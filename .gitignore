@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+
+_chk/
+_chk_seed/
+_feedback_pack_*/
+*.tar
+bench_out/
+_runs/
+
+solve_user
+solve.cpp.bak_before_user_code
