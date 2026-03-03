@@ -1,0 +1,28 @@
+OGDF wrapper 채우기 → static runner → bundle 수집 → earliest-stage 디버깅 → dummy graft runner의 반복
+
+아래 순서대로만 진행해.
+
+1. OGDF wrapper 5개를 먼저 채운다.
+   - forEachSkeletonEdge
+   - originalOfSkeletonNode
+   - polesOfSkeletonEdge
+   - computeCycleOrderFromSkeleton
+   - buildRShapeFromSkeleton
+
+2. runStaticPipelineCaseDumpAware를 manual-only로 먼저 실행한다.
+3. 첫 failure bundle이 나오면 그 1개만 저장한다.
+4. 가장 이른 stage만 디버깅한다.
+   - RAW_*면 compact/raw만 본다.
+   - MINI_*면 raw/mini만 본다.
+   - actual/trace는 보지 않는다.
+5. static pipeline이 통과하면 runDummyGraftCaseDumpAware를 실행한다.
+6. 다시 첫 failure bundle 1개만 저장한다.
+7. 다시 가장 이른 stage만 디버깅한다.
+   - DUMMY_REAL_SET_FAIL이면 explicitExpected/explicitGot부터 본다.
+   - DUMMY_PROXY_REWIRE_FAIL이면 compact/actualAfterGraft/trace만 본다.
+8. 위 둘이 안정화되기 전에는 rewriteR_fallback + normalizeTouchedRegion 전체 local harness로 올리지 않는다.
+
+실행할 때는 항상:
+- 첫 실패 1개만 본다.
+- 가장 이른 stage만 고친다.
+- stage가 뒤로 갈수록 앞 stage는 이미 통과했다고 가정한다.

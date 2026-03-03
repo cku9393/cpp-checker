@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+.DS_Store
 
 _chk/
 _chk_seed/
@@ -10,3 +11,8 @@ _runs/
 
 solve_user
 solve.cpp.bak_before_user_code
+
+# local OGDF harness build artifacts
+ogdf_local_harness_bundle/build/
+ogdf_local_harness_bundle_v2/.deps/
+ogdf_local_harness_bundle_v2/build/
