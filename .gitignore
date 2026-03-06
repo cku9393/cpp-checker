@@ -16,3 +16,10 @@ solve.cpp.bak_before_user_code
 ogdf_local_harness_bundle/build/
 ogdf_local_harness_bundle_v2/.deps/
 ogdf_local_harness_bundle_v2/build/
+
+# generated artifacts inside archived branch folders
+**/.deps/
+**/build/
+**/build-debug/
+**/build-release/
+**/build-asan/
