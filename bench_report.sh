@@ -2,6 +2,16 @@
 set -euo pipefail
 
 cd "$(dirname "$0")"
+if [[ -n "${PYTHON:-}" ]]; then
+  PYTHON_BIN="$PYTHON"
+elif command -v python3 >/dev/null 2>&1; then
+  PYTHON_BIN=python3
+elif command -v python >/dev/null 2>&1; then
+  PYTHON_BIN=python
+else
+  echo "[bench_report.sh] python interpreter not found" >&2
+  exit 127
+fi
 
 SOLVER="${1:-./solve}"
 OUT="${2:-bench_out}"
@@ -10,19 +20,7 @@ SEEDS="${4:-1}"
 TIMEOUT="${5:-}"
 SHUF_L="${6:-1}"
 SHUF_Q="${7:-1}"
-ARG8="${8:-}"
-ARG9="${9:-}"
-
-MODES=""
-KEEP="0"
-if [[ -n "$ARG9" ]]; then
-  MODES="$ARG8"
-  KEEP="$ARG9"
-elif [[ "$ARG8" == "0" || "$ARG8" == "1" ]]; then
-  KEEP="$ARG8"
-else
-  MODES="$ARG8"
-fi
+MODES="${8:-}"
 
 ARGS=(--solver "$SOLVER" --out "$OUT" --sizes "$SIZES" --seeds "$SEEDS")
 if [[ -n "$MODES" ]]; then
@@ -37,10 +35,7 @@ fi
 if [[ -n "$TIMEOUT" ]]; then
   ARGS+=(--timeout "$TIMEOUT")
 fi
-if [[ "$KEEP" == "1" ]]; then
-  ARGS+=(--keep)
-fi
 
-python3 bench_report.py "${ARGS[@]}"
+"$PYTHON_BIN" bench_report.py "${ARGS[@]}"
 echo
 echo "[bench] summary table: $OUT/bench_summary.md"

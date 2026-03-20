@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
+import sys
 import tempfile
 import time
 from pathlib import Path
+
+from suite_utils import default_solver_path, ensure_executable, resolve_solver_path
 
 ROOT = Path(__file__).resolve().parent
 GEN = ROOT / "gen_case.py"
@@ -20,7 +22,7 @@ def run_once(solver: str, mode: str, n: int, seed: int, timeout: float, shuffle_
         out_path = td / "out.txt"
 
         gen_cmd = [
-            "python3",
+            sys.executable,
             str(GEN),
             "--mode",
             mode,
@@ -49,7 +51,7 @@ def run_once(solver: str, mode: str, n: int, seed: int, timeout: float, shuffle_
         elapsed = time.perf_counter() - start
         if validate:
             try:
-                subprocess.run(["python3", str(VAL), str(in_path), str(out_path), "--quiet"], check=True)
+                subprocess.run([sys.executable, str(VAL), str(in_path), str(out_path), "--quiet"], check=True)
             except subprocess.CalledProcessError:
                 return False, elapsed, "wrong_answer"
         return True, elapsed, "ok"
@@ -67,7 +69,7 @@ def all_pass(solver: str, mode: str, n: int, seeds, timeout: float, shuffle_labe
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Find largest n that survives a timeout under a generator mode.")
-    parser.add_argument("--solver", default=str(ROOT / "solve"))
+    parser.add_argument("--solver", default=str(default_solver_path(ROOT)))
     parser.add_argument("--mode", required=True)
     parser.add_argument("--timeout", type=float, default=2.0)
     parser.add_argument("--start", type=int, default=1024)
@@ -79,12 +81,14 @@ def main() -> int:
     args = parser.parse_args()
 
     seeds = [int(x) for x in args.seeds.split(",") if x.strip()]
+    solver = str(resolve_solver_path(args.solver, root=ROOT))
+    ensure_executable(Path(solver))
     validate = not args.no_validate
 
     lo = 0
     hi = min(max(1, args.start), args.n_max)
 
-    ok, t, reason = all_pass(args.solver, args.mode, hi, seeds, args.timeout, args.shuffle_labels, args.shuffle_queries, validate)
+    ok, t, reason = all_pass(solver, args.mode, hi, seeds, args.timeout, args.shuffle_labels, args.shuffle_queries, validate)
     print(f"probe n={hi}: ok={ok} time={t:.4f}s reason={reason}")
     if not ok:
         hi_fail = hi
@@ -95,7 +99,7 @@ def main() -> int:
         hi_fail = args.n_max + 1
         while cur < args.n_max:
             nxt = min(args.n_max, cur * 2)
-            ok, t, reason = all_pass(args.solver, args.mode, nxt, seeds, args.timeout, args.shuffle_labels, args.shuffle_queries, validate)
+            ok, t, reason = all_pass(solver, args.mode, nxt, seeds, args.timeout, args.shuffle_labels, args.shuffle_queries, validate)
             print(f"probe n={nxt}: ok={ok} time={t:.4f}s reason={reason}")
             if ok:
                 lo_pass = nxt
@@ -110,7 +114,7 @@ def main() -> int:
     l, r = lo_pass, hi_fail
     while l + 1 < r:
         mid = (l + r) // 2
-        ok, t, reason = all_pass(args.solver, args.mode, mid, seeds, args.timeout, args.shuffle_labels, args.shuffle_queries, validate)
+        ok, t, reason = all_pass(solver, args.mode, mid, seeds, args.timeout, args.shuffle_labels, args.shuffle_queries, validate)
         print(f"probe n={mid}: ok={ok} time={t:.4f}s reason={reason}")
         if ok:
             l = mid

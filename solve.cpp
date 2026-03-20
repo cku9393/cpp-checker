@@ -1,4 +1,7 @@
-﻿#include <bits/stdc++.h>
+#include <algorithm>
+#include <climits>
+#include <cstdio>
+#include <cstring>
 using namespace std;
 
 struct FastScanner {
@@ -23,13 +26,11 @@ struct FastScanner {
             c = read();
             if (!c) return false;
         }
-
         T sign = 1;
         if (c == '-') {
             sign = -1;
             c = read();
         }
-
         T val = 0;
         while (c > ' ') {
             val = val * 10 + (c - '0');
@@ -42,8 +43,8 @@ struct FastScanner {
 
 static const int MAXN = 100000 + 5;
 static const int MAXM = 100000 + 5;
-static const int MAXG = 400000 + 5;   // 4 * M
-static const int MAXU = 200000 + 5;   // 2 * M
+static const int MAXG = 400000 + 5;   // 4*M
+static const int MAXU = 200000 + 5;   // 2*M
 
 struct Query {
     int u, v, w;
@@ -61,7 +62,7 @@ Query Q[MAXM];
 int Ans[MAXN];
 int LocStamp[MAXN], LocIdx[MAXN], Stamp = 0;
 
-// 입력 그래프용으로 쓰다가, 초기 분할 후에는 task local graph scratch로 재사용
+// Used for initial component BFS and then reused as local graph scratch per task
 int headE[MAXN], toE[MAXG], nxtE[MAXG], ecnt = 0;
 
 // unary topo scratch
@@ -125,7 +126,6 @@ void solve_unary(int nl, int nr, int ql, int qr, int parent_of_root, int fixed_r
         int id = qidPool[p];
         const Query& qu = Q[id];
         int w = LocIdx[qu.w];
-
         if (qu.u != qu.w) add_arc_u(w, LocIdx[qu.u]);
         if (qu.v != qu.w) add_arc_u(w, LocIdx[qu.v]);
     }
@@ -389,18 +389,19 @@ void process_task(const Task& task) {
     int rootg = nodePool[nl + root];
     Ans[rootg] = parent;
 
-    int restSize = n0 - 1 - sumSepA[root];
     int sepNum = sepCntA[root];
+    int restSize = n0 - 1 - sumSepA[root];
     int groups = sepNum + (restSize > 0 ? 1 : 0);
 
+    int base = 0;
     if (restSize > 0) {
         for (int i = 0; i < n0; ++i) compOfA[i] = 0;
         compOfA[root] = -1;
+        base = 1;
     } else {
         for (int i = 0; i < n0; ++i) compOfA[i] = -1;
     }
 
-    int base = (restSize > 0 ? 1 : 0);
     for (int i = 0; i < sepNum; ++i) {
         int c = sepListA[sepOffA[root] + i];
         int gid = base + i;
@@ -509,12 +510,12 @@ int main() {
             compA[s] = cc;
 
             while (qh < qt) {
-                int u = queA[qh++];
-                for (int e = headE[u]; e != -1; e = nxtE[e]) {
-                    int v = toE[e];
-                    if (v == 1 || compA[v] != -1) continue;
-                    compA[v] = cc;
-                    queA[qt++] = v;
+                int x = queA[qh++];
+                for (int e = headE[x]; e != -1; e = nxtE[e]) {
+                    int y = toE[e];
+                    if (y == 1 || compA[y] != -1) continue;
+                    compA[y] = cc;
+                    queA[qt++] = y;
                 }
             }
             ++cc;
@@ -543,6 +544,7 @@ int main() {
             int c = compA[v];
             nodePool[curOffA[c]++] = v;
         }
+
         for (int i = 0; i < M; ++i) {
             if (Q[i].w == 1) continue;
             int c = compA[Q[i].w];

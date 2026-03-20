@@ -1,0 +1,16 @@
+{
+  "name": "smoke",
+  "description": "Quick sanity run for generation, solving, and validation.",
+  "stages": [
+    {
+      "name": "smoke_correctness",
+      "modes": ["comb_core", "multi_comb_rect", "balanced_dense", "caterpillar_rect_dense", "random_recursive_mixed"],
+      "sizes": [64, 128, 256],
+      "seeds": [1, 2],
+      "shuffle_labels": [0, 1],
+      "shuffle_queries": [0, 1],
+      "timeout": 2.0,
+      "must_pass": true
+    }
+  ]
+}

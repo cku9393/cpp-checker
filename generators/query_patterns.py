@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import math
-from typing import Dict, List
+from typing import Dict, Iterable, List, Sequence
 
 from .tree_ctx import TreeContext
 
@@ -34,6 +33,11 @@ class QueryBuilder:
         return True
 
 
+def _desc_targets(ctx: TreeContext, spine: Sequence[int], start_idx: int, stride: int = 1) -> Iterable[int]:
+    for j in range(start_idx, len(spine), stride):
+        yield ctx.deepest_desc[spine[j]]
+
+
 def pattern_comb_core(ctx: TreeContext, qb: QueryBuilder, meta: Dict) -> None:
     spine = meta.get("spine", [])
     side = meta.get("side", [])
@@ -43,6 +47,28 @@ def pattern_comb_core(ctx: TreeContext, qb: QueryBuilder, meta: Dict) -> None:
         qb.add(spine[i + 1], leaf, spine[i])
         if qb.remaining() == 0:
             return
+
+
+def pattern_comb_rectangular(ctx: TreeContext, qb: QueryBuilder, meta: Dict, stride: int = 1, per_side_limit: int | None = None) -> None:
+    """
+    For comb-shaped trees, use each side leaf against many deeper spine descendants.
+    This creates many valid queries that survive for multiple top-down removals in
+    decomposition-style solvers.
+    """
+    spine = meta.get("spine", [])
+    side = meta.get("side", [])
+    for i, leaf in enumerate(side):
+        w = spine[i]
+        used = 0
+        for target in _desc_targets(ctx, spine, i + 1, stride):
+            if target == leaf or target == w:
+                continue
+            qb.add(leaf, target, w)
+            used += 1
+            if qb.remaining() == 0:
+                return
+            if per_side_limit is not None and used >= per_side_limit:
+                break
 
 
 def pattern_ancestors_to_target(ctx: TreeContext, qb: QueryBuilder, target: int, stride: int = 1) -> None:
@@ -66,6 +92,40 @@ def pattern_comb_side_vs_deepest(ctx: TreeContext, qb: QueryBuilder, meta: Dict)
             qb.add(leaf, deepest, w)
             if qb.remaining() == 0:
                 return
+
+
+def pattern_multi_comb_core(ctx: TreeContext, qb: QueryBuilder, meta: Dict) -> None:
+    spine = meta.get("spine", [])
+    side_groups = meta.get("side_groups", [])
+    for i in range(min(len(spine) - 1, len(side_groups))):
+        w = spine[i]
+        heavy = spine[i + 1]
+        for leaf in side_groups[i]:
+            qb.add(heavy, leaf, w)
+            if qb.remaining() == 0:
+                return
+
+
+def pattern_multi_comb_rectangular(ctx: TreeContext, qb: QueryBuilder, meta: Dict, stride: int = 1, per_leaf_limit: int | None = None) -> None:
+    spine = meta.get("spine", [])
+    side_groups = meta.get("side_groups", [])
+    upto = min(len(side_groups), len(spine))
+    for i in range(upto):
+        w = spine[i]
+        targets = list(_desc_targets(ctx, spine, i + 1, stride))
+        if not targets:
+            continue
+        for leaf in side_groups[i]:
+            used = 0
+            for target in targets:
+                if leaf == target or target == w:
+                    continue
+                qb.add(leaf, target, w)
+                used += 1
+                if qb.remaining() == 0:
+                    return
+                if per_leaf_limit is not None and used >= per_leaf_limit:
+                    break
 
 
 def pattern_chain_windows(ctx: TreeContext, qb: QueryBuilder) -> None:
@@ -157,12 +217,35 @@ def pattern_caterpillar_spine_vs_side(ctx: TreeContext, qb: QueryBuilder, meta: 
                     return
 
 
+def pattern_caterpillar_rectangular(ctx: TreeContext, qb: QueryBuilder, meta: Dict, stride: int = 1, per_leaf_limit: int | None = None) -> None:
+    spine = meta.get("spine", [])
+    side_map = meta.get("side_map", {})
+    for i, w in enumerate(spine[:-1]):
+        targets = list(_desc_targets(ctx, spine, i + 1, stride))
+        if not targets:
+            continue
+        for leaf in side_map.get(w, []):
+            used = 0
+            for target in targets:
+                if leaf == target or target == w:
+                    continue
+                qb.add(leaf, target, w)
+                used += 1
+                if qb.remaining() == 0:
+                    return
+                if per_leaf_limit is not None and used >= per_leaf_limit:
+                    break
+
+
 def fill_random_mixed(ctx: TreeContext, qb: QueryBuilder, rng, branch_ratio: float = 0.45, ancestor_ratio: float = 0.35) -> None:
     if ctx.n == 1:
         return
 
     attempts = 0
-    hard_limit = max(5000, qb.cap * 40)
+    # Keep generation fast even on small trees where the number of distinct valid
+    # queries is far below the global M cap. On large trees this still gives plenty
+    # of room to fill close to the cap.
+    hard_limit = max(4000, min(qb.cap, max(1000, ctx.n * 8)) * 8)
     while qb.remaining() > 0 and attempts < hard_limit:
         attempts += 1
         t = rng.random()

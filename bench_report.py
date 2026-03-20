@@ -5,7 +5,7 @@ Runs a full loop:
   generate -> solve -> validate
 
 It records:
-  - elapsed seconds and max RSS (kB) from /usr/bin/time
+  - elapsed seconds and best-effort max RSS (kB)
   - exit codes / timeouts
   - validator pass/fail
 
@@ -16,7 +16,7 @@ results are written to:
   - <out>/bench_pivot.csv
 
 Example:
-  python3 bench_report.py --solver ./solve --out bench_out \
+  python bench_report.py --solver ./solve --out bench_out \
     --modes comb_core,comb_dense --sizes 9999,19999,39999 --seeds 1,2,3 \
     --shuffle-labels --shuffle-queries --timeout 2.0
 """
@@ -25,17 +25,23 @@ from __future__ import annotations
 
 import argparse
 import csv
-import os
 import shlex
-import shutil
-import signal
 import subprocess
 import sys
-import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
+from suite_utils import (
+    default_solver_path,
+    ensure_executable,
+    markdown_table,
+    parse_int_list_csv,
+    parse_str_list_csv,
+    resolve_solver_path,
+    run_cmd,
+    run_solver_with_time,
+)
 
 ROOT = Path(__file__).resolve().parent
 GEN = ROOT / "gen_case.py"
@@ -43,104 +49,11 @@ VAL = ROOT / "validator.py"
 
 
 def parse_int_list(s: str) -> List[int]:
-    s = s.strip()
-    if not s:
-        return []
-    return [int(x) for x in s.split(",")]
+    return parse_int_list_csv(s)
 
 
 def parse_str_list(s: str) -> List[str]:
-    s = s.strip()
-    if not s:
-        return []
-    return [x.strip() for x in s.split(",") if x.strip()]
-
-
-def ensure_executable(p: Path) -> None:
-    if not p.exists():
-        raise FileNotFoundError(str(p))
-    if p.is_file() and not os.access(p, os.X_OK):
-        raise PermissionError(f"Not executable: {p}")
-
-
-def run_cmd(
-    cmd: List[str],
-    *,
-    stdin_path: Optional[Path] = None,
-    stdout_path: Optional[Path] = None,
-    stderr_path: Optional[Path] = None,
-    timeout: Optional[float] = None,
-) -> Tuple[int, bool, float]:
-    """Run command. Returns (exit_code, timed_out, elapsed_sec)."""
-
-    t0 = time.perf_counter()
-    stdin_f = open(stdin_path, "rb") if stdin_path else None
-    stdout_f = open(stdout_path, "wb") if stdout_path else subprocess.DEVNULL
-    stderr_f = open(stderr_path, "wb") if stderr_path else subprocess.DEVNULL
-
-    try:
-        # Start in its own process group so we can kill everything on timeout.
-        p = subprocess.Popen(
-            cmd,
-            stdin=stdin_f,
-            stdout=stdout_f,
-            stderr=stderr_f,
-            preexec_fn=os.setsid,
-        )
-        try:
-            p.wait(timeout=timeout)
-            timed_out = False
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            try:
-                os.killpg(p.pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
-            p.wait()
-        rc = int(p.returncode)
-    finally:
-        if stdin_f:
-            stdin_f.close()
-        if stdout_f not in (None, subprocess.DEVNULL):
-            stdout_f.close()
-        if stderr_f not in (None, subprocess.DEVNULL):
-            stderr_f.close()
-
-    return rc, timed_out, time.perf_counter() - t0
-
-
-def run_solver_with_time(
-    solver: Path,
-    in_path: Path,
-    out_path: Path,
-    time_path: Path,
-    stderr_path: Path,
-    timeout: Optional[float],
-) -> Tuple[int, bool, Optional[float], Optional[int]]:
-    """Run solver wrapped by /usr/bin/time and parse (sec, rss_kb)."""
-
-    # /usr/bin/time writes to -o file, so solver stderr is kept separately.
-    cmd = ["/usr/bin/time", "-f", "%e %M", "-o", str(time_path), str(solver)]
-    rc, timed_out, _elapsed = run_cmd(
-        cmd,
-        stdin_path=in_path,
-        stdout_path=out_path,
-        stderr_path=stderr_path,
-        timeout=timeout,
-    )
-
-    if timed_out:
-        return rc, True, None, None
-    if not time_path.exists():
-        return rc, False, None, None
-
-    try:
-        txt = time_path.read_text().strip().split()
-        sec = float(txt[0])
-        rss = int(txt[1])
-        return rc, False, sec, rss
-    except Exception:
-        return rc, False, None, None
+    return parse_str_list_csv(s)
 
 
 @dataclass
@@ -159,25 +72,9 @@ class Row:
     case_dir: str
 
 
-def markdown_table(headers: List[str], rows: List[List[str]]) -> str:
-    def esc(x: str) -> str:
-        return x.replace("|", "\\|")
-
-    out = []
-    out.append("| " + " | ".join(map(esc, headers)) + " |")
-    out.append("| " + " | ".join(["---"] * len(headers)) + " |")
-    for r in rows:
-        out.append("| " + " | ".join(map(esc, r)) + " |")
-    return "\n".join(out) + "\n"
-
-
-def row_all_pass(r: Row) -> bool:
-    return (r.gen_ok == 1) and (r.solver_rc == 0) and (r.timed_out == 0) and (r.val_ok == 1)
-
-
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--solver", default="./solve", help="path to solver executable")
+    ap.add_argument("--solver", default=str(default_solver_path(ROOT)), help="path to solver executable")
     ap.add_argument("--out", default="bench_out", help="output directory")
     ap.add_argument("--modes", default="", help="comma-separated modes; empty=all")
     ap.add_argument("--sizes", default="9999,19999,39999,79999,99999", help="comma-separated N")
@@ -188,7 +85,7 @@ def main() -> int:
     ap.add_argument("--keep", action="store_true", help="keep artifacts even if all-pass")
     args = ap.parse_args()
 
-    solver = Path(args.solver).resolve()
+    solver = resolve_solver_path(args.solver, root=ROOT)
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
 
@@ -348,20 +245,9 @@ def main() -> int:
         + markdown_table(header, md_rows)
     )
 
-    all_pass = len(rows) > 0 and all(row_all_pass(r) for r in rows)
-    runs_dir = out / "runs"
-    cleaned_runs = False
-    if all_pass and (not args.keep) and runs_dir.exists():
-        shutil.rmtree(runs_dir)
-        cleaned_runs = True
-
     print(f"[bench] wrote: {csv_path}")
     print(f"[bench] wrote: {md_path}")
     print(f"[bench] wrote: {pivot_csv}")
-    if cleaned_runs:
-        print(f"[bench] cleaned: {runs_dir} (all runs passed; use --keep to preserve artifacts)")
-    elif all_pass:
-        print(f"[bench] all runs passed; artifacts kept under: {runs_dir}")
     return 0
 
 

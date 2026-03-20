@@ -1,0 +1,44 @@
+{
+  "name": "rebuttal_gate",
+  "description": "Focused hard-mode gate for rebutting 'weak data / slow decomposition' criticism.",
+  "stages": [
+    {
+      "name": "hard_scaling",
+      "modes": [
+        "comb_core",
+        "comb_plus_unary",
+        "comb_dense",
+        "comb_rect_dense",
+        "multi_comb_core",
+        "multi_comb_rect",
+        "multi_comb_cap",
+        "caterpillar_mixed",
+        "caterpillar_rect_dense"
+      ],
+      "sizes": [4096, 8192, 16384, 32768],
+      "seeds": [1, 2, 3],
+      "shuffle_labels": [1],
+      "shuffle_queries": [1],
+      "timeout": 12.0,
+      "must_pass": true,
+      "alpha_max": 1.45,
+      "ratio_max": 2.90
+    },
+    {
+      "name": "max_dense_headroom",
+      "modes": [
+        "comb_dense",
+        "comb_rect_dense",
+        "multi_comb_rect",
+        "multi_comb_cap",
+        "caterpillar_rect_dense"
+      ],
+      "sizes": [50000, 99999],
+      "seeds": [1, 2],
+      "shuffle_labels": [1],
+      "shuffle_queries": [1],
+      "timeout": 6.0,
+      "must_pass": true
+    }
+  ]
+}

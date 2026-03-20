@@ -59,6 +59,49 @@ def build_comb_tree(n: int) -> Tuple[List[int], Dict]:
         "spine": spine,
         "side": side,
         "extra": extra,
+        "fanout": 1,
+    }
+
+
+def build_multi_comb_tree(n: int, fanout: int = 3) -> Tuple[List[int], Dict]:
+    """
+    Heavy path (spine) where each spine node gets up to `fanout` side leaves.
+    This is a stronger variant of comb for decomposition-style solvers because
+    one large component survives while many side leaves can keep generating
+    long-lived constraints.
+    """
+    fanout = max(1, fanout)
+    parent = _base_parent(n)
+    spine = [1]
+    side_groups: List[List[int]] = [[]]
+
+    cur = 1
+    nxt = 2
+    while nxt <= n:
+        # heavy child first
+        parent[nxt] = cur
+        spine.append(nxt)
+        side_groups.append([])
+        heavy = nxt
+        nxt += 1
+
+        # side leaves for current spine node
+        for _ in range(fanout):
+            if nxt > n:
+                break
+            parent[nxt] = cur
+            side_groups[-2].append(nxt)
+            nxt += 1
+
+        cur = heavy
+
+    total_side = sum(len(g) for g in side_groups)
+    return parent, {
+        "shape": "multi_comb",
+        "spine": spine,
+        "side_groups": side_groups,
+        "fanout": fanout,
+        "total_side": total_side,
     }
 
 

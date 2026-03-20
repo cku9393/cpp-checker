@@ -1,154 +1,316 @@
-# BOJ 28350 stress loop, upgraded
+# BOJ 28350 stress suite v5
 
-이 폴더는 다음 루프를 한 번에 돌리기 위한 패키지다.
+이 폴더는 `쿼리와 트리 2` 풀이를 **강한 반례군 + 검증 + 성능 리포트 + 인증형 게이트**로 평가하기 위한 패키지다.
 
-1. 다양한 숨은 트리를 기반으로 유효한 반례 입력 생성
-2. `solve.cpp` 실행
-3. 출력 트리가 실제로 쿼리를 만족하는지 검증
-4. 여러 모드와 크기에서 성능 경향 확인
-5. 특정 모드에서 어느 `N`부터 위험해지는지 breakpoint 탐색
+핵심 목표는 두 가지다.
 
-## 핵심 파일
+1. 정답성 검증
+2. 느린 decomposition 계열 코드가 약한 데이터에서만 통과하는지 강하게 가려내기
+
+중요한 점:
+
+이 스위트가 hidden data를 그대로 복제하는 **수학적 증명**은 아니다.
+하지만 `comb / multi_comb / caterpillar` 계열의 느린 구조와 `max-N` dense 케이스, 그리고 스케일링 분석까지 묶어서 평가하기 때문에,
+이걸 통과하면 **백준 통과 가능성에 대한 강한 증거**가 되고,
+동시에 “약한 데이터라서 통과했다”는 지적도 **매우 강하게 반박**할 수 있게 설계했다.
+
+## 새로 강화된 핵심
+
+이번 버전은 단순 케이스 추가가 아니라, **인증형 구조**로 바뀌었다.
+
+### 1) 더 강한 반례 모드
+
+기존 모드에 더해서 아래 hard family를 추가했다.
+
+- `comb_rect_dense`
+  - comb 계열에서 각 side leaf를 여러 깊이의 descendant와 엮어 long-lived query를 많이 만든다.
+- `multi_comb_core`
+  - heavy spine에 각 레벨마다 여러 side leaf가 달린 더 강한 comb 변형.
+- `multi_comb_rect`
+  - `multi_comb_core`에 cross-depth rectangular 쿼리를 얹은 강화형.
+- `multi_comb_cap`
+  - `multi_comb_rect`를 M cap 근처까지 공격적으로 채우는 버전.
+- `caterpillar_rect_dense`
+  - caterpillar 계열에서 여러 깊이로 long-lived 쿼리를 퍼뜨리는 강화형.
+
+이 모드들은 “큰 컴포넌트가 거의 줄지 않는 구조”와 “같은 쿼리 묶음이 여러 단계에 남는 구조”를 더 세게 찌른다.
+
+### 2) `certify_suite.py`
+
+단순 벤치마크가 아니라, 아래를 한 번에 판단한다.
+
+- 모든 케이스 validator 통과 여부
+- timeout / RE / WA 여부
+- hard family에서 크기 증가에 따른 **log-log slope(alpha)**
+- 크기 두 배 근처에서의 **worst growth ratio**
+- stage별 PASS / FAIL / WARN
+- 전체 verdict
+
+즉, “몇 초 걸렸다”만 보는 게 아니라,
+**정말 scaling이 건강한지**까지 본다.
+
+### 3) `rebuttal_gate.json`, `strong_gate.json`
+
+바로 쓸 수 있는 인증 preset을 넣었다.
+
+- `smoke.json`
+  - 빠른 sanity check
+- `rebuttal_gate.json`
+  - 느린 decomposition 계열 지적을 반박하기 위한 hard-mode 중심 gate
+- `strong_gate.json`
+  - correctness fuzz + hard scaling + max-N dense run을 모두 보는 종합 gate
+- `boj_3s_hard_gate.json`
+  - adversarial family + max-N 케이스에 대해 **개별 케이스 sub-3s cap**까지 거는 더 빡센 BOJ 지향 gate
+
+### 4) `hunt_hardest.py`
+
+모드/크기/seed/셔플 조합을 훑어서 **현재 solver 기준 가장 느린 케이스**를 자동으로 골라준다.
+
+즉, 단순히 정해진 세트만 돌리는 게 아니라,
+**현재 코드가 실제로 어디서 약한지**를 상위 케이스로 바로 볼 수 있다.
+
+## 파일 구성
 
 - `gen_case.py`
-  - 디테일한 반례 생성기
-  - 모든 모드는 실제 숨은 트리를 먼저 만들고, 그 트리에서 유도한 **항상 유효한** LCA 쿼리만 출력한다
-  - 옵션으로 메타 정보와 숨은 부모 배열도 저장 가능
+  - 유효한 LCA 쿼리 입력 생성기
 - `validator.py`
-  - 출력 부모 배열이 루트가 1인 올바른 트리인지 확인
-  - 모든 쿼리를 다시 LCA로 검증
-- `solve.cpp`
-  - 현재 테스트용 솔버 자리
-  - 원하는 코드로 교체해서 사용하면 된다
-- `run_case.sh`
-  - 단일 케이스 생성 -> 실행 -> 검증 -> 시간/메모리 출력
-- `stress_modes.sh`
-  - 여러 반례 모드를 일괄 실행
+  - 출력 트리와 모든 쿼리의 LCA를 재검증
+- `bench_report.py`
+  - CSV / Markdown 리포트 생성
 - `find_breakpoint.py`
-  - 특정 모드에서 timeout 기준으로 어디까지 버티는지 자동 탐색
+  - timeout 기준으로 버티는 최대 N 탐색
+- `certify_suite.py`
+  - stage/preset 기반 인증형 실행기
+- `hunt_hardest.py`
+  - 현재 solver 기준 최악 케이스 hunt
+- `suite_presets/*.json`
+  - smoke / rebuttal / strong gate preset
+- `gate.sh`
+  - 일반 preset용 `certify_suite.py` 래퍼
+- `gate_boj3s.sh`
+  - `boj_3s_hard_gate.json` 전용 래퍼
+- `hunt.sh`
+  - `hunt_hardest.py` 래퍼
+- `stress_modes.sh`
+  - 여러 모드 일괄 실행
+- `solve.cpp`
+  - 테스트할 솔버 자리
 
-## 생성 모드
+## 플랫폼별 진입점
 
-`python3 gen_case.py --list-modes`
+- macOS / Linux
+  - `build.sh`, `run_case.sh`, `stress_modes.sh`, `gate.sh`, `gate_boj3s.sh`, `hunt.sh`, `bench_report.sh`
+- Windows PowerShell
+  - `build.ps1`, `run_case.ps1`, `stress_modes.ps1`, `gate.ps1`, `gate_boj3s.ps1`, `hunt.ps1`, `bench_report.ps1`
+- 공통 사항
+  - Python 기반 실행 코어는 `.py` 파일들이다.
+  - 기본 solver 이름은 macOS / Linux에서 `solve`, Windows에서 `solve.exe`다.
+  - `build.py`는 사용 가능한 C++ 컴파일러를 자동 탐지한다.
+  - Linux에서 정적 링크가 꼭 필요하면 `build.py --static always`를 쓰면 된다.
 
-현재 포함된 주요 모드:
+## 생성 모드 목록
+
+```bash
+python gen_case.py --describe-modes
+```
+
+현재 주요 모드:
 
 - `comb_core`
-  - 느리게 줄어드는 comb 계열 기본형
-  - 분할이 절반 가까이 줄지 않는 구조를 가장 직접적으로 찌른다
 - `comb_plus_unary`
-  - `comb_core`에 unary ancestor 제약을 추가한 형태
-  - 큰 쿼리 묶음이 여러 단계에 걸쳐 남는지 보기 좋다
 - `comb_dense`
-  - comb 계열을 더 조밀하게 채운 버전
-  - 쿼리 스캔 상수까지 같이 압박한다
+- `comb_rect_dense`
+- `multi_comb_core`
+- `multi_comb_rect`
+- `multi_comb_cap`
 - `chain_unary`
-  - path 트리 기반 unary-only 테스트
-  - ancestor 처리 로직 검증용
 - `star_pairs`
-  - star 트리에서 leaf pair를 많이 넣은 케이스
-  - root branching 처리, dense M 검증용
 - `balanced_sibling`
-  - balanced binary tree에서 각 내부 노드의 서로 다른 자식 서브트리 대표를 짝짓는 구조
 - `balanced_dense`
-  - balanced tree에서 branching query를 더 많이 넣은 버전
 - `broom_mixed`
-  - 긴 handle + 빽빽한 broom head
 - `caterpillar_mixed`
-  - 긴 spine + side leaf 혼합
+- `caterpillar_rect_dense`
 - `random_recursive_mixed`
-  - 랜덤 recursive tree에서 여러 유형의 유효 쿼리 혼합
 
-## 빠른 사용법
+## 빠른 시작
 
 ```bash
-cd lca_tree_stress_v2
+cd lca_tree_stress_v5
 ./build.sh
-./run_case.sh comb_core 99999 1 1 1
-./run_case.sh comb_dense 99999 1 1 1
 ```
 
-`run_case.sh` 인자 순서:
-
-```text
-MODE N SEED SHUFFLE_LABELS SHUFFLE_QUERIES [SOLVER] [OUTDIR]
+```powershell
+Set-Location lca_tree_stress_v5
+./build.ps1
 ```
 
-예시:
+단일 케이스:
 
 ```bash
-./run_case.sh balanced_dense 50000 7 1 1 ./solve _runs/balanced_dense_50000
+./run_case.sh comb_rect_dense 99999 1 1 1
+./run_case.sh multi_comb_cap 99999 1 1 1
 ```
 
-## 일괄 스트레스
+```powershell
+./run_case.ps1 comb_rect_dense 99999 1 1 1
+./run_case.ps1 multi_comb_cap 99999 1 1 1
+```
+
+PowerShell에서는 같은 인자 구조로 `.ps1` 래퍼를 쓰면 된다. 직접 solver 경로를 넘길 때는 보통 `.\solve.exe`를 사용한다.
+
+## 인증형 게이트
+
+### 1) 종합 gate
 
 ```bash
-./stress_modes.sh ./solve 1 1 1
+./gate.sh ./solve suite_presets/strong_gate.json gate_out
 ```
 
-인자 순서:
-
-```text
-SOLVER SEED SHUFFLE_LABELS SHUFFLE_QUERIES
-```
-
-## breakpoint 탐색
-
-아래 명령은 특정 모드에서 timeout 2초 기준으로 어디까지 버티는지 찾는다.
+### 2) 느린 데이터 반박용 gate
 
 ```bash
-python3 find_breakpoint.py --solver ./solve --mode comb_dense --timeout 2.0 --shuffle-labels --shuffle-queries
+./gate.sh ./solve suite_presets/rebuttal_gate.json rebuttal_out
 ```
 
-여러 seed를 함께 보고 싶으면:
+### 3) 더 느린 머신이면 time-based limit를 배수 조정
 
 ```bash
-python3 find_breakpoint.py --solver ./solve --mode comb_plus_unary --timeout 2.0 --seeds 1,2,3 --shuffle-labels --shuffle-queries
-```
-
-## CSV/표 벤치마크 리포트
-
-여러 모드/크기/seed를 한 번에 돌리고, 결과를 CSV와 Markdown 표로 저장한다.
-
-```bash
-python3 bench_report.py --solver ./solve --out bench_out \
-  --sizes 9999,19999,39999,79999,99999 --seeds 1,2,3 \
-  --shuffle-labels --shuffle-queries --timeout 2.0
+./gate.sh ./solve suite_presets/strong_gate.json gate_out 1.5
 ```
 
 출력:
 
-- `bench_out/bench.csv`: 전체 실행 로그(행 단위)
-- `bench_out/bench_pivot.csv`: (mode,n)별 seed 최솟값 요약
-- `bench_out/bench_summary.md`: 사람 보기 좋은 표
-- 기본값은 모든 실행이 성공하면 `bench_out/runs/` 아티팩트를 정리한다.
-- 아티팩트를 항상 보존하려면 `--keep`을 추가한다.
+- `gate_out/certify_rows.csv`
+- `gate_out/certify_summary.md`
+- `gate_out/certify.json`
 
-짧은 래퍼 스크립트도 있다:
+`certify_summary.md`에는 stage별 PASS/FAIL, scaling alpha, worst growth ratio, top slow cases가 정리된다.
 
-```bash
-./bench_report.sh ./solve bench_out 9999,19999,39999 1,2,3 2.0 1 1 1
-```
-
-`bench_report.sh` 인자 순서:
-
-```text
-SOLVER OUT SIZES SEEDS TIMEOUT SHUFFLE_LABELS SHUFFLE_QUERIES [MODES|KEEP] [KEEP]
-```
-
-- 8번째 인자가 `0` 또는 `1`이면 `KEEP`으로 해석된다.
-- `MODES`와 `KEEP`을 같이 주고 싶으면 9번째 인자까지 전달하면 된다.
-
-## 숨은 트리도 같이 저장하고 싶을 때
+### 4) BOJ 3초 지향 hard gate
 
 ```bash
-python3 gen_case.py --mode comb_dense --n 99999 --seed 1 \
+./gate_boj3s.sh ./solve boj3s_out
+```
+
+또는 직접 preset 지정:
+
+```bash
+./gate.sh ./solve suite_presets/boj_3s_hard_gate.json boj3s_out
+```
+
+이 gate는 기존 `strong_gate`보다 더 엄격하다.
+
+- large adversarial family를 직접 포함
+- `hard_scaling_strict`, `boj_3s_large_adversarial`, `boj_3s_large_mix`는 `timeout=3.0`
+- `correctness_smoke`는 빠른 정답성 확인용으로 `timeout=1.5`
+- `case_sec_max`로 **개별 케이스 최대 시간**까지 제한
+- `sec_max`로 size별 median 관점에서도 여유(headroom) 확인
+
+실행 시간 `sec`과 메모리 `rss_kb`는 이제 공통 실행 코어가 직접 기록한다.
+macOS / Linux에서는 프로세스 사용량을 직접 수집하고, Windows에서는 가능한 범위에서 peak working set을 기록한다.
+
+주의할 점:
+
+이 gate를 통과했다고 해서 BOJ hidden을 **수학적으로 증명**하는 것은 아니다.
+하지만 “약한 데이터라서 통과한 것 아닌가?”라는 의심을 반박하는 용도로는 기존보다 훨씬 강하다.
+
+로컬 머신이 느리면 마지막 인자 `LIMIT_SCALE`을 올릴 수 있다.
+이 값은 `timeout`, `sec_max`, `case_sec_max`에 같이 적용된다.
+
+```bash
+./gate_boj3s.sh ./solve boj3s_out 1.15
+```
+
+## hardest-case hunt
+
+```bash
+./hunt.sh ./solve hunt_out 12000,24000,48000,99999 1,2,3 8.0
+```
+
+PowerShell 예시:
+
+```powershell
+./gate.ps1 .\solve.exe suite_presets/strong_gate.json gate_out
+./gate_boj3s.ps1 .\solve.exe boj3s_out
+./hunt.ps1 .\solve.exe hunt_out 12000,24000,48000,99999 1,2,3 8.0
+```
+
+출력:
+
+- `hunt_out/hunt.csv`
+- `hunt_out/hunt_summary.md`
+
+이걸로 현재 코드가 실제로 어느 family/seed/셔플 조합에서 가장 느린지 바로 볼 수 있다.
+
+## 일반 벤치 리포트
+
+```bash
+python bench_report.py --solver ./solve --out bench_out \
+  --sizes 9999,19999,39999,79999,99999 --seeds 1,2,3 \
+  --shuffle-labels --shuffle-queries --timeout 4.0
+```
+
+```powershell
+./bench_report.ps1 .\solve.exe bench_out 9999,19999,39999,79999,99999 1,2,3 4.0 1 1
+```
+
+출력:
+
+- `bench_out/bench.csv`
+- `bench_out/bench_pivot.csv`
+- `bench_out/bench_summary.md`
+
+## breakpoint 탐색
+
+```bash
+python find_breakpoint.py --solver ./solve --mode multi_comb_cap \
+  --timeout 2.0 --shuffle-labels --shuffle-queries
+```
+
+```powershell
+python .\find_breakpoint.py --solver .\solve.exe --mode multi_comb_cap `
+  --timeout 2.0 --shuffle-labels --shuffle-queries
+```
+
+## hidden tree도 저장
+
+```bash
+python gen_case.py --mode comb_rect_dense --n 99999 --seed 1 \
   --shuffle-labels --shuffle-queries \
   --meta meta.json --parent-out hidden_parent.txt > in.txt
 ```
 
-## 팁
+```powershell
+python .\gen_case.py --mode comb_rect_dense --n 99999 --seed 1 `
+  --shuffle-labels --shuffle-queries `
+  --meta meta.json --parent-out hidden_parent.txt > in.txt
+```
 
-- decomposition 계열 최악 성능을 보려면 `comb_core`, `comb_plus_unary`, `comb_dense`부터 보는 게 좋다.
-- 쿼리 유형이 다양해도 맞는지 보려면 `balanced_dense`, `broom_mixed`, `random_recursive_mixed`를 같이 돌리면 좋다.
-- label/query shuffle을 켜면 hard-coded 분기나 입력 순서 의존을 좀 더 잘 잡아낼 수 있다.
+## 추천 사용 순서
+
+가장 실전적인 루프는 이렇다.
+
+1. `./build.sh`
+2. `./gate.sh ./solve suite_presets/strong_gate.json gate_out`
+3. `./gate.sh ./solve suite_presets/rebuttal_gate.json rebuttal_out`
+4. `./gate_boj3s.sh ./solve boj3s_out`
+5. `./hunt.sh ./solve hunt_out`
+
+이 순서로 보면,
+정답성 문제인지,
+hard family scaling 문제인지,
+max-N headroom 문제인지,
+가장 느린 실제 케이스가 뭔지까지 한 번에 잡힌다.
+
+## 해석 팁
+
+- `PASS`
+  - 정답성 + hard scaling + dense max-N run까지 preset 기준 통과
+- `WARN`
+  - soft stage나 보조 기준에서만 이상
+- `FAIL`
+  - timeout / WA / RE / scaling blow-up 등 명확한 문제 존재
+
+특히 `rebuttal_gate.json`에서 fail이 나면,
+느린 decomposition 계열 지적을 반박하기 어렵다.
+반대로 이 gate를 통과하면 그 지적은 상당 부분 무력화된다.
