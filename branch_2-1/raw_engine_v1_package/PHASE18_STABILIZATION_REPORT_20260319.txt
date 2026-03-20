@@ -1,0 +1,181 @@
+PHASE18 stabilization report
+date=2026-03-19
+package=raw_engine_v1_package
+
+1. modified/added files
+- modified
+  - README.md
+  - tests/CMakeLists.txt
+  - tests/raw_engine_cases.cpp
+  - tests/raw_engine_main.cpp
+  - tests/test_harness.hpp
+- added
+  - tests/policy_gate.hpp
+  - tests/policy_gate.cpp
+  - tests/tools/build_evidence_bundle.py
+  - PHASE18_STABILIZATION_REPORT_20260319.txt
+- no `src/` primitive/planner production semantics changes were introduced in this phase
+
+2. policy graduation manifest design
+- outputs:
+  - `artifacts/manifests/policy_graduation_manifest_v1.json`
+  - `artifacts/manifests/policy_graduation_manifest_v1.txt`
+  - `artifacts/manifests/policy_graduation_manifest_v1.summary.txt`
+- implementation:
+  - `tests/policy_gate.hpp`
+  - `tests/policy_gate.cpp`
+  - `tests/raw_engine_cases.cpp`
+  - `tests/raw_engine_main.cpp`
+  - `tests/test_harness.hpp`
+- the manifest records:
+  - phase metadata: `manifest_version`, `report_version=phase18`, `build_tag`, `timestamp_utc`, `artifact_root`
+  - family status: `PASS`, `NON_APPLICABLE`, `DIAGNOSTIC_ONLY`, `FAIL`, `INSUFFICIENT_EVIDENCE`
+  - family thresholds:
+    - compared/eligible/completed minima
+    - semantic/fallback/shift maxima
+    - applicability thresholds for `planner_tie_mixed_organic`
+    - lineage sample threshold for `planner_tie_mixed_organic_compare_ready`
+  - measured evidence:
+    - compare counts and compare-ineligible histogram
+    - applicability drift fields
+    - diagnostic lineage fields
+  - final rationale, drift flag, and `counts_as_production_evidence`
+- `--case policy_gate` evaluates the full manifest or one family via `--gate-family`
+- `--gate-strict` fails unless every selected family is `PASS`, `NON_APPLICABLE`, or `DIAGNOSTIC_ONLY`
+- campaign aggregate rewrites now refresh the policy manifest automatically and append `policy_family_status=` lines to aggregate summaries
+
+3. family gate criteria and actual results
+- direct production `PASS` rule:
+  - `compared_state_count >= 32`
+  - `compare_eligible_state_count >= 32`
+  - `compare_completed_state_count >= 32`
+  - `semantic_disagreement_count = 0`
+  - `fallback_count = 0`
+  - `semantic_shift_count = 0`
+- `NON_APPLICABLE` rule for `planner_tie_mixed_organic`:
+  - `generated_state_count >= 48`
+  - `compare_relevance <= 0.02`
+  - `split_ready_relevance <= 0.05`
+  - dominant ineligible reason stays `no_split_ready`
+  - dominant reason confidence stays `>= 0.90`
+  - no drift flag
+- `DIAGNOSTIC_ONLY` rule for `planner_tie_mixed_organic_compare_ready`:
+  - compare evidence `>= 32/32/32`
+  - `lineage_sample_count >= 16`
+  - `same_semantic_class_count >= lineage_sample_count`
+  - `same_final_state_count >= lineage_sample_count`
+  - `same_trace_class_count >= lineage_sample_count`
+  - `semantic_disagreement_count = 0`
+  - `fallback_count = 0`
+  - `semantic_shift_count = 0`
+  - `counts_as_production_evidence = 0`
+- current manifest result:
+  - `split_tie_organic_symmetric = PASS`
+  - `automorphism_probe_large = PASS`
+  - `planner_tie_mixed_organic = NON_APPLICABLE`
+  - `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY`
+- strict gate rerun:
+  - `./build-release-phase18/tests/raw_engine_tests --case policy_gate --gate-strict --gate-output artifacts/manifests/policy_graduation_manifest_v1.json`
+  - result: passed
+
+4. planner_tie_mixed_organic applicability drift result
+- output:
+  - `artifacts/phase18_final_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt`
+- measured result:
+  - `generated_state_count=48`
+  - `split_ready_state_count=0`
+  - `tie_ready_state_count=0`
+  - `compare_eligible_state_count=0`
+  - `compare_ineligible_state_count=48`
+  - `compare_ineligible_reason_histogram={"no_split_ready":48}`
+  - `actual_split_hits=0`
+  - `actual_join_hits=48`
+  - `actual_integrate_hits=48`
+  - `split_ready_relevance=0`
+  - `tie_ready_relevance=0`
+  - `compare_relevance=0`
+  - `dominant_ineligible_reason=no_split_ready`
+  - `dominant_ineligible_reason_confidence=1`
+  - `classification=NON_APPLICABLE`
+- interpretation:
+  - no applicability drift was observed
+  - the family remains mixed-followup heavy via join/integrate hits
+  - no planner reclassification is required in this phase
+
+5. why compare_ready stays diagnostic-only
+- output:
+  - `artifacts/phase18_final_lineage/logs/compare_ready_lineage_audit.summary.txt`
+- measured result:
+  - `derived_from_base_state_count=16`
+  - `compare_completed_state_count=16`
+  - `lineage_sample_count=16`
+  - `same_semantic_class_count=16`
+  - `same_final_state_count=16`
+  - `same_trace_class_count=16`
+  - `forced_split_ready_support_count=16`
+  - `followup_pattern_preserved_count=0`
+  - `structure_only_enrichment_count=0`
+- interpretation:
+  - bounded exact compare consistency remains good enough for diagnostics
+  - the precursor still requires forced split-ready support
+  - the precursor still does not preserve the base followup pattern
+  - because `followup_pattern_preserved_count=0` and `structure_only_enrichment_count=0`, the family stays pinned at `DIAGNOSTIC_ONLY`
+  - the manifest records `counts_as_production_evidence=0`, so it never upgrades production graduation by itself
+
+6. evidence bundle generation
+- script:
+  - `tests/tools/build_evidence_bundle.py`
+- bundle command:
+  - `python tests/tools/build_evidence_bundle.py --phase phase18 --artifact-root artifacts --report-out PHASE18_STABILIZATION_REPORT_20260319.txt --policy-manifest artifacts/manifests/policy_graduation_manifest_v1.json --zip-out raw_engine_phase18_stabilization_20260319.zip`
+- fixed bundle layout:
+  - `reports/`
+  - `manifests/`
+  - `curated/`
+  - `regressions/`
+  - `logs/`
+  - root `bundle_metadata.json`
+
+7. explicit executions
+- passed:
+  - `./build-debug-phase18/tests/raw_engine_tests --case planner_tie_organic_applicability_audit --artifact-dir artifacts/phase18_final_applicability`
+  - `./build-debug-phase18/tests/raw_engine_tests --case compare_ready_lineage_gate_smoke`
+  - `./build-release-phase18/tests/raw_engine_tests --case policy_gate --gate-strict --gate-output artifacts/manifests/policy_graduation_manifest_v1.json`
+  - `./build-debug-phase18/tests/raw_engine_tests --case corpus_roundtrip_smoke --artifact-dir artifacts/phase18_corpus`
+  - `./build-debug-phase18/tests/raw_engine_tests --case corpus_replay --load-corpus artifacts/phase18_corpus/corpus/roundtrip`
+
+8. full build / CTest results
+- Release:
+  - build dir: `build-release-phase18`
+  - result: `106/106` passed
+  - wall time: `287.20 sec`
+- Debug:
+  - build dir: `build-debug-phase18`
+  - result: `106/106` passed
+  - wall time: `1122.80 sec`
+- isolated ASan/UBSan:
+  - build dir: `build-asan-phase18`
+  - result: `106/106` passed
+  - wall time: `3113.62 sec`
+
+9. semantic counterexample / regression status
+- new semantic counterexample:
+  - none
+- new regression list:
+  - none
+- dump/reduce/regression pipeline:
+  - unchanged and still available if a future semantic mismatch reappears
+
+10. final verdict
+- `exact_shadow` stays graduated for production
+- acceptable machine-readable gate set:
+  - `PASS`
+  - `NON_APPLICABLE`
+  - `DIAGNOSTIC_ONLY`
+- there is no `FAIL`
+- there is no `INSUFFICIENT_EVIDENCE`
+- no evidence in phase18 justifies changing `src/raw_planner.cpp` or any primitive implementation
+
+11. remaining risks
+- direct expensive compare evidence for `split_tie_organic_symmetric` and `automorphism_probe_large` is still sourced from the existing expensive compare campaign summaries; if those generators or planner behaviors change, those campaigns should be rerun to refresh direct evidence
+- `planner_tie_mixed_organic` remains classified through applicability rather than direct compare; if `compare_eligible_state_count` starts rising above zero, the manifest will leave `NON_APPLICABLE` and require reclassification
+- `planner_tie_mixed_organic_compare_ready` is still structurally enriched relative to the base family, so it should remain diagnostic-only unless future lineage work proves structure-only and followup preservation

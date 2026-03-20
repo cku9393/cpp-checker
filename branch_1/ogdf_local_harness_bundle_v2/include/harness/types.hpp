@@ -40,7 +40,22 @@ enum class HarnessStage : uint8_t {
     ACTUAL_METADATA_FAIL,
     ACTUAL_INVARIANT_FAIL,
     DUMMY_REAL_SET_FAIL,
-    DUMMY_PROXY_REWIRE_FAIL
+    DUMMY_PROXY_REWIRE_FAIL,
+    LOCAL_BUILD_CORE_FAIL,
+    LOCAL_CHOOSE_RX_FAIL,
+    LOCAL_REWRITE_R_FAIL,
+    LOCAL_NORMALIZE_FAIL,
+    LOCAL_ACTUAL_INVARIANT_FAIL,
+    LOCAL_ORACLE_FAIL,
+    SEQ_BUILD_CORE_FAIL,
+    SEQ_CHOOSE_RX_FAIL,
+    SEQ_REWRITE_R_FAIL,
+    SEQ_NORMALIZE_FAIL,
+    SEQ_ACTUAL_INVARIANT_FAIL,
+    SEQ_ORACLE_FAIL,
+    SEQ_PROGRESS_STUCK,
+    SEQ_MAX_STEPS_REACHED,
+    SEQ_REPLAY_CAPTURE
 };
 
 inline const char *stageName(HarnessStage s) {
@@ -58,6 +73,21 @@ inline const char *stageName(HarnessStage s) {
         case HarnessStage::ACTUAL_INVARIANT_FAIL: return "ACTUAL_INVARIANT_FAIL";
         case HarnessStage::DUMMY_REAL_SET_FAIL: return "DUMMY_REAL_SET_FAIL";
         case HarnessStage::DUMMY_PROXY_REWIRE_FAIL: return "DUMMY_PROXY_REWIRE_FAIL";
+        case HarnessStage::LOCAL_BUILD_CORE_FAIL: return "LOCAL_BUILD_CORE_FAIL";
+        case HarnessStage::LOCAL_CHOOSE_RX_FAIL: return "LOCAL_CHOOSE_RX_FAIL";
+        case HarnessStage::LOCAL_REWRITE_R_FAIL: return "LOCAL_REWRITE_R_FAIL";
+        case HarnessStage::LOCAL_NORMALIZE_FAIL: return "LOCAL_NORMALIZE_FAIL";
+        case HarnessStage::LOCAL_ACTUAL_INVARIANT_FAIL: return "LOCAL_ACTUAL_INVARIANT_FAIL";
+        case HarnessStage::LOCAL_ORACLE_FAIL: return "LOCAL_ORACLE_FAIL";
+        case HarnessStage::SEQ_BUILD_CORE_FAIL: return "SEQ_BUILD_CORE_FAIL";
+        case HarnessStage::SEQ_CHOOSE_RX_FAIL: return "SEQ_CHOOSE_RX_FAIL";
+        case HarnessStage::SEQ_REWRITE_R_FAIL: return "SEQ_REWRITE_R_FAIL";
+        case HarnessStage::SEQ_NORMALIZE_FAIL: return "SEQ_NORMALIZE_FAIL";
+        case HarnessStage::SEQ_ACTUAL_INVARIANT_FAIL: return "SEQ_ACTUAL_INVARIANT_FAIL";
+        case HarnessStage::SEQ_ORACLE_FAIL: return "SEQ_ORACLE_FAIL";
+        case HarnessStage::SEQ_PROGRESS_STUCK: return "SEQ_PROGRESS_STUCK";
+        case HarnessStage::SEQ_MAX_STEPS_REACHED: return "SEQ_MAX_STEPS_REACHED";
+        case HarnessStage::SEQ_REPLAY_CAPTURE: return "SEQ_REPLAY_CAPTURE";
     }
     return "UNKNOWN";
 }
@@ -203,9 +233,291 @@ struct ReducedSPQRCore {
     Agg totalAgg;
 };
 
+struct RewiredProxyEdge {
+    int inputEdgeId = -1;
+    ArcId oldArc = -1;
+    NodeId actualNode = -1;
+    int actualSlot = -1;
+};
+
+enum class ProxyArcRepairOutcome : uint8_t {
+    PAR_OLDARC_ALREADY_LIVE,
+    PAR_MATCH_BY_OUTSIDENODE_AND_POLES,
+    PAR_MATCH_BY_POLES_ONLY_UNIQUE,
+    PAR_FAIL_OUTSIDENODE_DEAD,
+    PAR_FAIL_NO_CANDIDATE,
+    PAR_FAIL_MULTI_CANDIDATE,
+    PAR_FAIL_SLOT_NOT_VIRTUAL,
+    PAR_FAIL_SLOT_ARCID_MISMATCH,
+    PAR_FAIL_POLES_ONLY_MULTI_CANDIDATE,
+    PAR_FAIL_POLES_ONLY_SLOT_INVALID,
+    PAR_FAIL_POLES_ONLY_OTHER,
+    PAR_OTHER,
+    COUNT
+};
+
+enum class WeakRepairGateSubtype : uint8_t {
+    WRG_NOT_NEEDED_STRONG_LIVE,
+    WRG_ENTER_PNC_SAME_POLES_BUT_OTHER_OUTSIDE,
+    WRG_SKIP_PNC_OLDNODE_NO_LIVE_ARCS,
+    WRG_SKIP_OTHER_PNC,
+    WRG_OTHER,
+    COUNT
+};
+
+inline constexpr size_t kWeakRepairGateSubtypeCount =
+    static_cast<size_t>(WeakRepairGateSubtype::COUNT);
+
+enum class WeakRepairCandidateSubtype : uint8_t {
+    WRC_ZERO_SAME_POLE_CANDIDATES,
+    WRC_ONE_SAME_POLE_CANDIDATE,
+    WRC_MULTI_SAME_POLE_CANDIDATES,
+    WRC_SLOT_INVALID,
+    WRC_OTHER,
+    COUNT
+};
+
+inline constexpr size_t kWeakRepairCandidateSubtypeCount =
+    static_cast<size_t>(WeakRepairCandidateSubtype::COUNT);
+
+enum class WeakRepairCommitOutcome : uint8_t {
+    WCO_NOT_ATTEMPTED,
+    WCO_FAILED_BEFORE_GRAFT,
+    WCO_GRAFT_FAIL,
+    WCO_NORMALIZE_FAIL,
+    WCO_ACTUAL_INVARIANT_FAIL,
+    WCO_ORACLE_FAIL,
+    WCO_COMMITTED,
+    COUNT
+};
+
+inline constexpr size_t kWeakRepairCommitOutcomeCount =
+    static_cast<size_t>(WeakRepairCommitOutcome::COUNT);
+
+enum class ProxyArcLifecyclePhase : uint8_t {
+    PAL_SNAPSHOT_OK,
+    PAL_AFTER_CLEAR_KEEP_ALIVE,
+    PAL_AFTER_CLEAR_KEEP_DEAD,
+    PAL_AFTER_CLEAR_KEEP_NOT_INCIDENT,
+    PAL_AFTER_CLEAR_KEEP_SLOT_INVALID,
+    PAL_AFTER_MATERIALIZE_ALIVE,
+    PAL_AFTER_MATERIALIZE_DEAD,
+    PAL_AFTER_MATERIALIZE_NOT_INCIDENT,
+    PAL_AFTER_MATERIALIZE_SLOT_INVALID,
+    PAL_AFTER_INTERNAL_ARCS_ALIVE,
+    PAL_AFTER_INTERNAL_ARCS_DEAD,
+    PAL_AFTER_INTERNAL_ARCS_NOT_INCIDENT,
+    PAL_AFTER_INTERNAL_ARCS_SLOT_INVALID,
+    PAL_PRE_REWIRE_ALIVE,
+    PAL_PRE_REWIRE_DEAD,
+    PAL_PRE_REWIRE_NOT_INCIDENT,
+    PAL_PRE_REWIRE_SLOT_INVALID,
+    PAL_REWIRE_RET_FALSE,
+    PAL_OTHER,
+    COUNT
+};
+
+inline constexpr size_t kProxyArcLifecyclePhaseCount =
+    static_cast<size_t>(ProxyArcLifecyclePhase::COUNT);
+
+struct RepairedProxyArcInfo {
+    int inputEdgeId = -1;
+    ArcId originalOldArc = -1;
+    ArcId resolvedArc = -1;
+    NodeId oldNode = -1;
+    NodeId originalOutsideNode = -1;
+    NodeId resolvedOutsideNode = -1;
+    NodeId outsideNode = -1;
+    int resolvedOldSlot = -1;
+    VertexId poleA = -1;
+    VertexId poleB = -1;
+    bool repairUsedWeakPolesOnly = false;
+    bool weakRepairEntered = false;
+    WeakRepairGateSubtype weakRepairGateSubtype = WeakRepairGateSubtype::WRG_OTHER;
+    WeakRepairCandidateSubtype weakRepairCandidateSubtype =
+        WeakRepairCandidateSubtype::WRC_OTHER;
+    WeakRepairCommitOutcome weakRepairCommitOutcome =
+        WeakRepairCommitOutcome::WCO_NOT_ATTEMPTED;
+    std::vector<ProxyArcLifecyclePhase> phaseHistory;
+    ProxyArcLifecyclePhase firstBadPhase = ProxyArcLifecyclePhase::PAL_OTHER;
+    std::string firstBadWhy;
+    ProxyArcRepairOutcome repairOutcome = ProxyArcRepairOutcome::PAR_OTHER;
+};
+
+using ResolvedProxyEndpoint = RepairedProxyArcInfo;
+
+struct PreservedProxyArc {
+    int inputEdgeId = -1;
+    ArcId oldArc = -1;
+    NodeId oldNode = -1;
+    NodeId outsideNode = -1;
+    int resolvedOldSlot = -1;
+    VertexId poleA = -1;
+    VertexId poleB = -1;
+    int newSlot = -1;
+    NodeId finalNode = -1;
+    bool crossNodeRewire = false;
+    bool sameNodeRehome = false;
+};
+
+inline constexpr size_t kProxyArcRepairOutcomeCount =
+    static_cast<size_t>(ProxyArcRepairOutcome::COUNT);
+
+enum class GraftRewireBailoutSubtype : uint8_t {
+    GRB_OWNER_MINI_MISSING,
+    GRB_OWNER_MINI_SLOT_INVALID,
+    GRB_OWNER_SLOT_NOT_PROXY,
+    GRB_ACTUAL_OF_MINI_MISSING,
+    GRB_ACTUAL_SLOT_MISSING,
+    GRB_OLDARC_OUT_OF_RANGE,
+    GRB_OLDARC_DEAD,
+    GRB_OLDARC_NOT_INCIDENT_TO_OLDNODE,
+    GRB_OUTSIDENODE_MISMATCH,
+    GRB_OLDSLOT_INVALID,
+    GRB_OLDSLOT_NOT_VIRTUAL,
+    GRB_OLDSLOT_ARCID_MISMATCH,
+    GRB_DUPLICATE_OLDARC,
+    GRB_REWIRE_RET_FALSE,
+    GRB_OTHER,
+    COUNT
+};
+
+enum class GraftOtherSubtype : uint8_t {
+    GOS_PRESERVED_SNAPSHOT_EMPTY,
+    GOS_PRESERVED_DUPLICATE_SLOT,
+    GOS_PRESERVED_SLOT_OUT_OF_RANGE,
+    GOS_PRESERVED_SLOT_DEAD,
+    GOS_PRESERVED_SLOT_NOT_VIRTUAL,
+    GOS_PRESERVED_SLOT_ARCID_MISMATCH,
+    GOS_REHOME_NEWSLOT_INVALID,
+    GOS_REHOME_OLDARC_DEAD,
+    GOS_REHOME_OLDNODE_NOT_INCIDENT,
+    GOS_REHOME_NEWSLOT_NOT_VIRTUAL,
+    GOS_REHOME_ARC_SLOT_UPDATE_FAIL,
+    GOS_POSTCHECK_STALE_PRESERVED_SLOT,
+    GOS_POSTCHECK_PRESERVED_ARC_DEAD,
+    GOS_POSTCHECK_ADJ_MISMATCH,
+    GOS_POSTCHECK_OUTSIDE_MISMATCH,
+    GOS_OTHER,
+    COUNT
+};
+
+inline constexpr size_t kGraftOtherSubtypeCount =
+    static_cast<size_t>(GraftOtherSubtype::COUNT);
+
+enum class GraftPostcheckSubtype : uint8_t {
+    GPS_ADJ_METADATA_ONLY,
+    GPS_SAME_TYPE_SP_ONLY,
+    GPS_ADJ_AND_SAME_TYPE_SP,
+    GPS_OTHER,
+    COUNT
+};
+
+inline constexpr size_t kGraftPostcheckSubtypeCount =
+    static_cast<size_t>(GraftPostcheckSubtype::COUNT);
+
+enum class ReplaySnapshotPhase : uint8_t {
+    BEFORE_CLEAR,
+    AFTER_CLEAR_PRESERVE,
+    AFTER_MATERIALIZE,
+    AFTER_INTERNAL_ARC_CONNECT,
+    AFTER_PROXY_REWIRE,
+    AFTER_ADJ_REPAIR,
+    BEFORE_SP_CLEANUP,
+    AFTER_SP_CLEANUP,
+    AFTER_NORMALIZE,
+    COUNT
+};
+
 struct GraftTrace {
     std::vector<NodeId> actualOfMini;
     std::vector<NodeId> actualNodes;
+    std::vector<std::vector<int>> actualSlotOfMiniSlot;
+    std::vector<RewiredProxyEdge> rewiredProxyEdges;
+    std::vector<ResolvedProxyEndpoint> resolvedProxyEndpoints;
+    std::vector<PreservedProxyArc> preservedProxyArcs;
+    std::vector<NodeId> affectedAdjRepairNodes;
+    std::vector<NodeId> affectedNodesAfterInPlaceApply;
+    std::vector<ArcId> oldNodeAdjArcsBeforeRepair;
+    std::vector<ArcId> oldNodeAdjArcsAfterRepair;
+    bool weakRepairEntered = false;
+    WeakRepairGateSubtype weakRepairGateSubtype = WeakRepairGateSubtype::WRG_OTHER;
+    WeakRepairCandidateSubtype weakRepairCandidateSubtype =
+        WeakRepairCandidateSubtype::WRC_OTHER;
+    WeakRepairCommitOutcome weakRepairCommitOutcome =
+        WeakRepairCommitOutcome::WCO_NOT_ATTEMPTED;
+    ArcId weakRepairOriginalOldArc = -1;
+    ArcId weakRepairResolvedArc = -1;
+    NodeId weakRepairOriginalOutsideNode = -1;
+    NodeId weakRepairResolvedOutsideNode = -1;
+    int weakRepairInputEdgeId = -1;
+    GraftRewireBailoutSubtype graftRewireSubtype = GraftRewireBailoutSubtype::GRB_OTHER;
+    GraftOtherSubtype graftOtherSubtype = GraftOtherSubtype::GOS_OTHER;
+    int preservedProxyArcsCount = 0;
+    bool inPlaceLoopSharedApplied = false;
+    int loopInputEdgeId = -1;
+    int realInputEdgeId = -1;
+    VertexId loopSharedCutVertex = -1;
+    NodeId loopSharedChildNode = -1;
+    bool sameNodeRehomeAttempted = false;
+    bool sameNodeRehomeSucceeded = false;
+    bool deferredSameTypeSP = false;
+    struct SameTypeSPCleanupMerge {
+        NodeId u = -1;
+        NodeId v = -1;
+        NodeId keep = -1;
+    };
+    GraftPostcheckSubtype postcheckSubtype = GraftPostcheckSubtype::GPS_OTHER;
+    GraftPostcheckSubtype preCleanupPostcheckSubtype = GraftPostcheckSubtype::GPS_OTHER;
+    GraftPostcheckSubtype postCleanupPostcheckSubtype = GraftPostcheckSubtype::GPS_OTHER;
+    std::string postcheckWhyDetailed;
+    std::vector<NodeId> sameTypeSPCleanupSeedNodes;
+    int sameTypeSPCleanupMergeCount = 0;
+    std::vector<SameTypeSPCleanupMerge> sameTypeSPCleanupMergedPairs;
+    int failingPreservedInputEdge = -1;
+    ArcId failingPreservedOldArc = -1;
+    int failingPreservedOldSlot = -1;
+    int failingNewSlot = -1;
+    std::string graftOtherWhy;
+    NodeId firstBadAdjNode = -1;
+    std::vector<ArcId> expectedAdj;
+    std::vector<ArcId> actualAdj;
+    int failingInputEdge = -1;
+    ArcId failingOldArc = -1;
+    int failingOwnerMini = -1;
+    int failingOwnerMiniSlot = -1;
+    struct ReplayLiveArcSummary {
+        ArcId arcId = -1;
+        NodeId otherNode = -1;
+        int slotInNode = -1;
+        int slotInOther = -1;
+        VertexId poleA = -1;
+        VertexId poleB = -1;
+    };
+    struct ReplaySlotSnapshot {
+        int slotId = -1;
+        bool alive = false;
+        bool isVirtual = false;
+        VertexId poleA = -1;
+        VertexId poleB = -1;
+        EdgeId realEdge = -1;
+        ArcId arcId = -1;
+    };
+    struct ReplayNodeSnapshot {
+        NodeId nodeId = -1;
+        bool alive = false;
+        SPQRType type = SPQRType::R_NODE;
+        std::vector<ArcId> adjArcs;
+        std::vector<EdgeId> realEdgesHere;
+        std::vector<ReplaySlotSnapshot> slots;
+        std::vector<ReplayLiveArcSummary> neighboringLiveArcs;
+    };
+    struct ReplayNodeSnapshotPhase {
+        ReplaySnapshotPhase phase = ReplaySnapshotPhase::BEFORE_CLEAR;
+        std::vector<ReplayNodeSnapshot> nodes;
+    };
+    std::vector<ReplayNodeSnapshotPhase> oldNodeSnapshotsByPhase;
+    std::vector<ReplayNodeSnapshotPhase> affectedNodeSnapshotsByPhase;
 };
 
 struct DummyActualEnvelope {
@@ -228,13 +540,36 @@ struct HarnessBundle {
     HarnessStage stage = HarnessStage::RAW_BACKEND_FAIL;
     std::string where;
     std::string why;
+    std::optional<ExplicitBlockGraph> explicitInput;
     std::optional<CompactGraph> compact;
     std::optional<RawSpqrDecomp> raw;
     std::optional<StaticMiniCore> miniBeforeNormalize;
     std::optional<StaticMiniCore> miniAfterNormalize;
     std::optional<ReducedSPQRCore> actualBeforeGraft;
     std::optional<ReducedSPQRCore> actualAfterGraft;
+    std::optional<ReducedSPQRCore> actualBeforeRewrite;
+    std::optional<ReducedSPQRCore> actualAfterRewrite;
     std::optional<GraftTrace> trace;
+    std::optional<NodeId> chosenR;
+    std::optional<VertexId> chosenX;
+    std::optional<int> targetTcIndex;
+    std::optional<int> targetStep;
+    std::optional<int> stepIndex;
+    std::optional<int> sequenceLengthSoFar;
+    std::optional<GraftPostcheckSubtype> postcheckSubtype;
+    std::optional<ReducedSPQRCore> actualAfterNormalize;
+    std::optional<ExplicitBlockGraph> explicitAfterNormalize;
+    std::optional<bool> normalizeOk;
+    std::optional<bool> actualInvariantOk;
+    std::optional<bool> oracleBuildOk;
+    std::optional<bool> oracleEquivalentOk;
+    std::string normalizeWhy;
+    std::string actualInvariantWhy;
+    std::string oracleWhy;
+    std::vector<GraftTrace::ReplayNodeSnapshotPhase> oldNodeSnapshotsByPhase;
+    std::vector<GraftTrace::ReplayNodeSnapshotPhase> affectedNodeSnapshotsByPhase;
+    std::optional<ExplicitBlockGraph> explicitBefore;
+    std::optional<ExplicitBlockGraph> explicitAfter;
     std::optional<ExplicitBlockGraph> explicitExpected;
     std::optional<ExplicitBlockGraph> explicitGot;
 };
@@ -244,14 +579,18 @@ struct HarnessResult {
     std::string where;
     std::string why;
     std::string dumpPath;
+    std::optional<HarnessBundle> bundle;
 };
 
 struct RunConfig {
     uint64_t seed = 1;
     int rounds = 1;
+    int tcIndex = -1;
+    int targetStep = -1;
     bool manualOnly = false;
     std::string mode = "static";
     std::string dumpDir = "dumps";
+    std::string manifestPath;
 };
 
 inline std::pair<VertexId, VertexId> canonPole(VertexId a, VertexId b) {

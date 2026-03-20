@@ -1,0 +1,189 @@
+PHASE14 Stabilization Report
+Date: 2026-03-10
+Package: raw_engine_v1_package
+
+1. Modified / added files
+- tests/raw_engine_cases.cpp
+- tests/split_choice_oracle.cpp
+- tests/test_harness.hpp
+- tests/raw_engine_main.cpp
+- tests/CMakeLists.txt
+- README.md
+- tests/campaigns/phase14_split_tie_organic.txt
+- tests/campaigns/phase14_planner_tie_organic.txt
+- tests/campaigns/phase14_automorphism_probe.txt
+- tests/campaigns/phase14_resume_smoke.txt
+- tests/campaigns/phase14_checkpoint_smoke.txt
+
+2. Checkpoint / resume design
+- Added campaign checkpoint CLI:
+  - `--checkpoint-dir`
+  - `--checkpoint-every`
+  - `--resume-from`
+  - `--max-wall-seconds`
+  - `--stop-after-checkpoint`
+- Each chunk checkpoint persists:
+  - run/seed/iter window
+  - stats json path
+  - summary path
+  - compare/fallback counters
+  - campaign manifest snapshot
+- Resume logic now:
+  - loads existing chunk manifests
+  - skips already completed `(runIndex, seedIndex, seed, iterStart, iterCount)` chunks
+  - reconstructs run aggregates from chunk summaries
+  - rewrites per-run and aggregate outputs after each completed chunk
+- tests-only correctness fix applied in this phase:
+  - chunk summary format was expanded to include primitive hits, histograms, oracle mismatch map, and per-seed summaries
+  - summary loader now restores those fields
+  - `merge_fuzz_stats_into()` now merges `seedSummaries` instead of dropping them
+- Resume evidence:
+  - `artifacts/checkpoints/resume_smoke_run2/chunks`: 2 chunks
+  - `artifacts/checkpoints/split_tie_organic_test_run4/chunks`: 2 chunks
+
+3. Compare hot path profiling / tests-only optimization
+- Added compare timing stats already emitted into summary/json/profile:
+  - candidate enumeration
+  - exact_shadow evaluation
+  - exact_full evaluation
+  - canonicalization
+  - multiclass catalog
+  - cache hit/miss counters
+- Current hotspots remain exact_shadow/exact_full evaluation and canonicalization.
+- Representative sample timings:
+  - `artifacts/phase14_direct_compare/split_tie_organic/logs/seed930001_iter1.summary.txt`
+    - compare_exact_shadow_evaluation_ns=7237508750
+    - compare_exact_full_evaluation_ns=7617149625
+    - compare_canonicalization_ns=7594804041
+  - `artifacts/phase14_direct_compare/automorphism_probe/logs/seed930003_iter1.summary.txt`
+    - compare_exact_shadow_evaluation_ns=7279318209
+    - compare_exact_full_evaluation_ns=7735024292
+    - compare_canonicalization_ns=7723873668
+  - `artifacts/phase14_campaigns/split_tie_organic/logs/split_tie_organic_compare.compare_profile.summary.txt`
+    - compare_state_count=2
+    - compare_exact_shadow_evaluation_ns=13237795125
+    - compare_exact_full_evaluation_ns=16397470750
+    - compare_canonicalization_ns=16360078708
+- tests-only cache correctness fix applied in this phase:
+  - candidate evaluation cache is now scoped to a single `run_split_choice_oracle()` invocation
+  - scenario cache key now includes serialized planner dump content plus family / inverse-relabel fingerprint
+  - this removes cross-family / cross-context candidate reuse risk while keeping state/exact canonical caches
+
+4. Expensive family exact_shadow vs exact_full compare results
+- `split_tie_organic_symmetric`
+  - direct probe:
+    - `artifacts/phase14_direct_compare/split_tie_organic/logs/seed930001_iter1.summary.txt`
+    - compare_state_count=1
+    - same_representative_count=1
+    - same_semantic_class_count=1
+    - same_final_state_count=1
+    - semantic_disagreement_count=0
+    - fallback_count=0
+  - checkpoint/resume campaign:
+    - `artifacts/phase14_campaigns/split_tie_organic/logs/phase14_split_tie_organic_aggregate.summary.txt`
+    - total_iterations=2
+    - split_choice_compare_state_count=2
+    - split_choice_same_representative_count=2
+    - split_choice_same_semantic_class_count=2
+    - split_choice_same_final_state_count=2
+    - split_choice_semantic_disagreement_count=0
+    - split_choice_fallback_count=0
+    - representative_shift_count=0
+    - semantic_shift_count=0
+- `planner_tie_mixed_organic`
+  - campaign evidence:
+    - `artifacts/phase14_campaigns/planner_tie_organic/logs/phase14_planner_tie_organic_aggregate.summary.txt`
+    - total_iterations=3000
+    - split_choice_compare_state_count=0
+    - split_choice_fallback_count=0
+    - exact_audit_skipped_non_tie_count=3000
+  - interpretation:
+    - this family validated checkpoint/resume plumbing in this sampled run
+    - it did not yield tie-eligible compare states, so exact_shadow vs exact_full evidence is still weaker here than in split_tie_organic
+- `automorphism_probe_large`
+  - direct probe:
+    - `artifacts/phase14_direct_compare/automorphism_probe/logs/seed930003_iter1.summary.txt`
+    - compare_state_count=1
+    - same_representative_count=1
+    - same_semantic_class_count=1
+    - same_final_state_count=1
+    - semantic_disagreement_count=0
+    - fallback_count=0
+  - checkpoint smoke:
+    - `artifacts/phase14_campaigns/automorphism_probe/logs/phase14_automorphism_probe_aggregate.summary.txt`
+    - total_iterations=1
+    - split_choice_compare_state_count=1
+    - split_choice_same_representative_count=1
+    - split_choice_same_semantic_class_count=1
+    - split_choice_same_final_state_count=1
+    - split_choice_semantic_disagreement_count=0
+    - split_choice_fallback_count=0
+
+5. Campaign / tiering policy
+- Tier labels currently exposed:
+  - `core`
+  - `slow`
+  - `exhaustive`
+  - `fuzz`
+  - `compare`
+  - `nightly`
+  - `asan_slow`
+- Label visibility checks:
+  - `ctest --test-dir /tmp/cpp-checker-phase14-release -N -L compare` => 10 tests
+  - `ctest --test-dir /tmp/cpp-checker-phase14-release -N -L nightly` => 15 tests
+  - `ctest --test-dir /tmp/cpp-checker-phase14-release -N -L asan_slow` => 8 tests
+- README now documents:
+  - quick/core usage
+  - compare/nightly usage
+  - checkpoint/resume campaign workflow
+
+6. New semantic counterexample / reproduction
+- No new semantic mismatch was found in production `exact_shadow` mode during this phase.
+- No new `exact_shadow` vs `exact_full` semantic disagreement was found in completed compare runs.
+
+7. New regressions
+- None added in this phase.
+- Existing fast-mode compare/regression witness remains:
+  - `tests/regressions/split_choice_semantic_shift_state.txt`
+
+8. src warning cleanup
+- Not applied in this phase.
+- Scope stayed on tests/harness/campaign runtime and compare evidence collection.
+- Strict tests build after the latest tests-only fixes still passes:
+  - `cmake --build /tmp/cpp-checker-phase14-debug-strict -j4 --target raw_engine_tests`
+
+9. Executions and results
+- Release full:
+  - command: `ctest --test-dir /tmp/cpp-checker-phase14-release --output-on-failure`
+  - result: 89/89 pass
+  - total test time (real): 565.28 sec
+- Debug full:
+  - command: `ctest --test-dir /tmp/cpp-checker-phase14-debug --output-on-failure`
+  - result: 89/89 pass
+  - total test time (real): 1400.08 sec
+- ASan/UBSan full:
+  - command: `ctest --test-dir /tmp/cpp-checker-phase14-asan-clean --output-on-failure`
+  - result: 89/89 pass
+  - total test time (real): 1110.68 sec
+  - note:
+    - verification used fresh build dir `/tmp/cpp-checker-phase14-asan-clean`
+    - this avoided stale detached runners that had polluted `/tmp/cpp-checker-phase14-asan`
+- Additional explicit checks:
+  - compare smoke:
+    - `./raw_engine_tests --case split_choice_oracle_smoke --split-choice-policy exact_shadow --compare-against exact_full`
+    - `./raw_engine_tests --case split_choice_exact_class_smoke --split-choice-policy exact_shadow --compare-against exact_full`
+  - direct expensive-family probes:
+    - `./raw_engine_tests --case planner_oracle_fuzz --seed 930001 --iters 1 --oracle planner --fuzz-mode split_tie_organic_symmetric --split-choice-policy exact_shadow --compare-against exact_full --compare-sample-rate 1.0 --compare-budget 1 --exact-canonical-cap 6`
+    - `./raw_engine_tests --case planner_oracle_fuzz --seed 930003 --iters 1 --oracle planner --fuzz-mode automorphism_probe_large --split-choice-policy exact_shadow --compare-against exact_full --compare-sample-rate 1.0 --compare-budget 1 --exact-canonical-cap 6`
+  - checkpoint/resume:
+    - `./raw_engine_tests --case campaign --campaign-config tests/campaigns/phase14_resume_smoke.txt --checkpoint-dir artifacts/checkpoints/resume_smoke_run2 --checkpoint-every 1 --stop-after-checkpoint`
+    - `./raw_engine_tests --case campaign --resume-from artifacts/checkpoints/resume_smoke_run2/latest.chk --stop-after-checkpoint`
+    - `./raw_engine_tests --case campaign --campaign-config tests/campaigns/phase14_split_tie_organic.txt --checkpoint-dir artifacts/checkpoints/split_tie_organic_test_run4 --checkpoint-every 1 --stop-after-checkpoint`
+    - `./raw_engine_tests --case campaign --resume-from artifacts/checkpoints/split_tie_organic_test_run4/latest.chk --stop-after-checkpoint`
+
+10. Remaining risks
+- `planner_tie_mixed_organic` still under-produces split-choice compare states in sampled campaigns, so exact_full adequacy evidence there remains weaker than for `split_tie_organic_symmetric`.
+- Even with checkpoint/resume and caching, exact_full compare remains operationally expensive on symmetry-heavy families.
+- Current fallback metric is still a combined field; in this phase all observed fallback counts were zero, so interpretability was not impacted, but a future non-zero campaign would benefit from separate policy-vs-compare fallback counters.
+- Aggregate campaign summaries remain intentionally compact; the full-fidelity checkpoint data now lives in chunk summary files, which resume uses for reconstruction.
+- Clean ASan full-matrix isolation on fresh build dirs works, but the reused `/tmp/cpp-checker-phase14-asan` tree can still be polluted by stale detached runners if old sessions are left behind.

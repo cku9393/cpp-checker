@@ -1,0 +1,10 @@
+aggregateStatsFile=artifacts/logs/planner_phase4_aggregate.json
+aggregateSummaryFile=artifacts/logs/planner_phase4_aggregate.summary.txt
+saveCorpusDir=artifacts/corpus
+corpusPolicy=best
+
+run mode=random seeds=850001 iters=2000 stepBudget=200000 artifactDir=artifacts statsFile=artifacts/logs/seed850001_random.json
+run mode=weighted_join_heavy seeds=850002 iters=2000 stepBudget=200000 artifactDir=artifacts statsFile=artifacts/logs/seed850002_weighted_join.json
+run mode=weighted_integrate_heavy seeds=850003 iters=2000 stepBudget=200000 artifactDir=artifacts statsFile=artifacts/logs/seed850003_weighted_integrate.json
+run mode=planner_mixed_targeted seeds=850004 iters=2000 stepBudget=200000 artifactDir=artifacts statsFile=artifacts/logs/seed850004_targeted.json
+run mode=planner_mixed_structural seeds=850005 iters=2000 stepBudget=200000 artifactDir=artifacts statsFile=artifacts/logs/seed850005_structural.json

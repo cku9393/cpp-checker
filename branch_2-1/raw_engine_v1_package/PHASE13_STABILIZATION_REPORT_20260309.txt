@@ -1,0 +1,171 @@
+PHASE13 Stabilization Report
+Date: 2026-03-09
+Repo: raw_engine_v1_package
+
+1. Modified / added files
+- tests/split_choice_oracle.hpp
+- tests/split_choice_oracle.cpp
+- tests/multiclass_catalog.cpp
+- tests/exhaustive_generator.hpp
+- tests/exhaustive_cases.cpp
+- tests/raw_engine_cases.cpp
+- tests/split_choice_cases.cpp
+- tests/CMakeLists.txt
+- README.md
+
+Notes:
+- src primitive / planner semantics were not changed in this phase.
+- No src warning-cleanup pass was applied in this phase.
+
+2. exact_full compare mode design
+- Production default split-choice policy remains exact_shadow.
+- tests-only exact_full compare reuses the already-evaluated admissible pair outcomes and the tests exact canonical key to compute the exact representative without changing production planner behavior.
+- Compare path records:
+  - split_choice_compare_state_count
+  - split_choice_exact_full_eval_count
+  - split_choice_exact_shadow_eval_count
+  - split_choice_same_representative_count
+  - split_choice_same_semantic_class_count
+  - split_choice_same_final_state_count
+  - split_choice_semantic_disagreement_count
+  - split_choice_fallback_count
+  - split_choice_cap_hit_count
+- split_choice_fallback_count is now surfaced in split-choice summaries and fuzz aggregation.
+
+3. Multiclass catalog design
+- Multiclass states are cataloged by a family-scoped dedupe key:
+  family + ":" + category + ":" + base_cluster_key
+- This prevents cross-family cluster collapse.
+- Each catalog entry now emits:
+  - .summary.txt witness
+  - .state.txt replayable planner dump
+- final_state_divergence is based on the exact-audit projection comparison, not the old fast final-state hash.
+
+4. exact_shadow vs exact_full completed compare results
+- split_choice_oracle_smoke:
+  artifacts/phase13_compare_smoke/logs/split_choice_oracle_split_tie_ready.summary.txt
+  - admissible_pair_count=6
+  - fast_class_count=4
+  - exact_class_count=4
+  - exact_vs_fast_class_disagreement_count=0
+  - split_choice_same_representative_count=1
+  - split_choice_same_semantic_class_count=1
+  - split_choice_same_final_state_count=1
+  - split_choice_semantic_disagreement_count=0
+  - split_choice_fallback_count=0
+- split_choice_exact_class_smoke:
+  artifacts/phase13_compare_smoke/logs/split_choice_exact_class_smoke.summary.txt
+  - admissible_pair_count=6
+  - fast_class_count=4
+  - exact_class_count=4
+  - split_choice_same_representative_count=1
+  - split_choice_same_semantic_class_count=1
+  - split_choice_same_final_state_count=1
+  - split_choice_semantic_disagreement_count=0
+  - split_choice_fallback_count=0
+
+5. Regression compare
+- fast replay:
+  artifacts/phase13_regression_compare_fast/logs/split_choice_semantic_shift_regression.summary.txt
+  - selected_pair=2,6
+  - exact_shadow_selected_pair=2,8
+  - exact_full_selected_pair=2,8
+  - representative_shift_count=1
+  - semantic_shift_count=1
+  - split_choice_semantic_disagreement_count=0
+  - split_choice_fallback_count=0
+- exact_shadow replay:
+  artifacts/phase13_regression_compare_exact_shadow/logs/split_choice_semantic_shift_regression.summary.txt
+  - selected_pair=2,8
+  - exact_full_selected_pair=2,8
+  - representative_shift_count=0
+  - semantic_shift_count=0
+  - split_choice_semantic_disagreement_count=0
+  - split_choice_fallback_count=0
+
+6. Family representative-shift / semantic-divergence stats
+- Completed explicit exhaustive compare:
+  artifacts/phase13_explicit3/exhaustive_split_tie_ready/logs/exhaustive.summary.txt
+  - generated_state_count=8000
+  - canonical_unique_state_count=8000
+  - split_choice_compare_state_count=200
+  - split_choice_exact_shadow_eval_count=1200
+  - split_choice_exact_full_eval_count=1200
+  - split_choice_same_representative_count=200
+  - split_choice_same_semantic_class_count=200
+  - split_choice_same_final_state_count=200
+  - split_choice_semantic_disagreement_count=0
+  - split_choice_fallback_count=0
+  - split_choice_cap_hit_count=0
+  - multiclass_cluster_count=102
+  - harmless_multiclass_count=102
+  - trace_only_multiclass_count=0
+  - semantic_shift_multiclass_count=0
+- This is the strongest completed bounded adequacy evidence from this phase: on 200 sampled split-choice compare states in split_tie_ready, exact_shadow and exact_full matched on representative, semantic class, and final state with zero semantic disagreement and zero fallback.
+
+7. Multiclass catalog outcome
+- Completed compare/case runs remained in harmless_multiclass buckets.
+- Example catalog witness:
+  artifacts/phase13_explicit3/split_choice_oracle_smoke/logs/multiclass_catalog/split_choice_oracle_split_tie_ready_4147c1c919d1c1ef.summary.txt
+- Completed exhaustive split_tie_ready compare produced 102 harmless multiclass clusters and no trace_only / semantic_shift multiclass cluster.
+- Existing fast-mode regression still reproduces the old semantic shift, but exact_shadow and exact_full align on the same representative for that witness.
+
+8. CTest tiering policy
+- Added / clarified additive CTest labels:
+  - core
+  - slow
+  - exhaustive
+  - fuzz
+  - asan_slow
+  - nightly
+- Default plain ctest still runs the full suite.
+- Verified label counts on the release build:
+  - core=58
+  - slow=38
+  - exhaustive=13
+  - fuzz=8
+  - asan_slow=8
+  - nightly=15
+- Sensitive reducer / artifact retention tests now use unique artifact dirs and RUN_SERIAL to avoid parallel artifact collisions in full ctest.
+
+9. Executions and results
+- Release full:
+  - cmake --build /tmp/cpp-checker-phase12-release -j4 --target raw_engine_tests
+  - ctest --test-dir /tmp/cpp-checker-phase12-release -j4 --output-on-failure
+  - Result: 99/99 pass, Total Test time (real) = 241.08 sec
+- Debug full:
+  - ctest --test-dir /tmp/cpp-checker-phase12-debug -j4 --output-on-failure
+  - Result: 99/99 pass, Total Test time (real) = 1556.09 sec
+- ASan/UBSan full:
+  - ctest --test-dir /tmp/cpp-checker-phase12-asan -j1 --output-on-failure
+  - Result: 99/99 pass, Total Test time (real) = 7247.36 sec
+- Strict warnings:
+  - /tmp/cpp-checker-phase11-debug-strict build remains green
+
+10. Explicit requested runs
+- Completed:
+  - split_choice_oracle_smoke with exact_shadow vs exact_full compare
+  - split_choice_exact_class_smoke with exact_shadow vs exact_full compare
+  - split_choice_semantic_shift_regression with fast
+  - split_choice_semantic_shift_regression with exact_shadow
+  - exhaustive split_tie_ready with exact_shadow vs exact_full compare
+- Started but intentionally aborted because runtime was excessive for this turn:
+  - exhaustive split_tie_organic_symmetric
+    - ran for about 1h 28m on the release binary without producing a final summary yet
+  - planner_oracle_fuzz seed 930001 split_tie_organic_symmetric
+    - ran for about 10m 45s and produced partial multiclass witness output but no final aggregate summary yet
+- Partial artifacts from these interrupted runs were kept under:
+  - artifacts/phase13_explicit3/
+  - artifacts/phase13_explicit3b/
+
+11. New semantic counterexample / regression
+- No new exact_shadow semantic mismatch was found in completed compare runs.
+- No new regression state was added in this phase.
+- Existing regression remains:
+  - tests/regressions/split_choice_semantic_shift_state.txt
+- Fast mode still reproduces the old mismatch; exact_shadow still removes it.
+
+12. Remaining risks
+- exact_shadow vs exact_full evidence is stronger now, but the completed family-level exhaustive compare evidence in this phase is still concentrated in split_tie_ready.
+- split_tie_organic_symmetric exact_full compare remains operationally expensive at the requested 8000-state bound.
+- release planner fuzz compare seeds for 930001/930002/930003 were not completed in this turn because the first seed itself ran too long after the heavy exhaustive step.

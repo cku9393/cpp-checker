@@ -127,7 +127,7 @@ RawSkeletonBuilder build_isolated_occ_builder(const IsolatePrepared& in) {
         coreLocal.push_back(eid);
     }
 
-    B.corePatchLocalEids[in.occ] = move(coreLocal);
+    B.corePatchLocalEids[in.occ] = std::move(coreLocal);
     return B;
 }
 
@@ -185,7 +185,7 @@ RawSkeletonBuilder build_residual_after_isolate(const RawEngine& RE, RawSkelID s
     for (OccID id : survivors) {
         remap_occ_meta(C, RE, id, RE.occ.get(id).corePatchEdges);
     }
-    return move(C.B);
+    return std::move(C.B);
 }
 
 IsolateVertexResult isolate_vertex(RawEngine& RE, RawSkelID sid, OccID occ, RawUpdateCtx& U) {
@@ -197,8 +197,8 @@ IsolateVertexResult isolate_vertex(RawEngine& RE, RawSkelID sid, OccID occ, RawU
     assert_builder_basic(residualB);
 
     const RawSkelID sidOcc = RE.skel.alloc(RawSkeleton{});
-    commit_skeleton(RE, sidOcc, move(occB), U);
-    commit_skeleton(RE, sid, move(residualB), U);
+    commit_skeleton(RE, sidOcc, std::move(occB), U);
+    commit_skeleton(RE, sid, std::move(residualB), U);
     debug_validate_skeleton_and_hosted(RE, sidOcc);
     debug_validate_skeleton_and_hosted(RE, sid);
 
@@ -349,7 +349,7 @@ RawSkeletonBuilder build_child_after_sep_split(const RawEngine& RE, const SplitP
     for (OccID occ : side.hostedOcc) {
         remap_occ_meta(C, RE, occ, RE.occ.get(occ).corePatchEdges);
     }
-    return move(C.B);
+    return std::move(C.B);
 }
 
 SplitSeparationPairResult split_separation_pair(RawEngine& RE, RawSkelID sid, Vertex saOrig, Vertex sbOrig, RawUpdateCtx& U) {
@@ -377,7 +377,7 @@ SplitSeparationPairResult split_separation_pair(RawEngine& RE, RawSkelID sid, Ve
     res.child[0].sid = sid;
     res.child[0].hostedOcc = prep.side[0].hostedOcc;
     res.child[0].boundaryOnly = side_is_boundary_only(prep.side[0]);
-    commit_skeleton(RE, sid, move(builders[0]), U);
+    commit_skeleton(RE, sid, std::move(builders[0]), U);
     debug_validate_skeleton_and_hosted(RE, sid);
 
     for (u32 i = 1; i < static_cast<u32>(builders.size()); ++i) {
@@ -385,7 +385,7 @@ SplitSeparationPairResult split_separation_pair(RawEngine& RE, RawSkelID sid, Ve
         res.child[i].sid = nsid;
         res.child[i].hostedOcc = prep.side[i].hostedOcc;
         res.child[i].boundaryOnly = side_is_boundary_only(prep.side[i]);
-        commit_skeleton(RE, nsid, move(builders[i]), U);
+        commit_skeleton(RE, nsid, std::move(builders[i]), U);
         debug_validate_skeleton_and_hosted(RE, nsid);
     }
 
@@ -452,7 +452,7 @@ RawSkeletonBuilder build_merged_after_sep_join(
     copy_occ_meta_from(L);
     copy_occ_meta_from(R);
 
-    return move(C.B);
+    return std::move(C.B);
 }
 
 JoinSeparationPairResult join_separation_pair(
@@ -466,7 +466,7 @@ JoinSeparationPairResult join_separation_pair(
     assert(leftSid != rightSid);
     RawSkeletonBuilder B = build_merged_after_sep_join(RE, leftSid, rightSid, saOrig, sbOrig);
     assert_builder_basic(B);
-    commit_skeleton(RE, leftSid, move(B), U);
+    commit_skeleton(RE, leftSid, std::move(B), U);
     retire_skeleton_contents(RE, rightSid);
     RE.skel.retire(rightSid);
     debug_validate_skeleton_and_hosted(RE, leftSid);
@@ -545,7 +545,7 @@ RawSkeletonBuilder build_merged_after_integrate(
     copy_occ_meta_from(P);
     copy_occ_meta_from(Cc);
 
-    return move(C.B);
+    return std::move(C.B);
 }
 
 IntegrateResult integrate_skeleton(
@@ -558,7 +558,7 @@ IntegrateResult integrate_skeleton(
     assert(parentSid != childSid);
     RawSkeletonBuilder B = build_merged_after_integrate(RE, parentSid, childSid, bm);
     assert_builder_basic(B);
-    commit_skeleton(RE, parentSid, move(B), U);
+    commit_skeleton(RE, parentSid, std::move(B), U);
     retire_skeleton_contents(RE, childSid);
     RE.skel.retire(childSid);
     debug_validate_skeleton_and_hosted(RE, parentSid);

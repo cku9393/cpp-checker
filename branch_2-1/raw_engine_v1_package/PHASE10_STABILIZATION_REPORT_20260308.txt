@@ -1,0 +1,36 @@
+Phase 10 stabilization summary
+
+Key result:
+- Fast split-choice policy still matches exact class partition on bounded audits.
+- Exact-shadow representative audit found semantic representative shift on split_tie_organic_symmetric.
+- This is a planner-policy issue, not a primitive-body issue.
+
+New regression:
+- tests/regressions/split_choice_semantic_shift_state.txt
+- test case: split_choice_semantic_shift_regression
+
+Primary repro:
+- /tmp/cpp-checker-phase10-release/tests/raw_engine_tests --case split_choice_semantic_shift_regression
+
+Representative sampled exact audit:
+- /tmp/cpp-checker-phase10-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 910007 --iters 200 --oracle planner --fuzz-mode split_tie_organic_symmetric --dump-on-fail --artifact-dir artifacts/phase10_fuzz --stats-file artifacts/phase10_fuzz/logs/seed910007_split_tie_organic_exact_shadow_cap8.json --exact-canonical-cap 8 --exact-audit-sample-rate 0.2 --exact-audit-budget 100 --exact-audit-family split_tie_organic_symmetric --split-choice-policy exact_shadow
+
+Notable stats from seed910007:
+- exact_audited_state_count=100
+- exact_audited_pair_count=400
+- fast_vs_exact_class_disagreement_count=0
+- representative_shift_count=100
+- semantic_shift_count=100
+- split_choice_fallback_count=0
+
+Generated artifacts:
+- artifacts/phase10_exhaustive_split_tie_organic/
+- artifacts/phase10_exhaustive_automorphism/
+- artifacts/phase10_fuzz/
+
+Corpus:
+- artifacts/phase10_fuzz/corpus_symmetry/corpus_manifest_v1.txt
+
+Verification snapshot:
+- Full suite before final regression add: Debug 90/90, Release 90/90, ASan/UBSan 90/90
+- After final regression add: split-choice delta subset passed in Debug/Release/ASan

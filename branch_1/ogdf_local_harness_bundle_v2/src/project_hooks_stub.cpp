@@ -21,5 +21,7 @@ ExplicitBlockGraph StubHarnessOps::materializeWholeCoreExplicit(const ReducedSPQ
 ExplicitBlockGraph StubHarnessOps::materializeCompactRealProjection(const CompactGraph &) { return {}; }
 bool StubHarnessOps::checkEquivalentExplicitGraphs(const ExplicitBlockGraph &, const ExplicitBlockGraph &, std::string &why) { return failStub(why, "checkEquivalentExplicitGraphs"); }
 bool StubHarnessOps::checkDummyProxyRewire(const DummyActualEnvelope &, const StaticMiniCore &, const GraftTrace &, std::string &why) { return failStub(why, "checkDummyProxyRewire"); }
+bool StubHarnessOps::rewriteRFallback(ReducedSPQRCore &, NodeId, VertexId, std::string &why) { return failStub(why, "rewriteRFallback"); }
+bool StubHarnessOps::normalizeTouchedRegion(ReducedSPQRCore &, std::string &why) { return failStub(why, "normalizeTouchedRegion"); }
 
 } // namespace harness

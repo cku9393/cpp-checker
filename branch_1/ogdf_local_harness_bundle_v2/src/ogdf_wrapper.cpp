@@ -7,8 +7,8 @@ bool OgdfRawSpqrBackend::buildRaw(const CompactGraph &H,
                                   RawSpqrDecomp &raw,
                                   std::string &err) {
 #if USE_OGDF
-    if (!buildRawSpqrDecompWithOgdf(H, raw)) {
-        err = "buildRawSpqrDecompWithOgdf returned false";
+    if (!buildRawSpqrDecompWithOgdf(H, raw, err)) {
+        if (err.empty()) err = "buildRawSpqrDecompWithOgdf returned false";
         return false;
     }
     return true;
@@ -71,10 +71,14 @@ polesOfSkeletonEdge(const ogdf::Skeleton &S,
     return {a, b};
 }
 
-std::vector<int> computeCycleOrderFromSkeleton(
+bool computeCycleOrderFromSkeleton(
     const ogdf::Skeleton &S,
-    const ogdf::EdgeArray<int> &slotOfSkel
+    const ogdf::EdgeArray<int> &slotOfSkel,
+    std::vector<int> &out,
+    std::string &why
 ) {
+    out.clear();
+    why.clear();
     const ogdf::Graph &GS = S.getGraph();
 
     int m = 0;
@@ -83,7 +87,10 @@ std::vector<int> computeCycleOrderFromSkeleton(
 #else
     for (ogdf::edge e = GS.firstEdge(); e; e = e->succ()) { ++m; }
 #endif
-    HASSERT(m >= 3, "S skeleton must have at least 3 edges");
+    if (m < 3) {
+        why = "S skeleton must have at least 3 edges";
+        return false;
+    }
 
 #if OGDF_HAS_RANGE_GRAPH_ITER
     for (ogdf::node v : GS.nodes) {
@@ -96,11 +103,17 @@ std::vector<int> computeCycleOrderFromSkeleton(
 #else
         for (ogdf::adjEntry adj = v->firstAdj(); adj; adj = adj->succ()) { ++deg; }
 #endif
-        HASSERT(deg == 2, "S skeleton vertex is not degree-2");
+        if (deg != 2) {
+            why = "S skeleton vertex is not degree-2";
+            return false;
+        }
     }
 
     ogdf::edge start = GS.firstEdge();
-    HASSERT(start != nullptr, "S skeleton has no edge");
+    if (start == nullptr) {
+        why = "S skeleton has no edge";
+        return false;
+    }
 
     std::vector<int> order;
     order.reserve(m);
@@ -110,11 +123,16 @@ std::vector<int> computeCycleOrderFromSkeleton(
     ogdf::node curV = start->target();
 
     while (true) {
-        HASSERT(slotOfSkel[curE] >= 0, "slotOfSkel missing on S edge");
+        if (slotOfSkel[curE] < 0) {
+            why = "slotOfSkel missing on S edge";
+            return false;
+        }
 
         if (!used.insert((void*)curE).second) {
-            HASSERT(curE == start && (int)order.size() == m,
-                    "S cycle walk revisited edge too early");
+            if (curE != start || (int)order.size() != m) {
+                why = "S cycle walk revisited edge too early";
+                return false;
+            }
             break;
         }
 
@@ -131,7 +149,10 @@ std::vector<int> computeCycleOrderFromSkeleton(
             nextE = cand;
             break;
         }
-        HASSERT(nextE != nullptr, "S cycle walk could not find next edge");
+        if (nextE == nullptr) {
+            why = "S cycle walk could not find next edge";
+            return false;
+        }
 
         ogdf::node nextV =
             (nextE->source() == curV ? nextE->target() : nextE->source());
@@ -146,18 +167,27 @@ std::vector<int> computeCycleOrderFromSkeleton(
     std::sort(sorted.begin(), sorted.end());
     sorted.erase(std::unique(sorted.begin(), sorted.end()), sorted.end());
 
-    HASSERT((int)sorted.size() == m, "S cycleSlots has duplicates");
-    HASSERT((int)order.size() == m, "S cycleSlots size mismatch");
-    return order;
+    if ((int)sorted.size() != m) {
+        why = "S cycleSlots has duplicates";
+        return false;
+    }
+    if ((int)order.size() != m) {
+        why = "S cycleSlots size mismatch";
+        return false;
+    }
+    out = std::move(order);
+    return true;
 }
 
-void buildRShapeFromSkeleton(
+bool buildRShapeFromSkeleton(
     const ogdf::Skeleton &S,
     const ogdf::NodeArray<VertexId> &origVertexOfGraphNode,
     const ogdf::EdgeArray<int> &slotOfSkel,
     int numSlots,
-    RawRShape &out
+    RawRShape &out,
+    std::string &why
 ) {
+    why.clear();
     const ogdf::Graph &GS = S.getGraph();
 
     std::unordered_map<void*, int> localId;
@@ -184,7 +214,10 @@ void buildRShapeFromSkeleton(
     for (ogdf::edge eSk = GS.firstEdge(); eSk; eSk = eSk->succ()) {
 #endif
         int slot = slotOfSkel[eSk];
-        HASSERT(slot >= 0 && slot < numSlots, "R slotOfSkel invalid");
+        if (slot < 0 || slot >= numSlots) {
+            why = "R slotOfSkel invalid";
+            return false;
+        }
 
         int a = localId[(void*)eSk->source()];
         int b = localId[(void*)eSk->target()];
@@ -196,159 +229,195 @@ void buildRShapeFromSkeleton(
     }
 
     for (int s = 0; s < numSlots; ++s) {
-        HASSERT(seen[s] == 1, "R shape slot missing or duplicated");
+        if (seen[s] != 1) {
+            why = "R shape slot missing or duplicated";
+            return false;
+        }
     }
 
     for (auto &vec : out.incSlots) {
         std::sort(vec.begin(), vec.end());
         vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
     }
+    return true;
 }
 
 } // namespace ogdf_wrap
 #endif
 
-bool buildRawSpqrDecompWithOgdf(const CompactGraph &H, RawSpqrDecomp &raw) {
+bool buildRawSpqrDecompWithOgdf(const CompactGraph &H,
+                                RawSpqrDecomp &raw,
+                                std::string &why) {
 #if USE_OGDF
     using namespace ogdf_wrap;
-    raw = {};
-    raw.ownerOfInputEdge.assign(H.edges.size(), {-1, -1});
+    why.clear();
+    try {
+        raw = {};
+        raw.ownerOfInputEdge.assign(H.edges.size(), {-1, -1});
 
-    BuildContext B;
-    buildOgdfGraph(H, B);
-    if (B.inputEdge.empty()) return false;
-
-    ogdf::StaticSPQRTree T(B.G, B.inputEdge[0]);
-
-    std::unordered_map<void*, int> rawIdOfTreeNode;
-    forEachTreeNode(T, [&](ogdf::node tv) {
-        int id = (int)raw.nodes.size();
-        rawIdOfTreeNode[(void*)tv] = id;
-        raw.nodes.push_back({});
-        raw.nodes.back().alive = true;
-        raw.nodes.back().type = mapType(T.typeOf(tv));
-    });
-
-    std::unordered_map<SkelEdgeKey, int, SkelEdgeKeyHash> treeEdgeIdOfSkelCopy;
-
-    forEachTreeEdge(T, [&](ogdf::edge te) {
-        int a = rawIdOfTreeNode[(void*)te->source()];
-        int b = rawIdOfTreeNode[(void*)te->target()];
-
-        auto &E = raw.treeEdges.emplace_back();
-        int tid = (int)raw.treeEdges.size() - 1;
-        E.alive = true;
-        E.a = a;
-        E.b = b;
-
-        ogdf::edge sa = T.skeletonEdgeSrc(te);
-        ogdf::edge sb = T.skeletonEdgeTgt(te);
-
-        const auto &SkA = T.skeleton(te->source());
-        const auto &SkB = T.skeleton(te->target());
-
-        auto pa = polesOfSkeletonEdge(SkA, sa, *B.origVertexOfGraphNode);
-        auto pb = polesOfSkeletonEdge(SkB, sb, *B.origVertexOfGraphNode);
-
-        if (canonPole(pa.first, pa.second) != canonPole(pb.first, pb.second)) {
-            throw HarnessError("tree edge endpoint pole mismatch");
+        BuildContext B;
+        buildOgdfGraph(H, B);
+        if (B.inputEdge.empty()) {
+            why = "OGDF raw materialize: compact graph has no input edges";
+            return false;
         }
 
-        E.poleA = pa.first;
-        E.poleB = pa.second;
+        ogdf::StaticSPQRTree T(B.G, B.inputEdge[0]);
 
-        treeEdgeIdOfSkelCopy[keyOf(SkA, sa)] = tid;
-        treeEdgeIdOfSkelCopy[keyOf(SkB, sb)] = tid;
-    });
-
-    std::unordered_map<SkelEdgeKey, int, SkelEdgeKeyHash> inputIdOfSkelCopy;
-    for (int inputId = 0; inputId < (int)B.inputEdge.size(); ++inputId) {
-        ogdf::edge e = B.inputEdge[inputId];
-        ogdf::edge eSk = T.copyOfReal(e);
-        const auto &Sk = T.skeletonOfReal(e);
-        inputIdOfSkelCopy[keyOf(Sk, eSk)] = inputId;
-    }
-
-    forEachTreeNode(T, [&](ogdf::node tv) {
-        int u = rawIdOfTreeNode[(void*)tv];
-        auto &RN = raw.nodes[u];
-        const auto &Sk = T.skeleton(tv);
-        ogdf::EdgeArray<int> slotOfSkel(Sk.getGraph(), -1);
-        int slotCounter = 0;
-
-        forEachSkeletonEdge(Sk, [&](ogdf::edge eSk) {
-            RawSlot rs;
-            rs.alive = true;
-            auto poles = polesOfSkeletonEdge(Sk, eSk, *B.origVertexOfGraphNode);
-            rs.poleA = poles.first;
-            rs.poleB = poles.second;
-
-            auto k = keyOf(Sk, eSk);
-            auto itInput = inputIdOfSkelCopy.find(k);
-            if (itInput != inputIdOfSkelCopy.end()) {
-                rs.kind = RawSlotKind::INPUT_EDGE;
-                rs.inputEdgeId = itInput->second;
-            } else {
-                auto itTree = treeEdgeIdOfSkelCopy.find(k);
-                if (itTree == treeEdgeIdOfSkelCopy.end()) {
-                    throw HarnessError("skeleton edge could not be classified as INPUT or TREE");
-                }
-                rs.kind = RawSlotKind::TREE_EDGE;
-                rs.treeEdgeId = itTree->second;
-            }
-
-            int pos = (int)RN.slots.size();
-            RN.slots.push_back(rs);
-            slotOfSkel[eSk] = pos;
-
-            if (rs.kind == RawSlotKind::INPUT_EDGE) {
-                raw.ownerOfInputEdge[rs.inputEdgeId] = {u, pos};
-            }
-            ++slotCounter;
+        std::unordered_map<void*, int> rawIdOfTreeNode;
+        forEachTreeNode(T, [&](ogdf::node tv) {
+            int id = (int)raw.nodes.size();
+            rawIdOfTreeNode[(void*)tv] = id;
+            raw.nodes.push_back({});
+            raw.nodes.back().alive = true;
+            raw.nodes.back().type = mapType(T.typeOf(tv));
         });
 
-        if (RN.type == SPQRType::S_NODE) {
-            RN.cycleSlots = computeCycleOrderFromSkeleton(Sk, slotOfSkel);
-        } else if (RN.type == SPQRType::P_NODE) {
-            RawPShape p;
-            for (const auto &s : RN.slots) {
-                if (!s.alive) continue;
-                p.poleA = s.poleA;
-                p.poleB = s.poleB;
-                break;
-            }
-            RN.pShape = p;
-        } else {
-            RawRShape r;
-            buildRShapeFromSkeleton(Sk, *B.origVertexOfGraphNode, slotOfSkel,
-                                    (int)RN.slots.size(), r);
-            RN.rShape = std::move(r);
-        }
-    });
+        std::unordered_map<SkelEdgeKey, int, SkelEdgeKeyHash> treeEdgeIdOfSkelCopy;
 
-    for (int tid = 0; tid < (int)raw.treeEdges.size(); ++tid) {
-        auto &E = raw.treeEdges[tid];
-        bool okA = false, okB = false;
-        for (int i = 0; i < (int)raw.nodes[E.a].slots.size(); ++i) {
-            const auto &s = raw.nodes[E.a].slots[i];
-            if (s.alive && s.kind == RawSlotKind::TREE_EDGE && s.treeEdgeId == tid) {
-                E.slotInA = i; okA = true; break;
+        forEachTreeEdge(T, [&](ogdf::edge te) {
+            int a = rawIdOfTreeNode[(void*)te->source()];
+            int b = rawIdOfTreeNode[(void*)te->target()];
+
+            auto &E = raw.treeEdges.emplace_back();
+            int tid = (int)raw.treeEdges.size() - 1;
+            E.alive = true;
+            E.a = a;
+            E.b = b;
+
+            ogdf::edge sa = T.skeletonEdgeSrc(te);
+            ogdf::edge sb = T.skeletonEdgeTgt(te);
+
+            const auto &SkA = T.skeleton(te->source());
+            const auto &SkB = T.skeleton(te->target());
+
+            auto pa = polesOfSkeletonEdge(SkA, sa, *B.origVertexOfGraphNode);
+            auto pb = polesOfSkeletonEdge(SkB, sb, *B.origVertexOfGraphNode);
+
+            if (canonPole(pa.first, pa.second) != canonPole(pb.first, pb.second)) {
+                throw HarnessError("tree edge endpoint pole mismatch");
+            }
+
+            E.poleA = pa.first;
+            E.poleB = pa.second;
+
+            treeEdgeIdOfSkelCopy[keyOf(SkA, sa)] = tid;
+            treeEdgeIdOfSkelCopy[keyOf(SkB, sb)] = tid;
+        });
+
+        std::unordered_map<SkelEdgeKey, int, SkelEdgeKeyHash> inputIdOfSkelCopy;
+        for (int inputId = 0; inputId < (int)B.inputEdge.size(); ++inputId) {
+            ogdf::edge e = B.inputEdge[inputId];
+            ogdf::edge eSk = T.copyOfReal(e);
+            const auto &Sk = T.skeletonOfReal(e);
+            inputIdOfSkelCopy[keyOf(Sk, eSk)] = inputId;
+        }
+
+        forEachTreeNode(T, [&](ogdf::node tv) {
+            int u = rawIdOfTreeNode[(void*)tv];
+            auto &RN = raw.nodes[u];
+            const auto &Sk = T.skeleton(tv);
+            ogdf::EdgeArray<int> slotOfSkel(Sk.getGraph(), -1);
+
+            forEachSkeletonEdge(Sk, [&](ogdf::edge eSk) {
+                RawSlot rs;
+                rs.alive = true;
+                auto poles = polesOfSkeletonEdge(Sk, eSk, *B.origVertexOfGraphNode);
+                rs.poleA = poles.first;
+                rs.poleB = poles.second;
+
+                auto k = keyOf(Sk, eSk);
+                auto itInput = inputIdOfSkelCopy.find(k);
+                if (itInput != inputIdOfSkelCopy.end()) {
+                    rs.kind = RawSlotKind::INPUT_EDGE;
+                    rs.inputEdgeId = itInput->second;
+                } else {
+                    auto itTree = treeEdgeIdOfSkelCopy.find(k);
+                    if (itTree == treeEdgeIdOfSkelCopy.end()) {
+                        throw HarnessError("skeleton edge could not be classified as INPUT or TREE");
+                    }
+                    rs.kind = RawSlotKind::TREE_EDGE;
+                    rs.treeEdgeId = itTree->second;
+                }
+
+                int pos = (int)RN.slots.size();
+                RN.slots.push_back(rs);
+                slotOfSkel[eSk] = pos;
+
+                if (rs.kind == RawSlotKind::INPUT_EDGE) {
+                    raw.ownerOfInputEdge[rs.inputEdgeId] = {u, pos};
+                }
+            });
+
+            if (RN.type == SPQRType::S_NODE) {
+                if (!computeCycleOrderFromSkeleton(Sk, slotOfSkel, RN.cycleSlots, why)) {
+                    why = "OGDF raw materialize: " + why;
+                    throw HarnessError(why);
+                }
+            } else if (RN.type == SPQRType::P_NODE) {
+                RawPShape p;
+                for (const auto &s : RN.slots) {
+                    if (!s.alive) continue;
+                    p.poleA = s.poleA;
+                    p.poleB = s.poleB;
+                    break;
+                }
+                RN.pShape = p;
+            } else {
+                RawRShape r;
+                if (!buildRShapeFromSkeleton(Sk,
+                                             *B.origVertexOfGraphNode,
+                                             slotOfSkel,
+                                             (int)RN.slots.size(),
+                                             r,
+                                             why)) {
+                    why = "OGDF raw materialize: " + why;
+                    throw HarnessError(why);
+                }
+                RN.rShape = std::move(r);
+            }
+        });
+
+        for (int tid = 0; tid < (int)raw.treeEdges.size(); ++tid) {
+            auto &E = raw.treeEdges[tid];
+            bool okA = false, okB = false;
+            for (int i = 0; i < (int)raw.nodes[E.a].slots.size(); ++i) {
+                const auto &s = raw.nodes[E.a].slots[i];
+                if (s.alive && s.kind == RawSlotKind::TREE_EDGE && s.treeEdgeId == tid) {
+                    E.slotInA = i;
+                    okA = true;
+                    break;
+                }
+            }
+            for (int i = 0; i < (int)raw.nodes[E.b].slots.size(); ++i) {
+                const auto &s = raw.nodes[E.b].slots[i];
+                if (s.alive && s.kind == RawSlotKind::TREE_EDGE && s.treeEdgeId == tid) {
+                    E.slotInB = i;
+                    okB = true;
+                    break;
+                }
+            }
+            if (!okA || !okB) {
+                why = "OGDF raw materialize: tree edge slot lookup failed";
+                return false;
             }
         }
-        for (int i = 0; i < (int)raw.nodes[E.b].slots.size(); ++i) {
-            const auto &s = raw.nodes[E.b].slots[i];
-            if (s.alive && s.kind == RawSlotKind::TREE_EDGE && s.treeEdgeId == tid) {
-                E.slotInB = i; okB = true; break;
-            }
-        }
-        if (!okA || !okB) return false;
+
+        raw.valid = true;
+        raw.error = RawDecompError::NONE;
+        return true;
+    } catch (const HarnessError &e) {
+        if (why.empty()) why = std::string("OGDF raw materialize: ") + e.what();
+        return false;
+    } catch (const std::exception &e) {
+        why = std::string("OGDF exception: ") + e.what();
+        return false;
+    } catch (...) {
+        why = "OGDF exception: unknown";
+        return false;
     }
-
-    raw.valid = true;
-    raw.error = RawDecompError::NONE;
-    return true;
 #else
-    (void)H; (void)raw;
+    (void)H; (void)raw; (void)why;
     return false;
 #endif
 }

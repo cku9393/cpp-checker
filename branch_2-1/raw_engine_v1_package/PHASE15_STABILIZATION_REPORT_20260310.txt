@@ -1,0 +1,191 @@
+PHASE15 stabilization report
+date=2026-03-10
+package=raw_engine_v1_package
+
+1. modified/added files
+- modified: README.md
+- modified: tests/CMakeLists.txt
+- modified: tests/raw_engine_cases.cpp
+- modified: tests/exhaustive_cases.cpp
+- modified: tests/exhaustive_cases.hpp
+- added: tests/campaigns/phase15_split_tie_organic_compare.txt
+- added: tests/campaigns/phase15_planner_tie_organic_compare.txt
+- added: tests/campaigns/phase15_automorphism_compare.txt
+- added: tests/campaigns/phase15_checkpoint_smoke.txt
+- added: tests/campaigns/phase15_resume_smoke.txt
+
+2. planner_tie_mixed_organic compare gap analysis
+- root cause: the real `planner_tie_mixed_organic` family is a post-split mixed follow-up witness, so the split-choice compare oracle never sees a sole-hosted split-ready target there.
+- direct gap probe:
+  file=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase15_gap_probe/logs/planner_tie_mixed_organic_gap_probe.summary.txt
+  total_iterations=12
+  split_choice_compare_state_count=0
+  compare_eligible_state_count=0
+  compare_ineligible_state_count=12
+  exact_audit_skipped_non_tie_count=12
+  compare_ineligible_reason_histogram={"no_split_ready":12}
+- correction: kept the original mixed family unchanged and added a tests-only compare precursor family `planner_tie_mixed_organic_compare_ready`.
+- `planner_tie_mixed_organic_compare_ready_smoke` now asserts:
+  - original mixed family stays compare-ineligible
+  - compare-ready family is split-tie compare-eligible
+  - exact_shadow vs exact_full has no semantic disagreement and no fallback
+
+3. compare eligibility stats definition
+- `compare_eligible_state_count`: states that can actually run the split-choice exact compare path
+- `compare_ineligible_state_count`: states sampled for compare/audit but rejected before exact compare
+- `compare_ineligible_reason_histogram`: reason breakdown for ineligible states
+- `compare_completed_state_count`: states that finished exact compare with exact audit available
+- `compare_partial_state_count`: states that entered compare but only partial/capped results were available
+- the new fields are emitted in planner fuzz summaries/json, campaign aggregate summaries/json, compare-profile summaries, and exhaustive summaries.
+
+4. expensive family exact_shadow vs exact_full compare results
+- split_tie_organic_symmetric campaign:
+  summary=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaigns_bounded/split_tie_organic/logs/phase15_split_tie_organic_aggregate.summary.txt
+  compared_state_count=16
+  same_representative_count=16
+  same_semantic_class_count=16
+  same_final_state_count=16
+  semantic_disagreement_count=0
+  fallback_count=0
+  representative_shift_count=0
+  semantic_shift_count=0
+- planner_tie_mixed_organic compare-ready campaign:
+  summary=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaigns_bounded/planner_tie_organic/logs/phase15_planner_tie_organic_aggregate.summary.txt
+  mode=planner_tie_mixed_organic_compare_ready
+  compared_state_count=16
+  same_representative_count=16
+  same_semantic_class_count=16
+  same_final_state_count=16
+  semantic_disagreement_count=0
+  fallback_count=0
+  representative_shift_count=0
+  semantic_shift_count=0
+- automorphism_probe_large campaign:
+  summary=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaigns_bounded/automorphism_probe/logs/phase15_automorphism_probe_aggregate.summary.txt
+  compared_state_count=16
+  same_representative_count=16
+  same_semantic_class_count=16
+  same_final_state_count=16
+  semantic_disagreement_count=0
+  fallback_count=0
+  representative_shift_count=0
+  semantic_shift_count=0
+- corpus replay:
+  summary=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_corpus_replay/logs/corpus_replay.summary.txt
+  compared_state_count=6
+  semantic_disagreement_count=0
+  fallback_count=0
+
+5. compare hot-path profiling
+- split_tie_organic compare profile:
+  /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaigns_bounded/split_tie_organic/logs/phase15_split_tie_organic_aggregate.compare_profile.summary.txt
+  exact_shadow_eval_ns=45795149001
+  exact_full_eval_ns=6352892955
+  canonicalization_ns=6263368168
+  state_hash_cache_hit/miss=68/12
+  exact_canonical_cache_hit/miss=56/8
+- planner_tie_organic compare-ready profile:
+  /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaigns_bounded/planner_tie_organic/logs/phase15_planner_tie_organic_aggregate.compare_profile.summary.txt
+  exact_shadow_eval_ns=45524541293
+  exact_full_eval_ns=6295234914
+  canonicalization_ns=6200367792
+  state_hash_cache_hit/miss=68/12
+  exact_canonical_cache_hit/miss=56/8
+- automorphism profile:
+  /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaigns_bounded/automorphism_probe/logs/phase15_automorphism_probe_aggregate.compare_profile.summary.txt
+  exact_shadow_eval_ns=45313382917
+  exact_full_eval_ns=12879582623
+  canonicalization_ns=12796562957
+  state_hash_cache_hit/miss=56/24
+  exact_canonical_cache_hit/miss=48/16
+- interpretation: compare runtime is dominated by bounded exact_shadow lookahead and exact/full canonicalization, especially on automorphism-heavy states. The new bounded phase15 campaign configs are small enough to finish while still producing compare evidence.
+
+6. campaign / checkpoint / resume improvements
+- added phase15 compare configs for split organic, planner tie organic compare-ready, and automorphism probe.
+- added nightly compare tests:
+  - raw_engine_planner_tie_mixed_organic_compare_ready_smoke
+  - raw_engine_compare_campaign_checkpoint_smoke
+  - raw_engine_campaign_resume_smoke
+  - raw_engine_campaign_partial_merge_smoke
+- nightly targeted CTest rerun:
+  command=`ctest --test-dir /tmp/cpp-checker-phase15-nightly --output-on-failure -R 'raw_engine_(planner_tie_mixed_organic_compare_ready_smoke|compare_campaign_checkpoint_smoke|campaign_resume_smoke|campaign_partial_merge_smoke)'`
+  result=4/4 pass
+- checkpoint smoke aggregate:
+  /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaign_checkpoint_smoke/logs/campaign_aggregate.summary.txt
+  compared_state_count=6
+  semantic_disagreement_count=0
+  fallback_count=0
+- partial merge smoke aggregate:
+  /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaign_resume_smoke/logs/campaign_aggregate.summary.txt
+  compared_state_count=2
+  semantic_disagreement_count=0
+  fallback_count=0
+- checkpoint manifests/chunks were written under:
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase15_split_tie_organic_bounded
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase15_planner_tie_organic_bounded
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase15_automorphism_probe_bounded
+
+7. CTest tiering
+- default full suite still uses the registered non-nightly tests.
+- nightly registration adds compare/campaign tail tests.
+- nightly label count:
+  command=`ctest --test-dir /tmp/cpp-checker-phase15-nightly -N -L nightly`
+  result=19 tests
+- compare label count:
+  command=`ctest --test-dir /tmp/cpp-checker-phase15-nightly -N -L compare`
+  result=14 tests
+- compare-ready smoke and campaign checkpoint/resume tests are labelled `compare` and `nightly`; they are not added to the default 89-test suite.
+
+8. new semantic counterexample / regression
+- no new semantic counterexample was confirmed in phase15.
+- bounded compare campaigns, corpus replay, checkpoint/resume smokes, and nightly compare smokes all held `split_choice_semantic_disagreement_count=0`.
+- new regression list: none
+
+9. exact_shadow retention evidence
+- completed compare evidence so far:
+  - split_tie_ready: carried from prior phases, already sufficient
+  - split_tie_organic_symmetric: 16 compared states, disagreement 0
+  - planner_tie_mixed_organic_compare_ready: 16 compared states, disagreement 0
+  - automorphism_probe_large: 16 compared states, disagreement 0
+- fallback stayed zero across:
+  - planner_tie_mixed_organic gap probe
+  - bounded compare campaigns
+  - corpus replay
+  - nightly compare smokes
+- exact_shadow therefore remains the production default with stronger bounded adequacy evidence on the expensive families than phase14 had.
+
+10. warning cleanup
+- src warning cleanup: not performed in this phase
+- reason: phase15 focus stayed on generator/campaign/runtime stabilization and exact compare evidence collection
+- tests strict build:
+  command=`cmake -S '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package' -B /tmp/cpp-checker-phase15-debug-strict -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_TEST_STRICT_WARNINGS=ON && cmake --build /tmp/cpp-checker-phase15-debug-strict -j4 --target raw_engine_tests`
+  result=pass
+
+11. verification commands and results
+- release configure/build:
+  `cmake -S '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package' -B /tmp/cpp-checker-phase15-release -DCMAKE_BUILD_TYPE=Release`
+  `cmake --build /tmp/cpp-checker-phase15-release -j4 --target raw_engine_tests`
+- release full ctest:
+  `ctest --test-dir /tmp/cpp-checker-phase15-release --output-on-failure`
+  result=89/89 pass
+  real_time_sec=161.89
+- debug configure/build:
+  `cmake -S '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package' -B /tmp/cpp-checker-phase15-debug -DCMAKE_BUILD_TYPE=Debug`
+  `cmake --build /tmp/cpp-checker-phase15-debug -j4`
+- debug full ctest:
+  `ctest --test-dir /tmp/cpp-checker-phase15-debug --output-on-failure`
+  result=89/89 pass
+  real_time_sec=660.06
+- isolated asan configure/build:
+  `pkill -f '/tmp/cpp-checker-phase14-asan' || true`
+  `cmake -S '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package' -B /tmp/cpp-checker-phase15-asan -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_ENABLE_ASAN=ON -DRAW_ENGINE_ENABLE_UBSAN=ON`
+  `cmake --build /tmp/cpp-checker-phase15-asan -j4`
+- isolated asan full ctest:
+  `ctest --test-dir /tmp/cpp-checker-phase15-asan --output-on-failure -j1`
+  result=89/89 pass
+  real_time_sec=1497.27
+
+12. remaining risks
+- production `exact_shadow` is still a bounded policy, not the full tests-only exhaustive canonicalizer.
+- `planner_tie_mixed_organic_compare_ready` is intentionally a tests-only split precursor, not a true mixed follow-up execution family. It exists to collect compare evidence without violating the production sole-hosted-occ split precondition.
+- compare hot path remains expensive. Even with caches and smaller campaign bounds, exact_shadow lookahead plus exact/full canonicalization dominate runtime on symmetry-heavy states.

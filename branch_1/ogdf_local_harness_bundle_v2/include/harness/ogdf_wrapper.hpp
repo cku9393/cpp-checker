@@ -83,15 +83,18 @@ std::pair<VertexId,VertexId>
 polesOfSkeletonEdge(const ogdf::Skeleton &S,
                     ogdf::edge eSk,
                     const ogdf::NodeArray<VertexId> &origVertexOfGraphNode);
-std::vector<int> computeCycleOrderFromSkeleton(
+bool computeCycleOrderFromSkeleton(
     const ogdf::Skeleton &S,
-    const ogdf::EdgeArray<int> &slotOfSkel);
-void buildRShapeFromSkeleton(
+    const ogdf::EdgeArray<int> &slotOfSkel,
+    std::vector<int> &out,
+    std::string &why);
+bool buildRShapeFromSkeleton(
     const ogdf::Skeleton &S,
     const ogdf::NodeArray<VertexId> &origVertexOfGraphNode,
     const ogdf::EdgeArray<int> &slotOfSkel,
     int numSlots,
-    RawRShape &out);
+    RawRShape &out,
+    std::string &why);
 
 struct SkelEdgeKey {
     const void *skelPtr = nullptr;
@@ -115,6 +118,8 @@ inline SkelEdgeKey keyOf(const ogdf::Skeleton &S, ogdf::edge eSk) {
 } // namespace ogdf_wrap
 #endif
 
-bool buildRawSpqrDecompWithOgdf(const CompactGraph &H, RawSpqrDecomp &raw);
+bool buildRawSpqrDecompWithOgdf(const CompactGraph &H,
+                                RawSpqrDecomp &raw,
+                                std::string &why);
 
 } // namespace harness

@@ -26,6 +26,18 @@ inline HarnessBundle makeBaseBundle(uint64_t seed,
     return B;
 }
 
+inline HarnessBundle makeBaseBundle(uint64_t seed,
+                                    int tc,
+                                    const char *backendName,
+                                    const ExplicitBlockGraph &G) {
+    HarnessBundle B;
+    B.seed = seed;
+    B.tc = tc;
+    B.backendName = backendName ? backendName : "UNKNOWN";
+    B.explicitInput = G;
+    return B;
+}
+
 inline void setFailure(HarnessBundle &B,
                        HarnessStage stage,
                        std::string where,
@@ -41,7 +53,9 @@ inline std::string makeBundlePath(const std::string &dir,
     std::ostringstream oss;
     oss << dir << "/" << stageName(B.stage)
         << "_seed" << B.seed
-        << "_tc" << B.tc << ".txt";
+        << "_tc" << B.tc;
+    if (B.stepIndex.has_value()) oss << "_step" << *B.stepIndex;
+    oss << ".txt";
     return oss.str();
 }
 
@@ -52,6 +66,7 @@ inline HarnessResult failAndDump(HarnessBundle &B,
     R.where = B.where;
     R.why = B.why;
     R.dumpPath = makeBundlePath(dumpDir, B);
+    R.bundle = B;
     dumpHarnessBundle(B, R.dumpPath);
     return R;
 }

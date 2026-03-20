@@ -61,6 +61,14 @@ public:
                                        const StaticMiniCore &mini,
                                        const GraftTrace &trace,
                                        std::string &why) = 0;
+
+    virtual bool rewriteRFallback(ReducedSPQRCore &core,
+                                  NodeId rNode,
+                                  VertexId x,
+                                  std::string &why) = 0;
+
+    virtual bool normalizeTouchedRegion(ReducedSPQRCore &core,
+                                        std::string &why) = 0;
 };
 
 class StubHarnessOps final : public IHarnessOps {
@@ -81,6 +89,8 @@ public:
     ExplicitBlockGraph materializeCompactRealProjection(const CompactGraph &) override;
     bool checkEquivalentExplicitGraphs(const ExplicitBlockGraph &, const ExplicitBlockGraph &, std::string &why) override;
     bool checkDummyProxyRewire(const DummyActualEnvelope &, const StaticMiniCore &, const GraftTrace &, std::string &why) override;
+    bool rewriteRFallback(ReducedSPQRCore &, NodeId, VertexId, std::string &why) override;
+    bool normalizeTouchedRegion(ReducedSPQRCore &, std::string &why) override;
 };
 
 class ProjectHarnessOps final : public IHarnessOps {
@@ -101,6 +111,8 @@ public:
     ExplicitBlockGraph materializeCompactRealProjection(const CompactGraph &) override;
     bool checkEquivalentExplicitGraphs(const ExplicitBlockGraph &, const ExplicitBlockGraph &, std::string &why) override;
     bool checkDummyProxyRewire(const DummyActualEnvelope &, const StaticMiniCore &, const GraftTrace &, std::string &why) override;
+    bool rewriteRFallback(ReducedSPQRCore &, NodeId, VertexId, std::string &why) override;
+    bool normalizeTouchedRegion(ReducedSPQRCore &, std::string &why) override;
 };
 
 } // namespace harness

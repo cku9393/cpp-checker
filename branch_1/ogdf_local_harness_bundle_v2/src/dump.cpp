@@ -1,4 +1,5 @@
 #include "harness/dump.hpp"
+#include "harness/project_static_adapter.hpp"
 #include <iomanip>
 #include <sstream>
 
@@ -112,12 +113,185 @@ void dumpActualCore(const ReducedSPQRCore &C, std::ostream &os) {
     }
 }
 
+static void dumpReplayLiveArcSummary(const GraftTrace::ReplayLiveArcSummary &arc,
+                                     std::ostream &os) {
+    os << "    arcId=" << arc.arcId
+       << " otherNode=" << arc.otherNode
+       << " slotInNode=" << arc.slotInNode
+       << " slotInOther=" << arc.slotInOther
+       << " poles=(" << arc.poleA << "," << arc.poleB << ")\n";
+}
+
+static void dumpReplaySlotSnapshot(const GraftTrace::ReplaySlotSnapshot &slot,
+                                   std::ostream &os) {
+    os << "    slot " << slot.slotId
+       << " alive=" << (slot.alive ? 1 : 0)
+       << " kind=" << (slot.isVirtual ? "VIRTUAL" : "REAL")
+       << " poles=(" << slot.poleA << "," << slot.poleB << ")";
+    if (slot.isVirtual) os << " arcId=" << slot.arcId;
+    else os << " realEdge=" << slot.realEdge;
+    os << "\n";
+}
+
+static void dumpReplayNodeSnapshot(const GraftTrace::ReplayNodeSnapshot &node,
+                                   std::ostream &os) {
+    os << "  node " << node.nodeId
+       << " alive=" << (node.alive ? 1 : 0)
+       << " type="
+       << (node.type == SPQRType::S_NODE ? 'S' :
+           node.type == SPQRType::P_NODE ? 'P' : 'R')
+       << "\n";
+    os << "    adjArcs:";
+    for (auto arcId : node.adjArcs) os << ' ' << arcId;
+    os << "\n";
+    os << "    realEdgesHere:";
+    for (auto edgeId : node.realEdgesHere) os << ' ' << edgeId;
+    os << "\n";
+    os << "    slots:\n";
+    for (const auto &slot : node.slots) {
+        dumpReplaySlotSnapshot(slot, os);
+    }
+    os << "    neighboringLiveArcs:\n";
+    for (const auto &arc : node.neighboringLiveArcs) {
+        dumpReplayLiveArcSummary(arc, os);
+    }
+}
+
+static void dumpReplayNodeSnapshotPhases(
+    const std::vector<GraftTrace::ReplayNodeSnapshotPhase> &phases,
+    const char *label,
+    std::ostream &os) {
+    os << label << ":\n";
+    for (const auto &phase : phases) {
+        os << " phase=" << replaySnapshotPhaseName(phase.phase) << "\n";
+        for (const auto &node : phase.nodes) {
+            dumpReplayNodeSnapshot(node, os);
+        }
+    }
+}
+
 void dumpGraftTrace(const GraftTrace &T, std::ostream &os) {
     os << "=== GraftTrace ===\nactualOfMini:";
     for (int i = 0; i < (int)T.actualOfMini.size(); ++i) os << " [" << i << "->" << T.actualOfMini[i] << "]";
     os << "\nactualNodes:";
     for (auto x : T.actualNodes) os << ' ' << x;
+    os << "\nactualSlotOfMiniSlot:\n";
+    for (int m = 0; m < (int)T.actualSlotOfMiniSlot.size(); ++m) {
+        os << "  mini " << m << ':';
+        for (int s = 0; s < (int)T.actualSlotOfMiniSlot[m].size(); ++s) {
+            os << " [" << s << "->" << T.actualSlotOfMiniSlot[m][s] << "]";
+        }
+        os << "\n";
+    }
+    os << "rewiredProxyEdges:\n";
+    for (const auto &rw : T.rewiredProxyEdges) {
+        os << "  input=" << rw.inputEdgeId
+           << " oldArc=" << rw.oldArc
+           << " actualNode=" << rw.actualNode
+           << " actualSlot=" << rw.actualSlot << "\n";
+    }
+    os << "resolvedProxyEndpoints:\n";
+    for (const auto &rp : T.resolvedProxyEndpoints) {
+        os << "  input=" << rp.inputEdgeId
+           << " originalOldArc=" << rp.originalOldArc
+           << " resolvedArc=" << rp.resolvedArc
+           << " oldNode=" << rp.oldNode
+           << " originalOutsideNode=" << rp.originalOutsideNode
+           << " resolvedOutsideNode=" << rp.resolvedOutsideNode
+           << " outsideNode=" << rp.outsideNode
+           << " resolvedOldSlot=" << rp.resolvedOldSlot
+           << " poles=(" << rp.poleA << "," << rp.poleB << ")"
+           << " weakPolesOnly=" << (rp.repairUsedWeakPolesOnly ? 1 : 0)
+           << " repairOutcome=" << proxyArcRepairOutcomeName(rp.repairOutcome)
+           << " firstBadPhase=" << proxyArcLifecyclePhaseName(rp.firstBadPhase)
+           << " firstBadWhy=" << rp.firstBadWhy
+           << " phaseHistory=";
+        for (size_t i = 0; i < rp.phaseHistory.size(); ++i) {
+            if (i) os << ',';
+            os << proxyArcLifecyclePhaseName(rp.phaseHistory[i]);
+        }
+        os << "\n";
+    }
+    os << "preservedProxyArcs:\n";
+    for (const auto &pp : T.preservedProxyArcs) {
+        os << "  input=" << pp.inputEdgeId
+           << " oldArc=" << pp.oldArc
+           << " oldNode=" << pp.oldNode
+           << " outsideNode=" << pp.outsideNode
+           << " resolvedOldSlot=" << pp.resolvedOldSlot
+           << " poles=(" << pp.poleA << "," << pp.poleB << ")"
+           << " newSlot=" << pp.newSlot
+           << " finalNode=" << pp.finalNode
+           << " crossNodeRewire=" << (pp.crossNodeRewire ? 1 : 0)
+           << " sameNodeRehome=" << (pp.sameNodeRehome ? 1 : 0)
+           << "\n";
+    }
+    os << "affectedAdjRepairNodes:";
+    for (auto nodeId : T.affectedAdjRepairNodes) os << ' ' << nodeId;
+    os << "\naffectedNodesAfterInPlaceApply:";
+    for (auto nodeId : T.affectedNodesAfterInPlaceApply) os << ' ' << nodeId;
+    os << "\noldNodeAdjArcsBeforeRepair:";
+    for (auto arcId : T.oldNodeAdjArcsBeforeRepair) os << ' ' << arcId;
+    os << "\noldNodeAdjArcsAfterRepair:";
+    for (auto arcId : T.oldNodeAdjArcsAfterRepair) os << ' ' << arcId;
+    os << "\nfirstBadAdjNode=" << T.firstBadAdjNode;
+    os << "\nexpectedAdj:";
+    for (auto arcId : T.expectedAdj) os << ' ' << arcId;
+    os << "\nactualAdj:";
+    for (auto arcId : T.actualAdj) os << ' ' << arcId;
+    os << "\nsameTypeSPCleanupSeedNodes:";
+    for (auto nodeId : T.sameTypeSPCleanupSeedNodes) os << ' ' << nodeId;
+    os << "\nsameTypeSPCleanupMergeCount=" << T.sameTypeSPCleanupMergeCount;
+    os << "\nsameTypeSPCleanupMergedPairs:\n";
+    for (const auto &merge : T.sameTypeSPCleanupMergedPairs) {
+        os << "  (" << merge.u << "," << merge.v << ") -> keep " << merge.keep << "\n";
+    }
     os << "\n";
+    os << "graftRewireSubtype=" << graftRewireBailoutSubtypeName(T.graftRewireSubtype)
+       << " graftOtherSubtype=" << graftOtherSubtypeName(T.graftOtherSubtype)
+       << " postcheckSubtype=" << graftPostcheckSubtypeName(T.postcheckSubtype)
+       << " preCleanupPostcheckSubtype="
+       << graftPostcheckSubtypeName(T.preCleanupPostcheckSubtype)
+       << " postCleanupPostcheckSubtype="
+       << graftPostcheckSubtypeName(T.postCleanupPostcheckSubtype)
+       << " deferredSameTypeSP=" << (T.deferredSameTypeSP ? 1 : 0)
+       << " preservedProxyArcsCount=" << T.preservedProxyArcsCount
+       << " inPlaceLoopSharedApplied=" << (T.inPlaceLoopSharedApplied ? 1 : 0)
+       << " loopInputEdgeId=" << T.loopInputEdgeId
+       << " realInputEdgeId=" << T.realInputEdgeId
+       << " loopSharedCutVertex=" << T.loopSharedCutVertex
+       << " loopSharedChildNode=" << T.loopSharedChildNode
+       << " sameNodeRehomeAttempted=" << (T.sameNodeRehomeAttempted ? 1 : 0)
+       << " sameNodeRehomeSucceeded=" << (T.sameNodeRehomeSucceeded ? 1 : 0)
+       << " failingPreservedInputEdge=" << T.failingPreservedInputEdge
+       << " failingPreservedOldArc=" << T.failingPreservedOldArc
+       << " failingPreservedOldSlot=" << T.failingPreservedOldSlot
+       << " failingNewSlot=" << T.failingNewSlot
+       << " failingInputEdge=" << T.failingInputEdge
+       << " failingOldArc=" << T.failingOldArc
+       << " failingOwnerMini=" << T.failingOwnerMini
+       << " failingOwnerMiniSlot=" << T.failingOwnerMiniSlot << "\n";
+    if (!T.graftOtherWhy.empty()) {
+        os << "graftOtherWhy=" << T.graftOtherWhy << "\n";
+    }
+    if (!T.postcheckWhyDetailed.empty()) {
+        os << "postcheckWhyDetailed=" << T.postcheckWhyDetailed << "\n";
+    }
+    os << "weakRepairEntered=" << (T.weakRepairEntered ? 1 : 0)
+       << " weakRepairGateSubtype=" << weakRepairGateSubtypeName(T.weakRepairGateSubtype)
+       << " weakRepairCandidateSubtype="
+       << weakRepairCandidateSubtypeName(T.weakRepairCandidateSubtype)
+       << " weakRepairCommitOutcome="
+       << weakRepairCommitOutcomeName(T.weakRepairCommitOutcome)
+       << " weakRepairInputEdgeId=" << T.weakRepairInputEdgeId
+       << " weakRepairOriginalOldArc=" << T.weakRepairOriginalOldArc
+       << " weakRepairResolvedArc=" << T.weakRepairResolvedArc
+       << " weakRepairOriginalOutsideNode=" << T.weakRepairOriginalOutsideNode
+       << " weakRepairResolvedOutsideNode=" << T.weakRepairResolvedOutsideNode << "\n";
+    dumpReplayNodeSnapshotPhases(T.oldNodeSnapshotsByPhase, "oldNodeSnapshotsByPhase", os);
+    dumpReplayNodeSnapshotPhases(T.affectedNodeSnapshotsByPhase,
+                                 "affectedNodeSnapshotsByPhase",
+                                 os);
 }
 
 void dumpExplicitBlockGraph(const ExplicitBlockGraph &G, std::ostream &os) {
@@ -138,13 +312,67 @@ void dumpHarnessBundle(const HarnessBundle &B, const std::string &path) {
     ofs << "stage=" << stageName(B.stage) << "\n";
     ofs << "where=" << B.where << "\n";
     ofs << "why=" << B.why << "\n\n";
+    if (B.targetTcIndex.has_value()) ofs << "targetTcIndex=" << *B.targetTcIndex << "\n";
+    if (B.targetStep.has_value()) ofs << "targetStep=" << *B.targetStep << "\n";
+    if (B.stepIndex.has_value()) ofs << "stepIndex=" << *B.stepIndex << "\n";
+    if (B.sequenceLengthSoFar.has_value()) {
+        ofs << "sequenceLengthSoFar=" << *B.sequenceLengthSoFar << "\n";
+    }
+    if (B.chosenR.has_value()) ofs << "chosenR=" << *B.chosenR << "\n";
+    if (B.chosenX.has_value()) ofs << "chosenX=" << *B.chosenX << "\n";
+    if (B.postcheckSubtype) {
+        ofs << "postcheckSubtype=" << graftPostcheckSubtypeName(*B.postcheckSubtype) << "\n";
+    }
+    if (B.normalizeOk) {
+        ofs << "normalizeOk=" << (*B.normalizeOk ? 1 : 0) << "\n";
+        ofs << "normalizeWhy=" << B.normalizeWhy << "\n";
+    }
+    if (B.actualInvariantOk) {
+        ofs << "actualInvariantOk=" << (*B.actualInvariantOk ? 1 : 0) << "\n";
+        ofs << "actualInvariantWhy=" << B.actualInvariantWhy << "\n";
+    }
+    if (B.oracleBuildOk) {
+        ofs << "oracleBuildOk=" << (*B.oracleBuildOk ? 1 : 0) << "\n";
+    }
+    if (B.oracleEquivalentOk) {
+        ofs << "oracleEquivalentOk=" << (*B.oracleEquivalentOk ? 1 : 0) << "\n";
+    }
+    if (!B.oracleWhy.empty()) {
+        ofs << "oracleWhy=" << B.oracleWhy << "\n";
+    }
+    if (B.targetTcIndex.has_value() || B.targetStep.has_value() ||
+        B.stepIndex.has_value() || B.sequenceLengthSoFar.has_value() ||
+        B.chosenR.has_value() || B.chosenX.has_value() || B.postcheckSubtype ||
+        B.normalizeOk || B.actualInvariantOk || B.oracleBuildOk || B.oracleEquivalentOk ||
+        !B.oracleWhy.empty()) {
+        ofs << "\n";
+    }
+    if (B.explicitInput) { ofs << "=== ExplicitInput ===\n"; dumpExplicitBlockGraph(*B.explicitInput, ofs); ofs << "\n"; }
     if (B.compact) { dumpCompactGraph(*B.compact, ofs); ofs << "\n"; }
     if (B.raw) { dumpRawSpqrDecomp(*B.raw, ofs); ofs << "\n"; }
     if (B.miniBeforeNormalize) { ofs << "=== MiniBeforeNormalize ===\n"; dumpStaticMiniCore(*B.miniBeforeNormalize, ofs); ofs << "\n"; }
     if (B.miniAfterNormalize) { ofs << "=== MiniAfterNormalize ===\n"; dumpStaticMiniCore(*B.miniAfterNormalize, ofs); ofs << "\n"; }
     if (B.actualBeforeGraft) { ofs << "=== ActualBeforeGraft ===\n"; dumpActualCore(*B.actualBeforeGraft, ofs); ofs << "\n"; }
     if (B.actualAfterGraft) { ofs << "=== ActualAfterGraft ===\n"; dumpActualCore(*B.actualAfterGraft, ofs); ofs << "\n"; }
+    if (B.actualBeforeRewrite) { ofs << "=== ActualBeforeRewrite ===\n"; dumpActualCore(*B.actualBeforeRewrite, ofs); ofs << "\n"; }
+    if (B.actualAfterRewrite) { ofs << "=== ActualAfterRewrite ===\n"; dumpActualCore(*B.actualAfterRewrite, ofs); ofs << "\n"; }
+    if (B.actualAfterNormalize) { ofs << "=== ActualAfterNormalize ===\n"; dumpActualCore(*B.actualAfterNormalize, ofs); ofs << "\n"; }
     if (B.trace) { dumpGraftTrace(*B.trace, ofs); ofs << "\n"; }
+    if (!B.oldNodeSnapshotsByPhase.empty()) {
+        dumpReplayNodeSnapshotPhases(B.oldNodeSnapshotsByPhase,
+                                     "bundle.oldNodeSnapshotsByPhase",
+                                     ofs);
+        ofs << "\n";
+    }
+    if (!B.affectedNodeSnapshotsByPhase.empty()) {
+        dumpReplayNodeSnapshotPhases(B.affectedNodeSnapshotsByPhase,
+                                     "bundle.affectedNodeSnapshotsByPhase",
+                                     ofs);
+        ofs << "\n";
+    }
+    if (B.explicitBefore) { ofs << "=== ExplicitBefore ===\n"; dumpExplicitBlockGraph(*B.explicitBefore, ofs); ofs << "\n"; }
+    if (B.explicitAfter) { ofs << "=== ExplicitAfter ===\n"; dumpExplicitBlockGraph(*B.explicitAfter, ofs); ofs << "\n"; }
+    if (B.explicitAfterNormalize) { ofs << "=== ExplicitAfterNormalize ===\n"; dumpExplicitBlockGraph(*B.explicitAfterNormalize, ofs); ofs << "\n"; }
     if (B.explicitExpected) { ofs << "=== ExplicitExpected ===\n"; dumpExplicitBlockGraph(*B.explicitExpected, ofs); ofs << "\n"; }
     if (B.explicitGot) { ofs << "=== ExplicitGot ===\n"; dumpExplicitBlockGraph(*B.explicitGot, ofs); ofs << "\n"; }
 }

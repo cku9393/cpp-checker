@@ -1,0 +1,242 @@
+PHASE17 stabilization report
+date=2026-03-19
+package=raw_engine_v1_package
+
+1. modified/added files
+- this phase stayed on tests/docs/report/campaign surfaces only
+- modified
+  - README.md
+  - tests/CMakeLists.txt
+  - tests/raw_engine_cases.cpp
+  - tests/raw_engine_main.cpp
+  - tests/split_choice_oracle.hpp
+  - tests/split_choice_oracle.cpp
+  - tests/test_harness.hpp
+- added
+  - tests/compare_ready_lineage.hpp
+  - tests/compare_ready_lineage.cpp
+  - tests/family_applicability_audit.hpp
+  - tests/family_applicability_audit.cpp
+  - tests/campaigns/phase17_planner_tie_gap_audit.txt
+  - tests/campaigns/phase17_planner_tie_compare_ready.txt
+  - tests/campaigns/phase17_split_tie_organic_compare.txt
+  - tests/campaigns/phase17_automorphism_compare.txt
+  - PHASE17_STABILIZATION_REPORT_20260319.txt
+- no src primitive/planner production-source edits were introduced by this phase
+
+2. planner_tie_mixed_organic applicability audit
+- audit support:
+  - tests/family_applicability_audit.hpp
+  - tests/family_applicability_audit.cpp
+- artifact:
+  - artifacts/phase17_final_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt
+- audited result:
+  - family=planner_tie_mixed_organic
+  - generated_state_count=48
+  - split_ready_state_count=0
+  - tie_ready_state_count=0
+  - compare_eligible_state_count=0
+  - compare_ineligible_state_count=48
+  - compare_ineligible_reason_histogram={"no_split_ready":48}
+  - actual_split_hits=0
+  - actual_join_hits=48
+  - actual_integrate_hits=48
+  - split_ready_relevance=0
+  - tie_ready_relevance=0
+  - compare_relevance=0
+  - dominant_ineligible_reason=no_split_ready
+  - dominant_ineligible_reason_confidence=1
+  - classification=NON_APPLICABLE
+- interpretation:
+  - this family is not merely short on exact-compare evidence
+  - over the phase17 audited sample it never enters split-ready or tie-ready split-choice territory
+  - join/integrate followup activity remains present, so the family is still exercising the intended mixed-followup planner region
+  - the current evidence supports non-applicability of direct split-choice compare, not generator under-generation
+
+3. compare_ready representativeness / lineage
+- lineage support:
+  - tests/compare_ready_lineage.hpp
+  - tests/compare_ready_lineage.cpp
+- artifact:
+  - artifacts/phase17_final_lineage/logs/compare_ready_lineage_audit.summary.txt
+  - artifacts/phase17_final_lineage/logs/compare_ready_lineage_audit.lineage.txt
+- lineage result:
+  - base_family=planner_tie_mixed_organic
+  - generated_state_count=16
+  - compare_eligible_state_count=0
+  - compare_ineligible_state_count=16
+  - compare_ineligible_reason_histogram={"no_split_ready":16}
+  - derived_from_base_state_count=16
+  - compare_ready_state_count=16
+  - compare_completed_state_count=16
+  - lineage_sample_count=16
+  - same_semantic_class_count=16
+  - same_final_state_count=16
+  - same_trace_class_count=16
+  - pair_replay_count=16
+  - forced_split_ready_support_count=16
+  - added_boundary_artifact_count=0
+  - injected_keepOcc_sibling_count=0
+  - followup_pattern_preserved_count=0
+  - structure_only_enrichment_count=0
+  - injected_structure_delta_histogram={"forced_split_ready_support,op_delta=-3":16}
+  - operation_count_delta_histogram={"-3":16}
+- lineage logging:
+  - every paired replay now logs paired_lineage_fingerprint=hash(base_state_hash|base_target_prepare_hash|compare_ready_state_hash|compare_ready_target_prepare_hash|reason_code)
+- interpretation:
+  - exact_shadow vs exact_full remained semantically and canonically aligned on every completed compare-ready replay
+  - the compare_ready precursor is stable as a bounded tests-only exact compare family
+  - it does not preserve the base family followup pattern and does not qualify as structure-only enrichment
+  - phase17 therefore does not promote planner_tie_mixed_organic to PROXY_PASS
+
+4. graduation gate definition
+- production default remains exact_shadow
+- exact_full remains tests/debug/nightly-only
+- direct compare PASS thresholds:
+  - split_tie_ready >= 16/16/16 compared/eligible/completed
+  - split_tie_organic_symmetric >= 32/32/32
+  - planner_tie_mixed_organic_compare_ready >= 32/32/32
+  - automorphism_probe_large >= 32/32/32
+- gate meanings:
+  - PASS
+    - direct compared/eligible/completed targets met
+    - semantic_disagreement_count=0
+    - fallback_count=0
+    - semantic_shift_count=0
+  - PROXY_PASS
+    - direct family remains under-generated
+    - proxy compare family reaches PASS
+    - lineage sample target is met
+    - same_semantic_class_count and same_final_state_count stay perfect across lineage samples
+    - followup_pattern_preserved_count and structure_only_enrichment_count stay perfect across lineage samples
+  - NON_APPLICABLE
+    - audited states meet applicability target
+    - compare_relevance and split_ready_relevance stay below configured maxima
+    - dominant ineligible reason stays no_split_ready at or above configured confidence
+  - FAIL
+    - semantic disagreement, fallback, semantic shift, or evidence shortfall
+- new phase17 campaign/gate controls:
+  - --target-compared-states
+  - --target-eligible-states
+  - --target-lineage-samples
+  - --target-applicability-confidence
+  - --stop-when-gate-passes
+  - --max-partial-runs
+- checkpoint/resume guardrails:
+  - latest.chk now writes and validates version=phase17
+  - manifest compatibility smoke now rejects mismatched compared/eligible/lineage/applicability targets and stale manifest versions
+
+5. family gate results
+- planner_tie_mixed_organic
+  - gate_status=NON_APPLICABLE
+  - stop_reason=gate_passed
+  - compared/eligible/completed=0/0/0
+  - rationale=family remains mixed-followup heavy and split-choice compare is stably no_split_ready
+- planner_tie_mixed_organic_compare_ready
+  - gate_status=PASS
+  - stop_reason=gate_passed
+  - compared/eligible/completed=32/32/32
+  - semantic_disagreement_count=0
+  - fallback_count=0
+  - semantic_shift_count=0
+- split_tie_organic_symmetric
+  - gate_status=PASS
+  - stop_reason=gate_passed
+  - compared/eligible/completed=32/32/32
+  - semantic_disagreement_count=0
+  - fallback_count=0
+  - semantic_shift_count=0
+- automorphism_probe_large
+  - gate_status=PASS
+  - stop_reason=gate_passed
+  - compared/eligible/completed=32/32/32
+  - semantic_disagreement_count=0
+  - fallback_count=0
+  - semantic_shift_count=0
+
+6. direct vs proxy family comparison
+- planner_tie_mixed_organic vs planner_tie_mixed_organic_compare_ready
+  - direct family applicability: NON_APPLICABLE
+  - direct family compare evidence: 0 compare states, 48/48 no_split_ready ineligible
+  - proxy family compare evidence: PASS at 32/32/32 with disagreement=0 and fallback=0
+  - semantic/final consistency inside compare-ready exact compare: 16/16 same semantic class, 16/16 same final state
+  - trace class consistency inside compare-ready exact compare: 16/16
+  - base-vs-proxy followup preservation: 0/16
+  - base-vs-proxy structure-only enrichment: 0/16
+  - final interpretation: proxy family remains useful bounded exact compare evidence for exact_shadow, but not representative enough to upgrade the direct family above NON_APPLICABLE
+- split_tie_organic_symmetric
+  - direct family applicability: directly compare-eligible
+  - direct family compare evidence: PASS at 32/32/32
+  - proxy family: none used in phase17
+- automorphism_probe_large
+  - direct family applicability: directly compare-eligible
+  - direct family compare evidence: PASS at 32/32/32
+  - proxy family: none used in phase17
+
+7. compare campaign / timing / cache profiling
+- planner_tie_mixed_organic gap audit
+  - gate_status=NON_APPLICABLE
+  - stop_reason=gate_passed
+  - compare_state_count=0
+  - compare_eligible_state_count=0
+  - compare_completed_state_count=0
+- planner_tie_mixed_organic_compare_ready
+  - avg_compare_time_per_state_ns=2765311822.875000
+  - avg_exact_full_eval_time_per_pair_ns=33827043.289062
+  - scenario_hash_cache_hit_ratio=0.925000
+  - exact_full_pair_evaluation_cache_hit_ratio=0.000000
+  - exact_canonical_key_cache_hit_ratio=0.937500
+- split_tie_organic_symmetric
+  - avg_compare_time_per_state_ns=2769183098.000000
+  - avg_exact_full_eval_time_per_pair_ns=34231826.554688
+  - scenario_hash_cache_hit_ratio=0.925000
+  - exact_full_pair_evaluation_cache_hit_ratio=0.000000
+  - exact_canonical_key_cache_hit_ratio=0.937500
+- automorphism_probe_large
+  - avg_compare_time_per_state_ns=3132803392.937500
+  - avg_exact_full_eval_time_per_pair_ns=81206661.781250
+  - scenario_hash_cache_hit_ratio=0.856250
+  - exact_full_pair_evaluation_cache_hit_ratio=0.000000
+  - exact_canonical_key_cache_hit_ratio=0.875000
+- hotspot interpretation:
+  - automorphism remains the slowest expensive family
+  - exact_full pair-evaluation cache hit rate stays 0.0 across the expensive families
+  - scenario hash and exact canonical caches remain productive, but pair evaluation still dominates wall-clock
+
+8. explicit execution log
+- passed
+  - build-release/tests/raw_engine_tests --case planner_tie_organic_applicability_audit --artifact-dir artifacts/phase17_final_applicability
+  - build-release/tests/raw_engine_tests --case compare_ready_lineage_audit --iters 8 --artifact-dir artifacts/phase17_final_lineage
+  - build-release/tests/raw_engine_tests --case campaign --campaign-config tests/campaigns/phase17_planner_tie_gap_audit.txt --checkpoint-dir artifacts/checkpoints/phase17_final_planner_tie_gap_audit --checkpoint-every 4 --target-applicability-confidence 0.90 --stop-when-gate-passes --max-partial-runs 12 --max-wall-seconds 1800
+  - build-release/tests/raw_engine_tests --case campaign --campaign-config tests/campaigns/phase17_planner_tie_compare_ready.txt --checkpoint-dir artifacts/checkpoints/phase17_final_planner_tie_compare_ready --checkpoint-every 4 --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes --max-partial-runs 12 --max-wall-seconds 1800
+  - build-release/tests/raw_engine_tests --case campaign --campaign-config tests/campaigns/phase17_split_tie_organic_compare.txt --checkpoint-dir artifacts/checkpoints/phase17_final_split_tie_organic --checkpoint-every 4 --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes --max-partial-runs 12 --max-wall-seconds 1800
+  - build-release/tests/raw_engine_tests --case campaign --campaign-config tests/campaigns/phase17_automorphism_compare.txt --checkpoint-dir artifacts/checkpoints/phase17_final_automorphism_probe --checkpoint-every 4 --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes --max-partial-runs 12 --max-wall-seconds 1800
+  - build-release/tests/raw_engine_tests --case campaign --resume-from artifacts/checkpoints/phase17_final_planner_tie_compare_ready/latest.chk
+  - build-release/tests/raw_engine_tests --case campaign --resume-from artifacts/checkpoints/phase17_final_split_tie_organic/latest.chk
+  - build-release/tests/raw_engine_tests --case campaign --resume-from artifacts/checkpoints/phase17_final_automorphism_probe/latest.chk
+  - build-release/tests/raw_engine_tests --case corpus_replay --load-corpus artifacts/phase17_campaigns_compare/planner_tie_mixed_organic_gap_audit/corpus --artifact-dir artifacts/phase17_corpus_replay_final
+
+9. validation
+- Release + CTest
+  - result=97/97 passed, total real time 188.59 sec
+- Debug + CTest
+  - result=97/97 passed, total real time 736.57 sec
+- isolated ASan/UBSan + CTest
+  - result=97/97 passed, total real time 2173.80 sec
+
+10. semantic mismatch / regressions
+- no new semantic mismatch was found in this phase
+- no new reducer-produced counterexample was generated
+- no new regression test was added because no new mismatch was discovered
+
+11. exact_shadow conclusion
+- exact_shadow remains the production split-choice default
+- expensive direct compare families stayed PASS with disagreement=0 and fallback=0
+- planner_tie_mixed_organic now has quantified applicability evidence for NON_APPLICABLE rather than an open “gap probe” interpretation
+- compare_ready remains useful as bounded exact compare evidence, but phase17 does not rely on it for PROXY_PASS graduation because the stronger representativeness checks fail
+- conclusion: keep exact_shadow graduated for production; do not promote planner_tie_mixed_organic to proxy graduation
+
+12. remaining risks
+- planner_tie_mixed_organic_compare_ready is stable as a tests-only compare family, but it is not a minimal-structure proxy for the direct mixed-organic family
+- exact_full pair evaluation remains the dominant runtime hotspot and still shows 0.0 cache-hit ratio on the expensive families
+- phase17 settles planner_tie_mixed_organic as NON_APPLICABLE over the audited sample, but broader family redesign would be required if future work wants a truly representative direct compare family

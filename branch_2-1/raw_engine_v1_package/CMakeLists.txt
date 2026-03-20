@@ -5,6 +5,8 @@ project(raw_engine_v1 LANGUAGES CXX)
 option(RAW_ENGINE_ENABLE_ASAN "Enable AddressSanitizer" OFF)
 option(RAW_ENGINE_ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" OFF)
 option(RAW_ENGINE_ENABLE_CONVERSION_WARNINGS "Enable -Wconversion" OFF)
+option(RAW_ENGINE_TEST_STRICT_WARNINGS "Enable stricter warning flags for raw_engine_tests only" OFF)
+option(RAW_ENGINE_REGISTER_NIGHTLY_TESTS "Register the expensive nightly-only raw_engine_tests cases with CTest" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

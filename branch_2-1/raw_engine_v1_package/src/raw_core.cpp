@@ -71,7 +71,7 @@ void remap_occ_meta(BuildCtx& C, const RawEngine& RE, OccID occ, const vector<Ra
             ce.push_back(it->second);
         }
     }
-    C.B.corePatchLocalEids[occ] = move(ce);
+    C.B.corePatchLocalEids[occ] = std::move(ce);
 }
 
 LabeledComponents label_components_without_blocked(

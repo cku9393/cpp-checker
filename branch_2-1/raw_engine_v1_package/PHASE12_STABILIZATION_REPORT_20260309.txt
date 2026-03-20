@@ -1,0 +1,140 @@
+PHASE12 stabilization report
+Date: 2026-03-09
+
+1. Modified / added files
+- README.md
+- tests/CMakeLists.txt
+- tests/test_harness.hpp
+- tests/raw_engine_main.cpp
+- tests/raw_engine_cases.cpp
+- tests/exhaustive_cases.cpp
+- tests/exhaustive_generator.hpp
+- tests/reference_oracle_cases.cpp
+- tests/split_choice_oracle.hpp
+- tests/split_choice_oracle.cpp
+- tests/multiclass_catalog.hpp
+- tests/multiclass_catalog.cpp
+
+2. exact_full compare mode
+- Split-choice policy modes are now:
+  - fast
+  - exact_shadow (production default)
+  - exact_full (tests-only)
+- Compare mode is orthogonal:
+  - --compare-against exact_full
+  - --compare-sample-rate
+  - --compare-budget
+- The compare path measures:
+  - split_choice_compare_state_count
+  - split_choice_exact_full_eval_count
+  - split_choice_exact_shadow_eval_count
+  - split_choice_same_representative_count
+  - split_choice_same_semantic_class_count
+  - split_choice_same_final_state_count
+  - split_choice_semantic_disagreement_count
+  - split_choice_cap_hit_count
+
+3. exact_shadow vs exact_full results
+- split_choice_oracle_smoke (artifacts/phase12_compare_smoke_release/logs/split_choice_oracle_split_tie_ready.summary.txt)
+  - same_representative=1
+  - same_semantic_class=1
+  - same_final_state=1
+  - semantic_disagreement=0
+  - cap_hit=0
+- split_choice_exact_class_smoke (artifacts/phase12_compare_smoke_release/logs/split_choice_exact_class_smoke.summary.txt)
+  - same_representative=1
+  - same_semantic_class=1
+  - same_final_state=1
+  - semantic_disagreement=0
+  - cap_hit=0
+- split_choice_semantic_shift_regression, exact_shadow compare path
+  - exact_shadow_selected_pair=2,8
+  - exact_full_selected_pair=2,8
+  - semantic_disagreement=0
+  - fast mode still reproduces old mismatch witness via fast_selected_pair=2,6
+- bounded exhaustive sample:
+  - artifacts/phase12_exhaustive_split_tie_ready_tiny/logs/exhaustive.summary.txt
+  - generated_state_count=64
+  - exact_audited_state_count=64
+  - split_choice_compare_state_count=32
+  - split_choice_same_representative_count=32
+  - split_choice_same_semantic_class_count=32
+  - split_choice_same_final_state_count=32
+  - split_choice_semantic_disagreement_count=0
+  - split_choice_cap_hit_count=0
+
+4. multiclass catalog
+- New catalog groups multiclass states by canonical cluster key and stores witness summaries.
+- Current bounded split_tie_ready sample produced:
+  - multiclass_cluster_count=17
+  - harmless_multiclass_count=17
+  - trace_only_multiclass_count=0
+  - semantic_shift_multiclass_count=0
+- Representative witness:
+  - artifacts/phase12_exhaustive_split_tie_ready_tiny/logs/multiclass_catalog/exhaustive_2d2f08ff3a7f6aec.summary.txt
+  - admissible_pair_count=6
+  - semantic_class_count=4
+  - fast_selected_pair=2,6
+  - exact_shadow_selected_pair=2,8
+  - exact_full_selected_pair=2,8
+  - category=harmless_multiclass
+
+5. family / planner sampled compare notes
+- planner_tie_mixed_organic sampled fuzz run completed:
+  - artifacts/phase12_fuzz_compare_small/logs/seed930002_planner_tie_mixed_organic.summary.txt
+  - split_ready_count=0
+  - join_candidate_count=200
+  - integrate_candidate_count=200
+  - exact compare counters stay zero because sampled states never entered a split-choice tie
+- No completed run in this phase produced split_choice_semantic_disagreement_count > 0.
+
+6. CTest tiering
+- Labels added / documented:
+  - core
+  - slow
+  - exhaustive
+  - fuzz
+  - asan_slow
+  - nightly
+- Current release label counts:
+  - core=78
+  - slow=18
+  - exhaustive=13
+  - fuzz=8
+  - asan_slow=8
+  - nightly=15
+
+7. Verification
+- Release full CTest was rerun in chunks and passed:
+  - 1-40 pass
+  - 41 pass
+  - 42-50 pass
+  - 51-60 pass
+  - 61-70 pass
+  - 71-80 pass
+  - 81-90 pass
+  - 91-99 pass
+  - net result: 99/99 pass
+- Debug reruns completed:
+  - 1-40 pass
+  - 51-80 pass
+  - 81-92 pass inside the 81-99 chunk before wrapper instability at test 93
+- Debug remaining blocker:
+  - heavy tail cases 93-99 were affected by runner/session instability and unexpected concurrent phase13 raw_engine_tests processes in the same workspace
+  - code-level regressions were not observed in the completed debug reruns
+- ASan/UBSan:
+  - build tree reconfigured and rebuilt successfully
+  - full CTest rerun was not completed in this turn because the same runner instability needed to be untangled first
+
+8. New counterexamples / regressions
+- No new semantic counterexample was confirmed for exact_shadow vs exact_full in the completed compare evidence.
+- No new regression file was added in this phase.
+
+9. Warning hygiene
+- No src warning cleanup was performed in this phase.
+- Work stayed in tests / runner / docs.
+
+10. Remaining risks
+- exact_shadow adequacy evidence improved, but completed compare evidence is still bounded / sampled.
+- multiclass split states remain; this phase catalogs them and shows harmless exact_shadow vs exact_full agreement on the completed witnesses, not a proof over the whole state space.
+- long heavy Debug/ASan tail tests remain operationally fragile under this environment; tiering reduces that operational risk, but the heavy tails are still expensive.

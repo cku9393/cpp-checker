@@ -1,0 +1,346 @@
+PHASE16 stabilization report
+date=2026-03-19
+package=raw_engine_v1_package
+
+1. modified/added files
+- this pass stayed on tests/docs/report/campaign surfaces only
+- modified
+  - README.md
+  - tests/CMakeLists.txt
+  - tests/raw_engine_cases.cpp
+  - tests/raw_engine_main.cpp
+  - tests/test_harness.hpp
+  - PHASE16_STABILIZATION_REPORT_20260319.txt
+- added
+  - tests/compare_ready_lineage.hpp
+  - tests/compare_ready_lineage.cpp
+  - tests/campaigns/phase16_split_tie_organic_compare.txt
+  - tests/campaigns/phase16_planner_tie_gap_probe.txt
+  - tests/campaigns/phase16_planner_tie_compare_ready.txt
+  - tests/campaigns/phase16_automorphism_compare.txt
+  - tests/campaigns/phase16_split_tie_organic_compare_final_20260319.txt
+  - tests/campaigns/phase16_planner_tie_gap_probe_final_20260319.txt
+  - tests/campaigns/phase16_planner_tie_compare_ready_final_20260319.txt
+  - tests/campaigns/phase16_automorphism_compare_final_20260319.txt
+  - tests/campaigns/phase16_resume_gate_smoke.txt
+- no primitive/planner production-source edits were introduced by this phase
+- phase16 review-fix follow-up after the first audit:
+  - resume-time gate/max_partial_runs stop checks now execute before any new checkpoint chunk is launched
+  - checkpoint compatibility now validates target_compared_states / target_eligible_states / max_partial_runs / stop_when_gate_passes
+  - new smoke coverage was added for phase16 resume preflight and manifest compatibility
+
+2. compare_ready lineage / representativeness design
+- new lineage audit support lives in:
+  - tests/compare_ready_lineage.hpp
+  - tests/compare_ready_lineage.cpp
+- wired cases:
+  - compare_ready_lineage_audit
+  - compare_ready_lineage_smoke
+- audit pairing:
+  - base family = planner_tie_mixed_organic
+  - tests-only precursor = planner_tie_mixed_organic_compare_ready
+  - paired seeds are replayed through both generators
+  - base and precursor precheck stats are logged side by side
+  - lineage pairing is no longer counted from shared seeds alone
+  - derived_from_base_state_count now requires a stable sampled lineage fingerprint over:
+    - base_state_hash
+    - base_target_prepare_hash
+    - compare_ready_state_hash
+    - compare_ready_target_prepare_hash
+    - reason_code
+- lineage detail log records:
+  - base_family
+  - base_state_hash
+  - compare_ready_state_hash
+  - base_target_prepare_hash
+  - compare_ready_target_prepare_hash
+  - reason_code
+  - base_precheck
+  - compare_ready_precheck
+  - derived_from_base_state
+  - compare_completed
+  - same_semantic_class_count
+  - same_final_state_count
+  - structure_only_enrichment
+- lineage summary counters cover:
+  - real family:
+    - generated_state_count
+    - compare_eligible_state_count
+    - compare_ineligible_state_count
+    - compare_ineligible_reason_histogram
+    - no_split_ready_count
+    - single_admissible_pair_count
+    - tie_but_followup_absent_count
+    - keepOcc_absent_count
+    - boundary_artifact_absent_count
+  - compare_ready precursor:
+    - derived_from_base_state_count
+    - compare_ready_state_count
+    - compare_completed_state_count
+    - same_semantic_class_count
+    - same_final_state_count
+    - pair_replay_count
+    - structure_only_enrichment_count
+- audit artifacts:
+  - artifacts/phase16_lineage/logs/compare_ready_lineage_audit.summary.txt
+  - artifacts/phase16_lineage/logs/compare_ready_lineage_audit.lineage.txt
+- audited outcome:
+  - base_family=planner_tie_mixed_organic
+  - generated_state_count=16
+  - compare_eligible_state_count=0
+  - compare_ineligible_state_count=16
+  - compare_ineligible_reason_histogram={"no_split_ready":16}
+  - no_split_ready_count=16
+  - derived_from_base_state_count=16
+  - compare_ready_state_count=16
+  - compare_completed_state_count=16
+  - same_semantic_class_count=16
+  - same_final_state_count=16
+  - pair_replay_count=16
+  - structure_only_enrichment_count=16
+  - sampled paired fingerprint:
+    - base_state_hash=8ff9fc680532ac4c
+    - base_target_prepare_hash=b7d4d7cdcc5b306e
+    - compare_ready_state_hash=61dd66aafdb6cb88
+    - compare_ready_target_prepare_hash=92b57a12bc2fa972
+    - reason_code=no_split_ready
+- interpretation:
+  - the authoritative base family still characteristically stalls in no_split_ready
+  - sampled compare_ready precursors stayed on one stable paired lineage fingerprint across the audit sample
+  - compare_ready exact_shadow vs exact_full remained same-semantic-class and same-final-state on all completed compare states
+  - the added precursor structure still behaves as tests-only split-choice enablement rather than semantic drift
+
+3. policy graduation gate definition
+- production default remains exact_shadow
+- exact_full remains compare/debug/nightly-only
+- new CLI knobs:
+  - --target-compared-states
+  - --target-eligible-states
+  - --stop-when-gate-passes
+  - --max-partial-runs
+- per-family thresholds in policy_graduation_threshold_for_family():
+  - split_tie_ready = 16 / 16 / 16
+  - split_tie_organic_symmetric = 32 / 32 / 32
+  - planner_tie_mixed_organic_compare_ready = 32 / 32 / 32
+  - automorphism_probe_large = 32 / 32 / 32
+- gate classification in evaluate_policy_graduation_gate():
+  - FAIL
+    - split_choice_semantic_disagreement_count > 0
+    - split_choice_fallback_count > 0
+    - semantic_shift_count > 0
+  - INSUFFICIENT_EVIDENCE
+    - compared/eligible/completed counts below effective thresholds
+  - PASS
+    - thresholds met
+    - representative_shift_count == 0
+  - SOFT_PASS
+    - thresholds met
+    - representative shifts allowed
+    - semantic_shift_count == 0
+- aggregate outputs now emit:
+  - gate_status
+  - stop_reason
+  - target_compared_states
+  - target_eligible_states
+  - compare_completed_state_count
+  - run_gate=...
+- checkpoint manifests now persist and now validate:
+  - target_compared_states
+  - target_eligible_states
+  - max_partial_runs
+  - stop_when_gate_passes
+  - checkpoint_every
+  - compare/sample/canonical knobs
+- smoke coverage added or updated:
+  - compare_ready_lineage_smoke
+  - campaign_phase16_resume_gate_smoke
+  - campaign_phase16_manifest_compatibility_smoke
+  - split_choice_policy_graduation_smoke
+  - compare_evidence_threshold_smoke
+
+4. family gate results
+- split_tie_organic_symmetric
+  - artifact:
+    - artifacts/phase16_final_20260319/split_tie_organic/logs/phase16_split_tie_organic_aggregate.summary.txt
+  - result:
+    - gate_status=PASS
+    - stop_reason=gate_passed
+    - compared/eligible/completed=36/36/36
+    - split_choice_semantic_disagreement_count=0
+    - split_choice_fallback_count=0
+    - representative_shift_count=0
+    - semantic_shift_count=0
+- planner_tie_mixed_organic_compare_ready
+  - artifact:
+    - artifacts/phase16_final_20260319/planner_tie_mixed_organic_compare_ready/logs/phase16_planner_tie_mixed_organic_compare_ready_aggregate.summary.txt
+  - result:
+    - gate_status=PASS
+    - stop_reason=gate_passed
+    - compared/eligible/completed=40/40/40
+    - split_choice_semantic_disagreement_count=0
+    - split_choice_fallback_count=0
+    - representative_shift_count=0
+    - semantic_shift_count=0
+- automorphism_probe_large
+  - artifact:
+    - artifacts/phase16_final_20260319/automorphism_probe/logs/phase16_automorphism_probe_aggregate.summary.txt
+  - result:
+    - gate_status=PASS
+    - stop_reason=gate_passed
+    - compared/eligible/completed=36/36/36
+    - split_choice_semantic_disagreement_count=0
+    - split_choice_fallback_count=0
+    - representative_shift_count=0
+    - semantic_shift_count=0
+- direct base-family gap probe
+  - artifact:
+    - artifacts/phase16_final_20260319/planner_tie_mixed_organic_gap_probe/logs/phase16_planner_tie_mixed_organic_gap_probe_aggregate.summary.txt
+  - result:
+    - total_iterations=48
+    - compare_eligible_state_count=0
+    - compare_ineligible_state_count=48
+    - compare_ineligible_reason_histogram={"no_split_ready":48}
+    - split_choice_semantic_disagreement_count=0
+    - split_choice_fallback_count=0
+    - gate_status=INSUFFICIENT_EVIDENCE
+    - stop_reason=completed
+  - role:
+    - characterization probe only, not a graduation family
+- checkpoint/resume preflight validation on completed PASS campaigns
+  - commands rerun under the patched runner:
+    - build-release/tests/raw_engine_tests --case campaign --resume-from artifacts/checkpoints/phase16_final_split_tie_organic/latest.chk
+    - build-release/tests/raw_engine_tests --case campaign --resume-from artifacts/checkpoints/phase16_final_planner_tie_compare_ready/latest.chk
+    - build-release/tests/raw_engine_tests --case campaign --resume-from artifacts/checkpoints/phase16_final_automorphism_probe/latest.chk
+  - result:
+    - all three resumed cleanly with case=campaign pass
+    - checkpoint chunk counts remained unchanged at 9 / 10 / 9
+    - aggregate summaries remained gate_status=PASS and stop_reason=gate_passed
+
+5. compare campaign / timing / cache profiling
+- split_tie_organic final aggregate
+  - avg_compare_time_per_state_ns=5998574228.166667
+  - avg_exact_full_eval_time_per_pair_ns=188843422.451389
+  - scenario_hash_cache_hit_ratio=0.811111
+  - exact_full_pair_evaluation_cache_hit_ratio=0.000000
+  - exact_canonical_key_cache_hit_ratio=0.833333
+- planner_tie_mixed_organic_compare_ready final aggregate
+  - avg_compare_time_per_state_ns=6347919175.150000
+  - avg_exact_full_eval_time_per_pair_ns=152616646.893750
+  - scenario_hash_cache_hit_ratio=0.835000
+  - exact_full_pair_evaluation_cache_hit_ratio=0.000000
+  - exact_canonical_key_cache_hit_ratio=0.850000
+- automorphism_probe_large final aggregate
+  - avg_compare_time_per_state_ns=8113532512.805555
+  - avg_exact_full_eval_time_per_pair_ns=241129013.895833
+  - scenario_hash_cache_hit_ratio=0.811111
+  - exact_full_pair_evaluation_cache_hit_ratio=0.000000
+  - exact_canonical_key_cache_hit_ratio=0.833333
+- gap probe
+  - compare-time counters stayed zero because the sampled base-family states never became compare-eligible
+- profiling interpretation
+  - compare runtime is still dominated by exact_shadow / exact_full evaluation plus canonicalization
+  - automorphism_probe_large remains the slowest expensive family
+  - exact_full pair evaluation cache hit ratio stayed 0.0 in all final PASS aggregates
+  - exact canonical key cache reuse is real but not enough to remove the need for checkpoint/resume
+
+6. verification commands and results
+- lineage audit rerun on the patched runner
+  - build-release/tests/raw_engine_tests --case compare_ready_lineage_audit --iters 8 --artifact-dir artifacts/phase16_lineage
+- explicit gap probe rerun on the patched runner
+  - build-release/tests/raw_engine_tests --case campaign --campaign-config tests/campaigns/phase16_planner_tie_gap_probe_final_20260319.txt --checkpoint-dir artifacts/checkpoints/phase16_planner_tie_gap_final_r2
+- corpus replay rerun
+  - build-release/tests/raw_engine_tests --case corpus_replay --load-corpus artifacts/phase16_final_20260319/planner_tie_mixed_organic_gap_probe/corpus --artifact-dir artifacts/phase16_corpus_replay
+- phase16 smoke verification on the patched runner
+  - ctest --test-dir build-release --output-on-failure -R 'raw_engine_(compare_ready_lineage_smoke|campaign_phase16_resume_gate_smoke|campaign_phase16_manifest_compatibility_smoke|split_choice_policy_graduation_smoke|compare_evidence_threshold_smoke)$'
+  - result:
+    - 100% tests passed, 0 failed out of 5
+- README/tier docs now cover:
+  - core
+  - slow
+  - exhaustive
+  - fuzz
+  - compare
+  - nightly
+  - asan_slow
+  - quick/core execution
+  - compare/nightly execution
+  - checkpoint/resume usage
+  - gate interpretation
+
+7. debug full ctest
+- build dir:
+  - build-debug-phase16-final
+- log:
+  - artifacts/phase16_final_20260319/logs/ctest_debug_phase16_final_r2.log
+- result:
+  - 100% tests passed, 0 tests failed out of 94
+  - label summary:
+    - asan_slow = 7.90 sec*proc
+    - compare = 514.56 sec*proc
+    - core = 296.14 sec*proc
+    - exhaustive = 73.88 sec*proc
+    - fuzz = 16.96 sec*proc
+    - slow = 310.65 sec*proc
+  - total real time = 771.41 sec
+
+8. release full ctest
+- build dir:
+  - build-release
+- log:
+  - artifacts/phase16_final_20260319/logs/ctest_release_phase16_final_r2.log
+- result:
+  - 100% tests passed, 0 tests failed out of 94
+  - label summary:
+    - asan_slow = 1.89 sec*proc
+    - compare = 146.68 sec*proc
+    - core = 85.45 sec*proc
+    - exhaustive = 20.27 sec*proc
+    - fuzz = 4.21 sec*proc
+    - slow = 91.49 sec*proc
+  - total real time = 220.26 sec
+
+9. isolated ASan/UBSan full rerun
+- build dir:
+  - build-asan-phase16-final
+- log:
+  - artifacts/phase16_final_20260319/logs/ctest_asan_phase16_final_r2_heartbeat.log
+- result:
+  - 100% tests passed, 0 tests failed out of 94
+  - label summary:
+    - asan_slow = 29.64 sec*proc
+    - compare = 1678.73 sec*proc
+    - core = 933.61 sec*proc
+    - exhaustive = 223.67 sec*proc
+    - fuzz = 69.02 sec*proc
+    - slow = 1107.62 sec*proc
+  - total real time = 2518.23 sec
+
+10. semantic counterexamples and regressions
+- no new semantic mismatch was confirmed in this phase
+- no new split_choice_semantic_disagreement was observed in the final PASS families
+- no new fallback was observed in the final PASS families
+- no new regression test files were added because no new semantic counterexample required reduction
+- no primitive bug was confirmed
+- no planner exact_shadow policy bug was confirmed
+
+11. exact_shadow retention rationale
+- exact_shadow now has explicit graduation-gate evidence in all three expensive target families:
+  - split_tie_organic_symmetric PASS at 36/36/36 with disagreement=0 and fallback=0
+  - planner_tie_mixed_organic_compare_ready PASS at 40/40/40 with disagreement=0 and fallback=0
+  - automorphism_probe_large PASS at 36/36/36 with disagreement=0 and fallback=0
+- representative_shift_count remained 0 in the final PASS aggregates
+- compare_ready lineage audit now records a stable sampled base/precursor fingerprint rather than inferring lineage from seeds alone
+- compare_ready exact_shadow vs exact_full remained same-semantic-class and same-final-state on all 16 completed audit states
+- the authoritative planner_tie_mixed_organic family remains no_split_ready-heavy, which justifies keeping compare_ready as the tests-only evidence precursor instead of weakening the production split precondition
+- no primitive bug was confirmed, so primitive production source remained untouched
+- exact_full remains compare/debug/nightly-only
+
+12. remaining risks
+- planner_tie_mixed_organic itself still rarely reaches compare-eligible split-tie states; the evidence story still depends on the documented compare_ready lineage/representativeness bridge
+- compare runtime remains high, especially for automorphism_probe_large
+- exact_full pair evaluation cache hit ratio remains 0.0 in the current PASS aggregates
+- checkpoint/resume is still operationally required for expensive compare families
+- optional hygiene was intentionally limited
+  - README/tier cleanup was done
+  - assert/runtime_error cleanup was not expanded further
+  - src warning-hygiene-only cleanup was not pursued

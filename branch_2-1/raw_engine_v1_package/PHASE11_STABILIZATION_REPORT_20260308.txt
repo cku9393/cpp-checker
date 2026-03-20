@@ -1,0 +1,222 @@
+Phase 11 Stabilization Report
+Date: 2026-03-08
+Package: raw_engine_v1_package
+Branch: branch_2-1
+
+1. Modified / Added Files
+
+Production / shared-facing:
+- include/raw_engine/raw_engine.hpp
+- src/raw_planner.cpp
+
+Tests / harness / docs:
+- tests/test_harness.hpp
+- tests/raw_engine_main.cpp
+- tests/split_choice_oracle.hpp
+- tests/split_choice_oracle.cpp
+- tests/split_choice_cases.cpp
+- tests/exact_canonicalizer.cpp
+- tests/exhaustive_cases.cpp
+- tests/metamorphic_cases.cpp
+- tests/raw_engine_cases.cpp
+- tests/CMakeLists.txt
+- README.md
+
+Artifacts / regression:
+- tests/regressions/split_choice_semantic_shift_state.txt
+
+2. Production Split-Choice Policy
+
+Production default split-choice policy is now exact_shadow.
+
+Behavior:
+- 0 admissible split pairs: return nullopt
+- 1 admissible split pair: choose it directly
+- 2+ admissible split pairs: enumerate support-based brute-force candidates, evaluate each pair by bounded lookahead:
+  - perform split
+  - apply afterSplit follow-up hooks
+  - run current planner normalization
+  - capture failed / stopConditionSatisfied / target isolate canonical key / final canonical raw state key / failureKey
+- choose the lexicographically minimal ProductionSplitChoiceSignature
+- original label order is not used as the primary policy key
+
+Fast policy was retained only for comparison / regression reproduction / fallback accounting.
+Production default is exact_shadow in include/raw_engine/raw_engine.hpp.
+
+3. Production Canonical Key Design
+
+Production path uses a minimal shared key, not the full tests-only exhaustive canonicalizer.
+
+ProductionSplitChoiceSignature fields:
+- failed
+- stopConditionSatisfied
+- target isolate canonical key
+- final canonical raw state key
+- failureKey
+
+Ordering:
+- lexicographic total order over the fields above
+- same-signature ties are resolved deterministically without directly using original labels as the primary rank
+
+Tests-only exact canonicalizer remains in tests/ and is still used for audits.
+
+4. Fast vs Exact-Shadow Comparison
+
+Current results:
+- fast_vs_exact_class_disagreement_count = 0
+- exact_shadow removes the previously observed semantic shift on the regression witness
+- fast mode still reproduces the old split-choice semantic divergence for comparison
+
+Key evidence:
+- regression witness: tests/regressions/split_choice_semantic_shift_state.txt
+- split_choice_policy_fast_vs_exact_shadow_compare
+- split_choice_semantic_shift_regression
+
+5. Split-Choice Stats
+
+Representative / shift findings under exact_shadow:
+- semantic_shift_count = 0 on the retained phase11 exact_shadow explicit fuzz logs
+- representative_shift_count = 0 on the retained phase11 exact_shadow explicit fuzz logs
+- split_choice_fallback_count = 0 on retained explicit fuzz logs and current regression reruns
+
+Representative explicit logs:
+- artifacts/phase11_fuzz/logs/seed920001_split_tie_ready.summary.txt
+- artifacts/phase11_fuzz/logs/seed920002_planner_tie_mixed.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920003_planner_mixed_structural.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920004_split_tie_organic_symmetric_20.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920005_planner_tie_mixed_organic.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920006_corpus_replay.summary.txt
+
+Representative values from those logs:
+- seed920001 split_tie_ready:
+  - split_choice_candidate_count=9000
+  - split_choice_eval_count=9000
+  - tie_count=1500
+  - multiclass_count=1500
+  - representative_shift_count=0
+  - semantic_shift_count=0
+  - fallback_count=0
+- seed920002 planner_tie_mixed:
+  - split_choice_candidate_count=0
+  - representative_shift_count=0
+  - semantic_shift_count=0
+  - fallback_count=0
+- seed920003 planner_mixed_structural:
+  - split_choice_candidate_count=1854
+  - split_choice_eval_count=1407
+  - tie_count=469
+  - multiclass_count=469
+  - representative_shift_count=0
+  - semantic_shift_count=0
+  - fallback_count=0
+- seed920004 split_tie_organic_symmetric:
+  - split_choice_candidate_count=80
+  - tie_count=20
+  - multiclass_count=20
+  - representative_shift_count=0
+  - semantic_shift_count=0
+  - fallback_count=0
+
+6. Regression State: Fast vs Exact-Shadow
+
+Regression witness:
+- tests/regressions/split_choice_semantic_shift_state.txt
+
+Expected / verified behavior:
+- fast mode: old mismatch reproduction remains available for comparison
+- exact_shadow mode: semantic_shift=0
+
+Explicit latest reruns on current release binary:
+- /tmp/cpp-checker-phase10-release/tests/raw_engine_tests --case split_choice_semantic_shift_regression --split-choice-policy fast
+- /tmp/cpp-checker-phase10-release/tests/raw_engine_tests --case split_choice_semantic_shift_regression --split-choice-policy exact_shadow
+
+Both regression commands passed. The test itself enforces fast reproduction and exact_shadow stabilization.
+
+7. Explicit Exhaustive / Fuzz Evidence
+
+Current latest release-side exhaustive rerun:
+- artifacts/phase11_exhaustive_split_tie_ready/logs/exhaustive.summary.txt
+  - generated_state_count=8000
+  - canonical_unique_state_count=8000
+  - dedupe_ratio=0
+  - validator_checks=8000
+  - primitive_checks=8000
+  - planner_checks=8000
+
+Retained phase11 exact_shadow explicit runs copied into canonical artifacts/:
+- artifacts/phase11_probe_split_tie_ready/logs/exhaustive.summary.txt
+- artifacts/phase11_probe_split_tie_structural/logs/exhaustive.summary.txt
+- artifacts/phase11_exhaustive_planner_tie_mixed/logs/exhaustive.summary.txt
+- artifacts/phase11_fuzz/logs/seed920001_split_tie_ready.summary.txt
+- artifacts/phase11_fuzz/logs/seed920002_planner_tie_mixed.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920003_planner_mixed_structural.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920004_split_tie_organic_symmetric_20.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920005_planner_tie_mixed_organic.summary.txt
+- artifacts/phase11_fuzz_postfix/logs/seed920006_corpus_replay.summary.txt
+
+Selected retained values:
+- split_tie_structural probe:
+  - generated=300
+  - unique=152
+  - dedupe_ratio=0.493333
+  - symmetric_structure_duplicate_count=64
+- planner_tie_mixed exhaustive:
+  - generated=6000
+  - unique=6000
+  - dedupe_ratio=0
+
+8. New Semantic Counterexamples
+
+No new exact_shadow production semantic mismatch was found in the retained explicit exact_shadow runs or the current regression reruns.
+
+The preserved semantic-shift witness remains comparison-only:
+- tests/regressions/split_choice_semantic_shift_state.txt
+- classified as planner split-choice policy risk under fast mode, not a primitive bug
+
+9. Regression List
+
+Retained regressions:
+- tests/regressions/split_choice_oracle_reduced_state.txt
+- tests/regressions/split_choice_semantic_shift_state.txt
+
+No new primitive regression was added in this phase.
+
+10. Warning Cleanup
+
+This phase did not introduce new primitive-semantic src changes.
+
+Relevant hygiene status:
+- production policy change was limited to raw_planner / raw_engine.hpp
+- strict warnings build completed successfully for the tests target:
+  - cmake -S ... -B /tmp/cpp-checker-phase11-debug-strict -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_TEST_STRICT_WARNINGS=ON
+  - cmake --build /tmp/cpp-checker-phase11-debug-strict -j4
+
+No separate src warning-only cleanup pass was performed in this closing step beyond the already-landed planner policy work.
+
+11. Build / Test Commands
+
+Release:
+- cmake --build /tmp/cpp-checker-phase10-release -j4
+- ctest --test-dir /tmp/cpp-checker-phase10-release --output-on-failure
+- result: 99/99 passed, total real time 4346.83 sec
+
+Debug:
+- cmake --build /tmp/cpp-checker-phase9-debug -j4
+- ctest --test-dir /tmp/cpp-checker-phase9-debug --output-on-failure
+- result: 99/99 passed, total real time 4346.83 sec
+
+ASan/UBSan:
+- cmake --build /tmp/cpp-checker-phase10-asan -j4
+- ctest --test-dir /tmp/cpp-checker-phase10-asan --output-on-failure
+- result: 99/99 passed, total real time 10941.21 sec
+
+Strict warnings:
+- cmake -S branch_2-1/raw_engine_v1_package -B /tmp/cpp-checker-phase11-debug-strict -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_TEST_STRICT_WARNINGS=ON
+- cmake --build /tmp/cpp-checker-phase11-debug-strict -j4
+- result: build passed
+
+12. Remaining Risks
+
+- Production exact_shadow policy is stronger than fast mode, but it is still a bounded lookahead policy rather than the full tests-only exhaustive exact canonicalizer.
+- split-choice multiclass states still exist; this phase stabilizes representative selection, not the existence of multiple semantic classes.
+- Some long split-choice / exhaustive smokes remain expensive, especially under ASan and Debug.

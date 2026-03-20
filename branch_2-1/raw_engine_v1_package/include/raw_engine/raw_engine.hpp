@@ -8,6 +8,7 @@
 #include <functional>
 #include <limits>
 #include <optional>
+#include <string>
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
@@ -270,8 +271,24 @@ struct RawUpdaterHooks {
     std::function<void(const IntegrateResult&, std::deque<UpdJob>&)> afterIntegrate;
 };
 
+struct SplitChoicePolicyStats {
+    std::size_t candidateCount = 0;
+    std::size_t evalCount = 0;
+    std::size_t tieCount = 0;
+    std::size_t multiclassCount = 0;
+    std::size_t fallbackCount = 0;
+    std::unordered_map<std::size_t, std::size_t> equivClassCountHistogram;
+};
+
+enum class RawSplitChoicePolicyMode : u8 {
+    FAST = 0,
+    EXACT_SHADOW = 1,
+};
+
 struct RawUpdaterRunOptions {
     std::size_t stepBudget = 200000;
+    std::size_t maxSplitChoiceEval = 0;
+    RawSplitChoicePolicyMode splitChoicePolicy = RawSplitChoicePolicyMode::EXACT_SHADOW;
 };
 
 RawSkeletonBuilder::BV make_builder_vertex(RawVertexKind kind, Vertex orig, OccID occ = 0);
@@ -292,6 +309,9 @@ RawVID find_real_orig_in_skeleton(const RawEngine& RE, const RawSkeleton& S, Ver
 void retire_skeleton_contents(RawEngine& RE, RawSkelID sid);
 void commit_skeleton(RawEngine& RE, RawSkelID sid, RawSkeletonBuilder&& B, RawUpdateCtx& U);
 
+bool validate_builder_basic(const RawSkeletonBuilder& B, std::string* error = nullptr);
+bool validate_skeleton_wellformed(const RawEngine& RE, RawSkelID sid, std::string* error = nullptr);
+bool validate_occ_patch_consistent(const RawEngine& RE, OccID occ, std::string* error = nullptr);
 void assert_builder_basic(const RawSkeletonBuilder& B);
 void assert_skeleton_wellformed(const RawEngine& RE, RawSkelID sid);
 void assert_occ_patch_consistent(const RawEngine& RE, OccID occ);
@@ -346,7 +366,18 @@ bool valid_split_pair_for_support(
     RawVID bV,
     const std::vector<RawVID>& support
 );
+void reset_split_choice_policy_stats();
+const SplitChoicePolicyStats& split_choice_policy_stats();
+std::string planner_fast_canonical_state_key(const RawEngine& RE);
+std::string planner_fast_canonical_isolate_key(const RawEngine& RE, const IsolatePrepared& prep);
 std::optional<std::pair<Vertex, Vertex>> discover_split_pair_from_support(const RawEngine& RE, OccID occ);
+std::optional<std::pair<Vertex, Vertex>> discover_split_pair_from_support(
+    const RawEngine& RE,
+    OccID occ,
+    const RawPlannerCtx* plannerCtx,
+    const RawUpdaterRunOptions& runOptions,
+    SplitChoicePolicyStats* eventStats = nullptr
+);
 bool child_contains_occ(const SplitChildInfo& c, OccID occ);
 bool child_intersects_keep_occ(const SplitChildInfo& c, const RawPlannerCtx& ctx);
 int choose_anchor_child(const SplitSeparationPairResult& res, const RawPlannerCtx& ctx);
