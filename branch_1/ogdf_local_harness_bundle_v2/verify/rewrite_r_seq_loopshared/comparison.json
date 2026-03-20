@@ -1,0 +1,29 @@
+{
+  "baseline": {
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+    "TSO_LOOP_PLUS_EDGE_SHARED": 0,
+    "TS_TWO_OTHER": 0,
+    "rewriteFallbackSpecialCaseCount": 0,
+    "seqLoopPlusEdgeSharedHandledCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0,
+    "seqTooSmallOtherHandledCount": 0
+  },
+  "current": {
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 18852,
+    "TSO_LOOP_PLUS_EDGE_SHARED": 9672,
+    "TS_TWO_OTHER": 9672,
+    "rewriteFallbackSpecialCaseCount": 76779,
+    "seqLoopPlusEdgeSharedHandledCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 47042,
+    "seqTooSmallOtherHandledCount": 0
+  },
+  "delta": {
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 18852,
+    "TSO_LOOP_PLUS_EDGE_SHARED": 9672,
+    "TS_TWO_OTHER": 9672,
+    "rewriteFallbackSpecialCaseCount": 76779,
+    "seqLoopPlusEdgeSharedHandledCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 47042,
+    "seqTooSmallOtherHandledCount": 0
+  }
+}

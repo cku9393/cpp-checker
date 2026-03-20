@@ -1,0 +1,165 @@
+{
+  "task": "rewrite_r_seq_weak_pipeline",
+  "date": "2026-03-09",
+  "baselineSummary": "verify/rewrite_r_seq_oldarcweak/summary.json",
+  "runManifest": "verify/rewrite_r_seq_weak_pipeline/run_manifest.json",
+  "runCount": 32,
+  "allRunsGreen": true,
+  "rewriteSeqCalls": 111100,
+  "rewriteSeqSucceededCases": 111100,
+  "rewriteSeqFailedCases": 0,
+  "seqFallbackCaseCount": 6894,
+  "seqRewriteWholeCoreFallbackCount": 8829,
+  "seqResolvedOldArcRepairAttemptCount": 0,
+  "seqResolvedOldArcRepairSuccessCount": 0,
+  "seqResolvedOldArcRepairFailCount": 0,
+  "seqResolvedOldArcRepairUsedCount": 0,
+  "seqResolvedOldArcWeakRepairAttemptCount": 0,
+  "seqResolvedOldArcWeakRepairSuccessCount": 0,
+  "seqResolvedOldArcWeakRepairFailCount": 0,
+  "seqResolvedOldArcWeakRepairUsedCount": 0,
+  "rewriteFallbackTriggerCounts": {
+    "RFT_NONE": 0,
+    "RFT_COMPACT_BUILD_FAIL": 566,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 1369,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 1247,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 829,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_GRAFT_REWIRE_FAIL": 4818,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_OTHER": 0
+  },
+  "seqGraftRewireSubtypeCounts": {
+    "GRB_OWNER_MINI_MISSING": 0,
+    "GRB_OWNER_MINI_SLOT_INVALID": 0,
+    "GRB_OWNER_SLOT_NOT_PROXY": 0,
+    "GRB_ACTUAL_OF_MINI_MISSING": 0,
+    "GRB_ACTUAL_SLOT_MISSING": 0,
+    "GRB_OLDARC_OUT_OF_RANGE": 0,
+    "GRB_OLDARC_DEAD": 4818,
+    "GRB_OLDARC_NOT_INCIDENT_TO_OLDNODE": 0,
+    "GRB_OUTSIDENODE_MISMATCH": 0,
+    "GRB_OLDSLOT_INVALID": 0,
+    "GRB_OLDSLOT_NOT_VIRTUAL": 0,
+    "GRB_OLDSLOT_ARCID_MISMATCH": 0,
+    "GRB_DUPLICATE_OLDARC": 0,
+    "GRB_REWIRE_RET_FALSE": 0,
+    "GRB_OTHER": 0
+  },
+  "seqResolvedOldArcRepairOutcomeCounts": {
+    "PAR_OLDARC_ALREADY_LIVE": 12468,
+    "PAR_MATCH_BY_OUTSIDENODE_AND_POLES": 0,
+    "PAR_MATCH_BY_POLES_ONLY_UNIQUE": 0,
+    "PAR_FAIL_OUTSIDENODE_DEAD": 0,
+    "PAR_FAIL_NO_CANDIDATE": 0,
+    "PAR_FAIL_MULTI_CANDIDATE": 0,
+    "PAR_FAIL_SLOT_NOT_VIRTUAL": 0,
+    "PAR_FAIL_SLOT_ARCID_MISMATCH": 0,
+    "PAR_FAIL_POLES_ONLY_MULTI_CANDIDATE": 0,
+    "PAR_FAIL_POLES_ONLY_SLOT_INVALID": 0,
+    "PAR_FAIL_POLES_ONLY_OTHER": 0,
+    "PAR_OTHER": 0
+  },
+  "seqResolvedOldArcWeakRepairOutcomeCounts": {
+    "PAR_OLDARC_ALREADY_LIVE": 0,
+    "PAR_MATCH_BY_OUTSIDENODE_AND_POLES": 0,
+    "PAR_MATCH_BY_POLES_ONLY_UNIQUE": 0,
+    "PAR_FAIL_OUTSIDENODE_DEAD": 0,
+    "PAR_FAIL_NO_CANDIDATE": 0,
+    "PAR_FAIL_MULTI_CANDIDATE": 0,
+    "PAR_FAIL_SLOT_NOT_VIRTUAL": 0,
+    "PAR_FAIL_SLOT_ARCID_MISMATCH": 0,
+    "PAR_FAIL_POLES_ONLY_MULTI_CANDIDATE": 0,
+    "PAR_FAIL_POLES_ONLY_SLOT_INVALID": 0,
+    "PAR_FAIL_POLES_ONLY_OTHER": 0,
+    "PAR_OTHER": 0
+  },
+  "seqWeakRepairGateCounts": {
+    "WRG_NOT_NEEDED_STRONG_LIVE": 12468,
+    "WRG_ENTER_PNC_SAME_POLES_BUT_OTHER_OUTSIDE": 0,
+    "WRG_SKIP_PNC_OLDNODE_NO_LIVE_ARCS": 0,
+    "WRG_SKIP_OTHER_PNC": 0,
+    "WRG_OTHER": 0
+  },
+  "seqWeakRepairCandidateCounts": {
+    "WRC_ZERO_SAME_POLE_CANDIDATES": 0,
+    "WRC_ONE_SAME_POLE_CANDIDATE": 0,
+    "WRC_MULTI_SAME_POLE_CANDIDATES": 0,
+    "WRC_SLOT_INVALID": 0,
+    "WRC_OTHER": 0
+  },
+  "seqWeakRepairCommitCounts": {
+    "WCO_NOT_ATTEMPTED": 0,
+    "WCO_FAILED_BEFORE_GRAFT": 0,
+    "WCO_GRAFT_FAIL": 0,
+    "WCO_NORMALIZE_FAIL": 0,
+    "WCO_ACTUAL_INVARIANT_FAIL": 0,
+    "WCO_ORACLE_FAIL": 0,
+    "WCO_COMMITTED": 0
+  },
+  "seqWeakRepairEnteredCount": 0,
+  "seqWeakRepairTentativeSuccessCount": 0,
+  "seqWeakRepairCommittedCount": 0,
+  "seqWeakRepairRollbackCount": 0,
+  "weakRepairDumpPaths": {
+    "WRG_NOT_NEEDED_STRONG_LIVE": "dumps/rewrite_r_seq_weak_pipeline/seq_weak_gate_WRG_NOT_NEEDED_STRONG_LIVE_seed1_tc40_step1.txt"
+  },
+  "comparisonToBaseline": {
+    "rewriteSeqCalls": {
+      "baseline": 111100,
+      "current": 111100,
+      "delta": 0
+    },
+    "seqFallbackCaseCount": {
+      "baseline": 6894,
+      "current": 6894,
+      "delta": 0
+    },
+    "seqRewriteWholeCoreFallbackCount": {
+      "baseline": 8829,
+      "current": 8829,
+      "delta": 0
+    },
+    "seqResolvedOldArcRepairAttemptCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcRepairSuccessCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcRepairFailCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcWeakRepairAttemptCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcWeakRepairSuccessCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcWeakRepairFailCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    }
+  },
+  "conclusion": "weak repair 0회의 직접 원인은 strong-live gate가 모든 resolver 시도를 흡수해 weak path가 실제로 열리지 않는 데 있다."
+}

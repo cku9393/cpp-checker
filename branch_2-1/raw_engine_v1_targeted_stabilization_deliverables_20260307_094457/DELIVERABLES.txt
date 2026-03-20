@@ -1,0 +1,11 @@
+Included
+- raw_engine_v1_package source tree excluding build dirs and standalone binaries
+- stabilization report and updated README
+- tests, reference planner, state dump, and harness changes for targeted planner stabilization
+- counterexamples directory
+- planner targeted fuzz stats logs from planner_fuzz_phase_20260307
+
+Excluded
+- build-debug/build-asan/build-release trees
+- standalone raw_engine_v1 binaries
+- large historical planner_oracle_fuzz trace corpora with no new counterexample

@@ -1,0 +1,60 @@
+{
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "outputDumpDir": "dumps/rewrite_r_seq_regression",
+  "totalCases": 5,
+  "passedCases": 5,
+  "failedCases": 0,
+  "failedCaseNames": [],
+  "cases": [
+    {
+      "name": "same_type_sp_cleanup_tc40_step1",
+      "seed": 1,
+      "tcIndex": 40,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 2.31104,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc40_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "loopshared_proxy_loop_real_tc56_step1",
+      "seed": 1,
+      "tcIndex": 56,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.21212,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc56_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "selfloop_remainder_spqrready_tc328_step1",
+      "seed": 1,
+      "tcIndex": 328,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.22087,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc328_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "selfloop_remainder_oneedge_tc444_step1",
+      "seed": 2,
+      "tcIndex": 444,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.36696,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed2_tc444_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "xshared_spqrready_tc851_step1",
+      "seed": 1,
+      "tcIndex": 851,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 0.923167,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc851_step1.txt",
+      "failures": []
+    }
+  ]
+}

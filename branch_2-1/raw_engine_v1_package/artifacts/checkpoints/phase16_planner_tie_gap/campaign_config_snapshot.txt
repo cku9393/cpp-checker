@@ -1,0 +1,6 @@
+aggregateStatsFile=artifacts/phase16_campaigns_compare/planner_tie_gap/logs/phase16_planner_tie_gap_aggregate.json
+aggregateSummaryFile=artifacts/phase16_campaigns_compare/planner_tie_gap/logs/phase16_planner_tie_gap_aggregate.summary.txt
+saveCorpusDir=artifacts/phase16_campaigns_compare/planner_tie_gap/corpus
+corpusPolicy=best
+
+run caseName=planner_oracle_fuzz mode=planner_tie_mixed_organic seeds=960101,960102,960103,960104 iters=12 stepBudget=200000 artifactDir=artifacts/phase16_campaigns_compare/planner_tie_gap statsFile=artifacts/phase16_campaigns_compare/planner_tie_gap/logs/planner_tie_gap_probe.json exactCanonicalCap=6 compareSampleRate=1.0 compareBudget=64 splitChoicePolicyMode=exact_shadow splitChoiceCompareMode=exact_full

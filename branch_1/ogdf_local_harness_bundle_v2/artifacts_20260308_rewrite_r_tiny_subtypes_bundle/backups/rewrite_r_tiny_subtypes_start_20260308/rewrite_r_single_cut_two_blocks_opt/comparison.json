@@ -1,0 +1,95 @@
+{
+  "baseline_reject_counts": {
+    "EMPTY_AFTER_DELETE": 0,
+    "NOT_BICONNECTED": 27004,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": 20429,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "baseline_stats": {
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 47433,
+    "rewriteCalls": 111100,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100
+  },
+  "baseline_subtype_counts": {
+    "NB_BLOCKS_ALL_TINY": 0,
+    "NB_COMPLEX_MULTI_CUT": 0,
+    "NB_DISCONNECTED": 0,
+    "NB_OTHER": 0,
+    "NB_PATH_OF_BLOCKS": 9543,
+    "NB_SINGLE_CUT_TWO_BLOCKS": 17461,
+    "NB_STAR_AROUND_ONE_CUT": 0
+  },
+  "delta_reject_counts": {
+    "EMPTY_AFTER_DELETE": 0,
+    "NOT_BICONNECTED": -17461,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": 0,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "delta_stats": {
+    "backendBuildRawDirectCount": 0,
+    "backendBuildRawFallbackCount": 0,
+    "compactPathOfBlocksHandled": 0,
+    "compactReadyCount": 0,
+    "compactRejectedFallbackCount": -17461,
+    "compactSingleCutTwoBlocksHandled": 17461,
+    "rewriteCalls": 0,
+    "rewriteFallbackSpecialCaseCount": 17461,
+    "rewriteFallbackWholeCoreCount": 29972,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 0
+  },
+  "delta_subtype_counts": {
+    "NB_BLOCKS_ALL_TINY": 0,
+    "NB_COMPLEX_MULTI_CUT": 0,
+    "NB_DISCONNECTED": 0,
+    "NB_OTHER": 0,
+    "NB_PATH_OF_BLOCKS": 0,
+    "NB_SINGLE_CUT_TWO_BLOCKS": 0,
+    "NB_STAR_AROUND_ONE_CUT": 0
+  },
+  "failure": null,
+  "new_reject_counts": {
+    "EMPTY_AFTER_DELETE": 0,
+    "NOT_BICONNECTED": 9543,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": 20429,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "new_stats": {
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "compactPathOfBlocksHandled": 0,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 29972,
+    "compactSingleCutTwoBlocksHandled": 17461,
+    "rewriteCalls": 111100,
+    "rewriteFallbackSpecialCaseCount": 17461,
+    "rewriteFallbackWholeCoreCount": 29972,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100
+  },
+  "new_subtype_counts": {
+    "NB_BLOCKS_ALL_TINY": 0,
+    "NB_COMPLEX_MULTI_CUT": 0,
+    "NB_DISCONNECTED": 0,
+    "NB_OTHER": 0,
+    "NB_PATH_OF_BLOCKS": 9543,
+    "NB_SINGLE_CUT_TWO_BLOCKS": 17461,
+    "NB_STAR_AROUND_ONE_CUT": 0
+  }
+}

@@ -1,0 +1,40 @@
+trigger=RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED
+xIncidentVirtualSubtype=XIV_SHARED_WITH_LOOP
+pathTaken=WHOLE_CORE_REBUILD
+why=compact build: virtual slot incident to x unsupported in first pass | x-incident virtual classify: shared with loop | x-shared residual: after-delete compact graph spqr-ready | x-shared-loop: after-delete subtype unsupported
+seed=1
+tc=851
+stepIndex=1
+sequenceLengthSoFar=2
+chosenR=0
+chosenX=3
+
+=== XIncidentVirtualSlots ===
+slot 6 poles=(3,3) loop=1 arcId=0 outsideNode=1 sideAgg.edgeCnt=1 sideAgg.vertexCnt=2
+
+=== RNodeLocalSlots ===
+nodeId=0
+alive=1 type=2
+slot 0 alive=1 kind=REAL poles=(3,4) realEdge=2
+slot 1 alive=1 kind=REAL poles=(4,5) realEdge=3
+slot 2 alive=1 kind=REAL poles=(5,6) realEdge=4
+slot 3 alive=1 kind=REAL poles=(3,5) realEdge=8
+slot 4 alive=1 kind=REAL poles=(3,6) realEdge=9
+slot 5 alive=1 kind=REAL poles=(4,6) realEdge=10
+slot 6 alive=1 kind=VIRTUAL poles=(3,3) arcId=0 oldArc=0 outsideNode=1
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(7,5,5)
+node 0 type=R localAgg=(6,4,4) subAgg=(6,4,4)
+  realEdgesHere: 2 3 4 8 9 10
+  slot 0 kind=REAL poles=(3,4) realEdge=2
+  slot 1 kind=REAL poles=(4,5) realEdge=3
+  slot 2 kind=REAL poles=(5,6) realEdge=4
+  slot 3 kind=REAL poles=(3,5) realEdge=8
+  slot 4 kind=REAL poles=(3,6) realEdge=9
+  slot 5 kind=REAL poles=(4,6) realEdge=10
+  slot 6 kind=VIRTUAL poles=(3,3) arcId=0
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 1
+  slot 0 kind=REAL poles=(2,3) realEdge=1
+  slot 1 kind=VIRTUAL poles=(3,3) arcId=0

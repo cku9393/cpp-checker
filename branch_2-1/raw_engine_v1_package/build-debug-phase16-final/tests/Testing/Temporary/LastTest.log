@@ -1,0 +1,139 @@
+Start testing: Mar 19 21:18 KST
+----------------------------------------------------------
+39/106 Testing: raw_engine_policy_gate_manifest_smoke
+39/106 Test: raw_engine_policy_gate_manifest_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "policy_gate_manifest_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_policy_gate_manifest_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=policy_gate_manifest_smoke
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_gate_manifest_smoke" end time: Mar 19 21:18 KST
+"raw_engine_policy_gate_manifest_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/106 Testing: raw_engine_policy_gate_family_filter_smoke
+40/106 Test: raw_engine_policy_gate_family_filter_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "policy_gate_family_filter_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_policy_gate_family_filter_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=policy_gate_family_filter_smoke
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_gate_family_filter_smoke" end time: Mar 19 21:18 KST
+"raw_engine_policy_gate_family_filter_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/106 Testing: raw_engine_policy_gate_non_applicable_smoke
+41/106 Test: raw_engine_policy_gate_non_applicable_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "policy_gate_non_applicable_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_policy_gate_non_applicable_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=policy_gate_non_applicable_smoke
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_gate_non_applicable_smoke" end time: Mar 19 21:18 KST
+"raw_engine_policy_gate_non_applicable_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/106 Testing: raw_engine_planner_tie_organic_applicability_drift_smoke
+42/106 Test: raw_engine_planner_tie_organic_applicability_drift_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "planner_tie_organic_applicability_drift_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_planner_tie_organic_applicability_drift_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_tie_organic_applicability_drift_smoke
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_tie_organic_applicability_drift_smoke" end time: Mar 19 21:18 KST
+"raw_engine_planner_tie_organic_applicability_drift_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/106 Testing: raw_engine_compare_ready_lineage_gate_smoke
+43/106 Test: raw_engine_compare_ready_lineage_gate_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "compare_ready_lineage_gate_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_compare_ready_lineage_gate_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=compare_ready_lineage_gate_smoke
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_compare_ready_lineage_gate_smoke" end time: Mar 19 21:18 KST
+"raw_engine_compare_ready_lineage_gate_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/106 Testing: raw_engine_policy_gate_nightly_smoke
+45/106 Test: raw_engine_policy_gate_nightly_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "policy_gate_nightly_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_policy_gate_nightly_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=policy_gate_nightly_smoke
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_gate_nightly_smoke" end time: Mar 19 21:18 KST
+"raw_engine_policy_gate_nightly_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/106 Testing: raw_engine_manifest_roundtrip_smoke
+46/106 Test: raw_engine_manifest_roundtrip_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "manifest_roundtrip_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_manifest_roundtrip_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=manifest_roundtrip_smoke
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_manifest_roundtrip_smoke" end time: Mar 19 21:18 KST
+"raw_engine_manifest_roundtrip_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/106 Testing: raw_engine_evidence_bundle_smoke
+47/106 Test: raw_engine_evidence_bundle_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "evidence_bundle_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_evidence_bundle_smoke" start time: Mar 19 21:18 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/artifacts/evidence_bundle_smoke/raw_engine_phase18_stabilization.zip
+raw_engine_v1 tests passed case=evidence_bundle_smoke
+<end of output>
+Test time =   0.07 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_evidence_bundle_smoke" end time: Mar 19 21:18 KST
+"raw_engine_evidence_bundle_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Mar 19 21:18 KST
+
+compare =   0.29 sec*proc
+
+core =   0.29 sec*proc
+
+nightly =   0.01 sec*proc
+

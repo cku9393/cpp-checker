@@ -1,0 +1,15 @@
+{
+"case":"planner_oracle_fuzz",
+"weight_profile":"weighted_split_heavy",
+"total_iterations":1000,
+"primitive_hits":{"isolate":3063,"split":0,"join":0,"integrate":0},
+"sequence_histogram":{"empty":937,"isolate_vertex":3063},
+"split_success_count":0,
+"split_rejected_count":4000,
+"direct_ab_artifact_count":674,
+"boundary_only_child_count":1000,
+"multi_edge_count":1986,
+"reducer_invocation_count":0,
+"oracle_mismatch_count":{},
+"seed_summaries":[{"seed":820002,"iterations":1000,"primitive_hits":{"isolate":3063,"split":0,"join":0,"integrate":0},"split_success_count":0,"split_rejected_count":4000,"direct_ab_artifact_count":674,"boundary_only_child_count":1000,"multi_edge_count":1986,"reducer_invocation_count":0}]
+}

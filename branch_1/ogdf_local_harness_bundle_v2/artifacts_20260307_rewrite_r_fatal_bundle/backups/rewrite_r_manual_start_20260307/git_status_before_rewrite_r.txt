@@ -1,0 +1,69 @@
+ M include/harness/project_static_adapter.hpp
+ M include/harness/types.hpp
+ M src/dump.cpp
+ M src/project_hook_shims.cpp
+ M src/project_hooks_real.cpp
+ M src/project_static_adapter.cpp
+ M ../../branch_2-1/raw_engine_v1_package/README.md
+ M ../../branch_2-1/raw_engine_v1_package/include/raw_engine/raw_engine.hpp
+ M ../../branch_2-1/raw_engine_v1_package/src/raw_validators.cpp
+ M ../../branch_2-1/raw_engine_v1_package/tests/CMakeLists.txt
+ M ../../branch_2-1/raw_engine_v1_package/tests/raw_engine_cases.cpp
+ M ../../branch_2-1/raw_engine_v1_package/tests/raw_engine_main.cpp
+ M ../../branch_2-1/raw_engine_v1_package/tests/test_harness.hpp
+?? ../backups/
+?? artifacts_20260306_mini_precheck_bundle.zip
+?? artifacts_20260306_mini_precheck_bundle/
+?? artifacts_20260307_check_reduced_invariant_bundle.zip
+?? artifacts_20260307_check_reduced_invariant_bundle/
+?? artifacts_20260307_dummy_actual_invariant_fail_bundle.zip
+?? artifacts_20260307_dummy_actual_invariant_fail_bundle/
+?? artifacts_20260307_dummy_actual_invariant_reason_bundle.zip
+?? artifacts_20260307_dummy_actual_invariant_reason_bundle/
+?? artifacts_20260307_dummy_graft_fail_bundle.zip
+?? artifacts_20260307_dummy_graft_fail_bundle/
+?? artifacts_20260307_dummy_keep_select_bundle.zip
+?? artifacts_20260307_dummy_keep_select_bundle/
+?? artifacts_20260307_dummy_manual_pass_bundle.zip
+?? artifacts_20260307_dummy_manual_pass_bundle/
+?? artifacts_20260307_dummy_proxy_rewire_fail_bundle.zip
+?? artifacts_20260307_dummy_proxy_rewire_fail_bundle/
+?? artifacts_20260307_dummy_real_set_fail_bundle.zip
+?? artifacts_20260307_dummy_real_set_fail_bundle/
+?? artifacts_20260307_rewrite_r_start_checkpoint.zip
+?? artifacts_20260307_rewrite_r_start_checkpoint/
+?? artifacts_20260307_static_dummy_green_checkpoint.zip
+?? artifacts_20260307_static_dummy_green_checkpoint/
+?? artifacts_20260307_static_dummy_green_checkpoint_rewrite_r_start.zip
+?? artifacts_20260307_static_green_checkpoint.zip
+?? artifacts_20260307_static_green_checkpoint/
+?? artifacts_20260307_static_manual_pass_bundle.zip
+?? artifacts_20260307_static_manual_pass_bundle/
+?? backups/
+?? ../../branch_2-1/raw_engine_v1_deliverables_20260306_234316.zip
+?? ../../branch_2-1/raw_engine_v1_deliverables_20260306_234316/
+?? ../../branch_2-1/raw_engine_v1_failure_sig_deliverables_20260307_010852.zip
+?? ../../branch_2-1/raw_engine_v1_failure_sig_deliverables_20260307_010852/
+?? ../../branch_2-1/raw_engine_v1_non_targeted_stabilization_deliverables_20260307_101724.zip
+?? ../../branch_2-1/raw_engine_v1_non_targeted_stabilization_deliverables_20260307_101724/
+?? ../../branch_2-1/raw_engine_v1_package/STABILIZATION_REPORT_20260306.txt
+?? ../../branch_2-1/raw_engine_v1_package/artifacts/
+?? ../../branch_2-1/raw_engine_v1_package/phase4_artifacts_20260307.zip
+?? ../../branch_2-1/raw_engine_v1_package/tests/campaigns/
+?? ../../branch_2-1/raw_engine_v1_package/tests/failure_signature.cpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/failure_signature.hpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/planner_oracle_cases.cpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/reference_model.cpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/reference_model.hpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/reference_oracle_cases.cpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/reference_planner.cpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/reference_planner.hpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/stabilization_support.cpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/stabilization_support.hpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/state_dump.cpp
+?? ../../branch_2-1/raw_engine_v1_package/tests/state_dump.hpp
+?? ../../branch_2-1/raw_engine_v1_planner_deliverables_20260307_002207.zip
+?? ../../branch_2-1/raw_engine_v1_planner_deliverables_20260307_002207/
+?? ../../branch_2-1/raw_engine_v1_planner_deliverables_20260307_002207_clean.zip
+?? ../../branch_2-1/raw_engine_v1_targeted_stabilization_deliverables_20260307_094457.zip
+?? ../../branch_2-1/raw_engine_v1_targeted_stabilization_deliverables_20260307_094457/

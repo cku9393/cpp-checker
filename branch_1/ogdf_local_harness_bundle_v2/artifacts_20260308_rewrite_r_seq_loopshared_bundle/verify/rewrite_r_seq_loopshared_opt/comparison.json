@@ -1,0 +1,226 @@
+{
+  "rewriteFallbackSpecialCaseCount": {
+    "baseline": 76779,
+    "current": 86747,
+    "delta": 9968
+  },
+  "rewriteFallbackTriggerCounts": {
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_BACKEND_BUILDRAW_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_BACKEND_BUILDRAW_S_LT3": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_CHOOSE_KEEP_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_COMPACT_BUILD_FAIL": {
+      "baseline": 6969,
+      "current": 6969,
+      "delta": 0
+    },
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": {
+      "baseline": 10156,
+      "current": 3452,
+      "delta": -6704
+    },
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": {
+      "baseline": 18852,
+      "current": 6212,
+      "delta": -12640
+    },
+    "RFT_GRAFT_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_GRAFT_REWIRE_FAIL": {
+      "baseline": 4818,
+      "current": 4818,
+      "delta": 0
+    },
+    "RFT_MATERIALIZE_MINI_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_NONE": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_PROXY_METADATA_INVALID": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_RAW_VALIDATE_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_SINGLE_CUT_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_TWO_PATH_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": {
+      "baseline": 6247,
+      "current": 6247,
+      "delta": 0
+    }
+  },
+  "rewritePathTakenCounts": {
+    "DIRECT_SPQR": 41135,
+    "SPECIAL_LOOP_SHARED": 9968,
+    "SPECIAL_PATH": 24770,
+    "SPECIAL_SINGLE_CUT": 17628,
+    "SPECIAL_TWO_PATH": 34381,
+    "WHOLE_CORE_REBUILD": 27698
+  },
+  "rewriteSeqCalls": {
+    "baseline": 111100,
+    "current": 111100,
+    "delta": 0
+  },
+  "rewriteSeqSucceededCases": {
+    "baseline": 111100,
+    "current": 111100,
+    "delta": 0
+  },
+  "seqFallbackCaseCount": {
+    "baseline": 27706,
+    "current": 18034,
+    "delta": -9672
+  },
+  "seqGraftRewireFallbackCount": {
+    "baseline": 4818,
+    "current": 4818,
+    "delta": 0
+  },
+  "seqLoopPlusEdgeSharedHandledCount": {
+    "baseline": 0,
+    "current": 9968,
+    "delta": 9968
+  },
+  "seqProxyMetadataFallbackCount": {
+    "baseline": 0,
+    "current": 0,
+    "delta": 0
+  },
+  "seqRewriteWholeCoreFallbackCount": {
+    "baseline": 47042,
+    "current": 27698,
+    "delta": -19344
+  },
+  "seqTooSmallOtherHandledCount": {
+    "baseline": 0,
+    "current": 9968,
+    "delta": 9968
+  },
+  "seqTooSmallOtherSubtypeCounts": {
+    "TSO_KIND_MIXED_ANOMALY": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TSO_LOOP_PLUS_EDGE_DISJOINT": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TSO_LOOP_PLUS_EDGE_SHARED": {
+      "baseline": 9672,
+      "current": 0,
+      "delta": -9672
+    },
+    "TSO_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TSO_TWO_LOOPS_DIFF_VERTEX": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TSO_TWO_LOOPS_SAME_VERTEX": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TSO_TWO_NONLOOP_UNCLASSIFIED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    }
+  },
+  "seqTooSmallSubtypeCounts": {
+    "TS_EMPTY": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TS_ONE_EDGE": {
+      "baseline": 9180,
+      "current": 6212,
+      "delta": -2968
+    },
+    "TS_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TS_TWO_DISCONNECTED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TS_TWO_OTHER": {
+      "baseline": 9672,
+      "current": 0,
+      "delta": -9672
+    },
+    "TS_TWO_PARALLEL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "TS_TWO_PATH": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    }
+  }
+}

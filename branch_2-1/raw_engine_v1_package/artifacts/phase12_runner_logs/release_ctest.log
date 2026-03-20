@@ -1,0 +1,4 @@
+Test project /tmp/cpp-checker-phase12-release
+      Start  1: raw_engine_micro
+ 1/99 Test  #1: raw_engine_micro ...............................................   Passed    0.01 sec
+      Start  2: raw_engine_roundtrip

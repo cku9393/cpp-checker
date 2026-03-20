@@ -1,0 +1,42 @@
+{
+  "commands": [
+    "./build/rewrite_r_harness --backend ogdf --mode rewrite-r-seq --seed 1 --rounds 100 --dump-dir dumps/rewrite_r_seq_clearpreserve/s1_r100",
+    "./build/rewrite_r_harness --backend ogdf --mode rewrite-r-seq --seed 1 --rounds 1000 --dump-dir dumps/rewrite_r_seq_clearpreserve/s1_r1000",
+    "for s in $(seq 1 10); do ./build/rewrite_r_harness --backend ogdf --mode rewrite-r-seq --seed ${s} --rounds 1000 --dump-dir dumps/rewrite_r_seq_clearpreserve/s${s}_r1000 || break; done",
+    "for s in $(seq 1 20); do ./build/rewrite_r_harness --backend ogdf --mode rewrite-r-seq --seed ${s} --rounds 5000 --dump-dir dumps/rewrite_r_seq_clearpreserve/s${s}_r5000 || break; done"
+  ],
+  "logs": [
+    "verify/rewrite_r_seq_clearpreserve/logs/s10_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s10_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s11_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s12_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s13_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s14_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s15_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s16_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s17_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s18_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s19_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s1_r100.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s1_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s1_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s20_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s2_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s2_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s3_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s3_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s4_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s4_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s5_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s5_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s6_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s6_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s7_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s7_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s8_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s8_r5000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s9_r1000.log",
+    "verify/rewrite_r_seq_clearpreserve/logs/s9_r5000.log"
+  ],
+  "allRunsGreen": true
+}

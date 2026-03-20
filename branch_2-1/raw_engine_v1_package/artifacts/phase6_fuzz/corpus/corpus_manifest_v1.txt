@@ -1,0 +1,14 @@
+raw_corpus_v1
+entries 12
+entry best_integrate family_planner_mixed_structural_s2_j2_i2 870003 random default planner_mixed_structural 2 2 2 1500 200000 928 375 750 928 750 1125 5 4
+entry best_join family_planner_mixed_structural_s2_j2_i2 870003 random default planner_mixed_structural 2 2 2 1500 200000 928 375 750 928 750 1125 5 4
+entry best_split family_planner_mixed_structural_s2_j2_i2 870003 random default planner_mixed_structural 2 2 2 1500 200000 928 375 750 928 750 1125 5 4
+entry diverse_trace family_planner_mixed_structural_s2_j2_i2 870003 random default planner_mixed_structural 2 2 2 1500 200000 928 375 750 928 750 1125 5 4
+entry best_integrate family_planner_mixed_targeted_s2_j2_i2 870002 random default planner_mixed_targeted 2 2 2 1500 200000 750 750 750 750 750 750 4 4
+entry best_join family_planner_mixed_targeted_s2_j2_i2 870002 random default planner_mixed_targeted 2 2 2 1500 200000 750 750 750 750 750 750 4 4
+entry best_split family_planner_mixed_targeted_s2_j2_i2 870002 random default planner_mixed_targeted 2 2 2 1500 200000 750 750 750 750 750 750 4 4
+entry diverse_trace family_planner_mixed_targeted_s2_j2_i2 870002 random default planner_mixed_targeted 2 2 2 1500 200000 750 750 750 750 750 750 4 4
+entry best_integrate weight_random_bias_default_s2_j2_i2 870001 random default random 2 2 2 1500 200000 534 212 427 534 424 650 6 5
+entry best_join weight_random_bias_default_s2_j2_i2 870001 random default random 2 2 2 1500 200000 534 212 427 534 424 650 6 5
+entry best_split weight_random_bias_default_s2_j2_i2 870001 random default random 2 2 2 1500 200000 534 212 427 534 424 650 6 5
+entry diverse_trace weight_random_bias_default_s2_j2_i2 870001 random default random 2 2 2 1500 200000 534 212 427 534 424 650 6 5

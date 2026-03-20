@@ -1,0 +1,104 @@
+{
+  "baseline_reject_counts": {
+    "EMPTY_AFTER_DELETE": 0,
+    "NOT_BICONNECTED": 9543,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": 20429,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "baseline_stats": {
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "compactPathOfBlocksHandled": 0,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 29972,
+    "compactSingleCutTwoBlocksHandled": 17461,
+    "compactTooSmallHandledCount": 0,
+    "rewriteCalls": 111100,
+    "rewriteFallbackSpecialCaseCount": 17461,
+    "rewriteFallbackWholeCoreCount": 29972,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100
+  },
+  "baseline_too_small_subtype_counts": {
+    "TS_EMPTY": 0,
+    "TS_ONE_EDGE": 0,
+    "TS_OTHER": 0,
+    "TS_TWO_DISCONNECTED": 0,
+    "TS_TWO_OTHER": 0,
+    "TS_TWO_PARALLEL": 0,
+    "TS_TWO_PATH": 20429
+  },
+  "delta_reject_counts": {
+    "EMPTY_AFTER_DELETE": 0,
+    "NOT_BICONNECTED": 0,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": -20429,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "delta_stats": {
+    "backendBuildRawDirectCount": 0,
+    "backendBuildRawFallbackCount": 0,
+    "compactPathOfBlocksHandled": 0,
+    "compactReadyCount": 0,
+    "compactRejectedFallbackCount": -20429,
+    "compactSingleCutTwoBlocksHandled": 0,
+    "compactTooSmallHandledCount": 20429,
+    "compactTooSmallTwoPathHandledCount": 20429,
+    "rewriteCalls": 0,
+    "rewriteFallbackSpecialCaseCount": 20429,
+    "rewriteFallbackWholeCoreCount": -20429,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 0
+  },
+  "delta_too_small_subtype_counts": {
+    "TS_EMPTY": 0,
+    "TS_ONE_EDGE": 0,
+    "TS_OTHER": 0,
+    "TS_TWO_DISCONNECTED": 0,
+    "TS_TWO_OTHER": 0,
+    "TS_TWO_PARALLEL": 0,
+    "TS_TWO_PATH": 0
+  },
+  "failure": null,
+  "new_reject_counts": {
+    "EMPTY_AFTER_DELETE": 0,
+    "NOT_BICONNECTED": 9543,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": 0,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "new_stats": {
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "compactPathOfBlocksHandled": 0,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 9543,
+    "compactSingleCutTwoBlocksHandled": 17461,
+    "compactTooSmallHandledCount": 20429,
+    "compactTooSmallTwoPathHandledCount": 20429,
+    "rewriteCalls": 111100,
+    "rewriteFallbackSpecialCaseCount": 37890,
+    "rewriteFallbackWholeCoreCount": 9543,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100
+  },
+  "new_too_small_subtype_counts": {
+    "TS_EMPTY": 0,
+    "TS_ONE_EDGE": 0,
+    "TS_OTHER": 0,
+    "TS_TWO_DISCONNECTED": 0,
+    "TS_TWO_OTHER": 0,
+    "TS_TWO_PARALLEL": 0,
+    "TS_TWO_PATH": 20429
+  }
+}

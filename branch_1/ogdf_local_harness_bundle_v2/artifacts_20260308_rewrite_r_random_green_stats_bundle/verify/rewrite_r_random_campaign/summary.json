@@ -1,0 +1,494 @@
+{
+  "results": [
+    {
+      "name": "s1_r100",
+      "seed": 1,
+      "rounds": 100,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 100,
+        "compactReadyCount": 61,
+        "compactRejectedFallbackCount": 39,
+        "backendBuildRawDirectCount": 61,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 100
+      }
+    },
+    {
+      "name": "s1_r1000",
+      "seed": 1,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 598,
+        "compactRejectedFallbackCount": 402,
+        "backendBuildRawDirectCount": 598,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s1_r1000",
+      "seed": 1,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 598,
+        "compactRejectedFallbackCount": 402,
+        "backendBuildRawDirectCount": 598,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s2_r1000",
+      "seed": 2,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 559,
+        "compactRejectedFallbackCount": 441,
+        "backendBuildRawDirectCount": 559,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s3_r1000",
+      "seed": 3,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 579,
+        "compactRejectedFallbackCount": 421,
+        "backendBuildRawDirectCount": 579,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s4_r1000",
+      "seed": 4,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 563,
+        "compactRejectedFallbackCount": 437,
+        "backendBuildRawDirectCount": 563,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s5_r1000",
+      "seed": 5,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 594,
+        "compactRejectedFallbackCount": 406,
+        "backendBuildRawDirectCount": 594,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s6_r1000",
+      "seed": 6,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 589,
+        "compactRejectedFallbackCount": 411,
+        "backendBuildRawDirectCount": 589,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s7_r1000",
+      "seed": 7,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 581,
+        "compactRejectedFallbackCount": 419,
+        "backendBuildRawDirectCount": 581,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s8_r1000",
+      "seed": 8,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 572,
+        "compactRejectedFallbackCount": 428,
+        "backendBuildRawDirectCount": 572,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s9_r1000",
+      "seed": 9,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 589,
+        "compactRejectedFallbackCount": 411,
+        "backendBuildRawDirectCount": 589,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s10_r1000",
+      "seed": 10,
+      "rounds": 1000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 1000,
+        "compactReadyCount": 560,
+        "compactRejectedFallbackCount": 440,
+        "backendBuildRawDirectCount": 560,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s1_r5000",
+      "seed": 1,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2899,
+        "compactRejectedFallbackCount": 2101,
+        "backendBuildRawDirectCount": 2899,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s2_r5000",
+      "seed": 2,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2883,
+        "compactRejectedFallbackCount": 2117,
+        "backendBuildRawDirectCount": 2883,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s3_r5000",
+      "seed": 3,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2846,
+        "compactRejectedFallbackCount": 2154,
+        "backendBuildRawDirectCount": 2846,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s4_r5000",
+      "seed": 4,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2865,
+        "compactRejectedFallbackCount": 2135,
+        "backendBuildRawDirectCount": 2865,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s5_r5000",
+      "seed": 5,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2851,
+        "compactRejectedFallbackCount": 2149,
+        "backendBuildRawDirectCount": 2851,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s6_r5000",
+      "seed": 6,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2843,
+        "compactRejectedFallbackCount": 2157,
+        "backendBuildRawDirectCount": 2843,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s7_r5000",
+      "seed": 7,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2898,
+        "compactRejectedFallbackCount": 2102,
+        "backendBuildRawDirectCount": 2898,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s8_r5000",
+      "seed": 8,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2876,
+        "compactRejectedFallbackCount": 2124,
+        "backendBuildRawDirectCount": 2876,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s9_r5000",
+      "seed": 9,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2791,
+        "compactRejectedFallbackCount": 2209,
+        "backendBuildRawDirectCount": 2791,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s10_r5000",
+      "seed": 10,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2803,
+        "compactRejectedFallbackCount": 2197,
+        "backendBuildRawDirectCount": 2803,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s11_r5000",
+      "seed": 11,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2916,
+        "compactRejectedFallbackCount": 2084,
+        "backendBuildRawDirectCount": 2916,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s12_r5000",
+      "seed": 12,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2788,
+        "compactRejectedFallbackCount": 2212,
+        "backendBuildRawDirectCount": 2788,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s13_r5000",
+      "seed": 13,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2921,
+        "compactRejectedFallbackCount": 2079,
+        "backendBuildRawDirectCount": 2921,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s14_r5000",
+      "seed": 14,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2879,
+        "compactRejectedFallbackCount": 2121,
+        "backendBuildRawDirectCount": 2879,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s15_r5000",
+      "seed": 15,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2877,
+        "compactRejectedFallbackCount": 2123,
+        "backendBuildRawDirectCount": 2877,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s16_r5000",
+      "seed": 16,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2824,
+        "compactRejectedFallbackCount": 2176,
+        "backendBuildRawDirectCount": 2824,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s17_r5000",
+      "seed": 17,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2931,
+        "compactRejectedFallbackCount": 2069,
+        "backendBuildRawDirectCount": 2931,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s18_r5000",
+      "seed": 18,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2879,
+        "compactRejectedFallbackCount": 2121,
+        "backendBuildRawDirectCount": 2879,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s19_r5000",
+      "seed": 19,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2770,
+        "compactRejectedFallbackCount": 2230,
+        "backendBuildRawDirectCount": 2770,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s20_r5000",
+      "seed": 20,
+      "rounds": 5000,
+      "returncode": 0,
+      "stats": {
+        "rewriteCalls": 5000,
+        "compactReadyCount": 2884,
+        "compactRejectedFallbackCount": 2116,
+        "backendBuildRawDirectCount": 2884,
+        "backendBuildRawFallbackCount": 0,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    }
+  ],
+  "aggregate": {
+    "rewriteCalls": 111100,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 47433,
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100
+  },
+  "first_failure": null
+}

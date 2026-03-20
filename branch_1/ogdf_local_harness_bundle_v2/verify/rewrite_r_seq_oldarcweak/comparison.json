@@ -1,0 +1,38 @@
+{
+  "baseline": {
+    "rewriteSeqCalls": 111100,
+    "seqFallbackCaseCount": 6894,
+    "seqRewriteWholeCoreFallbackCount": 8829,
+    "GRB_OLDARC_DEAD": 4818,
+    "seqResolvedOldArcRepairAttemptCount": 12468,
+    "seqResolvedOldArcRepairSuccessCount": 0,
+    "seqResolvedOldArcRepairFailCount": 12468,
+    "seqResolvedOldArcWeakRepairAttemptCount": 0,
+    "seqResolvedOldArcWeakRepairSuccessCount": 0,
+    "seqResolvedOldArcWeakRepairFailCount": 0
+  },
+  "current": {
+    "rewriteSeqCalls": 111100,
+    "seqFallbackCaseCount": 6894,
+    "seqRewriteWholeCoreFallbackCount": 8829,
+    "GRB_OLDARC_DEAD": 4818,
+    "seqResolvedOldArcRepairAttemptCount": 0,
+    "seqResolvedOldArcRepairSuccessCount": 0,
+    "seqResolvedOldArcRepairFailCount": 0,
+    "seqResolvedOldArcWeakRepairAttemptCount": 0,
+    "seqResolvedOldArcWeakRepairSuccessCount": 0,
+    "seqResolvedOldArcWeakRepairFailCount": 0
+  },
+  "delta": {
+    "rewriteSeqCalls": 0,
+    "seqFallbackCaseCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0,
+    "GRB_OLDARC_DEAD": 0,
+    "seqResolvedOldArcRepairAttemptCount": -12468,
+    "seqResolvedOldArcRepairSuccessCount": 0,
+    "seqResolvedOldArcRepairFailCount": -12468,
+    "seqResolvedOldArcWeakRepairAttemptCount": 0,
+    "seqResolvedOldArcWeakRepairSuccessCount": 0,
+    "seqResolvedOldArcWeakRepairFailCount": 0
+  }
+}

@@ -1,0 +1,13 @@
+mode=isolate_split
+seed=3736675150
+branch_count=3
+occ_count=3
+boundary_only_count=1
+max_path_len=1
+max_occ_per_branch=2
+direct_ab_count=0
+multi_edge_count=0
+shared_orig_pairs=0
+keep_occ_count=1
+op_count=1
+step_budget=200000

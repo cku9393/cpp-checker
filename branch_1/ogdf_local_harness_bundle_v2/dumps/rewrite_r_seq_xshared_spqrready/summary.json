@@ -1,0 +1,135 @@
+{
+  "aggregate_policy": {
+    "excluded_logs": [
+      "dumps/rewrite_r_seq_xshared_spqrready/s1_r1000_stdout.txt"
+    ],
+    "included_logs": [
+      "dumps/rewrite_r_seq_xshared_spqrready/s1_r100_stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed1.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed10.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed2.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed3.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed4.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed5.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed6.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed7.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed8.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_10_r1000/seed9.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed1.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed10.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed11.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed12.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed13.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed14.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed15.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed16.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed17.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed18.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed19.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed2.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed20.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed3.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed4.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed5.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed6.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed7.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed8.stdout.txt",
+      "dumps/rewrite_r_seq_xshared_spqrready/full_s1_20_r5000_clean/seed9.stdout.txt"
+    ],
+    "reason": "dedup aggregate uses s1_r100 + full_s1_10_r1000 + per-seed clean full_s1_20_r5000; excludes s1_r1000 because seed1/1000 is already included in full_s1_10_r1000"
+  },
+  "baseline_before_stage": {
+    "rewriteFallbackTriggerCounts": {
+      "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 121
+    },
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 121,
+    "seqRewriteWholeCoreFallbackCount": 121,
+    "seqXIncidentResidualSubtypeCounts": {
+      "XSR_HAFTER_SPQR_READY": 121
+    }
+  },
+  "correctness": "green",
+  "current": {
+    "rewriteFallbackSpecialCaseCount": 94461,
+    "rewriteFallbackTriggerCounts": {
+      "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+      "RFT_BACKEND_BUILDRAW_OTHER": 0,
+      "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+      "RFT_CHOOSE_KEEP_FAIL": 0,
+      "RFT_COMPACT_BUILD_FAIL": 0,
+      "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+      "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+      "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+      "RFT_GRAFT_OTHER": 0,
+      "RFT_GRAFT_REWIRE_FAIL": 0,
+      "RFT_MATERIALIZE_MINI_FAIL": 0,
+      "RFT_NONE": 0,
+      "RFT_OTHER": 0,
+      "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+      "RFT_PROXY_METADATA_INVALID": 0,
+      "RFT_RAW_VALIDATE_FAIL": 0,
+      "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+      "RFT_TWO_PATH_BUILDER_FAIL": 0,
+      "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 0
+    },
+    "rewritePathTakenCounts": {
+      "DIRECT_SPQR": 45643,
+      "SPECIAL_LOOP_SHARED": 11101,
+      "SPECIAL_ONE_EDGE": 3667,
+      "SPECIAL_PATH": 24559,
+      "SPECIAL_SELF_LOOP_ONE_EDGE": 148,
+      "SPECIAL_SELF_LOOP_SPQR_READY": 414,
+      "SPECIAL_SELF_LOOP_TWO_PATH": 6354,
+      "SPECIAL_SINGLE_CUT": 17468,
+      "SPECIAL_TWO_PATH": 30629,
+      "WHOLE_CORE_REBUILD": 0
+    },
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0,
+    "seqXIncidentResidualSubtypeCounts": {
+      "XSR_HAFTER_BUILD_FAIL": 0,
+      "XSR_HAFTER_EMPTY": 0,
+      "XSR_HAFTER_LOOP_SHARED": 0,
+      "XSR_HAFTER_ONE_EDGE": 0,
+      "XSR_HAFTER_OTHER": 0,
+      "XSR_HAFTER_OTHER_NOT_BICONNECTED": 0,
+      "XSR_HAFTER_PATH_OF_BLOCKS": 0,
+      "XSR_HAFTER_SINGLE_CUT": 0,
+      "XSR_HAFTER_SPQR_READY": 0,
+      "XSR_HAFTER_TWO_PARALLEL": 0,
+      "XSR_HAFTER_TWO_PATH": 0
+    },
+    "seqXIncidentSpqrReadyAttemptCount": 121,
+    "seqXIncidentSpqrReadyFallbackCount": 0,
+    "seqXIncidentSpqrReadyHandledCount": 121,
+    "seqXIncidentVirtualSubtypeCounts": {
+      "XIV_MIXED_OTHER": 0,
+      "XIV_MULTI_POS_PROXY": 0,
+      "XIV_ONE_POS_PROXY": 0,
+      "XIV_SHARED_WITH_LOOP": 0,
+      "XIV_ZERO_PAYLOAD": 0
+    }
+  },
+  "currentDominantRemainingTrigger": "NONE",
+  "currentDominantRemainingTriggerCount": 0,
+  "currentDominantResidualSubtype": "NONE",
+  "currentDominantResidualSubtypeCount": 0,
+  "delta_vs_baseline": {
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": -121,
+    "XSR_HAFTER_SPQR_READY": -121,
+    "seqFallbackCaseCount": -121,
+    "seqRewriteWholeCoreFallbackCount": -121
+  },
+  "nextSafeFixTarget": "none; tracked sequence fallback triggers are 0",
+  "representativeReplay": {
+    "attemptDump": "dumps/rewrite_r_seq_xshared_spqrready/seq_xshared_spqrready_attempt_seed1_tc851_step1.txt",
+    "bundle": "dumps/rewrite_r_seq_xshared_spqrready/replay/SEQ_REPLAY_CAPTURE_seed1_tc851_step1.txt",
+    "seed": 1,
+    "stdout": "dumps/rewrite_r_seq_xshared_spqrready/replay_stdout.txt",
+    "successDump": "dumps/rewrite_r_seq_xshared_spqrready/seq_xshared_spqrready_success_seed1_tc851_step1.txt",
+    "targetStep": 1,
+    "tcIndex": 851
+  }
+}

@@ -1,0 +1,178 @@
+raw_engine_v1 next stabilization phase
+date: 2026-03-07
+
+1. modified / added files
+- tests/failure_signature.hpp
+- tests/failure_signature.cpp
+- tests/reference_planner.hpp
+- tests/reference_planner.cpp
+- tests/planner_oracle_cases.cpp
+- tests/state_dump.hpp
+- tests/state_dump.cpp
+- tests/raw_engine_cases.cpp
+- tests/raw_engine_main.cpp
+- tests/test_harness.hpp
+- tests/CMakeLists.txt
+- STABILIZATION_REPORT_20260306.txt
+
+2. FailureSignature structure
+- FailureSignature fields:
+  - failureClass
+  - stage
+  - primitiveKind
+  - plannerPhase
+  - targetOcc
+  - mismatchKind
+  - canonicalStateHash
+  - oracleHash
+  - optional tracePrefixHash
+  - detail
+- FailureClass:
+  - none
+  - validator_failure
+  - primitive_oracle_mismatch
+  - planner_oracle_mismatch
+  - step_budget_exceeded
+  - sanitizer_failure
+  - crash
+- stage:
+  - primitive
+  - planner
+  - reducer
+  - replay
+- mismatchKind:
+  - validation
+  - prepare
+  - split_result / split_state
+  - join_result / join_state
+  - integrate_result / integrate_state
+  - final_state
+  - stop_condition
+  - target_prepare
+  - trace_prefix
+  - step_budget
+  - sanitizer
+  - crash
+- replay_state / replay_planner_state now print machine-readable FAIL_* lines from the structured object, including FAIL_HASH derived from structural fields only.
+
+3. reducer acceptance rules
+- reducer acceptance no longer uses detail-string equality.
+- acceptance is FailureSignature::same_failure():
+  - failureClass must match
+  - stage / primitiveKind / plannerPhase / targetOcc / mismatchKind must match when both sides carry a concrete value
+  - canonicalStateHash / oracleHash / tracePrefixHash must match when both sides are populated
+- effect:
+  - planner / primitive oracle mismatches keep the same structural mismatch class and canonical hashes
+  - step_budget_exceeded can shrink budget without getting blocked by message-format churn
+  - validator / sanitizer / crash classes are separated cleanly at replay time
+
+4. stepBudget / trace shrink strategy
+- planner reducer still shrinks raw state structurally:
+  - keepOcc
+  - occurrence removal
+  - REAL vertex removal
+  - edge removal
+- added planner-specific shrink axes:
+  - stepBudget
+  - tracePrefixLength
+  - initialQueue size
+  - per-job boundary map size inside initialQueue
+- reduced planner artifacts are now split:
+  - reduced_planner/<stem>_reduced_planner_state.txt
+  - reduced_planner/<stem>_reduced_planner_trace.log
+
+5. fuzz stats and new modes
+- new CLI:
+  - --stats
+  - --stats-file
+  - --fuzz-mode
+  - --weight-profile
+  - --max-artifacts
+  - --keep-only-failures
+  - --trace-level none|summary|full
+  - --compress-artifacts
+- collected stats:
+  - primitive hit count
+  - planner primitive sequence histogram
+  - split success / rejected count
+  - direct a-b artifact encounter count
+  - boundaryOnly child count
+  - multi-edge count
+  - reducer invocation count
+  - oracle mismatch count by class
+  - seed summary
+- supported profiles:
+  - random
+  - weighted_split_heavy
+  - weighted_join_heavy
+  - weighted_integrate_heavy
+  - artifact_heavy
+  - multiedge_heavy
+- observed distribution shift from release planner fuzz stats:
+  - random seed 820001: direct_ab_artifact_count=657, boundary_only_child_count=1897, multi_edge_count=1975
+  - artifact_heavy seed 820003: direct_ab_artifact_count=1000, boundary_only_child_count=2780
+  - multiedge_heavy seed 820004: multi_edge_count=4000
+
+6. new semantic counterexample and reproduction
+- new planner semantic counterexample found in this phase: none
+- planner oracle fuzz runs completed without planner_oracle_mismatch / validator_failure / sanitizer_failure / crash
+- replay / reduce repro commands kept:
+  - ./build-release/tests/raw_engine_tests --case replay_planner_state --state-file <file> --oracle planner --trace-level summary
+  - ./build-release/tests/raw_engine_tests --case reduce_planner_state --state-file <file> --oracle planner
+
+7. regression list
+- existing regressions kept:
+  - raw_engine_regression_44001
+  - raw_engine_regression_isolate_split_no_sep
+- new regression added in this phase: none
+
+8. artifact retention policy
+- default artifact root remains executable-parent/artifacts/
+- default deterministic roots:
+  - build-debug/tests/artifacts/
+  - build-asan/tests/artifacts/
+  - build-release/tests/artifacts/
+- subdirectories:
+  - counterexamples/
+  - reduced/
+  - reduced_planner/
+  - traces/
+  - logs/
+- policy:
+  - successful cases do not keep traces by default
+  - failure artifacts are kept
+  - reduced / reduced_planner artifacts are pruned after traces / logs / counterexamples
+  - user-provided --artifact-dir is respected as-is
+  - log-style trace artifacts can be compressed when --compress-artifacts is enabled
+- release planner fuzz stats for this phase:
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release/tests/artifacts/planner_fuzz_phase/logs/seed820001_random.json
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release/tests/artifacts/planner_fuzz_phase/logs/seed820002_split.json
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release/tests/artifacts/planner_fuzz_phase/logs/seed820003_artifact.json
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release/tests/artifacts/planner_fuzz_phase/logs/seed820004_multiedge.json
+  - /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release/tests/artifacts/planner_fuzz_phase/logs/seed820005_join.json
+
+9. verification commands and results
+- Debug:
+  - cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug
+  - cmake --build build-debug -j4
+  - ctest --test-dir build-debug --output-on-failure
+  - result: 24/24 passed
+- ASan + UBSan:
+  - cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_ENABLE_ASAN=ON -DRAW_ENGINE_ENABLE_UBSAN=ON
+  - cmake --build build-asan -j4
+  - ctest --test-dir build-asan --output-on-failure
+  - result: 24/24 passed
+- Release:
+  - cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+  - cmake --build build-release -j4
+  - ctest --test-dir build-release --output-on-failure
+  - result: 24/24 passed
+- extra planner oracle fuzz:
+  - ./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 820001 --iters 1000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release/tests/artifacts/planner_fuzz_phase --stats-file /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release/tests/artifacts/planner_fuzz_phase/logs/seed820001_random.json --fuzz-mode random
+  - repeated for seeds 820002, 820003, 820004, 820005 with profiles weighted_split_heavy, artifact_heavy, multiedge_heavy, weighted_join_heavy
+  - result: all 5 runs passed, no planner semantic counterexample found
+
+10. remaining risks
+- sampled planner fuzz traces are still isolate-heavy; the current generator/profile tuning changes artifact distribution strongly, but did not yet drive split/join/integrate hits in the 5x1000 release sweep.
+- planner reducer now shrinks stepBudget / tracePrefix / initialQueue, but it still reduces planner behavior indirectly through raw-state deletion rather than a dedicated semantic queue minimizer.
+- --compress-artifacts currently matters for log-like artifacts; replayable txt state dumps are intentionally kept uncompressed.

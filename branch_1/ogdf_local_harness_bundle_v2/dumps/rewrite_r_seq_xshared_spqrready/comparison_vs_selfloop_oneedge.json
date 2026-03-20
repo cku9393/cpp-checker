@@ -1,0 +1,29 @@
+{
+  "current": {
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "XSR_HAFTER_SPQR_READY": 0,
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0,
+    "seqXIncidentSpqrReadyAttemptCount": 121,
+    "seqXIncidentSpqrReadyFallbackCount": 0,
+    "seqXIncidentSpqrReadyHandledCount": 121
+  },
+  "delta": {
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": -121,
+    "XSR_HAFTER_SPQR_READY": -121,
+    "rewriteSeqCalls": 0,
+    "seqFallbackCaseCount": -121,
+    "seqRewriteWholeCoreFallbackCount": -121,
+    "seqXIncidentSpqrReadyAttemptCount": 121,
+    "seqXIncidentSpqrReadyFallbackCount": 0,
+    "seqXIncidentSpqrReadyHandledCount": 121
+  },
+  "previous": {
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 121,
+    "XSR_HAFTER_SPQR_READY": 121,
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 121,
+    "seqRewriteWholeCoreFallbackCount": 121
+  }
+}

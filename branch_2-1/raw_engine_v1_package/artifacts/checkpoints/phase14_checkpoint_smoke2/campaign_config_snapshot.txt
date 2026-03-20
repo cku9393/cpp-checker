@@ -1,0 +1,4 @@
+aggregateStatsFile=artifacts/phase14_campaign_checkpoint_smoke/logs/campaign_aggregate.json
+aggregateSummaryFile=artifacts/phase14_campaign_checkpoint_smoke/logs/campaign_aggregate.summary.txt
+corpusPolicy=best
+run caseName=planner_oracle_fuzz mode=split_tie_ready seeds=931001 iters=6 stepBudget=200000 artifactDir=artifacts/phase14_campaign_checkpoint_smoke statsFile=artifacts/phase14_campaign_checkpoint_smoke/logs/checkpoint_smoke_seed931001.json exactCanonicalCap=6 compareSampleRate=1.0 compareBudget=6 splitChoicePolicyMode=exact_shadow splitChoiceCompareMode=exact_full

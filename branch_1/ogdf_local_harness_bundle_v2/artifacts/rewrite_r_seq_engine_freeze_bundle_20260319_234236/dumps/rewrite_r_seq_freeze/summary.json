@@ -1,0 +1,86 @@
+{
+  "status": "frozen",
+  "engineApi": {
+    "function": "runRewriteSequenceToFixpoint",
+    "header": "include/harness/project_static_adapter.hpp",
+    "source": "src/project_static_adapter.cpp"
+  },
+  "correctness": {
+    "rewrite_r_single_step": "green",
+    "rewrite_r_seq": "green",
+    "rewriteSeqCalls": 110000,
+    "seqFallbackCaseCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0,
+    "wholeCoreRebuildCount": 0
+  },
+  "regression": {
+    "manifestPath": "regressions/rewrite_seq_cases.json",
+    "summaryPath": "dumps/rewrite_r_seq_regression/summary.json",
+    "totalCases": 6,
+    "passedCases": 6,
+    "failedCases": 0,
+    "caseNames": [
+      "same_type_sp_cleanup_tc40_step1",
+      "xshared_loopshared_proxy_loop_real_tc56_step1",
+      "selfloop_spqrready_tc328_step1",
+      "selfloop_oneedge_tc444_step1",
+      "xshared_spqrready_tc851_step1",
+      "xincident_oneedge_tc33_step1"
+    ],
+    "dumpPaths": {
+      "same_type_sp_cleanup_tc40_step1": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc40_step1.txt",
+      "xshared_loopshared_proxy_loop_real_tc56_step1": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc56_step1.txt",
+      "selfloop_spqrready_tc328_step1": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc328_step1.txt",
+      "selfloop_oneedge_tc444_step1": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed2_tc444_step1.txt",
+      "xshared_spqrready_tc851_step1": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc851_step1.txt",
+      "xincident_oneedge_tc33_step1": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc33_step1.txt"
+    }
+  },
+  "bench": {
+    "smokeSummaryPath": "dumps/rewrite_r_seq_bench_freeze/s1_r1000/summary.json",
+    "aggregateSummaryPath": "dumps/rewrite_r_seq_bench_freeze/aggregate_summary.json",
+    "dedupAggregate": {
+      "totalCases": 110000,
+      "totalRewriteCalls": 139855,
+      "rewriteSeqCalls": 110000,
+      "totalElapsedMs": 28063.342,
+      "avgCaseMs": 0.2551212909090909,
+      "avgRewriteMs": 0.2006602695649065,
+      "maxCaseMs": 36.3664,
+      "maxSequenceLength": 3,
+      "seqFallbackCaseCount": 0,
+      "seqRewriteWholeCoreFallbackCount": 0,
+      "rewriteFallbackSpecialCaseCount": 94375,
+      "wholeCoreRebuildCount": 0
+    },
+    "performanceGate": {
+      "priorTimingBaselineAvailable": false,
+      "note": "No older dedicated bench summary existed for the exact freeze gate. Internal scale check uses current smoke vs full campaign averages.",
+      "smokeAvgCaseMs": 0.259429,
+      "fullCampaignAvgCaseMs": 0.25553440000000005,
+      "fullVsSmokeRatio": 0.9849878001302862,
+      "severeRegressionThreshold": 2.0,
+      "passesInternalScaleGate": true
+    }
+  },
+  "featureFlag": "USE_REWRITE_SEQ_ENGINE",
+  "nextStage": "solver integration / end-to-end compare mode",
+  "docs": {
+    "freeze": "docs/rewrite_seq_engine_freeze_ko.md",
+    "apiExample": "docs/rewrite_seq_engine_api_example_ko.md",
+    "solverChecklist": "docs/rewrite_seq_solver_integration_checklist_ko.md",
+    "solverCompareSkeleton": "docs/rewrite_seq_solver_compare_mode_skeleton_ko.md"
+  },
+  "verification": {
+    "verified": true,
+    "manifestCaseCount": 6,
+    "regressionFailedCases": 0,
+    "benchSummaryCount": 31,
+    "problems": []
+  },
+  "git": {
+    "head": "179336d2faf130faa0da3d70b4c614209f0ba998",
+    "dirtyWorktree": true,
+    "tagPolicy": "no git tag created; freeze is anchored by artifact zip + summary because HEAD does not capture uncommitted workspace state"
+  }
+}

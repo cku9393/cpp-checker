@@ -1,0 +1,62 @@
+{
+  "baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_selfloop_two_path_opt/summary.json",
+  "current_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/summary.json",
+  "dominant_trigger": {
+    "baseline": [
+      "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED",
+      6247
+    ],
+    "current": [
+      "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED",
+      6247
+    ]
+  },
+  "stats_delta": {
+    "rewriteSeqCalls": 0,
+    "rewriteSeqSucceededCases": 0,
+    "rewriteSeqFailedCases": 0,
+    "seqFallbackCaseCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0,
+    "rewriteFallbackSpecialCaseCount": 0,
+    "seqGraftRewireFallbackCount": 0,
+    "seqProxyMetadataFallbackCount": 0
+  },
+  "trigger_count_delta": {
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_COMPACT_BUILD_FAIL": 0,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_GRAFT_REWIRE_FAIL": 0,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_NONE": 0,
+    "RFT_OTHER": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 0
+  },
+  "xincident_subtype_breakdown": {
+    "XIV_ZERO_PAYLOAD": 0,
+    "XIV_ONE_POS_PROXY": 0,
+    "XIV_MULTI_POS_PROXY": 0,
+    "XIV_SHARED_WITH_LOOP": 6247,
+    "XIV_MIXED_OTHER": 0
+  },
+  "xincident_case_counts": {
+    "XIV_ZERO_PAYLOAD": 0,
+    "XIV_ONE_POS_PROXY": 0,
+    "XIV_MULTI_POS_PROXY": 0,
+    "XIV_SHARED_WITH_LOOP": 6247,
+    "XIV_MIXED_OTHER": 0
+  },
+  "xincident_dump_paths": {
+    "XIV_SHARED_WITH_LOOP": "dumps/rewrite_r_seq_xincident/seq_fallback_XIV_SHARED_WITH_LOOP_seed1_tc0_step1.txt"
+  }
+}

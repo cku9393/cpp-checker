@@ -1,0 +1,69 @@
+{
+  "baseline": {
+    "rewriteCalls": 111100,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 47433,
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100,
+    "compactRejectReasonCounts": {
+      "EMPTY_AFTER_DELETE": 0,
+      "TOO_SMALL_FOR_SPQR": 20429,
+      "NOT_BICONNECTED": 27004,
+      "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+      "SELF_LOOP": 0,
+      "OWNER_NOT_R": 0,
+      "X_NOT_PRESENT_IN_R": 0,
+      "OTHER": 0
+    },
+    "firstRejectDumpPaths": {
+      "EMPTY_AFTER_DELETE": "",
+      "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+      "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+      "X_INCIDENT_VIRTUAL_UNSUPPORTED": "",
+      "SELF_LOOP": "",
+      "OWNER_NOT_R": "",
+      "X_NOT_PRESENT_IN_R": "",
+      "OTHER": ""
+    }
+  },
+  "optimized": {
+    "rewriteCalls": 111100,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 47433,
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100,
+    "compactRejectReasonCounts": {
+      "EMPTY_AFTER_DELETE": 0,
+      "TOO_SMALL_FOR_SPQR": 20429,
+      "NOT_BICONNECTED": 27004,
+      "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+      "SELF_LOOP": 0,
+      "OWNER_NOT_R": 0,
+      "X_NOT_PRESENT_IN_R": 0,
+      "OTHER": 0
+    },
+    "firstRejectDumpPaths": {
+      "EMPTY_AFTER_DELETE": "",
+      "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+      "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+      "X_INCIDENT_VIRTUAL_UNSUPPORTED": "",
+      "SELF_LOOP": "",
+      "OWNER_NOT_R": "",
+      "X_NOT_PRESENT_IN_R": "",
+      "OTHER": ""
+    }
+  },
+  "delta": {
+    "compactReadyCount": 0,
+    "compactRejectedFallbackCount": 0,
+    "backendBuildRawDirectCount": 0,
+    "backendBuildRawFallbackCount": 0,
+    "compactReadyPct": 0.0,
+    "compactRejectedFallbackPct": 0.0
+  },
+  "selected_reason": "NOT_BICONNECTED"
+}

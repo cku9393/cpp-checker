@@ -1,0 +1,39 @@
+raw_state_v1
+primitive integrate
+sid 4294967295
+occ 0
+left_sid 4294967295
+right_sid 4294967295
+parent_sid 0
+child_sid 1
+a_orig 4294967295
+b_orig 4294967295
+boundary_map 2
+bm 6 6
+bm 6 8
+keep_occ 1 0
+through_branches 2 0 1
+sequence 2 integrate join
+vertices 8
+v 0 0 6 0
+v 1 0 8 0
+v 2 0 2 0
+v 3 1 9 0
+v 4 0 6 0
+v 5 0 8 0
+v 6 0 11 0
+v 7 1 14 1
+edges 6
+e 0 3 2 1 0 0
+e 1 2 0 0 0 0
+e 2 0 1 0 0 0
+e 3 7 6 1 0 0
+e 4 6 4 0 0 0
+e 5 6 5 0 0 0
+skeletons 2
+s 0 4 0 1 2 3 3 0 1 2 1 0
+s 1 4 4 5 6 7 3 3 4 5 1 1
+occurrences 2
+o 0 9 0 3 0 2 1 2
+o 1 14 1 7 0 2 4 5
+end

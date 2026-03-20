@@ -1,0 +1,59 @@
+selected_pair=2,8
+fast_selected_pair=2,6
+policy_selected_pair=2,8
+exact_shadow_selected_pair=2,8
+exact_full_selected_pair=2,8
+exact_representative_pair=4294967295,4294967295
+admissible_pair_count=6
+compared_pair_count=6
+fully_equivalent_count=1
+same_stop_different_final_state_count=1
+semantic_mismatch_count=4
+selected_equivalence_class_size=1
+max_equivalence_class_size=1
+selected_pair_representative=1
+exact_audit_available=0
+fast_class_count=4
+exact_class_count=0
+exact_vs_fast_class_disagreement_count=0
+representative_shift_count=0
+representative_shift_same_class_count=0
+representative_shift_semantic_divergence_count=0
+representative_shift_followup_divergence_count=0
+representative_shift_trace_divergence_count=0
+harmless_shift_count=0
+trace_only_shift_count=0
+semantic_shift_count=0
+representative_shift_kind=none
+representative_shifted=0
+exact_representative_selected=0
+split_choice_compare_state_count=0
+split_choice_exact_shadow_eval_count=6
+split_choice_exact_full_eval_count=6
+split_choice_fallback_count=0
+split_choice_same_representative_count=0
+split_choice_same_semantic_class_count=0
+split_choice_same_final_state_count=0
+split_choice_semantic_disagreement_count=0
+split_choice_cap_hit_count=1
+split_choice_harmless_compare_count=0
+split_choice_trace_only_compare_count=0
+candidate_enumeration_ns=289375
+exact_shadow_evaluation_ns=281773500
+exact_full_evaluation_ns=12295125
+canonicalization_ns=0
+multiclass_catalog_ns=0
+state_hash_cache_hit_count=0
+state_hash_cache_miss_count=1
+candidate_evaluation_cache_hit_count=0
+candidate_evaluation_cache_miss_count=6
+exact_canonical_cache_hit_count=0
+exact_canonical_cache_miss_count=0
+split_choice_exact_shadow_vs_exact_full_shifted=0
+split_choice_exact_shadow_vs_exact_full_shift_kind=none
+pair=2,6 selected=0 fast_selected=1 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=same_stop_different_final_state stop=1 final=94fe2e787412d48f target_prepare=801665d7a206d1ec trace=47fe0d7eaf8e51e3 fast_class=3feec04fe1a5cfac
+pair=2,8 selected=1 fast_selected=0 policy_selected=1 exact_shadow_selected=1 exact_full_selected=1 grade=fully_equivalent stop=1 final=8d71e4776d3b1ae1 target_prepare=801665d7a206d1ec trace=47fe0d7eaf8e51e3 fast_class=6bb8fdb7171a2606
+pair=4,6 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=ba4ef2f52b706ec9 target_prepare=801665d7a206d1ec trace=47fe0d7eaf8e51e3 fast_class=fffb8cb1de14aabb
+pair=4,8 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=50524443659fe2b7 target_prepare=801665d7a206d1ec trace=47fe0d7eaf8e51e3 fast_class=3feec04fe1a5cfac
+pair=4,3001 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=e8852f1f3c2544db target_prepare=801665d7a206d1ec trace=47fe0d7eaf8e51e3 fast_class=2b5da0ab0bfbb1ad
+pair=6,3001 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=20c3e741c4aec6d3 target_prepare=801665d7a206d1ec trace=47fe0d7eaf8e51e3 fast_class=2b5da0ab0bfbb1ad

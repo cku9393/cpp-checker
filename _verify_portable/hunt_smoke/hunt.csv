@@ -1,0 +1,25 @@
+mode,n,seed,shuffle_labels,shuffle_queries,solver_rc,timed_out,val_ok,sec,rss_kb,case_dir
+comb_rect_dense,128,1,0,0,0,0,1,0.413364,2176,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n128/seed1_L0_Q0
+comb_rect_dense,128,1,0,1,0,0,1,0.012181,2176,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n128/seed1_L0_Q1
+comb_rect_dense,128,1,1,0,0,0,1,0.012581,2176,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n128/seed1_L1_Q0
+comb_rect_dense,128,1,1,1,0,0,1,0.011266,2176,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n128/seed1_L1_Q1
+comb_rect_dense,256,1,0,0,0,0,1,0.025258,2624,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n256/seed1_L0_Q0
+comb_rect_dense,256,1,0,1,0,0,1,0.024043,2624,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n256/seed1_L0_Q1
+comb_rect_dense,256,1,1,0,0,0,1,0.025160,2624,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n256/seed1_L1_Q0
+comb_rect_dense,256,1,1,1,0,0,1,0.025065,2624,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/comb_rect_dense/n256/seed1_L1_Q1
+multi_comb_rect,128,1,0,0,0,0,1,0.012547,2128,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n128/seed1_L0_Q0
+multi_comb_rect,128,1,0,1,0,0,1,0.010997,2128,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n128/seed1_L0_Q1
+multi_comb_rect,128,1,1,0,0,0,1,0.011592,2128,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n128/seed1_L1_Q0
+multi_comb_rect,128,1,1,1,0,0,1,0.012594,2128,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n128/seed1_L1_Q1
+multi_comb_rect,256,1,0,0,0,0,1,0.012550,2464,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n256/seed1_L0_Q0
+multi_comb_rect,256,1,0,1,0,0,1,0.010481,2464,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n256/seed1_L0_Q1
+multi_comb_rect,256,1,1,0,0,0,1,0.010708,2464,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n256/seed1_L1_Q0
+multi_comb_rect,256,1,1,1,0,0,1,0.012561,2464,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/multi_comb_rect/n256/seed1_L1_Q1
+balanced_dense,128,1,0,0,0,0,1,0.010684,2064,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n128/seed1_L0_Q0
+balanced_dense,128,1,0,1,0,0,1,0.012562,2064,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n128/seed1_L0_Q1
+balanced_dense,128,1,1,0,0,0,1,0.010866,2064,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n128/seed1_L1_Q0
+balanced_dense,128,1,1,1,0,0,1,0.011446,2064,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n128/seed1_L1_Q1
+balanced_dense,256,1,0,0,0,0,1,0.010629,2240,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n256/seed1_L0_Q0
+balanced_dense,256,1,0,1,0,0,1,0.012213,2240,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n256/seed1_L0_Q1
+balanced_dense,256,1,1,0,0,0,1,0.012707,2256,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n256/seed1_L1_Q0
+balanced_dense,256,1,1,1,0,0,1,0.012572,2256,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_portable/hunt_smoke/runs/balanced_dense/n256/seed1_L1_Q1

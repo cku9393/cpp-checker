@@ -1,0 +1,14 @@
+raw_corpus_v1
+entries 12
+entry best_integrate family_planner_mixed_structural_s2_j2_i2 880003 random default planner_mixed_structural 2 2 2 1500 200000 938 375 750 938 750 1125 5 4
+entry best_join family_planner_mixed_structural_s2_j2_i2 880003 random default planner_mixed_structural 2 2 2 1500 200000 938 375 750 938 750 1125 5 4
+entry best_split family_planner_mixed_structural_s2_j2_i2 880003 random default planner_mixed_structural 2 2 2 1500 200000 938 375 750 938 750 1125 5 4
+entry diverse_trace family_planner_mixed_structural_s2_j2_i2 880003 random default planner_mixed_structural 2 2 2 1500 200000 938 375 750 938 750 1125 5 4
+entry best_integrate family_planner_tie_mixed_s2_j2_i2 880002 random default planner_tie_mixed 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry best_join family_planner_tie_mixed_s2_j2_i2 880002 random default planner_tie_mixed 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry best_split family_planner_tie_mixed_s2_j2_i2 880002 random default planner_tie_mixed 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry diverse_trace family_planner_tie_mixed_s2_j2_i2 880002 random default planner_tie_mixed 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry best_integrate family_split_tie_ready_s2_j2_i2 880001 random default split_tie_ready 2 2 2 1500 200000 1500 0 0 1500 0 0 1 1
+entry best_join family_split_tie_ready_s2_j2_i2 880001 random default split_tie_ready 2 2 2 1500 200000 1500 0 0 1500 0 0 1 1
+entry best_split family_split_tie_ready_s2_j2_i2 880001 random default split_tie_ready 2 2 2 1500 200000 1500 0 0 1500 0 0 1 1
+entry diverse_trace family_split_tie_ready_s2_j2_i2 880001 random default split_tie_ready 2 2 2 1500 200000 1500 0 0 1500 0 0 1 1

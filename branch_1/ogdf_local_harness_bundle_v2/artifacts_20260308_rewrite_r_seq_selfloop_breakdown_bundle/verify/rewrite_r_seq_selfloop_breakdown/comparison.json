@@ -1,0 +1,195 @@
+{
+  "rewriteFallbackTriggerCounts": {
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_BACKEND_BUILDRAW_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_BACKEND_BUILDRAW_S_LT3": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_CHOOSE_KEEP_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_COMPACT_BUILD_FAIL": {
+      "baseline": 6969,
+      "current": 6969,
+      "delta": 0
+    },
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": {
+      "baseline": 3452,
+      "current": 3452,
+      "delta": 0
+    },
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": {
+      "baseline": 6212,
+      "current": 6212,
+      "delta": 0
+    },
+    "RFT_GRAFT_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_GRAFT_REWIRE_FAIL": {
+      "baseline": 4818,
+      "current": 4818,
+      "delta": 0
+    },
+    "RFT_MATERIALIZE_MINI_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_NONE": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_PROXY_METADATA_INVALID": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_RAW_VALIDATE_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_SINGLE_CUT_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_TWO_PATH_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": {
+      "baseline": 6247,
+      "current": 6247,
+      "delta": 0
+    }
+  },
+  "seqCompactBuildFailSubtypeCounts": {
+    "CBF_DUPLICATE_COMPACT_EDGE": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_EMPTY_VERTEX_SET": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_NODE_DEAD": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_NODE_NOT_R": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_PROXY_OLDARC_INVALID": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_PROXY_OLDSLOT_ARC_MISMATCH": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_PROXY_OLDSLOT_INVALID": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_PROXY_OUTSIDENODE_INVALID": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_REAL_ENDPOINT_NOT_MAPPED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "CBF_SELF_LOOP_PRECHECK": {
+      "baseline": 6969,
+      "current": 6969,
+      "delta": 0
+    },
+    "CBF_X_NOT_PRESENT_IN_R": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    }
+  },
+  "seqFallbackCaseCount": {
+    "baseline": 18034,
+    "current": 18034,
+    "delta": 0
+  },
+  "seqRewriteWholeCoreFallbackCount": {
+    "baseline": 27698,
+    "current": 27698,
+    "delta": 0
+  },
+  "seqSelfLoopCaseCountsBySubtype": {
+    "SL_MIXED_REAL_PROXY_LOOP": 0,
+    "SL_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 148,
+    "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+    "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+    "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 418,
+    "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 6403,
+    "SL_REAL_LOOP_PRESENT": 0
+  },
+  "seqSelfLoopSubtypeCounts": {
+    "SL_MIXED_REAL_PROXY_LOOP": 0,
+    "SL_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 148,
+    "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+    "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+    "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 418,
+    "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 6403,
+    "SL_REAL_LOOP_PRESENT": 0
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "campaign_runs": [
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s1_r100",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s1_r100.log",
+      "returncode": 0,
+      "rounds": 100,
+      "seed": 1
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s1_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s1_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 1
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s1_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s1_r1000_loop.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 1
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s2_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s2_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 2
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s3_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s3_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 3
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s4_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s4_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 4
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s5_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s5_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 5
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s6_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s6_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 6
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s7_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s7_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 7
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s8_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s8_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 8
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s9_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s9_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 9
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s10_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s10_r1000.log",
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 10
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s1_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s1_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 1
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s2_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s2_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 2
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s3_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s3_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 3
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s4_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s4_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 4
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s5_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s5_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 5
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s6_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s6_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 6
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s7_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s7_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 7
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s8_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s8_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 8
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s9_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s9_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 9
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s10_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s10_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 10
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s11_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s11_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 11
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s12_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s12_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 12
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s13_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s13_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 13
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s14_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s14_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 14
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s15_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s15_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 15
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s16_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s16_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 16
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s17_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s17_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 17
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s18_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s18_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 18
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s19_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s19_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 19
+    },
+    {
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftbreakdown/s20_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftbreakdown/logs/s20_r5000.log",
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 20
+    }
+  ],
+  "dominantGraftRewireSubtype": "GRB_OLDSLOT_INVALID",
+  "dominantGraftRewireSubtypeCount": 4020,
+  "firstGraftRewireDumpPaths": {
+    "GRB_OLDARC_DEAD": "dumps/rewrite_r_seq_graftbreakdown/seq_fallback_GRB_OLDARC_DEAD_seed1_tc817_step1.txt",
+    "GRB_OLDSLOT_INVALID": "dumps/rewrite_r_seq_graftbreakdown/seq_fallback_GRB_OLDSLOT_INVALID_seed1_tc40_step1.txt"
+  },
+  "rewriteFallbackTriggerCounts": {
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_COMPACT_BUILD_FAIL": 566,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 1247,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 829,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_GRAFT_REWIRE_FAIL": 4818,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_NONE": 0,
+    "RFT_OTHER": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 1369
+  },
+  "rewriteSeqCalls": 111100,
+  "rewriteSeqFailedCases": 0,
+  "rewriteSeqSucceededCases": 111100,
+  "seqFallbackCaseCount": 6894,
+  "seqGraftRewireAtStepCounts": {
+    "step1_GRB_OLDARC_DEAD": 798,
+    "step1_GRB_OLDSLOT_INVALID": 4020
+  },
+  "seqGraftRewireCaseCountsBySubtype": {
+    "GRB_ACTUAL_OF_MINI_MISSING": 0,
+    "GRB_ACTUAL_SLOT_MISSING": 0,
+    "GRB_DUPLICATE_OLDARC": 0,
+    "GRB_OLDARC_DEAD": 798,
+    "GRB_OLDARC_NOT_INCIDENT_TO_OLDNODE": 0,
+    "GRB_OLDARC_OUT_OF_RANGE": 0,
+    "GRB_OLDSLOT_ARCID_MISMATCH": 0,
+    "GRB_OLDSLOT_INVALID": 4020,
+    "GRB_OLDSLOT_NOT_VIRTUAL": 0,
+    "GRB_OTHER": 0,
+    "GRB_OUTSIDENODE_MISMATCH": 0,
+    "GRB_OWNER_MINI_MISSING": 0,
+    "GRB_OWNER_MINI_SLOT_INVALID": 0,
+    "GRB_OWNER_SLOT_NOT_PROXY": 0,
+    "GRB_REWIRE_RET_FALSE": 0
+  },
+  "seqGraftRewireFallbackCount": 4818,
+  "seqGraftRewireSubtypeCounts": {
+    "GRB_ACTUAL_OF_MINI_MISSING": 0,
+    "GRB_ACTUAL_SLOT_MISSING": 0,
+    "GRB_DUPLICATE_OLDARC": 0,
+    "GRB_OLDARC_DEAD": 798,
+    "GRB_OLDARC_NOT_INCIDENT_TO_OLDNODE": 0,
+    "GRB_OLDARC_OUT_OF_RANGE": 0,
+    "GRB_OLDSLOT_ARCID_MISMATCH": 0,
+    "GRB_OLDSLOT_INVALID": 4020,
+    "GRB_OLDSLOT_NOT_VIRTUAL": 0,
+    "GRB_OTHER": 0,
+    "GRB_OUTSIDENODE_MISMATCH": 0,
+    "GRB_OWNER_MINI_MISSING": 0,
+    "GRB_OWNER_MINI_SLOT_INVALID": 0,
+    "GRB_OWNER_SLOT_NOT_PROXY": 0,
+    "GRB_REWIRE_RET_FALSE": 0
+  },
+  "seqProxyMetadataFallbackCount": 0,
+  "seqRewriteWholeCoreFallbackCount": 8829
+}

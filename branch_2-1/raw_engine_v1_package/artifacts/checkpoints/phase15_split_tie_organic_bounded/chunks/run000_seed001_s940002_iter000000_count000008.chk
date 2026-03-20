@@ -1,0 +1,14 @@
+run_index=0
+seed_index=1
+seed=940002
+iter_start=0
+iter_count=8
+total_iterations=8
+compare_state_count=8
+semantic_disagreement_count=0
+fallback_count=0
+case_name=planner_oracle_fuzz
+mode=split_tie_organic_symmetric
+artifact_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase15_campaigns_bounded/split_tie_organic
+stats_file=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase15_split_tie_organic_bounded/chunks/run000_seed001_s940002_iter000000_count000008.json
+summary_file=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase15_split_tie_organic_bounded/chunks/run000_seed001_s940002_iter000000_count000008.summary.txt

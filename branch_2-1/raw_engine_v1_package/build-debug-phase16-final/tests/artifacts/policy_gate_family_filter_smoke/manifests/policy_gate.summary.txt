@@ -1,0 +1,4 @@
+policy_gate_summary split_tie_organic_symmetric=PASS planner_tie_mixed_organic=NON_APPLICABLE planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY
+family=split_tie_organic_symmetric status=PASS role=production_family compared=32 eligible=32 completed=32 rationale=direct compare evidence satisfied
+family=planner_tie_mixed_organic status=NON_APPLICABLE role=production_family compared=0 eligible=0 completed=0 rationale=no_split_ready remains dominant and compare relevance stayed below threshold
+family=planner_tie_mixed_organic_compare_ready status=DIAGNOSTIC_ONLY role=diagnostic_support_family compared=32 eligible=32 completed=32 rationale=diagnostic compare family met bounded exact evidence and lineage consistency; not counted as production evidence

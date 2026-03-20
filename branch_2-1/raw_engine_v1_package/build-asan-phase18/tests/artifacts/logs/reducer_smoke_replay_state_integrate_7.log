@@ -1,0 +1,3 @@
+Assertion failed: (false), function copy_old_vertex, file raw_core.cpp, line 32.
+raw_engine_tests fatal signal=6
+failure_context case=replay_state

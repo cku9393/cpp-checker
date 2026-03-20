@@ -1,0 +1,230 @@
+{
+  "task": "rewrite_r_seq_weak_pipeline",
+  "date": "2026-03-09",
+  "runs": [
+    {
+      "label": "s10_r1000",
+      "seed": 10,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s10_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s10_r1000.log"
+    },
+    {
+      "label": "s10_r5000",
+      "seed": 10,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s10_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s10_r5000.log"
+    },
+    {
+      "label": "s11_r5000",
+      "seed": 11,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s11_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s11_r5000.log"
+    },
+    {
+      "label": "s12_r5000",
+      "seed": 12,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s12_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s12_r5000.log"
+    },
+    {
+      "label": "s13_r5000",
+      "seed": 13,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s13_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s13_r5000.log"
+    },
+    {
+      "label": "s14_r5000",
+      "seed": 14,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s14_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s14_r5000.log"
+    },
+    {
+      "label": "s15_r5000",
+      "seed": 15,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s15_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s15_r5000.log"
+    },
+    {
+      "label": "s16_r5000",
+      "seed": 16,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s16_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s16_r5000.log"
+    },
+    {
+      "label": "s17_r5000",
+      "seed": 17,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s17_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s17_r5000.log"
+    },
+    {
+      "label": "s18_r5000",
+      "seed": 18,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s18_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s18_r5000.log"
+    },
+    {
+      "label": "s19_r5000",
+      "seed": 19,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s19_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s19_r5000.log"
+    },
+    {
+      "label": "s1_r100",
+      "seed": 1,
+      "rounds": 100,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s1_r100",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s1_r100.log"
+    },
+    {
+      "label": "s1_r1000",
+      "seed": 1,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s1_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s1_r1000.log"
+    },
+    {
+      "label": "s1_r1000_single",
+      "seed": 1,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s1_r1000_single",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s1_r1000_single.log"
+    },
+    {
+      "label": "s1_r5000",
+      "seed": 1,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s1_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s1_r5000.log"
+    },
+    {
+      "label": "s20_r5000",
+      "seed": 20,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s20_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s20_r5000.log"
+    },
+    {
+      "label": "s2_r1000",
+      "seed": 2,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s2_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s2_r1000.log"
+    },
+    {
+      "label": "s2_r5000",
+      "seed": 2,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s2_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s2_r5000.log"
+    },
+    {
+      "label": "s3_r1000",
+      "seed": 3,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s3_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s3_r1000.log"
+    },
+    {
+      "label": "s3_r5000",
+      "seed": 3,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s3_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s3_r5000.log"
+    },
+    {
+      "label": "s4_r1000",
+      "seed": 4,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s4_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s4_r1000.log"
+    },
+    {
+      "label": "s4_r5000",
+      "seed": 4,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s4_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s4_r5000.log"
+    },
+    {
+      "label": "s5_r1000",
+      "seed": 5,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s5_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s5_r1000.log"
+    },
+    {
+      "label": "s5_r5000",
+      "seed": 5,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s5_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s5_r5000.log"
+    },
+    {
+      "label": "s6_r1000",
+      "seed": 6,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s6_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s6_r1000.log"
+    },
+    {
+      "label": "s6_r5000",
+      "seed": 6,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s6_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s6_r5000.log"
+    },
+    {
+      "label": "s7_r1000",
+      "seed": 7,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s7_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s7_r1000.log"
+    },
+    {
+      "label": "s7_r5000",
+      "seed": 7,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s7_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s7_r5000.log"
+    },
+    {
+      "label": "s8_r1000",
+      "seed": 8,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s8_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s8_r1000.log"
+    },
+    {
+      "label": "s8_r5000",
+      "seed": 8,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s8_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s8_r5000.log"
+    },
+    {
+      "label": "s9_r1000",
+      "seed": 9,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s9_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s9_r1000.log"
+    },
+    {
+      "label": "s9_r5000",
+      "seed": 9,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_weak_pipeline/s9_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/logs/s9_r5000.log"
+    }
+  ]
+}

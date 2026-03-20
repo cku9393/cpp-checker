@@ -1,0 +1,50 @@
+trigger=RFT_COMPACT_BUILD_FAIL
+buildFailSubtype=CBF_SELF_LOOP_PRECHECK
+selfLoopSubtype=SL_PROXY_ONLY_REMAINDER_SPQR_READY
+why=rewriteR: compact local graph has self-loop | self-loop classify: proxy-only, remainder spqr-ready
+seed=1
+tc=328
+stepIndex=1
+sequenceLengthSoFar=2
+chosenR=0
+chosenX=1
+
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=1
+origOfCv: [0->4] [1->5] [2->6]
+edge#0 kind=REAL cv=(0,1) orig=(4,5) realEdge=3
+edge#1 kind=REAL cv=(1,2) orig=(5,6) realEdge=4
+edge#2 kind=REAL cv=(0,2) orig=(4,6) realEdge=11
+edge#3 kind=PROXY cv=(0,0) orig=(4,4) oldArc=0 outsideNode=1 oldSlotInU=6 sideAgg=(1,2,2)
+
+=== SelfLoops ===
+inputEdgeId=3 kind=PROXY poles=(4,4)
+
+=== RemainderSummary ===
+removedLoopEdgeIds: 3
+remainderEdgeCount=3
+remainderVertexCount=3
+remainderClassify=ok spqr-ready
+
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=1
+origOfCv: [0->4] [1->5] [2->6]
+edge#0 kind=REAL cv=(0,1) orig=(4,5) realEdge=3
+edge#1 kind=REAL cv=(1,2) orig=(5,6) realEdge=4
+edge#2 kind=REAL cv=(0,2) orig=(4,6) realEdge=11
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(7,5,5)
+node 0 type=R localAgg=(6,4,4) subAgg=(6,4,4)
+  realEdgesHere: 3 4 5 6 7 11
+  slot 0 kind=REAL poles=(4,5) realEdge=3
+  slot 1 kind=REAL poles=(5,6) realEdge=4
+  slot 2 kind=REAL poles=(1,6) realEdge=5
+  slot 3 kind=REAL poles=(1,4) realEdge=6
+  slot 4 kind=REAL poles=(1,5) realEdge=7
+  slot 5 kind=REAL poles=(4,6) realEdge=11
+  slot 6 kind=VIRTUAL poles=(4,4) arcId=0
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 2
+  slot 0 kind=REAL poles=(3,4) realEdge=2
+  slot 1 kind=VIRTUAL poles=(4,4) arcId=0

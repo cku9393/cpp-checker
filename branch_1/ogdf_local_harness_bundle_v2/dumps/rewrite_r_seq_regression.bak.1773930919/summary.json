@@ -1,0 +1,80 @@
+{
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "outputDumpDir": "dumps/rewrite_r_seq_regression",
+  "totalCases": 7,
+  "passedCases": 5,
+  "failedCases": 2,
+  "failedCaseNames": ["seq_loopshared_proxy_loop_real_tc56_step1", "seq_generic_oneedge_tc328_step2"],
+  "cases": [
+    {
+      "name": "seq_spcleanup_tc40_step1",
+      "seed": 1,
+      "tcIndex": 40,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 3.41396,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc40_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "seq_loopshared_proxy_loop_real_tc56_step1",
+      "seed": 1,
+      "tcIndex": 56,
+      "targetStep": 1,
+      "passed": false,
+      "elapsedMs": 4.2815,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc56_step1.txt",
+      "failures": ["unknown expectedSpecialPathTag: SEQ_XSHARED_PROXY_LOOP_REAL"]
+    },
+    {
+      "name": "seq_selfloop_two_path_tc57_step1",
+      "seed": 1,
+      "tcIndex": 57,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.93258,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc57_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "seq_selfloop_spqrready_tc328_step1",
+      "seed": 1,
+      "tcIndex": 328,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.36883,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc328_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "seq_selfloop_oneedge_tc444_step1",
+      "seed": 2,
+      "tcIndex": 444,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.6465,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed2_tc444_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "seq_generic_oneedge_tc328_step2",
+      "seed": 1,
+      "tcIndex": 328,
+      "targetStep": 2,
+      "passed": false,
+      "elapsedMs": 0.980375,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_PROGRESS_STUCK_seed1_tc328_step2.txt",
+      "failures": ["top-level ok mismatch: expected=1 actual=0", "actualInvariantOk mismatch: expected=1 actual=0", "oracleEquivalentOk mismatch: expected=1 actual=0", "expected special path/stat tag not observed: SPECIAL_ONE_EDGE", "expected special path/stat tag not observed: SEQ_ONE_EDGE_REAL_NONLOOP"]
+    },
+    {
+      "name": "seq_xshared_spqrready_tc851_step1",
+      "seed": 1,
+      "tcIndex": 851,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 3.40508,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc851_step1.txt",
+      "failures": []
+    }
+  ]
+}

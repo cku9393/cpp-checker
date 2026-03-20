@@ -1,0 +1,11 @@
+Included
+- raw_engine_v1_package source tree excluding build dirs and standalone binaries
+- stabilization report
+- primitive reducer smoke input/output
+- planner reducer smoke input/output
+- replay_planner_state trace
+
+Excluded
+- build-debug/build-asan/build-release trees
+- standalone raw_engine_v1 binaries
+- large planner_oracle_fuzz trace corpus with no counterexample

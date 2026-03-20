@@ -1,0 +1,12 @@
+Included
+- raw_engine_v1_package source tree excluding build dirs and standalone binaries
+- updated stabilization report and README for the non-targeted coverage phase
+- tests, harness, planner oracle, and CLI changes for bias-aware coverage and structural planner families
+- counterexamples directory
+- baseline planner fuzz stats logs from planner_fuzz_phase_20260307
+- current phase planner fuzz stats logs and summary text from planner_fuzz_phase_20260307_phase3
+
+Excluded
+- build-debug/build-asan/build-release trees
+- standalone raw_engine_v1 binaries
+- large historical trace corpora with no new semantic counterexample

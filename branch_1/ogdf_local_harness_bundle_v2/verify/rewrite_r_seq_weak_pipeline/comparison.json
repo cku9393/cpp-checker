@@ -1,0 +1,74 @@
+{
+  "baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_oldarcweak/summary.json",
+  "current_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_weak_pipeline/summary.json",
+  "deltas": {
+    "rewriteSeqCalls": {
+      "baseline": 111100,
+      "current": 111100,
+      "delta": 0
+    },
+    "seqFallbackCaseCount": {
+      "baseline": 6894,
+      "current": 6894,
+      "delta": 0
+    },
+    "seqRewriteWholeCoreFallbackCount": {
+      "baseline": 8829,
+      "current": 8829,
+      "delta": 0
+    },
+    "seqResolvedOldArcRepairAttemptCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcRepairSuccessCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcRepairFailCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcWeakRepairAttemptCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcWeakRepairSuccessCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqResolvedOldArcWeakRepairFailCount": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    }
+  },
+  "gate_counts": {
+    "WRG_NOT_NEEDED_STRONG_LIVE": 12468,
+    "WRG_ENTER_PNC_SAME_POLES_BUT_OTHER_OUTSIDE": 0,
+    "WRG_SKIP_PNC_OLDNODE_NO_LIVE_ARCS": 0,
+    "WRG_SKIP_OTHER_PNC": 0,
+    "WRG_OTHER": 0
+  },
+  "candidate_counts": {
+    "WRC_ZERO_SAME_POLE_CANDIDATES": 0,
+    "WRC_ONE_SAME_POLE_CANDIDATE": 0,
+    "WRC_MULTI_SAME_POLE_CANDIDATES": 0,
+    "WRC_SLOT_INVALID": 0,
+    "WRC_OTHER": 0
+  },
+  "commit_counts": {
+    "WCO_NOT_ATTEMPTED": 0,
+    "WCO_FAILED_BEFORE_GRAFT": 0,
+    "WCO_GRAFT_FAIL": 0,
+    "WCO_NORMALIZE_FAIL": 0,
+    "WCO_ACTUAL_INVARIANT_FAIL": 0,
+    "WCO_ORACLE_FAIL": 0,
+    "WCO_COMMITTED": 0
+  }
+}

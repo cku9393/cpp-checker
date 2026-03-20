@@ -1,0 +1,6 @@
+raw_corpus_v1
+entries 4
+entry best_integrate family_planner_tie_mixed_organic_s2_j2_i2 930012 random default planner_tie_mixed_organic 2 2 2 100 200000 0 100 100 0 100 100 1 1
+entry best_join family_planner_tie_mixed_organic_s2_j2_i2 930012 random default planner_tie_mixed_organic 2 2 2 100 200000 0 100 100 0 100 100 1 1
+entry best_split family_planner_tie_mixed_organic_s2_j2_i2 930012 random default planner_tie_mixed_organic 2 2 2 100 200000 0 100 100 0 100 100 1 1
+entry diverse_trace family_planner_tie_mixed_organic_s2_j2_i2 930012 random default planner_tie_mixed_organic 2 2 2 100 200000 0 100 100 0 100 100 1 1

@@ -1,0 +1,6 @@
+raw_corpus_v1
+entries 4
+entry best_integrate family_planner_tie_mixed_organic_compare_ready_s2_j2_i2 960203 random default planner_tie_mixed_organic_compare_ready 2 2 2 4 200000 4 0 0 4 0 0 1 1
+entry best_join family_planner_tie_mixed_organic_compare_ready_s2_j2_i2 960203 random default planner_tie_mixed_organic_compare_ready 2 2 2 4 200000 4 0 0 4 0 0 1 1
+entry best_split family_planner_tie_mixed_organic_compare_ready_s2_j2_i2 960203 random default planner_tie_mixed_organic_compare_ready 2 2 2 4 200000 4 0 0 4 0 0 1 1
+entry diverse_trace family_planner_tie_mixed_organic_compare_ready_s2_j2_i2 960203 random default planner_tie_mixed_organic_compare_ready 2 2 2 4 200000 4 0 0 4 0 0 1 1

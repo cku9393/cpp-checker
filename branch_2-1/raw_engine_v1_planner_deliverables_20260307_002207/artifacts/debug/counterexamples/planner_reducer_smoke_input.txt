@@ -1,0 +1,44 @@
+planner_state_v1
+case planner_reducer_smoke
+seed none
+iter -1
+target_occ 0
+keep_occ 1 0
+step_budget 1
+dump_trace 1
+raw_begin
+raw_state_v1
+primitive isolate
+sid 4294967295
+occ 4294967295
+left_sid 4294967295
+right_sid 4294967295
+parent_sid 4294967295
+child_sid 4294967295
+a_orig 4294967295
+b_orig 4294967295
+boundary_map 0
+keep_occ 0
+through_branches 0
+sequence 0
+vertices 6
+v 0 0 2 0
+v 1 0 8 0
+v 2 1 9 0
+v 3 0 6 0
+v 4 1 12 1
+v 5 0 10 0
+edges 7
+e 0 2 3 1 0 0
+e 1 0 3 0 0 0
+e 2 3 1 0 0 0
+e 3 4 5 1 0 0
+e 4 0 5 0 0 0
+e 5 5 1 0 0 0
+e 6 0 1 0 0 0
+skeletons 1
+s 0 6 0 1 2 3 4 5 7 0 1 2 3 4 5 6 2 0 1
+occurrences 2
+o 0 9 0 2 0 2 1 2
+o 1 12 0 4 0 2 4 5
+end

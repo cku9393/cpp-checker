@@ -1,0 +1,28 @@
+reason=OTHER
+trigger=RFT_COMPACT_EMPTY_AFTER_DELETE
+pathTaken=WHOLE_CORE_REBUILD
+why=rewriteR: compact local graph empty after deleting x
+seed=1
+tc=0
+stepIndex=2
+sequenceLengthSoFar=3
+chosenR=0
+chosenX=6
+
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=6
+origOfCv: [0->1] [1->5]
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(2,3,3)
+node 0 type=R localAgg=(2,3,3) subAgg=(2,3,3)
+  realEdgesHere: 4 5
+  slot 0 kind=REAL poles=(5,6) realEdge=4
+  slot 1 kind=REAL poles=(1,6) realEdge=5
+
+=== ExplicitBefore ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+

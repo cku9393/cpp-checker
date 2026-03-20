@@ -1,0 +1,15 @@
+selected_pair=4,6
+admissible_pair_count=6
+compared_pair_count=6
+fully_equivalent_count=1
+same_stop_different_final_state_count=2
+semantic_mismatch_count=3
+selected_equivalence_class_size=1
+max_equivalence_class_size=1
+selected_pair_representative=1
+pair=2,6 selected=0 grade=same_stop_different_final_state stop=1 final=2a114ce52203ed0e target_prepare=509dc01a2608b7b4 trace=47fe0d7eaf8e51e3
+pair=2,8 selected=0 grade=same_stop_different_final_state stop=1 final=9cea908e67423b48 target_prepare=509dc01a2608b7b4 trace=47fe0d7eaf8e51e3
+pair=4,6 selected=1 grade=fully_equivalent stop=1 final=6a92e2fe55f08c8c target_prepare=509dc01a2608b7b4 trace=47fe0d7eaf8e51e3
+pair=4,8 selected=0 grade=semantic_mismatch stop=1 final=21085ead99039542 target_prepare=509dc01a2608b7b4 trace=47fe0d7eaf8e51e3
+pair=4,3100 selected=0 grade=semantic_mismatch stop=1 final=a00b229977b10560 target_prepare=509dc01a2608b7b4 trace=47fe0d7eaf8e51e3
+pair=6,3100 selected=0 grade=semantic_mismatch stop=1 final=f24b3e73409fabf8 target_prepare=509dc01a2608b7b4 trace=47fe0d7eaf8e51e3

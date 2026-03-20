@@ -1,0 +1,629 @@
+{
+  "comparison_vs_baseline": {
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": {
+      "baseline": 824,
+      "current": 0,
+      "delta": -824
+    },
+    "seqFallbackCaseCount": {
+      "baseline": 824,
+      "current": 683,
+      "delta": -141
+    },
+    "seqRewriteWholeCoreFallbackCount": {
+      "baseline": 1507,
+      "current": 683,
+      "delta": -824
+    }
+  },
+  "dedup": {
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+    "pathTakenCounts": {
+      "DIRECT_SPQR": 45522,
+      "SPECIAL_LOOP_SHARED": 11101,
+      "SPECIAL_ONE_EDGE": 4350,
+      "SPECIAL_PATH": 24559,
+      "SPECIAL_SELF_LOOP_TWO_PATH": 6354,
+      "SPECIAL_SINGLE_CUT": 17468,
+      "SPECIAL_TWO_PATH": 30629,
+      "WHOLE_CORE_REBUILD": 683
+    },
+    "rewriteFallbackSpecialCaseCount": 94461,
+    "rewriteFallbackTriggerCounts": {
+      "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+      "RFT_BACKEND_BUILDRAW_OTHER": 0,
+      "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+      "RFT_CHOOSE_KEEP_FAIL": 0,
+      "RFT_COMPACT_BUILD_FAIL": 562,
+      "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+      "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+      "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+      "RFT_GRAFT_OTHER": 0,
+      "RFT_GRAFT_REWIRE_FAIL": 0,
+      "RFT_MATERIALIZE_MINI_FAIL": 0,
+      "RFT_NONE": 0,
+      "RFT_OTHER": 0,
+      "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+      "RFT_PROXY_METADATA_INVALID": 0,
+      "RFT_RAW_VALIDATE_FAIL": 0,
+      "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+      "RFT_TWO_PATH_BUILDER_FAIL": 0,
+      "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 121
+    },
+    "rewriteSeqCalls": 110100,
+    "sampleDumpPaths": {
+      "buildfail": {
+        "CBF_SELF_LOOP_PRECHECK": "dumps/rewrite_r_seq_buildfail/seq_fallback_CBF_SELF_LOOP_PRECHECK_seed1_tc57_step1.txt"
+      },
+      "fallback_triggers": {
+        "RFT_COMPACT_BUILD_FAIL": "dumps/rewrite_r_seq_fallbacks/seq_fallback_RFT_COMPACT_BUILD_FAIL_seed1_tc328_step1.txt",
+        "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": "dumps/rewrite_r_seq_fallbacks/seq_fallback_RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED_seed1_tc0_step1.txt"
+      },
+      "oneedge": {
+        "SOE_REAL_NONLOOP": "dumps/rewrite_r_seq_oneedge/seq_tiny_oneedge_SOE_REAL_NONLOOP_seed1_tc328_step2.txt"
+      },
+      "selfloop": {
+        "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": "dumps/rewrite_r_seq_selfloop/seq_fallback_SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED_seed2_tc444_step1.txt",
+        "SL_PROXY_ONLY_REMAINDER_SPQR_READY": "dumps/rewrite_r_seq_selfloop/seq_fallback_SL_PROXY_ONLY_REMAINDER_SPQR_READY_seed1_tc328_step1.txt"
+      }
+    },
+    "seqCompactBuildFailSubtypeCounts": {
+      "CBF_DUPLICATE_COMPACT_EDGE": 0,
+      "CBF_EMPTY_VERTEX_SET": 0,
+      "CBF_NODE_DEAD": 0,
+      "CBF_NODE_NOT_R": 0,
+      "CBF_OTHER": 0,
+      "CBF_PROXY_OLDARC_INVALID": 0,
+      "CBF_PROXY_OLDSLOT_ARC_MISMATCH": 0,
+      "CBF_PROXY_OLDSLOT_INVALID": 0,
+      "CBF_PROXY_OUTSIDENODE_INVALID": 0,
+      "CBF_REAL_ENDPOINT_NOT_MAPPED": 0,
+      "CBF_SELF_LOOP_PRECHECK": 562,
+      "CBF_X_NOT_PRESENT_IN_R": 0
+    },
+    "seqFallbackCaseCount": 683,
+    "seqRewriteWholeCoreFallbackCount": 683,
+    "seqSelfLoopSubtypeCounts": {
+      "SL_MIXED_REAL_PROXY_LOOP": 0,
+      "SL_OTHER": 0,
+      "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+      "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+      "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 148,
+      "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+      "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+      "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 414,
+      "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 0,
+      "SL_REAL_LOOP_PRESENT": 0
+    },
+    "seqTooSmallOneEdgeCaseCountsBySubtype": {
+      "SOE_OTHER": 0,
+      "SOE_PROXY_LOOP": 0,
+      "SOE_PROXY_NONLOOP": 0,
+      "SOE_REAL_LOOP": 0,
+      "SOE_REAL_NONLOOP": 30
+    },
+    "seqTooSmallOneEdgeFallbackCount": 0,
+    "seqTooSmallOneEdgeHandledCount": 824,
+    "seqTooSmallOneEdgeRealNonLoopHandledCount": 824,
+    "seqTooSmallOneEdgeSubtypeCounts": {
+      "SOE_OTHER": 0,
+      "SOE_PROXY_LOOP": 0,
+      "SOE_PROXY_NONLOOP": 0,
+      "SOE_REAL_LOOP": 0,
+      "SOE_REAL_NONLOOP": 824
+    },
+    "seqXIncidentResidualSubtypeCounts": {
+      "XSR_HAFTER_BUILD_FAIL": 0,
+      "XSR_HAFTER_EMPTY": 0,
+      "XSR_HAFTER_LOOP_SHARED": 0,
+      "XSR_HAFTER_ONE_EDGE": 0,
+      "XSR_HAFTER_OTHER": 0,
+      "XSR_HAFTER_OTHER_NOT_BICONNECTED": 0,
+      "XSR_HAFTER_PATH_OF_BLOCKS": 0,
+      "XSR_HAFTER_SINGLE_CUT": 0,
+      "XSR_HAFTER_SPQR_READY": 121,
+      "XSR_HAFTER_TWO_PARALLEL": 0,
+      "XSR_HAFTER_TWO_PATH": 0
+    },
+    "seqXIncidentVirtualSubtypeCounts": {
+      "XIV_MIXED_OTHER": 0,
+      "XIV_MULTI_POS_PROXY": 0,
+      "XIV_ONE_POS_PROXY": 0,
+      "XIV_SHARED_WITH_LOOP": 121,
+      "XIV_ZERO_PAYLOAD": 0
+    }
+  },
+  "excluded_runs": [
+    "s1_r1000"
+  ],
+  "included_runs_dedup": [
+    "s1_r100",
+    "full_s1_10_r1000",
+    "full_s1_20_r5000"
+  ],
+  "next_target": {
+    "dominant_remaining_trigger": "RFT_COMPACT_BUILD_FAIL",
+    "trigger_count": 562
+  },
+  "per_log": {
+    "full_s1_10_r1000": {
+      "aggregates": {
+        "[REWRITE_R_PATH_TAKEN_COUNTS]": {
+          "DIRECT_SPQR": 4216,
+          "SPECIAL_LOOP_SHARED": 997,
+          "SPECIAL_ONE_EDGE": 389,
+          "SPECIAL_PATH": 2207,
+          "SPECIAL_SELF_LOOP_TWO_PATH": 544,
+          "SPECIAL_SINGLE_CUT": 1544,
+          "SPECIAL_TWO_PATH": 2770,
+          "WHOLE_CORE_REBUILD": 52
+        },
+        "[REWRITE_R_SEQ_BUILDFAIL_SUBTYPE_COUNTS]": {
+          "CBF_DUPLICATE_COMPACT_EDGE": 0,
+          "CBF_EMPTY_VERTEX_SET": 0,
+          "CBF_NODE_DEAD": 0,
+          "CBF_NODE_NOT_R": 0,
+          "CBF_OTHER": 0,
+          "CBF_PROXY_OLDARC_INVALID": 0,
+          "CBF_PROXY_OLDSLOT_ARC_MISMATCH": 0,
+          "CBF_PROXY_OLDSLOT_INVALID": 0,
+          "CBF_PROXY_OUTSIDENODE_INVALID": 0,
+          "CBF_REAL_ENDPOINT_NOT_MAPPED": 0,
+          "CBF_SELF_LOOP_PRECHECK": 40,
+          "CBF_X_NOT_PRESENT_IN_R": 0
+        },
+        "[REWRITE_R_SEQ_FALLBACK_TRIGGER_COUNTS]": {
+          "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+          "RFT_BACKEND_BUILDRAW_OTHER": 0,
+          "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+          "RFT_CHOOSE_KEEP_FAIL": 0,
+          "RFT_COMPACT_BUILD_FAIL": 40,
+          "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+          "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+          "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+          "RFT_GRAFT_OTHER": 0,
+          "RFT_GRAFT_REWIRE_FAIL": 0,
+          "RFT_MATERIALIZE_MINI_FAIL": 0,
+          "RFT_NONE": 0,
+          "RFT_OTHER": 0,
+          "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+          "RFT_PROXY_METADATA_INVALID": 0,
+          "RFT_RAW_VALIDATE_FAIL": 0,
+          "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+          "RFT_TWO_PATH_BUILDER_FAIL": 0,
+          "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 12
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_CASE_COUNTS]": {
+          "SOE_OTHER": 0,
+          "SOE_PROXY_LOOP": 0,
+          "SOE_PROXY_NONLOOP": 0,
+          "SOE_REAL_LOOP": 0,
+          "SOE_REAL_NONLOOP": 10
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_SUBTYPE_COUNTS]": {
+          "SOE_OTHER": 0,
+          "SOE_PROXY_LOOP": 0,
+          "SOE_PROXY_NONLOOP": 0,
+          "SOE_REAL_LOOP": 0,
+          "SOE_REAL_NONLOOP": 66
+        },
+        "[REWRITE_R_SEQ_SELFLOOP_SUBTYPE_COUNTS]": {
+          "SL_MIXED_REAL_PROXY_LOOP": 0,
+          "SL_OTHER": 0,
+          "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+          "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+          "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 9,
+          "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+          "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+          "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 31,
+          "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 0,
+          "SL_REAL_LOOP_PRESENT": 0
+        },
+        "[REWRITE_R_SEQ_XINCIDENT_SUBTYPE_COUNTS]": {
+          "XIV_MIXED_OTHER": 0,
+          "XIV_MULTI_POS_PROXY": 0,
+          "XIV_ONE_POS_PROXY": 0,
+          "XIV_SHARED_WITH_LOOP": 12,
+          "XIV_ZERO_PAYLOAD": 0
+        },
+        "[REWRITE_R_SEQ_XSHARED_RESIDUAL_SUBTYPE_COUNTS]": {
+          "XSR_HAFTER_BUILD_FAIL": 0,
+          "XSR_HAFTER_EMPTY": 0,
+          "XSR_HAFTER_LOOP_SHARED": 0,
+          "XSR_HAFTER_ONE_EDGE": 0,
+          "XSR_HAFTER_OTHER": 0,
+          "XSR_HAFTER_OTHER_NOT_BICONNECTED": 0,
+          "XSR_HAFTER_PATH_OF_BLOCKS": 0,
+          "XSR_HAFTER_SINGLE_CUT": 0,
+          "XSR_HAFTER_SPQR_READY": 12,
+          "XSR_HAFTER_TWO_PARALLEL": 0,
+          "XSR_HAFTER_TWO_PATH": 0
+        },
+        "[REWRITE_R_STATS]": {
+          "backendBuildRawDirectCount": 4216,
+          "backendBuildRawFallbackCount": 0,
+          "compactPathOfBlocksHandled": 2207,
+          "compactReadyCount": 4216,
+          "compactRejectedFallbackCount": 52,
+          "compactSingleCutTwoBlocksHandled": 1544,
+          "compactTooSmallHandledCount": 2722,
+          "compactTooSmallTwoPathHandledCount": 2656,
+          "rewriteCalls": 12719,
+          "rewriteFallbackSpecialCaseCount": 8451,
+          "rewriteFallbackWholeCoreCount": 52,
+          "rewriteManualPassCount": 0,
+          "rewriteRandomPassCount": 10000,
+          "rewriteSeqCalls": 10000,
+          "rewriteSeqFailedCases": 0,
+          "rewriteSeqMaxStepReachedCount": 0,
+          "rewriteSeqSucceededCases": 10000,
+          "seqAdjRepairAffectedNodeCount": 3371,
+          "seqAdjRepairOldNodeCount": 1088,
+          "seqAdjRepairOutsideNodeCount": 1088,
+          "seqAdjRepairUsedCount": 1088,
+          "seqClearPreserveArcCount": 1088,
+          "seqClearPreserveCrossNodeRewireCount": 0,
+          "seqClearPreserveFallbackCount": 0,
+          "seqClearPreserveRequestedCount": 1088,
+          "seqClearPreserveSameNodeRehomeCount": 1088,
+          "seqFallbackCaseCount": 52,
+          "seqGraftRewireFallbackCount": 0,
+          "seqLoopPlusEdgeSharedHandledCount": 890,
+          "seqProxyMetadataFallbackCount": 0,
+          "seqResolvedOldArcRepairAttemptCount": 0,
+          "seqResolvedOldArcRepairFailCount": 0,
+          "seqResolvedOldArcRepairSuccessCount": 0,
+          "seqResolvedOldArcRepairUsedCount": 0,
+          "seqResolvedProxyRepairUsedCount": 1088,
+          "seqResolvedProxySnapshotCount": 11777,
+          "seqResolvedProxySnapshotFailCount": 0,
+          "seqRewriteWholeCoreFallbackCount": 52,
+          "seqSelfLoopRemainderTwoPathHandledCount": 544,
+          "seqTooSmallOneEdgeFallbackCount": 0,
+          "seqTooSmallOneEdgeHandledCount": 66,
+          "seqTooSmallOneEdgeRealNonLoopHandledCount": 66,
+          "seqTooSmallOtherHandledCount": 890,
+          "seqXIncidentOneEdgeHandledCount": 323,
+          "seqXIncidentOneEdgeRealHandledCount": 323,
+          "seqXIncidentOneEdgeUnsupportedProxyCount": 0,
+          "seqXIncidentSharedWithLoopHandledCount": 544,
+          "seqXSharedLoopSharedProxyLoopRealAttemptCount": 107,
+          "seqXSharedLoopSharedProxyLoopRealFallbackCount": 0,
+          "seqXSharedLoopSharedProxyLoopRealHandledCount": 107
+        }
+      },
+      "last_nonempty": {
+        "[REWRITE_R_SEQ_BUILDFAIL_SUBTYPE_DUMPS]": {
+          "CBF_SELF_LOOP_PRECHECK": "dumps/rewrite_r_seq_buildfail/seq_fallback_CBF_SELF_LOOP_PRECHECK_seed1_tc57_step1.txt"
+        },
+        "[REWRITE_R_SEQ_FALLBACK_TRIGGER_DUMPS]": {
+          "RFT_COMPACT_BUILD_FAIL": "dumps/rewrite_r_seq_fallbacks/seq_fallback_RFT_COMPACT_BUILD_FAIL_seed1_tc328_step1.txt",
+          "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": "dumps/rewrite_r_seq_fallbacks/seq_fallback_RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED_seed1_tc0_step1.txt"
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_DUMPS]": {
+          "SOE_REAL_NONLOOP": "dumps/rewrite_r_seq_oneedge/seq_tiny_oneedge_SOE_REAL_NONLOOP_seed1_tc328_step2.txt"
+        },
+        "[REWRITE_R_SEQ_SELFLOOP_SUBTYPE_DUMPS]": {
+          "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": "dumps/rewrite_r_seq_selfloop/seq_fallback_SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED_seed2_tc444_step1.txt",
+          "SL_PROXY_ONLY_REMAINDER_SPQR_READY": "dumps/rewrite_r_seq_selfloop/seq_fallback_SL_PROXY_ONLY_REMAINDER_SPQR_READY_seed1_tc328_step1.txt"
+        }
+      }
+    },
+    "full_s1_20_r5000": {
+      "aggregates": {
+        "[REWRITE_R_PATH_TAKEN_COUNTS]": {
+          "DIRECT_SPQR": 41264,
+          "SPECIAL_LOOP_SHARED": 10090,
+          "SPECIAL_ONE_EDGE": 3958,
+          "SPECIAL_PATH": 22333,
+          "SPECIAL_SELF_LOOP_TWO_PATH": 5804,
+          "SPECIAL_SINGLE_CUT": 15907,
+          "SPECIAL_TWO_PATH": 27832,
+          "WHOLE_CORE_REBUILD": 631
+        },
+        "[REWRITE_R_SEQ_BUILDFAIL_SUBTYPE_COUNTS]": {
+          "CBF_DUPLICATE_COMPACT_EDGE": 0,
+          "CBF_EMPTY_VERTEX_SET": 0,
+          "CBF_NODE_DEAD": 0,
+          "CBF_NODE_NOT_R": 0,
+          "CBF_OTHER": 0,
+          "CBF_PROXY_OLDARC_INVALID": 0,
+          "CBF_PROXY_OLDSLOT_ARC_MISMATCH": 0,
+          "CBF_PROXY_OLDSLOT_INVALID": 0,
+          "CBF_PROXY_OUTSIDENODE_INVALID": 0,
+          "CBF_REAL_ENDPOINT_NOT_MAPPED": 0,
+          "CBF_SELF_LOOP_PRECHECK": 522,
+          "CBF_X_NOT_PRESENT_IN_R": 0
+        },
+        "[REWRITE_R_SEQ_FALLBACK_TRIGGER_COUNTS]": {
+          "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+          "RFT_BACKEND_BUILDRAW_OTHER": 0,
+          "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+          "RFT_CHOOSE_KEEP_FAIL": 0,
+          "RFT_COMPACT_BUILD_FAIL": 522,
+          "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+          "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+          "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+          "RFT_GRAFT_OTHER": 0,
+          "RFT_GRAFT_REWIRE_FAIL": 0,
+          "RFT_MATERIALIZE_MINI_FAIL": 0,
+          "RFT_NONE": 0,
+          "RFT_OTHER": 0,
+          "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+          "RFT_PROXY_METADATA_INVALID": 0,
+          "RFT_RAW_VALIDATE_FAIL": 0,
+          "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+          "RFT_TWO_PATH_BUILDER_FAIL": 0,
+          "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 109
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_CASE_COUNTS]": {
+          "SOE_OTHER": 0,
+          "SOE_PROXY_LOOP": 0,
+          "SOE_PROXY_NONLOOP": 0,
+          "SOE_REAL_LOOP": 0,
+          "SOE_REAL_NONLOOP": 20
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_SUBTYPE_COUNTS]": {
+          "SOE_OTHER": 0,
+          "SOE_PROXY_LOOP": 0,
+          "SOE_PROXY_NONLOOP": 0,
+          "SOE_REAL_LOOP": 0,
+          "SOE_REAL_NONLOOP": 758
+        },
+        "[REWRITE_R_SEQ_SELFLOOP_SUBTYPE_COUNTS]": {
+          "SL_MIXED_REAL_PROXY_LOOP": 0,
+          "SL_OTHER": 0,
+          "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+          "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+          "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 139,
+          "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+          "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+          "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 383,
+          "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 0,
+          "SL_REAL_LOOP_PRESENT": 0
+        },
+        "[REWRITE_R_SEQ_XINCIDENT_SUBTYPE_COUNTS]": {
+          "XIV_MIXED_OTHER": 0,
+          "XIV_MULTI_POS_PROXY": 0,
+          "XIV_ONE_POS_PROXY": 0,
+          "XIV_SHARED_WITH_LOOP": 109,
+          "XIV_ZERO_PAYLOAD": 0
+        },
+        "[REWRITE_R_SEQ_XSHARED_RESIDUAL_SUBTYPE_COUNTS]": {
+          "XSR_HAFTER_BUILD_FAIL": 0,
+          "XSR_HAFTER_EMPTY": 0,
+          "XSR_HAFTER_LOOP_SHARED": 0,
+          "XSR_HAFTER_ONE_EDGE": 0,
+          "XSR_HAFTER_OTHER": 0,
+          "XSR_HAFTER_OTHER_NOT_BICONNECTED": 0,
+          "XSR_HAFTER_PATH_OF_BLOCKS": 0,
+          "XSR_HAFTER_SINGLE_CUT": 0,
+          "XSR_HAFTER_SPQR_READY": 109,
+          "XSR_HAFTER_TWO_PARALLEL": 0,
+          "XSR_HAFTER_TWO_PATH": 0
+        },
+        "[REWRITE_R_STATS]": {
+          "backendBuildRawDirectCount": 41264,
+          "backendBuildRawFallbackCount": 0,
+          "compactPathOfBlocksHandled": 22333,
+          "compactReadyCount": 41264,
+          "compactRejectedFallbackCount": 631,
+          "compactSingleCutTwoBlocksHandled": 15907,
+          "compactTooSmallHandledCount": 27388,
+          "compactTooSmallTwoPathHandledCount": 26630,
+          "rewriteCalls": 127819,
+          "rewriteFallbackSpecialCaseCount": 85924,
+          "rewriteFallbackWholeCoreCount": 631,
+          "rewriteManualPassCount": 0,
+          "rewriteRandomPassCount": 100000,
+          "rewriteSeqCalls": 100000,
+          "rewriteSeqFailedCases": 0,
+          "rewriteSeqMaxStepReachedCount": 0,
+          "rewriteSeqSucceededCases": 100000,
+          "seqAdjRepairAffectedNodeCount": 35272,
+          "seqAdjRepairOldNodeCount": 11269,
+          "seqAdjRepairOutsideNodeCount": 11269,
+          "seqAdjRepairUsedCount": 11269,
+          "seqClearPreserveArcCount": 11269,
+          "seqClearPreserveCrossNodeRewireCount": 0,
+          "seqClearPreserveFallbackCount": 0,
+          "seqClearPreserveRequestedCount": 11269,
+          "seqClearPreserveSameNodeRehomeCount": 11269,
+          "seqFallbackCaseCount": 631,
+          "seqGraftRewireFallbackCount": 0,
+          "seqLoopPlusEdgeSharedHandledCount": 8964,
+          "seqProxyMetadataFallbackCount": 0,
+          "seqResolvedOldArcRepairAttemptCount": 0,
+          "seqResolvedOldArcRepairFailCount": 0,
+          "seqResolvedOldArcRepairSuccessCount": 0,
+          "seqResolvedOldArcRepairUsedCount": 0,
+          "seqResolvedProxyRepairUsedCount": 11269,
+          "seqResolvedProxySnapshotCount": 118224,
+          "seqResolvedProxySnapshotFailCount": 0,
+          "seqRewriteWholeCoreFallbackCount": 631,
+          "seqSelfLoopRemainderTwoPathHandledCount": 5804,
+          "seqTooSmallOneEdgeFallbackCount": 0,
+          "seqTooSmallOneEdgeHandledCount": 758,
+          "seqTooSmallOneEdgeRealNonLoopHandledCount": 758,
+          "seqTooSmallOtherHandledCount": 8964,
+          "seqXIncidentOneEdgeHandledCount": 3200,
+          "seqXIncidentOneEdgeRealHandledCount": 3200,
+          "seqXIncidentOneEdgeUnsupportedProxyCount": 0,
+          "seqXIncidentSharedWithLoopHandledCount": 5528,
+          "seqXSharedLoopSharedProxyLoopRealAttemptCount": 1126,
+          "seqXSharedLoopSharedProxyLoopRealFallbackCount": 0,
+          "seqXSharedLoopSharedProxyLoopRealHandledCount": 1126
+        }
+      },
+      "last_nonempty": {
+        "[REWRITE_R_SEQ_BUILDFAIL_SUBTYPE_DUMPS]": {
+          "CBF_SELF_LOOP_PRECHECK": "dumps/rewrite_r_seq_buildfail/seq_fallback_CBF_SELF_LOOP_PRECHECK_seed1_tc57_step1.txt"
+        },
+        "[REWRITE_R_SEQ_FALLBACK_TRIGGER_DUMPS]": {
+          "RFT_COMPACT_BUILD_FAIL": "dumps/rewrite_r_seq_fallbacks/seq_fallback_RFT_COMPACT_BUILD_FAIL_seed1_tc328_step1.txt",
+          "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": "dumps/rewrite_r_seq_fallbacks/seq_fallback_RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED_seed1_tc0_step1.txt"
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_DUMPS]": {
+          "SOE_REAL_NONLOOP": "dumps/rewrite_r_seq_oneedge/seq_tiny_oneedge_SOE_REAL_NONLOOP_seed1_tc328_step2.txt"
+        },
+        "[REWRITE_R_SEQ_SELFLOOP_SUBTYPE_DUMPS]": {
+          "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": "dumps/rewrite_r_seq_selfloop/seq_fallback_SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED_seed2_tc444_step1.txt",
+          "SL_PROXY_ONLY_REMAINDER_SPQR_READY": "dumps/rewrite_r_seq_selfloop/seq_fallback_SL_PROXY_ONLY_REMAINDER_SPQR_READY_seed1_tc328_step1.txt"
+        }
+      }
+    },
+    "s1_r100": {
+      "aggregates": {
+        "[REWRITE_R_PATH_TAKEN_COUNTS]": {
+          "DIRECT_SPQR": 42,
+          "SPECIAL_LOOP_SHARED": 14,
+          "SPECIAL_ONE_EDGE": 3,
+          "SPECIAL_PATH": 19,
+          "SPECIAL_SELF_LOOP_TWO_PATH": 6,
+          "SPECIAL_SINGLE_CUT": 17,
+          "SPECIAL_TWO_PATH": 27,
+          "WHOLE_CORE_REBUILD": 0
+        },
+        "[REWRITE_R_SEQ_BUILDFAIL_SUBTYPE_COUNTS]": {
+          "CBF_DUPLICATE_COMPACT_EDGE": 0,
+          "CBF_EMPTY_VERTEX_SET": 0,
+          "CBF_NODE_DEAD": 0,
+          "CBF_NODE_NOT_R": 0,
+          "CBF_OTHER": 0,
+          "CBF_PROXY_OLDARC_INVALID": 0,
+          "CBF_PROXY_OLDSLOT_ARC_MISMATCH": 0,
+          "CBF_PROXY_OLDSLOT_INVALID": 0,
+          "CBF_PROXY_OUTSIDENODE_INVALID": 0,
+          "CBF_REAL_ENDPOINT_NOT_MAPPED": 0,
+          "CBF_SELF_LOOP_PRECHECK": 0,
+          "CBF_X_NOT_PRESENT_IN_R": 0
+        },
+        "[REWRITE_R_SEQ_FALLBACK_TRIGGER_COUNTS]": {
+          "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+          "RFT_BACKEND_BUILDRAW_OTHER": 0,
+          "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+          "RFT_CHOOSE_KEEP_FAIL": 0,
+          "RFT_COMPACT_BUILD_FAIL": 0,
+          "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+          "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+          "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+          "RFT_GRAFT_OTHER": 0,
+          "RFT_GRAFT_REWIRE_FAIL": 0,
+          "RFT_MATERIALIZE_MINI_FAIL": 0,
+          "RFT_NONE": 0,
+          "RFT_OTHER": 0,
+          "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+          "RFT_PROXY_METADATA_INVALID": 0,
+          "RFT_RAW_VALIDATE_FAIL": 0,
+          "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+          "RFT_TWO_PATH_BUILDER_FAIL": 0,
+          "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 0
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_CASE_COUNTS]": {
+          "SOE_OTHER": 0,
+          "SOE_PROXY_LOOP": 0,
+          "SOE_PROXY_NONLOOP": 0,
+          "SOE_REAL_LOOP": 0,
+          "SOE_REAL_NONLOOP": 0
+        },
+        "[REWRITE_R_SEQ_ONEEDGE_SUBTYPE_COUNTS]": {
+          "SOE_OTHER": 0,
+          "SOE_PROXY_LOOP": 0,
+          "SOE_PROXY_NONLOOP": 0,
+          "SOE_REAL_LOOP": 0,
+          "SOE_REAL_NONLOOP": 0
+        },
+        "[REWRITE_R_SEQ_SELFLOOP_SUBTYPE_COUNTS]": {
+          "SL_MIXED_REAL_PROXY_LOOP": 0,
+          "SL_OTHER": 0,
+          "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+          "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+          "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 0,
+          "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+          "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+          "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 0,
+          "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 0,
+          "SL_REAL_LOOP_PRESENT": 0
+        },
+        "[REWRITE_R_SEQ_XINCIDENT_SUBTYPE_COUNTS]": {
+          "XIV_MIXED_OTHER": 0,
+          "XIV_MULTI_POS_PROXY": 0,
+          "XIV_ONE_POS_PROXY": 0,
+          "XIV_SHARED_WITH_LOOP": 0,
+          "XIV_ZERO_PAYLOAD": 0
+        },
+        "[REWRITE_R_SEQ_XSHARED_RESIDUAL_SUBTYPE_COUNTS]": {
+          "XSR_HAFTER_BUILD_FAIL": 0,
+          "XSR_HAFTER_EMPTY": 0,
+          "XSR_HAFTER_LOOP_SHARED": 0,
+          "XSR_HAFTER_ONE_EDGE": 0,
+          "XSR_HAFTER_OTHER": 0,
+          "XSR_HAFTER_OTHER_NOT_BICONNECTED": 0,
+          "XSR_HAFTER_PATH_OF_BLOCKS": 0,
+          "XSR_HAFTER_SINGLE_CUT": 0,
+          "XSR_HAFTER_SPQR_READY": 0,
+          "XSR_HAFTER_TWO_PARALLEL": 0,
+          "XSR_HAFTER_TWO_PATH": 0
+        },
+        "[REWRITE_R_STATS]": {
+          "backendBuildRawDirectCount": 42,
+          "backendBuildRawFallbackCount": 0,
+          "compactPathOfBlocksHandled": 19,
+          "compactReadyCount": 42,
+          "compactRejectedFallbackCount": 0,
+          "compactSingleCutTwoBlocksHandled": 17,
+          "compactTooSmallHandledCount": 26,
+          "compactTooSmallTwoPathHandledCount": 26,
+          "rewriteCalls": 128,
+          "rewriteFallbackSpecialCaseCount": 86,
+          "rewriteFallbackWholeCoreCount": 0,
+          "rewriteManualPassCount": 0,
+          "rewriteRandomPassCount": 100,
+          "rewriteSeqCalls": 100,
+          "rewriteSeqFailedCases": 0,
+          "rewriteSeqMaxStepReachedCount": 0,
+          "rewriteSeqSucceededCases": 100,
+          "seqAdjRepairAffectedNodeCount": 38,
+          "seqAdjRepairOldNodeCount": 12,
+          "seqAdjRepairOutsideNodeCount": 12,
+          "seqAdjRepairUsedCount": 12,
+          "seqClearPreserveArcCount": 12,
+          "seqClearPreserveCrossNodeRewireCount": 0,
+          "seqClearPreserveFallbackCount": 0,
+          "seqClearPreserveRequestedCount": 12,
+          "seqClearPreserveSameNodeRehomeCount": 12,
+          "seqFallbackCaseCount": 0,
+          "seqGraftRewireFallbackCount": 0,
+          "seqLoopPlusEdgeSharedHandledCount": 12,
+          "seqProxyMetadataFallbackCount": 0,
+          "seqResolvedOldArcRepairAttemptCount": 0,
+          "seqResolvedOldArcRepairFailCount": 0,
+          "seqResolvedOldArcRepairSuccessCount": 0,
+          "seqResolvedOldArcRepairUsedCount": 0,
+          "seqResolvedProxyRepairUsedCount": 12,
+          "seqResolvedProxySnapshotCount": 116,
+          "seqResolvedProxySnapshotFailCount": 0,
+          "seqRewriteWholeCoreFallbackCount": 0,
+          "seqSelfLoopRemainderTwoPathHandledCount": 6,
+          "seqTooSmallOneEdgeFallbackCount": 0,
+          "seqTooSmallOneEdgeHandledCount": 0,
+          "seqTooSmallOneEdgeRealNonLoopHandledCount": 0,
+          "seqTooSmallOtherHandledCount": 12,
+          "seqXIncidentOneEdgeHandledCount": 3,
+          "seqXIncidentOneEdgeRealHandledCount": 3,
+          "seqXIncidentOneEdgeUnsupportedProxyCount": 0,
+          "seqXIncidentSharedWithLoopHandledCount": 6,
+          "seqXSharedLoopSharedProxyLoopRealAttemptCount": 2,
+          "seqXSharedLoopSharedProxyLoopRealFallbackCount": 0,
+          "seqXSharedLoopSharedProxyLoopRealHandledCount": 2
+        }
+      },
+      "last_nonempty": {
+        "[REWRITE_R_SEQ_BUILDFAIL_SUBTYPE_DUMPS]": {},
+        "[REWRITE_R_SEQ_FALLBACK_TRIGGER_DUMPS]": {},
+        "[REWRITE_R_SEQ_ONEEDGE_DUMPS]": {},
+        "[REWRITE_R_SEQ_SELFLOOP_SUBTYPE_DUMPS]": {}
+      }
+    }
+  }
+}

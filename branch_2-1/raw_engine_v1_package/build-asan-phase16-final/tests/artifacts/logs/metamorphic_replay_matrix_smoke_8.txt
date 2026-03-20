@@ -1,0 +1,59 @@
+planner_state_v2
+case metamorphic_replay_matrix_smoke
+seed none
+iter -1
+target_occ 0
+keep_occ 1 1
+step_budget 200000
+trace_prefix_length 0
+trace_level full
+initial_queue 3
+job 2 0 4294967295 4294967295 4294967295 4294967295 1 2 2 4 4 6 6
+job 1 0 1 0 4 6 4294967295 4294967295 0
+job 0 0 4294967295 4294967295 4294967295 4294967295 4294967295 4294967295 0
+raw_begin
+raw_state_v1
+primitive isolate
+sid 4294967295
+occ 4294967295
+left_sid 4294967295
+right_sid 4294967295
+parent_sid 4294967295
+child_sid 4294967295
+a_orig 4294967295
+b_orig 4294967295
+boundary_map 0
+keep_occ 0
+through_branches 0
+sequence 0
+vertices 12
+v 0 0 6 0
+v 1 0 4 0
+v 2 1 2504 1
+v 3 0 8 0
+v 4 0 3001 0
+v 5 0 2 0
+v 6 0 6 0
+v 7 0 4 0
+v 8 0 4001 0
+v 9 1 2317 0
+v 10 0 4 0
+v 11 0 6 0
+edges 9
+e 0 10 11 0 0 0
+e 1 8 0 0 0 0
+e 2 1 8 0 0 0
+e 3 9 8 1 0 0
+e 4 6 3 0 0 0
+e 5 5 7 0 0 0
+e 6 2 4 1 0 0
+e 7 4 3 0 0 0
+e 8 5 4 0 0 0
+skeletons 3
+s 0 6 7 6 5 4 3 2 5 8 7 6 5 4 1 1
+s 1 4 1 0 8 9 3 3 2 1 1 0
+s 2 2 10 11 1 0 0
+occurrences 2
+o 0 2317 1 9 0 2 2 1
+o 1 2504 0 2 0 2 8 7
+end

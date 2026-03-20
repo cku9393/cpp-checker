@@ -1,0 +1,168 @@
+{
+  "aggregate_not_biconnected_subtype_counts": {},
+  "aggregate_reject_counts": {},
+  "aggregate_stats": {},
+  "aggregate_too_small_subtype_counts": {},
+  "failure": {
+    "name": "s1_r50",
+    "returncode": 1,
+    "rounds": 50,
+    "seed": 1
+  },
+  "first_not_biconnected_subtype_dumps": {},
+  "first_reject_dumps": {},
+  "first_too_small_subtype_dumps": {},
+  "manual": {
+    "not_biconnected_subtype_counts": {
+      "NB_BLOCKS_ALL_TINY": 0,
+      "NB_COMPLEX_MULTI_CUT": 0,
+      "NB_DISCONNECTED": 0,
+      "NB_OTHER": 0,
+      "NB_PATH_OF_BLOCKS": 0,
+      "NB_SINGLE_CUT_TWO_BLOCKS": 1,
+      "NB_STAR_AROUND_ONE_CUT": 0
+    },
+    "not_biconnected_subtype_dumps": {
+      "NB_BLOCKS_ALL_TINY": "-",
+      "NB_COMPLEX_MULTI_CUT": "-",
+      "NB_DISCONNECTED": "-",
+      "NB_OTHER": "-",
+      "NB_PATH_OF_BLOCKS": "-",
+      "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+      "NB_STAR_AROUND_ONE_CUT": "-"
+    },
+    "reject_counts": {
+      "EMPTY_AFTER_DELETE": 0,
+      "NOT_BICONNECTED": 0,
+      "OTHER": 0,
+      "OWNER_NOT_R": 0,
+      "SELF_LOOP": 0,
+      "TOO_SMALL_FOR_SPQR": 0,
+      "X_INCIDENT_VIRTUAL_UNSUPPORTED": 1,
+      "X_NOT_PRESENT_IN_R": 0
+    },
+    "reject_dumps": {
+      "EMPTY_AFTER_DELETE": "-",
+      "NOT_BICONNECTED": "-",
+      "OTHER": "-",
+      "OWNER_NOT_R": "-",
+      "SELF_LOOP": "-",
+      "TOO_SMALL_FOR_SPQR": "-",
+      "X_INCIDENT_VIRTUAL_UNSUPPORTED": "dumps/rewrite_r_rejects/reject_X_INCIDENT_VIRTUAL_UNSUPPORTED_seed1_tc2.txt",
+      "X_NOT_PRESENT_IN_R": "-"
+    },
+    "returncode": 0,
+    "stats": {
+      "backendBuildRawDirectCount": 2,
+      "backendBuildRawFallbackCount": 0,
+      "compactPathOfBlocksHandled": 0,
+      "compactReadyCount": 2,
+      "compactRejectedFallbackCount": 1,
+      "compactSingleCutTwoBlocksHandled": 1,
+      "compactTooSmallHandledCount": 0,
+      "compactTooSmallTwoPathHandledCount": 0,
+      "rewriteCalls": 4,
+      "rewriteFallbackSpecialCaseCount": 1,
+      "rewriteFallbackWholeCoreCount": 1,
+      "rewriteManualPassCount": 3,
+      "rewriteRandomPassCount": 0
+    },
+    "too_small_subtype_counts": {
+      "TS_EMPTY": 0,
+      "TS_ONE_EDGE": 0,
+      "TS_OTHER": 0,
+      "TS_TWO_DISCONNECTED": 0,
+      "TS_TWO_OTHER": 0,
+      "TS_TWO_PARALLEL": 0,
+      "TS_TWO_PATH": 0
+    },
+    "too_small_subtype_dumps": {
+      "TS_EMPTY": "-",
+      "TS_ONE_EDGE": "-",
+      "TS_OTHER": "-",
+      "TS_TWO_DISCONNECTED": "-",
+      "TS_TWO_OTHER": "-",
+      "TS_TWO_PARALLEL": "-",
+      "TS_TWO_PATH": "-"
+    }
+  },
+  "results": [
+    {
+      "name": "s1_r50",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 7,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 8,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 7,
+        "NOT_BICONNECTED": 0,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 8,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 2,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "dumps/rewrite_r_rejects/reject_EMPTY_AFTER_DELETE_seed1_tc0.txt",
+        "NOT_BICONNECTED": "-",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "dumps/rewrite_r_rejects/reject_X_INCIDENT_VIRTUAL_UNSUPPORTED_seed1_tc2.txt",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 1,
+      "rounds": 50,
+      "seed": 1,
+      "stats": {
+        "backendBuildRawDirectCount": 15,
+        "backendBuildRawFallbackCount": 0,
+        "compactPathOfBlocksHandled": 7,
+        "compactReadyCount": 15,
+        "compactRejectedFallbackCount": 17,
+        "compactSingleCutTwoBlocksHandled": 8,
+        "compactTooSmallHandledCount": 12,
+        "compactTooSmallTwoPathHandledCount": 12,
+        "rewriteCalls": 59,
+        "rewriteFallbackSpecialCaseCount": 27,
+        "rewriteFallbackWholeCoreCount": 17,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 40
+      },
+      "too_small_subtype_counts": {
+        "TS_EMPTY": 0,
+        "TS_ONE_EDGE": 1,
+        "TS_OTHER": 0,
+        "TS_TWO_DISCONNECTED": 0,
+        "TS_TWO_OTHER": 7,
+        "TS_TWO_PARALLEL": 0,
+        "TS_TWO_PATH": 12
+      },
+      "too_small_subtype_dumps": {
+        "TS_EMPTY": "-",
+        "TS_ONE_EDGE": "dumps/rewrite_r_tiny_rejects/reject_TS_ONE_EDGE_seed1_tc34.txt",
+        "TS_OTHER": "-",
+        "TS_TWO_DISCONNECTED": "-",
+        "TS_TWO_OTHER": "dumps/rewrite_r_tiny_rejects/reject_TS_TWO_OTHER_seed1_tc2.txt",
+        "TS_TWO_PARALLEL": "-",
+        "TS_TWO_PATH": "dumps/rewrite_r_tiny_rejects/reject_TS_TWO_PATH_seed1_tc3.txt"
+      }
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+raw_engine_v1 next stabilization phase
+date: 2026-03-07
+
+1. modified / added files
+- README.md
+- STABILIZATION_REPORT_20260306.txt
+- tests/CMakeLists.txt
+- tests/raw_engine_cases.cpp
+- tests/raw_engine_main.cpp
+- tests/reference_oracle_cases.cpp
+- tests/test_harness.hpp
+
+2. new generator family / bias profile summary
+- non-targeted planner generation now resolves a precondition-bias config from:
+  - weight profile defaults
+  - optional `--precondition-bias-profile`
+  - optional `--bias-split`, `--bias-join`, `--bias-integrate` overrides
+- `random` / `weighted_*` / `artifact_heavy` planner fuzz no longer rely on the old isolate-heavy single-shape generator only
+  - legacy single-skeleton generation is still in the pool
+  - structural precondition states are now mixed in probabilistically, with weights controlled by the resolved bias config
+  - this keeps non-targeted modes random, but materially raises split/join/integrate entry probability
+- new direct structural families:
+  - `join_ready`
+    - builds two sibling skeletons from scratch with the same separator pair
+    - planner starts from a direct `JOIN_PAIR` precondition state, not a post-split artifact
+  - `integrate_ready`
+    - builds a parent target skeleton plus a direct integrate child from scratch
+    - child is either boundary-only or boundary-map style, selected deterministically from seed
+  - `planner_mixed_structural`
+    - deterministic rotation over `join_ready`, `integrate_ready`, `split_ready`, `split_with_boundary_artifact`
+    - increases primitive-sequence diversity while allowing join/integrate before any planner-issued split
+- existing targeted families were kept:
+  - `split_ready`
+  - `split_with_boundary_artifact`
+  - `split_with_keepOcc_sibling`
+  - `split_with_join_and_integrate`
+  - `planner_mixed_targeted`
+
+3. new coverage stats and conversion ratios
+- existing counters kept:
+  - `split_ready_count`
+  - `boundary_only_child_count`
+  - `join_candidate_count`
+  - `integrate_candidate_count`
+  - `actual_split_hits`
+  - `actual_join_hits`
+  - `actual_integrate_hits`
+  - `first_split_iter`
+  - `first_join_iter`
+  - `first_integrate_iter`
+- new ratio fields:
+  - `precondition_to_actual.split_conversion = actual_split_hits / max(1, split_ready_count)`
+  - `precondition_to_actual.join_conversion = actual_join_hits / max(1, join_candidate_count)`
+  - `precondition_to_actual.integrate_conversion = actual_integrate_hits / max(1, integrate_candidate_count)`
+- new diversity fields:
+  - `trace_prefix_histogram`
+  - `primitive_multiset_histogram`
+  - `diversity.unique_trace_prefix_count`
+  - `diversity.unique_primitive_multiset_count`
+- new mode / seed summary fields:
+  - `coverage_summary.primitive_total`
+  - `coverage_summary.isolate_heavy_ratio`
+  - `coverage_summary.split_hit_density`
+  - `coverage_summary.join_hit_density`
+  - `coverage_summary.integrate_hit_density`
+- new metadata fields:
+  - `precondition_bias_profile`
+  - `bias_split`
+  - `bias_join`
+  - `bias_integrate`
+- output formats:
+  - JSON via `--stats` / `--stats-file`
+  - per-run text summary alongside JSON as `<stats>.summary.txt`
+  - both aggregate and per-seed summaries are emitted
+
+4. coverage quality gate tests and criteria
+- existing gates kept:
+  - `planner_targeted_split_smoke`
+    - seed `830101`
+    - requires `split_ready_count >= 1`, `actual_split_hits >= 1`, `split_conversion >= 0.50`
+  - `planner_targeted_join_smoke`
+    - seed `830201`
+    - requires `join_candidate_count >= 1`, `actual_join_hits >= 1`, `join_conversion >= 0.50`
+  - `planner_targeted_integrate_smoke`
+    - seed `830301`
+    - requires split and integrate hits plus `integrate_conversion >= 0.50`
+  - `planner_targeted_mixed_smoke`
+    - seed `830401`
+    - requires split/join/integrate all >= 2 and conversion >= 0.25 each
+  - `planner_coverage_smoke`
+    - seed `830501`
+    - requires split/join/integrate all >= 2
+    - validates `precondition_to_actual`, `diversity`, and `coverage_summary` fields exist
+- new gates added:
+  - `planner_random_coverage_smoke`
+    - random mode, seed `840101`, 24 iterations
+    - uses `balanced` precondition bias
+    - requires `actual_split_hits >= 1`, `actual_integrate_hits >= 1`
+    - requires `split_conversion >= 0.05`, `integrate_conversion >= 0.05`
+  - `planner_weighted_coverage_smoke`
+    - deterministic 16-iteration checks for:
+      - `weighted_split_heavy`: `actual_split_hits >= 1`
+      - `weighted_join_heavy`: `actual_join_hits >= 1`
+      - `weighted_integrate_heavy`: `actual_integrate_hits >= 1`
+    - each target primitive also requires conversion >= 0.05
+  - `planner_join_ready_smoke`
+    - seed `840301`
+    - requires direct join candidate and `actual_join_hits >= 1`
+  - `planner_integrate_ready_smoke`
+    - seed `840401`
+    - requires direct integrate candidate and `actual_integrate_hits >= 1`
+  - `planner_structural_mixed_smoke`
+    - seed `840501`
+    - requires split/join/integrate all >= 1
+    - requires all conversions >= 0.10
+    - requires diversity counts >= 3
+- all quality gates are deterministic and non-flaky in Debug / ASan / Release
+
+5. random / weighted coverage increase
+- previous comparable baseline from the prior phase:
+  - files:
+    - `build-release/tests/artifacts/planner_fuzz_phase_20260307/logs/seed830001_random.json`
+    - `build-release/tests/artifacts/planner_fuzz_phase_20260307/logs/seed830002_weighted_split.json`
+    - `build-release/tests/artifacts/planner_fuzz_phase_20260307/logs/seed830003_artifact.json`
+  - aggregate over 6000 iterations:
+    - `actual_split_hits = 0`
+    - `actual_join_hits = 0`
+    - `actual_integrate_hits = 0`
+    - primitive hits were isolate-only: `isolate = 15224`, `split = 0`, `join = 0`, `integrate = 0`
+- current comparable non-targeted rerun:
+  - files:
+    - `seed840001_random.json`
+    - `seed840002_weighted_split.json`
+    - `seed840004_artifact.json`
+  - aggregate over 6000 iterations:
+    - `actual_split_hits = 2993`
+    - `actual_join_hits = 665`
+    - `actual_integrate_hits = 2468`
+    - `split_ready_count = 2993`
+    - `join_candidate_count = 1330`
+    - `integrate_candidate_count = 3721`
+    - primitive hits:
+      - `isolate = 2374`
+      - `split = 2993`
+      - `join = 665`
+      - `integrate = 2468`
+    - isolate-heavy ratio improved from `1.000000` to about `0.279294`
+- per-mode highlights from the new rerun:
+  - `seed840001_random.json`
+    - `actual_split_hits = 670`
+    - `actual_join_hits = 270`
+    - `actual_integrate_hits = 521`
+    - `split_conversion = 1.000000`
+    - `join_conversion = 0.500000`
+    - `integrate_conversion = 0.676623`
+  - `seed840002_weighted_split.json`
+    - `actual_split_hits = 1168`
+    - `actual_join_hits = 236`
+    - `actual_integrate_hits = 805`
+    - `split_hit_density = 0.584000`
+  - `seed840003_weighted_join.json`
+    - `actual_join_hits = 643`
+    - `join_candidate_count = 1286`
+    - `join_conversion = 0.500000`
+  - `seed840004_artifact.json`
+    - `actual_integrate_hits = 1142`
+    - `integrate_candidate_count = 1798`
+    - `integrate_conversion = 0.635150`
+
+6. planner fuzz rerun
+- new artifact root:
+  - `build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3`
+- executed commands:
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 840001 --iters 2000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3 --stats-file build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3/logs/seed840001_random.json --fuzz-mode random`
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 840002 --iters 2000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3 --stats-file build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3/logs/seed840002_weighted_split.json --fuzz-mode weighted_split_heavy`
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 840003 --iters 2000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3 --stats-file build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3/logs/seed840003_weighted_join.json --fuzz-mode weighted_join_heavy`
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 840004 --iters 2000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3 --stats-file build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3/logs/seed840004_artifact.json --fuzz-mode artifact_heavy`
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 840005 --iters 2000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3 --stats-file build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3/logs/seed840005_join_ready.json --fuzz-mode join_ready`
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 840006 --iters 2000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3 --stats-file build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3/logs/seed840006_integrate_ready.json --fuzz-mode integrate_ready`
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 840007 --iters 2000 --step-budget 200000 --oracle planner --dump-on-fail --artifact-dir build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3 --stats-file build-release/tests/artifacts/planner_fuzz_phase_20260307_phase3/logs/seed840007_structural_mixed.json --fuzz-mode planner_mixed_structural`
+- result:
+  - all 7 runs passed
+  - no new semantic counterexample
+- direct structural run highlights:
+  - `seed840005_join_ready.json`
+    - `actual_join_hits = 2000`
+    - `join_candidate_count = 4000`
+    - `join_conversion = 0.500000`
+  - `seed840006_integrate_ready.json`
+    - `actual_integrate_hits = 2000`
+    - `actual_split_hits = 979`
+    - `integrate_conversion = 0.500000`
+  - `seed840007_structural_mixed.json`
+    - `actual_split_hits = 1235`
+    - `actual_join_hits = 500`
+    - `actual_integrate_hits = 1000`
+    - `unique_trace_prefix_count = 5`
+    - `unique_primitive_multiset_count = 4`
+
+7. semantic counterexample / reducer / regression status
+- new semantic counterexample found in this phase: none
+- no `planner_oracle_mismatch`, primitive oracle mismatch, sanitizer failure, or crash was observed
+- reducer / dump / FailureSignature paths remain wired:
+  - planner fuzz still runs with `--dump-on-fail`
+  - stats and trace metadata are emitted even on successful runs
+  - if a future mismatch appears, the current harness still supports:
+    - FailureSignature classification
+    - live planner state dump + trace
+    - reducer minimization
+    - regression case addition
+- new regression added in this phase: none
+- existing regressions kept:
+  - `raw_engine_regression_44001`
+  - `raw_engine_regression_isolate_split_no_sep`
+
+8. Debug / ASan / Release commands and results
+- Debug
+  - `cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug`
+  - `cmake --build build-debug -j4`
+  - `ctest --test-dir build-debug --output-on-failure`
+  - result: `34/34` passed
+- ASan + UBSan
+  - `cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=RelWithDebInfo -DRAW_ENGINE_ENABLE_ASAN=ON -DRAW_ENGINE_ENABLE_UBSAN=ON`
+  - `cmake --build build-asan -j4`
+  - `ctest --test-dir build-asan --output-on-failure`
+  - result: `34/34` passed
+- Release
+  - `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release`
+  - `cmake --build build-release -j4`
+  - `ctest --test-dir build-release --output-on-failure`
+  - result: `34/34` passed
+
+9. constraints preserved
+- committed raw skeleton still uses only `REAL` / `OCC_CENTER`
+- `ALLOC_LINK` is still only `RawOccRecord::allocNbr` metadata
+- primitive bodies still use builder reconstruction plus `commit_skeleton()`
+- only `afterSplit` constructs `JOIN_PAIR` / `INTEGRATE_CHILD`
+- `afterJoin` / `afterIntegrate` still only guarantee `ENSURE_SOLE(targetOcc)` once
+- `src/` primitive bodies were not changed in this phase
+- support-based brute-force separator discovery remains unchanged
+
+10. remaining risks
+- non-targeted coverage is now materially better, but it is still bias-assisted; pure emergent random discovery from the legacy shape alone would still under-cover split/join/integrate
+- join remains structurally special:
+  - an empty-queue planner run cannot discover a fresh `JOIN_PAIR` from `ENSURE_SOLE(targetOcc)` alone under the current hook rules
+  - current non-targeted join coverage therefore comes from probabilistic direct structural precondition states, while deterministic coverage comes from `join_ready` / `planner_mixed_structural`
+- artifact and integrate coverage are now healthy, but conversion ratios are partly shaped by the builder pool design rather than by fully unconstrained random discovery
+- warnings around existing unqualified `move` calls and some aggregate initialization remain in the tree; they are noisy but not functional regressions

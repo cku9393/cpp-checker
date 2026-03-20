@@ -1,0 +1,18 @@
+{
+  "previousOptimizedBaseline": {
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 2059,
+    "seqRewriteWholeCoreFallbackCount": 3977
+  },
+  "currentInstrumentedBaseline": {
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 2059,
+    "seqRewriteWholeCoreFallbackCount": 3977,
+    "correctnessGreen": true
+  },
+  "delta": {
+    "rewriteSeqCalls": 0,
+    "seqFallbackCaseCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0
+  }
+}

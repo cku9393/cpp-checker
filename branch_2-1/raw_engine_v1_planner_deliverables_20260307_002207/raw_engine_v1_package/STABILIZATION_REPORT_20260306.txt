@@ -1,0 +1,111 @@
+raw_engine_v1 planner stabilization phase
+date: 2026-03-06
+
+1. files changed
+- tests/reference_planner.hpp
+- tests/reference_planner.cpp
+- tests/planner_oracle_cases.cpp
+- tests/state_dump.hpp
+- tests/state_dump.cpp
+- tests/raw_engine_cases.cpp
+- tests/raw_engine_main.cpp
+- tests/test_harness.hpp
+- tests/reference_oracle_cases.cpp
+- tests/reference_model.hpp
+- tests/reference_model.cpp
+- tests/CMakeLists.txt
+
+2. planner oracle design
+- reference planner uses the same make_basic_hooks_for_target() policy as the engine planner
+- primitive semantics are composed from the existing reference isolate/split/join/integrate models
+- compared signatures:
+  - final full canonical raw state
+  - target stop condition
+  - target-occ prepare_isolate_neighborhood signature
+  - debug trace summary when captured
+- planner mismatch output now prefixes:
+  - case
+  - seed
+  - iter
+  - targetOcc
+  - keepOcc
+  - stepBudget
+
+3. failure signature
+- FailureClass:
+  - none
+  - validator_failure
+  - primitive_oracle_mismatch
+  - planner_oracle_mismatch
+  - step_budget_exceeded
+  - sanitizer_failure
+  - crash
+- FailureSignature:
+  - failureClass
+  - hash
+  - detail
+- replay_state and replay_planner_state print FAIL_CLASS=... and FAIL_HASH=... when present
+- reducer acceptance now requires same failure class and uses hash equality when both sides have a hash
+
+4. dump / replay / reduce
+- primitive replay/reduce kept and upgraded to failure-class-aware acceptance
+- planner dump/replay/reduce added:
+  - --case replay_planner_state
+  - --case reduce_planner_state
+  - --target-occ
+  - --keep-occ
+  - --artifact-dir
+  - --dump-trace
+- planner_oracle_fuzz auto-reduces a pending planner dump when a dump-on-fail planner failure is hit
+
+5. artifact path policy
+- default artifact root is the executable parent directory plus artifacts/
+- practical default paths:
+  - build-debug/tests/artifacts/
+  - build-asan/tests/artifacts/
+  - build-release/tests/artifacts/
+- subdirectories used:
+  - counterexamples/
+  - reduced/
+  - reduced_planner/
+  - traces/
+  - logs/
+
+6. regressions and counterexamples
+- existing regressions kept:
+  - raw_engine_regression_44001
+  - raw_engine_regression_isolate_split_no_sep
+- new planner semantic counterexample found in this phase: none
+- new regression added in this phase: none
+
+7. tests added
+- planner_oracle
+- planner_oracle_fuzz
+- replay_planner_state
+- reduce_planner_state_smoke
+- failure_signature_smoke
+
+8. verification commands
+- cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build-debug -j4
+- ctest --test-dir build-debug --output-on-failure
+- cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_ENABLE_ASAN=ON -DRAW_ENGINE_ENABLE_UBSAN=ON
+- cmake --build build-asan -j4
+- ctest --test-dir build-asan --output-on-failure
+- cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+- cmake --build build-release -j4
+- ctest --test-dir build-release --output-on-failure
+
+9. results
+- Debug: 19/19 passed
+- ASan + UBSan: 19/19 passed
+- Release: 19/19 passed
+- extra planner oracle fuzz:
+  - build-release/tests/raw_engine_tests --case planner_oracle_fuzz --seed 810001 --iters 1000 --step-budget 200000 --dump-on-fail --dump-trace --oracle planner --artifact-dir build-release/tests/artifacts/planner_fuzz_search
+  - repeated for seeds 810002, 810003, 810004, 810005
+  - result: all 5 runs passed, no planner semantic counterexample found
+
+10. remaining risks
+- planner trace dumping is intentionally verbose; large fuzz runs can create many trace files quickly
+- reducer matching uses detail hashes from replay output, so message-format churn can invalidate hash stability across future refactors
+- planner oracle compares final state / stop condition / target prepare, not strict trace equality

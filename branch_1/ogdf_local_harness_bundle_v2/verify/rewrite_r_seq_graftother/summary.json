@@ -1,0 +1,371 @@
+{
+  "runCount": 31,
+  "allRunsGreen": true,
+  "rewriteSeqCalls": 110100,
+  "seqFallbackCaseCount": 6088,
+  "seqRewriteWholeCoreFallbackCount": 8006,
+  "rewriteFallbackSpecialCaseCount": 96431,
+  "seqClearPreserveRequestedCount": 11134,
+  "seqClearPreserveArcCount": 11134,
+  "seqClearPreserveCrossNodeRewireCount": 0,
+  "seqClearPreserveSameNodeRehomeCount": 11134,
+  "seqClearPreserveFallbackCount": 0,
+  "rewriteFallbackTriggerCounts": {
+    "RFT_NONE": 0,
+    "RFT_COMPACT_BUILD_FAIL": 562,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 1356,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 1235,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 824,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_GRAFT_REWIRE_FAIL": 4029,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_OTHER": 0
+  },
+  "seqGraftRewireSubtypeCounts": {
+    "GRB_OWNER_MINI_MISSING": 0,
+    "GRB_OWNER_MINI_SLOT_INVALID": 0,
+    "GRB_OWNER_SLOT_NOT_PROXY": 0,
+    "GRB_ACTUAL_OF_MINI_MISSING": 0,
+    "GRB_ACTUAL_SLOT_MISSING": 0,
+    "GRB_OLDARC_OUT_OF_RANGE": 0,
+    "GRB_OLDARC_DEAD": 0,
+    "GRB_OLDARC_NOT_INCIDENT_TO_OLDNODE": 0,
+    "GRB_OUTSIDENODE_MISMATCH": 0,
+    "GRB_OLDSLOT_INVALID": 0,
+    "GRB_OLDSLOT_NOT_VIRTUAL": 0,
+    "GRB_OLDSLOT_ARCID_MISMATCH": 0,
+    "GRB_DUPLICATE_OLDARC": 0,
+    "GRB_REWIRE_RET_FALSE": 0,
+    "GRB_OTHER": 4029
+  },
+  "seqGraftOtherSubtypeCounts": {
+    "GOS_PRESERVED_SNAPSHOT_EMPTY": 0,
+    "GOS_PRESERVED_DUPLICATE_SLOT": 0,
+    "GOS_PRESERVED_SLOT_OUT_OF_RANGE": 0,
+    "GOS_PRESERVED_SLOT_DEAD": 0,
+    "GOS_PRESERVED_SLOT_NOT_VIRTUAL": 0,
+    "GOS_PRESERVED_SLOT_ARCID_MISMATCH": 0,
+    "GOS_REHOME_NEWSLOT_INVALID": 0,
+    "GOS_REHOME_OLDARC_DEAD": 0,
+    "GOS_REHOME_OLDNODE_NOT_INCIDENT": 0,
+    "GOS_REHOME_NEWSLOT_NOT_VIRTUAL": 0,
+    "GOS_REHOME_ARC_SLOT_UPDATE_FAIL": 0,
+    "GOS_POSTCHECK_STALE_PRESERVED_SLOT": 0,
+    "GOS_POSTCHECK_PRESERVED_ARC_DEAD": 0,
+    "GOS_POSTCHECK_ADJ_MISMATCH": 4029,
+    "GOS_POSTCHECK_OUTSIDE_MISMATCH": 0,
+    "GOS_OTHER": 0
+  },
+  "seqGraftOtherCaseCountsBySubtype": {
+    "GOS_PRESERVED_SNAPSHOT_EMPTY": 0,
+    "GOS_PRESERVED_DUPLICATE_SLOT": 0,
+    "GOS_PRESERVED_SLOT_OUT_OF_RANGE": 0,
+    "GOS_PRESERVED_SLOT_DEAD": 0,
+    "GOS_PRESERVED_SLOT_NOT_VIRTUAL": 0,
+    "GOS_PRESERVED_SLOT_ARCID_MISMATCH": 0,
+    "GOS_REHOME_NEWSLOT_INVALID": 0,
+    "GOS_REHOME_OLDARC_DEAD": 0,
+    "GOS_REHOME_OLDNODE_NOT_INCIDENT": 0,
+    "GOS_REHOME_NEWSLOT_NOT_VIRTUAL": 0,
+    "GOS_REHOME_ARC_SLOT_UPDATE_FAIL": 0,
+    "GOS_POSTCHECK_STALE_PRESERVED_SLOT": 0,
+    "GOS_POSTCHECK_PRESERVED_ARC_DEAD": 0,
+    "GOS_POSTCHECK_ADJ_MISMATCH": 4029,
+    "GOS_POSTCHECK_OUTSIDE_MISMATCH": 0,
+    "GOS_OTHER": 0
+  },
+  "seqGraftOtherAtStepCounts": {
+    "step1_GOS_POSTCHECK_ADJ_MISMATCH": 4029
+  },
+  "firstDumpPaths": {
+    "graftRewire": {
+      "GRB_OTHER": "dumps/rewrite_r_seq_graftbreakdown/seq_fallback_GRB_OTHER_seed1_tc40_step1.txt"
+    },
+    "graftOther": {
+      "GOS_POSTCHECK_ADJ_MISMATCH": "dumps/rewrite_r_seq_graftother/seq_graft_other_GOS_POSTCHECK_ADJ_MISMATCH_seed1_tc40_step1.txt",
+      "GOS_PRESERVED_SNAPSHOT_EMPTY": "-",
+      "GOS_PRESERVED_DUPLICATE_SLOT": "-",
+      "GOS_PRESERVED_SLOT_OUT_OF_RANGE": "-",
+      "GOS_PRESERVED_SLOT_DEAD": "-",
+      "GOS_PRESERVED_SLOT_NOT_VIRTUAL": "-",
+      "GOS_PRESERVED_SLOT_ARCID_MISMATCH": "-",
+      "GOS_REHOME_NEWSLOT_INVALID": "-",
+      "GOS_REHOME_OLDARC_DEAD": "-",
+      "GOS_REHOME_OLDNODE_NOT_INCIDENT": "-",
+      "GOS_REHOME_NEWSLOT_NOT_VIRTUAL": "-",
+      "GOS_REHOME_ARC_SLOT_UPDATE_FAIL": "-",
+      "GOS_POSTCHECK_STALE_PRESERVED_SLOT": "-",
+      "GOS_POSTCHECK_PRESERVED_ARC_DEAD": "-",
+      "GOS_POSTCHECK_OUTSIDE_MISMATCH": "-",
+      "GOS_OTHER": "-"
+    }
+  },
+  "logs": [
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s10_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s10_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s11_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s12_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s13_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s14_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s15_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s16_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s17_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s18_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s19_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s1_r100.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s1_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s1_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s20_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s2_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s2_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s3_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s3_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s4_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s4_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s5_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s5_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s6_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s6_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s7_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s7_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s8_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s8_r5000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s9_r1000.log",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s9_r5000.log"
+  ],
+  "baselineSummary": "verify/rewrite_r_seq_clearpreserve/summary.json",
+  "dominantRemainingTrigger": "RFT_GRAFT_REWIRE_FAIL",
+  "dominantRemainingTriggerCount": 4029,
+  "dominantGraftSubtype": "GRB_OTHER",
+  "dominantGraftOtherSubtype": "GOS_POSTCHECK_ADJ_MISMATCH",
+  "dominantGraftOtherSubtypeCount": 4029,
+  "commands": [
+    {
+      "seed": 10,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s10_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s10_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 10,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s10_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s10_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 11,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s11_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s11_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 12,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s12_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s12_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 13,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s13_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s13_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 14,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s14_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s14_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 15,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s15_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s15_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 16,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s16_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s16_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 17,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s17_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s17_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 18,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s18_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s18_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 19,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s19_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s19_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 1,
+      "rounds": 100,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s1_r100",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s1_r100.log",
+      "ok": true
+    },
+    {
+      "seed": 1,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s1_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s1_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 1,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s1_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s1_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 20,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s20_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s20_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 2,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s2_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s2_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 2,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s2_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s2_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 3,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s3_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s3_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 3,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s3_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s3_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 4,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s4_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s4_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 4,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s4_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s4_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 5,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s5_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s5_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 5,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s5_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s5_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 6,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s6_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s6_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 6,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s6_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s6_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 7,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s7_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s7_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 7,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s7_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s7_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 8,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s8_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s8_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 8,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s8_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s8_r5000.log",
+      "ok": true
+    },
+    {
+      "seed": 9,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s9_r1000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s9_r1000.log",
+      "ok": true
+    },
+    {
+      "seed": 9,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_graftother/s9_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_graftother/logs/s9_r5000.log",
+      "ok": true
+    }
+  ]
+}

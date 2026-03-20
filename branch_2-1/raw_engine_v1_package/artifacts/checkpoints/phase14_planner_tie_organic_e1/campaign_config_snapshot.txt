@@ -1,0 +1,6 @@
+aggregateStatsFile=artifacts/phase14_campaigns/planner_tie_organic/logs/aggregate.json
+aggregateSummaryFile=artifacts/phase14_campaigns/planner_tie_organic/logs/aggregate.summary.txt
+saveCorpusDir=artifacts/phase14_campaigns/planner_tie_organic/corpus
+corpusPolicy=best
+
+run caseName=planner_oracle_fuzz mode=planner_tie_mixed_organic seeds=930201,930202 iters=600 stepBudget=200000 artifactDir=artifacts/phase14_campaigns/planner_tie_organic statsFile=artifacts/phase14_campaigns/planner_tie_organic/logs/planner_tie_organic_compare.json exactCanonicalCap=6 compareSampleRate=0.2 compareBudget=200 splitChoicePolicyMode=exact_shadow splitChoiceCompareMode=exact_full

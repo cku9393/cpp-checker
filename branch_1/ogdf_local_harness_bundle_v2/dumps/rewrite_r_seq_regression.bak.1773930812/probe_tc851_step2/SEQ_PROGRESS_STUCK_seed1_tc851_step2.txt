@@ -1,0 +1,47 @@
+=== HarnessBundle ===
+seed=1
+tc=851
+backend=OGDF
+stage=SEQ_PROGRESS_STUCK
+where=rewrite-r-seq-replay
+why=replay target step not reached before sequence exhausted
+
+targetTcIndex=851
+targetStep=2
+stepIndex=2
+sequenceLengthSoFar=2
+
+=== ExplicitInput ===
+vertices: 1 2 3 4 5 6
+edges:
+  id=0 (1,2)
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=8 (3,5)
+  id=9 (3,6)
+  id=10 (4,6)
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(4,5,5)
+node 0 type=S localAgg=(3,3,3) subAgg=(3,3,3)
+  realEdgesHere: 3 4 10
+  slot 0 kind=REAL poles=(4,5) realEdge=3
+  slot 1 kind=REAL poles=(5,6) realEdge=4
+  slot 2 kind=REAL poles=(4,6) realEdge=10
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 1
+  slot 0 kind=REAL poles=(2,3) realEdge=1
+
+=== ExplicitBefore ===
+vertices: 2 3 4 5 6
+edges:
+  id=1 (2,3)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=10 (4,6)
+

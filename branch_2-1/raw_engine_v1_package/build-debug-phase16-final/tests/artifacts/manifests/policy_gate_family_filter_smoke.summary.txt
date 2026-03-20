@@ -1,0 +1,2 @@
+policy_gate_summary planner_tie_mixed_organic=INSUFFICIENT_EVIDENCE
+family=planner_tie_mixed_organic status=INSUFFICIENT_EVIDENCE role=production_family compared=0 eligible=0 completed=0 rationale=applicability audit below generated-state threshold

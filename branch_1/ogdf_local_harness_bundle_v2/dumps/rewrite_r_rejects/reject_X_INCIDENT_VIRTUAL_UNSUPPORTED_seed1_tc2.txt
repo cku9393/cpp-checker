@@ -1,0 +1,32 @@
+reason=X_INCIDENT_VIRTUAL_UNSUPPORTED
+why=rewriteR: virtual slot incident to x unsupported in first pass
+seed=1
+tc=2
+chosenR=0
+chosenX=3
+
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=3
+origOfCv: [0->4] [1->5]
+edge#0 kind=REAL cv=(0,1) orig=(4,5) realEdge=23
+
+=== ExplicitBefore ===
+vertices: 2 3 4 5
+edges:
+  id=21 (2,3)
+  id=22 (3,4)
+  id=23 (4,5)
+  id=27 (3,5)
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(4,4,4)
+node 0 type=R localAgg=(3,3,3) subAgg=(3,3,3)
+  realEdgesHere: 22 23 27
+  slot 0 kind=REAL poles=(3,4) realEdge=22
+  slot 1 kind=REAL poles=(4,5) realEdge=23
+  slot 2 kind=REAL poles=(3,5) realEdge=27
+  slot 3 kind=VIRTUAL poles=(3,3) arcId=0
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 21
+  slot 0 kind=REAL poles=(2,3) realEdge=21
+  slot 1 kind=VIRTUAL poles=(3,3) arcId=0

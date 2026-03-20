@@ -1,0 +1,39 @@
+{
+  "baselineSummary": "verify/rewrite_r_seq_clearpreserve/summary.json",
+  "currentSummary": "verify/rewrite_r_seq_graftother/summary.json",
+  "rewriteSeqCalls": {
+    "baseline": 110100,
+    "current": 110100,
+    "delta": 0
+  },
+  "seqFallbackCaseCount": {
+    "baseline": 6088,
+    "current": 6088,
+    "delta": 0
+  },
+  "seqRewriteWholeCoreFallbackCount": {
+    "baseline": 8006,
+    "current": 8006,
+    "delta": 0
+  },
+  "GRB_OTHER": {
+    "baseline": 4029,
+    "current": 4029,
+    "delta": 0
+  },
+  "GOS_POSTCHECK_ADJ_MISMATCH": {
+    "baseline": 0,
+    "current": 4029,
+    "delta": 4029
+  },
+  "seqClearPreserveRequestedCount": {
+    "baseline": 11134,
+    "current": 11134,
+    "delta": 0
+  },
+  "seqClearPreserveSameNodeRehomeCount": {
+    "baseline": 11134,
+    "current": 11134,
+    "delta": 0
+  }
+}

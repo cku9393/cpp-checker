@@ -1,0 +1,24 @@
+case=planner_oracle_fuzz
+weight_profile=random
+precondition_bias_profile=default
+scenario_family=planner_tie_mixed
+bias_split=2
+bias_join=2
+bias_integrate=2
+iterations=1500
+split_ready_count=0
+join_candidate_count=1500
+integrate_candidate_count=1500
+actual_split_hits=0
+actual_join_hits=1500
+actual_integrate_hits=1500
+split_conversion=0.000000
+join_conversion=1.000000
+integrate_conversion=1.000000
+unique_trace_prefix_count=1
+unique_primitive_multiset_count=1
+isolate_heavy_ratio=0.333333
+split_hit_density=0.000000
+join_hit_density=1.000000
+integrate_hit_density=1.000000
+seed=880002 iterations=1500 split_ready=0 join_candidate=1500 integrate_candidate=1500 actual_split=0 actual_join=1500 actual_integrate=1500 split_conversion=0.000000 join_conversion=1.000000 integrate_conversion=1.000000 unique_trace_prefix_count=1 unique_primitive_multiset_count=1

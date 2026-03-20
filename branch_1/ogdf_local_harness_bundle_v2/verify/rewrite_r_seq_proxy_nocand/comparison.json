@@ -1,0 +1,22 @@
+{
+  "seqFallbackCaseCount": {
+    "baseline": 6894,
+    "current": 6894,
+    "delta": 0
+  },
+  "seqRewriteWholeCoreFallbackCount": {
+    "baseline": 8829,
+    "current": 8829,
+    "delta": 0
+  },
+  "GRB_OLDARC_DEAD": {
+    "baseline": 4818,
+    "current": 4818,
+    "delta": 0
+  },
+  "seqResolvedOldArcRepairAttemptCount": {
+    "baseline": 12468,
+    "current": 12468,
+    "delta": 0
+  }
+}

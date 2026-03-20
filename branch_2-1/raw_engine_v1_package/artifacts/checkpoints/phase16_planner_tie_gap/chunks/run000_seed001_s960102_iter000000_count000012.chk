@@ -1,0 +1,14 @@
+run_index=0
+seed_index=1
+seed=960102
+iter_start=0
+iter_count=12
+total_iterations=12
+compare_state_count=0
+semantic_disagreement_count=0
+fallback_count=0
+case_name=planner_oracle_fuzz
+mode=planner_tie_mixed_organic
+artifact_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase16_campaigns_compare/planner_tie_gap
+stats_file=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase16_planner_tie_gap/chunks/run000_seed001_s960102_iter000000_count000012.json
+summary_file=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase16_planner_tie_gap/chunks/run000_seed001_s960102_iter000000_count000012.summary.txt

@@ -1,0 +1,39 @@
+reason=OTHER
+trigger=RFT_COMPACT_TOO_SMALL_UNHANDLED
+pathTaken=WHOLE_CORE_REBUILD
+subtype=TS_TWO_OTHER
+why=rewriteR: compact local graph has fewer than 3 edges
+seed=1
+tc=2
+stepIndex=1
+sequenceLengthSoFar=2
+chosenR=0
+chosenX=2
+
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=2
+origOfCv: [0->3] [1->4]
+edge#0 kind=REAL cv=(0,1) orig=(3,4) realEdge=2
+edge#1 kind=PROXY cv=(1,1) orig=(4,4) oldArc=0 outsideNode=1 oldSlotInU=3 sideAgg=(1,2,2)
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(4,4,4)
+node 0 type=R localAgg=(3,3,3) subAgg=(3,3,3)
+  realEdgesHere: 1 2 7
+  slot 0 kind=REAL poles=(2,3) realEdge=1
+  slot 1 kind=REAL poles=(3,4) realEdge=2
+  slot 2 kind=REAL poles=(2,4) realEdge=7
+  slot 3 kind=VIRTUAL poles=(4,4) arcId=0
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 3
+  slot 0 kind=REAL poles=(4,5) realEdge=3
+  slot 1 kind=VIRTUAL poles=(4,4) arcId=0
+
+=== ExplicitBefore ===
+vertices: 2 3 4 5
+edges:
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=7 (2,4)
+

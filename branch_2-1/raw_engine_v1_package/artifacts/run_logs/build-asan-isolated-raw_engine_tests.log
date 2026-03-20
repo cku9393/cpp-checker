@@ -1,0 +1,4 @@
+[ 21%] Built target raw_engine_lib
+[ 26%] Building CXX object tests/CMakeFiles/raw_engine_tests.dir/raw_engine_cases.cpp.o
+[ 30%] Linking CXX executable raw_engine_tests
+[100%] Built target raw_engine_tests

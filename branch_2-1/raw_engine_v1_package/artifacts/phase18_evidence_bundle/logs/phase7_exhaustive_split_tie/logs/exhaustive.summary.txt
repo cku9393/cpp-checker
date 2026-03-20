@@ -1,0 +1,7 @@
+generated_state_count=8000
+canonical_unique_state_count=8000
+dedupe_drop_count=0
+collision_spot_check_count=0
+organic_duplicate_example_count=0
+dedupe_ratio=0
+family=split_tie_ready generated=8000 unique=8000 dedupe_drops=0 dedupe_ratio=0 validator_checks=8000 primitive_checks=8000 planner_checks=8000

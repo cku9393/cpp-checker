@@ -1,0 +1,5 @@
+aggregateStatsFile=artifacts/phase16_resume_gate_smoke/logs/campaign_aggregate.json
+aggregateSummaryFile=artifacts/phase16_resume_gate_smoke/logs/campaign_aggregate.summary.txt
+corpusPolicy=best
+
+run caseName=planner_oracle_fuzz mode=split_tie_organic_symmetric seeds=951601 iters=4 stepBudget=200000 artifactDir=artifacts/phase16_resume_gate_smoke statsFile=artifacts/phase16_resume_gate_smoke/logs/resume_gate_smoke_seed951601.json exactCanonicalCap=6 compareSampleRate=1.0 compareBudget=4 splitChoicePolicyMode=exact_shadow splitChoiceCompareMode=exact_full

@@ -1,0 +1,37 @@
+raw_engine_v1 next stabilization phase
+date: 2026-03-06
+
+included work
+- primitive semantic oracle for isolate/split/join/integrate
+- canonical signatures for isolate prepared state, split children, merged skeletons, occurrence metadata
+- live raw state dump/replay/reduce CLI
+- new tests: isolate_oracle, split_oracle, join_oracle, integrate_oracle, replay_state, reducer_smoke
+
+design constraints preserved
+- committed raw skeleton keeps REAL and OCC_CENTER only
+- ALLOC_LINK remains RawOccRecord::allocNbr metadata only
+- primitive commit path remains builder reconstruction plus commit_skeleton()
+- afterSplit remains the place that creates JOIN_PAIR / INTEGRATE_CHILD structural work
+- afterJoin / afterIntegrate continue to guarantee ENSURE_SOLE(targetOcc) once
+- P builder first working version still uses THROUGH_PUBLISHED / SPLIT only
+- separator pair search remains support-based brute force
+
+build and test status
+- Debug: pass
+- ASan + UBSan: pass
+- Release: pass
+
+commands used
+- cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build-debug -j4
+- ctest --test-dir build-debug --output-on-failure
+- cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_ENABLE_ASAN=ON -DRAW_ENGINE_ENABLE_UBSAN=ON
+- cmake --build build-asan -j4
+- ctest --test-dir build-asan --output-on-failure
+- cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
+- cmake --build build-release -j4
+- ctest --test-dir build-release --output-on-failure
+
+notes
+- no new semantic engine counterexample was found during this phase
+- reducer smoke currently emits a reduced integrate-state example during tests

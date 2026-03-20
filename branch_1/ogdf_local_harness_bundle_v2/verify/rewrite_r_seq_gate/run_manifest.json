@@ -1,0 +1,292 @@
+{
+  "runs": [
+    {
+      "label": "s1_r100",
+      "seed": 1,
+      "rounds": 100,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s1_r100",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s1_r100.log",
+      "duration_sec": 0.549,
+      "returncode": 0
+    },
+    {
+      "label": "s1_r1000",
+      "seed": 1,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s1_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s1_r1000.log",
+      "duration_sec": 0.271,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 1,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s1_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s1_r1000.log",
+      "duration_sec": 0.256,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 2,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s2_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s2_r1000.log",
+      "duration_sec": 0.261,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 3,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s3_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s3_r1000.log",
+      "duration_sec": 0.262,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 4,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s4_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s4_r1000.log",
+      "duration_sec": 0.265,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 5,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s5_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s5_r1000.log",
+      "duration_sec": 0.257,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 6,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s6_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s6_r1000.log",
+      "duration_sec": 0.269,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 7,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s7_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s7_r1000.log",
+      "duration_sec": 0.296,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 8,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s8_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s8_r1000.log",
+      "duration_sec": 0.311,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 9,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s9_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s9_r1000.log",
+      "duration_sec": 0.304,
+      "returncode": 0
+    },
+    {
+      "label": "s1_10_r1000",
+      "seed": 10,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s10_r1000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s10_r1000.log",
+      "duration_sec": 0.276,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 1,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s1_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s1_r5000.log",
+      "duration_sec": 1.499,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 2,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s2_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s2_r5000.log",
+      "duration_sec": 2.474,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 3,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s3_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s3_r5000.log",
+      "duration_sec": 2.259,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 4,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s4_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s4_r5000.log",
+      "duration_sec": 2.53,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 5,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s5_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s5_r5000.log",
+      "duration_sec": 1.827,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 6,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s6_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s6_r5000.log",
+      "duration_sec": 2.038,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 7,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s7_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s7_r5000.log",
+      "duration_sec": 2.673,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 8,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s8_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s8_r5000.log",
+      "duration_sec": 2.278,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 9,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s9_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s9_r5000.log",
+      "duration_sec": 2.4,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 10,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s10_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s10_r5000.log",
+      "duration_sec": 2.115,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 11,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s11_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s11_r5000.log",
+      "duration_sec": 2.281,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 12,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s12_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s12_r5000.log",
+      "duration_sec": 1.821,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 13,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s13_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s13_r5000.log",
+      "duration_sec": 2.111,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 14,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s14_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s14_r5000.log",
+      "duration_sec": 2.139,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 15,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s15_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s15_r5000.log",
+      "duration_sec": 1.96,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 16,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s16_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s16_r5000.log",
+      "duration_sec": 2.271,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 17,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s17_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s17_r5000.log",
+      "duration_sec": 2.083,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 18,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s18_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s18_r5000.log",
+      "duration_sec": 2.347,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 19,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s19_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s19_r5000.log",
+      "duration_sec": 1.81,
+      "returncode": 0
+    },
+    {
+      "label": "s1_20_r5000",
+      "seed": 20,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_gate/s20_r5000",
+      "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_gate/logs/s20_r5000.log",
+      "duration_sec": 1.957,
+      "returncode": 0
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+raw_corpus_v1
+entries 4
+entry best_integrate family_split_tie_ready_s2_j2_i2 931001 random default split_tie_ready 2 2 2 1 200000 1 0 0 1 0 0 1 1
+entry best_join family_split_tie_ready_s2_j2_i2 931001 random default split_tie_ready 2 2 2 1 200000 1 0 0 1 0 0 1 1
+entry best_split family_split_tie_ready_s2_j2_i2 931001 random default split_tie_ready 2 2 2 1 200000 1 0 0 1 0 0 1 1
+entry diverse_trace family_split_tie_ready_s2_j2_i2 931001 random default split_tie_ready 2 2 2 1 200000 1 0 0 1 0 0 1 1

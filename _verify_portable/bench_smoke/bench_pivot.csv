@@ -1,0 +1,5 @@
+mode,n,min_sec_over_seeds
+comb_rect_dense,128,0.412106
+comb_rect_dense,256,0.025144
+multi_comb_rect,128,0.012570
+multi_comb_rect,256,0.011127

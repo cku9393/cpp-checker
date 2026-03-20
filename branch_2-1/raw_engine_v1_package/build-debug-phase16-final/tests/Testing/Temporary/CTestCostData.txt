@@ -1,0 +1,9 @@
+raw_engine_policy_gate_manifest_smoke 2 0.0786786
+raw_engine_policy_gate_family_filter_smoke 2 0.00696985
+raw_engine_policy_gate_non_applicable_smoke 2 0.00511794
+raw_engine_planner_tie_organic_applicability_drift_smoke 3 0.00300036
+raw_engine_compare_ready_lineage_gate_smoke 2 0.00421481
+raw_engine_policy_gate_nightly_smoke 2 0.00482415
+raw_engine_manifest_roundtrip_smoke 3 0.0030069
+raw_engine_evidence_bundle_smoke 2 0.035168
+---

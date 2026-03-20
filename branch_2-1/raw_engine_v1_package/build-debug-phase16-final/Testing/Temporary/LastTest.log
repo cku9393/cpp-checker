@@ -1,0 +1,272 @@
+Start testing: Mar 19 19:10 KST
+----------------------------------------------------------
+32/97 Testing: raw_engine_compare_ready_lineage_smoke
+32/97 Test: raw_engine_compare_ready_lineage_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "compare_ready_lineage_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_compare_ready_lineage_smoke" start time: Mar 19 19:10 KST
+Output:
+----------------------------------------------------------
+raw_engine_tests error: compare_ready_lineage_audit expected verified paired lineage replays
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time =  38.27 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_compare_ready_lineage_smoke" end time: Mar 19 19:11 KST
+"raw_engine_compare_ready_lineage_smoke" time elapsed: 00:00:38
+----------------------------------------------------------
+
+33/97 Testing: raw_engine_planner_tie_organic_applicability_smoke
+33/97 Test: raw_engine_planner_tie_organic_applicability_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "planner_tie_organic_applicability_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_planner_tie_organic_applicability_smoke" start time: Mar 19 19:11 KST
+Output:
+----------------------------------------------------------
+raw_engine_tests error: unordered_map::at: key not found
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time =   0.35 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_planner_tie_organic_applicability_smoke" end time: Mar 19 19:11 KST
+"raw_engine_planner_tie_organic_applicability_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/97 Testing: raw_engine_planner_tie_organic_proxy_pass_smoke
+34/97 Test: raw_engine_planner_tie_organic_proxy_pass_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "planner_tie_organic_proxy_pass_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_planner_tie_organic_proxy_pass_smoke" start time: Mar 19 19:11 KST
+Output:
+----------------------------------------------------------
+raw_engine_tests error: planner_tie organic proxy smoke expected PROXY_PASS
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time = 364.47 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_planner_tie_organic_proxy_pass_smoke" end time: Mar 19 19:17 KST
+"raw_engine_planner_tie_organic_proxy_pass_smoke" time elapsed: 00:06:04
+----------------------------------------------------------
+
+38/97 Testing: raw_engine_policy_graduation_gate_smoke
+38/97 Test: raw_engine_policy_graduation_gate_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests/raw_engine_tests" "--case" "policy_graduation_gate_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase16-final/tests
+"raw_engine_policy_graduation_gate_smoke" start time: Mar 19 19:17 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=policy_graduation_gate_smoke
+<end of output>
+Test time = 379.35 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_graduation_gate_smoke" end time: Mar 19 19:23 KST
+"raw_engine_policy_graduation_gate_smoke" time elapsed: 00:06:19
+----------------------------------------------------------
+
+End testing: Mar 19 19:23 KST
+
+compare = 782.43 sec*proc
+
+core = 379.35 sec*proc
+
+slow = 403.09 sec*proc
+

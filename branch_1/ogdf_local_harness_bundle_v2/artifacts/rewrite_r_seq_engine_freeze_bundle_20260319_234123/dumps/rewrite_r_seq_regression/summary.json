@@ -1,0 +1,70 @@
+{
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "outputDumpDir": "dumps/rewrite_r_seq_regression",
+  "totalCases": 6,
+  "passedCases": 6,
+  "failedCases": 0,
+  "failedCaseNames": [],
+  "cases": [
+    {
+      "name": "same_type_sp_cleanup_tc40_step1",
+      "seed": 1,
+      "tcIndex": 40,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 3.12254,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc40_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "xshared_loopshared_proxy_loop_real_tc56_step1",
+      "seed": 1,
+      "tcIndex": 56,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 2.54004,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc56_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "selfloop_spqrready_tc328_step1",
+      "seed": 1,
+      "tcIndex": 328,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 2.25292,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc328_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "selfloop_oneedge_tc444_step1",
+      "seed": 2,
+      "tcIndex": 444,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 2.15462,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed2_tc444_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "xshared_spqrready_tc851_step1",
+      "seed": 1,
+      "tcIndex": 851,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.46058,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc851_step1.txt",
+      "failures": []
+    },
+    {
+      "name": "xincident_oneedge_tc33_step1",
+      "seed": 1,
+      "tcIndex": 33,
+      "targetStep": 1,
+      "passed": true,
+      "elapsedMs": 1.0445,
+      "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc33_step1.txt",
+      "failures": []
+    }
+  ]
+}

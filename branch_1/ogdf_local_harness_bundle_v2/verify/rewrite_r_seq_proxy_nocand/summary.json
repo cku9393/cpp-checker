@@ -1,0 +1,135 @@
+{
+  "task": "rewrite_r_seq_proxy_nocand",
+  "date": "2026-03-09",
+  "baselineSummary": "verify/rewrite_r_seq_oldarcrepair/summary.json",
+  "runManifest": "verify/rewrite_r_seq_proxy_nocand/run_manifest.json",
+  "runCount": 32,
+  "rewriteSeqCalls": 111100,
+  "rewriteSeqSucceededCases": 111100,
+  "rewriteSeqFailedCases": 0,
+  "seqFallbackCaseCount": 6894,
+  "seqRewriteWholeCoreFallbackCount": 8829,
+  "seqResolvedOldArcRepairAttemptCount": 12468,
+  "seqResolvedOldArcRepairSuccessCount": 0,
+  "seqResolvedOldArcRepairFailCount": 12468,
+  "seqResolvedOldArcRepairUsedCount": 0,
+  "seqResolvedProxySnapshotCount": 135260,
+  "seqResolvedProxySnapshotFailCount": 0,
+  "seqResolvedProxyRepairUsedCount": 12468,
+  "rewriteFallbackTriggerCounts": {
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_COMPACT_BUILD_FAIL": 566,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 1247,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 829,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_GRAFT_REWIRE_FAIL": 4818,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_NONE": 0,
+    "RFT_OTHER": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 1369
+  },
+  "seqGraftRewireSubtypeCounts": {
+    "GRB_ACTUAL_OF_MINI_MISSING": 0,
+    "GRB_ACTUAL_SLOT_MISSING": 0,
+    "GRB_DUPLICATE_OLDARC": 0,
+    "GRB_OLDARC_DEAD": 4818,
+    "GRB_OLDARC_NOT_INCIDENT_TO_OLDNODE": 0,
+    "GRB_OLDARC_OUT_OF_RANGE": 0,
+    "GRB_OLDSLOT_ARCID_MISMATCH": 0,
+    "GRB_OLDSLOT_INVALID": 0,
+    "GRB_OLDSLOT_NOT_VIRTUAL": 0,
+    "GRB_OTHER": 0,
+    "GRB_OUTSIDENODE_MISMATCH": 0,
+    "GRB_OWNER_MINI_MISSING": 0,
+    "GRB_OWNER_MINI_SLOT_INVALID": 0,
+    "GRB_OWNER_SLOT_NOT_PROXY": 0,
+    "GRB_REWIRE_RET_FALSE": 0
+  },
+  "seqResolvedOldArcRepairOutcomeCounts": {
+    "PAR_FAIL_MULTI_CANDIDATE": 0,
+    "PAR_FAIL_NO_CANDIDATE": 12468,
+    "PAR_FAIL_OUTSIDENODE_DEAD": 0,
+    "PAR_FAIL_SLOT_ARCID_MISMATCH": 0,
+    "PAR_FAIL_SLOT_NOT_VIRTUAL": 0,
+    "PAR_MATCH_BY_OUTSIDENODE_AND_POLES": 0,
+    "PAR_OLDARC_ALREADY_LIVE": 12468,
+    "PAR_OTHER": 0
+  },
+  "seqProxyRepairNoCandidateSubtypeCounts": {
+    "PNC_CANDIDATE_SLOT_ARCID_MISMATCH": 0,
+    "PNC_CANDIDATE_SLOT_NOT_VIRTUAL": 0,
+    "PNC_MULTI_WEAK_CANDIDATES": 0,
+    "PNC_NO_ARC_TO_OUTSIDENODE": 0,
+    "PNC_OLDNODE_DEAD": 0,
+    "PNC_OLDNODE_NO_LIVE_ARCS": 4818,
+    "PNC_OTHER": 0,
+    "PNC_OUTSIDENODE_DEAD": 0,
+    "PNC_SAME_POLES_BUT_OTHER_OUTSIDE": 7650,
+    "PNC_TO_OUTSIDENODE_BUT_WRONG_POLES": 0
+  },
+  "seqProxyRepairNoCandidateCaseCountsBySubtype": {
+    "PNC_CANDIDATE_SLOT_ARCID_MISMATCH": 0,
+    "PNC_CANDIDATE_SLOT_NOT_VIRTUAL": 0,
+    "PNC_MULTI_WEAK_CANDIDATES": 0,
+    "PNC_NO_ARC_TO_OUTSIDENODE": 0,
+    "PNC_OLDNODE_DEAD": 0,
+    "PNC_OLDNODE_NO_LIVE_ARCS": 4818,
+    "PNC_OTHER": 0,
+    "PNC_OUTSIDENODE_DEAD": 0,
+    "PNC_SAME_POLES_BUT_OTHER_OUTSIDE": 7650,
+    "PNC_TO_OUTSIDENODE_BUT_WRONG_POLES": 0
+  },
+  "seqProxyRepairNoCandidateAtStepCounts": {
+    "step1_PNC_OLDNODE_NO_LIVE_ARCS": 4818,
+    "step1_PNC_SAME_POLES_BUT_OTHER_OUTSIDE": 7650
+  },
+  "proxyRepairNoCandidateDumpPaths": {
+    "PNC_OLDNODE_NO_LIVE_ARCS": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_proxy_nocand/seq_proxy_nocand_PNC_OLDNODE_NO_LIVE_ARCS_seed1_tc40_step1.txt",
+    "PNC_SAME_POLES_BUT_OTHER_OUTSIDE": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_proxy_nocand/seq_proxy_nocand_PNC_SAME_POLES_BUT_OTHER_OUTSIDE_seed1_tc56_step1.txt"
+  },
+  "dominantRemainingTrigger": "RFT_GRAFT_REWIRE_FAIL",
+  "dominantRemainingTriggerCount": 4818,
+  "dominantGraftRewireSubtype": "GRB_OLDARC_DEAD",
+  "dominantGraftRewireSubtypeCount": 4818,
+  "dominantOldArcRepairOutcome": "PAR_FAIL_NO_CANDIDATE",
+  "dominantOldArcRepairOutcomeCount": 12468,
+  "dominantProxyRepairNoCandidateSubtype": "PNC_SAME_POLES_BUT_OTHER_OUTSIDE",
+  "dominantProxyRepairNoCandidateSubtypeCount": 7650,
+  "comparisonToBaseline": {
+    "seqFallbackCaseCount": {
+      "baseline": 6894,
+      "current": 6894,
+      "delta": 0
+    },
+    "seqRewriteWholeCoreFallbackCount": {
+      "baseline": 8829,
+      "current": 8829,
+      "delta": 0
+    },
+    "GRB_OLDARC_DEAD": {
+      "baseline": 4818,
+      "current": 4818,
+      "delta": 0
+    },
+    "seqResolvedOldArcRepairAttemptCount": {
+      "baseline": 12468,
+      "current": 12468,
+      "delta": 0
+    }
+  },
+  "conclusion": {
+    "correctnessGreen": true,
+    "oldArcRepairDetailedBreakdownReady": true,
+    "dominantNoCandidateSubtype": "PNC_SAME_POLES_BUT_OTHER_OUTSIDE",
+    "nextTarget": "outsideNode drift tolerant repair 검토"
+  }
+}

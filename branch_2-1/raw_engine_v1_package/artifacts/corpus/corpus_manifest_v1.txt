@@ -1,0 +1,22 @@
+raw_corpus_v1
+entries 20
+entry best_integrate family_planner_mixed_structural_s2_j2_i2 850005 random default planner_mixed_structural 2 2 2 2000 200000 1250 500 1000 1250 1000 1500 5 4
+entry best_join family_planner_mixed_structural_s2_j2_i2 850005 random default planner_mixed_structural 2 2 2 2000 200000 1250 500 1000 1250 1000 1500 5 4
+entry best_split family_planner_mixed_structural_s2_j2_i2 850005 random default planner_mixed_structural 2 2 2 2000 200000 1250 500 1000 1250 1000 1500 5 4
+entry diverse_trace family_planner_mixed_structural_s2_j2_i2 850005 random default planner_mixed_structural 2 2 2 2000 200000 1250 500 1000 1250 1000 1500 5 4
+entry best_integrate family_planner_mixed_targeted_s2_j2_i2 850004 random default planner_mixed_targeted 2 2 2 2000 200000 1000 1000 1000 1000 1000 1000 4 4
+entry best_join family_planner_mixed_targeted_s2_j2_i2 850004 random default planner_mixed_targeted 2 2 2 2000 200000 1000 1000 1000 1000 1000 1000 4 4
+entry best_split family_planner_mixed_targeted_s2_j2_i2 850004 random default planner_mixed_targeted 2 2 2 2000 200000 1000 1000 1000 1000 1000 1000 4 4
+entry diverse_trace family_planner_mixed_targeted_s2_j2_i2 850004 random default planner_mixed_targeted 2 2 2 2000 200000 1000 1000 1000 1000 1000 1000 4 4
+entry best_integrate weight_random_bias_default_s2_j2_i2 850001 random default random 2 2 2 2000 200000 625 295 499 625 590 762 6 5
+entry best_join weight_random_bias_default_s2_j2_i2 850001 random default random 2 2 2 2000 200000 625 295 499 625 590 762 6 5
+entry best_split weight_random_bias_default_s2_j2_i2 850001 random default random 2 2 2 2000 200000 625 295 499 625 590 762 6 5
+entry diverse_trace weight_random_bias_default_s2_j2_i2 850001 random default random 2 2 2 2000 200000 625 295 499 625 590 762 6 5
+entry best_integrate weight_weighted_integrate_heavy_bias_default_s3_j2_i5 850003 weighted_integrate_heavy default random 3 2 5 2000 200000 1075 247 993 1075 494 1533 6 5
+entry best_join weight_weighted_integrate_heavy_bias_default_s3_j2_i5 850003 weighted_integrate_heavy default random 3 2 5 2000 200000 1075 247 993 1075 494 1533 6 5
+entry best_split weight_weighted_integrate_heavy_bias_default_s3_j2_i5 850003 weighted_integrate_heavy default random 3 2 5 2000 200000 1075 247 993 1075 494 1533 6 5
+entry diverse_trace weight_weighted_integrate_heavy_bias_default_s3_j2_i5 850003 weighted_integrate_heavy default random 3 2 5 2000 200000 1075 247 993 1075 494 1533 6 5
+entry best_integrate weight_weighted_join_heavy_bias_default_s3_j5_i2 850002 weighted_join_heavy default random 3 5 2 2000 200000 863 592 591 863 1184 891 6 5
+entry best_join weight_weighted_join_heavy_bias_default_s3_j5_i2 850002 weighted_join_heavy default random 3 5 2 2000 200000 863 592 591 863 1184 891 6 5
+entry best_split weight_weighted_join_heavy_bias_default_s3_j5_i2 850002 weighted_join_heavy default random 3 5 2 2000 200000 863 592 591 863 1184 891 6 5
+entry diverse_trace weight_weighted_join_heavy_bias_default_s3_j5_i2 850002 weighted_join_heavy default random 3 5 2 2000 200000 863 592 591 863 1184 891 6 5

@@ -1,0 +1,364 @@
+Start testing: Mar 19 11:55 KST
+----------------------------------------------------------
+1/92 Testing: raw_engine_micro
+1/92 Test: raw_engine_micro
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "micro"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_micro" start time: Mar 19 11:55 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=micro
+<end of output>
+Test time =   2.02 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_micro" end time: Mar 19 11:55 KST
+"raw_engine_micro" time elapsed: 00:00:02
+----------------------------------------------------------
+
+2/92 Testing: raw_engine_roundtrip
+2/92 Test: raw_engine_roundtrip
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "roundtrip"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_roundtrip" start time: Mar 19 11:55 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=roundtrip
+<end of output>
+Test time =   5.88 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_roundtrip" end time: Mar 19 11:55 KST
+"raw_engine_roundtrip" time elapsed: 00:00:05
+----------------------------------------------------------
+
+3/92 Testing: raw_engine_split_integrate_ensure
+3/92 Test: raw_engine_split_integrate_ensure
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "split_integrate_ensure"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_split_integrate_ensure" start time: Mar 19 11:55 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_integrate_ensure
+<end of output>
+Test time =   3.89 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_integrate_ensure" end time: Mar 19 11:55 KST
+"raw_engine_split_integrate_ensure" time elapsed: 00:00:03
+----------------------------------------------------------
+
+4/92 Testing: raw_engine_regression_44001
+4/92 Test: raw_engine_regression_44001
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "regression_44001"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_regression_44001" start time: Mar 19 11:55 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=regression_44001
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_regression_44001" end time: Mar 19 11:55 KST
+"raw_engine_regression_44001" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/92 Testing: raw_engine_regression_isolate_split_no_sep
+5/92 Test: raw_engine_regression_isolate_split_no_sep
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "regression_isolate_split_no_sep"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_regression_isolate_split_no_sep" start time: Mar 19 11:55 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=regression_isolate_split_no_sep
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_regression_isolate_split_no_sep" end time: Mar 19 11:55 KST
+"raw_engine_regression_isolate_split_no_sep" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/92 Testing: raw_engine_planner
+6/92 Test: raw_engine_planner
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "planner"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_planner" start time: Mar 19 11:55 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner
+<end of output>
+Test time = 107.53 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner" end time: Mar 19 11:57 KST
+"raw_engine_planner" time elapsed: 00:01:47
+----------------------------------------------------------
+
+7/92 Testing: raw_engine_fuzz_matrix
+7/92 Test: raw_engine_fuzz_matrix
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "fuzz_matrix"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_fuzz_matrix" start time: Mar 19 11:57 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=fuzz_matrix
+<end of output>
+Test time =  43.32 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_fuzz_matrix" end time: Mar 19 11:57 KST
+"raw_engine_fuzz_matrix" time elapsed: 00:00:43
+----------------------------------------------------------
+
+8/92 Testing: raw_engine_fuzz
+8/92 Test: raw_engine_fuzz
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "fuzz"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_fuzz" start time: Mar 19 11:57 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=fuzz
+<end of output>
+Test time =  25.45 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_fuzz" end time: Mar 19 11:58 KST
+"raw_engine_fuzz" time elapsed: 00:00:25
+----------------------------------------------------------
+
+9/92 Testing: raw_engine_isolate_oracle
+9/92 Test: raw_engine_isolate_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "isolate_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_isolate_oracle" start time: Mar 19 11:58 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=isolate_oracle
+<end of output>
+Test time =   6.18 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_isolate_oracle" end time: Mar 19 11:58 KST
+"raw_engine_isolate_oracle" time elapsed: 00:00:06
+----------------------------------------------------------
+
+10/92 Testing: raw_engine_split_oracle
+10/92 Test: raw_engine_split_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "split_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_split_oracle" start time: Mar 19 11:58 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_oracle
+<end of output>
+Test time =   9.86 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_oracle" end time: Mar 19 11:58 KST
+"raw_engine_split_oracle" time elapsed: 00:00:09
+----------------------------------------------------------
+
+11/92 Testing: raw_engine_join_oracle
+11/92 Test: raw_engine_join_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "join_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_join_oracle" start time: Mar 19 11:58 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=join_oracle
+<end of output>
+Test time =  11.83 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_join_oracle" end time: Mar 19 11:58 KST
+"raw_engine_join_oracle" time elapsed: 00:00:11
+----------------------------------------------------------
+
+12/92 Testing: raw_engine_integrate_oracle
+12/92 Test: raw_engine_integrate_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "integrate_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_integrate_oracle" start time: Mar 19 11:58 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=integrate_oracle
+<end of output>
+Test time =   5.96 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_integrate_oracle" end time: Mar 19 11:58 KST
+"raw_engine_integrate_oracle" time elapsed: 00:00:05
+----------------------------------------------------------
+
+13/92 Testing: raw_engine_planner_oracle
+13/92 Test: raw_engine_planner_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "planner_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_planner_oracle" start time: Mar 19 11:58 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_oracle
+<end of output>
+Test time = 124.39 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_oracle" end time: Mar 19 12:00 KST
+"raw_engine_planner_oracle" time elapsed: 00:02:04
+----------------------------------------------------------
+
+14/92 Testing: raw_engine_planner_oracle_fuzz
+14/92 Test: raw_engine_planner_oracle_fuzz
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "planner_oracle_fuzz"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_planner_oracle_fuzz" start time: Mar 19 12:00 KST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =  21.82 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_planner_oracle_fuzz" end time: Mar 19 12:01 KST
+"raw_engine_planner_oracle_fuzz" time elapsed: 00:00:21
+----------------------------------------------------------
+
+15/92 Testing: raw_engine_replay_state
+15/92 Test: raw_engine_replay_state
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "replay_state"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_replay_state" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+FAIL_CLASS=none
+FAIL_STAGE=none
+FAIL_PRIMITIVE=none
+FAIL_PLANNER_PHASE=none
+FAIL_TARGET_OCC=4294967295
+FAIL_MISMATCH=none
+raw_engine_v1 tests passed case=replay_state
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_replay_state" end time: Mar 19 12:01 KST
+"raw_engine_replay_state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/92 Testing: raw_engine_reducer_smoke
+16/92 Test: raw_engine_reducer_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "reducer_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_reducer_smoke" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=reducer_smoke
+<end of output>
+Test time =   4.80 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_reducer_smoke" end time: Mar 19 12:01 KST
+"raw_engine_reducer_smoke" time elapsed: 00:00:04
+----------------------------------------------------------
+
+17/92 Testing: raw_engine_replay_planner_state
+17/92 Test: raw_engine_replay_planner_state
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "replay_planner_state"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_replay_planner_state" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+FAIL_CLASS=none
+FAIL_STAGE=none
+FAIL_PRIMITIVE=none
+FAIL_PLANNER_PHASE=none
+FAIL_TARGET_OCC=4294967295
+FAIL_MISMATCH=none
+raw_engine_v1 tests passed case=replay_planner_state
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_replay_planner_state" end time: Mar 19 12:01 KST
+"raw_engine_replay_planner_state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/92 Testing: raw_engine_reduce_planner_state_smoke
+18/92 Test: raw_engine_reduce_planner_state_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "reduce_planner_state_smoke" "--artifact-dir" "artifacts/reduce_planner_state_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_reduce_planner_state_smoke" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=reduce_planner_state_smoke
+<end of output>
+Test time =   4.47 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_reduce_planner_state_smoke" end time: Mar 19 12:01 KST
+"raw_engine_reduce_planner_state_smoke" time elapsed: 00:00:04
+----------------------------------------------------------
+
+19/92 Testing: raw_engine_failure_signature_smoke
+19/92 Test: raw_engine_failure_signature_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "failure_signature_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_failure_signature_smoke" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=failure_signature_smoke
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_failure_signature_smoke" end time: Mar 19 12:01 KST
+"raw_engine_failure_signature_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/92 Testing: raw_engine_planner_failure_signature_smoke
+20/92 Test: raw_engine_planner_failure_signature_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "planner_failure_signature_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_planner_failure_signature_smoke" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_failure_signature_smoke
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_failure_signature_smoke" end time: Mar 19 12:01 KST
+"raw_engine_planner_failure_signature_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/92 Testing: raw_engine_reduce_planner_state_step_budget
+21/92 Test: raw_engine_reduce_planner_state_step_budget
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "reduce_planner_state_step_budget" "--artifact-dir" "artifacts/reduce_planner_state_step_budget"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_reduce_planner_state_step_budget" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =  12.93 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_reduce_planner_state_step_budget" end time: Mar 19 12:01 KST
+"raw_engine_reduce_planner_state_step_budget" time elapsed: 00:00:12
+----------------------------------------------------------
+
+22/92 Testing: raw_engine_reduce_planner_state_trace_prefix
+22/92 Test: raw_engine_reduce_planner_state_trace_prefix
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "reduce_planner_state_trace_prefix" "--artifact-dir" "artifacts/reduce_planner_state_trace_prefix"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_reduce_planner_state_trace_prefix" start time: Mar 19 12:01 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=reduce_planner_state_trace_prefix
+<end of output>
+Test time =   4.93 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_reduce_planner_state_trace_prefix" end time: Mar 19 12:01 KST
+"raw_engine_reduce_planner_state_trace_prefix" time elapsed: 00:00:04
+----------------------------------------------------------
+

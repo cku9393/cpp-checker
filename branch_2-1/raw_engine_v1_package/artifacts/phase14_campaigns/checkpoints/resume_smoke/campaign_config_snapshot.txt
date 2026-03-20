@@ -1,0 +1,6 @@
+aggregateStatsFile=artifacts/phase14_campaigns/resume_smoke/logs/phase14_resume_smoke_aggregate.json
+aggregateSummaryFile=artifacts/phase14_campaigns/resume_smoke/logs/phase14_resume_smoke_aggregate.summary.txt
+saveCorpusDir=artifacts/phase14_campaigns/resume_smoke/corpus
+corpusPolicy=best
+
+run caseName=planner_oracle_fuzz mode=split_tie_ready seeds=931001 iters=2 stepBudget=200000 artifactDir=artifacts/phase14_campaigns/resume_smoke statsFile=artifacts/phase14_campaigns/resume_smoke/logs/resume_smoke_compare.json exactCanonicalCap=6 compareSampleRate=1.0 compareBudget=2 splitChoicePolicyMode=exact_shadow splitChoiceCompareMode=exact_full

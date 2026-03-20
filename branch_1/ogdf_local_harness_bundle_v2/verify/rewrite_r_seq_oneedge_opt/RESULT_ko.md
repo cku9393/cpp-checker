@@ -1,0 +1,49 @@
+# rewrite-r-seq x-shared one-edge optimization
+
+## status
+- correctness: green (`rewriteSeqSucceededCases=111100`, `rewriteSeqFailedCases=0`)
+- seqXIncidentOneEdgeHandledCount: 3552
+- seqXIncidentOneEdgeRealHandledCount: 3552
+- seqXIncidentOneEdgeUnsupportedProxyCount: 0
+- seqRewriteWholeCoreFallbackCount: 12240 -> 8829
+- RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED: 4921 -> 1369
+- XSR_HAFTER_ONE_EDGE residual: 3552 -> 0
+
+## current dominant trigger
+- RFT_GRAFT_REWIRE_FAIL = 4818
+- residual x-shared dominant subtype: XSR_HAFTER_LOOP_SHARED = 1247
+- next safe fix target: sequence-specific graft bailout reduction
+
+## trigger breakdown
+- RFT_GRAFT_REWIRE_FAIL = 4818
+- RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED = 1369
+- RFT_COMPACT_EMPTY_AFTER_DELETE = 1247
+- RFT_COMPACT_TOO_SMALL_UNHANDLED = 829
+- RFT_COMPACT_BUILD_FAIL = 566
+- RFT_BACKEND_BUILDRAW_NOT_BICONNECTED = 0
+- RFT_BACKEND_BUILDRAW_OTHER = 0
+- RFT_BACKEND_BUILDRAW_S_LT3 = 0
+- RFT_CHOOSE_KEEP_FAIL = 0
+- RFT_COMPACT_NOT_BICONNECTED_UNHANDLED = 0
+- RFT_GRAFT_OTHER = 0
+- RFT_MATERIALIZE_MINI_FAIL = 0
+- RFT_NONE = 0
+- RFT_OTHER = 0
+- RFT_PATH_OF_BLOCKS_BUILDER_FAIL = 0
+- RFT_PROXY_METADATA_INVALID = 0
+- RFT_RAW_VALIDATE_FAIL = 0
+- RFT_SINGLE_CUT_BUILDER_FAIL = 0
+- RFT_TWO_PATH_BUILDER_FAIL = 0
+
+## x-shared residual subtype breakdown
+- XSR_HAFTER_LOOP_SHARED = 1247
+- XSR_HAFTER_SPQR_READY = 122
+- XSR_HAFTER_BUILD_FAIL = 0
+- XSR_HAFTER_EMPTY = 0
+- XSR_HAFTER_ONE_EDGE = 0
+- XSR_HAFTER_OTHER = 0
+- XSR_HAFTER_OTHER_NOT_BICONNECTED = 0
+- XSR_HAFTER_PATH_OF_BLOCKS = 0
+- XSR_HAFTER_SINGLE_CUT = 0
+- XSR_HAFTER_TWO_PARALLEL = 0
+- XSR_HAFTER_TWO_PATH = 0

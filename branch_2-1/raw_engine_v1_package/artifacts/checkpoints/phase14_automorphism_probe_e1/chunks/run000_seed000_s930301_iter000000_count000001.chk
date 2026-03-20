@@ -1,0 +1,14 @@
+run_index=0
+seed_index=0
+seed=930301
+iter_start=0
+iter_count=1
+total_iterations=1
+compare_state_count=1
+semantic_disagreement_count=0
+fallback_count=0
+case_name=planner_oracle_fuzz
+mode=automorphism_probe_large
+artifact_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/artifacts/phase14_campaigns/automorphism_probe
+stats_file=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase14_automorphism_probe_e1/chunks/run000_seed000_s930301_iter000000_count000001.json
+summary_file=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/phase14_automorphism_probe_e1/chunks/run000_seed000_s930301_iter000000_count000001.summary.txt

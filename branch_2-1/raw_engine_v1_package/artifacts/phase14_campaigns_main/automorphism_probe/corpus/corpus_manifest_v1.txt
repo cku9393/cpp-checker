@@ -1,0 +1,6 @@
+raw_corpus_v1
+entries 4
+entry best_integrate family_automorphism_probe_large_s2_j2_i2 930003 random default automorphism_probe_large 2 2 2 2 200000 2 0 0 2 0 0 1 1
+entry best_join family_automorphism_probe_large_s2_j2_i2 930003 random default automorphism_probe_large 2 2 2 2 200000 2 0 0 2 0 0 1 1
+entry best_split family_automorphism_probe_large_s2_j2_i2 930003 random default automorphism_probe_large 2 2 2 2 200000 2 0 0 2 0 0 1 1
+entry diverse_trace family_automorphism_probe_large_s2_j2_i2 930003 random default automorphism_probe_large 2 2 2 2 200000 2 0 0 2 0 0 1 1

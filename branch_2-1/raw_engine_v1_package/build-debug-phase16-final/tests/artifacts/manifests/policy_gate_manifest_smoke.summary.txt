@@ -1,0 +1,5 @@
+policy_gate_summary split_tie_organic_symmetric=INSUFFICIENT_EVIDENCE automorphism_probe_large=INSUFFICIENT_EVIDENCE planner_tie_mixed_organic=INSUFFICIENT_EVIDENCE planner_tie_mixed_organic_compare_ready=INSUFFICIENT_EVIDENCE
+family=split_tie_organic_symmetric status=INSUFFICIENT_EVIDENCE role=production_family compared=0 eligible=0 completed=0 rationale=compare summary missing
+family=automorphism_probe_large status=INSUFFICIENT_EVIDENCE role=production_family compared=0 eligible=0 completed=0 rationale=compare summary missing
+family=planner_tie_mixed_organic status=INSUFFICIENT_EVIDENCE role=production_family compared=0 eligible=0 completed=0 rationale=applicability audit below generated-state threshold
+family=planner_tie_mixed_organic_compare_ready status=INSUFFICIENT_EVIDENCE role=diagnostic_support_family compared=0 eligible=0 completed=0 rationale=diagnostic compare summary missing

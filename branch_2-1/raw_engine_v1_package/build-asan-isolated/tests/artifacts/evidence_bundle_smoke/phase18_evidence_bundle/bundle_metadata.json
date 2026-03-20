@@ -1,0 +1,19 @@
+{
+  "phase": "phase18",
+  "timestamp_utc": "2026-03-19T13:11:24Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/artifacts/evidence_bundle_smoke",
+  "report": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/artifacts/evidence_bundle_smoke/PHASE18_STABILIZATION_REPORT.txt",
+  "policy_manifest_json": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/artifacts/evidence_bundle_smoke/manifests/policy_gate.json",
+  "policy_manifest_txt": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/artifacts/evidence_bundle_smoke/manifests/policy_gate.txt",
+  "policy_manifest_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/artifacts/evidence_bundle_smoke/manifests/policy_gate.summary.txt",
+  "bundle_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/artifacts/evidence_bundle_smoke/phase18_evidence_bundle",
+  "zip_out": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/artifacts/evidence_bundle_smoke/raw_engine_phase18_stabilization.zip",
+  "gate_summary": "policy_gate_summary split_tie_organic_symmetric=PASS planner_tie_mixed_organic=NON_APPLICABLE planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY",
+  "copied_counts": {
+    "reports": 1,
+    "manifests": 3,
+    "curated": 2,
+    "regressions": 1,
+    "logs": 1
+  }
+}

@@ -1,0 +1,1737 @@
+{
+  "aggregate_not_biconnected_subtype_counts": {
+    "NB_BLOCKS_ALL_TINY": 0,
+    "NB_COMPLEX_MULTI_CUT": 0,
+    "NB_DISCONNECTED": 0,
+    "NB_OTHER": 0,
+    "NB_PATH_OF_BLOCKS": 9543,
+    "NB_SINGLE_CUT_TWO_BLOCKS": 17461,
+    "NB_STAR_AROUND_ONE_CUT": 0
+  },
+  "aggregate_reject_counts": {
+    "EMPTY_AFTER_DELETE": 0,
+    "NOT_BICONNECTED": 27004,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": 20429,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "aggregate_stats": {
+    "backendBuildRawDirectCount": 63667,
+    "backendBuildRawFallbackCount": 0,
+    "compactReadyCount": 63667,
+    "compactRejectedFallbackCount": 47433,
+    "rewriteCalls": 111100,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 111100
+  },
+  "failure": null,
+  "first_not_biconnected_subtype_dumps": {
+    "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+    "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt"
+  },
+  "first_reject_dumps": {
+    "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+    "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt"
+  },
+  "results": [
+    {
+      "name": "s1_r100",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 5,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 15,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 20,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 19,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 100,
+      "seed": 1,
+      "stats": {
+        "backendBuildRawDirectCount": 61,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 61,
+        "compactRejectedFallbackCount": 39,
+        "rewriteCalls": 100,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 100
+      }
+    },
+    {
+      "name": "s1_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 75,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 152,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 227,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 175,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 1,
+      "stats": {
+        "backendBuildRawDirectCount": 598,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 598,
+        "compactRejectedFallbackCount": 402,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s1_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 75,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 152,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 227,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 175,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 1,
+      "stats": {
+        "backendBuildRawDirectCount": 598,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 598,
+        "compactRejectedFallbackCount": 402,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s2_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 85,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 153,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 238,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 203,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 2,
+      "stats": {
+        "backendBuildRawDirectCount": 559,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 559,
+        "compactRejectedFallbackCount": 441,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s3_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 76,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 157,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 233,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 188,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 3,
+      "stats": {
+        "backendBuildRawDirectCount": 579,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 579,
+        "compactRejectedFallbackCount": 421,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s4_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 96,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 148,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 244,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 193,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 4,
+      "stats": {
+        "backendBuildRawDirectCount": 563,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 563,
+        "compactRejectedFallbackCount": 437,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s5_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 98,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 135,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 233,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 173,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 5,
+      "stats": {
+        "backendBuildRawDirectCount": 594,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 594,
+        "compactRejectedFallbackCount": 406,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s6_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 92,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 136,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 228,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 183,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 6,
+      "stats": {
+        "backendBuildRawDirectCount": 589,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 589,
+        "compactRejectedFallbackCount": 411,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s7_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 96,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 156,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 252,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 167,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 7,
+      "stats": {
+        "backendBuildRawDirectCount": 581,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 581,
+        "compactRejectedFallbackCount": 419,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s8_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 81,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 167,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 248,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 180,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 8,
+      "stats": {
+        "backendBuildRawDirectCount": 572,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 572,
+        "compactRejectedFallbackCount": 428,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s9_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 77,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 157,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 234,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 177,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 9,
+      "stats": {
+        "backendBuildRawDirectCount": 589,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 589,
+        "compactRejectedFallbackCount": 411,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s10_r1000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 98,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 146,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 244,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 196,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 1000,
+      "seed": 10,
+      "stats": {
+        "backendBuildRawDirectCount": 560,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 560,
+        "compactRejectedFallbackCount": 440,
+        "rewriteCalls": 1000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 1000
+      }
+    },
+    {
+      "name": "s1_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 406,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 790,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1196,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 905,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 1,
+      "stats": {
+        "backendBuildRawDirectCount": 2899,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2899,
+        "compactRejectedFallbackCount": 2101,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s2_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 410,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 780,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1190,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 927,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 2,
+      "stats": {
+        "backendBuildRawDirectCount": 2883,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2883,
+        "compactRejectedFallbackCount": 2117,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s3_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 390,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 785,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1175,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 979,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 3,
+      "stats": {
+        "backendBuildRawDirectCount": 2846,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2846,
+        "compactRejectedFallbackCount": 2154,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s4_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 436,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 778,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1214,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 921,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 4,
+      "stats": {
+        "backendBuildRawDirectCount": 2865,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2865,
+        "compactRejectedFallbackCount": 2135,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s5_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 475,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 761,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1236,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 913,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 5,
+      "stats": {
+        "backendBuildRawDirectCount": 2851,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2851,
+        "compactRejectedFallbackCount": 2149,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s6_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 444,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 796,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1240,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 917,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 6,
+      "stats": {
+        "backendBuildRawDirectCount": 2843,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2843,
+        "compactRejectedFallbackCount": 2157,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s7_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 420,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 791,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1211,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 891,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 7,
+      "stats": {
+        "backendBuildRawDirectCount": 2898,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2898,
+        "compactRejectedFallbackCount": 2102,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s8_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 409,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 790,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1199,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 925,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 8,
+      "stats": {
+        "backendBuildRawDirectCount": 2876,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2876,
+        "compactRejectedFallbackCount": 2124,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s9_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 443,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 849,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1292,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 917,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 9,
+      "stats": {
+        "backendBuildRawDirectCount": 2791,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2791,
+        "compactRejectedFallbackCount": 2209,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s10_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 473,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 780,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1253,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 944,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 10,
+      "stats": {
+        "backendBuildRawDirectCount": 2803,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2803,
+        "compactRejectedFallbackCount": 2197,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s11_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 396,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 781,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1177,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 907,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 11,
+      "stats": {
+        "backendBuildRawDirectCount": 2916,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2916,
+        "compactRejectedFallbackCount": 2084,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s12_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 424,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 838,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1262,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 950,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 12,
+      "stats": {
+        "backendBuildRawDirectCount": 2788,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2788,
+        "compactRejectedFallbackCount": 2212,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s13_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 432,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 748,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1180,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 899,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 13,
+      "stats": {
+        "backendBuildRawDirectCount": 2921,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2921,
+        "compactRejectedFallbackCount": 2079,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s14_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 436,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 780,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1216,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 905,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 14,
+      "stats": {
+        "backendBuildRawDirectCount": 2879,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2879,
+        "compactRejectedFallbackCount": 2121,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s15_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 456,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 797,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1253,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 870,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 15,
+      "stats": {
+        "backendBuildRawDirectCount": 2877,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2877,
+        "compactRejectedFallbackCount": 2123,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s16_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 431,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 788,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1219,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 957,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 16,
+      "stats": {
+        "backendBuildRawDirectCount": 2824,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2824,
+        "compactRejectedFallbackCount": 2176,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s17_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 409,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 773,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1182,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 887,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 17,
+      "stats": {
+        "backendBuildRawDirectCount": 2931,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2931,
+        "compactRejectedFallbackCount": 2069,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s18_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 425,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 818,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1243,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 878,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 18,
+      "stats": {
+        "backendBuildRawDirectCount": 2879,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2879,
+        "compactRejectedFallbackCount": 2121,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s19_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 457,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 786,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1243,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 987,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 19,
+      "stats": {
+        "backendBuildRawDirectCount": 2770,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2770,
+        "compactRejectedFallbackCount": 2230,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    },
+    {
+      "name": "s20_r5000",
+      "not_biconnected_subtype_counts": {
+        "NB_BLOCKS_ALL_TINY": 0,
+        "NB_COMPLEX_MULTI_CUT": 0,
+        "NB_DISCONNECTED": 0,
+        "NB_OTHER": 0,
+        "NB_PATH_OF_BLOCKS": 417,
+        "NB_SINGLE_CUT_TWO_BLOCKS": 778,
+        "NB_STAR_AROUND_ONE_CUT": 0
+      },
+      "not_biconnected_subtype_dumps": {
+        "NB_BLOCKS_ALL_TINY": "-",
+        "NB_COMPLEX_MULTI_CUT": "-",
+        "NB_DISCONNECTED": "-",
+        "NB_OTHER": "-",
+        "NB_PATH_OF_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_PATH_OF_BLOCKS_seed1_tc14.txt",
+        "NB_SINGLE_CUT_TWO_BLOCKS": "dumps/rewrite_r_rejects/reject_NB_SINGLE_CUT_TWO_BLOCKS_seed1_tc2.txt",
+        "NB_STAR_AROUND_ONE_CUT": "-"
+      },
+      "reject_counts": {
+        "EMPTY_AFTER_DELETE": 0,
+        "NOT_BICONNECTED": 1195,
+        "OTHER": 0,
+        "OWNER_NOT_R": 0,
+        "SELF_LOOP": 0,
+        "TOO_SMALL_FOR_SPQR": 921,
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": 0,
+        "X_NOT_PRESENT_IN_R": 0
+      },
+      "reject_dumps": {
+        "EMPTY_AFTER_DELETE": "-",
+        "NOT_BICONNECTED": "dumps/rewrite_r_rejects/reject_NOT_BICONNECTED_seed1_tc2.txt",
+        "OTHER": "-",
+        "OWNER_NOT_R": "-",
+        "SELF_LOOP": "-",
+        "TOO_SMALL_FOR_SPQR": "dumps/rewrite_r_rejects/reject_TOO_SMALL_FOR_SPQR_seed1_tc3.txt",
+        "X_INCIDENT_VIRTUAL_UNSUPPORTED": "-",
+        "X_NOT_PRESENT_IN_R": "-"
+      },
+      "returncode": 0,
+      "rounds": 5000,
+      "seed": 20,
+      "stats": {
+        "backendBuildRawDirectCount": 2884,
+        "backendBuildRawFallbackCount": 0,
+        "compactReadyCount": 2884,
+        "compactRejectedFallbackCount": 2116,
+        "rewriteCalls": 5000,
+        "rewriteManualPassCount": 0,
+        "rewriteRandomPassCount": 5000
+      }
+    }
+  ]
+}

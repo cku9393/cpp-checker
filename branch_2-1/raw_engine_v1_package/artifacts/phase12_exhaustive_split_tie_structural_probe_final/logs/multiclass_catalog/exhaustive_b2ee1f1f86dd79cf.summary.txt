@@ -1,0 +1,63 @@
+case=exhaustive
+family=split_tie_structural
+cluster_key=b2ee1f1f86dd79cf
+category=harmless_multiclass
+admissible_pair_count=6
+semantic_class_count=4
+representative_shifted=0
+fast_selected_pair=2,6
+exact_shadow_selected_pair=2,8
+exact_full_selected_pair=2,8
+stop_condition_divergence=0
+final_state_divergence=0
+scenario_label=split_tie_structural_seed880361
+witness_state=/private/tmp/cpp-checker-phase12-release/artifacts/phase12_exhaustive_split_tie_structural_probe/logs/multiclass_catalog/exhaustive_b2ee1f1f86dd79cf.state.txt
+selected_pair=2,8
+fast_selected_pair=2,6
+policy_selected_pair=2,8
+exact_shadow_selected_pair=2,8
+exact_full_selected_pair=2,8
+exact_representative_pair=2,8
+admissible_pair_count=6
+compared_pair_count=6
+fully_equivalent_count=1
+same_stop_different_final_state_count=1
+semantic_mismatch_count=4
+selected_equivalence_class_size=1
+max_equivalence_class_size=1
+selected_pair_representative=1
+exact_audit_available=1
+fast_class_count=4
+exact_class_count=4
+exact_vs_fast_class_disagreement_count=0
+representative_shift_count=0
+representative_shift_same_class_count=0
+representative_shift_semantic_divergence_count=0
+representative_shift_followup_divergence_count=0
+representative_shift_trace_divergence_count=0
+harmless_shift_count=0
+trace_only_shift_count=0
+semantic_shift_count=0
+representative_shift_kind=none
+representative_shifted=0
+exact_representative_selected=1
+split_choice_compare_state_count=1
+split_choice_exact_shadow_eval_count=6
+split_choice_exact_full_eval_count=6
+split_choice_fallback_count=0
+split_choice_same_representative_count=1
+split_choice_same_semantic_class_count=1
+split_choice_same_final_state_count=1
+split_choice_semantic_disagreement_count=0
+split_choice_cap_hit_count=0
+split_choice_harmless_compare_count=0
+split_choice_trace_only_compare_count=0
+split_choice_exact_shadow_vs_exact_full_shifted=0
+split_choice_exact_shadow_vs_exact_full_shift_kind=none
+multiclass_catalog_key=b26ac2b50774ca81
+pair=2,6 selected=0 fast_selected=1 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=same_stop_different_final_state stop=1 final=80406171a70ed949 target_prepare=19262183a53bd578 trace=47fe0d7eaf8e51e3 fast_class=b6b1ab46e6b99efc exact_class=6246fe94004d85c8
+pair=2,8 selected=1 fast_selected=0 policy_selected=1 exact_shadow_selected=1 exact_full_selected=1 grade=fully_equivalent stop=1 final=c12787dfffb15cc3 target_prepare=19262183a53bd578 trace=47fe0d7eaf8e51e3 fast_class=8cc778d4b4dcc17a exact_class=accc2a454c68079a
+pair=4,6 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=1828747a2020e5e7 target_prepare=19262183a53bd578 trace=47fe0d7eaf8e51e3 fast_class=eb778fa6ddc1bfc7 exact_class=44134b499e690d42
+pair=4,8 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=31179c107f54e26d target_prepare=19262183a53bd578 trace=47fe0d7eaf8e51e3 fast_class=b6b1ab46e6b99efc exact_class=6246fe94004d85c8
+pair=4,3001 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=aced98ae762a5319 target_prepare=19262183a53bd578 trace=47fe0d7eaf8e51e3 fast_class=c94a446793408a61 exact_class=97f95a83b5893a43
+pair=6,3001 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=5345c263738bb371 target_prepare=19262183a53bd578 trace=47fe0d7eaf8e51e3 fast_class=c94a446793408a61 exact_class=97f95a83b5893a43

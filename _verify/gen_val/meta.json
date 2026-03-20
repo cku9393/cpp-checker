@@ -1,0 +1,29 @@
+{
+  "mode": "comb_core",
+  "shape": "comb",
+  "n": 10,
+  "m": 4,
+  "seed": 1,
+  "max_depth": 5,
+  "leaves": 5,
+  "internal": 5,
+  "multi_child": 4,
+  "deepest_node": 10,
+  "subtree_root_deepest": 10,
+  "spine": [
+    1,
+    2,
+    4,
+    6,
+    8,
+    10
+  ],
+  "side": [
+    3,
+    5,
+    7,
+    9
+  ],
+  "extra": 10,
+  "fanout": 1
+}

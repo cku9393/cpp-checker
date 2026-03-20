@@ -1,0 +1,17 @@
+{
+  "mode": "rewrite-r-seq-replay",
+  "seed": 1,
+  "tcIndex": 40,
+  "targetStep": 1,
+  "result": "failed",
+  "failureStage": "SEQ_ACTUAL_INVARIANT_FAIL",
+  "failureReason": "actual reduced: adjacent same-type S/P nodes are forbidden",
+  "deferredSameTypeSP": true,
+  "postcheckSubtype": "GPS_SAME_TYPE_SP_ONLY",
+  "fallbackRemoved": true,
+  "seqRewriteWholeCoreFallbackCount": 0,
+  "seqDeferredSameTypeSPCount": 1,
+  "graftOtherSubtypeCount_GOS_POSTCHECK_ADJ_MISMATCH": 0,
+  "normalizeResolvedSameTypeSP": false,
+  "nextTarget": "sequence-only local S/P cleanup"
+}

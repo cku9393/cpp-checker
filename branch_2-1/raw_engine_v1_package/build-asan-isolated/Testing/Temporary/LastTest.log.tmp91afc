@@ -1,0 +1,1022 @@
+Start testing: Mar 19 12:39 KST
+----------------------------------------------------------
+1/92 Testing: raw_engine_micro
+1/92 Test: raw_engine_micro
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "micro"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_micro" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=micro
+<end of output>
+Test time =   1.14 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_micro" end time: Mar 19 12:39 KST
+"raw_engine_micro" time elapsed: 00:00:01
+----------------------------------------------------------
+
+4/92 Testing: raw_engine_regression_44001
+4/92 Test: raw_engine_regression_44001
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "regression_44001"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_regression_44001" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=regression_44001
+<end of output>
+Test time =   1.18 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_regression_44001" end time: Mar 19 12:39 KST
+"raw_engine_regression_44001" time elapsed: 00:00:01
+----------------------------------------------------------
+
+5/92 Testing: raw_engine_regression_isolate_split_no_sep
+5/92 Test: raw_engine_regression_isolate_split_no_sep
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "regression_isolate_split_no_sep"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_regression_isolate_split_no_sep" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=regression_isolate_split_no_sep
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_regression_isolate_split_no_sep" end time: Mar 19 12:39 KST
+"raw_engine_regression_isolate_split_no_sep" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/92 Testing: raw_engine_split_integrate_ensure
+3/92 Test: raw_engine_split_integrate_ensure
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_integrate_ensure"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_integrate_ensure" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_integrate_ensure
+<end of output>
+Test time =   4.50 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_integrate_ensure" end time: Mar 19 12:39 KST
+"raw_engine_split_integrate_ensure" time elapsed: 00:00:04
+----------------------------------------------------------
+
+2/92 Testing: raw_engine_roundtrip
+2/92 Test: raw_engine_roundtrip
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "roundtrip"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_roundtrip" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=roundtrip
+<end of output>
+Test time =   5.15 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_roundtrip" end time: Mar 19 12:39 KST
+"raw_engine_roundtrip" time elapsed: 00:00:05
+----------------------------------------------------------
+
+9/92 Testing: raw_engine_isolate_oracle
+9/92 Test: raw_engine_isolate_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "isolate_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_isolate_oracle" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=isolate_oracle
+<end of output>
+Test time =   3.89 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_isolate_oracle" end time: Mar 19 12:39 KST
+"raw_engine_isolate_oracle" time elapsed: 00:00:03
+----------------------------------------------------------
+
+10/92 Testing: raw_engine_split_oracle
+10/92 Test: raw_engine_split_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_oracle" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_oracle
+<end of output>
+Test time =   5.51 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_oracle" end time: Mar 19 12:39 KST
+"raw_engine_split_oracle" time elapsed: 00:00:05
+----------------------------------------------------------
+
+11/92 Testing: raw_engine_join_oracle
+11/92 Test: raw_engine_join_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "join_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_join_oracle" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=join_oracle
+<end of output>
+Test time =   7.88 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_join_oracle" end time: Mar 19 12:40 KST
+"raw_engine_join_oracle" time elapsed: 00:00:07
+----------------------------------------------------------
+
+8/92 Testing: raw_engine_fuzz
+8/92 Test: raw_engine_fuzz
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "fuzz"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_fuzz" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=fuzz
+<end of output>
+Test time =  22.23 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_fuzz" end time: Mar 19 12:40 KST
+"raw_engine_fuzz" time elapsed: 00:00:22
+----------------------------------------------------------
+
+12/92 Testing: raw_engine_integrate_oracle
+12/92 Test: raw_engine_integrate_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "integrate_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_integrate_oracle" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=integrate_oracle
+<end of output>
+Test time =   5.44 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_integrate_oracle" end time: Mar 19 12:40 KST
+"raw_engine_integrate_oracle" time elapsed: 00:00:05
+----------------------------------------------------------
+
+7/92 Testing: raw_engine_fuzz_matrix
+7/92 Test: raw_engine_fuzz_matrix
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "fuzz_matrix"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_fuzz_matrix" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=fuzz_matrix
+<end of output>
+Test time =  49.53 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_fuzz_matrix" end time: Mar 19 12:40 KST
+"raw_engine_fuzz_matrix" time elapsed: 00:00:49
+----------------------------------------------------------
+
+15/92 Testing: raw_engine_replay_state
+15/92 Test: raw_engine_replay_state
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "replay_state"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_replay_state" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+FAIL_CLASS=none
+FAIL_STAGE=none
+FAIL_PRIMITIVE=none
+FAIL_PLANNER_PHASE=none
+FAIL_TARGET_OCC=4294967295
+FAIL_MISMATCH=none
+raw_engine_v1 tests passed case=replay_state
+<end of output>
+Test time =   0.22 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_replay_state" end time: Mar 19 12:40 KST
+"raw_engine_replay_state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/92 Testing: raw_engine_reducer_smoke
+16/92 Test: raw_engine_reducer_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "reducer_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_reducer_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=reducer_smoke
+<end of output>
+Test time =   3.93 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_reducer_smoke" end time: Mar 19 12:40 KST
+"raw_engine_reducer_smoke" time elapsed: 00:00:03
+----------------------------------------------------------
+
+17/92 Testing: raw_engine_replay_planner_state
+17/92 Test: raw_engine_replay_planner_state
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "replay_planner_state"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_replay_planner_state" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+FAIL_CLASS=none
+FAIL_STAGE=none
+FAIL_PRIMITIVE=none
+FAIL_PLANNER_PHASE=none
+FAIL_TARGET_OCC=4294967295
+FAIL_MISMATCH=none
+raw_engine_v1 tests passed case=replay_planner_state
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_replay_planner_state" end time: Mar 19 12:40 KST
+"raw_engine_replay_planner_state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/92 Testing: raw_engine_failure_signature_smoke
+19/92 Test: raw_engine_failure_signature_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "failure_signature_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_failure_signature_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=failure_signature_smoke
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_failure_signature_smoke" end time: Mar 19 12:40 KST
+"raw_engine_failure_signature_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/92 Testing: raw_engine_planner_failure_signature_smoke
+20/92 Test: raw_engine_planner_failure_signature_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_failure_signature_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_failure_signature_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_failure_signature_smoke
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_failure_signature_smoke" end time: Mar 19 12:40 KST
+"raw_engine_planner_failure_signature_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/92 Testing: raw_engine_planner_oracle_fuzz_stats
+23/92 Test: raw_engine_planner_oracle_fuzz_stats
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_oracle_fuzz_stats"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_oracle_fuzz_stats" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_oracle_fuzz_stats
+<end of output>
+Test time =  12.73 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_oracle_fuzz_stats" end time: Mar 19 12:40 KST
+"raw_engine_planner_oracle_fuzz_stats" time elapsed: 00:00:12
+----------------------------------------------------------
+
+24/92 Testing: raw_engine_primitive_fault_detection_smoke
+24/92 Test: raw_engine_primitive_fault_detection_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "primitive_fault_detection_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_primitive_fault_detection_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=primitive_fault_detection_smoke
+<end of output>
+Test time =   0.24 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_primitive_fault_detection_smoke" end time: Mar 19 12:40 KST
+"raw_engine_primitive_fault_detection_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/92 Testing: raw_engine_planner_fault_detection_smoke
+25/92 Test: raw_engine_planner_fault_detection_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_fault_detection_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_fault_detection_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_fault_detection_smoke
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_fault_detection_smoke" end time: Mar 19 12:40 KST
+"raw_engine_planner_fault_detection_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/92 Testing: raw_engine_mutation_matrix_smoke
+26/92 Test: raw_engine_mutation_matrix_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "mutation_matrix_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_mutation_matrix_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=mutation_matrix_smoke
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_mutation_matrix_smoke" end time: Mar 19 12:40 KST
+"raw_engine_mutation_matrix_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/92 Testing: raw_engine_planner_fixpoint_idempotence
+27/92 Test: raw_engine_planner_fixpoint_idempotence
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_fixpoint_idempotence"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_fixpoint_idempotence" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_fixpoint_idempotence
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_fixpoint_idempotence" end time: Mar 19 12:40 KST
+"raw_engine_planner_fixpoint_idempotence" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/92 Testing: raw_engine_planner_replay_determinism
+28/92 Test: raw_engine_planner_replay_determinism
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_replay_determinism"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_replay_determinism" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_replay_determinism
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_replay_determinism" end time: Mar 19 12:40 KST
+"raw_engine_planner_replay_determinism" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/92 Testing: raw_engine_corpus_roundtrip_smoke
+30/92 Test: raw_engine_corpus_roundtrip_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "corpus_roundtrip_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_corpus_roundtrip_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=corpus_roundtrip_smoke
+<end of output>
+Test time =   4.35 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_corpus_roundtrip_smoke" end time: Mar 19 12:40 KST
+"raw_engine_corpus_roundtrip_smoke" time elapsed: 00:00:04
+----------------------------------------------------------
+
+31/92 Testing: raw_engine_corpus_replay_smoke
+31/92 Test: raw_engine_corpus_replay_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "corpus_replay_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_corpus_replay_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=corpus_replay_smoke
+<end of output>
+Test time =   1.87 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_corpus_replay_smoke" end time: Mar 19 12:40 KST
+"raw_engine_corpus_replay_smoke" time elapsed: 00:00:01
+----------------------------------------------------------
+
+14/92 Testing: raw_engine_planner_oracle_fuzz
+14/92 Test: raw_engine_planner_oracle_fuzz
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_oracle_fuzz"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_oracle_fuzz" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_oracle_fuzz
+<end of output>
+Test time =  93.00 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_oracle_fuzz" end time: Mar 19 12:41 KST
+"raw_engine_planner_oracle_fuzz" time elapsed: 00:01:33
+----------------------------------------------------------
+
+33/92 Testing: raw_engine_split_choice_policy_graduation_smoke
+33/92 Test: raw_engine_split_choice_policy_graduation_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_policy_graduation_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_policy_graduation_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_policy_graduation_smoke
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_policy_graduation_smoke" end time: Mar 19 12:41 KST
+"raw_engine_split_choice_policy_graduation_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/92 Testing: raw_engine_compare_evidence_threshold_smoke
+34/92 Test: raw_engine_compare_evidence_threshold_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "compare_evidence_threshold_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_compare_evidence_threshold_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=compare_evidence_threshold_smoke
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_compare_evidence_threshold_smoke" end time: Mar 19 12:41 KST
+"raw_engine_compare_evidence_threshold_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/92 Testing: raw_engine_planner
+6/92 Test: raw_engine_planner
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner" start time: Mar 19 12:39 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner
+<end of output>
+Test time = 121.80 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner" end time: Mar 19 12:41 KST
+"raw_engine_planner" time elapsed: 00:02:01
+----------------------------------------------------------
+
+35/92 Testing: raw_engine_exhaustive_split_ready_smoke
+35/92 Test: raw_engine_exhaustive_split_ready_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_split_ready_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_split_ready_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_split_ready_smoke
+<end of output>
+Test time =   4.10 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_split_ready_smoke" end time: Mar 19 12:41 KST
+"raw_engine_exhaustive_split_ready_smoke" time elapsed: 00:00:04
+----------------------------------------------------------
+
+37/92 Testing: raw_engine_exhaustive_integrate_ready_smoke
+37/92 Test: raw_engine_exhaustive_integrate_ready_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_integrate_ready_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_integrate_ready_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_integrate_ready_smoke
+<end of output>
+Test time =   0.80 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_integrate_ready_smoke" end time: Mar 19 12:41 KST
+"raw_engine_exhaustive_integrate_ready_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/92 Testing: raw_engine_exhaustive_mixed_smoke
+38/92 Test: raw_engine_exhaustive_mixed_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_mixed_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_mixed_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_mixed_smoke
+<end of output>
+Test time =   1.46 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_mixed_smoke" end time: Mar 19 12:41 KST
+"raw_engine_exhaustive_mixed_smoke" time elapsed: 00:00:01
+----------------------------------------------------------
+
+39/92 Testing: raw_engine_planner_tie_mixed_exhaustive_smoke
+39/92 Test: raw_engine_planner_tie_mixed_exhaustive_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_tie_mixed_exhaustive_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_tie_mixed_exhaustive_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_tie_mixed_exhaustive_smoke
+<end of output>
+Test time =   0.42 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_tie_mixed_exhaustive_smoke" end time: Mar 19 12:41 KST
+"raw_engine_planner_tie_mixed_exhaustive_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/92 Testing: raw_engine_exhaustive_canonical_dedupe_smoke
+40/92 Test: raw_engine_exhaustive_canonical_dedupe_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_canonical_dedupe_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_canonical_dedupe_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_canonical_dedupe_smoke
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_canonical_dedupe_smoke" end time: Mar 19 12:41 KST
+"raw_engine_exhaustive_canonical_dedupe_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/92 Testing: raw_engine_exhaustive_join_ready_smoke
+36/92 Test: raw_engine_exhaustive_join_ready_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_join_ready_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_join_ready_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_join_ready_smoke
+<end of output>
+Test time =   6.03 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_join_ready_smoke" end time: Mar 19 12:41 KST
+"raw_engine_exhaustive_join_ready_smoke" time elapsed: 00:00:06
+----------------------------------------------------------
+
+13/92 Testing: raw_engine_planner_oracle
+13/92 Test: raw_engine_planner_oracle
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "planner_oracle"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_planner_oracle" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=planner_oracle
+<end of output>
+Test time = 118.81 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_planner_oracle" end time: Mar 19 12:42 KST
+"raw_engine_planner_oracle" time elapsed: 00:01:58
+----------------------------------------------------------
+
+41/92 Testing: raw_engine_exhaustive_natural_dedupe_smoke
+41/92 Test: raw_engine_exhaustive_natural_dedupe_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_natural_dedupe_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_natural_dedupe_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_natural_dedupe_smoke
+<end of output>
+Test time = 133.60 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_natural_dedupe_smoke" end time: Mar 19 12:44 KST
+"raw_engine_exhaustive_natural_dedupe_smoke" time elapsed: 00:02:13
+----------------------------------------------------------
+
+43/92 Testing: raw_engine_exhaustive_collision_guard_smoke
+43/92 Test: raw_engine_exhaustive_collision_guard_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_collision_guard_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_collision_guard_smoke" start time: Mar 19 12:42 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_collision_guard_smoke
+<end of output>
+Test time = 133.30 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_collision_guard_smoke" end time: Mar 19 12:44 KST
+"raw_engine_exhaustive_collision_guard_smoke" time elapsed: 00:02:13
+----------------------------------------------------------
+
+45/92 Testing: raw_engine_metamorphic_relabel_invariance
+45/92 Test: raw_engine_metamorphic_relabel_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "metamorphic_relabel_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_metamorphic_relabel_invariance" start time: Mar 19 12:44 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=metamorphic_relabel_invariance
+<end of output>
+Test time =  25.32 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_metamorphic_relabel_invariance" end time: Mar 19 12:44 KST
+"raw_engine_metamorphic_relabel_invariance" time elapsed: 00:00:25
+----------------------------------------------------------
+
+46/92 Testing: raw_engine_metamorphic_occid_invariance
+46/92 Test: raw_engine_metamorphic_occid_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "metamorphic_occid_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_metamorphic_occid_invariance" start time: Mar 19 12:44 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=metamorphic_occid_invariance
+<end of output>
+Test time =  25.06 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_metamorphic_occid_invariance" end time: Mar 19 12:45 KST
+"raw_engine_metamorphic_occid_invariance" time elapsed: 00:00:25
+----------------------------------------------------------
+
+47/92 Testing: raw_engine_metamorphic_edge_order_invariance
+47/92 Test: raw_engine_metamorphic_edge_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "metamorphic_edge_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_metamorphic_edge_order_invariance" start time: Mar 19 12:45 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=metamorphic_edge_order_invariance
+<end of output>
+Test time =  25.80 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_metamorphic_edge_order_invariance" end time: Mar 19 12:45 KST
+"raw_engine_metamorphic_edge_order_invariance" time elapsed: 00:00:25
+----------------------------------------------------------
+
+48/92 Testing: raw_engine_metamorphic_vertex_order_invariance
+48/92 Test: raw_engine_metamorphic_vertex_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "metamorphic_vertex_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_metamorphic_vertex_order_invariance" start time: Mar 19 12:45 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=metamorphic_vertex_order_invariance
+<end of output>
+Test time =  45.94 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_metamorphic_vertex_order_invariance" end time: Mar 19 12:46 KST
+"raw_engine_metamorphic_vertex_order_invariance" time elapsed: 00:00:45
+----------------------------------------------------------
+
+49/92 Testing: raw_engine_replay_serialization_invariance
+49/92 Test: raw_engine_replay_serialization_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "replay_serialization_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_replay_serialization_invariance" start time: Mar 19 12:46 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=replay_serialization_invariance
+<end of output>
+Test time =  25.71 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_replay_serialization_invariance" end time: Mar 19 12:46 KST
+"raw_engine_replay_serialization_invariance" time elapsed: 00:00:25
+----------------------------------------------------------
+
+44/92 Testing: raw_engine_exact_canonicalizer_smoke
+44/92 Test: raw_engine_exact_canonicalizer_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exact_canonicalizer_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exact_canonicalizer_smoke" start time: Mar 19 12:44 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exact_canonicalizer_smoke
+<end of output>
+Test time = 192.62 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exact_canonicalizer_smoke" end time: Mar 19 12:47 KST
+"raw_engine_exact_canonicalizer_smoke" time elapsed: 00:03:12
+----------------------------------------------------------
+
+51/92 Testing: raw_engine_metamorphic_planner_multistep_smoke
+51/92 Test: raw_engine_metamorphic_planner_multistep_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "metamorphic_planner_multistep_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_metamorphic_planner_multistep_smoke" start time: Mar 19 12:47 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=metamorphic_planner_multistep_smoke
+<end of output>
+Test time =  30.14 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_metamorphic_planner_multistep_smoke" end time: Mar 19 12:47 KST
+"raw_engine_metamorphic_planner_multistep_smoke" time elapsed: 00:00:30
+----------------------------------------------------------
+
+52/92 Testing: raw_engine_metamorphic_replay_matrix_smoke
+52/92 Test: raw_engine_metamorphic_replay_matrix_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "metamorphic_replay_matrix_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_metamorphic_replay_matrix_smoke" start time: Mar 19 12:47 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=metamorphic_replay_matrix_smoke
+<end of output>
+Test time =  34.07 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_metamorphic_replay_matrix_smoke" end time: Mar 19 12:48 KST
+"raw_engine_metamorphic_replay_matrix_smoke" time elapsed: 00:00:34
+----------------------------------------------------------
+
+53/92 Testing: raw_engine_split_choice_oracle_smoke
+53/92 Test: raw_engine_split_choice_oracle_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_oracle_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_oracle_smoke" start time: Mar 19 12:48 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_oracle_smoke
+<end of output>
+Test time =  16.96 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_oracle_smoke" end time: Mar 19 12:48 KST
+"raw_engine_split_choice_oracle_smoke" time elapsed: 00:00:16
+----------------------------------------------------------
+
+54/92 Testing: raw_engine_split_choice_relabel_invariance
+54/92 Test: raw_engine_split_choice_relabel_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_relabel_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_relabel_invariance" start time: Mar 19 12:48 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_relabel_invariance
+<end of output>
+Test time =  14.29 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_relabel_invariance" end time: Mar 19 12:48 KST
+"raw_engine_split_choice_relabel_invariance" time elapsed: 00:00:14
+----------------------------------------------------------
+
+55/92 Testing: raw_engine_split_choice_edge_order_invariance
+55/92 Test: raw_engine_split_choice_edge_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_edge_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_edge_order_invariance" start time: Mar 19 12:48 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_edge_order_invariance
+<end of output>
+Test time =  14.89 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_edge_order_invariance" end time: Mar 19 12:49 KST
+"raw_engine_split_choice_edge_order_invariance" time elapsed: 00:00:14
+----------------------------------------------------------
+
+50/92 Testing: raw_engine_metamorphic_family_matrix_smoke
+50/92 Test: raw_engine_metamorphic_family_matrix_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "metamorphic_family_matrix_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_metamorphic_family_matrix_smoke" start time: Mar 19 12:46 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=metamorphic_family_matrix_smoke
+<end of output>
+Test time = 142.64 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_metamorphic_family_matrix_smoke" end time: Mar 19 12:49 KST
+"raw_engine_metamorphic_family_matrix_smoke" time elapsed: 00:02:22
+----------------------------------------------------------
+
+56/92 Testing: raw_engine_split_choice_vertex_order_invariance
+56/92 Test: raw_engine_split_choice_vertex_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_vertex_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_vertex_order_invariance" start time: Mar 19 12:49 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_vertex_order_invariance
+<end of output>
+Test time =  13.57 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_vertex_order_invariance" end time: Mar 19 12:49 KST
+"raw_engine_split_choice_vertex_order_invariance" time elapsed: 00:00:13
+----------------------------------------------------------
+
+57/92 Testing: raw_engine_split_choice_oracle_regression
+57/92 Test: raw_engine_split_choice_oracle_regression
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_oracle_regression"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_oracle_regression" start time: Mar 19 12:49 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_oracle_regression
+<end of output>
+Test time =  39.68 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_oracle_regression" end time: Mar 19 12:49 KST
+"raw_engine_split_choice_oracle_regression" time elapsed: 00:00:39
+----------------------------------------------------------
+
+59/92 Testing: raw_engine_split_choice_policy_relabel_invariance
+59/92 Test: raw_engine_split_choice_policy_relabel_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_policy_relabel_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_policy_relabel_invariance" start time: Mar 19 12:49 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_policy_relabel_invariance
+<end of output>
+Test time =  16.93 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_policy_relabel_invariance" end time: Mar 19 12:50 KST
+"raw_engine_split_choice_policy_relabel_invariance" time elapsed: 00:00:16
+----------------------------------------------------------
+
+60/92 Testing: raw_engine_split_choice_policy_edge_order_invariance
+60/92 Test: raw_engine_split_choice_policy_edge_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_policy_edge_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_policy_edge_order_invariance" start time: Mar 19 12:50 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_policy_edge_order_invariance
+<end of output>
+Test time =  15.79 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_policy_edge_order_invariance" end time: Mar 19 12:50 KST
+"raw_engine_split_choice_policy_edge_order_invariance" time elapsed: 00:00:15
+----------------------------------------------------------
+
+61/92 Testing: raw_engine_split_choice_policy_vertex_order_invariance
+61/92 Test: raw_engine_split_choice_policy_vertex_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_policy_vertex_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_policy_vertex_order_invariance" start time: Mar 19 12:50 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_policy_vertex_order_invariance
+<end of output>
+Test time =  18.14 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_policy_vertex_order_invariance" end time: Mar 19 12:50 KST
+"raw_engine_split_choice_policy_vertex_order_invariance" time elapsed: 00:00:18
+----------------------------------------------------------
+
+62/92 Testing: raw_engine_split_choice_policy_occid_invariance
+62/92 Test: raw_engine_split_choice_policy_occid_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_policy_occid_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_policy_occid_invariance" start time: Mar 19 12:50 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_policy_occid_invariance
+<end of output>
+Test time =  15.78 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_policy_occid_invariance" end time: Mar 19 12:50 KST
+"raw_engine_split_choice_policy_occid_invariance" time elapsed: 00:00:15
+----------------------------------------------------------
+
+58/92 Testing: raw_engine_split_choice_policy_smoke
+58/92 Test: raw_engine_split_choice_policy_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_policy_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_policy_smoke" start time: Mar 19 12:49 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_policy_smoke
+<end of output>
+Test time = 110.05 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_policy_smoke" end time: Mar 19 12:51 KST
+"raw_engine_split_choice_policy_smoke" time elapsed: 00:01:50
+----------------------------------------------------------
+
+63/92 Testing: raw_engine_split_choice_policy_multiclass_smoke
+63/92 Test: raw_engine_split_choice_policy_multiclass_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_policy_multiclass_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_policy_multiclass_smoke" start time: Mar 19 12:50 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_policy_multiclass_smoke
+<end of output>
+Test time =  14.61 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_policy_multiclass_smoke" end time: Mar 19 12:51 KST
+"raw_engine_split_choice_policy_multiclass_smoke" time elapsed: 00:00:14
+----------------------------------------------------------
+
+64/92 Testing: raw_engine_split_choice_exact_class_smoke
+64/92 Test: raw_engine_split_choice_exact_class_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_exact_class_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_exact_class_smoke" start time: Mar 19 12:51 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_exact_class_smoke
+<end of output>
+Test time =  10.07 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_exact_class_smoke" end time: Mar 19 12:51 KST
+"raw_engine_split_choice_exact_class_smoke" time elapsed: 00:00:10
+----------------------------------------------------------
+
+65/92 Testing: raw_engine_split_choice_exact_relabel_invariance
+65/92 Test: raw_engine_split_choice_exact_relabel_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_exact_relabel_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_exact_relabel_invariance" start time: Mar 19 12:51 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_exact_relabel_invariance
+<end of output>
+Test time =  18.78 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_exact_relabel_invariance" end time: Mar 19 12:51 KST
+"raw_engine_split_choice_exact_relabel_invariance" time elapsed: 00:00:18
+----------------------------------------------------------
+
+66/92 Testing: raw_engine_split_choice_exact_vertex_order_invariance
+66/92 Test: raw_engine_split_choice_exact_vertex_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_exact_vertex_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_exact_vertex_order_invariance" start time: Mar 19 12:51 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_exact_vertex_order_invariance
+<end of output>
+Test time =  19.40 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_exact_vertex_order_invariance" end time: Mar 19 12:51 KST
+"raw_engine_split_choice_exact_vertex_order_invariance" time elapsed: 00:00:19
+----------------------------------------------------------
+
+67/92 Testing: raw_engine_split_choice_exact_edge_order_invariance
+67/92 Test: raw_engine_split_choice_exact_edge_order_invariance
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "split_choice_exact_edge_order_invariance"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_split_choice_exact_edge_order_invariance" start time: Mar 19 12:51 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=split_choice_exact_edge_order_invariance
+<end of output>
+Test time =  19.27 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_split_choice_exact_edge_order_invariance" end time: Mar 19 12:51 KST
+"raw_engine_split_choice_exact_edge_order_invariance" time elapsed: 00:00:19
+----------------------------------------------------------
+
+42/92 Testing: raw_engine_exhaustive_family_sweep_smoke
+42/92 Test: raw_engine_exhaustive_family_sweep_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "exhaustive_family_sweep_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_exhaustive_family_sweep_smoke" start time: Mar 19 12:41 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=exhaustive_family_sweep_smoke
+<end of output>
+Test time = 720.35 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_exhaustive_family_sweep_smoke" end time: Mar 19 12:53 KST
+"raw_engine_exhaustive_family_sweep_smoke" time elapsed: 00:12:00
+----------------------------------------------------------
+
+32/92 Testing: raw_engine_compare_ready_lineage_smoke
+32/92 Test: raw_engine_compare_ready_lineage_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests/raw_engine_tests" "--case" "compare_ready_lineage_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-isolated/tests
+"raw_engine_compare_ready_lineage_smoke" start time: Mar 19 12:40 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=compare_ready_lineage_smoke
+<end of output>
+Test time = 919.49 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_compare_ready_lineage_smoke" end time: Mar 19 12:56 KST
+"raw_engine_compare_ready_lineage_smoke" time elapsed: 00:15:19
+----------------------------------------------------------
+

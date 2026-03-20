@@ -1,0 +1,6 @@
+family=integrate_ready invariant=relabel primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=join_ready invariant=relabel primitive_only_hits=1 planner_step_hits=0 planner_multistep_hits=1 replay_step_hits=0
+family=mixed invariant=relabel primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_ready invariant=relabel primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_tie_ready invariant=relabel primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_tie_structural invariant=relabel primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0

@@ -1,0 +1,48 @@
+{
+  "bench": {
+    "full_s1_10_r1000SummaryPath": "dumps/rewrite_r_seq_bench/full_s1_10_r1000/aggregate_summary.json",
+    "full_s1_20_r5000SummaryPath": "dumps/rewrite_r_seq_bench/full_s1_20_r5000/aggregate_summary.json",
+    "performanceGate": {
+      "baselineEstablished": true,
+      "note": "This freeze establishes the benchmark baseline for solver integration.",
+      "severeRegressionThresholdMultiplier": 2.0
+    },
+    "s1_r1000SummaryPath": "dumps/rewrite_r_seq_bench/s1_r1000/summary.json"
+  },
+  "correctness": "green",
+  "engineApi": {
+    "function": "runRewriteSequenceToFixpoint",
+    "header": "include/harness/project_static_adapter.hpp",
+    "source": "src/project_static_adapter.cpp"
+  },
+  "freezeMetrics": {
+    "rewriteSeqCalls": 100000,
+    "seqFallbackCaseCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 0,
+    "totalRewriteCalls": 127188
+  },
+  "nextStage": "solver integration / end-to-end compare mode",
+  "regression": {
+    "manifestPath": "regressions/rewrite_seq_cases.json",
+    "summaryPath": "dumps/rewrite_r_seq_regression/summary.json"
+  },
+  "representativeReplays": [
+    "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc40_step1.txt",
+    "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc56_step1.txt",
+    "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc328_step1.txt",
+    "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed2_tc444_step1.txt",
+    "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc851_step1.txt",
+    "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc33_step1.txt"
+  ],
+  "verification": {
+    "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_freeze/verification.json",
+    "verified": true,
+    "benchSummaryCount": 31,
+    "problems": []
+  },
+  "git": {
+    "head": "179336d2faf130faa0da3d70b4c614209f0ba998",
+    "dirtyWorktree": true,
+    "tagPolicy": "no git tag created; freeze is anchored by artifact zip + summary because HEAD does not capture uncommitted workspace state"
+  }
+}

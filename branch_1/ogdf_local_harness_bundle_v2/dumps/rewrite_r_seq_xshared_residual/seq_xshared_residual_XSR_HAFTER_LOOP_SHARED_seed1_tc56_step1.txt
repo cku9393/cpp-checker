@@ -1,0 +1,43 @@
+trigger=RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED
+xIncidentSubtype=XIV_SHARED_WITH_LOOP
+residualSubtype=XSR_HAFTER_LOOP_SHARED
+why=compact build: virtual slot incident to x unsupported in first pass | x-incident virtual classify: shared with loop | x-shared residual: after-delete compact graph loop+edge-shared | graft: rewireArcEndpoint returned false
+seed=1
+tc=56
+stepIndex=1
+sequenceLengthSoFar=2
+chosenR=0
+chosenX=1
+
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=1
+origOfCv: [0->5] [1->6]
+edge#0 kind=REAL cv=(0,1) orig=(5,6) realEdge=4
+edge#1 kind=PROXY cv=(0,0) orig=(5,5) oldArc=1 outsideNode=2 oldSlotInU=4 sideAgg=(1,2,2)
+
+=== RNodeLocalSlots ===
+nodeId=0
+alive=1 type=2
+slot 0 alive=1 kind=REAL poles=(5,6) realEdge=4
+slot 1 alive=1 kind=REAL poles=(1,6) realEdge=5
+slot 2 alive=1 kind=REAL poles=(1,5) realEdge=6
+slot 3 alive=1 kind=VIRTUAL poles=(1,1) arcId=0 oldArc=0 outsideNode=1
+slot 4 alive=1 kind=VIRTUAL poles=(5,5) arcId=1 oldArc=1 outsideNode=2
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(5,5,5)
+node 0 type=R localAgg=(3,3,3) subAgg=(3,3,3)
+  realEdgesHere: 4 5 6
+  slot 0 kind=REAL poles=(5,6) realEdge=4
+  slot 1 kind=REAL poles=(1,6) realEdge=5
+  slot 2 kind=REAL poles=(1,5) realEdge=6
+  slot 3 kind=VIRTUAL poles=(1,1) arcId=0
+  slot 4 kind=VIRTUAL poles=(5,5) arcId=1
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 0
+  slot 0 kind=REAL poles=(1,2) realEdge=0
+  slot 1 kind=VIRTUAL poles=(1,1) arcId=0
+node 2 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 3
+  slot 0 kind=REAL poles=(4,5) realEdge=3
+  slot 1 kind=VIRTUAL poles=(5,5) arcId=1

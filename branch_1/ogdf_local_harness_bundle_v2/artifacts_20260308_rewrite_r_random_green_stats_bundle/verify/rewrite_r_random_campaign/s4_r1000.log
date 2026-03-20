@@ -1,0 +1,2 @@
+[OK] completed tc=1000
+[REWRITE_R_STATS] rewriteCalls=1000 compactReadyCount=563 compactRejectedFallbackCount=437 backendBuildRawDirectCount=563 backendBuildRawFallbackCount=0 rewriteManualPassCount=0 rewriteRandomPassCount=1000

@@ -1,0 +1,316 @@
+{
+  "baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_xshared_opt/summary.json",
+  "current_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_xshared_residual/summary.json",
+  "stats": {
+    "rewriteSeqCalls": {
+      "baseline": 111100,
+      "current": 111100,
+      "delta": 0
+    },
+    "rewriteSeqSucceededCases": {
+      "baseline": 111100,
+      "current": 111100,
+      "delta": 0
+    },
+    "rewriteSeqFailedCases": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "seqFallbackCaseCount": {
+      "baseline": 10305,
+      "current": 10305,
+      "delta": 0
+    },
+    "seqRewriteWholeCoreFallbackCount": {
+      "baseline": 12240,
+      "current": 12240,
+      "delta": 0
+    },
+    "rewriteFallbackSpecialCaseCount": {
+      "baseline": 94476,
+      "current": 94476,
+      "delta": 0
+    },
+    "seqXIncidentSharedWithLoopHandledCount": {
+      "baseline": 1326,
+      "current": 1326,
+      "delta": 0
+    }
+  },
+  "rewriteFallbackTriggerCounts": {
+    "RFT_GRAFT_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_BACKEND_BUILDRAW_S_LT3": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": {
+      "baseline": 1247,
+      "current": 1247,
+      "delta": 0
+    },
+    "RFT_SINGLE_CUT_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": {
+      "baseline": 4921,
+      "current": 4921,
+      "delta": 0
+    },
+    "RFT_BACKEND_BUILDRAW_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_GRAFT_REWIRE_FAIL": {
+      "baseline": 4818,
+      "current": 4818,
+      "delta": 0
+    },
+    "RFT_TWO_PATH_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_MATERIALIZE_MINI_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_COMPACT_BUILD_FAIL": {
+      "baseline": 566,
+      "current": 566,
+      "delta": 0
+    },
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": {
+      "baseline": 688,
+      "current": 688,
+      "delta": 0
+    },
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_CHOOSE_KEEP_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_RAW_VALIDATE_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_PROXY_METADATA_INVALID": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "RFT_NONE": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    }
+  },
+  "seqXIncidentVirtualSubtypeCounts": {
+    "XIV_MULTI_POS_PROXY": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XIV_ONE_POS_PROXY": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XIV_SHARED_WITH_LOOP": {
+      "baseline": 4921,
+      "current": 4921,
+      "delta": 0
+    },
+    "XIV_MIXED_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XIV_ZERO_PAYLOAD": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    }
+  },
+  "seqXIncidentResidualSubtypeCounts": {
+    "XSR_HAFTER_LOOP_SHARED": {
+      "baseline": 0,
+      "current": 1247,
+      "delta": 1247
+    },
+    "XSR_HAFTER_PATH_OF_BLOCKS": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_SPQR_READY": {
+      "baseline": 0,
+      "current": 122,
+      "delta": 122
+    },
+    "XSR_HAFTER_SINGLE_CUT": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_TWO_PATH": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_OTHER_NOT_BICONNECTED": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_TWO_PARALLEL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_EMPTY": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_BUILD_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSR_HAFTER_ONE_EDGE": {
+      "baseline": 0,
+      "current": 3552,
+      "delta": 3552
+    }
+  },
+  "seqXIncidentBridgeBailoutCounts": {
+    "XSB_HAFTER_BUILD_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSB_GRAFT_FAIL": {
+      "baseline": 0,
+      "current": 1247,
+      "delta": 1247
+    },
+    "XSB_NONE": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSB_METADATA_REFRESH_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSB_OTHER": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSB_TWO_PATH_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSB_CHOOSE_KEEP_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSB_LOOP_SHARED_BUILDER_FAIL": {
+      "baseline": 0,
+      "current": 0,
+      "delta": 0
+    },
+    "XSB_UNSUPPORTED_HAFTER_SUBTYPE": {
+      "baseline": 0,
+      "current": 3674,
+      "delta": 3674
+    }
+  },
+  "rewritePathTakenCounts": {
+    "WHOLE_CORE_REBUILD": {
+      "baseline": 12240,
+      "current": 12240,
+      "delta": 0
+    },
+    "SPECIAL_SELF_LOOP_TWO_PATH": {
+      "baseline": 6403,
+      "current": 6403,
+      "delta": 0
+    },
+    "DIRECT_SPQR": {
+      "baseline": 41135,
+      "current": 41135,
+      "delta": 0
+    },
+    "SPECIAL_SINGLE_CUT": {
+      "baseline": 17628,
+      "current": 17628,
+      "delta": 0
+    },
+    "SPECIAL_PATH": {
+      "baseline": 24770,
+      "current": 24770,
+      "delta": 0
+    },
+    "SPECIAL_LOOP_SHARED": {
+      "baseline": 9968,
+      "current": 9968,
+      "delta": 0
+    },
+    "SPECIAL_TWO_PATH": {
+      "baseline": 35707,
+      "current": 35707,
+      "delta": 0
+    }
+  },
+  "dominant_remaining_trigger": {
+    "baseline": {
+      "name": "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED",
+      "count": 4921
+    },
+    "current": {
+      "name": "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED",
+      "count": 4921
+    }
+  }
+}

@@ -1,0 +1,1 @@
+family=planner_mixed_structural invariant=relabel primitive_only_hits=1 planner_step_hits=0 planner_multistep_hits=1 replay_step_hits=0

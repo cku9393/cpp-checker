@@ -1,0 +1,7 @@
+FAIL_CLASS=none
+FAIL_STAGE=none
+FAIL_PRIMITIVE=none
+FAIL_PLANNER_PHASE=none
+FAIL_TARGET_OCC=4294967295
+FAIL_MISMATCH=none
+raw_engine_v1 tests passed case=replay_state

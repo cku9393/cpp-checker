@@ -1,0 +1,46 @@
+{
+  "correctness": "green",
+  "gate_decision": "stop_here",
+  "dominant_remaining_trigger": "RFT_COMPACT_BUILD_FAIL",
+  "empty_after_delete_is_dominant": false,
+  "totals": {
+    "rewriteSeqCalls": 111100,
+    "rewriteSeqSucceededCases": 111100,
+    "rewriteSeqFailedCases": 0,
+    "seqFallbackCaseCount": 18034,
+    "seqRewriteWholeCoreFallbackCount": 27698,
+    "seqLoopPlusEdgeSharedHandledCount": 9968,
+    "seqTooSmallOtherHandledCount": 9968,
+    "rewriteFallbackSpecialCaseCount": 86747
+  },
+  "rewriteFallbackTriggerCounts": {
+    "RFT_COMPACT_BUILD_FAIL": 6969,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 6247,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 6212,
+    "RFT_GRAFT_REWIRE_FAIL": 4818,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 3452,
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_NONE": 0,
+    "RFT_OTHER": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0
+  },
+  "rewritePathTakenCounts": {
+    "DIRECT_SPQR": 41135,
+    "SPECIAL_LOOP_SHARED": 9968,
+    "SPECIAL_PATH": 24770,
+    "SPECIAL_SINGLE_CUT": 17628,
+    "SPECIAL_TWO_PATH": 34381,
+    "WHOLE_CORE_REBUILD": 27698
+  },
+  "next_target": "RFT_COMPACT_BUILD_FAIL"
+}

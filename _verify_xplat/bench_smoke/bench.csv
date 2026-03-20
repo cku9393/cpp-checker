@@ -1,0 +1,5 @@
+mode,n,seed,shuffle_labels,shuffle_queries,gen_ok,solver_rc,timed_out,val_ok,sec,rss_kb,case_dir
+comb_rect_dense,128,1,1,1,1,0,0,1,0.010926,2176,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_xplat/bench_smoke/runs/comb_rect_dense/n128/seed1_L1_Q1
+comb_rect_dense,256,1,1,1,1,0,0,1,0.037009,2624,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_xplat/bench_smoke/runs/comb_rect_dense/n256/seed1_L1_Q1
+multi_comb_rect,128,1,1,1,1,0,0,1,0.021886,2128,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_xplat/bench_smoke/runs/multi_comb_rect/n128/seed1_L1_Q1
+multi_comb_rect,256,1,1,1,1,0,0,1,0.011027,2464,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/_verify_xplat/bench_smoke/runs/multi_comb_rect/n256/seed1_L1_Q1

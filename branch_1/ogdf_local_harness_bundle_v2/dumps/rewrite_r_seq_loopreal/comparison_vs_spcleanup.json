@@ -1,0 +1,28 @@
+{
+  "previousSpCleanupBaseline": {
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 2059,
+    "seqRewriteWholeCoreFallbackCount": 3977,
+    "GOS_POSTCHECK_ADJ_MISMATCH": 0,
+    "seqSameTypeSPCleanupAttemptCount": 4029,
+    "seqSameTypeSPCleanupMergeCount": 4029,
+    "seqSameTypeSPCleanupSuccessCount": 4029,
+    "seqSameTypeSPCleanupFailCount": 0,
+    "seqSameTypeSPCleanupCaseCount": 4029
+  },
+  "currentLoopReal": {
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 824,
+    "seqRewriteWholeCoreFallbackCount": 1507,
+    "rewriteFallbackSpecialCaseCount": 93637,
+    "seqXSharedLoopSharedProxyLoopRealAttemptCount": 1235,
+    "seqXSharedLoopSharedProxyLoopRealHandledCount": 1235,
+    "seqXSharedLoopSharedProxyLoopRealFallbackCount": 0,
+    "correctnessGreen": true
+  },
+  "delta": {
+    "rewriteSeqCalls": 0,
+    "seqFallbackCaseCount": -1235,
+    "seqRewriteWholeCoreFallbackCount": -2470
+  }
+}

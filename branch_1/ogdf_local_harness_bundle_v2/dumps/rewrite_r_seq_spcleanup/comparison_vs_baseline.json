@@ -1,0 +1,25 @@
+{
+  "baseline": {
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 6088,
+    "seqRewriteWholeCoreFallbackCount": 8006,
+    "GOS_POSTCHECK_ADJ_MISMATCH": 4029
+  },
+  "current": {
+    "rewriteSeqCalls": 110100,
+    "seqFallbackCaseCount": 2059,
+    "seqRewriteWholeCoreFallbackCount": 3977,
+    "GOS_POSTCHECK_ADJ_MISMATCH": 0,
+    "seqSameTypeSPCleanupAttemptCount": 4029,
+    "seqSameTypeSPCleanupMergeCount": 4029,
+    "seqSameTypeSPCleanupSuccessCount": 4029,
+    "seqSameTypeSPCleanupFailCount": 0,
+    "seqSameTypeSPCleanupCaseCount": 4029
+  },
+  "delta": {
+    "rewriteSeqCalls": 0,
+    "seqFallbackCaseCount": -4029,
+    "seqRewriteWholeCoreFallbackCount": -4029,
+    "GOS_POSTCHECK_ADJ_MISMATCH": -4029
+  }
+}

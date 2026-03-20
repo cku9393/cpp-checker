@@ -1,0 +1,6 @@
+aggregateStatsFile=artifacts/phase14_campaigns/automorphism_probe/logs/aggregate.json
+aggregateSummaryFile=artifacts/phase14_campaigns/automorphism_probe/logs/aggregate.summary.txt
+saveCorpusDir=artifacts/phase14_campaigns/automorphism_probe/corpus
+corpusPolicy=best
+
+run caseName=planner_oracle_fuzz mode=automorphism_probe_large seeds=930301,930302 iters=600 stepBudget=200000 artifactDir=artifacts/phase14_campaigns/automorphism_probe statsFile=artifacts/phase14_campaigns/automorphism_probe/logs/automorphism_probe_compare.json exactCanonicalCap=6 compareSampleRate=0.3 compareBudget=150 splitChoicePolicyMode=exact_shadow splitChoiceCompareMode=exact_full

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libraw_engine_lib.a CMakeFiles/raw_engine_lib.dir/raw_core.cpp.o CMakeFiles/raw_engine_lib.dir/raw_validators.cpp.o CMakeFiles/raw_engine_lib.dir/raw_primitives.cpp.o CMakeFiles/raw_engine_lib.dir/raw_planner.cpp.o
+/usr/bin/ranlib libraw_engine_lib.a

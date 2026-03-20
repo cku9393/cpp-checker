@@ -1,0 +1,24 @@
+phase16 verification summary
+date=2026-03-19
+
+release full ctest
+command=ctest --test-dir build-release --output-on-failure --progress
+result=100% tests passed, 0 tests failed out of 92
+total_test_time_real_sec=484.69
+
+debug full ctest
+artifact=artifacts/phase16_final_20260319/logs/ctest_debug_phase16_final.log
+result=100% tests passed, 0 tests failed out of 92
+total_test_time_real_sec=1512.02
+note=build-debug/Testing/Temporary/LastTest.log also ends cleanly at End testing on 2026-03-19; build-debug/Testing/Temporary/LastTestsFailed.log is stale from 2026-03-07
+
+asan isolated segmented rerun
+build_dir=build-asan-phase16
+segment_1=tests 1-40 completed in build-asan-phase16/Testing/Temporary/LastTest.log with no current LastTestsFailed.log
+segment_2_command=ctest --test-dir build-asan-phase16 -I 41,60,1 --output-on-failure --progress
+segment_2_result=100% tests passed, 0 tests failed out of 20
+segment_2_total_test_time_real_sec=1197.26
+segment_3_command=ctest --test-dir build-asan-phase16 -I 61,92,1 --output-on-failure --progress
+segment_3_result=100% tests passed, 0 tests failed out of 32
+segment_3_total_test_time_real_sec=1735.18
+asan_long_tail_notes=split_choice_semantic_shift_smoke=599.06s; split_choice_policy_fast_vs_exact_shadow_compare=307.57s; exhaustive_family_sweep_smoke=513.82s

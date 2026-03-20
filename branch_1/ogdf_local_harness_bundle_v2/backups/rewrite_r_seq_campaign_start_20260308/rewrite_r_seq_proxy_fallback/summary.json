@@ -1,0 +1,32 @@
+{
+  "completed_tc": 50,
+  "reject_counts": {
+    "EMPTY_AFTER_DELETE": 8,
+    "NOT_BICONNECTED": 0,
+    "OTHER": 0,
+    "OWNER_NOT_R": 0,
+    "SELF_LOOP": 0,
+    "TOO_SMALL_FOR_SPQR": 11,
+    "X_INCIDENT_VIRTUAL_UNSUPPORTED": 2,
+    "X_NOT_PRESENT_IN_R": 0
+  },
+  "returncode": 0,
+  "stats": {
+    "backendBuildRawDirectCount": 19,
+    "backendBuildRawFallbackCount": 0,
+    "compactPathOfBlocksHandled": 9,
+    "compactReadyCount": 19,
+    "compactRejectedFallbackCount": 21,
+    "compactSingleCutTwoBlocksHandled": 9,
+    "compactTooSmallHandledCount": 15,
+    "compactTooSmallTwoPathHandledCount": 15,
+    "rewriteCalls": 73,
+    "rewriteFallbackSpecialCaseCount": 33,
+    "rewriteFallbackWholeCoreCount": 22,
+    "rewriteManualPassCount": 0,
+    "rewriteRandomPassCount": 50,
+    "seqGraftRewireFallbackCount": 1,
+    "seqProxyMetadataFallbackCount": 0,
+    "seqRewriteWholeCoreFallbackCount": 1
+  }
+}

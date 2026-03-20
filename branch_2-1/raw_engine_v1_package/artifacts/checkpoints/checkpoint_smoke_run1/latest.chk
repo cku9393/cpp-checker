@@ -1,0 +1,12 @@
+version=phase14
+checkpoint_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/checkpoint_smoke_run1
+campaign_config_snapshot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/checkpoints/checkpoint_smoke_run1/campaign_config_snapshot.txt
+split_choice_policy_mode=exact_shadow
+split_choice_compare_mode=none
+compare_sample_rate=1
+compare_budget=0
+exact_canonical_cap=0
+checkpoint_every=2
+save_corpus_dir=
+load_corpus_dir=
+corpus_policy=best

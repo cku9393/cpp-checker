@@ -1,0 +1,34 @@
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test OGDF_HEADERS_OK
+-- Performing Test OGDF_HEADERS_OK - Failed
+-- Performing Test OGDF_HAS_RANGE_GRAPH_ITER
+-- Performing Test OGDF_HAS_RANGE_GRAPH_ITER - Failed
+-- Performing Test OGDF_HAS_NODE_ADJENTRIES
+-- Performing Test OGDF_HAS_NODE_ADJENTRIES - Failed
+-- Performing Test OGDF_HAS_STATICSPQRTREE
+-- Performing Test OGDF_HAS_STATICSPQRTREE - Failed
+-- Performing Test OGDF_HAS_STATICSKELETON
+-- Performing Test OGDF_HAS_STATICSKELETON - Failed
+-- Performing Test OGDF_HAS_STATICSKELETON_TREEEDGE
+-- Performing Test OGDF_HAS_STATICSKELETON_TREEEDGE - Failed
+-- USE_OGDF=ON
+-- HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS=ON
+-- OGDF_INCLUDE_DIRS=/tmp/codex/ogdf-install/include;/tmp/codex/ogdf-install/include/ogdf-release;/tmp/codex/ogdf-install/../ogdf-build/include/ogdf-release
+-- OGDF_LIBRARY_DIRS=/tmp/codex/ogdf-install/lib;/tmp/codex/ogdf-install
+-- OGDF_HAS_RANGE_GRAPH_ITER=
+-- OGDF_HAS_NODE_ADJENTRIES=
+-- OGDF_HAS_STATICSKELETON_TREEEDGE=
+-- Configuring done (50.2s)
+-- Generating done (0.1s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_C_COMPILER
+
+
+-- Build files have been written to: /tmp/codex/harness-build-static-raw

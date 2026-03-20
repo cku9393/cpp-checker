@@ -1,0 +1,14 @@
+{
+"run_count":5,
+"mode_count":5,
+"total_iterations":10000,
+"split_ready_count":4813,
+"join_candidate_count":4268,
+"integrate_candidate_count":5686,
+"actual_split_hits":4813,
+"actual_join_hits":2634,
+"actual_integrate_hits":4083,
+"trace_prefix_histogram":{"integrate":807,"integrate>join>isolate_vertex":500,"integrate>split":796,"isolate_vertex":1746,"join>isolate_vertex":2134,"split":2037,"split>integrate":1980},
+"primitive_multiset_histogram":{"isolate=0,split=0,join=0,integrate=1":807,"isolate=0,split=1,join=0,integrate=0":2037,"isolate=0,split=1,join=0,integrate=1":2776,"isolate=1,split=0,join=0,integrate=0":1746,"isolate=1,split=0,join=1,integrate=0":2134,"isolate=1,split=0,join=1,integrate=1":500},
+"oracle_mismatch_count":{}
+}

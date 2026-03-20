@@ -1,0 +1,230 @@
+{
+  "task": "rewrite_r_seq_arcphase",
+  "date": "2026-03-10",
+  "runs": [
+    {
+      "label": "s10_r1000_loop",
+      "seed": 10,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s10_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s10_r1000_loop.log"
+    },
+    {
+      "label": "s10_r5000",
+      "seed": 10,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s10_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s10_r5000.log"
+    },
+    {
+      "label": "s11_r5000",
+      "seed": 11,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s11_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s11_r5000.log"
+    },
+    {
+      "label": "s12_r5000",
+      "seed": 12,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s12_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s12_r5000.log"
+    },
+    {
+      "label": "s13_r5000",
+      "seed": 13,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s13_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s13_r5000.log"
+    },
+    {
+      "label": "s14_r5000",
+      "seed": 14,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s14_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s14_r5000.log"
+    },
+    {
+      "label": "s15_r5000",
+      "seed": 15,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s15_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s15_r5000.log"
+    },
+    {
+      "label": "s16_r5000",
+      "seed": 16,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s16_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s16_r5000.log"
+    },
+    {
+      "label": "s17_r5000",
+      "seed": 17,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s17_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s17_r5000.log"
+    },
+    {
+      "label": "s18_r5000",
+      "seed": 18,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s18_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s18_r5000.log"
+    },
+    {
+      "label": "s19_r5000",
+      "seed": 19,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s19_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s19_r5000.log"
+    },
+    {
+      "label": "s1_r100",
+      "seed": 1,
+      "rounds": 100,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s1_r100",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s1_r100.log"
+    },
+    {
+      "label": "s1_r1000_loop",
+      "seed": 1,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s1_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s1_r1000_loop.log"
+    },
+    {
+      "label": "s1_r1000_single",
+      "seed": 1,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s1_r1000_single",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s1_r1000_single.log"
+    },
+    {
+      "label": "s1_r5000",
+      "seed": 1,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s1_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s1_r5000.log"
+    },
+    {
+      "label": "s20_r5000",
+      "seed": 20,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s20_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s20_r5000.log"
+    },
+    {
+      "label": "s2_r1000_loop",
+      "seed": 2,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s2_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s2_r1000_loop.log"
+    },
+    {
+      "label": "s2_r5000",
+      "seed": 2,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s2_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s2_r5000.log"
+    },
+    {
+      "label": "s3_r1000_loop",
+      "seed": 3,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s3_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s3_r1000_loop.log"
+    },
+    {
+      "label": "s3_r5000",
+      "seed": 3,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s3_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s3_r5000.log"
+    },
+    {
+      "label": "s4_r1000_loop",
+      "seed": 4,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s4_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s4_r1000_loop.log"
+    },
+    {
+      "label": "s4_r5000",
+      "seed": 4,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s4_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s4_r5000.log"
+    },
+    {
+      "label": "s5_r1000_loop",
+      "seed": 5,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s5_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s5_r1000_loop.log"
+    },
+    {
+      "label": "s5_r5000",
+      "seed": 5,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s5_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s5_r5000.log"
+    },
+    {
+      "label": "s6_r1000_loop",
+      "seed": 6,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s6_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s6_r1000_loop.log"
+    },
+    {
+      "label": "s6_r5000",
+      "seed": 6,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s6_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s6_r5000.log"
+    },
+    {
+      "label": "s7_r1000_loop",
+      "seed": 7,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s7_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s7_r1000_loop.log"
+    },
+    {
+      "label": "s7_r5000",
+      "seed": 7,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s7_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s7_r5000.log"
+    },
+    {
+      "label": "s8_r1000_loop",
+      "seed": 8,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s8_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s8_r1000_loop.log"
+    },
+    {
+      "label": "s8_r5000",
+      "seed": 8,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s8_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s8_r5000.log"
+    },
+    {
+      "label": "s9_r1000_loop",
+      "seed": 9,
+      "rounds": 1000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s9_r1000_loop",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s9_r1000_loop.log"
+    },
+    {
+      "label": "s9_r5000",
+      "seed": 9,
+      "rounds": 5000,
+      "dump_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/rewrite_r_seq_arcphase/s9_r5000",
+      "log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/verify/rewrite_r_seq_arcphase/logs/s9_r5000.log"
+    }
+  ]
+}

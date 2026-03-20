@@ -1,0 +1,18 @@
+{
+  "mode": "rewrite-r-seq-replay",
+  "seed": 1,
+  "tcIndex": 40,
+  "targetStep": 1,
+  "bundlePath": "dumps/rewrite_r_seq_replay/SEQ_REPLAY_CAPTURE_seed1_tc40_step1.txt",
+  "postcheckSubtype": "GPS_SAME_TYPE_SP_ONLY",
+  "graftOtherSubtype": "GOS_POSTCHECK_ADJ_MISMATCH",
+  "graftOtherWhy": "graft: sequence rewrite produced adjacent same-type S/P nodes on arc 0 (0,1)",
+  "postcheckWhyDetailed": "postcheck detailed: same-type S/P structural adjacency",
+  "adjacencyMismatchPresent": false,
+  "firstBadAdjNode": -1,
+  "oldNodeAdjArcsBeforeRepair": [0],
+  "oldNodeAdjArcsAfterRepair": [0],
+  "firstStructuralPhase": "AFTER_CLEAR_PRESERVE",
+  "persistsThroughAdjRepair": true,
+  "nextTarget": "same-type S/P structural cleanup"
+}

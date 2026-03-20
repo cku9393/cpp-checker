@@ -1,0 +1,3 @@
+0: split hash=295c53c7cf23b5f6 split occ=0 sep=4,6 sig=sep=4,6
+childCount=3
+children=[{boundaryOnly=0,hosted=[],graph={skeletons=[{verts=[R:2,R:3100,R:4,R:6,R:8],edges=[CORE|R:2|R:3100,CORE|R:2|R:4,CORE|R:3100|R:8,CORE|R:6|R:8],hosted=[]}],occurrences=[]}},{boundaryOnly=0,hosted=[],graph={skeletons=[{verts=[R:4,R:6,R:6130],edges=[CORE|R:4|R:6130,CORE|R:6|R:6130],hosted=[]}],occurrences=[]}},{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:2279:0,R:4,R:4440,R:6],edges=[CORE|R:4440|R:6,CORE|R:4|R:4440,REAL_PORT|C:2279:0|R:4440],hosted=[0]}],occurrences=[]}}]

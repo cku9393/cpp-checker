@@ -1,0 +1,3 @@
+generated_state_count=16
+canonical_unique_state_count=8
+family=mixed generated=16 unique=8 dedupe_ratio=0.5 validator_checks=0 primitive_checks=0 planner_checks=0

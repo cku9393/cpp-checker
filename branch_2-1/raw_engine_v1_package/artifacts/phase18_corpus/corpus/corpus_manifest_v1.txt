@@ -1,0 +1,6 @@
+raw_corpus_v1
+entries 4
+entry best_integrate family_planner_mixed_structural_s2_j2_i2 821003 random default planner_mixed_structural 2 2 2 4 200000 3 1 2 3 2 3 4 3
+entry best_join family_planner_mixed_structural_s2_j2_i2 821003 random default planner_mixed_structural 2 2 2 4 200000 3 1 2 3 2 3 4 3
+entry best_split family_planner_mixed_structural_s2_j2_i2 821003 random default planner_mixed_structural 2 2 2 4 200000 3 1 2 3 2 3 4 3
+entry diverse_trace family_planner_mixed_structural_s2_j2_i2 821003 random default planner_mixed_structural 2 2 2 4 200000 3 1 2 3 2 3 4 3

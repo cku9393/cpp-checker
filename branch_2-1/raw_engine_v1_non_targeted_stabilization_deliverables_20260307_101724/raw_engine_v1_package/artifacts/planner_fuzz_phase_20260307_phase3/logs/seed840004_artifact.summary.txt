@@ -1,0 +1,24 @@
+case=planner_oracle_fuzz
+weight_profile=artifact_heavy
+precondition_bias_profile=default
+scenario_family=random
+bias_split=3
+bias_join=1
+bias_integrate=6
+iterations=2000
+split_ready_count=1155
+join_candidate_count=318
+integrate_candidate_count=1798
+actual_split_hits=1155
+actual_join_hits=159
+actual_integrate_hits=1142
+split_conversion=1.000000
+join_conversion=0.500000
+integrate_conversion=0.635150
+unique_trace_prefix_count=6
+unique_primitive_multiset_count=5
+isolate_heavy_ratio=0.173620
+split_hit_density=0.577500
+join_hit_density=0.079500
+integrate_hit_density=0.571000
+seed=840004 iterations=2000 split_ready=1155 join_candidate=318 integrate_candidate=1798 actual_split=1155 actual_join=159 actual_integrate=1142 split_conversion=1.000000 join_conversion=0.500000 integrate_conversion=0.635150 unique_trace_prefix_count=6 unique_primitive_multiset_count=5

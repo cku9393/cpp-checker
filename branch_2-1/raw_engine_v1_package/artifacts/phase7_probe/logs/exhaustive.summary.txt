@@ -1,0 +1,7 @@
+generated_state_count=5
+canonical_unique_state_count=5
+dedupe_drop_count=0
+collision_spot_check_count=0
+organic_duplicate_example_count=0
+dedupe_ratio=0
+family=planner_tie_mixed generated=5 unique=5 dedupe_drops=0 dedupe_ratio=0 validator_checks=5 primitive_checks=5 planner_checks=5

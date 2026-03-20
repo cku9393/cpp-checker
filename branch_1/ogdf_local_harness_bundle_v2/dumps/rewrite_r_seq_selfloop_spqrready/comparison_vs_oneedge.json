@@ -1,0 +1,44 @@
+{
+  "baseline": {
+    "rewriteFallbackTriggerCounts": {
+      "RFT_COMPACT_BUILD_FAIL": 562
+    },
+    "rewriteSeqCalls": 110100,
+    "seqCompactBuildFailSubtypeCounts": {
+      "CBF_SELF_LOOP_PRECHECK": 562
+    },
+    "seqFallbackCaseCount": 683,
+    "seqRewriteWholeCoreFallbackCount": 683,
+    "seqSelfLoopSubtypeCounts": {
+      "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 414
+    }
+  },
+  "baseline_stage": "rewrite_r_seq_oneedge_generic",
+  "current": {
+    "rewriteFallbackSpecialCaseCount": 94461,
+    "rewriteFallbackTriggerCounts": {
+      "RFT_COMPACT_BUILD_FAIL": 148
+    },
+    "rewriteSeqCalls": 110100,
+    "seqCompactBuildFailSubtypeCounts": {
+      "CBF_SELF_LOOP_PRECHECK": 148
+    },
+    "seqFallbackCaseCount": 269,
+    "seqRewriteWholeCoreFallbackCount": 269,
+    "seqSelfLoopRemainderSpqrReadyAttemptCount": 414,
+    "seqSelfLoopRemainderSpqrReadyFallbackCount": 0,
+    "seqSelfLoopRemainderSpqrReadyHandledCount": 414,
+    "seqSelfLoopSubtypeCounts": {
+      "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 148,
+      "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 0
+    }
+  },
+  "current_stage": "rewrite_r_seq_selfloop_spqrready",
+  "delta": {
+    "CBF_SELF_LOOP_PRECHECK": -414,
+    "RFT_COMPACT_BUILD_FAIL": -414,
+    "SL_PROXY_ONLY_REMAINDER_SPQR_READY": -414,
+    "seqFallbackCaseCount": -414,
+    "seqRewriteWholeCoreFallbackCount": -414
+  }
+}

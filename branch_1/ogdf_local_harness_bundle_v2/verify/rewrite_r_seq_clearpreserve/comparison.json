@@ -1,0 +1,54 @@
+{
+  "baselineSummary": "verify/rewrite_r_seq_arcphase/summary.json",
+  "currentSummary": "verify/rewrite_r_seq_clearpreserve/summary.json",
+  "rewriteSeqCalls": {
+    "baseline": 111100,
+    "current": 110100,
+    "delta": -1000
+  },
+  "seqFallbackCaseCount": {
+    "baseline": 6894,
+    "current": 6088,
+    "delta": -806
+  },
+  "seqRewriteWholeCoreFallbackCount": {
+    "baseline": 8829,
+    "current": 8006,
+    "delta": -823
+  },
+  "GRB_OLDARC_DEAD": {
+    "baseline": 4818,
+    "current": 0,
+    "delta": -4818
+  },
+  "PAL_AFTER_CLEAR_KEEP_DEAD": {
+    "baseline": 11221,
+    "current": 0,
+    "delta": -11221
+  },
+  "seqClearPreserveRequestedCount": {
+    "baseline": 0,
+    "current": 11134,
+    "delta": 11134
+  },
+  "seqClearPreserveArcCount": {
+    "baseline": 0,
+    "current": 11134,
+    "delta": 11134
+  },
+  "seqClearPreserveCrossNodeRewireCount": {
+    "baseline": 0,
+    "current": 0,
+    "delta": 0
+  },
+  "seqClearPreserveSameNodeRehomeCount": {
+    "baseline": 0,
+    "current": 11134,
+    "delta": 11134
+  },
+  "seqClearPreserveFallbackCount": {
+    "baseline": 0,
+    "current": 0,
+    "delta": 0
+  }
+}

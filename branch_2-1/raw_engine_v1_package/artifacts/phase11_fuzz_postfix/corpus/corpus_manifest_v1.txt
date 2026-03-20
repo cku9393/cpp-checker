@@ -1,0 +1,14 @@
+raw_corpus_v1
+entries 12
+entry best_integrate family_planner_mixed_structural_s2_j2_i2 920003 random default planner_mixed_structural 2 2 2 1500 200000 916 375 576 916 750 951 5 4
+entry best_join family_planner_mixed_structural_s2_j2_i2 920003 random default planner_mixed_structural 2 2 2 1500 200000 916 375 576 916 750 951 5 4
+entry best_split family_planner_mixed_structural_s2_j2_i2 920003 random default planner_mixed_structural 2 2 2 1500 200000 916 375 576 916 750 951 5 4
+entry diverse_trace family_planner_mixed_structural_s2_j2_i2 920003 random default planner_mixed_structural 2 2 2 1500 200000 916 375 576 916 750 951 5 4
+entry best_integrate family_planner_tie_mixed_organic_s2_j2_i2 920005 random default planner_tie_mixed_organic 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry best_join family_planner_tie_mixed_organic_s2_j2_i2 920005 random default planner_tie_mixed_organic 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry best_split family_planner_tie_mixed_organic_s2_j2_i2 920005 random default planner_tie_mixed_organic 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry diverse_trace family_planner_tie_mixed_organic_s2_j2_i2 920005 random default planner_tie_mixed_organic 2 2 2 1500 200000 0 1500 1500 0 1500 1500 1 1
+entry best_integrate family_split_tie_organic_symmetric_s2_j2_i2 920004 random default split_tie_organic_symmetric 2 2 2 20 200000 20 0 0 20 0 0 1 1
+entry best_join family_split_tie_organic_symmetric_s2_j2_i2 920004 random default split_tie_organic_symmetric 2 2 2 20 200000 20 0 0 20 0 0 1 1
+entry best_split family_split_tie_organic_symmetric_s2_j2_i2 920004 random default split_tie_organic_symmetric 2 2 2 20 200000 20 0 0 20 0 0 1 1
+entry diverse_trace family_split_tie_organic_symmetric_s2_j2_i2 920004 random default split_tie_organic_symmetric 2 2 2 20 200000 20 0 0 20 0 0 1 1

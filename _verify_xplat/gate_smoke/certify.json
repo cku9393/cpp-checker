@@ -1,0 +1,18 @@
+{
+  "verdict": "PASS",
+  "reasons": [],
+  "preset": "smoke",
+  "stages": [
+    {
+      "name": "smoke_correctness",
+      "status": "PASS",
+      "cases": 120,
+      "timeouts": 0,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    }
+  ]
+}

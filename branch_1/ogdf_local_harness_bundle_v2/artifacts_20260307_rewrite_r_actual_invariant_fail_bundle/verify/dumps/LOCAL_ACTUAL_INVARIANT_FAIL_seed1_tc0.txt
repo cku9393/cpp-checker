@@ -1,0 +1,57 @@
+=== HarnessBundle ===
+seed=1
+tc=0
+backend=OGDF
+stage=LOCAL_ACTUAL_INVARIANT_FAIL
+where=checkActualReducedInvariant
+why=actual occ: occurrence pole mismatch
+
+chosenR=0
+chosenX=1
+
+=== ExplicitInput ===
+vertices: 1 2 3 4
+edges:
+  id=1 (1,2)
+  id=2 (1,3)
+  id=3 (1,4)
+  id=4 (2,3)
+  id=5 (2,4)
+  id=6 (3,4)
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(6,4,0)
+node 0 type=R localAgg=(6,4,0) subAgg=(6,4,0)
+  realEdgesHere: 1 2 3 4 5 6
+  slot 0 kind=REAL poles=(1,2) realEdge=1
+  slot 1 kind=REAL poles=(1,3) realEdge=2
+  slot 2 kind=REAL poles=(1,4) realEdge=3
+  slot 3 kind=REAL poles=(2,3) realEdge=4
+  slot 4 kind=REAL poles=(2,4) realEdge=5
+  slot 5 kind=REAL poles=(3,4) realEdge=6
+
+=== ActualAfterRewrite ===
+blockId=0 root=0 totalAgg=(3,3,3)
+node 0 type=S localAgg=(3,3,3) subAgg=(3,3,3)
+  realEdgesHere: 4 5 6
+  slot 0 kind=REAL poles=(2,3) realEdge=4
+  slot 1 kind=REAL poles=(3,4) realEdge=6
+  slot 2 kind=REAL poles=(2,4) realEdge=5
+
+=== ExplicitBefore ===
+vertices: 1 2 3 4
+edges:
+  id=1 (1,2)
+  id=2 (1,3)
+  id=3 (1,4)
+  id=4 (2,3)
+  id=5 (2,4)
+  id=6 (3,4)
+
+=== ExplicitAfter ===
+vertices: 2 3 4
+edges:
+  id=4 (2,3)
+  id=5 (2,4)
+  id=6 (3,4)
+

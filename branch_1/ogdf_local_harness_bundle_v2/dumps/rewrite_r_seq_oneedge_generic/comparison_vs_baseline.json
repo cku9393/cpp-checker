@@ -1,0 +1,17 @@
+{
+  "RFT_COMPACT_TOO_SMALL_UNHANDLED": {
+    "baseline": 824,
+    "current": 0,
+    "delta": -824
+  },
+  "seqFallbackCaseCount": {
+    "baseline": 824,
+    "current": 683,
+    "delta": -141
+  },
+  "seqRewriteWholeCoreFallbackCount": {
+    "baseline": 1507,
+    "current": 683,
+    "delta": -824
+  }
+}

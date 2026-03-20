@@ -1,0 +1,18 @@
+Start testing: Mar 19 12:45 KST
+----------------------------------------------------------
+31/92 Testing: raw_engine_corpus_replay_smoke
+31/92 Test: raw_engine_corpus_replay_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests/raw_engine_tests" "--case" "corpus_replay_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase16/tests
+"raw_engine_corpus_replay_smoke" start time: Mar 19 12:45 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=corpus_replay_smoke
+<end of output>
+Test time =   2.22 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_corpus_replay_smoke" end time: Mar 19 12:45 KST
+"raw_engine_corpus_replay_smoke" time elapsed: 00:00:02
+----------------------------------------------------------
+

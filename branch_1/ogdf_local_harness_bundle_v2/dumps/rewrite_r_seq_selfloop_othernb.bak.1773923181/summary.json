@@ -1,0 +1,102 @@
+{
+  "aggregate_policy": {
+    "excluded_logs": [
+      "dumps/rewrite_r_seq_selfloop_othernb/s1_r1000_stdout.txt"
+    ],
+    "included_logs": [
+      "dumps/rewrite_r_seq_selfloop_othernb/s1_r100_stdout.txt",
+      "dumps/rewrite_r_seq_selfloop_othernb/full_s1_10_r1000_stdout.txt",
+      "dumps/rewrite_r_seq_selfloop_othernb/full_s1_20_r5000_stdout.txt"
+    ],
+    "reason": "dedup aggregate excludes seed1 rounds1000 because it is included in seed1..10 rounds1000"
+  },
+  "dominantSelfLoopOtherNBSubtype": "SLNB_OTHER",
+  "dominantSelfLoopOtherNBSubtypeCount": 337,
+  "nextSafeFixTarget": "finer subtype design for SLNB_OTHER residual",
+  "rewriteFallbackTriggerCounts": {
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_COMPACT_BUILD_FAIL": 337,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_GRAFT_REWIRE_FAIL": 0,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_NONE": 0,
+    "RFT_OTHER": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 258
+  },
+  "rewritePathTakenCounts": {
+    "DIRECT_SPQR": 101191,
+    "SPECIAL_LOOP_SHARED": 24622,
+    "SPECIAL_ONE_EDGE": 8774,
+    "SPECIAL_PATH": 54864,
+    "SPECIAL_SELF_LOOP_SPQR_READY": 937,
+    "SPECIAL_SELF_LOOP_TWO_PATH": 14187,
+    "SPECIAL_SINGLE_CUT": 38873,
+    "SPECIAL_TWO_PATH": 68126,
+    "WHOLE_CORE_REBUILD": 595
+  },
+  "rewriteSeqCalls": 245100,
+  "seqCompactBuildFailSubtypeCounts": {
+    "CBF_DUPLICATE_COMPACT_EDGE": 0,
+    "CBF_EMPTY_VERTEX_SET": 0,
+    "CBF_NODE_DEAD": 0,
+    "CBF_NODE_NOT_R": 0,
+    "CBF_OTHER": 0,
+    "CBF_PROXY_OLDARC_INVALID": 0,
+    "CBF_PROXY_OLDSLOT_ARC_MISMATCH": 0,
+    "CBF_PROXY_OLDSLOT_INVALID": 0,
+    "CBF_PROXY_OUTSIDENODE_INVALID": 0,
+    "CBF_REAL_ENDPOINT_NOT_MAPPED": 0,
+    "CBF_SELF_LOOP_PRECHECK": 337,
+    "CBF_X_NOT_PRESENT_IN_R": 0
+  },
+  "seqFallbackCaseCount": 595,
+  "seqRewriteWholeCoreFallbackCount": 595,
+  "seqSelfLoopOtherNBAtStepCounts": {
+    "step1_SLNB_OTHER": 337
+  },
+  "seqSelfLoopOtherNBCaseCountsBySubtype": {
+    "SLNB_BLOCKS_ALL_TINY": 0,
+    "SLNB_COMPLEX_MULTI_CUT": 0,
+    "SLNB_DISCONNECTED": 0,
+    "SLNB_OTHER": 337,
+    "SLNB_STAR_AROUND_ONE_CUT": 0
+  },
+  "seqSelfLoopOtherNBDumpPaths": {
+    "SLNB_BLOCKS_ALL_TINY": "-",
+    "SLNB_COMPLEX_MULTI_CUT": "-",
+    "SLNB_DISCONNECTED": "-",
+    "SLNB_OTHER": "dumps/rewrite_r_seq_selfloop_othernb/seq_selfloop_othernb_SLNB_OTHER_seed1_tc1536_step1.txt",
+    "SLNB_STAR_AROUND_ONE_CUT": "-"
+  },
+  "seqSelfLoopOtherNBSubtypeCounts": {
+    "SLNB_BLOCKS_ALL_TINY": 0,
+    "SLNB_COMPLEX_MULTI_CUT": 0,
+    "SLNB_DISCONNECTED": 0,
+    "SLNB_OTHER": 337,
+    "SLNB_STAR_AROUND_ONE_CUT": 0
+  },
+  "seqSelfLoopSubtypeCounts": {
+    "SL_MIXED_REAL_PROXY_LOOP": 0,
+    "SL_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 337,
+    "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+    "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+    "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 0,
+    "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 0,
+    "SL_REAL_LOOP_PRESENT": 0
+  },
+  "stage": "rewrite_r_seq_selfloop_othernb"
+}

@@ -1,0 +1,124 @@
+{
+  "aggregate_policy": {
+    "excluded_logs": [
+      "dumps/rewrite_r_seq_selfloop_spqrready/s1_r1000_stdout.txt"
+    ],
+    "included_logs": [
+      "dumps/rewrite_r_seq_selfloop_spqrready/s1_r100_stdout.txt",
+      "dumps/rewrite_r_seq_selfloop_spqrready/full_s1_10_r1000_stdout.txt",
+      "dumps/rewrite_r_seq_selfloop_spqrready/full_s1_20_r5000_stdout.txt"
+    ],
+    "reason": "dedup aggregate excludes seed1 rounds1000 because it is included in seed1..10 rounds1000"
+  },
+  "currentDominantRemainingSubtype": "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED",
+  "currentDominantRemainingTrigger": "RFT_COMPACT_BUILD_FAIL",
+  "currentDominantRemainingTriggerCount": 148,
+  "nextSafeFixTarget": "sequence self-loop remainder other-not-biconnected safe handling",
+  "notes": {
+    "representative_selfloop_sample": "seed=1 tc=328 step=1",
+    "selfloop_attempt_dump": "dumps/rewrite_r_seq_selfloop_spqrready/seq_selfloop_spqrready_attempt_seed1_tc328_step1.txt",
+    "selfloop_success_dump": "dumps/rewrite_r_seq_selfloop_spqrready/seq_selfloop_spqrready_success_seed1_tc328_step1.txt"
+  },
+  "replay": {
+    "actualInvariantOk": 1,
+    "capture": "dumps/rewrite_r_seq_selfloop_spqrready/replay/SEQ_REPLAY_CAPTURE_seed1_tc328_step1.txt",
+    "log": "dumps/rewrite_r_seq_selfloop_spqrready/replay_stdout.txt",
+    "oracleEquivalentOk": 1,
+    "seed": 1,
+    "specialSelfLoopSpqrReadyCount": 1,
+    "targetStep": 1,
+    "tcIndex": 328
+  },
+  "rewriteFallbackSpecialCaseCount": 94461,
+  "rewriteFallbackTriggerCounts": {
+    "RFT_BACKEND_BUILDRAW_NOT_BICONNECTED": 0,
+    "RFT_BACKEND_BUILDRAW_OTHER": 0,
+    "RFT_BACKEND_BUILDRAW_S_LT3": 0,
+    "RFT_CHOOSE_KEEP_FAIL": 0,
+    "RFT_COMPACT_BUILD_FAIL": 148,
+    "RFT_COMPACT_EMPTY_AFTER_DELETE": 0,
+    "RFT_COMPACT_NOT_BICONNECTED_UNHANDLED": 0,
+    "RFT_COMPACT_TOO_SMALL_UNHANDLED": 0,
+    "RFT_GRAFT_OTHER": 0,
+    "RFT_GRAFT_REWIRE_FAIL": 0,
+    "RFT_MATERIALIZE_MINI_FAIL": 0,
+    "RFT_NONE": 0,
+    "RFT_OTHER": 0,
+    "RFT_PATH_OF_BLOCKS_BUILDER_FAIL": 0,
+    "RFT_PROXY_METADATA_INVALID": 0,
+    "RFT_RAW_VALIDATE_FAIL": 0,
+    "RFT_SINGLE_CUT_BUILDER_FAIL": 0,
+    "RFT_TWO_PATH_BUILDER_FAIL": 0,
+    "RFT_X_INCIDENT_VIRTUAL_UNSUPPORTED": 121
+  },
+  "rewriteFallbackWholeCoreCount": 269,
+  "rewritePathTakenCounts": {
+    "DIRECT_SPQR": 45522,
+    "SPECIAL_LOOP_SHARED": 11101,
+    "SPECIAL_ONE_EDGE": 3936,
+    "SPECIAL_PATH": 24559,
+    "SPECIAL_SELF_LOOP_SPQR_READY": 414,
+    "SPECIAL_SELF_LOOP_TWO_PATH": 6354,
+    "SPECIAL_SINGLE_CUT": 17468,
+    "SPECIAL_TWO_PATH": 30629,
+    "WHOLE_CORE_REBUILD": 269
+  },
+  "rewriteSeqCalls": 110100,
+  "seqCompactBuildFailSubtypeCounts": {
+    "CBF_DUPLICATE_COMPACT_EDGE": 0,
+    "CBF_EMPTY_VERTEX_SET": 0,
+    "CBF_NODE_DEAD": 0,
+    "CBF_NODE_NOT_R": 0,
+    "CBF_OTHER": 0,
+    "CBF_PROXY_OLDARC_INVALID": 0,
+    "CBF_PROXY_OLDSLOT_ARC_MISMATCH": 0,
+    "CBF_PROXY_OLDSLOT_INVALID": 0,
+    "CBF_PROXY_OUTSIDENODE_INVALID": 0,
+    "CBF_REAL_ENDPOINT_NOT_MAPPED": 0,
+    "CBF_SELF_LOOP_PRECHECK": 148,
+    "CBF_X_NOT_PRESENT_IN_R": 0
+  },
+  "seqFallbackCaseCount": 269,
+  "seqFallbackReasonCounts": {
+    "GRAFT_REWIRE": 0,
+    "OTHER": 269,
+    "PROXY_METADATA": 0
+  },
+  "seqRewriteWholeCoreFallbackCount": 269,
+  "seqSelfLoopRemainderSpqrReadyAttemptCount": 414,
+  "seqSelfLoopRemainderSpqrReadyFallbackCount": 0,
+  "seqSelfLoopRemainderSpqrReadyHandledCount": 414,
+  "seqSelfLoopSubtypeCounts": {
+    "SL_MIXED_REAL_PROXY_LOOP": 0,
+    "SL_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_EMPTY": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER": 0,
+    "SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED": 148,
+    "SL_PROXY_ONLY_REMAINDER_PATH_OF_BLOCKS": 0,
+    "SL_PROXY_ONLY_REMAINDER_SINGLE_CUT": 0,
+    "SL_PROXY_ONLY_REMAINDER_SPQR_READY": 0,
+    "SL_PROXY_ONLY_REMAINDER_TWO_PATH": 0,
+    "SL_REAL_LOOP_PRESENT": 0
+  },
+  "seqXIncidentResidualSubtypeCounts": {
+    "XSR_HAFTER_BUILD_FAIL": 0,
+    "XSR_HAFTER_EMPTY": 0,
+    "XSR_HAFTER_LOOP_SHARED": 0,
+    "XSR_HAFTER_ONE_EDGE": 0,
+    "XSR_HAFTER_OTHER": 0,
+    "XSR_HAFTER_OTHER_NOT_BICONNECTED": 0,
+    "XSR_HAFTER_PATH_OF_BLOCKS": 0,
+    "XSR_HAFTER_SINGLE_CUT": 0,
+    "XSR_HAFTER_SPQR_READY": 121,
+    "XSR_HAFTER_TWO_PARALLEL": 0,
+    "XSR_HAFTER_TWO_PATH": 0
+  },
+  "seqXIncidentSubtypeCounts": {
+    "XIV_MIXED_OTHER": 0,
+    "XIV_MULTI_POS_PROXY": 0,
+    "XIV_ONE_POS_PROXY": 0,
+    "XIV_SHARED_WITH_LOOP": 121,
+    "XIV_ZERO_PAYLOAD": 0
+  },
+  "stage": "rewrite_r_seq_selfloop_spqrready"
+}

@@ -1,0 +1,6 @@
+generated_state_count=8
+canonical_unique_state_count=4
+dedupe_drop_count=4
+collision_spot_check_count=4
+dedupe_ratio=0.5
+family=join_ready generated=8 unique=4 dedupe_drops=4 dedupe_ratio=0.5 validator_checks=4 primitive_checks=4 planner_checks=4
