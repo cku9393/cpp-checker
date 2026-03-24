@@ -1,0 +1,737 @@
+Start testing: Mar 22 19:41 KST
+----------------------------------------------------------
+96/192 Testing: raw_engine_runtime_registry_select_no_match_smoke
+96/192 Test: raw_engine_runtime_registry_select_no_match_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "runtime_registry_select_no_match_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_runtime_registry_select_no_match_smoke" start time: Mar 22 19:41 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/policy_runtime_current_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/policy_runtime_refresh_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/policy_runtime_rerun_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/policy_runtime_current_phase22_baseline_selection.json
+runtime_baseline_selection_summary comparability_verdict=NOT_COMPARABLE selected_baseline_id=phase22-runtime-approved-7fbf1adc-20260322_104159 candidate_count=1 reason=compatible active runtime baseline differs in host/toolchain details
+raw_engine_tests error: runtime registry select no match smoke expected REBASELINE_REQUIRED
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --artifact-root <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --policy-manifest <path>
+  --source-manifest <path>
+  --baseline-manifest <path>
+  --baseline-out <path>
+  --baseline-tag <string>
+  --current-manifest <path>
+  --refresh-manifest <path>
+  --gate-family <name>
+  --gate-strict
+  --gate-output <path>
+  --rerun-plan <path>
+  --runtime-baseline-manifest <path>
+  --runtime-baseline-registry <path>
+  --runtime-current-manifest <path>
+  --runtime-refresh-manifest <path>
+  --runtime-rerun-plan <path>
+  --runtime-history-index <path>
+  --runtime-budget-config <path>
+  --proposal-out <path>
+  --activate
+  --retire-baseline <id>
+  --runtime-runner-tag <string>
+  --runtime-stage <name=seconds>
+  --runtime-test-count <name=count>
+  --plan-out <path>
+  --emit-summary <path>
+  --freshness-only
+  --revalidate-families <csv>
+  --family-filter <csv>
+  --mark-stale-on-hash-change
+  --allow-stale
+  --strict-refresh
+  --allow-empty-plan
+  --require-acceptable-status
+  --freeze-provenance
+  --include-diagnostic
+  --include-non-applicable
+  --synthetic-hash-drift <planner_semantics_hash|generator_family_hash|compare_engine_hash|campaign_config_hash>
+  --synthetic-applicability-drift <family>
+  --synthetic-diagnostic-promotion <family>
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time =   1.08 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_runtime_registry_select_no_match_smoke" end time: Mar 22 19:41 KST
+"raw_engine_runtime_registry_select_no_match_smoke" time elapsed: 00:00:01
+----------------------------------------------------------
+
+97/192 Testing: raw_engine_runtime_registry_rebaseline_required_smoke
+97/192 Test: raw_engine_runtime_registry_rebaseline_required_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "runtime_registry_rebaseline_required_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_runtime_registry_rebaseline_required_smoke" start time: Mar 22 19:41 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_current_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_refresh_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_rerun_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_current_phase22_baseline_selection.json
+runtime_baseline_selection_summary comparability_verdict=NOT_COMPARABLE selected_baseline_id=phase22-runtime-approved-7fbf1adc-20260322_104200 candidate_count=1 reason=compatible active runtime baseline differs in host/toolchain details
+raw_engine_tests error: runtime registry rebaseline required smoke expected REBASELINE_REQUIRED
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --artifact-root <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --policy-manifest <path>
+  --source-manifest <path>
+  --baseline-manifest <path>
+  --baseline-out <path>
+  --baseline-tag <string>
+  --current-manifest <path>
+  --refresh-manifest <path>
+  --gate-family <name>
+  --gate-strict
+  --gate-output <path>
+  --rerun-plan <path>
+  --runtime-baseline-manifest <path>
+  --runtime-baseline-registry <path>
+  --runtime-current-manifest <path>
+  --runtime-refresh-manifest <path>
+  --runtime-rerun-plan <path>
+  --runtime-history-index <path>
+  --runtime-budget-config <path>
+  --proposal-out <path>
+  --activate
+  --retire-baseline <id>
+  --runtime-runner-tag <string>
+  --runtime-stage <name=seconds>
+  --runtime-test-count <name=count>
+  --plan-out <path>
+  --emit-summary <path>
+  --freshness-only
+  --revalidate-families <csv>
+  --family-filter <csv>
+  --mark-stale-on-hash-change
+  --allow-stale
+  --strict-refresh
+  --allow-empty-plan
+  --require-acceptable-status
+  --freeze-provenance
+  --include-diagnostic
+  --include-non-applicable
+  --synthetic-hash-drift <planner_semantics_hash|generator_family_hash|compare_engine_hash|campaign_config_hash>
+  --synthetic-applicability-drift <family>
+  --synthetic-diagnostic-promotion <family>
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time =   0.51 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_runtime_registry_rebaseline_required_smoke" end time: Mar 22 19:42 KST
+"raw_engine_runtime_registry_rebaseline_required_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+115/192 Testing: raw_engine_artifact_index_smoke
+115/192 Test: raw_engine_artifact_index_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "artifact_index_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_artifact_index_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_current_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_refresh_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_rerun_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+policy_pipeline_summary mode=bundle_only severity=OK exit_code=0 current_verdict=PASS freshness_verdict=FRESH rerun_plan_verdict=PASS stale_family_count=0 requires_rerun_family_count=0 reclassify_required_count=0 runtime_current_verdict=PASS runtime_freshness_verdict=FRESH runtime_comparability_verdict=COMPARABLE runtime_selected_baseline_id=phase22-runtime-approved-7fbf1adc-20260322_104200 runtime_rerun_plan_verdict=PASS runtime_budget_verdict=PASS runtime_severity=OK runtime_rebaseline_proposal_needed=0
+recommended_next_action=no action required; exact_shadow lifecycle remains healthy
+baseline_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json
+current_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_graduation_manifest_v1.json
+refresh_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json
+rerun_plan=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_rerun_plan_phase22_v1.json
+runtime_baseline_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+runtime_current_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_current_phase22.json
+runtime_refresh_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_refresh_phase22.json
+runtime_rerun_plan=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/policy_runtime_rerun_phase22.json
+runtime_baseline_registry=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/runtime_baseline_registry_v1.json
+runtime_history_index=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/runtime_history_index_v1.json
+runtime_proposal=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+bundle_metadata=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/phase23_evidence_bundle/bundle_metadata.json
+stage=name=build_evidence_bundle status=PASS duration_seconds=0.111 note=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/artifact_index_smoke/raw_engine_phase22_pipeline_smoke.zip
+raw_engine_v1 tests passed case=artifact_index_smoke
+<end of output>
+Test time =   0.64 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_artifact_index_smoke" end time: Mar 22 19:42 KST
+"raw_engine_artifact_index_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+117/192 Testing: raw_engine_bundle_index_roundtrip_smoke
+117/192 Test: raw_engine_bundle_index_roundtrip_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "bundle_index_roundtrip_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_bundle_index_roundtrip_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/bundle_index_roundtrip_smoke/outputs/raw_engine_phase22_stabilization.zip
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/bundle_index_roundtrip_smoke/outputs/raw_engine_phase22_stabilization.zip
+raw_engine_v1 tests passed case=bundle_index_roundtrip_smoke
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_bundle_index_roundtrip_smoke" end time: Mar 22 19:42 KST
+"raw_engine_bundle_index_roundtrip_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+120/192 Testing: raw_engine_policy_pipeline_rebaseline_needed_smoke
+120/192 Test: raw_engine_policy_pipeline_rebaseline_needed_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "policy_pipeline_rebaseline_needed_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_policy_pipeline_rebaseline_needed_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_current_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_refresh_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_rerun_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+policy_pipeline_summary mode=quick severity=ACTION_REQUIRED exit_code=20 current_verdict=PASS freshness_verdict=FRESH rerun_plan_verdict=PASS stale_family_count=0 requires_rerun_family_count=0 reclassify_required_count=0 runtime_current_verdict=PASS runtime_freshness_verdict=NOT_COMPARABLE runtime_comparability_verdict=NOT_COMPARABLE runtime_selected_baseline_id=phase22-runtime-approved-7fbf1adc-20260322_104201 runtime_rerun_plan_verdict=PASS runtime_budget_verdict=PASS runtime_severity=ACTION_REQUIRED runtime_rebaseline_proposal_needed=1
+recommended_next_action=compatible active runtime baseline differs in host/toolchain details
+baseline_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json
+current_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_graduation_manifest_v1.json
+refresh_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json
+rerun_plan=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_rerun_plan_phase22_v1.json
+runtime_baseline_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+runtime_current_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_current_phase22.json
+runtime_refresh_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_refresh_phase22.json
+runtime_rerun_plan=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_rerun_phase22.json
+runtime_baseline_registry=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/runtime_baseline_registry_v1.json
+runtime_history_index=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/runtime_history_index_v1.json
+runtime_proposal=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+stage=name=policy_ci_check status=PASS duration_seconds=0.014 note=policy_lifecycle_summary case=policy_ci_check current_verdict=PASS freshness_verdict=FRESH plan_verdict=PASS stale_family_count=0 requires_rerun_family_count=0 reclassify_required_count=0 selected_entry_count=0
+baseline_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.txt
+current_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_graduation_manifest_v1.json
+refresh_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json
+rerun_plan=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_rerun_plan_phase22_v1.json
+family_status=family=split_tie_organic_symmetric current_status=PASS freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=1 rationale=direct compare evidence satisfied
+family_status=family=automorphism_probe_large current_status=PASS freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=1 rationale=direct compare evidence satisfied
+family_status=family=planner_tie_mixed_organic current_status=NON_APPLICABLE freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=0 rationale=no_split_ready remained dominant and compare relevance stayed below threshold
+family_status=family=planner_tie_mixed_organic_compare_ready current_status=DIAGNOSTIC_ONLY freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=0 rationale=diagnostic compare family met bounded compare and lineage consistency, but followup preservation or structure-only enrichment did not hold; counts_as_production_evidence=false
+raw_engine_v1 tests passed case=policy_ci_check
+stage=name=runtime_write_current status=PASS duration_seconds=0.057 note=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_current_phase22.json
+stage=name=runtime_gate_refresh status=PASS duration_seconds=0.047 note=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_refresh_phase22.json
+stage=name=runtime_gate_plan_rerun status=PASS duration_seconds=0.046 note=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/policy_runtime_rerun_phase22.json
+stage=name=runtime_propose_rebaseline status=PASS duration_seconds=0.046 note=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/policy_pipeline_rebaseline_needed_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+raw_engine_v1 tests passed case=policy_pipeline_rebaseline_needed_smoke
+<end of output>
+Test time =   0.73 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_pipeline_rebaseline_needed_smoke" end time: Mar 22 19:42 KST
+"raw_engine_policy_pipeline_rebaseline_needed_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+121/192 Testing: raw_engine_runtime_registry_unknown_fingerprint_smoke
+121/192 Test: raw_engine_runtime_registry_unknown_fingerprint_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "runtime_registry_unknown_fingerprint_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_runtime_registry_unknown_fingerprint_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_current_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_refresh_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_rerun_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_rebaseline_required_smoke/manifests/policy_runtime_current_phase22_baseline_selection.json
+runtime_baseline_selection_summary comparability_verdict=NOT_COMPARABLE selected_baseline_id=phase22-runtime-approved-7fbf1adc-20260322_104202 candidate_count=1 reason=compatible active runtime baseline differs in host/toolchain details
+raw_engine_tests error: runtime registry rebaseline required smoke expected REBASELINE_REQUIRED
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --artifact-root <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --policy-manifest <path>
+  --source-manifest <path>
+  --baseline-manifest <path>
+  --baseline-out <path>
+  --baseline-tag <string>
+  --current-manifest <path>
+  --refresh-manifest <path>
+  --gate-family <name>
+  --gate-strict
+  --gate-output <path>
+  --rerun-plan <path>
+  --runtime-baseline-manifest <path>
+  --runtime-baseline-registry <path>
+  --runtime-current-manifest <path>
+  --runtime-refresh-manifest <path>
+  --runtime-rerun-plan <path>
+  --runtime-history-index <path>
+  --runtime-budget-config <path>
+  --proposal-out <path>
+  --activate
+  --retire-baseline <id>
+  --runtime-runner-tag <string>
+  --runtime-stage <name=seconds>
+  --runtime-test-count <name=count>
+  --plan-out <path>
+  --emit-summary <path>
+  --freshness-only
+  --revalidate-families <csv>
+  --family-filter <csv>
+  --mark-stale-on-hash-change
+  --allow-stale
+  --strict-refresh
+  --allow-empty-plan
+  --require-acceptable-status
+  --freeze-provenance
+  --include-diagnostic
+  --include-non-applicable
+  --synthetic-hash-drift <planner_semantics_hash|generator_family_hash|compare_engine_hash|campaign_config_hash>
+  --synthetic-applicability-drift <family>
+  --synthetic-diagnostic-promotion <family>
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time =   0.53 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_runtime_registry_unknown_fingerprint_smoke" end time: Mar 22 19:42 KST
+"raw_engine_runtime_registry_unknown_fingerprint_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+122/192 Testing: raw_engine_runtime_registry_multiple_candidate_smoke
+122/192 Test: raw_engine_runtime_registry_multiple_candidate_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "runtime_registry_multiple_candidate_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_runtime_registry_multiple_candidate_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/policy_runtime_current_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/policy_runtime_refresh_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/policy_runtime_rerun_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_multiple_candidate_smoke/manifests/policy_runtime_current_phase22_baseline_selection.json
+runtime_baseline_registry_summary active_entry_count=1 retired_entry_count=1 entry_count=2
+runtime_baseline_selection_summary comparability_verdict=COMPARABLE selected_baseline_id=phase22-runtime-approved-v2-7fbf1adc-synthetic20260322_104202 candidate_count=2 reason=active exact runtime fingerprint match
+raw_engine_v1 tests passed case=runtime_registry_multiple_candidate_smoke
+<end of output>
+Test time =   0.57 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_runtime_registry_multiple_candidate_smoke" end time: Mar 22 19:42 KST
+"raw_engine_runtime_registry_multiple_candidate_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+123/192 Testing: raw_engine_runtime_registry_retired_only_smoke
+123/192 Test: raw_engine_runtime_registry_retired_only_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "runtime_registry_retired_only_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_runtime_registry_retired_only_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/policy_runtime_current_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/policy_runtime_baseline_phase22_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/policy_runtime_refresh_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/policy_runtime_rerun_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/runtime_rebaseline_proposal_phase22.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_retired_only_smoke/manifests/policy_runtime_current_phase22_baseline_selection.json
+runtime_baseline_registry_summary active_entry_count=0 retired_entry_count=1 entry_count=1
+runtime_baseline_selection_summary comparability_verdict=REBASELINE_REQUIRED selected_baseline_id=phase22-runtime-approved-7fbf1adc-20260322_104203 candidate_count=1 reason=only retired runtime baselines match the current host/toolchain
+raw_engine_v1 tests passed case=runtime_registry_retired_only_smoke
+<end of output>
+Test time =   0.56 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_runtime_registry_retired_only_smoke" end time: Mar 22 19:42 KST
+"raw_engine_runtime_registry_retired_only_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+129/192 Testing: raw_engine_evidence_bundle_runtime_registry_smoke
+129/192 Test: raw_engine_evidence_bundle_runtime_registry_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "evidence_bundle_runtime_registry_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_evidence_bundle_runtime_registry_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/manifests/policy_runtime_current_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/manifests/policy_runtime_baseline_phase19_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/manifests/policy_runtime_refresh_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/manifests/runtime_rebaseline_proposal_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/manifests/policy_runtime_rerun_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_registry_smoke/raw_engine_phase19_stabilization.zip
+raw_engine_v1 tests passed case=evidence_bundle_runtime_registry_smoke
+<end of output>
+Test time =   0.58 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_evidence_bundle_runtime_registry_smoke" end time: Mar 22 19:42 KST
+"raw_engine_evidence_bundle_runtime_registry_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+130/192 Testing: raw_engine_evidence_bundle_runtime_history_smoke
+130/192 Test: raw_engine_evidence_bundle_runtime_history_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "evidence_bundle_runtime_history_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_evidence_bundle_runtime_history_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/manifests/policy_runtime_current_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/manifests/policy_runtime_baseline_phase19_approved.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/manifests/runtime_baseline_registry_v1.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/manifests/policy_runtime_refresh_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/manifests/runtime_history_index_v1_summary.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/manifests/runtime_rebaseline_proposal_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/manifests/policy_runtime_rerun_phase19.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_runtime_history_smoke/raw_engine_phase19_stabilization.zip
+raw_engine_v1 tests passed case=evidence_bundle_runtime_history_smoke
+<end of output>
+Test time =   0.61 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_evidence_bundle_runtime_history_smoke" end time: Mar 22 19:42 KST
+"raw_engine_evidence_bundle_runtime_history_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+132/192 Testing: raw_engine_ops_guide_paths_smoke
+132/192 Test: raw_engine_ops_guide_paths_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/raw_engine_tests" "--case" "ops_guide_paths_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests
+"raw_engine_ops_guide_paths_smoke" start time: Mar 22 19:42 KST
+Output:
+----------------------------------------------------------
+raw_engine_tests error: ops guide smoke expected runtime baseline registry doc
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --artifact-root <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --policy-manifest <path>
+  --source-manifest <path>
+  --baseline-manifest <path>
+  --baseline-out <path>
+  --baseline-tag <string>
+  --current-manifest <path>
+  --refresh-manifest <path>
+  --gate-family <name>
+  --gate-strict
+  --gate-output <path>
+  --rerun-plan <path>
+  --runtime-baseline-manifest <path>
+  --runtime-baseline-registry <path>
+  --runtime-current-manifest <path>
+  --runtime-refresh-manifest <path>
+  --runtime-rerun-plan <path>
+  --runtime-history-index <path>
+  --runtime-budget-config <path>
+  --proposal-out <path>
+  --activate
+  --retire-baseline <id>
+  --runtime-runner-tag <string>
+  --runtime-stage <name=seconds>
+  --runtime-test-count <name=count>
+  --plan-out <path>
+  --emit-summary <path>
+  --freshness-only
+  --revalidate-families <csv>
+  --family-filter <csv>
+  --mark-stale-on-hash-change
+  --allow-stale
+  --strict-refresh
+  --allow-empty-plan
+  --require-acceptable-status
+  --freeze-provenance
+  --include-diagnostic
+  --include-non-applicable
+  --synthetic-hash-drift <planner_semantics_hash|generator_family_hash|compare_engine_hash|campaign_config_hash>
+  --synthetic-applicability-drift <family>
+  --synthetic-diagnostic-promotion <family>
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_ops_guide_paths_smoke" end time: Mar 22 19:42 KST
+"raw_engine_ops_guide_paths_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Mar 22 19:42 KST
+
+compare =   0.82 sec*proc
+
+policy_refresh =   0.82 sec*proc
+
+policy_sentinel =   0.82 sec*proc
+

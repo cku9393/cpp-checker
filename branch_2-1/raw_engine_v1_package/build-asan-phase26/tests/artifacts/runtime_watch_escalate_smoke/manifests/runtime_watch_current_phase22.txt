@@ -1,0 +1,7 @@
+manifest_version=runtime_watch_current_v1
+phase=phase22
+overall_watch_status=WATCH_ESCALATE
+overall_watch_recommendation=INVESTIGATE_RUNTIME_DRIFT
+runtime_budget_profile_id=phase27-runtime-budget-v1
+watch_sample_count=5
+runtime_watch_entry=execution_class=asan_full role=diagnostic watch_status=WATCH_ESCALATE sample_count=5

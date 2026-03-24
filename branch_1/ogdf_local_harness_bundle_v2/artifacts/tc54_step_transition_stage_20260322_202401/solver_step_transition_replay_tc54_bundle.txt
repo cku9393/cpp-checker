@@ -1,0 +1,175 @@
+=== SolverStepTransitionReplayBundle ===
+caseName=seed1_tc54
+manifestPath=dumps/solver_compare_oracle_random/seed1_tc54_manifest.json
+seed=1
+tc=54
+targetStep=1
+topLevelOk=1
+sourceStep=1
+stepTransitionSeamKind=STSK_STEP1_HANDOFF_EQUAL_BOTH_DIFFER_FROM_SHADOW
+stepTransitionSeamWhy=step1 handoff equal, both solver and replay step2 live cores differ from shadow
+solverWhy=
+rewriteWhy=
+shadowWhy=
+
+=== SolverStep1Snapshot ===
+side=SOLVER
+sourceStep=1
+chosenR=0
+chosenX=2
+terminatedAfterStep=0
+terminateReason=
+nextInputSourceTag=NORMALIZE
+explicitBeforeStep:
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (8,2,4)
+  (9,2,5)
+  (10,2,6)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+explicitAfterNormalize:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+nextInputExplicit:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+aliveRNodesForNextStep=[0]
+nextStepCandidates:
+  rNode=0 x=5 scorePrimary=3 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=6 scorePrimary=3 scoreSecondary=-6 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=1 scorePrimary=2 scoreSecondary=-1 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=4 scorePrimary=2 scoreSecondary=-4 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+
+=== RewriteStep1Snapshot ===
+side=REPLAY
+sourceStep=1
+chosenR=0
+chosenX=2
+terminatedAfterStep=0
+terminateReason=
+nextInputSourceTag=NORMALIZE
+explicitBeforeStep:
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (8,2,4)
+  (9,2,5)
+  (10,2,6)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+explicitAfterNormalize:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+nextInputExplicit:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+aliveRNodesForNextStep=[0]
+nextStepCandidates:
+  rNode=0 x=5 scorePrimary=3 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=6 scorePrimary=3 scoreSecondary=-6 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=1 scorePrimary=2 scoreSecondary=-1 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=4 scorePrimary=2 scoreSecondary=-4 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+
+=== ShadowStep2Snapshot ===
+side=SHADOW
+sourceStep=1
+chosenR=-1
+chosenX=-1
+terminatedAfterStep=0
+terminateReason=
+nextInputSourceTag=SHADOW
+explicitBeforeStep:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices:
+canonicalEdges:
+explicitAfterNormalize:
+canonicalVertices:
+canonicalEdges:
+nextInputExplicit:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+aliveRNodesForNextStep=[0]
+nextStepCandidates:
+  rNode=0 x=1 scorePrimary=3 scoreSecondary=-1 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=4 scorePrimary=3 scoreSecondary=-4 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=5 scorePrimary=3 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=6 scorePrimary=3 scoreSecondary=-6 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=3 scorePrimary=2 scoreSecondary=-3 sourceTag=REAL_ENDPOINT_MULTIPLICITY

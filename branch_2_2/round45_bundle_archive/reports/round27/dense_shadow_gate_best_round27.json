@@ -1,0 +1,5 @@
+{
+  "gate_found": false,
+  "reason": "no zero-mismatch positive-speedup gate under searched family",
+  "searched_rows": 77
+}

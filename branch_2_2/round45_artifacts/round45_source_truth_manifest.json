@@ -1,0 +1,12 @@
+{
+  "source_sha256": "6d7a9ac4f96de13a863d7bc876ac9f208cc42b54610230436203c40ca26c2cd7",
+  "baseline_zip": "/mnt/data/lca_tree_stress_v5_round44_dense_stseparator_hold.zip",
+  "baseline_fallback": false,
+  "hook_same_side_probe_present": false,
+  "hook_candidate_rows_present": false,
+  "hook_prefilter_rows_present": false,
+  "hook_shadowcheck_present": true,
+  "header_sink_present": false,
+  "source_alignment_passed": false,
+  "notes": "fresh inspection before smoke gate"
+}

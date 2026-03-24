@@ -1,0 +1,20 @@
+[STATECERT_GATED] modeS0_hits=0 fallback_hits=0
+[DENSE_DECOMPOSESERIES_R37 rows] rows=121 shadow_prefilter_hit=23 shadow_attempted=23 shadow_match=0 shadow_mismatch=23
+[DENSE_DECOMPOSESERIES_R37 ms] spqr_total=16936 spqr_raw_total=11756.7 choose_parallel=0 recursive_total=11756.7 recursive_series=11756.7 ds_total=11756.7 build_subsetinfo=24.4734 candidate_loop=6074.39 comp_init=2.30958 seed_scan=39.4851 bfs_queue=98.6386 bfs_neighbor=5476.39 label_write=38.6639 partition=0.003626 connectivity=0 normvec=0 other=2.38002
+[DENSE_RECT_PROF] split_calls=253 apply_calls=255 should_calls=255
+[DENSE_RECT_PROF split_ms] dead_edge_collect=9.42187 local_id_adj=30.6847 cheap_fan=0.018708 no_bad_fast=0.03708 tarjan_bcc=50.0427 piece_build=9.83774 boundary_materialize=0.824082
+[DENSE_RECT_PROF apply_ms] dead_remove=0.682876 small_materialize=0.691835 boundary_reconnect=0.290617 oldBad_reclass=6.21645
+[DENSE_RECT_PROF shouldUseTrueSpqr] true=2 false=253 dead=0 no_bad=129 E_guard=121 V_guard=0 Q_guard=1 dense_guard=2
+[DENSE_RECT_KEEP_ORDER_ROUND4 calls] step3_calls=252 keep_calls=252 single_bcc=23 unique_max=102 ties=0
+[DENSE_RECT_KEEP_ORDER_ROUND4 ms] step3_total=60.1807 keep_order=14.3957 mass_scan=0.02017 tie_collect=0.024958 canonical_order=0 full_normalize=0 piece_postpass=0.177164 comb4096_step3=0 comb4096_keep=0 comb4096_canon=0
+[DENSE_RECT_KEEP_ORDER_ROUND4 counts] tie_avg_candidates=0 tie_max_candidates=0 sorted_lists=0 sorted_total_edges=0
+[COMBDENSE_R8 counts] split_spqr_calls=255 localrebuild_fallback=0 fastkeep_calls=1
+[COMBDENSE_R8 fastkeep_ms] total=0.001167 dead_edge=0.000375 dead_vertex=0.000125 boundary_loop=8.3e-05 state_bump=0.000208
+[DENSE_LOCALIDADJ_R9 ms] lid_mark_realof=0 deadedge_filter=0 degree_first=0 surv_arrays_build=0 adj_alloc=0 adj_fill=0 deg_fill=0 other=0
+[DENSE_SPQR_R16 should] calls=255 true=2 false=253 E_guard=121 V_guard=0 Q_guard=1 dense_guard=2 boundary_guard=0 other_guard=129
+[DENSE_SPQR_R16 gate] samples=506 boundaryZero_ratio=0.857708 ccOne_ratio=1 currentOnComb_ratio=0.0118577 attachCuts_avg=0.158103 attachCuts_max=2 badQueries_avg=1323.42 badQueries_max=6473 boundary_size_avg=0.158103 boundary_size_max=2 oldBoundary_size_avg=0.158103 oldBoundary_size_max=2 currentV_avg=64.0553 currentV_max=254 currentE_avg=3448.68 currentE_max=18174 E_over_ratio=0.478261 Q_over_ratio=0.482213 structured_gate_hit=0
+[DENSE_SPQR_R16 escape] eligible=0 attempted=0 success=0 fallback=0 gate_not_met=0 shadow_mismatch=0 spqr_path_fail=0 validator_shadow_fail=0 invariant_unsure=0 forced_fallback=0
+[DENSE_SPQR_R16 ms] spqr_total=16936.8 spqr_build=16680.9 spqr_keep_selection=121.944 spqr_piece_emit=129.701
+[DENSE_SPQR_R16 shadow] sampled_shadow_runs=0 keep_choice_mismatch=0 piece_count_mismatch=0 piece_multiset_mismatch=0 output_validator_fail=0
+[DENSE_SHADOW_DIFF_R20 rows] rows=0 prefilter_hit=0 prefilter_eligible=0 shadow_attempted=0 shadow_match=0 shadow_mismatch=0
+[DENSE_SHADOW_DIFF_R20 mismatch] keep_choice=0 piece_count=0 piece_multiset=0 validator=0 spqr_path_fail=0 invariant_unsure=0 forced=0

@@ -1,0 +1,14 @@
+{
+  "mode": "materialize-core-replay",
+  "manifestPath": "branch_1/ogdf_local_harness_bundle_v2/regressions/rewrite_seq_cases.json",
+  "caseName": "same_type_sp_cleanup_tc40_step1",
+  "outputDumpDir": "branch_1/ogdf_local_harness_bundle_v2/dumps/materialize_core_replay",
+  "bundlePath": "branch_1/ogdf_local_harness_bundle_v2/dumps/materialize_core_replay/CMSS_TYPE_COERCION_AT_ALLOC_seed1_tc40_step2_replay_same_type_sp_cleanup_tc40_step1.txt",
+  "topLevelOk": true,
+  "sourceStep": 2,
+  "sourceSide": "replay",
+  "seamKind": "CMSS_TYPE_COERCION_AT_ALLOC",
+  "seamWhy": "type differs from MINI_AFTER starting at ALLOCATE; first structure-equal stage is CMS_INSTALL_INPUT_SLOTS mini=(R,S,P)=(0,1,0) alloc=(R,S,P)=(1,0,0) slotCount=4",
+  "sourceWhy": "",
+  "builderWhy": ""
+}

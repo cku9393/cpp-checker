@@ -1,0 +1,92 @@
+{
+  "summary_version": "runtime_watch_history_summary_v1",
+  "generated_at_utc": "2026-03-23T05:23:23Z",
+  "runtime_watch_history_index_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase26/tests/artifacts/evidence_bundle_contains_rebaseline_transition_smoke/manifests/runtime_watch_history_index_v1.json",
+  "fingerprint_count": 1,
+  "watch_status_counts": {
+    "CLEAR": 6
+  },
+  "fingerprints": [
+    {
+      "runtime_fingerprint_key": "b7dd41c4bd4138f3c82d00f4e05a214b9f35805603ba4856ddcdd75e2454b53c",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "runner-rebaseline",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "9aa2f07f5dae6ee953ba2f7daeb4763a28f1bcd3380f90e32cfa4ca0c06f78ec"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "asan_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 2,
+          "stable_overrun_count": 0,
+          "clear_count": 2,
+          "escalation_count": 0,
+          "execution_role": "diagnostic"
+        },
+        {
+          "execution_class": "debug_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 2,
+          "stable_overrun_count": 0,
+          "clear_count": 2,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        },
+        {
+          "execution_class": "policy_core",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 2,
+          "stable_overrun_count": 0,
+          "clear_count": 2,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_nightly",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 2,
+          "stable_overrun_count": 0,
+          "clear_count": 2,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_refresh",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 2,
+          "stable_overrun_count": 0,
+          "clear_count": 2,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "release_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 2,
+          "stable_overrun_count": 0,
+          "clear_count": 2,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        }
+      ]
+    }
+  ],
+  "summary_hash": "99f75b6bd2ce4323093c5e30352e80610a0a2500e0d8c25bf81272d5f8992ae4"
+}

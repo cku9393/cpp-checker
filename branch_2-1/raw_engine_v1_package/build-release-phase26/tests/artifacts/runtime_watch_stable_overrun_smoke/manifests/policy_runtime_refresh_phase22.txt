@@ -1,0 +1,19 @@
+manifest_version=runtime_refresh_manifest_v1
+phase=phase22
+current_verdict=WARN
+freshness_verdict=FRESH
+comparability_verdict=COMPARABLE
+selected_baseline_id=phase27-runtime-watch-7fbf1adc-20260323_051117
+selected_baseline_tag=phase27-runtime-watch
+overall_budget_verdict=BUDGET_WARN
+runtime_severity=WARN
+stale_entry_count=0
+requires_rerun_entry_count=0
+rebaseline_required_count=0
+not_comparable_count=0
+runtime_refresh_entry=execution_class=release_full current_status=OK freshness_status=FRESH comparability=COMPARABLE
+runtime_refresh_entry=execution_class=debug_full current_status=OK freshness_status=FRESH comparability=COMPARABLE
+runtime_refresh_entry=execution_class=asan_full current_status=WARN freshness_status=FRESH comparability=COMPARABLE
+runtime_refresh_entry=execution_class=policy_core current_status=OK freshness_status=FRESH comparability=COMPARABLE
+runtime_refresh_entry=execution_class=policy_refresh current_status=OK freshness_status=FRESH comparability=COMPARABLE
+runtime_refresh_entry=execution_class=policy_nightly current_status=OK freshness_status=FRESH comparability=COMPARABLE

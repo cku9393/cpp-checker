@@ -1,0 +1,4 @@
+registry_version=runtime_baseline_registry_v1
+active_entry_count=1
+retired_entry_count=0
+runtime_registry_entry=baseline_id=phase19-runtime-approved-d70f8d6c-20260323_052232 baseline_tag=phase19-runtime-approved status=active host_fingerprint_hash=d70f8d6cffd368768a47f0875b87eadd51ec53e81a80a0aad5627e8d05b9432d build_classes=asan_full,debug_full,policy_nightly,release_full

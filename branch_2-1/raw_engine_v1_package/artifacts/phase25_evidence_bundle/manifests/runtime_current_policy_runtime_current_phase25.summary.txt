@@ -1,0 +1,1 @@
+runtime_manifest_summary role=current overall_status=WARN overall_budget_verdict=BUDGET_WARN entry_count=6 warn_count=1 fail_count=0

@@ -1,0 +1,195 @@
+{
+  "phase": "phase22",
+  "timestamp_utc": "2026-03-22T06:11:22Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke",
+  "report": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/PHASE22_PIPELINE_SMOKE_REPORT.txt",
+  "policy_manifest_json": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.json",
+  "policy_manifest_txt": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.txt",
+  "policy_manifest_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.summary.txt",
+  "bundle_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/phase22_evidence_bundle",
+  "zip_out": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/raw_engine_phase22_pipeline_smoke.zip",
+  "gate_summary": "policy_gate_summary current_verdict=PASS freshness_verdict=FRESH split_tie_organic_symmetric=PASS/FRESH automorphism_probe_large=PASS/FRESH planner_tie_mixed_organic=NON_APPLICABLE/FRESH planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY/FRESH",
+  "policy_summary": "exact_shadow policy lifecycle healthy: no stale families, no rerun-required families, no reclassification required; pipeline severity=OK",
+  "current_verdict": "PASS",
+  "freshness_verdict": "FRESH",
+  "gate_verdict": "PASS",
+  "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+  "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.json",
+  "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+  "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+  "pipeline_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_pipeline_summary.json",
+  "runtime_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_budget_phase22_v1.json",
+  "pipeline_severity": "OK",
+  "pipeline_exit_code": 0,
+  "pipeline_recommended_next_action": "policy lifecycle is fresh; no rerun is required",
+  "baseline_manifest_hash": "78688faa119406d91a6fb2443549f37e1acc643e991205050dcfdf33cf283f5f",
+  "current_manifest_hash": "56ebac9ea33626dad5d2e10253d7fada047579b304dfaf107254a4bae3f849bf",
+  "refresh_manifest_hash": "9228eeb919db48e657c97f69056aa68d0897617eb86c22074c6fb769365e0f3a",
+  "rerun_plan_hash": "e15bf8e339d0c09cd575186ce7839ca2c3b25b49c1b421d518e0d898e49a6611",
+  "pipeline_summary_hash": "ba704594495b091cb989e41e22951b7e9c9682038aee08f4c53590d33e71be8b",
+  "runtime_manifest_hash": "edff9d64208c4b780b5e06367fcd78aa6fefb6849b84a760849f616fa54c2d09",
+  "freshness_summary": {
+    "default_freshness_status": "STALE",
+    "manifest_freshness_status": null,
+    "manifest_freshness_verdict": "FRESH",
+    "family_status_counts": {
+      "FRESH": 4
+    },
+    "stale_family_count": 0,
+    "revalidated_family_count": 4,
+    "reclassify_required_count": 0
+  },
+  "refresh_summary": {
+    "freshness_verdict": "FRESH",
+    "current_verdict": "PASS",
+    "stale_family_count": 0,
+    "requires_rerun_family_count": 0,
+    "reclassify_required_count": 0
+  },
+  "pipeline_summary_data": {
+    "summary_version": "policy_pipeline_summary_v1",
+    "timestamp_utc": "2026-03-22T06:11:23Z",
+    "phase": "phase22",
+    "mode": "bundle_only",
+    "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke",
+    "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+    "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.json",
+    "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+    "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+    "runtime_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_budget_phase22_v1.json",
+    "bundle_metadata": null,
+    "current_verdict": "PASS",
+    "freshness_verdict": "FRESH",
+    "rerun_plan_verdict": "PASS",
+    "stale_family_count": 0,
+    "requires_rerun_family_count": 0,
+    "reclassify_required_count": 0,
+    "severity": "OK",
+    "exit_code": 0,
+    "recommended_next_action": "policy lifecycle is fresh; no rerun is required",
+    "runtime_budget_verdict": "NO_BASELINE",
+    "stages": []
+  },
+  "runtime_summary": {
+    "manifest_version": "policy_runtime_manifest_v1",
+    "timestamp_utc": "2026-03-22T06:11:23Z",
+    "phase": "phase22",
+    "mode": "bundle_only",
+    "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke",
+    "entries": [],
+    "total_wall_seconds": 0,
+    "overall_budget_verdict": "NO_BASELINE"
+  },
+  "drift_flags": [],
+  "reclassification_needed_families": [],
+  "family_status_summary": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_status_table": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_freshness": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": false
+    }
+  ],
+  "stale_family_count": 0,
+  "requires_rerun_family_count": 0,
+  "reclassify_required_count": 0,
+  "copied_counts": {
+    "reports": 1,
+    "manifests": 21,
+    "curated": 20,
+    "regressions": 2,
+    "logs": 0
+  },
+  "artifact_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/indexes/artifact_index.json",
+  "bundle_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/policy_roundtrip_smoke/indexes/bundle_index.json",
+  "retention": {
+    "prune_artifacts": false,
+    "max_bundles": 5,
+    "max_nightly_runs": 5,
+    "keep_approved": false,
+    "pruned": {
+      "bundles": [],
+      "curated_bundles": [],
+      "evidence_bundles": [],
+      "nightly_runs": []
+    }
+  }
+}

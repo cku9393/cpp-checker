@@ -1,0 +1,1 @@
+runtime_baseline_selection_summary comparability_verdict=REBASELINE_REQUIRED selected_baseline_id=phase25-runtime-approved-c89a575d-20260323_003527 candidate_count=3 exact_match_count=0 compatible_match_count=0 retired_match_count=3 reason=only retired runtime baselines match the current host/toolchain

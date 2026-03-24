@@ -1,0 +1,24 @@
+generated_state_count=6000
+canonical_unique_state_count=1
+dedupe_drop_count=5999
+collision_spot_check_count=12
+organic_duplicate_example_count=16
+exact_audited_state_count=0
+exact_audit_skipped_cap_count=6000
+exact_audit_skipped_budget_count=0
+exact_audit_skipped_sample_count=0
+fast_unique_count=0
+exact_unique_count=0
+fast_vs_exact_disagreement_count=0
+false_merge_count=0
+false_split_count=0
+build_order_duplicate_count=0
+commit_order_duplicate_count=0
+hosted_occ_order_duplicate_count=0
+relabel_duplicate_count=0
+occid_duplicate_count=0
+symmetric_structure_duplicate_count=0
+mixed_duplicate_count=64
+unknown_duplicate_count=0
+dedupe_ratio=0.999833
+family=automorphism_probe_large generated=6000 unique=1 dedupe_drops=5999 dedupe_ratio=0.999833 validator_checks=1 primitive_checks=1 planner_checks=1

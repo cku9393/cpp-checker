@@ -1,0 +1,6 @@
+round43 dense same-side hold bundle
+
+Requested baseline zip /mnt/data/lca_tree_stress_v5_round42_dense_candidateaccepted_hold.zip was not present in /mnt/data.
+Nearest available baseline source zip /mnt/data/lca_tree_stress_v5_round41_dense_candidateevents_hold.zip was used as fallback.
+This bundle is packaged as a baseline-equivalent status hold bundle aligned with round43 report artifacts.
+See /mnt/data/round43_dense_sameside_report.md for execution details and hold rationale.

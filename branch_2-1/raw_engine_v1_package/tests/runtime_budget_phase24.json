@@ -1,0 +1,46 @@
+{
+  "entries": {
+    "release_full": {
+      "soft_seconds": 260.0,
+      "hard_seconds": 520.0,
+      "soft_delta_percent": 25.0,
+      "hard_delta_percent": 60.0
+    },
+    "debug_full": {
+      "soft_seconds": 900.0,
+      "hard_seconds": 1800.0,
+      "soft_delta_percent": 25.0,
+      "hard_delta_percent": 60.0
+    },
+    "asan_full": {
+      "soft_seconds": 2400.0,
+      "hard_seconds": 4200.0,
+      "soft_delta_percent": 25.0,
+      "hard_delta_percent": 60.0
+    },
+    "policy_core": {
+      "soft_seconds": 30.0,
+      "hard_seconds": 90.0,
+      "soft_delta_percent": 200.0,
+      "hard_delta_percent": 500.0
+    },
+    "policy_refresh": {
+      "soft_seconds": 30.0,
+      "hard_seconds": 90.0,
+      "soft_delta_percent": 200.0,
+      "hard_delta_percent": 500.0
+    },
+    "policy_nightly": {
+      "soft_seconds": 180.0,
+      "hard_seconds": 600.0,
+      "soft_delta_percent": 100.0,
+      "hard_delta_percent": 250.0
+    },
+    "compare_campaign": {
+      "soft_seconds": 300.0,
+      "hard_seconds": 1200.0,
+      "soft_delta_percent": 30.0,
+      "hard_delta_percent": 80.0
+    }
+  }
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -45,6 +46,15 @@ def list_modes() -> List[str]:
     if res.returncode != 0:
         raise RuntimeError(res.stderr)
     return [ln.strip() for ln in res.stdout.splitlines() if ln.strip()]
+
+
+def build_case_solver_env(case_dir: Path, mode: str, n: int, seed: int) -> dict[str, str]:
+    env = os.environ.copy()
+    env['DENSE_PROFILE_OUTDIR'] = str(case_dir)
+    env['DENSE_SHADOW_CASE_MODE'] = mode
+    env['DENSE_SHADOW_CASE_N'] = str(n)
+    env['DENSE_SHADOW_CASE_SEED'] = str(seed)
+    return env
 
 
 def main() -> int:
@@ -99,7 +109,17 @@ def main() -> int:
                             rows.append(Row(mode, n, seed, sl, sq, 127, 0, 0, None, None, str(case_dir)))
                             continue
 
-                        rc_sol, to_sol, sec, rss = run_solver_with_time(solver, in_path, out_path, time_path, sol_stderr, args.timeout)
+                        solver_env = build_case_solver_env(case_dir, mode, n, seed)
+                        rc_sol, to_sol, sec, rss = run_solver_with_time(
+                            solver,
+                            in_path,
+                            out_path,
+                            time_path,
+                            sol_stderr,
+                            args.timeout,
+                            env=solver_env,
+                            cwd=case_dir,
+                        )
                         val_ok = 0
                         if rc_sol == 0 and not to_sol:
                             rc_val, to_val, _ = run_cmd([sys.executable, str(VAL), str(in_path), str(out_path), '--quiet'],

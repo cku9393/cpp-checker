@@ -1,0 +1,48 @@
+{
+  "summary_version": "policy_pipeline_summary_v1",
+  "timestamp_utc": "2026-03-22T06:18:22Z",
+  "phase": "phase22",
+  "mode": "quick",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke",
+  "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+  "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_v1.json",
+  "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+  "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+  "runtime_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_runtime_budget_phase22_v1.json",
+  "bundle_metadata": null,
+  "current_verdict": "PASS",
+  "freshness_verdict": "REQUIRES_RERUN",
+  "rerun_plan_verdict": "RERUN_REQUIRED",
+  "stale_family_count": 0,
+  "requires_rerun_family_count": 1,
+  "reclassify_required_count": 1,
+  "severity": "ACTION_REQUIRED",
+  "exit_code": 20,
+  "recommended_next_action": "reclassification required; rerun affected families and review exact_shadow policy retention",
+  "runtime_budget_verdict": "NO_BASELINE",
+  "stages": [
+    {
+      "name": "policy_ci_check",
+      "status": "PASS",
+      "duration_seconds": 0.037,
+      "command": [
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/raw_engine_tests",
+        "--case",
+        "policy_ci_check",
+        "--baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+        "--current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_v1.json",
+        "--refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+        "--rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+        "--emit-summary",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_pipeline_summary.txt",
+        "--synthetic-applicability-drift",
+        "planner_tie_mixed_organic"
+      ],
+      "note": "policy_lifecycle_summary case=policy_ci_check current_verdict=PASS freshness_verdict=REQUIRES_RERUN plan_verdict=RERUN_REQUIRED stale_family_count=0 requires_rerun_family_count=1 reclassify_required_count=1 selected_entry_count=1\nbaseline_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.txt\ncurrent_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_v1.json\nrefresh_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json\nrerun_plan=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/action_required_mode_smoke/manifests/policy_rerun_plan_phase22_v1.json\nfamily_status=family=split_tie_organic_symmetric current_status=PASS freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=1 rationale=direct compare evidence satisfied\nfamily_status=family=automorphism_probe_large current_status=PASS freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=1 rationale=direct compare evidence satisfied\nfamily_status=family=planner_tie_mixed_organic current_status=NON_APPLICABLE freshness_status=REQUIRES_RERUN drift_flag=1 reclassify_required=1 counts_as_production_evidence=0 rationale=no_split_ready remained dominant and compare relevance stayed below threshold\nfamily_status=family=planner_tie_mixed_organic_compare_ready current_status=DIAGNOSTIC_ONLY freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=0 rationale=diagnostic compare family met bounded compare and lineage consistency, but followup preservation or structure-only enrichment did not hold; counts_as_production_evidence=false\nraw_engine_v1 tests passed case=policy_ci_check"
+    }
+  ]
+}

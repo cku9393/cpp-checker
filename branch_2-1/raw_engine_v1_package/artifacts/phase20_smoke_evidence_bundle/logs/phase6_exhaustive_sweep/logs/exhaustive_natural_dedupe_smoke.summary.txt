@@ -1,0 +1,9 @@
+generated_state_count=208
+canonical_unique_state_count=104
+dedupe_drop_count=104
+collision_spot_check_count=0
+dedupe_ratio=0.5
+family=split_ready generated=48 unique=24 dedupe_drops=24 dedupe_ratio=0.5 validator_checks=24 primitive_checks=24 planner_checks=24
+family=join_ready generated=8 unique=4 dedupe_drops=4 dedupe_ratio=0.5 validator_checks=4 primitive_checks=4 planner_checks=4
+family=integrate_ready generated=48 unique=24 dedupe_drops=24 dedupe_ratio=0.5 validator_checks=24 primitive_checks=24 planner_checks=24
+family=mixed generated=104 unique=52 dedupe_drops=52 dedupe_ratio=0.5 validator_checks=52 primitive_checks=52 planner_checks=52

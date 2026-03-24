@@ -1,0 +1,174 @@
+PHASE18 stabilization report
+date=2026-03-19
+package=raw_engine_v1_package
+policy_manifest=artifacts/manifests/policy_graduation_manifest_v1.json
+policy_summary=artifacts/manifests/policy_graduation_manifest_v1.summary.txt
+conclusion=KEEP exact_shadow
+
+1. modified/added files
+- modified
+  - README.md
+  - tests/CMakeLists.txt
+  - tests/raw_engine_cases.cpp
+  - tests/raw_engine_main.cpp
+  - tests/test_harness.hpp
+- added
+  - tests/policy_gate.hpp
+  - tests/policy_gate.cpp
+  - tests/tools/build_evidence_bundle.py
+  - PHASE18_STABILIZATION_REPORT_20260319.txt
+- no `src/` primitive/planner production semantics changes were introduced in this phase
+
+2. policy graduation manifest design
+- new machine-readable outputs:
+  - `artifacts/manifests/policy_graduation_manifest_v1.json`
+  - `artifacts/manifests/policy_graduation_manifest_v1.txt`
+  - `artifacts/manifests/policy_graduation_manifest_v1.summary.txt`
+- new CLI / case:
+  - `./raw_engine_tests --case policy_gate`
+  - `--policy-manifest <path>`
+  - `--gate-family <name>`
+  - `--gate-strict`
+  - `--gate-output <path>`
+- manifest schema records:
+  - phase metadata: `manifest_version`, `report_version=phase18`, `build_tag`, `timestamp_utc`, `artifact_root`
+  - family role: `production_family` or `diagnostic_support_family`
+  - family status: `PASS | NON_APPLICABLE | DIAGNOSTIC_ONLY | FAIL | INSUFFICIENT_EVIDENCE`
+  - thresholds:
+    - `compared_state_count_min`
+    - `compare_eligible_state_count_min`
+    - `compare_completed_state_count_min`
+    - `semantic_disagreement_count_max`
+    - `fallback_count_max`
+    - `semantic_shift_count_max`
+    - applicability thresholds for `planner_tie_mixed_organic`
+    - lineage sample threshold for `planner_tie_mixed_organic_compare_ready`
+  - measured evidence:
+    - direct compare counts / histograms
+    - applicability counts / relevance / dominant reason confidence
+    - lineage consistency counters
+    - `counts_as_production_evidence`
+    - `drift_flag`
+- campaign aggregate writing now refreshes the phase18 policy manifest automatically, so nightly/CI can read one stable gate artifact instead of reparsing per-family campaign logs.
+
+3. family gate criteria and actual results
+- `split_tie_organic_symmetric`
+  - threshold: compared/eligible/completed >= `32/32/32`, `semantic_disagreement=0`, `fallback=0`, `semantic_shift=0`
+  - measured: compared/eligible/completed = `32/32/32`, disagreement/fallback/semantic_shift = `0/0/0`
+  - result: `PASS`
+- `automorphism_probe_large`
+  - threshold: compared/eligible/completed >= `32/32/32`, `semantic_disagreement=0`, `fallback=0`, `semantic_shift=0`
+  - measured: compared/eligible/completed = `32/32/32`, disagreement/fallback/semantic_shift = `0/0/0`
+  - result: `PASS`
+- `planner_tie_mixed_organic`
+  - threshold: generated states >= `48`, `compare_relevance <= 0.02`, `split_ready_relevance <= 0.05`, dominant ineligible reason = `no_split_ready`, dominant confidence >= `0.90`, no semantic/fallback/semantic-shift drift
+  - measured: generated=`48`, split_ready=`0`, tie_ready=`0`, eligible=`0`, ineligible=`48`, `no_split_ready=48`, compare_relevance=`0`, split_ready_relevance=`0`, dominant confidence=`1.0`
+  - result: `NON_APPLICABLE`
+- `planner_tie_mixed_organic_compare_ready`
+  - threshold: direct compare `32/32/32`, lineage samples >= `16`, `same_semantic_class_count >= 16`, `same_final_state_count >= 16`, `same_trace_class_count >= 16`, disagreement/fallback/semantic_shift = `0/0/0`
+  - measured: direct compare `32/32/32`, lineage sample count=`16`, semantic/final/trace consistency=`16/16/16`
+  - result: `DIAGNOSTIC_ONLY`
+- final gate verdict
+  - `split_tie_organic_symmetric=PASS`
+  - `automorphism_probe_large=PASS`
+  - `planner_tie_mixed_organic=NON_APPLICABLE`
+  - `planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY`
+  - `./build-release/tests/raw_engine_tests --case policy_gate --gate-strict --gate-output artifacts/manifests/policy_graduation_manifest_v1.json` passed
+
+4. planner_tie_mixed_organic applicability drift result
+- explicit phase18 applicability audit:
+  - output: `artifacts/phase18_final_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt`
+  - `generated_state_count=48`
+  - `split_ready_state_count=0`
+  - `tie_ready_state_count=0`
+  - `compare_eligible_state_count=0`
+  - `compare_ineligible_reason_histogram={"no_split_ready":48}`
+  - `actual_split_hits=0`
+  - `actual_join_hits=48`
+  - `actual_integrate_hits=48`
+  - `compare_relevance=0`
+  - `split_ready_relevance=0`
+  - `dominant_ineligible_reason=no_split_ready`
+  - `dominant_ineligible_reason_confidence=1`
+  - `classification=NON_APPLICABLE`
+- drift interpretation:
+  - no applicability drift was observed
+  - `NON_APPLICABLE` remains stable
+  - no planner reclassification is required in this phase
+
+5. why compare_ready stays diagnostic-only
+- explicit phase18 lineage audit:
+  - output: `artifacts/phase18_final_lineage/logs/compare_ready_lineage_audit.summary.txt`
+  - `lineage_sample_count=16`
+  - `derived_from_base_state_count=16`
+  - `same_semantic_class_count=16`
+  - `same_final_state_count=16`
+  - `same_trace_class_count=16`
+  - `followup_pattern_preserved_count=0`
+  - `structure_only_enrichment_count=0`
+  - `forced_split_ready_support_count=16`
+- interpretation:
+  - bounded exact compare consistency is good enough for monitoring
+  - the precursor still requires forced split-ready support and does not preserve the base followup pattern
+  - because `followup_pattern_preserved_count=0` and `structure_only_enrichment_count=0`, the family is intentionally pinned at `DIAGNOSTIC_ONLY`
+  - the manifest records `counts_as_production_evidence=0` for this family, so it never upgrades production graduation on its own
+
+6. evidence bundle generation
+- new script:
+  - `tests/tools/build_evidence_bundle.py`
+- bundle command:
+  - `python tests/tools/build_evidence_bundle.py --phase phase18 --artifact-root artifacts --report-out PHASE18_STABILIZATION_REPORT_20260319.txt --policy-manifest artifacts/manifests/policy_graduation_manifest_v1.json --zip-out raw_engine_phase18_stabilization_20260319.zip --curated-zip raw_engine_phase18_stabilization_curated_20260319.zip`
+- fixed bundle layout:
+  - `reports/`
+  - `manifests/`
+  - `curated/`
+  - `regressions/`
+  - `logs/`
+  - root `bundle_metadata.json`
+- curated zip contents were kept separate from the larger evidence bundle so the policy-manifest artifact and the smaller source/doc delta can be shared independently.
+
+7. validation and explicit execution
+- Release full CTest
+  - build dir: `build-release`
+  - result: `106/106` passed
+  - wall time: `316.86 sec`
+- Debug full CTest
+  - build dir: `build-debug-phase18`
+  - result: `106/106` passed
+  - wall time: `1180.91 sec`
+- isolated ASan+UBSan full CTest
+  - build dir: `build-asan-isolated`
+  - result: `106/106` passed
+  - wall time: `3349.42 sec`
+- explicit phase18 commands passed
+  - `./build-release/tests/raw_engine_tests --case policy_gate --gate-strict --gate-output artifacts/manifests/policy_graduation_manifest_v1.json`
+  - `./build-release/tests/raw_engine_tests --case planner_tie_organic_applicability_audit --artifact-dir artifacts/phase18_final_applicability`
+  - `./build-release/tests/raw_engine_tests --case planner_tie_organic_applicability_smoke --artifact-dir artifacts/phase18_final_applicability`
+  - `./build-release/tests/raw_engine_tests --case compare_ready_lineage_audit --artifact-dir artifacts/phase18_final_lineage`
+  - `./build-release/tests/raw_engine_tests --case compare_ready_lineage_gate_smoke`
+  - `./build-release/tests/raw_engine_tests --case planner_oracle_fuzz --scenario-family planner_mixed_structural --save-corpus artifacts/phase18_corpus/corpus --stats --iters 4`
+  - `./build-release/tests/raw_engine_tests --case corpus_replay --load-corpus artifacts/phase18_corpus/corpus/roundtrip --scenario-family planner_mixed_structural`
+  - `python tests/tools/build_evidence_bundle.py --phase phase18 ...`
+
+8. semantic counterexamples
+- no new semantic mismatch was found
+- no new `FailureSignature` dump/reduce/regression path was triggered in this phase
+- no `raw_planner.cpp` or primitive-body change was required
+
+9. new regressions
+- none
+- existing regression inventory remains unchanged
+
+10. final verdict
+- `exact_shadow` stays graduated for production
+- current machine-readable gate status set is acceptable for release/nightly:
+  - `PASS`
+  - `NON_APPLICABLE`
+  - `DIAGNOSTIC_ONLY`
+- there is no `FAIL`
+- there is no `INSUFFICIENT_EVIDENCE`
+
+11. remaining risks
+- direct expensive compare evidence for `split_tie_organic_symmetric` and `automorphism_probe_large` is still sourced from the existing expensive campaign summaries; if those generators or planner behavior change, the campaigns should be rerun to refresh direct evidence.
+- `planner_tie_mixed_organic` remains classified through applicability rather than direct compare; if `compare_eligible_state_count` starts rising above zero, the manifest will move out of `NON_APPLICABLE` and require reclassification.
+- `planner_tie_mixed_organic_compare_ready` is still structurally enriched relative to the base family, so it should remain diagnostic-only unless future lineage work proves structure-only preservation and followup preservation.

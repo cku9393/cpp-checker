@@ -36,6 +36,27 @@ void append_keep_occ(vector<OccID>& keepOcc, const string& csv) {
     }
 }
 
+void append_csv_strings(vector<string>& values, const string& csv) {
+    size_t start = 0;
+    while (start < csv.size()) {
+        const size_t comma = csv.find(',', start);
+        string token = csv.substr(start, comma == string::npos ? string::npos : comma - start);
+        token.erase(token.begin(), find_if(token.begin(), token.end(), [](unsigned char ch) {
+            return !isspace(ch);
+        }));
+        token.erase(find_if(token.rbegin(), token.rend(), [](unsigned char ch) {
+            return !isspace(ch);
+        }).base(), token.end());
+        if (!token.empty()) {
+            values.push_back(token);
+        }
+        if (comma == string::npos) {
+            break;
+        }
+        start = comma + 1U;
+    }
+}
+
 optional<OracleMode> parse_oracle_mode(const string& text) {
     if (text == "primitive") {
         return OracleMode::PRIMITIVE;
@@ -265,6 +286,7 @@ void print_usage(ostream& os) {
     os << "  --target-occ <id>\n";
     os << "  --keep-occ <csv>\n";
     os << "  --artifact-dir <path>\n";
+    os << "  --artifact-root <path>\n";
     os << "  --save-corpus <dir>\n";
     os << "  --load-corpus <dir>\n";
     os << "  --corpus-policy best|append|replace\n";
@@ -281,9 +303,53 @@ void print_usage(ostream& os) {
     os << "  --max-partial-runs <N>\n";
     os << "  --stop-after-checkpoint\n";
     os << "  --policy-manifest <path>\n";
+    os << "  --source-manifest <path>\n";
+    os << "  --baseline-manifest <path>\n";
+    os << "  --baseline-out <path>\n";
+    os << "  --baseline-tag <string>\n";
+    os << "  --current-manifest <path>\n";
+    os << "  --refresh-manifest <path>\n";
     os << "  --gate-family <name>\n";
     os << "  --gate-strict\n";
     os << "  --gate-output <path>\n";
+    os << "  --rerun-plan <path>\n";
+    os << "  --runtime-baseline-manifest <path>\n";
+    os << "  --runtime-baseline-out <path>\n";
+    os << "  --runtime-baseline-registry <path>\n";
+    os << "  --runtime-current-manifest <path>\n";
+    os << "  --runtime-refresh-manifest <path>\n";
+    os << "  --runtime-rerun-plan <path>\n";
+    os << "  --runtime-history-index <path>\n";
+    os << "  --runtime-watch-current <path>\n";
+    os << "  --runtime-watch-out <path>\n";
+    os << "  --runtime-watch-refresh <path>\n";
+    os << "  --runtime-watch-history-index <path>\n";
+    os << "  --runtime-budget-config <path>\n";
+    os << "  --execution-class <name|csv|all>\n";
+    os << "  --proposal-out <path>\n";
+    os << "  --runtime-proposal <path>\n";
+    os << "  --archive-proposal <path>\n";
+    os << "  --activate\n";
+    os << "  --retire-baseline <id>\n";
+    os << "  --runtime-runner-tag <string>\n";
+    os << "  --runtime-stage <name=seconds>\n";
+    os << "  --runtime-test-count <name=count>\n";
+    os << "  --plan-out <path>\n";
+    os << "  --emit-summary <path>\n";
+    os << "  --freshness-only\n";
+    os << "  --revalidate-families <csv>\n";
+    os << "  --family-filter <csv>\n";
+    os << "  --mark-stale-on-hash-change\n";
+    os << "  --allow-stale\n";
+    os << "  --strict-refresh\n";
+    os << "  --allow-empty-plan\n";
+    os << "  --require-acceptable-status\n";
+    os << "  --freeze-provenance\n";
+    os << "  --include-diagnostic\n";
+    os << "  --include-non-applicable\n";
+    os << "  --synthetic-hash-drift <planner_semantics_hash|generator_family_hash|compare_engine_hash|campaign_config_hash>\n";
+    os << "  --synthetic-applicability-drift <family>\n";
+    os << "  --synthetic-diagnostic-promotion <family>\n";
     os << "  --max-real <N>\n";
     os << "  --max-occ <N>\n";
     os << "  --max-edges <N>\n";
@@ -356,6 +422,8 @@ int main(int argc, char** argv) {
                 append_keep_occ(options.keepOcc, require_value(i, argc, argv, arg));
             } else if (arg == "--artifact-dir") {
                 options.artifactDir = require_value(i, argc, argv, arg);
+            } else if (arg == "--artifact-root") {
+                options.artifactDir = require_value(i, argc, argv, arg);
             } else if (arg == "--save-corpus") {
                 options.saveCorpusDir = require_value(i, argc, argv, arg);
             } else if (arg == "--load-corpus") {
@@ -377,12 +445,102 @@ int main(int argc, char** argv) {
                 options.resumeFrom = require_value(i, argc, argv, arg);
             } else if (arg == "--policy-manifest") {
                 options.policyManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--source-manifest") {
+                options.sourceManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--baseline-manifest") {
+                options.baselineManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--baseline-out") {
+                options.baselineOut = require_value(i, argc, argv, arg);
+            } else if (arg == "--baseline-tag") {
+                options.baselineTag = require_value(i, argc, argv, arg);
+            } else if (arg == "--current-manifest") {
+                options.currentManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--refresh-manifest") {
+                options.refreshManifest = require_value(i, argc, argv, arg);
             } else if (arg == "--gate-family") {
                 options.gateFamily = require_value(i, argc, argv, arg);
             } else if (arg == "--gate-strict") {
                 options.gateStrict = true;
             } else if (arg == "--gate-output") {
                 options.gateOutput = require_value(i, argc, argv, arg);
+            } else if (arg == "--rerun-plan") {
+                options.rerunPlan = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-baseline-manifest") {
+                options.runtimeBaselineManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-baseline-out") {
+                options.runtimeBaselineManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-baseline-registry") {
+                options.runtimeBaselineRegistry = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-current-manifest") {
+                options.runtimeCurrentManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-refresh-manifest") {
+                options.runtimeRefreshManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-rerun-plan") {
+                options.runtimeRerunPlan = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-history-index") {
+                options.runtimeHistoryIndex = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-watch-current") {
+                options.runtimeWatchCurrent = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-watch-out") {
+                options.runtimeWatchCurrent = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-watch-refresh") {
+                options.runtimeWatchRefresh = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-watch-history-index") {
+                options.runtimeWatchHistoryIndex = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-config") {
+                options.runtimeBudgetConfig = require_value(i, argc, argv, arg);
+            } else if (arg == "--execution-class") {
+                options.executionClass = require_value(i, argc, argv, arg);
+            } else if (arg == "--proposal-out") {
+                options.proposalOut = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-proposal") {
+                options.proposalOut = require_value(i, argc, argv, arg);
+            } else if (arg == "--archive-proposal") {
+                options.archiveProposal = require_value(i, argc, argv, arg);
+            } else if (arg == "--activate") {
+                options.activate = true;
+            } else if (arg == "--retire-baseline") {
+                options.retireBaseline = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-runner-tag") {
+                options.runtimeRunnerTag = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-stage") {
+                options.runtimeStageSpecs.push_back(require_value(i, argc, argv, arg));
+            } else if (arg == "--runtime-test-count") {
+                options.runtimeTestCountSpecs.push_back(require_value(i, argc, argv, arg));
+            } else if (arg == "--plan-out") {
+                options.planOut = require_value(i, argc, argv, arg);
+            } else if (arg == "--emit-summary") {
+                options.emitSummary = require_value(i, argc, argv, arg);
+            } else if (arg == "--freshness-only") {
+                options.freshnessOnly = true;
+            } else if (arg == "--revalidate-families") {
+                options.revalidateFamilies.clear();
+                append_csv_strings(options.revalidateFamilies, require_value(i, argc, argv, arg));
+            } else if (arg == "--family-filter") {
+                options.familyFilter.clear();
+                append_csv_strings(options.familyFilter, require_value(i, argc, argv, arg));
+            } else if (arg == "--mark-stale-on-hash-change") {
+                options.markStaleOnHashChange = true;
+            } else if (arg == "--allow-stale") {
+                options.allowStale = true;
+            } else if (arg == "--strict-refresh") {
+                options.strictRefresh = true;
+            } else if (arg == "--allow-empty-plan") {
+                options.allowEmptyPlan = true;
+            } else if (arg == "--require-acceptable-status") {
+                options.requireAcceptableStatus = true;
+            } else if (arg == "--freeze-provenance") {
+                options.freezeProvenance = true;
+            } else if (arg == "--include-diagnostic") {
+                options.includeDiagnostic = true;
+            } else if (arg == "--include-non-applicable") {
+                options.includeNonApplicable = true;
+            } else if (arg == "--synthetic-hash-drift") {
+                options.syntheticHashDrift = require_value(i, argc, argv, arg);
+            } else if (arg == "--synthetic-applicability-drift") {
+                options.syntheticApplicabilityDrift = require_value(i, argc, argv, arg);
+            } else if (arg == "--synthetic-diagnostic-promotion") {
+                options.syntheticDiagnosticPromotion = require_value(i, argc, argv, arg);
             } else if (arg == "--max-wall-seconds") {
                 options.maxWallSeconds = static_cast<size_t>(stoull(require_value(i, argc, argv, arg)));
             } else if (arg == "--target-compared-states") {

@@ -1,0 +1,4 @@
+{
+  "gate_found": false,
+  "reason": "source_baseline_mismatch_with_round43_artifacts_and_no_fresh_round44_solver_instrumentation"
+}

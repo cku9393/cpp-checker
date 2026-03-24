@@ -1,0 +1,7 @@
+baseline_tag=phase22-approved
+approval_timestamp_utc=2026-03-23T05:47:59Z
+report_file=
+bundle_file=
+baseline_manifest_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase26/tests/artifacts/runtime_baseline_promote_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json
+promoted_from_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase26/tests/artifacts/runtime_baseline_promote_smoke/manifests/policy_gate_source.txt
+family_status_snapshot=split_tie_organic_symmetric:PASS/FRESH,automorphism_probe_large:PASS/FRESH,planner_tie_mixed_organic:NON_APPLICABLE/FRESH,planner_tie_mixed_organic_compare_ready:DIAGNOSTIC_ONLY/FRESH

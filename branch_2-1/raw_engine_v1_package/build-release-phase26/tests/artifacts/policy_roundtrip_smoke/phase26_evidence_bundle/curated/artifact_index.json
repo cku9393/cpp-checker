@@ -1,0 +1,605 @@
+{
+  "generated_at_utc": "2026-03-23T05:11:51Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke",
+  "reports": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/phase26_evidence_bundle/reports/PHASE22_PIPELINE_SMOKE_REPORT.txt",
+      "mtime_epoch": 1774242710.144866,
+      "is_dir": false,
+      "size_bytes": 37
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE27_STABILIZATION_REPORT_20260323.txt",
+      "mtime_epoch": 1774241872.884372,
+      "is_dir": false,
+      "size_bytes": 204
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE27_STABILIZATION_REPORT.txt",
+      "mtime_epoch": 1774241315.3926604,
+      "is_dir": false,
+      "size_bytes": 204
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE26_STABILIZATION_REPORT_20260323.txt",
+      "mtime_epoch": 1774228661.530441,
+      "is_dir": false,
+      "size_bytes": 8891
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE25_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1774186828.2679214,
+      "is_dir": false,
+      "size_bytes": 9552
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE24_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1774178785.487726,
+      "is_dir": false,
+      "size_bytes": 10418
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE23_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1774168587.3027267,
+      "is_dir": false,
+      "size_bytes": 9561
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE22_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1774163431.0574584,
+      "is_dir": false,
+      "size_bytes": 9307
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE21_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1774157650.4720836,
+      "is_dir": false,
+      "size_bytes": 8583
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE20_STABILIZATION_REPORT_20260320.txt",
+      "mtime_epoch": 1773983707.077479,
+      "is_dir": false,
+      "size_bytes": 13713
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE19_STABILIZATION_REPORT_20260320.txt",
+      "mtime_epoch": 1773977806.5619853,
+      "is_dir": false,
+      "size_bytes": 11429
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE18_STABILIZATION_REPORT_20260319.txt",
+      "mtime_epoch": 1773927913.2782202,
+      "is_dir": false,
+      "size_bytes": 8013
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE18_STABILIZATION_REPORT_20260319 2.txt",
+      "mtime_epoch": 1773927486.0,
+      "is_dir": false,
+      "size_bytes": 9273
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE17_STABILIZATION_REPORT_20260319.txt",
+      "mtime_epoch": 1773919575.1850462,
+      "is_dir": false,
+      "size_bytes": 12745
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE16_STABILIZATION_REPORT_20260319.txt",
+      "mtime_epoch": 1773901744.2426212,
+      "is_dir": false,
+      "size_bytes": 14988
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE16_STABILIZATION_REPORT_20260319 2.txt",
+      "mtime_epoch": 1773892760.0,
+      "is_dir": false,
+      "size_bytes": 10817
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE15_STABILIZATION_REPORT_20260310.txt",
+      "mtime_epoch": 1773142700.6835818,
+      "is_dir": false,
+      "size_bytes": 11320
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE14_STABILIZATION_REPORT_20260310.txt",
+      "mtime_epoch": 1773112992.0284758,
+      "is_dir": false,
+      "size_bytes": 9738
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE13_STABILIZATION_REPORT_20260309.txt",
+      "mtime_epoch": 1773030279.665132,
+      "is_dir": false,
+      "size_bytes": 7707
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE12_STABILIZATION_REPORT_20260309.txt",
+      "mtime_epoch": 1773021974.140282,
+      "is_dir": false,
+      "size_bytes": 5099
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE11_STABILIZATION_REPORT_20260308.txt",
+      "mtime_epoch": 1772988669.8111658,
+      "is_dir": false,
+      "size_bytes": 8586
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE10_STABILIZATION_REPORT_20260308.txt",
+      "mtime_epoch": 1772962041.0579093,
+      "is_dir": false,
+      "size_bytes": 1695
+    }
+  ],
+  "manifests": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_pipeline_summary.txt",
+      "mtime_epoch": 1774242711.0030532,
+      "is_dir": false,
+      "size_bytes": 4649
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_pipeline_summary.json",
+      "mtime_epoch": 1774242711.0025046,
+      "is_dir": false,
+      "size_bytes": 10551
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_history_index_v1_summary.summary.txt",
+      "mtime_epoch": 1774242710.8591325,
+      "is_dir": false,
+      "size_bytes": 83
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_history_index_v1_summary.txt",
+      "mtime_epoch": 1774242710.8589566,
+      "is_dir": false,
+      "size_bytes": 755
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_history_index_v1.summary.txt",
+      "mtime_epoch": 1774242710.8587885,
+      "is_dir": false,
+      "size_bytes": 83
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_history_index_v1.txt",
+      "mtime_epoch": 1774242710.8585987,
+      "is_dir": false,
+      "size_bytes": 755
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_history_index_v1_summary.json",
+      "mtime_epoch": 1774242710.8584118,
+      "is_dir": false,
+      "size_bytes": 3214
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_history_index_v1.json",
+      "mtime_epoch": 1774242710.858049,
+      "is_dir": false,
+      "size_bytes": 32353
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_refresh_phase22.summary.txt",
+      "mtime_epoch": 1774242710.8565633,
+      "is_dir": false,
+      "size_bytes": 134
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_refresh_phase22.txt",
+      "mtime_epoch": 1774242710.8563817,
+      "is_dir": false,
+      "size_bytes": 887
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_refresh_phase22.json",
+      "mtime_epoch": 1774242710.856167,
+      "is_dir": false,
+      "size_bytes": 24030
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_budget_profile_phase22.summary.txt",
+      "mtime_epoch": 1774242710.7644386,
+      "is_dir": false,
+      "size_bytes": 102
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_budget_profile_phase22.txt",
+      "mtime_epoch": 1774242710.7640991,
+      "is_dir": false,
+      "size_bytes": 802
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_budget_profile_phase22.json",
+      "mtime_epoch": 1774242710.76378,
+      "is_dir": false,
+      "size_bytes": 3820
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_current_phase22.summary.txt",
+      "mtime_epoch": 1774242710.7629492,
+      "is_dir": false,
+      "size_bytes": 131
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_current_phase22.txt",
+      "mtime_epoch": 1774242710.7626266,
+      "is_dir": false,
+      "size_bytes": 799
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_watch_current_phase22.json",
+      "mtime_epoch": 1774242710.7622113,
+      "is_dir": false,
+      "size_bytes": 28877
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_rebaseline_proposal_phase22.summary.txt",
+      "mtime_epoch": 1774242710.660578,
+      "is_dir": false,
+      "size_bytes": 187
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_rebaseline_proposal_phase22.txt",
+      "mtime_epoch": 1774242710.6604555,
+      "is_dir": false,
+      "size_bytes": 1031
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_rebaseline_proposal_phase22.json",
+      "mtime_epoch": 1774242710.6602926,
+      "is_dir": false,
+      "size_bytes": 4638
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_rerun_phase22.summary.txt",
+      "mtime_epoch": 1774242710.5842888,
+      "is_dir": false,
+      "size_bytes": 148
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_rerun_phase22.txt",
+      "mtime_epoch": 1774242710.5841444,
+      "is_dir": false,
+      "size_bytes": 156
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_rerun_phase22.json",
+      "mtime_epoch": 1774242710.5839925,
+      "is_dir": false,
+      "size_bytes": 1322
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_refresh_phase22.summary.txt",
+      "mtime_epoch": 1774242710.50054,
+      "is_dir": false,
+      "size_bytes": 298
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_refresh_phase22.txt",
+      "mtime_epoch": 1774242710.5002851,
+      "is_dir": false,
+      "size_bytes": 1103
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_refresh_phase22.json",
+      "mtime_epoch": 1774242710.499941,
+      "is_dir": false,
+      "size_bytes": 6777
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_current_phase22_baseline_selection.summary.txt",
+      "mtime_epoch": 1774242710.4978461,
+      "is_dir": false,
+      "size_bytes": 270
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_current_phase22_baseline_selection.txt",
+      "mtime_epoch": 1774242710.4976027,
+      "is_dir": false,
+      "size_bytes": 344
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_current_phase22_baseline_selection.json",
+      "mtime_epoch": 1774242710.4972408,
+      "is_dir": false,
+      "size_bytes": 2916
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_current_phase22.summary.txt",
+      "mtime_epoch": 1774242710.4046874,
+      "is_dir": false,
+      "size_bytes": 124
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_current_phase22.txt",
+      "mtime_epoch": 1774242710.4044225,
+      "is_dir": false,
+      "size_bytes": 1390
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_current_phase22.json",
+      "mtime_epoch": 1774242710.4039705,
+      "is_dir": false,
+      "size_bytes": 11596
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+      "mtime_epoch": 1774242710.2951436,
+      "is_dir": false,
+      "size_bytes": 1453
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_rerun_plan_phase22_v1.txt",
+      "mtime_epoch": 1774242710.2950695,
+      "is_dir": false,
+      "size_bytes": 1338
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_rerun_plan_phase22_v1.summary.txt",
+      "mtime_epoch": 1774242710.2949426,
+      "is_dir": false,
+      "size_bytes": 149
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+      "mtime_epoch": 1774242710.2928078,
+      "is_dir": false,
+      "size_bytes": 10929
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.txt",
+      "mtime_epoch": 1774242710.292716,
+      "is_dir": false,
+      "size_bytes": 10108
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.summary.txt",
+      "mtime_epoch": 1774242710.2926395,
+      "is_dir": false,
+      "size_bytes": 1704
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.json",
+      "mtime_epoch": 1774242710.277653,
+      "is_dir": false,
+      "size_bytes": 10738
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.txt",
+      "mtime_epoch": 1774242710.2774572,
+      "is_dir": false,
+      "size_bytes": 9917
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_v1.summary.txt",
+      "mtime_epoch": 1774242710.277336,
+      "is_dir": false,
+      "size_bytes": 1763
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_history_index_v1_summary.summary.txt",
+      "mtime_epoch": 1774242710.0219116,
+      "is_dir": false,
+      "size_bytes": 68
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_history_index_v1_summary.txt",
+      "mtime_epoch": 1774242710.021749,
+      "is_dir": false,
+      "size_bytes": 969
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_history_index_v1.summary.txt",
+      "mtime_epoch": 1774242710.0215828,
+      "is_dir": false,
+      "size_bytes": 68
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_history_index_v1.txt",
+      "mtime_epoch": 1774242710.0214245,
+      "is_dir": false,
+      "size_bytes": 969
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_history_index_v1_summary.json",
+      "mtime_epoch": 1774242710.0212333,
+      "is_dir": false,
+      "size_bytes": 5547
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_history_index_v1.json",
+      "mtime_epoch": 1774242710.020737,
+      "is_dir": false,
+      "size_bytes": 11294
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_baseline_registry_v1.summary.txt",
+      "mtime_epoch": 1774242709.6716115,
+      "is_dir": false,
+      "size_bytes": 91
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_baseline_registry_v1.txt",
+      "mtime_epoch": 1774242709.6714275,
+      "is_dir": false,
+      "size_bytes": 403
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_baseline_registry_v1.json",
+      "mtime_epoch": 1774242709.671197,
+      "is_dir": false,
+      "size_bytes": 2511
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_baseline_phase22_approved.summary.txt",
+      "mtime_epoch": 1774242709.554241,
+      "is_dir": false,
+      "size_bytes": 125
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_baseline_phase22_approved.txt",
+      "mtime_epoch": 1774242709.5537992,
+      "is_dir": false,
+      "size_bytes": 1397
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+      "mtime_epoch": 1774242709.5533292,
+      "is_dir": false,
+      "size_bytes": 11935
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/policy_graduation_manifest_phase22_approved_v1_2026-03-23T05_11_49Z_phase22-approved.meta.txt",
+      "mtime_epoch": 1774242709.2859802,
+      "is_dir": false,
+      "size_bytes": 796
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/history_index.json",
+      "mtime_epoch": 1774242709.2859306,
+      "is_dir": false,
+      "size_bytes": 574
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/baseline_history_index.json",
+      "mtime_epoch": 1774242709.2857373,
+      "is_dir": false,
+      "size_bytes": 574
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/history_index.txt",
+      "mtime_epoch": 1774242709.2855852,
+      "is_dir": false,
+      "size_bytes": 449
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/baseline_history_index.txt",
+      "mtime_epoch": 1774242709.285375,
+      "is_dir": false,
+      "size_bytes": 449
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/policy_graduation_manifest_phase22_approved_v1_2026-03-23T05_11_49Z_phase22-approved.summary.txt",
+      "mtime_epoch": 1774242709.2850363,
+      "is_dir": false,
+      "size_bytes": 1740
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/policy_graduation_manifest_phase22_approved_v1_2026-03-23T05_11_49Z_phase22-approved.txt",
+      "mtime_epoch": 1774242709.2847958,
+      "is_dir": false,
+      "size_bytes": 10166
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/history/policy_graduation_manifest_phase22_approved_v1_2026-03-23T05_11_49Z_phase22-approved.json",
+      "mtime_epoch": 1774242709.2845314,
+      "is_dir": false,
+      "size_bytes": 10986
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+      "mtime_epoch": 1774242709.2842033,
+      "is_dir": false,
+      "size_bytes": 10986
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.txt",
+      "mtime_epoch": 1774242709.284138,
+      "is_dir": false,
+      "size_bytes": 10166
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.summary.txt",
+      "mtime_epoch": 1774242709.284115,
+      "is_dir": false,
+      "size_bytes": 1740
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_gate_source.json",
+      "mtime_epoch": 1774242709.2819438,
+      "is_dir": false,
+      "size_bytes": 10738
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_gate_source.txt",
+      "mtime_epoch": 1774242709.2818713,
+      "is_dir": false,
+      "size_bytes": 9917
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_gate_source.summary.txt",
+      "mtime_epoch": 1774242709.2818463,
+      "is_dir": false,
+      "size_bytes": 1763
+    }
+  ],
+  "bundles": [],
+  "delivery_bundles": [],
+  "curated_bundles": [],
+  "evidence_bundles": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/phase26_evidence_bundle",
+      "mtime_epoch": 1774242711.1380336,
+      "is_dir": true,
+      "size_bytes": 0
+    }
+  ],
+  "regressions": [],
+  "logs": [],
+  "checkpoints": [],
+  "nightly_runs": [],
+  "pipeline_summaries": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_pipeline_summary.json",
+      "mtime_epoch": 1774242711.0025046,
+      "is_dir": false,
+      "size_bytes": 10551
+    }
+  ],
+  "runtime_manifests": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_runtime_current_phase22.json",
+      "mtime_epoch": 1774242710.4039705,
+      "is_dir": false,
+      "size_bytes": 11596
+    }
+  ],
+  "runtime_registries": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_baseline_registry_v1.json",
+      "mtime_epoch": 1774242709.671197,
+      "is_dir": false,
+      "size_bytes": 2511
+    }
+  ],
+  "runtime_histories": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_history_index_v1.json",
+      "mtime_epoch": 1774242710.020737,
+      "is_dir": false,
+      "size_bytes": 11294
+    }
+  ],
+  "runtime_proposals": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/runtime_rebaseline_proposal_phase22.json",
+      "mtime_epoch": 1774242710.6602926,
+      "is_dir": false,
+      "size_bytes": 4638
+    }
+  ],
+  "approved_baselines": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/artifacts/policy_roundtrip_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+      "mtime_epoch": 1774242709.2842033,
+      "is_dir": false,
+      "size_bytes": 10986
+    }
+  ]
+}

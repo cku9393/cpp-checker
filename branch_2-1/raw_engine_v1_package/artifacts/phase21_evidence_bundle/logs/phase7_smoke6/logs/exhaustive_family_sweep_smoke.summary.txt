@@ -1,0 +1,13 @@
+generated_state_count=1744
+canonical_unique_state_count=1257
+dedupe_drop_count=487
+collision_spot_check_count=4
+organic_duplicate_example_count=16
+dedupe_ratio=0.279243
+family=split_ready generated=48 unique=24 dedupe_drops=24 dedupe_ratio=0.5 validator_checks=24 primitive_checks=24 planner_checks=24
+family=join_ready generated=8 unique=4 dedupe_drops=4 dedupe_ratio=0.5 validator_checks=4 primitive_checks=4 planner_checks=4
+family=integrate_ready generated=48 unique=24 dedupe_drops=24 dedupe_ratio=0.5 validator_checks=24 primitive_checks=24 planner_checks=24
+family=mixed generated=104 unique=52 dedupe_drops=52 dedupe_ratio=0.5 validator_checks=52 primitive_checks=52 planner_checks=52
+family=split_tie_ready generated=768 unique=768 dedupe_drops=0 dedupe_ratio=0 validator_checks=768 primitive_checks=768 planner_checks=768
+family=split_tie_structural generated=768 unique=385 dedupe_drops=383 dedupe_ratio=0.498698 validator_checks=385 primitive_checks=385 planner_checks=385
+family=planner_tie_mixed generated=0 unique=0 dedupe_drops=0 dedupe_ratio=0 validator_checks=0 primitive_checks=0 planner_checks=0

@@ -1,0 +1,9 @@
+runs=5
+modes=5
+total_iterations=10000
+split_ready_count=4813
+join_candidate_count=4268
+integrate_candidate_count=5686
+actual_split_hits=4813
+actual_join_hits=2634
+actual_integrate_hits=4083

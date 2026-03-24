@@ -1,0 +1,2 @@
+policy_gate_summary current_verdict=PASS freshness_verdict=STALE split_tie_organic_symmetric=PASS/STALE
+family=split_tie_organic_symmetric current_status=PASS freshness_status=STALE role=production_family compared=32 eligible=32 completed=32 drift_flag=0 reclassify_required=0 counts_as_production_evidence=1 rationale=direct compare evidence satisfied freshness_rationale=relevant input hash changed since baseline

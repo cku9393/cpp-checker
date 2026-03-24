@@ -1,0 +1,14 @@
+{
+  "mode": "materialize-core-replay",
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "caseName": "same_type_sp_cleanup_tc40_step1",
+  "outputDumpDir": "dumps/materialize_core_replay",
+  "bundlePath": "dumps/materialize_core_replay/CMSS_STRUCTURE_DIFFER_BEFORE_METADATA_seed1_tc40_step2_replay_same_type_sp_cleanup_tc40_step1.txt",
+  "topLevelOk": true,
+  "sourceStep": 2,
+  "sourceSide": "replay",
+  "seamKind": "CMSS_STRUCTURE_DIFFER_BEFORE_METADATA",
+  "seamWhy": "structure diverges before metadata",
+  "sourceWhy": "",
+  "builderWhy": ""
+}

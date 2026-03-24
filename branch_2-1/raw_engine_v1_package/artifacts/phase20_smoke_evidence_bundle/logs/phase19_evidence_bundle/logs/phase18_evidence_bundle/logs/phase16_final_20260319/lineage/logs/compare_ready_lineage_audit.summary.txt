@@ -1,0 +1,17 @@
+base_family=planner_tie_mixed_organic
+generated_state_count=16
+compare_eligible_state_count=0
+compare_ineligible_state_count=16
+compare_ineligible_reason_histogram={"no_split_ready":16}
+no_split_ready_count=16
+single_admissible_pair_count=0
+tie_but_followup_absent_count=0
+keepOcc_absent_count=0
+boundary_artifact_absent_count=0
+derived_from_base_state_count=16
+compare_ready_state_count=16
+compare_completed_state_count=16
+same_semantic_class_count=16
+same_final_state_count=16
+pair_replay_count=16
+structure_only_enrichment_count=16

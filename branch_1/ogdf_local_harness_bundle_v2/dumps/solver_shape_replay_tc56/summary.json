@@ -1,0 +1,14 @@
+{
+  "mode": "solver-shape-replay",
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "caseName": "xshared_loopshared_proxy_loop_real_tc56_step1",
+  "outputDumpDir": "dumps/solver_shape_replay_tc56",
+  "bundlePath": "dumps/solver_shape_replay_tc56/CSS_OTHER_seed1_tc56_step2_xshared_loopshared_proxy_loop_real_tc56_step1.txt",
+  "topLevelOk": false,
+  "seamStepIndex": 2,
+  "coreShapeSeamKind": "CSS_OTHER",
+  "coreShapeSeamWhy": "solver shape replay: canonical explicit mismatch before shadow build",
+  "solverWhy": "",
+  "replayWhy": "",
+  "shadowWhy": ""
+}

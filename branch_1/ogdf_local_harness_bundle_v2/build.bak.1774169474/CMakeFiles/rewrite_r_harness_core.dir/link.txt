@@ -1,0 +1,2 @@
+/usr/bin/ar qc librewrite_r_harness_core.a CMakeFiles/rewrite_r_harness_core.dir/src/ogdf_wrapper.cpp.o CMakeFiles/rewrite_r_harness_core.dir/src/dump.cpp.o CMakeFiles/rewrite_r_harness_core.dir/src/runners.cpp.o CMakeFiles/rewrite_r_harness_core.dir/src/project_hooks_stub.cpp.o CMakeFiles/rewrite_r_harness_core.dir/src/project_hooks_real.cpp.o CMakeFiles/rewrite_r_harness_core.dir/src/project_static_adapter.cpp.o CMakeFiles/rewrite_r_harness_core.dir/src/project_hook_shims.cpp.o
+/usr/bin/ranlib librewrite_r_harness_core.a

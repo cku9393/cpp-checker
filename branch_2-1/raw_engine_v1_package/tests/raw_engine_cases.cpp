@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <future>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -22,13 +23,19 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#if defined(__unix__) || defined(__APPLE__)
+#include <sys/wait.h>
+#endif
 
 #include "exhaustive_cases.hpp"
 #include "exhaustive_generator.hpp"
 #include "multiclass_catalog.hpp"
 #include "compare_ready_lineage.hpp"
 #include "family_applicability_audit.hpp"
+#include "policy_baseline.hpp"
 #include "policy_gate.hpp"
+#include "policy_manifest_freshness.hpp"
+#include "policy_runtime_budget.hpp"
 #include "split_choice_oracle.hpp"
 #include "state_dump.hpp"
 #include "stabilization_support.hpp"
@@ -187,6 +194,10 @@ struct SeedFuzzSummary {
     unordered_map<string, size_t> tracePrefixHistogram;
     unordered_map<string, size_t> primitiveMultisetHistogram;
 };
+
+void run_compare_ready_lineage_audit_case(const TestOptions& options);
+void run_planner_tie_organic_applicability_audit_case(const TestOptions& options);
+filesystem::path source_package_root();
 
 struct FuzzStats {
     string caseName;
@@ -479,6 +490,133 @@ void run_micro_suite(const TestOptions& options);
 void run_regression_44001(const TestOptions& options);
 void run_regression_isolate_split_no_sep(const TestOptions& options);
 void run_artifact_retention_smoke_case(const TestOptions& options);
+void run_policy_severity_smoke_case(const TestOptions& options);
+void run_pipeline_exit_code_smoke_case(const TestOptions& options);
+void run_stale_warn_mode_smoke_case(const TestOptions& options);
+void run_action_required_mode_smoke_case(const TestOptions& options);
+void run_runtime_budget_smoke_case(const TestOptions& options);
+void run_runtime_budget_manifest_roundtrip_smoke_case(const TestOptions& options);
+void run_runtime_gate_promote_baseline_case(const TestOptions& options);
+void run_runtime_gate_refresh_case(const TestOptions& options);
+void run_runtime_gate_plan_rerun_case(const TestOptions& options);
+void run_runtime_approve_rebaseline_case(const TestOptions& options);
+void run_runtime_registry_promote_baseline_case(const TestOptions& options);
+void run_runtime_registry_select_baseline_case(const TestOptions& options);
+void run_runtime_history_append_case(const TestOptions& options);
+void run_runtime_history_summary_case(const TestOptions& options);
+void run_runtime_watch_campaign_case(const TestOptions& options);
+void run_runtime_watch_refresh_case(const TestOptions& options);
+void run_runtime_propose_rebaseline_case(const TestOptions& options);
+void run_runtime_fingerprint_roundtrip_smoke_case(const TestOptions& options);
+void run_runtime_not_comparable_smoke_case(const TestOptions& options);
+void run_runtime_refresh_same_fingerprint_smoke_case(const TestOptions& options);
+void run_runtime_baseline_promote_smoke_case(const TestOptions& options);
+void run_runtime_refresh_against_promoted_baseline_smoke_case(const TestOptions& options);
+void run_runtime_rerun_plan_smoke_case(const TestOptions& options);
+void run_runtime_rerun_plan_empty_smoke_case(const TestOptions& options);
+void run_runtime_synthetic_warn_smoke_case(const TestOptions& options);
+void run_runtime_synthetic_action_required_smoke_case(const TestOptions& options);
+void run_runtime_synthetic_fail_smoke_case(const TestOptions& options);
+void run_runtime_missing_baseline_smoke_case(const TestOptions& options);
+void run_runtime_fingerprint_mismatch_smoke_case(const TestOptions& options);
+void run_combined_policy_runtime_ok_smoke_case(const TestOptions& options);
+void run_combined_policy_runtime_warn_smoke_case(const TestOptions& options);
+void run_combined_policy_runtime_action_required_smoke_case(const TestOptions& options);
+void run_combined_policy_runtime_fail_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_manifest_smoke_case(const TestOptions& options);
+void run_evidence_bundle_combined_summary_smoke_case(const TestOptions& options);
+void run_artifact_index_smoke_case(const TestOptions& options);
+void run_artifact_prune_smoke_case(const TestOptions& options);
+void run_bundle_index_roundtrip_smoke_case(const TestOptions& options);
+void run_policy_roundtrip_smoke_case(const TestOptions& options);
+void run_policy_empty_plan_noop_smoke_case(const TestOptions& options);
+void run_policy_manifest_missing_input_smoke_case(const TestOptions& options);
+void run_policy_selective_rerun_n_family_smoke_case(const TestOptions& options);
+void run_runtime_registry_promote_smoke_case(const TestOptions& options);
+void run_runtime_registry_activate_retire_smoke_case(const TestOptions& options);
+void run_runtime_registry_roundtrip_smoke_case(const TestOptions& options);
+void run_runtime_registry_select_exact_match_smoke_case(const TestOptions& options);
+void run_runtime_registry_select_no_match_smoke_case(const TestOptions& options);
+void run_runtime_registry_rebaseline_required_smoke_case(const TestOptions& options);
+void run_runtime_history_append_smoke_case(const TestOptions& options);
+void run_runtime_history_summary_smoke_case(const TestOptions& options);
+void run_runtime_history_jitter_smoke_case(const TestOptions& options);
+void run_runtime_rebaseline_proposal_smoke_case(const TestOptions& options);
+void run_runtime_rebaseline_noop_smoke_case(const TestOptions& options);
+void run_policy_pipeline_quick_registry_smoke_case(const TestOptions& options);
+void run_policy_pipeline_nightly_history_smoke_case(const TestOptions& options);
+void run_policy_pipeline_rebaseline_needed_smoke_case(const TestOptions& options);
+void run_runtime_registry_unknown_fingerprint_smoke_case(const TestOptions& options);
+void run_runtime_registry_multiple_candidate_smoke_case(const TestOptions& options);
+void run_runtime_registry_retired_only_smoke_case(const TestOptions& options);
+void run_runtime_registry_multi_fingerprint_smoke_case(const TestOptions& options);
+void run_runtime_registry_same_host_compiler_bump_smoke_case(const TestOptions& options);
+void run_runtime_registry_sanitizer_change_smoke_case(const TestOptions& options);
+void run_runtime_registry_runner_tag_change_smoke_case(const TestOptions& options);
+void run_runtime_registry_cross_host_smoke_case(const TestOptions& options);
+void run_runtime_history_regression_spike_smoke_case(const TestOptions& options);
+void run_runtime_history_stable_smoke_case(const TestOptions& options);
+void run_runtime_history_noisy_smoke_case(const TestOptions& options);
+void run_runtime_history_regressing_smoke_case(const TestOptions& options);
+void run_runtime_history_recovery_after_rebaseline_smoke_case(const TestOptions& options);
+void run_runtime_watch_campaign_smoke_case(const TestOptions& options);
+void run_runtime_watch_campaign_longer_smoke_case(const TestOptions& options);
+void run_runtime_watch_multi_fingerprint_smoke_case(const TestOptions& options);
+void run_runtime_watch_same_host_compiler_bump_smoke_case(const TestOptions& options);
+void run_runtime_watch_sanitizer_change_smoke_case(const TestOptions& options);
+void run_runtime_watch_runner_tag_change_smoke_case(const TestOptions& options);
+void run_runtime_watch_cross_host_smoke_case(const TestOptions& options);
+void run_runtime_watch_retired_only_smoke_case(const TestOptions& options);
+void run_runtime_watch_stable_overrun_smoke_case(const TestOptions& options);
+void run_runtime_watch_clear_after_recovery_smoke_case(const TestOptions& options);
+void run_runtime_watch_escalate_smoke_case(const TestOptions& options);
+void run_runtime_watch_transition_clear_smoke_case(const TestOptions& options);
+void run_runtime_watch_transition_stable_smoke_case(const TestOptions& options);
+void run_runtime_watch_transition_escalate_smoke_case(const TestOptions& options);
+void run_runtime_watch_to_rebaseline_candidate_smoke_case(const TestOptions& options);
+void run_runtime_watch_production_hard_fail_smoke_case(const TestOptions& options);
+void run_runtime_watch_diagnostic_soft_warn_smoke_case(const TestOptions& options);
+void run_runtime_budget_role_sensitive_smoke_case(const TestOptions& options);
+void run_combined_pipeline_continue_monitoring_smoke_case(const TestOptions& options);
+void run_combined_pipeline_watch_rationale_smoke_case(const TestOptions& options);
+void run_combined_pipeline_propose_runtime_rebaseline_smoke_case(const TestOptions& options);
+void run_combined_pipeline_fail_on_production_budget_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_watch_metadata_smoke_case(const TestOptions& options);
+void run_evidence_bundle_watch_history_smoke_case(const TestOptions& options);
+void run_evidence_bundle_watch_transition_smoke_case(const TestOptions& options);
+void run_evidence_bundle_multi_fingerprint_watch_smoke_case(const TestOptions& options);
+void run_runtime_recommendation_watch_smoke_case(const TestOptions& options);
+void run_runtime_recommendation_rebaseline_required_smoke_case(const TestOptions& options);
+void run_runtime_recommendation_not_comparable_smoke_case(const TestOptions& options);
+void run_combined_pipeline_recommendation_smoke_case(const TestOptions& options);
+void run_runtime_rebaseline_proposal_multi_candidate_smoke_case(const TestOptions& options);
+void run_runtime_rebaseline_proposal_retired_only_smoke_case(const TestOptions& options);
+void run_runtime_rebaseline_proposal_cross_host_smoke_case(const TestOptions& options);
+void run_runtime_approve_rebaseline_smoke_case(const TestOptions& options);
+void run_runtime_approve_rebaseline_registry_switch_smoke_case(const TestOptions& options);
+void run_runtime_approve_rebaseline_archive_proposal_smoke_case(const TestOptions& options);
+void run_runtime_refresh_after_rebaseline_smoke_case(const TestOptions& options);
+void run_runtime_rerun_plan_after_rebaseline_smoke_case(const TestOptions& options);
+void run_runtime_selection_after_registry_switch_smoke_case(const TestOptions& options);
+void run_combined_pipeline_after_rebaseline_quick_smoke_case(const TestOptions& options);
+void run_combined_pipeline_after_rebaseline_nightly_smoke_case(const TestOptions& options);
+void run_runtime_history_append_after_rebaseline_smoke_case(const TestOptions& options);
+void run_runtime_registry_history_transition_smoke_case(const TestOptions& options);
+void run_evidence_bundle_contains_rebaseline_transition_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_transition_metadata_smoke_case(const TestOptions& options);
+void run_pipeline_matrix_smoke_case(const TestOptions& options);
+void run_pipeline_matrix_mixed_fingerprints_smoke_case(const TestOptions& options);
+void run_pipeline_nightly_rebaseline_candidate_smoke_case(const TestOptions& options);
+void run_campaign_manifest_parallel_smoke_case(const TestOptions& options);
+void run_artifact_dir_uniqueness_smoke_case(const TestOptions& options);
+void run_policy_pipeline_parallel_smoke_case(const TestOptions& options);
+void run_transient_repro_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_registry_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_history_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_registry_snapshot_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_history_snapshot_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runtime_proposal_smoke_case(const TestOptions& options);
+void run_ops_guide_paths_smoke_case(const TestOptions& options);
 void write_compare_profile_summary(const filesystem::path& jsonPath, const FuzzStats& stats);
 
 string sanitize_stem_token(const string& text) {
@@ -594,6 +732,64 @@ string slurp_text_file(const filesystem::path& path) {
     ostringstream oss;
     oss << ifs.rdbuf();
     return oss.str();
+}
+
+string trim_copy_local(const string& text) {
+    string value = text;
+    const auto isNotSpace = [](unsigned char ch) { return !isspace(ch); };
+    value.erase(value.begin(), find_if(value.begin(), value.end(), isNotSpace));
+    value.erase(find_if(value.rbegin(), value.rend(), isNotSpace).base(), value.end());
+    return value;
+}
+
+int normalized_process_exit_code(int systemRc) {
+#if defined(__unix__) || defined(__APPLE__)
+    if (systemRc == -1) {
+        return -1;
+    }
+    if (WIFEXITED(systemRc)) {
+        return WEXITSTATUS(systemRc);
+    }
+    if (WIFSIGNALED(systemRc)) {
+        return 128 + WTERMSIG(systemRc);
+    }
+#endif
+    return systemRc;
+}
+
+int run_child_test_case_process(
+    const TestOptions& parentOptions,
+    const string& caseName,
+    const filesystem::path& artifactDir,
+    const string& extraArgs = ""
+) {
+    require_test(!parentOptions.executablePath.empty(), caseName + " expected executablePath for child process");
+    filesystem::path cliArtifactDir = artifactDir;
+    const filesystem::path packageRoot = source_package_root();
+    if (artifactDir.is_absolute()) {
+        error_code ec;
+        const filesystem::path relativePath = filesystem::relative(artifactDir, packageRoot, ec);
+        if (!ec && !relativePath.empty() && *relativePath.begin() != "..") {
+            cliArtifactDir = relativePath;
+        }
+    }
+    ostringstream command;
+    command << shell_quote(parentOptions.executablePath)
+            << " --case " << shell_quote(caseName)
+            << " --artifact-dir " << shell_quote(cliArtifactDir.string());
+    if (!extraArgs.empty()) {
+        command << ' ' << extraArgs;
+    }
+    return normalized_process_exit_code(system(command.str().c_str()));
+}
+
+pair<int, int> run_parallel_child_test_cases(
+    const function<int(void)>& lhs,
+    const function<int(void)>& rhs
+) {
+    future<int> first = async(launch::async, lhs);
+    future<int> second = async(launch::async, rhs);
+    return {first.get(), second.get()};
 }
 
 const char* fuzz_mode_name(FuzzMode mode) {
@@ -2102,16 +2298,15 @@ vector<u32> resolve_seed_list(const TestOptions& options, const vector<u32>& bas
     return corpusSeeds;
 }
 
-string trim_copy(const string& text) {
-    size_t begin = 0U;
-    while (begin < text.size() && isspace(static_cast<unsigned char>(text[begin])) != 0) {
-        ++begin;
+string join_string_csv(const vector<string>& values) {
+    ostringstream oss;
+    for (size_t i = 0; i < values.size(); ++i) {
+        if (i != 0U) {
+            oss << ',';
+        }
+        oss << values[i];
     }
-    size_t end = text.size();
-    while (end > begin && isspace(static_cast<unsigned char>(text[end - 1U])) != 0) {
-        --end;
-    }
-    return text.substr(begin, end - begin);
+    return oss.str();
 }
 
 vector<u32> parse_u32_csv(const string& text) {
@@ -2119,7 +2314,7 @@ vector<u32> parse_u32_csv(const string& text) {
     size_t start = 0U;
     while (start < text.size()) {
         const size_t comma = text.find(',', start);
-        const string token = trim_copy(text.substr(start, comma == string::npos ? string::npos : comma - start));
+        const string token = trim_copy_local(text.substr(start, comma == string::npos ? string::npos : comma - start));
         if (!token.empty()) {
             out.push_back(static_cast<u32>(stoul(token)));
         }
@@ -2571,7 +2766,7 @@ CampaignConfig load_campaign_config_json(const filesystem::path& path, const str
 }
 
 CampaignConfig load_campaign_config(const filesystem::path& path) {
-    const string text = trim_copy(slurp_text_file(path));
+    const string text = trim_copy_local(slurp_text_file(path));
     if (text.empty()) {
         throw runtime_error("failed to read campaign config: " + path.string());
     }
@@ -2584,7 +2779,7 @@ CampaignConfig load_campaign_config(const filesystem::path& path) {
     istringstream iss(text);
     string line;
     while (getline(iss, line)) {
-        line = trim_copy(line);
+        line = trim_copy_local(line);
         if (line.empty() || line[0] == '#') {
             continue;
         }
@@ -2718,6 +2913,22 @@ filesystem::path resolve_policy_gate_artifact_root(const TestOptions& options) {
     return configuredRoot.is_absolute() ? configuredRoot : filesystem::absolute(sourceArtifactRoot.parent_path() / configuredRoot);
 }
 
+string policy_runner_timestamp_utc_now() {
+    const auto now = chrono::system_clock::now();
+    const time_t nowTime = chrono::system_clock::to_time_t(now);
+    tm tmUtc{};
+#if defined(_WIN32)
+    gmtime_s(&tmUtc, &nowTime);
+#else
+    gmtime_r(&nowTime, &tmUtc);
+#endif
+    ostringstream oss;
+    oss << put_time(&tmUtc, "%Y-%m-%dT%H:%M:%SZ");
+    return oss.str();
+}
+
+filesystem::path source_package_root();
+
 string policy_gate_build_tag(const TestOptions& options) {
     const filesystem::path executablePath = filesystem::absolute(options.executablePath.empty()
             ? filesystem::path("raw_engine_tests")
@@ -2732,6 +2943,46 @@ string policy_gate_build_tag(const TestOptions& options) {
 
 filesystem::path default_policy_gate_output_path(const TestOptions& options) {
     return resolve_policy_gate_artifact_root(options) / "manifests" / "policy_graduation_manifest_v1.json";
+}
+
+filesystem::path default_policy_gate_refresh_output_path(const TestOptions& options) {
+    return resolve_policy_gate_artifact_root(options) / "manifests" / "policy_graduation_manifest_refresh_v1.json";
+}
+
+filesystem::path default_policy_gate_promoted_baseline_output_path(
+    const TestOptions& options,
+    const PolicyGateManifest& manifest
+) {
+    return resolve_policy_gate_artifact_root(options) / "manifests" /
+        ("policy_graduation_manifest_" + manifest.reportVersion + "_approved_v1.json");
+}
+
+filesystem::path default_policy_gate_rerun_plan_output_path(
+    const TestOptions& options,
+    const PolicyGateManifest& manifest
+) {
+    return resolve_policy_gate_artifact_root(options) / "manifests" /
+        ("policy_rerun_plan_" + manifest.reportVersion + "_v1.json");
+}
+
+filesystem::path normalize_policy_output_path(
+    const optional<string>& configuredPath,
+    const filesystem::path& defaultJsonPath
+) {
+    const filesystem::path chosen = configuredPath.has_value()
+        ? filesystem::absolute(*configuredPath)
+        : filesystem::absolute(defaultJsonPath);
+    if (chosen.extension() == ".txt") {
+        return chosen.parent_path() / (chosen.stem().string() + ".json");
+    }
+    return chosen;
+}
+
+filesystem::path policy_manifest_text_path(const filesystem::path& path) {
+    if (path.extension() == ".json") {
+        return path.parent_path() / (path.stem().string() + ".txt");
+    }
+    return path;
 }
 
 filesystem::path resolve_policy_manifest_input_path(const filesystem::path& path) {
@@ -2754,6 +3005,283 @@ PolicyGateManifest load_or_build_policy_gate_manifest(const TestOptions& options
         return load_policy_gate_manifest_text(resolve_policy_manifest_input_path(*options.policyManifest));
     }
     return build_policy_gate_manifest(resolve_policy_gate_artifact_root(options), policy_gate_build_tag(options));
+}
+
+filesystem::path resolve_policy_gate_source_manifest_path(const TestOptions& options) {
+    if (options.sourceManifest.has_value()) {
+        return resolve_policy_manifest_input_path(*options.sourceManifest);
+    }
+    if (options.policyManifest.has_value()) {
+        return resolve_policy_manifest_input_path(*options.policyManifest);
+    }
+    return resolve_policy_manifest_input_path(default_policy_gate_output_path(options));
+}
+
+filesystem::path resolve_policy_gate_baseline_manifest_path(const TestOptions& options) {
+    if (options.baselineManifest.has_value()) {
+        return resolve_policy_manifest_input_path(*options.baselineManifest);
+    }
+    if (options.policyManifest.has_value()) {
+        return resolve_policy_manifest_input_path(*options.policyManifest);
+    }
+    return resolve_policy_manifest_input_path(default_policy_gate_output_path(options));
+}
+
+filesystem::path resolve_policy_gate_current_manifest_path(const TestOptions& options) {
+    if (options.currentManifest.has_value()) {
+        return resolve_policy_manifest_input_path(*options.currentManifest);
+    }
+    if (options.policyManifest.has_value()) {
+        return resolve_policy_manifest_input_path(*options.policyManifest);
+    }
+    return resolve_policy_gate_baseline_manifest_path(options);
+}
+
+vector<string> selected_policy_refresh_families(const TestOptions& options) {
+    vector<string> families = options.revalidateFamilies;
+    if (options.gateFamily.has_value() && !options.gateFamily->empty() &&
+        find(families.begin(), families.end(), *options.gateFamily) == families.end()) {
+        families.push_back(*options.gateFamily);
+    }
+    return families;
+}
+
+vector<string> selected_policy_plan_families(const TestOptions& options) {
+    vector<string> families = options.familyFilter;
+    if (options.gateFamily.has_value() && !options.gateFamily->empty() &&
+        find(families.begin(), families.end(), *options.gateFamily) == families.end()) {
+        families.push_back(*options.gateFamily);
+    }
+    return families;
+}
+
+void apply_policy_refresh_mutations(
+    PolicyGateManifest& baseline,
+    PolicyGateManifest& current,
+    const TestOptions& options
+) {
+    PolicySyntheticMutationOptions baselineMutations;
+    baselineMutations.hashDriftField = options.syntheticHashDrift.value_or(string());
+    if (!baselineMutations.hashDriftField.empty()) {
+        apply_policy_synthetic_mutations(baseline, baselineMutations);
+    }
+
+    PolicySyntheticMutationOptions currentMutations;
+    currentMutations.applicabilityDriftFamily = options.syntheticApplicabilityDrift.value_or(string());
+    currentMutations.diagnosticPromotionFamily = options.syntheticDiagnosticPromotion.value_or(string());
+    if (!currentMutations.applicabilityDriftFamily.empty() || !currentMutations.diagnosticPromotionFamily.empty()) {
+        apply_policy_synthetic_mutations(current, currentMutations);
+    }
+}
+
+filesystem::path resolve_policy_gate_refresh_output_path(
+    const TestOptions& options
+) {
+    if (options.refreshManifest.has_value()) {
+        return normalize_policy_output_path(options.refreshManifest, default_policy_gate_refresh_output_path(options));
+    }
+    return normalize_policy_output_path(options.gateOutput, default_policy_gate_refresh_output_path(options));
+}
+
+filesystem::path resolve_policy_rerun_plan_output_path(
+    const TestOptions& options,
+    const PolicyGateManifest& manifest
+) {
+    if (options.rerunPlan.has_value()) {
+        return normalize_policy_output_path(options.rerunPlan, default_policy_gate_rerun_plan_output_path(options, manifest));
+    }
+    return normalize_policy_output_path(options.planOut, default_policy_gate_rerun_plan_output_path(options, manifest));
+}
+
+PolicyGateManifest ensure_current_policy_manifest(
+    const TestOptions& options,
+    const filesystem::path& outputJsonPath
+) {
+    if (options.currentManifest.has_value()) {
+        const filesystem::path inputPath = resolve_policy_manifest_input_path(*options.currentManifest);
+        if (filesystem::exists(inputPath)) {
+            return load_policy_gate_manifest_text(inputPath);
+        }
+    }
+    if (options.policyManifest.has_value()) {
+        const filesystem::path inputPath = resolve_policy_manifest_input_path(*options.policyManifest);
+        if (filesystem::exists(inputPath)) {
+            return load_policy_gate_manifest_text(inputPath);
+        }
+    }
+
+    const PolicyGateManifest manifest =
+        build_policy_gate_manifest(resolve_policy_gate_artifact_root(options), policy_gate_build_tag(options));
+    write_policy_gate_outputs(outputJsonPath, manifest);
+    return load_policy_gate_manifest_text(policy_manifest_text_path(outputJsonPath));
+}
+
+PolicyGateManifest make_refreshed_policy_manifest(
+    const TestOptions& options,
+    const filesystem::path& baselinePath,
+    const filesystem::path& currentPath,
+    const PolicyGateManifest& baselineManifest,
+    const PolicyGateManifest& currentManifest
+) {
+    PolicyGateManifest baseline = baselineManifest;
+    PolicyGateManifest current = currentManifest;
+    apply_policy_refresh_mutations(baseline, current, options);
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = options.freshnessOnly;
+    refreshOptions.markStaleOnHashChange = options.markStaleOnHashChange;
+    refreshOptions.revalidateFamilies = selected_policy_refresh_families(options);
+
+    PolicyGateManifest refresh = refresh_policy_gate_manifest(
+        baseline,
+        current,
+        source_package_root(),
+        baselinePath,
+        currentPath,
+        refreshOptions
+    );
+    if (options.gateFamily.has_value() && !options.gateFamily->empty()) {
+        refresh = filter_policy_gate_manifest(refresh, options.gateFamily);
+    }
+    return refresh;
+}
+
+bool policy_manifest_has_stale_families(const PolicyGateManifest& manifest) {
+    return manifest.staleFamilyCount != 0U || manifest.requiresRerunFamilyCount != 0U;
+}
+
+bool policy_plan_filter_active(const TestOptions& options) {
+    return !selected_policy_plan_families(options).empty();
+}
+
+void require_complete_policy_rerun_plan(
+    const PolicyRerunPlan& plan,
+    const TestOptions& options,
+    const string& caseName
+) {
+    if (!plan.omittedFamilies.empty() && !policy_plan_filter_active(options)) {
+        throw runtime_error(caseName + " omitted stale families from rerun plan: " + join_string_csv(plan.omittedFamilies));
+    }
+}
+
+void validate_policy_rerun_plan_inputs(
+    const PolicyRerunPlan& plan,
+    const filesystem::path& baselinePath,
+    const filesystem::path& currentPath,
+    const filesystem::path& refreshPath
+) {
+    const string expectedBaselinePath = filesystem::absolute(baselinePath).string();
+    const string expectedCurrentPath = filesystem::absolute(currentPath).string();
+    const string expectedRefreshPath = filesystem::absolute(refreshPath).string();
+    if (!plan.baselineManifestPath.empty() && filesystem::absolute(plan.baselineManifestPath).string() != expectedBaselinePath) {
+        throw runtime_error("policy rerun plan baseline manifest path mismatch");
+    }
+    if (!plan.currentManifestPath.empty() && filesystem::absolute(plan.currentManifestPath).string() != expectedCurrentPath) {
+        throw runtime_error("policy rerun plan current manifest path mismatch");
+    }
+    if (!plan.refreshManifestPath.empty() && filesystem::absolute(plan.refreshManifestPath).string() != expectedRefreshPath) {
+        throw runtime_error("policy rerun plan refresh manifest path mismatch");
+    }
+
+    const string baselineHash = hash_policy_manifest_file(baselinePath);
+    const string currentHash = hash_policy_manifest_file(currentPath);
+    const string refreshHash = hash_policy_manifest_file(refreshPath);
+    if (!plan.baselineManifestHash.empty() && plan.baselineManifestHash != baselineHash) {
+        throw runtime_error("policy rerun plan baseline manifest hash mismatch");
+    }
+    if (!plan.currentManifestHash.empty() && plan.currentManifestHash != currentHash) {
+        throw runtime_error("policy rerun plan current manifest hash mismatch");
+    }
+    if (!plan.refreshManifestHash.empty() && plan.refreshManifestHash != refreshHash) {
+        throw runtime_error("policy rerun plan refresh manifest hash mismatch");
+    }
+}
+
+string policy_manifest_verdict_text(const PolicyGateManifest& manifest) {
+    return policy_gate_manifest_satisfied(manifest) ? "PASS" : "FAIL";
+}
+
+string policy_manifest_freshness_text(const PolicyGateManifest& manifest) {
+    if (manifest.requiresRerunFamilyCount != 0U || manifest.reclassifyRequiredCount != 0U) {
+        return "REQUIRES_RERUN";
+    }
+    if (manifest.staleFamilyCount != 0U) {
+        return "STALE";
+    }
+    return "FRESH";
+}
+
+string policy_lifecycle_summary_text(
+    const string& caseName,
+    const filesystem::path& baselinePath,
+    const filesystem::path& currentPath,
+    const filesystem::path& refreshPath,
+    const filesystem::path& planPath,
+    const PolicyGateManifest& currentManifest,
+    const PolicyGateManifest& refreshManifest,
+    const PolicyRerunPlan& plan,
+    const PolicyRerunExecutionSummary* executionSummary
+) {
+    ostringstream oss;
+    oss << "policy_lifecycle_summary"
+        << " case=" << caseName
+        << " current_verdict=" << policy_manifest_verdict_text(currentManifest)
+        << " freshness_verdict=" << policy_manifest_freshness_text(refreshManifest)
+        << " plan_verdict=" << plan.summaryVerdict
+        << " stale_family_count=" << refreshManifest.staleFamilyCount
+        << " requires_rerun_family_count=" << refreshManifest.requiresRerunFamilyCount
+        << " reclassify_required_count=" << refreshManifest.reclassifyRequiredCount
+        << " selected_entry_count=" << plan.selectedEntryCount
+        << '\n';
+    oss << "baseline_manifest=" << filesystem::absolute(baselinePath).string() << '\n';
+    oss << "current_manifest=" << filesystem::absolute(currentPath).string() << '\n';
+    oss << "refresh_manifest=" << filesystem::absolute(refreshPath).string() << '\n';
+    oss << "rerun_plan=" << filesystem::absolute(planPath).string() << '\n';
+    if (executionSummary != nullptr) {
+        oss << policy_rerun_execution_summary_text(*executionSummary);
+    }
+    for (const PolicyGateFamilyResult& family : refreshManifest.families) {
+        oss << "family_status="
+            << "family=" << family.family
+            << " current_status=" << policy_gate_status_name(family.status)
+            << " freshness_status=" << policy_freshness_status_name(family.freshnessStatus)
+            << " drift_flag=" << (family.driftFlag ? 1 : 0)
+            << " reclassify_required=" << (family.reclassifyRequired ? 1 : 0)
+            << " counts_as_production_evidence=" << (family.countsAsProductionEvidence ? 1 : 0)
+            << " rationale=" << family.rationale
+            << '\n';
+    }
+    return oss.str();
+}
+
+void write_policy_lifecycle_summary(
+    const filesystem::path& summaryPath,
+    const string& caseName,
+    const filesystem::path& baselinePath,
+    const filesystem::path& currentPath,
+    const filesystem::path& refreshPath,
+    const filesystem::path& planPath,
+    const PolicyGateManifest& currentManifest,
+    const PolicyGateManifest& refreshManifest,
+    const PolicyRerunPlan& plan,
+    const PolicyRerunExecutionSummary* executionSummary
+) {
+    filesystem::create_directories(summaryPath.parent_path());
+    ofstream ofs(summaryPath);
+    if (!ofs) {
+        throw runtime_error("failed to write policy lifecycle summary: " + summaryPath.string());
+    }
+    ofs << policy_lifecycle_summary_text(
+        caseName,
+        baselinePath,
+        currentPath,
+        refreshPath,
+        planPath,
+        currentManifest,
+        refreshManifest,
+        plan,
+        executionSummary
+    );
 }
 
 PolicyGateManifest filtered_policy_gate_manifest(const TestOptions& options) {
@@ -2804,6 +3332,117 @@ void append_policy_gate_summary(
     }
 }
 
+filesystem::path resolve_policy_rerun_plan_input_path(const filesystem::path& path) {
+    const filesystem::path absolutePath = filesystem::absolute(path);
+    if (absolutePath.extension() == ".json") {
+        const filesystem::path txtPath =
+            absolutePath.parent_path() / (absolutePath.stem().string() + ".txt");
+        if (filesystem::exists(txtPath)) {
+            return txtPath;
+        }
+        throw runtime_error("policy rerun plan input expects the text sibling for json path: " + absolutePath.string());
+    }
+    return absolutePath;
+}
+
+filesystem::path default_policy_summary_output_path(const TestOptions& options, const string& stem) {
+    return resolve_policy_gate_artifact_root(options) / "manifests" / (stem + ".txt");
+}
+
+filesystem::path resolve_policy_summary_output_path(const TestOptions& options, const string& stem) {
+    if (options.emitSummary.has_value()) {
+        const filesystem::path configured = filesystem::absolute(*options.emitSummary);
+        if (configured.extension() == ".json") {
+            return configured.parent_path() / (configured.stem().string() + ".txt");
+        }
+        return configured;
+    }
+    return filesystem::absolute(default_policy_summary_output_path(options, stem));
+}
+
+PolicyRerunExecutionSummary execute_policy_rerun_plan(
+    const TestOptions& options,
+    const PolicyRerunPlan& plan
+) {
+    PolicyRerunExecutionSummary summary;
+    summary.executedAtUtc = policy_runner_timestamp_utc_now();
+    summary.artifactRoot = resolve_policy_gate_artifact_root(options).string();
+    summary.selectedFamilyCount = plan.entries.size();
+
+    for (const PolicyRerunPlanEntry& entry : plan.entries) {
+        if (entry.rerunKind == "synthetic_execute_rerun") {
+            ++summary.executedFamilyCount;
+            summary.executedFamilies.push_back(entry.family);
+            continue;
+        }
+        if (entry.rerunKind == "applicability_audit_rerun") {
+            TestOptions rerunOptions = options;
+            rerunOptions.caseName = "planner_tie_organic_applicability_audit";
+            if (!rerunOptions.iters.has_value()) {
+                rerunOptions.iters = 1;
+            }
+            rerunOptions.artifactDir =
+                (resolve_policy_gate_artifact_root(options) / "phase22_applicability").string();
+            run_planner_tie_organic_applicability_audit_case(rerunOptions);
+            ++summary.executedFamilyCount;
+            summary.executedFamilies.push_back(entry.family);
+            continue;
+        }
+        if (entry.rerunKind == "lineage_audit_rerun") {
+            TestOptions rerunOptions = options;
+            rerunOptions.caseName = "compare_ready_lineage_audit";
+            if (!rerunOptions.iters.has_value()) {
+                rerunOptions.iters = 1;
+            }
+            rerunOptions.artifactDir =
+                (resolve_policy_gate_artifact_root(options) / "phase22_lineage").string();
+            run_compare_ready_lineage_audit_case(rerunOptions);
+            ++summary.executedFamilyCount;
+            summary.executedFamilies.push_back(entry.family);
+            continue;
+        }
+        if (entry.rerunKind == "direct_compare_rerun") {
+            const filesystem::path executablePath = filesystem::absolute(
+                options.executablePath.empty() ? filesystem::path("raw_engine_tests") : filesystem::path(options.executablePath)
+            );
+            const filesystem::path checkpointDir =
+                resolve_policy_gate_artifact_root(options) / "nightly_reruns" / sanitize_stem_token(entry.family) / "checkpoints";
+            ostringstream command;
+            command << "cd " << shell_quote(source_package_root().string()) << " && "
+                    << shell_quote(executablePath.string())
+                    << " --case campaign"
+                    << " --campaign-config " << shell_quote(entry.campaignConfigPath)
+                    << " --checkpoint-dir " << shell_quote(checkpointDir.string())
+                    << " --target-compared-states 32"
+                    << " --target-eligible-states 32"
+                    << " --stop-when-gate-passes";
+            const string commandText = command.str();
+            const int rc = system(commandText.c_str());
+            if (rc != 0) {
+                summary.failedFamilies.push_back(entry.family);
+            } else {
+                ++summary.executedFamilyCount;
+                summary.executedFamilies.push_back(entry.family);
+            }
+            continue;
+        }
+        ++summary.noopFamilyCount;
+        summary.noopFamilies.push_back(entry.family);
+    }
+
+    if (!summary.failedFamilies.empty()) {
+        summary.summaryVerdict = "FAIL";
+        summary.rationale = "one or more rerun plan entries failed";
+    } else if (summary.executedFamilyCount == 0U) {
+        summary.summaryVerdict = "PASS";
+        summary.rationale = "no stale family reruns executed";
+    } else {
+        summary.summaryVerdict = "PASS";
+        summary.rationale = "selected stale family reruns executed successfully";
+    }
+    return summary;
+}
+
 string require_kv_value(
     const unordered_map<string, string>& values,
     const string& key,
@@ -2818,7 +3457,7 @@ string require_kv_value(
 
 unordered_map<string, size_t> parse_string_count_object(const string& text) {
     unordered_map<string, size_t> out;
-    const string trimmed = trim_copy(text);
+    const string trimmed = trim_copy_local(text);
     string_view view(trimmed);
     if (view == "{}" || view.empty()) {
         return out;
@@ -9052,7 +9691,7 @@ void run_campaign_case(const TestOptions& options) {
                 checkpointDir,
                 *priorManifest,
                 manifest,
-                !existingChunks.empty()
+                true
             );
         }
         write_campaign_checkpoint_manifest(manifest);
@@ -9299,7 +9938,7 @@ void run_campaign_case(const TestOptions& options) {
                 checkpointDir,
                 *priorManifest,
                 manifest,
-                !existingChunks.empty()
+                true
             );
         }
         write_campaign_checkpoint_manifest(manifest);
@@ -9580,13 +10219,21 @@ PolicyGateCompareEvidence make_compare_gate_smoke_evidence(
 
 PolicyGateManifest make_policy_gate_smoke_manifest() {
     PolicyGateManifest manifest;
-    manifest.buildTag = "phase18_smoke";
-    manifest.timestampUtc = "2026-03-19T00:00:00Z";
-    manifest.artifactRoot = "/tmp/policy_gate_smoke";
+    manifest.reportVersion = "phase22";
+    manifest.buildTag = "phase22_smoke";
+    manifest.timestampUtc = "2026-03-22T00:00:00Z";
+    manifest.artifactRoot = (source_package_root() / "artifacts" / "policy_gate_smoke").string();
     manifest.families.push_back(
         evaluate_production_compare_gate(
             "split_tie_organic_symmetric",
             make_compare_gate_smoke_evidence("split_tie_organic_symmetric", 32U, 32U, 32U),
+            32U
+        )
+    );
+    manifest.families.push_back(
+        evaluate_production_compare_gate(
+            "automorphism_probe_large",
+            make_compare_gate_smoke_evidence("automorphism_probe_large", 32U, 32U, 32U),
             32U
         )
     );
@@ -9620,7 +10267,375 @@ PolicyGateManifest make_policy_gate_smoke_manifest() {
             lineage
         )
     );
+    assign_policy_manifest_input_hashes(manifest, source_package_root());
+    manifest.freshFamilyCount = manifest.families.size();
+    manifest.revalidatedFamilyCount = manifest.families.size();
+    manifest.currentManifestHash = hash_policy_manifest_content(manifest);
     return manifest;
+}
+
+PolicyGateManifest write_policy_gate_smoke_manifest(
+    const filesystem::path& jsonPath,
+    const PolicyGateManifest& manifest
+) {
+    write_policy_gate_outputs(jsonPath, manifest);
+    return load_policy_gate_manifest_text(jsonPath.parent_path() / (jsonPath.stem().string() + ".txt"));
+}
+
+filesystem::path policy_tools_script_path(const string& name) {
+    return source_package_root() / "tests" / "tools" / name;
+}
+
+void write_smoke_report_file(const filesystem::path& path, const string& title) {
+    filesystem::create_directories(path.parent_path());
+    ofstream ofs(path);
+    if (!ofs) {
+        throw runtime_error("failed to write smoke report: " + path.string());
+    }
+    ofs << title << '\n';
+}
+
+
+struct PolicyPipelineSmokeArtifacts {
+    filesystem::path root;
+    filesystem::path sourceJson;
+    filesystem::path currentJson;
+    filesystem::path baselineJson;
+    filesystem::path refreshJson;
+    filesystem::path rerunJson;
+    filesystem::path reportPath;
+    filesystem::path summaryJson;
+    filesystem::path zipPath;
+    filesystem::path curatedZipPath;
+    filesystem::path runtimeCurrentJson;
+    filesystem::path runtimeBaselineJson;
+    filesystem::path runtimeRegistryJson;
+    filesystem::path runtimeRefreshJson;
+    filesystem::path runtimeRerunJson;
+    filesystem::path runtimeHistoryIndexJson;
+    filesystem::path runtimeHistorySummaryJson;
+    filesystem::path runtimeProposalJson;
+    filesystem::path runtimeArchivedProposalJson;
+    filesystem::path runtimeApprovalMetadataJson;
+    filesystem::path runtimeWatchCurrentJson;
+    filesystem::path runtimeWatchRefreshJson;
+    filesystem::path runtimeWatchHistoryIndexJson;
+    filesystem::path runtimeWatchHistorySummaryJson;
+    filesystem::path runtimeBudgetProfileJson;
+};
+
+int run_runtime_lifecycle_script(
+    const string& subcommand,
+    const vector<string>& args
+) {
+    ostringstream command;
+    command << shell_quote("/usr/bin/python3") << ' '
+            << shell_quote(policy_tools_script_path("runtime_gate.py").string())
+            << ' ' << shell_quote(subcommand);
+    for (const string& arg : args) {
+        command << ' ' << arg;
+    }
+    return normalized_process_exit_code(system(command.str().c_str()));
+}
+
+PolicyPipelineSmokeArtifacts prepare_policy_pipeline_smoke_artifacts(
+    const TestOptions& options,
+    const string& stem,
+    const PolicySyntheticMutationOptions& mutations = {}
+) {
+    PolicyPipelineSmokeArtifacts paths;
+    paths.root = resolve_artifact_dir(options) / stem;
+    filesystem::remove_all(paths.root);
+    filesystem::create_directories(paths.root / "manifests");
+    paths.sourceJson = paths.root / "manifests" / "policy_gate_source.json";
+    paths.currentJson = paths.root / "manifests" / "policy_graduation_manifest_v1.json";
+    paths.baselineJson = paths.root / "manifests" / "policy_graduation_manifest_phase22_approved_v1.json";
+    paths.refreshJson = paths.root / "manifests" / "policy_graduation_manifest_refresh_phase22_v1.json";
+    paths.rerunJson = paths.root / "manifests" / "policy_rerun_plan_phase22_v1.json";
+    paths.reportPath = paths.root / "PHASE22_PIPELINE_SMOKE_REPORT.txt";
+    paths.summaryJson = paths.root / "manifests" / "policy_pipeline_summary.json";
+    paths.zipPath = paths.root / "raw_engine_phase22_pipeline_smoke.zip";
+    paths.curatedZipPath = paths.root / "raw_engine_phase22_pipeline_smoke_curated.zip";
+    paths.runtimeCurrentJson = paths.root / "manifests" / "policy_runtime_current_phase22.json";
+    paths.runtimeBaselineJson = paths.root / "manifests" / "policy_runtime_baseline_phase22_approved.json";
+    paths.runtimeRegistryJson = paths.root / "manifests" / "runtime_baseline_registry_v1.json";
+    paths.runtimeRefreshJson = paths.root / "manifests" / "policy_runtime_refresh_phase22.json";
+    paths.runtimeRerunJson = paths.root / "manifests" / "policy_runtime_rerun_phase22.json";
+    paths.runtimeHistoryIndexJson = paths.root / "manifests" / "runtime_history_index_v1.json";
+    paths.runtimeHistorySummaryJson = paths.root / "manifests" / "runtime_history_index_v1_summary.json";
+    paths.runtimeProposalJson = paths.root / "manifests" / "runtime_rebaseline_proposal_phase22.json";
+    paths.runtimeArchivedProposalJson = paths.root / "manifests" / "runtime_rebaseline_proposal_phase22_archived.json";
+    paths.runtimeApprovalMetadataJson = paths.root / "manifests" / "policy_runtime_baseline_phase22_approved_approval_metadata.json";
+    paths.runtimeWatchCurrentJson = paths.root / "manifests" / "runtime_watch_current_phase22.json";
+    paths.runtimeWatchRefreshJson = paths.root / "manifests" / "runtime_watch_refresh_phase22.json";
+    paths.runtimeWatchHistoryIndexJson = paths.root / "manifests" / "runtime_watch_history_index_v1.json";
+    paths.runtimeWatchHistorySummaryJson = paths.root / "manifests" / "runtime_watch_history_index_v1_summary.json";
+    paths.runtimeBudgetProfileJson = source_package_root() / "tests" / "runtime_budget_phase28.json";
+
+    const PolicyGateManifest sourceManifest =
+        write_policy_gate_smoke_manifest(paths.sourceJson, make_policy_gate_smoke_manifest());
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase22-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    promoteOptions.freezeProvenance = true;
+    PolicyGateManifest baseline = promote_policy_gate_baseline(
+        sourceManifest,
+        source_package_root(),
+        policy_manifest_text_path(paths.sourceJson),
+        paths.baselineJson,
+        promoteOptions
+    );
+    if (!mutations.hashDriftField.empty()) {
+        PolicySyntheticMutationOptions baselineMutations;
+        baselineMutations.hashDriftField = mutations.hashDriftField;
+        apply_policy_synthetic_mutations(baseline, baselineMutations);
+    }
+    write_policy_baseline_outputs_with_history(paths.baselineJson, baseline);
+
+    PolicyGateManifest current = sourceManifest;
+    PolicySyntheticMutationOptions currentMutations;
+    currentMutations.applicabilityDriftFamily = mutations.applicabilityDriftFamily;
+    currentMutations.diagnosticPromotionFamily = mutations.diagnosticPromotionFamily;
+    apply_policy_synthetic_mutations(current, currentMutations);
+    write_policy_gate_outputs(paths.currentJson, current);
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refresh = refresh_policy_gate_manifest(
+        baseline,
+        current,
+        source_package_root(),
+        policy_manifest_text_path(paths.baselineJson),
+        policy_manifest_text_path(paths.currentJson),
+        refreshOptions
+    );
+    write_policy_gate_outputs(paths.refreshJson, refresh);
+
+    PolicyRerunPlanOptions planOptions;
+    planOptions.includeDiagnostic = true;
+    planOptions.includeNonApplicable = true;
+    const PolicyRerunPlan plan = build_policy_rerun_plan(
+        refresh,
+        policy_manifest_text_path(paths.baselineJson),
+        policy_manifest_text_path(paths.currentJson),
+        policy_manifest_text_path(paths.refreshJson),
+        planOptions
+    );
+    write_policy_rerun_plan_outputs(paths.rerunJson, plan);
+
+    require_test(
+        run_runtime_lifecycle_script(
+            "write-current",
+            {
+                "--phase phase22",
+                "--artifact-root " + shell_quote(paths.root.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--baseline-tag phase22-runtime",
+                "--runner-tag smoke-runner",
+                "--runtime-budget-config " + shell_quote(paths.runtimeBudgetProfileJson.string()),
+                "--entry execution_class=release_full,wall_time_sec=120.0",
+                "--entry execution_class=debug_full,wall_time_sec=480.0",
+                "--entry execution_class=asan_full,wall_time_sec=900.0",
+                "--entry execution_class=policy_core,wall_time_sec=1.0",
+                "--entry execution_class=policy_refresh,wall_time_sec=1.0",
+                "--entry execution_class=policy_nightly,wall_time_sec=2.0",
+                "--test-count release_full=10",
+                "--test-count debug_full=10",
+                "--test-count asan_full=10",
+            }
+        ) == 0,
+        "policy pipeline smoke expected runtime current manifest generation"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "promote-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag phase22-runtime-approved",
+            }
+        ) == 0,
+        "policy pipeline smoke expected runtime baseline promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "registry-promote-baseline",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag phase22-runtime-approved",
+                "--activate",
+            }
+        ) == 0,
+        "policy pipeline smoke expected runtime registry promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "policy pipeline smoke expected runtime refresh generation"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(paths.runtimeRerunJson.string()),
+            }
+        ) == 0,
+        "policy pipeline smoke expected runtime rerun plan generation"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "history-append",
+            {
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "policy pipeline smoke expected runtime history append"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "propose-rebaseline",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--proposal-out " + shell_quote(paths.runtimeProposalJson.string()),
+            }
+        ) == 0,
+        "policy pipeline smoke expected runtime rebaseline proposal generation"
+    );
+
+    write_smoke_report_file(paths.reportPath, "phase22 policy pipeline smoke report");
+    return paths;
+}
+
+int run_policy_pipeline_script(
+    const TestOptions& options,
+    const PolicyPipelineSmokeArtifacts& paths,
+    const string& mode,
+    bool strict,
+    bool allowEmptyPlan,
+    bool pruneArtifacts,
+    const string& extraArgs,
+    const string& runtimeRunnerTag = "smoke-runner"
+) {
+    const auto infer_pipeline_phase = [&](void) -> string {
+        const array<filesystem::path, 6> candidates = {
+            paths.summaryJson,
+            paths.reportPath,
+            paths.zipPath,
+            paths.curatedZipPath,
+            paths.runtimeWatchCurrentJson,
+            paths.runtimeWatchRefreshJson,
+        };
+        for (const filesystem::path& candidate : candidates) {
+            string text = candidate.string();
+            transform(text.begin(), text.end(), text.begin(), [](unsigned char ch) {
+                return static_cast<char>(tolower(ch));
+            });
+            const string needle = "phase";
+            size_t pos = text.find(needle);
+            while (pos != string::npos) {
+                size_t end = pos + needle.size();
+                while (end < text.size() && isdigit(static_cast<unsigned char>(text[end]))) {
+                    ++end;
+                }
+                if (end > pos + needle.size()) {
+                    return text.substr(pos, end - pos);
+                }
+                pos = text.find(needle, pos + needle.size());
+            }
+        }
+        return "phase26";
+    };
+
+    ostringstream command;
+    command << shell_quote("/usr/bin/python3") << ' '
+            << shell_quote(policy_tools_script_path("run_policy_pipeline.py").string())
+            << " --mode " << shell_quote(mode)
+            << " --pipeline-phase " << shell_quote(infer_pipeline_phase())
+            << " --baseline-manifest " << shell_quote(paths.baselineJson.string())
+            << " --current-manifest " << shell_quote(paths.currentJson.string())
+            << " --refresh-manifest " << shell_quote(paths.refreshJson.string())
+            << " --rerun-plan " << shell_quote(paths.rerunJson.string())
+            << " --artifact-root " << shell_quote(paths.root.string())
+            << " --summary-out " << shell_quote(paths.summaryJson.string())
+            << " --runtime-baseline-manifest " << shell_quote(paths.runtimeBaselineJson.string())
+            << " --runtime-baseline-registry " << shell_quote(paths.runtimeRegistryJson.string())
+            << " --runtime-current-manifest " << shell_quote(paths.runtimeCurrentJson.string())
+            << " --runtime-refresh-manifest " << shell_quote(paths.runtimeRefreshJson.string())
+            << " --runtime-rerun-plan " << shell_quote(paths.runtimeRerunJson.string())
+            << " --runtime-history-index " << shell_quote(paths.runtimeHistoryIndexJson.string())
+            << " --runtime-watch-current " << shell_quote(paths.runtimeWatchCurrentJson.string())
+            << " --runtime-watch-refresh " << shell_quote(paths.runtimeWatchRefreshJson.string())
+            << " --runtime-watch-history-index " << shell_quote(paths.runtimeWatchHistoryIndexJson.string())
+            << " --runtime-budget-config " << shell_quote(paths.runtimeBudgetProfileJson.string())
+            << " --runtime-stage release_full=120.0"
+            << " --runtime-stage debug_full=480.0"
+            << " --runtime-stage asan_full=900.0";
+    if (!runtimeRunnerTag.empty()) {
+        command << " --runtime-runner-tag " << shell_quote(runtimeRunnerTag);
+    }
+    if (!paths.runtimeProposalJson.empty() && filesystem::exists(paths.runtimeProposalJson)) {
+        command << " --runtime-proposal " << shell_quote(paths.runtimeProposalJson.string());
+    }
+    if (!options.executablePath.empty()) {
+        command << " --raw-engine-tests " << shell_quote(options.executablePath);
+    }
+    if (strict) {
+        command << " --strict";
+    }
+    if (allowEmptyPlan) {
+        command << " --allow-empty-plan";
+    }
+    if (mode != "quick") {
+        command << " --report-out " << shell_quote(paths.reportPath.string())
+                << " --zip-out " << shell_quote(paths.zipPath.string())
+                << " --curated-zip " << shell_quote(paths.curatedZipPath.string());
+    }
+    if (pruneArtifacts) {
+        command << " --prune-artifacts --max-bundles 2 --max-nightly-runs 1 --keep-approved";
+    }
+    if (!extraArgs.empty()) {
+        command << ' ' << extraArgs;
+    }
+    return normalized_process_exit_code(system(command.str().c_str()));
+}
+
+bool policy_refresh_manifest_ok(
+    const PolicyGateManifest& manifest,
+    bool freshnessOnly,
+    bool allowStale,
+    const optional<string>& familyFilter = nullopt
+) {
+    bool sawFamily = false;
+    for (const PolicyGateFamilyResult& family : manifest.families) {
+        if (familyFilter.has_value() && !familyFilter->empty() && family.family != *familyFilter) {
+            continue;
+        }
+        sawFamily = true;
+        if (!freshnessOnly && !policy_gate_status_is_satisfied(family.status)) {
+            return false;
+        }
+        if (family.freshnessStatus == PolicyFreshnessStatus::REQUIRES_RERUN) {
+            return false;
+        }
+        if (!allowStale && family.freshnessStatus == PolicyFreshnessStatus::STALE) {
+            return false;
+        }
+    }
+    return sawFamily;
 }
 
 void run_policy_gate_case(const TestOptions& options) {
@@ -9636,6 +10651,594 @@ void run_policy_gate_case(const TestOptions& options) {
     cout << policy_gate_short_summary(manifest);
     if (options.gateStrict && !policy_gate_manifest_satisfied(manifest)) {
         throw runtime_error("policy_gate strict failure: " + outputPath.string());
+    }
+}
+
+void run_policy_gate_refresh_case(const TestOptions& options) {
+    const filesystem::path baselinePath = resolve_policy_gate_baseline_manifest_path(options);
+    const filesystem::path currentPath = resolve_policy_gate_current_manifest_path(options);
+    PolicyGateManifest baseline = load_policy_gate_manifest_text(baselinePath);
+    PolicyGateManifest current = load_policy_gate_manifest_text(currentPath);
+    apply_policy_refresh_mutations(baseline, current, options);
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = options.freshnessOnly;
+    refreshOptions.markStaleOnHashChange = options.markStaleOnHashChange;
+    refreshOptions.revalidateFamilies = selected_policy_refresh_families(options);
+
+    PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        baseline,
+        current,
+        source_package_root(),
+        baselinePath,
+        currentPath,
+        refreshOptions
+    );
+    if (options.gateFamily.has_value() && !options.gateFamily->empty()) {
+        refreshed = filter_policy_gate_manifest(refreshed, options.gateFamily);
+    }
+    if (refreshed.families.empty()) {
+        throw runtime_error("policy_gate_refresh selected no families");
+    }
+
+    const filesystem::path outputPath = resolve_policy_gate_refresh_output_path(options);
+    write_policy_gate_outputs(outputPath, refreshed);
+    cout << policy_gate_short_summary(refreshed);
+    if (options.gateStrict &&
+        !policy_refresh_manifest_ok(refreshed, options.freshnessOnly, options.allowStale, options.gateFamily)) {
+        throw runtime_error("policy_gate_refresh strict failure: " + outputPath.string());
+    }
+}
+
+void run_policy_gate_promote_baseline_case(const TestOptions& options) {
+    const filesystem::path sourcePath = resolve_policy_gate_source_manifest_path(options);
+    const PolicyGateManifest sourceManifest = load_policy_gate_manifest_text(sourcePath);
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = options.baselineTag.value_or(sourceManifest.reportVersion + "-approved");
+    promoteOptions.requireAcceptableStatus = options.requireAcceptableStatus;
+    promoteOptions.freezeProvenance = options.freezeProvenance;
+
+    const filesystem::path outputPath = filesystem::absolute(
+        options.baselineOut.has_value()
+            ? *options.baselineOut
+            : default_policy_gate_promoted_baseline_output_path(options, sourceManifest).string()
+    );
+    const PolicyGateManifest baseline = promote_policy_gate_baseline(
+        sourceManifest,
+        source_package_root(),
+        sourcePath,
+        outputPath,
+        promoteOptions
+    );
+    write_policy_baseline_outputs_with_history(outputPath, baseline);
+    cout << policy_gate_short_summary(baseline);
+}
+
+void run_policy_gate_plan_rerun_case(const TestOptions& options) {
+    const filesystem::path baselinePath = resolve_policy_gate_baseline_manifest_path(options);
+    const filesystem::path currentPath = resolve_policy_gate_current_manifest_path(options);
+    PolicyGateManifest baseline = load_policy_gate_manifest_text(baselinePath);
+    PolicyGateManifest current = load_policy_gate_manifest_text(currentPath);
+    apply_policy_refresh_mutations(baseline, current, options);
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = true;
+    refreshOptions.markStaleOnHashChange = options.markStaleOnHashChange;
+    refreshOptions.revalidateFamilies = selected_policy_refresh_families(options);
+
+    PolicyGateManifest refreshManifest = refresh_policy_gate_manifest(
+        baseline,
+        current,
+        source_package_root(),
+        baselinePath,
+        currentPath,
+        refreshOptions
+    );
+
+    PolicyRerunPlanOptions planOptions;
+    planOptions.familyFilter = selected_policy_plan_families(options);
+    planOptions.includeDiagnostic = true;
+    planOptions.includeNonApplicable = true;
+    const PolicyRerunPlan plan = build_policy_rerun_plan(
+        refreshManifest,
+        baselinePath,
+        currentPath,
+        filesystem::path(),
+        planOptions
+    );
+
+    const filesystem::path outputPath = resolve_policy_rerun_plan_output_path(options, current);
+    write_policy_rerun_plan_outputs(outputPath, plan);
+    cout << policy_rerun_plan_summary(plan);
+}
+
+filesystem::path require_runtime_manifest_path(
+    const optional<string>& configured,
+    const string& flag
+) {
+    if (!configured.has_value() || configured->empty()) {
+        throw runtime_error("missing " + flag);
+    }
+    return filesystem::absolute(*configured);
+}
+
+void run_runtime_gate_promote_baseline_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path baselinePath = require_runtime_manifest_path(
+        options.runtimeBaselineManifest,
+        "--runtime-baseline-manifest"
+    );
+    const string baselineTag = options.baselineTag.value_or(string("runtime-approved"));
+    const int rc = run_runtime_lifecycle_script(
+        "promote-baseline",
+        {
+            "--runtime-current-manifest " + shell_quote(currentPath.string()),
+            "--runtime-baseline-manifest " + shell_quote(baselinePath.string()),
+            "--baseline-tag " + shell_quote(baselineTag),
+        }
+    );
+    if (rc != 0) {
+        throw runtime_error("runtime_gate_promote_baseline failed");
+    }
+    cout << slurp_text_file(baselinePath.parent_path() / (baselinePath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_gate_refresh_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path refreshPath = require_runtime_manifest_path(
+        options.runtimeRefreshManifest,
+        "--runtime-refresh-manifest"
+    );
+    vector<string> args = {
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        "--runtime-refresh-manifest " + shell_quote(refreshPath.string()),
+    };
+    if (options.runtimeBaselineRegistry.has_value() && !options.runtimeBaselineRegistry->empty()) {
+        args.push_back("--runtime-baseline-registry " + shell_quote(*options.runtimeBaselineRegistry));
+    } else {
+        const filesystem::path baselinePath = require_runtime_manifest_path(
+            options.runtimeBaselineManifest,
+            "--runtime-baseline-manifest"
+        );
+        args.push_back("--runtime-baseline-manifest " + shell_quote(baselinePath.string()));
+    }
+    if (options.syntheticHashDrift.has_value() && !options.syntheticHashDrift->empty()) {
+        args.push_back("--synthetic-fingerprint-mismatch " + shell_quote(*options.syntheticHashDrift));
+    }
+    const int rc = run_runtime_lifecycle_script("refresh", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_gate_refresh failed");
+    }
+    cout << slurp_text_file(refreshPath.parent_path() / (refreshPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_gate_plan_rerun_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path refreshPath = require_runtime_manifest_path(
+        options.runtimeRefreshManifest,
+        "--runtime-refresh-manifest"
+    );
+    const filesystem::path rerunPath = require_runtime_manifest_path(
+        options.runtimeRerunPlan,
+        "--runtime-rerun-plan"
+    );
+    const int rc = run_runtime_lifecycle_script(
+        "plan-rerun",
+        {
+            "--runtime-current-manifest " + shell_quote(currentPath.string()),
+            "--runtime-refresh-manifest " + shell_quote(refreshPath.string()),
+            "--runtime-rerun-plan " + shell_quote(rerunPath.string()),
+        }
+    );
+    if (rc != 0) {
+        throw runtime_error("runtime_gate_plan_rerun failed");
+    }
+    cout << slurp_text_file(rerunPath.parent_path() / (rerunPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_approve_rebaseline_case(const TestOptions& options) {
+    const filesystem::path registryPath = require_runtime_manifest_path(
+        options.runtimeBaselineRegistry,
+        "--runtime-baseline-registry"
+    );
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path proposalPath = require_runtime_manifest_path(
+        options.proposalOut,
+        "--runtime-proposal"
+    );
+    const filesystem::path baselinePath = require_runtime_manifest_path(
+        options.runtimeBaselineManifest,
+        "--runtime-baseline-out"
+    );
+    vector<string> args = {
+        "--runtime-baseline-registry " + shell_quote(registryPath.string()),
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        "--proposal-out " + shell_quote(proposalPath.string()),
+        "--runtime-baseline-out " + shell_quote(baselinePath.string()),
+        "--baseline-tag " + shell_quote(options.baselineTag.value_or(string("runtime-approved"))),
+    };
+    if (options.activate) {
+        args.push_back("--activate");
+    }
+    if (options.requireAcceptableStatus) {
+        args.push_back("--require-acceptable-status");
+    }
+    if (options.archiveProposal.has_value() && !options.archiveProposal->empty()) {
+        args.push_back("--archive-proposal " + shell_quote(*options.archiveProposal));
+    }
+    const int rc = run_runtime_lifecycle_script("approve-rebaseline", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_approve_rebaseline failed");
+    }
+    cout << slurp_text_file(baselinePath.parent_path() / (baselinePath.stem().string() + ".summary.txt"));
+}
+
+filesystem::path default_runtime_selection_output_path(const filesystem::path& currentPath) {
+    return currentPath.parent_path() / (currentPath.stem().string() + "_baseline_selection.json");
+}
+
+filesystem::path default_runtime_proposal_output_path(const filesystem::path& currentPath) {
+    return currentPath.parent_path() / (currentPath.stem().string() + "_rebaseline_proposal.json");
+}
+
+void run_runtime_registry_promote_baseline_case(const TestOptions& options) {
+    const filesystem::path registryPath = require_runtime_manifest_path(
+        options.runtimeBaselineRegistry,
+        "--runtime-baseline-registry"
+    );
+    vector<string> args = {"--runtime-baseline-registry " + shell_quote(registryPath.string())};
+    if (options.retireBaseline.has_value() && !options.retireBaseline->empty()) {
+        args.push_back("--retire-baseline " + shell_quote(*options.retireBaseline));
+    } else {
+        const filesystem::path baselinePath = require_runtime_manifest_path(
+            options.runtimeBaselineManifest,
+            "--runtime-baseline-manifest"
+        );
+        args.push_back("--runtime-baseline-manifest " + shell_quote(baselinePath.string()));
+        args.push_back("--baseline-tag " + shell_quote(options.baselineTag.value_or(string("runtime-approved"))));
+        if (options.activate) {
+            args.push_back("--activate");
+        }
+    }
+    const int rc = run_runtime_lifecycle_script("registry-promote-baseline", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_registry_promote_baseline failed");
+    }
+    cout << slurp_text_file(registryPath.parent_path() / (registryPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_registry_select_baseline_case(const TestOptions& options) {
+    const filesystem::path registryPath = require_runtime_manifest_path(
+        options.runtimeBaselineRegistry,
+        "--runtime-baseline-registry"
+    );
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const int rc = run_runtime_lifecycle_script(
+        "select-baseline",
+        {
+            "--runtime-baseline-registry " + shell_quote(registryPath.string()),
+            "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        }
+    );
+    if (rc != 0) {
+        throw runtime_error("runtime_registry_select_baseline failed");
+    }
+    const filesystem::path selectionPath = default_runtime_selection_output_path(currentPath);
+    cout << slurp_text_file(selectionPath.parent_path() / (selectionPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_history_append_case(const TestOptions& options) {
+    const filesystem::path historyPath = require_runtime_manifest_path(
+        options.runtimeHistoryIndex,
+        "--runtime-history-index"
+    );
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    vector<string> args = {
+        "--runtime-history-index " + shell_quote(historyPath.string()),
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+    };
+    if (options.runtimeRefreshManifest.has_value() && !options.runtimeRefreshManifest->empty()) {
+        args.push_back("--runtime-refresh-manifest " + shell_quote(*options.runtimeRefreshManifest));
+    }
+    const int rc = run_runtime_lifecycle_script("history-append", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_history_append failed");
+    }
+    cout << slurp_text_file(historyPath.parent_path() / (historyPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_history_summary_case(const TestOptions& options) {
+    const filesystem::path historyPath = require_runtime_manifest_path(
+        options.runtimeHistoryIndex,
+        "--runtime-history-index"
+    );
+    const int rc = run_runtime_lifecycle_script(
+        "history-summary",
+        {
+            "--runtime-history-index " + shell_quote(historyPath.string()),
+        }
+    );
+    if (rc != 0) {
+        throw runtime_error("runtime_history_summary failed");
+    }
+    cout << slurp_text_file(historyPath.parent_path() / (historyPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_watch_campaign_case(const TestOptions& options) {
+    const filesystem::path baselinePath = require_runtime_manifest_path(
+        options.runtimeBaselineManifest,
+        "--runtime-baseline-manifest"
+    );
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path watchCurrentPath = require_runtime_manifest_path(
+        options.runtimeWatchCurrent,
+        "--runtime-watch-current"
+    );
+    vector<string> args = {
+        "--runtime-baseline-manifest " + shell_quote(baselinePath.string()),
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        "--runtime-watch-current " + shell_quote(watchCurrentPath.string()),
+        "--repeat " + to_string(max(options.repeat, 1)),
+        "--execution-class " + shell_quote(options.executionClass.value_or(string("all"))),
+    };
+    if (options.runtimeRefreshManifest.has_value() && !options.runtimeRefreshManifest->empty()) {
+        args.push_back("--runtime-refresh-manifest " + shell_quote(*options.runtimeRefreshManifest));
+    }
+    if (options.runtimeHistoryIndex.has_value() && !options.runtimeHistoryIndex->empty()) {
+        args.push_back("--runtime-history-index " + shell_quote(*options.runtimeHistoryIndex));
+    }
+    if (options.runtimeWatchHistoryIndex.has_value() && !options.runtimeWatchHistoryIndex->empty()) {
+        args.push_back("--runtime-watch-history-index " + shell_quote(*options.runtimeWatchHistoryIndex));
+    }
+    if (options.runtimeBudgetConfig.has_value() && !options.runtimeBudgetConfig->empty()) {
+        args.push_back("--runtime-budget-config " + shell_quote(*options.runtimeBudgetConfig));
+    }
+    const int rc = run_runtime_lifecycle_script("watch-campaign", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_watch_campaign failed");
+    }
+    cout << slurp_text_file(watchCurrentPath.parent_path() / (watchCurrentPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_watch_refresh_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path refreshPath = require_runtime_manifest_path(
+        options.runtimeRefreshManifest,
+        "--runtime-refresh-manifest"
+    );
+    const filesystem::path watchCurrentPath = require_runtime_manifest_path(
+        options.runtimeWatchCurrent,
+        "--runtime-watch-current"
+    );
+    const filesystem::path watchRefreshPath = require_runtime_manifest_path(
+        options.runtimeWatchRefresh,
+        "--runtime-watch-refresh"
+    );
+    vector<string> args = {
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        "--runtime-refresh-manifest " + shell_quote(refreshPath.string()),
+        "--runtime-watch-current " + shell_quote(watchCurrentPath.string()),
+        "--runtime-watch-refresh " + shell_quote(watchRefreshPath.string()),
+    };
+    if (options.runtimeBaselineManifest.has_value() && !options.runtimeBaselineManifest->empty()) {
+        args.push_back("--runtime-baseline-manifest " + shell_quote(*options.runtimeBaselineManifest));
+    }
+    if (options.runtimeWatchHistoryIndex.has_value() && !options.runtimeWatchHistoryIndex->empty()) {
+        args.push_back("--runtime-watch-history-index " + shell_quote(*options.runtimeWatchHistoryIndex));
+    }
+    const int rc = run_runtime_lifecycle_script("watch-refresh", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_watch_refresh failed");
+    }
+    cout << slurp_text_file(watchRefreshPath.parent_path() / (watchRefreshPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_propose_rebaseline_case(const TestOptions& options) {
+    const filesystem::path registryPath = require_runtime_manifest_path(
+        options.runtimeBaselineRegistry,
+        "--runtime-baseline-registry"
+    );
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path proposalPath = filesystem::absolute(
+        options.proposalOut.has_value() ? *options.proposalOut : default_runtime_proposal_output_path(currentPath).string()
+    );
+    vector<string> args = {
+        "--runtime-baseline-registry " + shell_quote(registryPath.string()),
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        "--proposal-out " + shell_quote(proposalPath.string()),
+    };
+    if (options.runtimeRefreshManifest.has_value() && !options.runtimeRefreshManifest->empty()) {
+        args.push_back("--runtime-refresh-manifest " + shell_quote(*options.runtimeRefreshManifest));
+    }
+    if (options.runtimeHistoryIndex.has_value() && !options.runtimeHistoryIndex->empty()) {
+        args.push_back("--runtime-history-index " + shell_quote(*options.runtimeHistoryIndex));
+    }
+    const int rc = run_runtime_lifecycle_script("propose-rebaseline", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_propose_rebaseline failed");
+    }
+    cout << slurp_text_file(proposalPath.parent_path() / (proposalPath.stem().string() + ".summary.txt"));
+}
+
+void run_policy_ci_check_case(const TestOptions& options) {
+    const filesystem::path baselinePath = resolve_policy_gate_baseline_manifest_path(options);
+    const filesystem::path currentOutputPath =
+        normalize_policy_output_path(options.currentManifest, default_policy_gate_output_path(options));
+    const filesystem::path refreshOutputPath = resolve_policy_gate_refresh_output_path(options);
+    const PolicyGateManifest baseline = load_policy_gate_manifest_text(baselinePath);
+    const PolicyGateManifest current = ensure_current_policy_manifest(options, currentOutputPath);
+    write_policy_gate_outputs(currentOutputPath, current);
+    const PolicyGateManifest refreshManifest =
+        make_refreshed_policy_manifest(options, baselinePath, currentOutputPath, baseline, current);
+    write_policy_gate_outputs(refreshOutputPath, refreshManifest);
+
+    PolicyRerunPlanOptions planOptions;
+    planOptions.familyFilter = selected_policy_plan_families(options);
+    planOptions.includeDiagnostic = true;
+    planOptions.includeNonApplicable = true;
+    const PolicyRerunPlan plan = build_policy_rerun_plan(
+        refreshManifest,
+        baselinePath,
+        currentOutputPath,
+        refreshOutputPath,
+        planOptions
+    );
+    const filesystem::path planOutputPath = resolve_policy_rerun_plan_output_path(options, current);
+    write_policy_rerun_plan_outputs(planOutputPath, plan);
+    require_complete_policy_rerun_plan(plan, options, "policy_ci_check");
+
+    const filesystem::path summaryPath = resolve_policy_summary_output_path(options, "policy_ci_check");
+    write_policy_lifecycle_summary(
+        summaryPath,
+        "policy_ci_check",
+        baselinePath,
+        currentOutputPath,
+        refreshOutputPath,
+        planOutputPath,
+        current,
+        refreshManifest,
+        plan,
+        nullptr
+    );
+    cout << slurp_text_file(summaryPath);
+
+    if (!policy_gate_manifest_satisfied(current)) {
+        throw runtime_error("policy_ci_check current manifest failed policy gate: " + currentOutputPath.string());
+    }
+    if ((options.strictRefresh || options.gateStrict) &&
+        !policy_refresh_manifest_ok(refreshManifest, true, options.allowStale, options.gateFamily)) {
+        throw runtime_error("policy_ci_check refresh failure: " + refreshOutputPath.string());
+    }
+    if (!options.allowEmptyPlan && policy_manifest_has_stale_families(refreshManifest) && plan.entries.empty()) {
+        throw runtime_error("policy_ci_check found stale families but emitted an empty rerun plan");
+    }
+}
+
+void run_policy_nightly_refresh_case(const TestOptions& options) {
+    const filesystem::path baselinePath = resolve_policy_gate_baseline_manifest_path(options);
+    const filesystem::path currentOutputPath =
+        normalize_policy_output_path(options.currentManifest, default_policy_gate_output_path(options));
+    const filesystem::path refreshOutputPath = resolve_policy_gate_refresh_output_path(options);
+    const PolicyGateManifest baseline = load_policy_gate_manifest_text(baselinePath);
+    PolicyGateManifest current = ensure_current_policy_manifest(options, currentOutputPath);
+    write_policy_gate_outputs(currentOutputPath, current);
+    PolicyGateManifest refreshManifest =
+        make_refreshed_policy_manifest(options, baselinePath, currentOutputPath, baseline, current);
+    write_policy_gate_outputs(refreshOutputPath, refreshManifest);
+
+    PolicyRerunPlanOptions planOptions;
+    planOptions.familyFilter = selected_policy_plan_families(options);
+    planOptions.includeDiagnostic = true;
+    planOptions.includeNonApplicable = true;
+    PolicyRerunPlan plan = build_policy_rerun_plan(
+        refreshManifest,
+        baselinePath,
+        currentOutputPath,
+        refreshOutputPath,
+        planOptions
+    );
+    const filesystem::path planOutputPath = resolve_policy_rerun_plan_output_path(options, current);
+    write_policy_rerun_plan_outputs(planOutputPath, plan);
+    require_complete_policy_rerun_plan(plan, options, "policy_nightly_refresh");
+
+    PolicyRerunExecutionSummary executionSummary;
+    if (plan.entries.empty()) {
+        executionSummary.executedAtUtc = policy_runner_timestamp_utc_now();
+        executionSummary.artifactRoot = resolve_policy_gate_artifact_root(options).string();
+        executionSummary.summaryVerdict = "PASS";
+        executionSummary.rationale = "no stale families detected; nightly refresh no-op";
+    } else {
+        PolicyRerunPlan executionPlan = plan;
+        if (options.rerunPlan.has_value()) {
+            const filesystem::path planInputPath = resolve_policy_rerun_plan_input_path(*options.rerunPlan);
+            if (filesystem::exists(planInputPath)) {
+                executionPlan = load_policy_rerun_plan_text(planInputPath);
+                validate_policy_rerun_plan_inputs(executionPlan, baselinePath, currentOutputPath, refreshOutputPath);
+                require_complete_policy_rerun_plan(executionPlan, options, "policy_nightly_refresh");
+            }
+        }
+        executionSummary = execute_policy_rerun_plan(options, executionPlan);
+        if (executionSummary.summaryVerdict == "FAIL") {
+            throw runtime_error("policy_nightly_refresh selective rerun execution failed");
+        }
+        current = build_policy_gate_manifest(resolve_policy_gate_artifact_root(options), policy_gate_build_tag(options));
+        write_policy_gate_outputs(currentOutputPath, current);
+        refreshManifest = refresh_policy_gate_manifest(
+            baseline,
+            current,
+            source_package_root(),
+            baselinePath,
+            currentOutputPath,
+            PolicyManifestRefreshOptions{
+                true,
+                options.markStaleOnHashChange,
+                selected_policy_refresh_families(options),
+            }
+        );
+        if (options.gateFamily.has_value() && !options.gateFamily->empty()) {
+            refreshManifest = filter_policy_gate_manifest(refreshManifest, options.gateFamily);
+        }
+        write_policy_gate_outputs(refreshOutputPath, refreshManifest);
+        plan = build_policy_rerun_plan(
+            refreshManifest,
+            baselinePath,
+            currentOutputPath,
+            refreshOutputPath,
+            planOptions
+        );
+        write_policy_rerun_plan_outputs(planOutputPath, plan);
+        require_complete_policy_rerun_plan(plan, options, "policy_nightly_refresh");
+    }
+
+    const filesystem::path summaryPath = resolve_policy_summary_output_path(options, "policy_nightly_refresh");
+    write_policy_lifecycle_summary(
+        summaryPath,
+        "policy_nightly_refresh",
+        baselinePath,
+        currentOutputPath,
+        refreshOutputPath,
+        planOutputPath,
+        current,
+        refreshManifest,
+        plan,
+        &executionSummary
+    );
+    cout << slurp_text_file(summaryPath);
+
+    if ((options.strictRefresh || options.gateStrict) &&
+        !policy_refresh_manifest_ok(refreshManifest, true, options.allowStale, options.gateFamily)) {
+        throw runtime_error("policy_nightly_refresh failed to restore fresh policy state");
+    }
+    if (!options.allowEmptyPlan && policy_manifest_has_stale_families(refreshManifest) && plan.entries.empty()) {
+        throw runtime_error("policy_nightly_refresh still has stale families but no rerun plan entries");
     }
 }
 
@@ -9683,9 +11286,954 @@ void run_policy_gate_family_filter_smoke_case(const TestOptions& options) {
     );
 }
 
+void run_policy_refresh_smoke_case(const TestOptions& options) {
+    const PolicyGateManifest manifest = make_policy_gate_smoke_manifest();
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_refresh_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path jsonPath = root / "manifests" / "policy_gate.json";
+    const PolicyGateManifest stored = write_policy_gate_smoke_manifest(jsonPath, manifest);
+    const filesystem::path txtPath = jsonPath.parent_path() / "policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed =
+        refresh_policy_gate_manifest(stored, stored, source_package_root(), txtPath, txtPath, refreshOptions);
+
+    require_test(refreshed.freshFamilyCount == refreshed.families.size(), "policy refresh smoke expected all families fresh");
+    require_test(refreshed.staleFamilyCount == 0U, "policy refresh smoke expected zero stale families");
+    require_test(
+        refreshed.requiresRerunFamilyCount == 0U,
+        "policy refresh smoke expected zero rerun-required families"
+    );
+    require_test(
+        refreshed.reclassifyRequiredCount == 0U,
+        "policy refresh smoke expected zero reclassification-required families"
+    );
+    require_test(
+        policy_manifest_freshness_satisfied(refreshed),
+        "policy refresh smoke expected fully fresh manifest"
+    );
+}
+
+void run_policy_refresh_family_filter_smoke_case(const TestOptions& options) {
+    const PolicyGateManifest manifest = make_policy_gate_smoke_manifest();
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_refresh_family_filter_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path jsonPath = root / "manifests" / "policy_gate.json";
+    const PolicyGateManifest stored = write_policy_gate_smoke_manifest(jsonPath, manifest);
+    const filesystem::path txtPath = jsonPath.parent_path() / "policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.revalidateFamilies = {"planner_tie_mixed_organic"};
+    const PolicyGateManifest refreshed =
+        refresh_policy_gate_manifest(stored, stored, source_package_root(), txtPath, txtPath, refreshOptions);
+
+    require_test(refreshed.families.size() == 1U, "policy refresh family filter smoke expected one family");
+    require_test(
+        refreshed.revalidatedFamilyCount == 1U,
+        "policy refresh family filter smoke expected one revalidated family"
+    );
+    const PolicyGateFamilyResult& family = require_policy_gate_family(refreshed, "planner_tie_mixed_organic");
+    require_test(
+        family.status == PolicyGateStatus::NON_APPLICABLE,
+        "policy refresh family filter smoke expected NON_APPLICABLE status"
+    );
+    require_test(
+        family.freshnessStatus == PolicyFreshnessStatus::FRESH,
+        "policy refresh family filter smoke expected FRESH status"
+    );
+}
+
+void run_policy_baseline_promote_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_baseline_promote_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path sourceJson = root / "manifests" / "policy_gate.json";
+    const PolicyGateManifest sourceManifest = write_policy_gate_smoke_manifest(sourceJson, make_policy_gate_smoke_manifest());
+    const filesystem::path sourceTxt = sourceJson.parent_path() / "policy_gate.txt";
+    const filesystem::path baselineJson = root / "manifests" / "policy_gate_phase19_approved.json";
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase19-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    promoteOptions.freezeProvenance = true;
+    const PolicyGateManifest baseline = promote_policy_gate_baseline(
+        sourceManifest,
+        source_package_root(),
+        sourceTxt,
+        baselineJson,
+        promoteOptions
+    );
+    write_policy_gate_outputs(baselineJson, baseline);
+
+    require_test(baseline.manifestRole == "baseline", "policy baseline promote smoke expected baseline role");
+    require_test(
+        baseline.baselineTag == "phase19-approved",
+        "policy baseline promote smoke expected baseline tag"
+    );
+    require_test(baseline.provenanceFrozen, "policy baseline promote smoke expected frozen provenance");
+    require_test(
+        !baseline.approvalTimestampUtc.empty(),
+        "policy baseline promote smoke expected approval timestamp"
+    );
+    require_test(
+        !baseline.promotedFromManifest.empty(),
+        "policy baseline promote smoke expected promoted-from manifest path"
+    );
+    require_test(
+        policy_manifest_acceptable_for_baseline(baseline),
+        "policy baseline promote smoke expected acceptable promoted baseline"
+    );
+}
+
+void run_policy_baseline_roundtrip_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_baseline_roundtrip_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path sourceJson = root / "manifests" / "policy_gate.json";
+    const PolicyGateManifest sourceManifest = write_policy_gate_smoke_manifest(sourceJson, make_policy_gate_smoke_manifest());
+    const filesystem::path sourceTxt = sourceJson.parent_path() / "policy_gate.txt";
+    const filesystem::path baselineJson = root / "manifests" / "policy_gate_phase19_approved.json";
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase19-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    promoteOptions.freezeProvenance = true;
+    write_policy_gate_outputs(
+        baselineJson,
+        promote_policy_gate_baseline(sourceManifest, source_package_root(), sourceTxt, baselineJson, promoteOptions)
+    );
+
+    const PolicyGateManifest loaded =
+        load_policy_gate_manifest_text(baselineJson.parent_path() / "policy_gate_phase19_approved.txt");
+    require_test(loaded.manifestRole == "baseline", "policy baseline roundtrip smoke expected baseline role");
+    require_test(
+        loaded.baselineTag == "phase19-approved",
+        "policy baseline roundtrip smoke expected baseline tag preservation"
+    );
+    require_test(loaded.provenanceFrozen, "policy baseline roundtrip smoke expected provenance frozen preservation");
+    require_test(
+        require_policy_gate_family(loaded, "planner_tie_mixed_organic_compare_ready").status ==
+            PolicyGateStatus::DIAGNOSTIC_ONLY,
+        "policy baseline roundtrip smoke expected compare_ready diagnostic-only preservation"
+    );
+}
+
+void run_policy_promote_reject_fail_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_promote_reject_fail_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path sourceJson = root / "manifests" / "policy_gate.json";
+    PolicyGateManifest sourceManifest = make_policy_gate_smoke_manifest();
+    for (PolicyGateFamilyResult& family : sourceManifest.families) {
+        if (family.family == "split_tie_organic_symmetric") {
+            family.status = PolicyGateStatus::FAIL;
+            family.rationale = "synthetic fail for baseline rejection";
+            break;
+        }
+    }
+    sourceManifest.currentManifestHash = hash_policy_manifest_content(sourceManifest);
+    const PolicyGateManifest storedSource = write_policy_gate_smoke_manifest(sourceJson, sourceManifest);
+    const filesystem::path sourceTxt = sourceJson.parent_path() / "policy_gate.txt";
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase19-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    bool rejected = false;
+    try {
+        (void)promote_policy_gate_baseline(
+            storedSource,
+            source_package_root(),
+            sourceTxt,
+            root / "manifests" / "policy_gate_phase19_approved.json",
+            promoteOptions
+        );
+    } catch (const exception&) {
+        rejected = true;
+    }
+    require_test(rejected, "policy promote reject fail smoke expected promotion rejection");
+}
+
+void run_policy_refresh_against_promoted_baseline_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_refresh_against_promoted_baseline_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path sourceJson = root / "manifests" / "policy_gate.json";
+    const PolicyGateManifest sourceManifest = write_policy_gate_smoke_manifest(sourceJson, make_policy_gate_smoke_manifest());
+    const filesystem::path sourceTxt = sourceJson.parent_path() / "policy_gate.txt";
+    const filesystem::path baselineJson = root / "manifests" / "policy_gate_phase19_approved.json";
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase19-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    promoteOptions.freezeProvenance = true;
+    const PolicyGateManifest baseline = promote_policy_gate_baseline(
+        sourceManifest,
+        source_package_root(),
+        sourceTxt,
+        baselineJson,
+        promoteOptions
+    );
+    const PolicyGateManifest storedBaseline = write_policy_gate_smoke_manifest(baselineJson, baseline);
+    const filesystem::path baselineTxt = baselineJson.parent_path() / "policy_gate_phase19_approved.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        sourceManifest,
+        source_package_root(),
+        baselineTxt,
+        sourceTxt,
+        refreshOptions
+    );
+
+    require_test(
+        refreshed.freshFamilyCount == refreshed.families.size(),
+        "policy refresh against promoted baseline smoke expected all families fresh"
+    );
+    require_test(
+        refreshed.staleFamilyCount == 0U && refreshed.requiresRerunFamilyCount == 0U,
+        "policy refresh against promoted baseline smoke expected no stale or rerun-required families"
+    );
+    require_test(
+        policy_manifest_freshness_satisfied(refreshed),
+        "policy refresh against promoted baseline smoke expected FRESH manifest"
+    );
+}
+
+void run_policy_refresh_freshness_only_smoke_case(const TestOptions& options) {
+    run_policy_refresh_against_promoted_baseline_smoke_case(options);
+}
+
+void run_planner_tie_organic_reclassify_trigger_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "planner_tie_organic_reclassify_trigger_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+
+    const PolicyGateManifest baseline = make_policy_gate_smoke_manifest();
+    PolicyGateManifest current = baseline;
+    for (PolicyGateFamilyResult& family : current.families) {
+        if (family.family != "planner_tie_mixed_organic") {
+            continue;
+        }
+        family.status = PolicyGateStatus::INSUFFICIENT_EVIDENCE;
+        family.driftFlag = true;
+        family.reclassifyRequired = true;
+        family.measured.splitReadyStateCount = 3U;
+        family.measured.tieReadyStateCount = 2U;
+        family.measured.compareEligibleStateCount = 2U;
+        family.measured.compareRelevance = 2.0 / 48.0;
+        family.measured.splitReadyRelevance = 3.0 / 48.0;
+        family.rationale = "synthetic drift for refresh smoke";
+    }
+    current.currentManifestHash = hash_policy_manifest_content(current);
+
+    const PolicyGateManifest storedBaseline = write_policy_gate_smoke_manifest(baselineJson, baseline);
+    const PolicyGateManifest storedCurrent = write_policy_gate_smoke_manifest(currentJson, current);
+    const filesystem::path baselineTxt = baselineJson.parent_path() / "baseline_policy_gate.txt";
+    const filesystem::path currentTxt = currentJson.parent_path() / "current_policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.revalidateFamilies = {"planner_tie_mixed_organic"};
+    const PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        storedCurrent,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        refreshOptions
+    );
+
+    const PolicyGateFamilyResult& family = require_policy_gate_family(refreshed, "planner_tie_mixed_organic");
+    require_test(family.driftFlag, "planner_tie organic reclassify smoke expected drift flag");
+    require_test(
+        family.status == PolicyGateStatus::INSUFFICIENT_EVIDENCE,
+        "planner_tie organic reclassify smoke expected INSUFFICIENT_EVIDENCE"
+    );
+    require_test(
+        family.freshnessStatus == PolicyFreshnessStatus::REQUIRES_RERUN,
+        "planner_tie organic reclassify smoke expected REQUIRES_RERUN"
+    );
+    require_test(
+        family.reclassifyRequired,
+        "planner_tie organic reclassify smoke expected reclassifyRequired"
+    );
+}
+
+void run_policy_gate_diagnostic_only_smoke_case(const TestOptions& options) {
+    const string caseStem = options.caseName.empty() ? string("policy_gate_diagnostic_only_smoke") : options.caseName;
+    const filesystem::path root = resolve_artifact_dir(options) / caseStem;
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+
+    const PolicyGateManifest baseline = make_policy_gate_smoke_manifest();
+    const PolicyGateManifest storedBaseline = write_policy_gate_smoke_manifest(baselineJson, baseline);
+    const PolicyGateManifest storedCurrent = write_policy_gate_smoke_manifest(currentJson, baseline);
+    const filesystem::path baselineTxt = baselineJson.parent_path() / "baseline_policy_gate.txt";
+    const filesystem::path currentTxt = currentJson.parent_path() / "current_policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.revalidateFamilies = {"planner_tie_mixed_organic_compare_ready"};
+    PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        storedCurrent,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        refreshOptions
+    );
+
+    const PolicyGateFamilyResult& normalFamily =
+        require_policy_gate_family(refreshed, "planner_tie_mixed_organic_compare_ready");
+    require_test(
+        normalFamily.status == PolicyGateStatus::DIAGNOSTIC_ONLY,
+        "policy gate diagnostic smoke expected DIAGNOSTIC_ONLY"
+    );
+    require_test(
+        normalFamily.freshnessStatus == PolicyFreshnessStatus::FRESH,
+        "policy gate diagnostic smoke expected FRESH"
+    );
+    require_test(
+        !normalFamily.countsAsProductionEvidence,
+        "policy gate diagnostic smoke expected no production evidence credit"
+    );
+
+    PolicyGateManifest promoted = baseline;
+    for (PolicyGateFamilyResult& family : promoted.families) {
+        if (family.family == "planner_tie_mixed_organic_compare_ready") {
+            family.countsAsProductionEvidence = true;
+            break;
+        }
+    }
+    promoted.currentManifestHash = hash_policy_manifest_content(promoted);
+    const PolicyGateManifest storedPromoted = write_policy_gate_smoke_manifest(currentJson, promoted);
+    refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        storedPromoted,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        refreshOptions
+    );
+    const PolicyGateFamilyResult& promotedFamily =
+        require_policy_gate_family(refreshed, "planner_tie_mixed_organic_compare_ready");
+    require_test(
+        promotedFamily.freshnessStatus == PolicyFreshnessStatus::REQUIRES_RERUN,
+        "policy gate diagnostic smoke expected REQUIRES_RERUN on promotion"
+    );
+    require_test(
+        promotedFamily.reclassifyRequired,
+        "policy gate diagnostic smoke expected reclassifyRequired on promotion"
+    );
+}
+
+void run_policy_gate_non_applicable_drift_smoke_case(const TestOptions& options) {
+    run_planner_tie_organic_reclassify_trigger_smoke_case(options);
+}
+
+void run_compare_ready_not_promoted_smoke_case(const TestOptions& options) {
+    run_policy_gate_diagnostic_only_smoke_case(options);
+}
+
+void run_stale_family_selective_rerun_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "stale_family_selective_rerun_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+
+    PolicyGateManifest baseline = make_policy_gate_smoke_manifest();
+    for (PolicyGateFamilyResult& family : baseline.families) {
+        if (family.family == "split_tie_organic_symmetric") {
+            family.relevantInputHashes.compareEngineHash = "synthetic-stale-hash";
+            family.relevantInputHashes.combinedHash = "synthetic-stale-combined";
+            break;
+        }
+    }
+    baseline.currentManifestHash = hash_policy_manifest_content(baseline);
+    const PolicyGateManifest current = make_policy_gate_smoke_manifest();
+    const PolicyGateManifest storedBaseline = write_policy_gate_smoke_manifest(baselineJson, baseline);
+    const PolicyGateManifest storedCurrent = write_policy_gate_smoke_manifest(currentJson, current);
+    const filesystem::path baselineTxt = baselineJson.parent_path() / "baseline_policy_gate.txt";
+    const filesystem::path currentTxt = currentJson.parent_path() / "current_policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.revalidateFamilies = {"split_tie_organic_symmetric"};
+    const PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        storedCurrent,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        refreshOptions
+    );
+
+    require_test(refreshed.families.size() == 1U, "stale family selective rerun smoke expected one family");
+    require_test(
+        refreshed.revalidatedFamilyCount == 1U,
+        "stale family selective rerun smoke expected one revalidated family"
+    );
+    const PolicyGateFamilyResult& family = require_policy_gate_family(refreshed, "split_tie_organic_symmetric");
+    require_test(
+        family.freshnessStatus == PolicyFreshnessStatus::STALE,
+        "stale family selective rerun smoke expected STALE freshness"
+    );
+}
+
+void run_policy_rerun_plan_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_rerun_plan_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+
+    PolicyGateManifest baseline = make_policy_gate_smoke_manifest();
+    for (PolicyGateFamilyResult& family : baseline.families) {
+        if (family.family == "split_tie_organic_symmetric") {
+            family.relevantInputHashes.compareEngineHash = "synthetic-split-stale-hash";
+        } else if (family.family == "planner_tie_mixed_organic") {
+            family.relevantInputHashes.generatorFamilyHash = "synthetic-applicability-stale-hash";
+        } else if (family.family == "planner_tie_mixed_organic_compare_ready") {
+            family.relevantInputHashes.compareEngineHash = "synthetic-lineage-stale-hash";
+        } else {
+            continue;
+        }
+        family.relevantInputHashes.combinedHash = "synthetic-stale-combined-" + family.family;
+    }
+    baseline.currentManifestHash = hash_policy_manifest_content(baseline);
+    const PolicyGateManifest current = make_policy_gate_smoke_manifest();
+    const PolicyGateManifest storedBaseline = write_policy_gate_smoke_manifest(baselineJson, baseline);
+    const PolicyGateManifest storedCurrent = write_policy_gate_smoke_manifest(currentJson, current);
+    const filesystem::path baselineTxt = baselineJson.parent_path() / "baseline_policy_gate.txt";
+    const filesystem::path currentTxt = currentJson.parent_path() / "current_policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    const PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        storedCurrent,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        refreshOptions
+    );
+
+    PolicyRerunPlanOptions planOptions;
+    planOptions.includeDiagnostic = true;
+    planOptions.includeNonApplicable = true;
+    const PolicyRerunPlan plan =
+        build_policy_rerun_plan(refreshed, baselineTxt, currentTxt, filesystem::path(), planOptions);
+
+    require_test(
+        plan.summaryVerdict == "RERUN_REQUIRED",
+        "policy rerun plan smoke expected rerun-required verdict"
+    );
+    require_test(plan.entries.size() == 3U, "policy rerun plan smoke expected three plan entries");
+    require_test(
+        any_of(plan.entries.begin(), plan.entries.end(), [](const PolicyRerunPlanEntry& entry) {
+            return entry.family == "split_tie_organic_symmetric" && entry.rerunKind == "direct_compare_rerun";
+        }),
+        "policy rerun plan smoke expected direct compare rerun entry"
+    );
+    require_test(
+        any_of(plan.entries.begin(), plan.entries.end(), [](const PolicyRerunPlanEntry& entry) {
+            return entry.family == "planner_tie_mixed_organic" && entry.rerunKind == "applicability_audit_rerun";
+        }),
+        "policy rerun plan smoke expected applicability rerun entry"
+    );
+    require_test(
+        any_of(plan.entries.begin(), plan.entries.end(), [](const PolicyRerunPlanEntry& entry) {
+            return entry.family == "planner_tie_mixed_organic_compare_ready" &&
+                entry.rerunKind == "lineage_audit_rerun";
+        }),
+        "policy rerun plan smoke expected lineage rerun entry"
+    );
+}
+
+void run_policy_rerun_plan_empty_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_rerun_plan_empty_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+
+    const PolicyGateManifest current = make_policy_gate_smoke_manifest();
+    const PolicyGateManifest storedBaseline = write_policy_gate_smoke_manifest(baselineJson, current);
+    const PolicyGateManifest storedCurrent = write_policy_gate_smoke_manifest(currentJson, current);
+    const filesystem::path baselineTxt = baselineJson.parent_path() / "baseline_policy_gate.txt";
+    const filesystem::path currentTxt = currentJson.parent_path() / "current_policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        storedCurrent,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        refreshOptions
+    );
+    const PolicyRerunPlan plan =
+        build_policy_rerun_plan(refreshed, baselineTxt, currentTxt, filesystem::path(), PolicyRerunPlanOptions{});
+    require_test(plan.summaryVerdict == "PASS", "policy rerun plan empty smoke expected PASS verdict");
+    require_test(plan.entries.empty(), "policy rerun plan empty smoke expected no plan entries");
+}
+
+void run_policy_rerun_plan_family_filter_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_rerun_plan_family_filter_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+
+    PolicyGateManifest baseline = make_policy_gate_smoke_manifest();
+    for (PolicyGateFamilyResult& family : baseline.families) {
+        if (family.family == "planner_tie_mixed_organic_compare_ready") {
+            family.relevantInputHashes.compareEngineHash = "synthetic-lineage-stale-hash";
+            family.relevantInputHashes.combinedHash = "synthetic-lineage-stale-combined";
+            break;
+        }
+    }
+    baseline.currentManifestHash = hash_policy_manifest_content(baseline);
+    const PolicyGateManifest storedBaseline = write_policy_gate_smoke_manifest(baselineJson, baseline);
+    const PolicyGateManifest storedCurrent = write_policy_gate_smoke_manifest(currentJson, make_policy_gate_smoke_manifest());
+    const filesystem::path baselineTxt = baselineJson.parent_path() / "baseline_policy_gate.txt";
+    const filesystem::path currentTxt = currentJson.parent_path() / "current_policy_gate.txt";
+
+    PolicyGateManifest refreshed = refresh_policy_gate_manifest(
+        storedBaseline,
+        storedCurrent,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        PolicyManifestRefreshOptions{}
+    );
+    PolicyRerunPlanOptions planOptions;
+    planOptions.familyFilter = {"planner_tie_mixed_organic_compare_ready"};
+    planOptions.includeDiagnostic = true;
+    const PolicyRerunPlan plan =
+        build_policy_rerun_plan(refreshed, baselineTxt, currentTxt, filesystem::path(), planOptions);
+    require_test(plan.entries.size() == 1U, "policy rerun plan family filter smoke expected one entry");
+    require_test(
+        plan.entries.front().family == "planner_tie_mixed_organic_compare_ready",
+        "policy rerun plan family filter smoke expected filtered family"
+    );
+}
+
+void run_policy_refresh_stale_hash_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_refresh_stale_hash_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+    const PolicyGateManifest baseline = write_policy_gate_smoke_manifest(baselineJson, make_policy_gate_smoke_manifest());
+    const PolicyGateManifest current = write_policy_gate_smoke_manifest(currentJson, make_policy_gate_smoke_manifest());
+
+    TestOptions refreshOptions = options;
+    refreshOptions.syntheticHashDrift = "planner_semantics_hash";
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = make_refreshed_policy_manifest(
+        refreshOptions,
+        baselineJson.parent_path() / "baseline_policy_gate.txt",
+        currentJson.parent_path() / "current_policy_gate.txt",
+        baseline,
+        current
+    );
+    require_test(refreshed.staleFamilyCount != 0U, "policy refresh stale hash smoke expected stale families");
+    require_test(
+        require_policy_gate_family(refreshed, "split_tie_organic_symmetric").freshnessStatus ==
+            PolicyFreshnessStatus::STALE,
+        "policy refresh stale hash smoke expected PASS family stale"
+    );
+}
+
+void run_policy_refresh_compare_engine_hash_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_refresh_compare_engine_hash_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+    const PolicyGateManifest baseline = write_policy_gate_smoke_manifest(baselineJson, make_policy_gate_smoke_manifest());
+    const PolicyGateManifest current = write_policy_gate_smoke_manifest(currentJson, make_policy_gate_smoke_manifest());
+
+    TestOptions refreshOptions = options;
+    refreshOptions.syntheticHashDrift = "compare_engine_hash";
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = make_refreshed_policy_manifest(
+        refreshOptions,
+        baselineJson.parent_path() / "baseline_policy_gate.txt",
+        currentJson.parent_path() / "current_policy_gate.txt",
+        baseline,
+        current
+    );
+    require_test(
+        require_policy_gate_family(refreshed, "planner_tie_mixed_organic_compare_ready").freshnessStatus ==
+            PolicyFreshnessStatus::STALE,
+        "policy refresh compare engine hash smoke expected diagnostic family stale"
+    );
+}
+
+void run_policy_refresh_generator_hash_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_refresh_generator_hash_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+    const PolicyGateManifest baseline = write_policy_gate_smoke_manifest(baselineJson, make_policy_gate_smoke_manifest());
+    const PolicyGateManifest current = write_policy_gate_smoke_manifest(currentJson, make_policy_gate_smoke_manifest());
+
+    TestOptions refreshOptions = options;
+    refreshOptions.syntheticHashDrift = "generator_family_hash";
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = make_refreshed_policy_manifest(
+        refreshOptions,
+        baselineJson.parent_path() / "baseline_policy_gate.txt",
+        currentJson.parent_path() / "current_policy_gate.txt",
+        baseline,
+        current
+    );
+    require_test(
+        require_policy_gate_family(refreshed, "planner_tie_mixed_organic").freshnessStatus ==
+            PolicyFreshnessStatus::STALE,
+        "policy refresh generator hash smoke expected NON_APPLICABLE family stale"
+    );
+}
+
+void run_policy_refresh_campaign_config_hash_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_refresh_campaign_config_hash_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+    const PolicyGateManifest baseline = write_policy_gate_smoke_manifest(baselineJson, make_policy_gate_smoke_manifest());
+    const PolicyGateManifest current = write_policy_gate_smoke_manifest(currentJson, make_policy_gate_smoke_manifest());
+
+    TestOptions refreshOptions = options;
+    refreshOptions.syntheticHashDrift = "campaign_config_hash";
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = make_refreshed_policy_manifest(
+        refreshOptions,
+        baselineJson.parent_path() / "baseline_policy_gate.txt",
+        currentJson.parent_path() / "current_policy_gate.txt",
+        baseline,
+        current
+    );
+    require_test(
+        require_policy_gate_family(refreshed, "split_tie_organic_symmetric").freshnessStatus ==
+            PolicyFreshnessStatus::STALE,
+        "policy refresh campaign config hash smoke expected PASS family stale"
+    );
+}
+
+void run_policy_reclassify_non_applicable_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_reclassify_non_applicable_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+    const PolicyGateManifest baseline = write_policy_gate_smoke_manifest(baselineJson, make_policy_gate_smoke_manifest());
+    const PolicyGateManifest current = write_policy_gate_smoke_manifest(currentJson, make_policy_gate_smoke_manifest());
+
+    TestOptions refreshOptions = options;
+    refreshOptions.syntheticApplicabilityDrift = "planner_tie_mixed_organic";
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = make_refreshed_policy_manifest(
+        refreshOptions,
+        baselineJson.parent_path() / "baseline_policy_gate.txt",
+        currentJson.parent_path() / "current_policy_gate.txt",
+        baseline,
+        current
+    );
+    const PolicyGateFamilyResult& family = require_policy_gate_family(refreshed, "planner_tie_mixed_organic");
+    require_test(family.reclassifyRequired, "policy reclassify non-applicable smoke expected reclassifyRequired");
+    require_test(
+        family.freshnessStatus == PolicyFreshnessStatus::REQUIRES_RERUN,
+        "policy reclassify non-applicable smoke expected REQUIRES_RERUN"
+    );
+}
+
+void run_policy_reject_diagnostic_promotion_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_reject_diagnostic_promotion_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path baselineJson = root / "manifests" / "baseline_policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "current_policy_gate.json";
+    const PolicyGateManifest baseline = write_policy_gate_smoke_manifest(baselineJson, make_policy_gate_smoke_manifest());
+    const PolicyGateManifest current = write_policy_gate_smoke_manifest(currentJson, make_policy_gate_smoke_manifest());
+
+    TestOptions refreshOptions = options;
+    refreshOptions.syntheticDiagnosticPromotion = "planner_tie_mixed_organic_compare_ready";
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed = make_refreshed_policy_manifest(
+        refreshOptions,
+        baselineJson.parent_path() / "baseline_policy_gate.txt",
+        currentJson.parent_path() / "current_policy_gate.txt",
+        baseline,
+        current
+    );
+    const PolicyGateFamilyResult& family =
+        require_policy_gate_family(refreshed, "planner_tie_mixed_organic_compare_ready");
+    require_test(
+        family.freshnessStatus == PolicyFreshnessStatus::REQUIRES_RERUN,
+        "policy reject diagnostic promotion smoke expected REQUIRES_RERUN"
+    );
+    require_test(
+        family.reclassifyRequired,
+        "policy reject diagnostic promotion smoke expected reclassifyRequired"
+    );
+}
+
+void run_policy_rerun_plan_mode_selection_smoke_case(const TestOptions& options) {
+    run_policy_rerun_plan_smoke_case(options);
+}
+
+void run_policy_selective_rerun_execute_smoke_case(const TestOptions& options) {
+    PolicyRerunPlan plan;
+    PolicyRerunPlanEntry entry;
+    entry.family = "planner_tie_mixed_organic";
+    entry.currentStatus = "NON_APPLICABLE";
+    entry.freshnessStatus = "STALE";
+    entry.rerunKind = "synthetic_execute_rerun";
+    entry.evidenceMode = "applicability_only";
+    entry.statusImpact = "NON_APPLICABLE family stale";
+    plan.entries.push_back(entry);
+    plan.selectedEntryCount = 1U;
+    plan.summaryVerdict = "RERUN_REQUIRED";
+
+    const PolicyRerunExecutionSummary execution = execute_policy_rerun_plan(options, plan);
+    require_test(execution.summaryVerdict == "PASS", "policy selective rerun execute smoke expected PASS");
+    require_test(execution.executedFamilyCount == 1U, "policy selective rerun execute smoke expected one executed family");
+    require_test(
+        find(execution.executedFamilies.begin(), execution.executedFamilies.end(), "planner_tie_mixed_organic") !=
+            execution.executedFamilies.end(),
+        "policy selective rerun execute smoke expected planner_tie_mixed_organic execution"
+    );
+}
+
+void run_policy_selective_rerun_noop_smoke_case(const TestOptions& options) {
+    const PolicyRerunPlan plan;
+    const PolicyRerunExecutionSummary execution = execute_policy_rerun_plan(options, plan);
+    require_test(execution.summaryVerdict == "PASS", "policy selective rerun noop smoke expected PASS");
+    require_test(execution.executedFamilyCount == 0U, "policy selective rerun noop smoke expected zero executed families");
+}
+
+void run_policy_selective_rerun_n_family_smoke_case(const TestOptions& options) {
+    {
+        const PolicyRerunPlan emptyPlan;
+        const PolicyRerunExecutionSummary execution = execute_policy_rerun_plan(options, emptyPlan);
+        require_test(execution.executedFamilyCount == 0U, "policy selective rerun n-family smoke expected zero-family noop");
+    }
+    {
+        PolicyRerunPlan singlePlan;
+        PolicyRerunPlanEntry entry;
+        entry.family = "planner_tie_mixed_organic";
+        entry.rerunKind = "synthetic_execute_rerun";
+        singlePlan.entries.push_back(entry);
+        const PolicyRerunExecutionSummary execution = execute_policy_rerun_plan(options, singlePlan);
+        require_test(execution.executedFamilyCount == 1U, "policy selective rerun n-family smoke expected one-family execution");
+    }
+    {
+        PolicyRerunPlan multiPlan;
+        PolicyRerunPlanEntry applicability;
+        applicability.family = "planner_tie_mixed_organic";
+        applicability.rerunKind = "synthetic_execute_rerun";
+        PolicyRerunPlanEntry diagnostic;
+        diagnostic.family = "planner_tie_mixed_organic_compare_ready";
+        diagnostic.rerunKind = "synthetic_execute_rerun";
+        multiPlan.entries = {applicability, diagnostic};
+        const PolicyRerunExecutionSummary execution = execute_policy_rerun_plan(options, multiPlan);
+        require_test(execution.executedFamilyCount == 2U, "policy selective rerun n-family smoke expected two-family execution");
+    }
+}
+
+void run_policy_baseline_history_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_baseline_history_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path sourceJson = root / "manifests" / "policy_gate.json";
+    const filesystem::path baselineJson = root / "manifests" / "policy_gate_phase22_approved.json";
+    const PolicyGateManifest sourceManifest = write_policy_gate_smoke_manifest(sourceJson, make_policy_gate_smoke_manifest());
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase22-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    promoteOptions.freezeProvenance = true;
+    PolicyGateManifest baseline = promote_policy_gate_baseline(
+        sourceManifest,
+        source_package_root(),
+        policy_manifest_text_path(sourceJson),
+        baselineJson,
+        promoteOptions
+    );
+    write_policy_baseline_outputs_with_history(baselineJson, baseline);
+
+    baseline.baselineTag = "phase22-approved-r2";
+    baseline.approvalTimestampUtc = policy_runner_timestamp_utc_now();
+    write_policy_baseline_outputs_with_history(baselineJson, baseline);
+
+    const filesystem::path historyDir = baselineJson.parent_path() / "history";
+    require_test(
+        filesystem::exists(historyDir / "baseline_history_index.txt"),
+        "policy baseline history smoke expected baseline_history_index.txt"
+    );
+    require_test(
+        filesystem::exists(historyDir / "baseline_history_index.json"),
+        "policy baseline history smoke expected baseline_history_index.json"
+    );
+    require_test(
+        any_of(filesystem::directory_iterator(historyDir), filesystem::directory_iterator(), [](const auto& entry) {
+            const string name = entry.path().filename().string();
+            return entry.is_regular_file() &&
+                name.find(".meta.txt") != string::npos;
+        }),
+        "policy baseline history smoke expected history metadata entries"
+    );
+}
+
+void run_policy_baseline_archive_roundtrip_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_baseline_archive_roundtrip_smoke";
+    filesystem::remove_all(root);
+    TestOptions historyOptions = options;
+    historyOptions.artifactDir = root.string();
+    run_policy_baseline_history_smoke_case(historyOptions);
+
+    const filesystem::path baselineTxt = root / "policy_baseline_history_smoke" / "manifests" / "policy_gate_phase22_approved.txt";
+    const PolicyGateManifest loaded = load_policy_gate_manifest_text(baselineTxt);
+    require_test(loaded.manifestRole == "baseline", "policy baseline archive roundtrip smoke expected baseline role");
+    const string historyIndex = slurp_text_file(
+        root / "policy_baseline_history_smoke" / "manifests" / "history" / "baseline_history_index.txt");
+    require_test(
+        historyIndex.find("entry_count=") != string::npos,
+        "policy baseline archive roundtrip smoke expected history index content"
+    );
+}
+
+
+void run_policy_ci_check_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_ci_check_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path sourceJson = root / "manifests" / "policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "policy_graduation_manifest_v1.json";
+    const filesystem::path baselineJson = root / "manifests" / "policy_graduation_manifest_phase22_approved_v1.json";
+    const filesystem::path refreshJson = root / "manifests" / "policy_graduation_manifest_refresh_v1.json";
+    const filesystem::path rerunJson = root / "manifests" / "policy_rerun_plan_v1.json";
+    const filesystem::path summaryTxt = root / "manifests" / "policy_ci_check.summary.txt";
+    const PolicyGateManifest sourceManifest = write_policy_gate_smoke_manifest(sourceJson, make_policy_gate_smoke_manifest());
+    write_policy_gate_outputs(currentJson, sourceManifest);
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase22-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    promoteOptions.freezeProvenance = true;
+    const PolicyGateManifest baseline = promote_policy_gate_baseline(
+        sourceManifest,
+        source_package_root(),
+        policy_manifest_text_path(sourceJson),
+        baselineJson,
+        promoteOptions
+    );
+    write_policy_baseline_outputs_with_history(baselineJson, baseline);
+
+    TestOptions runOptions = options;
+    runOptions.artifactDir = root.string();
+    runOptions.baselineManifest = baselineJson.string();
+    runOptions.currentManifest = currentJson.string();
+    runOptions.refreshManifest = refreshJson.string();
+    runOptions.rerunPlan = rerunJson.string();
+    runOptions.emitSummary = summaryTxt.string();
+    run_policy_ci_check_case(runOptions);
+
+    const string summary = slurp_text_file(summaryTxt);
+    require_test(summary.find("current_verdict=PASS") != string::npos, "policy ci check smoke expected PASS verdict");
+    require_test(summary.find("freshness_verdict=FRESH") != string::npos, "policy ci check smoke expected FRESH refresh");
+    require_test(summary.find("selected_entry_count=0") != string::npos, "policy ci check smoke expected empty rerun plan");
+}
+
+void run_policy_nightly_refresh_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_nightly_refresh_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path sourceJson = root / "manifests" / "policy_gate.json";
+    const filesystem::path currentJson = root / "manifests" / "policy_graduation_manifest_v1.json";
+    const filesystem::path baselineJson = root / "manifests" / "policy_graduation_manifest_phase22_approved_v1.json";
+    const filesystem::path refreshJson = root / "manifests" / "policy_graduation_manifest_refresh_v1.json";
+    const filesystem::path rerunJson = root / "manifests" / "policy_rerun_plan_v1.json";
+    const filesystem::path summaryTxt = root / "manifests" / "policy_nightly_refresh.summary.txt";
+    const PolicyGateManifest sourceManifest = write_policy_gate_smoke_manifest(sourceJson, make_policy_gate_smoke_manifest());
+    write_policy_gate_outputs(currentJson, sourceManifest);
+
+    PolicyBaselinePromotionOptions promoteOptions;
+    promoteOptions.baselineTag = "phase22-approved";
+    promoteOptions.requireAcceptableStatus = true;
+    promoteOptions.freezeProvenance = true;
+    const PolicyGateManifest baseline = promote_policy_gate_baseline(
+        sourceManifest,
+        source_package_root(),
+        policy_manifest_text_path(sourceJson),
+        baselineJson,
+        promoteOptions
+    );
+    write_policy_baseline_outputs_with_history(baselineJson, baseline);
+
+    TestOptions runOptions = options;
+    runOptions.artifactDir = root.string();
+    runOptions.baselineManifest = baselineJson.string();
+    runOptions.currentManifest = currentJson.string();
+    runOptions.refreshManifest = refreshJson.string();
+    runOptions.rerunPlan = rerunJson.string();
+    runOptions.emitSummary = summaryTxt.string();
+    runOptions.allowEmptyPlan = true;
+    run_policy_nightly_refresh_case(runOptions);
+
+    const string summary = slurp_text_file(summaryTxt);
+    require_test(summary.find("current_verdict=PASS") != string::npos, "policy nightly refresh smoke expected PASS verdict");
+    require_test(summary.find("freshness_verdict=FRESH") != string::npos, "policy nightly refresh smoke expected FRESH refresh");
+    require_test(summary.find("selected_family_count=0") != string::npos, "policy nightly refresh smoke expected zero selected families");
+}
+
+void run_bundle_index_roundtrip_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "bundle_index_roundtrip_smoke";
+    filesystem::remove_all(root);
+    filesystem::create_directories(root / "outputs");
+
+    const filesystem::path reportPath = root / "PHASE22_STABILIZATION_REPORT.txt";
+    write_smoke_report_file(reportPath, "bundle index roundtrip smoke report");
+    const PolicyGateManifest current = make_policy_gate_smoke_manifest();
+    const filesystem::path currentJson = root / "manifests" / "policy_gate.json";
+    write_policy_gate_outputs(currentJson, current);
+    const filesystem::path bundleIndexPath = root / "indexes" / "bundle_index.json";
+    const filesystem::path scriptPath = policy_tools_script_path("build_evidence_bundle.py");
+    const filesystem::path zipPath = root / "outputs" / "raw_engine_phase22_stabilization.zip";
+
+    auto runBundle = [&]() {
+        ostringstream command;
+        command << shell_quote("/usr/bin/python3") << ' '
+                << shell_quote(scriptPath.string())
+                << " --phase phase22"
+                << " --artifact-root " << shell_quote(root.string())
+                << " --report-out " << shell_quote(reportPath.string())
+                << " --policy-manifest " << shell_quote(currentJson.string())
+                << " --current-manifest " << shell_quote(currentJson.string())
+                << " --bundle-index-out " << shell_quote(bundleIndexPath.string())
+                << " --zip-out " << shell_quote(zipPath.string())
+                << " --curated-zip " << shell_quote((root / "outputs" / "raw_engine_phase22_stabilization_curated.zip").string());
+        return system(command.str().c_str());
+    };
+
+    require_test(runBundle() == 0, "bundle index roundtrip smoke expected first bundle success");
+    require_test(runBundle() == 0, "bundle index roundtrip smoke expected second bundle success");
+    const string indexText = slurp_text_file(bundleIndexPath);
+    require_test(indexText.find("\"latest_bundle\"") != string::npos, "bundle index roundtrip smoke expected latest_bundle");
+}
+
+void run_policy_refresh_nightly_smoke_case(const TestOptions&) {
+    const filesystem::path artifactRoot = source_package_root() / "artifacts";
+    const PolicyGateManifest manifest = build_policy_gate_manifest(artifactRoot, "phase22_refresh_nightly_smoke");
+    const filesystem::path root = artifactRoot / "phase22_policy_refresh_nightly_smoke";
+    filesystem::remove_all(root);
+    const filesystem::path jsonPath = root / "manifests" / "policy_gate.json";
+    const PolicyGateManifest stored = write_policy_gate_smoke_manifest(jsonPath, manifest);
+    const filesystem::path txtPath = jsonPath.parent_path() / "policy_gate.txt";
+
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.freshnessOnly = true;
+    const PolicyGateManifest refreshed =
+        refresh_policy_gate_manifest(stored, stored, source_package_root(), txtPath, txtPath, refreshOptions);
+    require_test(
+        policy_manifest_freshness_satisfied(refreshed),
+        "policy refresh nightly smoke expected fresh manifest"
+    );
+}
+
 void run_policy_gate_nightly_smoke_case(const TestOptions&) {
     const filesystem::path artifactRoot = source_package_root() / "artifacts";
-    const PolicyGateManifest manifest = build_policy_gate_manifest(artifactRoot, "phase18_nightly_smoke");
+    const PolicyGateManifest manifest = build_policy_gate_manifest(artifactRoot, "phase22_nightly_smoke");
     require_test(policy_gate_manifest_satisfied(manifest), "policy gate nightly smoke expected satisfied manifest");
     require_test(
         require_policy_gate_family(manifest, "split_tie_organic_symmetric").status == PolicyGateStatus::PASS,
@@ -9814,17 +12362,18 @@ void run_manifest_roundtrip_smoke_case(const TestOptions& options) {
 }
 
 void run_evidence_bundle_smoke_case(const TestOptions& options) {
-    const filesystem::path root = resolve_artifact_dir(options) / "evidence_bundle_smoke";
+    const string caseStem = options.caseName.empty() ? string("evidence_bundle_smoke") : options.caseName;
+    const filesystem::path root = resolve_artifact_dir(options) / caseStem;
     filesystem::remove_all(root);
     filesystem::create_directories(root / "logs");
     filesystem::create_directories(root / "regressions");
     filesystem::create_directories(root / "curated");
     filesystem::create_directories(root / "manifests");
 
-    const filesystem::path reportPath = root / "PHASE18_STABILIZATION_REPORT.txt";
+    const filesystem::path reportPath = root / "PHASE19_STABILIZATION_REPORT.txt";
     {
         ofstream report(reportPath);
-        report << "phase18 evidence bundle smoke report\n";
+        report << "phase19 evidence bundle smoke report\n";
     }
 
     const filesystem::path logPath = root / "logs" / "smoke.log";
@@ -9839,36 +12388,2703 @@ void run_evidence_bundle_smoke_case(const TestOptions& options) {
         regression << "smoke regression\n";
     }
 
-    const filesystem::path curatedZip = root / "curated" / "raw_engine_phase18_curated.zip";
+    const filesystem::path curatedZip = root / "curated" / "raw_engine_phase19_curated.zip";
     {
         ofstream curated(curatedZip, ios::binary);
         curated << "zip placeholder\n";
     }
 
-    write_policy_gate_outputs(root / "manifests" / "policy_gate.json", make_policy_gate_smoke_manifest());
+    const PolicyGateManifest currentManifest = make_policy_gate_smoke_manifest();
+    PolicyGateManifest baselineManifest = currentManifest;
+    for (PolicyGateFamilyResult& family : baselineManifest.families) {
+        if (family.family == "split_tie_organic_symmetric") {
+            family.relevantInputHashes.compareEngineHash = "synthetic-baseline-hash";
+            family.relevantInputHashes.combinedHash = "synthetic-baseline-combined";
+            break;
+        }
+    }
+    baselineManifest.currentManifestHash = hash_policy_manifest_content(baselineManifest);
+    const filesystem::path currentJson = root / "manifests" / "policy_gate.json";
+    const filesystem::path baselineJson = root / "manifests" / "policy_gate_baseline.json";
+    write_policy_gate_outputs(currentJson, currentManifest);
+    write_policy_gate_outputs(baselineJson, baselineManifest);
+
+    const filesystem::path baselineTxt = root / "manifests" / "policy_gate_baseline.txt";
+    const filesystem::path currentTxt = root / "manifests" / "policy_gate.txt";
+    PolicyManifestRefreshOptions refreshOptions;
+    refreshOptions.revalidateFamilies = {"split_tie_organic_symmetric"};
+    const PolicyGateManifest refreshManifest = refresh_policy_gate_manifest(
+        baselineManifest,
+        currentManifest,
+        source_package_root(),
+        baselineTxt,
+        currentTxt,
+        refreshOptions
+    );
+    const filesystem::path refreshJson = root / "manifests" / "policy_gate_refresh.json";
+    write_policy_gate_outputs(refreshJson, refreshManifest);
+
+    PolicyRerunPlan plan = build_policy_rerun_plan(
+        refreshManifest,
+        baselineTxt,
+        currentTxt,
+        refreshJson.parent_path() / "policy_gate_refresh.txt",
+        PolicyRerunPlanOptions{}
+    );
+    const filesystem::path planJson = root / "manifests" / "policy_rerun_plan.json";
+    write_policy_rerun_plan_outputs(planJson, plan);
+    const filesystem::path runtimeCurrentJson = root / "manifests" / "policy_runtime_current_phase19.json";
+    const filesystem::path runtimeBaselineJson = root / "manifests" / "policy_runtime_baseline_phase19_approved.json";
+    const filesystem::path runtimeRegistryJson = root / "manifests" / "runtime_baseline_registry_v1.json";
+    const filesystem::path runtimeRefreshJson = root / "manifests" / "policy_runtime_refresh_phase19.json";
+    const filesystem::path runtimeRerunJson = root / "manifests" / "policy_runtime_rerun_phase19.json";
+    const filesystem::path runtimeHistoryIndexJson = root / "manifests" / "runtime_history_index_v1.json";
+    const filesystem::path runtimeProposalJson = root / "manifests" / "runtime_rebaseline_proposal_phase19.json";
+    require_test(
+        run_runtime_lifecycle_script(
+            "write-current",
+            {
+                "--phase phase19",
+                "--artifact-root " + shell_quote(root.string()),
+                "--runtime-current-manifest " + shell_quote(runtimeCurrentJson.string()),
+                "--baseline-tag phase19-runtime",
+                "--runner-tag bundle-smoke",
+                "--entry execution_class=release_full,wall_time_sec=120.0",
+                "--entry execution_class=debug_full,wall_time_sec=480.0",
+                "--entry execution_class=asan_full,wall_time_sec=900.0",
+                "--entry execution_class=policy_nightly,wall_time_sec=2.0",
+                "--test-count release_full=10",
+                "--test-count debug_full=10",
+                "--test-count asan_full=10",
+            }
+        ) == 0,
+        "evidence bundle smoke expected runtime current manifest generation"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "promote-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(runtimeCurrentJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(runtimeBaselineJson.string()),
+                "--baseline-tag phase19-runtime-approved",
+            }
+        ) == 0,
+        "evidence bundle smoke expected runtime baseline promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "registry-promote-baseline",
+            {
+                "--runtime-baseline-registry " + shell_quote(runtimeRegistryJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(runtimeBaselineJson.string()),
+                "--baseline-tag phase19-runtime-approved",
+                "--activate",
+            }
+        ) == 0,
+        "evidence bundle smoke expected runtime registry promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "evidence bundle smoke expected runtime refresh"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "history-append",
+            {
+                "--runtime-history-index " + shell_quote(runtimeHistoryIndexJson.string()),
+                "--runtime-current-manifest " + shell_quote(runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "evidence bundle smoke expected runtime history append"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "propose-rebaseline",
+            {
+                "--runtime-baseline-registry " + shell_quote(runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(runtimeRefreshJson.string()),
+                "--proposal-out " + shell_quote(runtimeProposalJson.string()),
+            }
+        ) == 0,
+        "evidence bundle smoke expected runtime proposal"
+    );
+
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-baseline-manifest " + shell_quote(runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(runtimeRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(runtimeRerunJson.string()),
+            }
+        ) == 0,
+        "evidence bundle smoke expected runtime rerun plan"
+    );
+
+    const filesystem::path pipelineSummaryJson = root / "manifests" / "policy_pipeline_summary.json";
+    {
+        ofstream summary(pipelineSummaryJson);
+        summary << "{\n"
+                << "  \"severity\": \"OK\",\n"
+                << "  \"runtime_severity\": \"OK\",\n"
+                << "  \"recommended_next_action\": \"no action required; exact_shadow lifecycle remains healthy\"\n"
+                << "}\n";
+    }
 
     const filesystem::path scriptPath = source_package_root() / "tests" / "tools" / "build_evidence_bundle.py";
-    const filesystem::path zipPath = root / "raw_engine_phase18_stabilization.zip";
+    const filesystem::path zipPath = root / "raw_engine_phase19_stabilization.zip";
     const string command =
         shell_quote("/usr/bin/python3") + " " +
         shell_quote(scriptPath.string()) +
-        " --phase phase18" +
+        " --phase phase19" +
         " --artifact-root " + shell_quote(root.string()) +
         " --report-out " + shell_quote(reportPath.string()) +
-        " --policy-manifest " + shell_quote((root / "manifests" / "policy_gate.json").string()) +
+        " --policy-manifest " + shell_quote(currentJson.string()) +
+        " --baseline-manifest " + shell_quote(baselineJson.string()) +
+        " --current-manifest " + shell_quote(currentJson.string()) +
+        " --refresh-manifest " + shell_quote(refreshJson.string()) +
+        " --rerun-plan " + shell_quote(planJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(runtimeHistoryIndexJson.string()) +
+        " --runtime-proposal " + shell_quote(runtimeProposalJson.string()) +
+        " --pipeline-summary " + shell_quote(pipelineSummaryJson.string()) +
         " --zip-out " + shell_quote(zipPath.string()) +
         " --curated-zip " + shell_quote(curatedZip.string());
     const int rc = system(command.c_str());
     require_test(rc == 0, "evidence bundle smoke expected bundle script success");
     require_test(filesystem::exists(zipPath), "evidence bundle smoke expected final zip");
     require_test(
-        filesystem::exists(root / "phase18_evidence_bundle" / "bundle_metadata.json"),
+        filesystem::exists(root / "phase19_evidence_bundle" / "bundle_metadata.json"),
         "evidence bundle smoke expected bundle metadata"
     );
     require_test(
-        filesystem::exists(root / "phase18_evidence_bundle" / "manifests" / "policy_gate.json"),
+        filesystem::exists(root / "phase19_evidence_bundle" / "manifests" / "policy_gate.json"),
         "evidence bundle smoke expected copied manifest json"
     );
+    const string metadata = slurp_text_file(root / "phase19_evidence_bundle" / "bundle_metadata.json");
+    require_test(
+        metadata.find("\"baseline_manifest_hash\"") != string::npos,
+        "evidence bundle smoke expected baseline manifest hash metadata"
+    );
+    require_test(
+        metadata.find("\"current_manifest_hash\"") != string::npos,
+        "evidence bundle smoke expected current manifest hash metadata"
+    );
+    require_test(
+        metadata.find("\"refresh_manifest_hash\"") != string::npos,
+        "evidence bundle smoke expected refresh manifest hash metadata"
+    );
+    require_test(
+        metadata.find("\"rerun_plan_hash\"") != string::npos,
+        "evidence bundle smoke expected rerun plan hash metadata"
+    );
+    require_test(
+        metadata.find("\"freshness_summary\"") != string::npos,
+        "evidence bundle smoke expected freshness summary metadata"
+    );
+    require_test(
+        metadata.find("\"drift_flags\"") != string::npos,
+        "evidence bundle smoke expected drift flags metadata"
+    );
+    require_test(
+        metadata.find("\"reclassification_needed_families\"") != string::npos,
+        "evidence bundle smoke expected reclassification-needed metadata"
+    );
+    require_test(
+        metadata.find("\"refresh_summary\"") != string::npos,
+        "evidence bundle smoke expected refresh summary metadata"
+    );
+    require_test(
+        metadata.find("\"family_status_summary\"") != string::npos,
+        "evidence bundle smoke expected family status summary metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_current_manifest_hash\"") != string::npos,
+        "evidence bundle smoke expected runtime current manifest hash metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_refresh_manifest_hash\"") != string::npos,
+        "evidence bundle smoke expected runtime refresh manifest hash metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_rerun_plan_hash\"") != string::npos,
+        "evidence bundle smoke expected runtime rerun plan hash metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_registry_hash\"") != string::npos,
+        "evidence bundle smoke expected runtime registry hash metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_history_index_hash\"") != string::npos,
+        "evidence bundle smoke expected runtime history hash metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_proposal_hash\"") != string::npos,
+        "evidence bundle smoke expected runtime proposal hash metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_budget_summary\"") != string::npos,
+        "evidence bundle smoke expected runtime budget summary metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_registry_summary\"") != string::npos,
+        "evidence bundle smoke expected runtime registry summary metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_history_summary\"") != string::npos,
+        "evidence bundle smoke expected runtime history summary metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_proposal_summary\"") != string::npos,
+        "evidence bundle smoke expected runtime proposal summary metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_severity\": \"OK\"") != string::npos,
+        "evidence bundle smoke expected runtime severity metadata"
+    );
+}
+
+void run_evidence_bundle_manifest_freshness_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_smoke_case(options);
+}
+
+void run_evidence_bundle_policy_refresh_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_smoke_case(options);
+}
+
+void run_evidence_bundle_rerun_plan_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_smoke_case(options);
+}
+
+void run_evidence_bundle_idempotent_smoke_case(const TestOptions& options) {
+    TestOptions firstRun = options;
+    firstRun.caseName = "evidence_bundle_idempotent_smoke";
+    run_evidence_bundle_smoke_case(firstRun);
+    const filesystem::path metadataPath =
+        resolve_artifact_dir(firstRun) / firstRun.caseName / "phase19_evidence_bundle" / "bundle_metadata.json";
+    string firstMetadata = slurp_text_file(metadataPath);
+    run_evidence_bundle_smoke_case(firstRun);
+    string secondMetadata = slurp_text_file(metadataPath);
+
+    require_test(
+        firstMetadata.find("\"policy_summary\"") != string::npos &&
+            secondMetadata.find("\"policy_summary\"") != string::npos &&
+            firstMetadata.find("\"stale_family_count\": 1") != string::npos &&
+            secondMetadata.find("\"stale_family_count\": 1") != string::npos &&
+            firstMetadata.find("\"requires_rerun_family_count\": 0") != string::npos &&
+            secondMetadata.find("\"requires_rerun_family_count\": 0") != string::npos,
+        "evidence bundle idempotent smoke expected stable policy summary fields across reruns"
+    );
+}
+
+void run_evidence_bundle_policy_summary_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_policy_summary_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+    const filesystem::path metadataPath =
+        resolve_artifact_dir(bundleOptions) / bundleOptions.caseName / "phase19_evidence_bundle" / "bundle_metadata.json";
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(metadata.find("\"policy_summary\"") != string::npos, "evidence bundle policy summary smoke expected policy_summary");
+    require_test(metadata.find("\"current_verdict\": \"PASS\"") != string::npos, "evidence bundle policy summary smoke expected current PASS");
+    require_test(metadata.find("\"freshness_verdict\": \"STALE\"") != string::npos, "evidence bundle policy summary smoke expected stale refresh summary");
+}
+
+void run_evidence_bundle_runtime_manifest_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_runtime_manifest_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+}
+
+void run_evidence_bundle_runtime_registry_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_runtime_registry_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+}
+
+void run_evidence_bundle_runtime_history_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_runtime_history_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+}
+
+void run_evidence_bundle_runtime_registry_snapshot_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_runtime_registry_snapshot_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+    const filesystem::path bundleRoot =
+        resolve_artifact_dir(bundleOptions) / bundleOptions.caseName / "phase19_evidence_bundle";
+    require_test(
+        filesystem::exists(bundleRoot / "manifests" / "runtime_registry_runtime_baseline_registry_v1.json"),
+        "evidence bundle runtime registry snapshot smoke expected copied runtime registry snapshot"
+    );
+    const string metadata = slurp_text_file(bundleRoot / "bundle_metadata.json");
+    require_test(
+        metadata.find("\"runtime_registry_summary\"") != string::npos,
+        "evidence bundle runtime registry snapshot smoke expected runtime registry metadata"
+    );
+}
+
+void run_evidence_bundle_runtime_history_snapshot_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_runtime_history_snapshot_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+    const filesystem::path bundleRoot =
+        resolve_artifact_dir(bundleOptions) / bundleOptions.caseName / "phase19_evidence_bundle";
+    require_test(
+        filesystem::exists(bundleRoot / "manifests" / "runtime_history_runtime_history_index_v1.json"),
+        "evidence bundle runtime history snapshot smoke expected copied runtime history index"
+    );
+    require_test(
+        filesystem::exists(bundleRoot / "manifests" / "runtime_history_summary_runtime_history_index_v1_summary.json"),
+        "evidence bundle runtime history snapshot smoke expected copied runtime history summary"
+    );
+    const string metadata = slurp_text_file(bundleRoot / "bundle_metadata.json");
+    require_test(
+        metadata.find("\"runtime_history_summary\"") != string::npos,
+        "evidence bundle runtime history snapshot smoke expected runtime history metadata"
+    );
+}
+
+void run_evidence_bundle_runtime_proposal_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_runtime_proposal_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+    const filesystem::path bundleRoot =
+        resolve_artifact_dir(bundleOptions) / bundleOptions.caseName / "phase19_evidence_bundle";
+    require_test(
+        filesystem::exists(bundleRoot / "manifests" / "runtime_proposal_runtime_rebaseline_proposal_phase19.json"),
+        "evidence bundle runtime proposal smoke expected copied runtime proposal"
+    );
+    const string metadata = slurp_text_file(bundleRoot / "bundle_metadata.json");
+    require_test(
+        metadata.find("\"runtime_proposal_summary\"") != string::npos,
+        "evidence bundle runtime proposal smoke expected runtime proposal metadata"
+    );
+}
+
+void run_evidence_bundle_combined_summary_smoke_case(const TestOptions& options) {
+    TestOptions bundleOptions = options;
+    bundleOptions.caseName = "evidence_bundle_combined_summary_smoke";
+    run_evidence_bundle_smoke_case(bundleOptions);
+    const filesystem::path metadataPath =
+        resolve_artifact_dir(bundleOptions) / bundleOptions.caseName / "phase19_evidence_bundle" / "bundle_metadata.json";
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(
+        metadata.find("\"pipeline_summary_data\"") != string::npos,
+        "evidence bundle combined summary smoke expected pipeline summary metadata"
+    );
+    require_test(
+        metadata.find("\"runtime_severity\": \"OK\"") != string::npos,
+        "evidence bundle combined summary smoke expected runtime severity"
+    );
+}
+
+void run_ops_guide_paths_smoke_case(const TestOptions& options) {
+    (void)options;
+    const filesystem::path readmePath = source_package_root() / "README.md";
+    const string readme = slurp_text_file(readmePath);
+    require_test(readme.find("registry-based now") != string::npos, "ops guide smoke expected runtime baseline registry doc");
+    require_test(readme.find("REBASELINE_REQUIRED") != string::npos, "ops guide smoke expected REBASELINE_REQUIRED doc");
+    require_test(readme.find("Runtime history") != string::npos, "ops guide smoke expected runtime history doc");
+}
+
+void run_policy_severity_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_severity_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "quick", true, false, false, "");
+    require_test(rc == 0, "policy severity smoke expected OK exit code");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"severity\": \"OK\"") != string::npos, "policy severity smoke expected OK severity");
+    require_test(
+        summary.find("\"recommended_next_action\": \"no action required; exact_shadow lifecycle remains healthy\"") != string::npos,
+        "policy severity smoke expected no-op recommendation"
+    );
+}
+
+void run_pipeline_exit_code_smoke_case(const TestOptions& options) {
+    const auto warnPaths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_exit_code_warn_smoke");
+    const int warnRc = run_policy_pipeline_script(
+        options,
+        warnPaths,
+        "quick",
+        true,
+        false,
+        false,
+        "--synthetic-hash-drift compare_engine_hash"
+    );
+    require_test(warnRc == 10, "pipeline exit code smoke expected WARN exit code 10");
+
+    const auto actionPaths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_exit_code_action_smoke");
+    const int actionRc = run_policy_pipeline_script(
+        options,
+        actionPaths,
+        "quick",
+        true,
+        false,
+        false,
+        "--synthetic-applicability-drift planner_tie_mixed_organic"
+    );
+    require_test(actionRc == 20, "pipeline exit code smoke expected ACTION_REQUIRED exit code 20");
+}
+
+void run_stale_warn_mode_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "stale_warn_mode_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        false,
+        false,
+        "--synthetic-hash-drift compare_engine_hash"
+    );
+    require_test(rc == 10, "stale warn mode smoke expected WARN exit code");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"severity\": \"WARN\"") != string::npos, "stale warn mode smoke expected WARN severity");
+    require_test(summary.find("\"stale_family_count\": 3") != string::npos, "stale warn mode smoke expected stale family count");
+}
+
+void run_action_required_mode_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "action_required_mode_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        false,
+        false,
+        "--synthetic-applicability-drift planner_tie_mixed_organic"
+    );
+    require_test(rc == 20, "action required mode smoke expected ACTION_REQUIRED exit code");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"severity\": \"ACTION_REQUIRED\"") != string::npos, "action required mode smoke expected ACTION_REQUIRED severity");
+    require_test(summary.find("\"reclassify_required_count\": 1") != string::npos, "action required mode smoke expected reclassify count");
+}
+
+void run_runtime_budget_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "runtime_budget_smoke";
+    filesystem::remove_all(root);
+    vector<PolicyRuntimeBudgetEntry> entries;
+    entries.push_back(
+        evaluate_policy_runtime_budget_entry(
+            "policy_quick",
+            8.0,
+            7.5,
+            PolicyRuntimeBudgetThreshold{10.0, 20.0, 25.0, 50.0}
+        )
+    );
+    entries.push_back(
+        evaluate_policy_runtime_budget_entry(
+            "policy_nightly",
+            140.0,
+            100.0,
+            PolicyRuntimeBudgetThreshold{120.0, 180.0, 20.0, 40.0}
+        )
+    );
+    const PolicyRuntimeBudgetManifest manifest =
+        evaluate_policy_runtime_budget_manifest(root.string(), entries);
+    const filesystem::path jsonPath = root / "manifests" / "policy_runtime_budget_v1.json";
+    write_policy_runtime_budget_outputs(jsonPath, manifest);
+
+    require_test(
+        manifest.budgetVerdict == "BUDGET_WARN",
+        "runtime budget smoke expected PASS_BUDGET_WARN verdict"
+    );
+    const string summary = slurp_text_file(root / "manifests" / "policy_runtime_budget_v1.summary.txt");
+    require_test(
+        summary.find("budget_verdict=BUDGET_WARN") != string::npos,
+        "runtime budget smoke expected summary verdict"
+    );
+}
+
+void run_runtime_budget_manifest_roundtrip_smoke_case(const TestOptions& options) {
+    TestOptions smokeOptions = options;
+    smokeOptions.caseName = "runtime_budget_smoke";
+    run_runtime_budget_smoke_case(smokeOptions);
+    const filesystem::path txtPath =
+        resolve_artifact_dir(smokeOptions) / "runtime_budget_smoke" / "manifests" / "policy_runtime_budget_v1.txt";
+    const PolicyRuntimeBudgetManifest loaded = load_policy_runtime_budget_manifest_text(txtPath);
+    require_test(loaded.entries.size() == 2U, "runtime budget manifest roundtrip smoke expected two samples");
+    require_test(
+        loaded.budgetVerdict == "BUDGET_WARN",
+        "runtime budget manifest roundtrip smoke expected PASS_BUDGET_WARN"
+    );
+}
+
+void replace_in_file_or_throw(
+    const filesystem::path& path,
+    const string& needle,
+    const string& replacement
+) {
+    string text = slurp_text_file(path);
+    const size_t pos = text.find(needle);
+    if (pos == string::npos) {
+        throw runtime_error("replace_in_file_or_throw missing token in " + path.string());
+    }
+    text.replace(pos, needle.size(), replacement);
+    ofstream ofs(path);
+    if (!ofs) {
+        throw runtime_error("failed to rewrite file: " + path.string());
+    }
+    ofs << text;
+}
+
+string extract_json_string_field_or_throw(const string& json, const string& field) {
+    const string key = "\"" + field + "\"";
+    const size_t keyPos = json.find(key);
+    if (keyPos == string::npos) {
+        throw runtime_error("missing json field: " + field);
+    }
+    const size_t colonPos = json.find(':', keyPos + key.size());
+    const size_t firstQuote = json.find('"', colonPos + 1U);
+    const size_t secondQuote = json.find('"', firstQuote + 1U);
+    if (colonPos == string::npos || firstQuote == string::npos || secondQuote == string::npos) {
+        throw runtime_error("malformed json string field: " + field);
+    }
+    return json.substr(firstQuote + 1U, secondQuote - firstQuote - 1U);
+}
+
+void mutate_runtime_runner_tag_or_throw(const filesystem::path& path, const string& runnerTag, const string& hostHashPrefix) {
+    replace_in_file_or_throw(path, "\"runner_tag\": \"smoke-runner\"", "\"runner_tag\": \"" + runnerTag + "\"");
+    replace_in_file_or_throw(path, "\"fingerprint_hash\": \"", "\"fingerprint_hash\": \"" + hostHashPrefix);
+}
+
+void mutate_runtime_compiler_version_or_throw(
+    const filesystem::path& path,
+    const string& compilerVersion,
+    const string& hostHashPrefix
+) {
+    replace_in_file_or_throw(
+        path,
+        "\"compiler_version\": \"Apple clang version 17.0.0 (clang-1700.6.4.2)\"",
+        "\"compiler_version\": \"" + compilerVersion + "\""
+    );
+    replace_in_file_or_throw(
+        path,
+        "\"compiler_version\": \"Apple clang version 17.0.0 (clang-1700.6.4.2)\"",
+        "\"compiler_version\": \"" + compilerVersion + "\""
+    );
+    replace_in_file_or_throw(path, "\"fingerprint_hash\": \"", "\"fingerprint_hash\": \"" + hostHashPrefix);
+}
+
+void mutate_runtime_os_arch_or_throw(
+    const filesystem::path& path,
+    const string& osName,
+    const string& archName,
+    const string& hostHashPrefix
+) {
+    replace_in_file_or_throw(path, "\"os\": \"Darwin\"", "\"os\": \"" + osName + "\"");
+    replace_in_file_or_throw(path, "\"arch\": \"arm64\"", "\"arch\": \"" + archName + "\"");
+    replace_in_file_or_throw(path, "\"fingerprint_hash\": \"", "\"fingerprint_hash\": \"" + hostHashPrefix);
+}
+
+void mutate_runtime_sanitizer_or_throw(
+    const filesystem::path& path,
+    const string& oldSanitizer,
+    const string& newSanitizer
+) {
+    replace_in_file_or_throw(
+        path,
+        "\"sanitizer_flags\": \"" + oldSanitizer + "\"",
+        "\"sanitizer_flags\": \"" + newSanitizer + "\""
+    );
+}
+
+filesystem::path clone_runtime_manifest_or_throw(
+    const filesystem::path& source,
+    const filesystem::path& target
+) {
+    filesystem::copy_file(source, target, filesystem::copy_options::overwrite_existing);
+    return target;
+}
+
+filesystem::path write_runtime_matrix_config_or_throw(
+    const filesystem::path& outPath,
+    const vector<pair<string, filesystem::path>>& entries
+) {
+    filesystem::create_directories(outPath.parent_path());
+    ofstream ofs(outPath);
+    if (!ofs) {
+        throw runtime_error("failed to write runtime matrix config: " + outPath.string());
+    }
+    ofs << "{\n  \"entries\": [\n";
+    for (size_t i = 0; i < entries.size(); ++i) {
+        ofs << "    {\n";
+        ofs << "      \"name\": \"" << entries[i].first << "\",\n";
+        ofs << "      \"runtime_current_manifest\": \"" << entries[i].second.string() << "\"\n";
+        ofs << "    }";
+        if (i + 1U != entries.size()) {
+            ofs << ',';
+        }
+        ofs << '\n';
+    }
+    ofs << "  ]\n}\n";
+    return outPath;
+}
+
+void write_runtime_current_smoke_manifest(
+    const PolicyPipelineSmokeArtifacts& paths,
+    double releaseSeconds,
+    double debugSeconds,
+    double asanSeconds,
+    const string& runnerTag
+) {
+    require_test(
+        run_runtime_lifecycle_script(
+            "write-current",
+            {
+                "--phase phase22",
+                "--artifact-root " + shell_quote(paths.root.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--baseline-tag phase22-runtime",
+                "--runner-tag " + shell_quote(runnerTag),
+                "--runtime-budget-config " + shell_quote(paths.runtimeBudgetProfileJson.string()),
+                "--entry execution_class=release_full,wall_time_sec=" + to_string(releaseSeconds),
+                "--entry execution_class=debug_full,wall_time_sec=" + to_string(debugSeconds),
+                "--entry execution_class=asan_full,wall_time_sec=" + to_string(asanSeconds),
+                "--entry execution_class=policy_core,wall_time_sec=1.0",
+                "--entry execution_class=policy_refresh,wall_time_sec=1.0",
+                "--entry execution_class=policy_nightly,wall_time_sec=2.0",
+                "--test-count release_full=10",
+                "--test-count debug_full=10",
+                "--test-count asan_full=10",
+            }
+        ) == 0,
+        "runtime smoke expected current manifest generation"
+    );
+}
+
+void promote_runtime_smoke_baseline_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const string& baselineTag
+) {
+    require_test(
+        run_runtime_lifecycle_script(
+            "promote-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag " + shell_quote(baselineTag),
+            }
+        ) == 0,
+        "runtime watch smoke expected baseline promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "registry-promote-baseline",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag " + shell_quote(baselineTag),
+                "--activate",
+            }
+        ) == 0,
+        "runtime watch smoke expected registry promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime watch smoke expected refresh generation"
+    );
+}
+
+void append_runtime_history_samples_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    int repeatCount
+) {
+    for (int i = 0; i < repeatCount; ++i) {
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime watch smoke expected history append"
+        );
+    }
+}
+
+void run_runtime_watch_cycle_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const string& executionClass,
+    int repeatCount
+) {
+    require_test(
+        run_runtime_lifecycle_script(
+            "watch-campaign",
+            {
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-current " + shell_quote(paths.runtimeWatchCurrentJson.string()),
+                "--runtime-watch-history-index " + shell_quote(paths.runtimeWatchHistoryIndexJson.string()),
+                "--runtime-budget-config " + shell_quote(paths.runtimeBudgetProfileJson.string()),
+                "--execution-class " + shell_quote(executionClass),
+                "--repeat " + to_string(max(repeatCount, 1)),
+            }
+        ) == 0,
+        "runtime watch smoke expected watch campaign"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "watch-refresh",
+            {
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-watch-current " + shell_quote(paths.runtimeWatchCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()),
+                "--runtime-watch-history-index " + shell_quote(paths.runtimeWatchHistoryIndexJson.string()),
+            }
+        ) == 0,
+        "runtime watch smoke expected watch refresh"
+    );
+}
+
+struct RuntimeRebaselineSmokeArtifacts {
+    PolicyPipelineSmokeArtifacts paths;
+    filesystem::path approvedBaselineJson;
+    filesystem::path archivedProposalJson;
+    filesystem::path refreshedRuntimeJson;
+    filesystem::path rerunRuntimeJson;
+    filesystem::path quickSummaryJson;
+    filesystem::path nightlySummaryJson;
+};
+
+RuntimeRebaselineSmokeArtifacts prepare_runtime_rebaseline_smoke_artifacts(
+    const TestOptions& options,
+    const string& stem
+) {
+    RuntimeRebaselineSmokeArtifacts artifacts;
+    artifacts.paths = prepare_policy_pipeline_smoke_artifacts(options, stem);
+    artifacts.approvedBaselineJson = artifacts.paths.root / "manifests" / "policy_runtime_baseline_phase25_approved.json";
+    artifacts.archivedProposalJson = artifacts.paths.root / "manifests" / "runtime_rebaseline_proposal_phase25_archived.json";
+    artifacts.refreshedRuntimeJson = artifacts.paths.root / "manifests" / "policy_runtime_refresh_phase25_v2.json";
+    artifacts.rerunRuntimeJson = artifacts.paths.root / "manifests" / "policy_runtime_rerun_phase25_v2.json";
+    artifacts.quickSummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_quick_phase26.json";
+    artifacts.nightlySummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_nightly_phase26.json";
+
+    mutate_runtime_runner_tag_or_throw(
+        artifacts.paths.runtimeCurrentJson,
+        "runner-rebaseline",
+        "synthetic-phase26-rebaseline-"
+    );
+
+    TestOptions refreshOptions = options;
+    refreshOptions.runtimeBaselineRegistry = artifacts.paths.runtimeRegistryJson.string();
+    refreshOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    refreshOptions.runtimeRefreshManifest = artifacts.paths.runtimeRefreshJson.string();
+    run_runtime_gate_refresh_case(refreshOptions);
+
+    TestOptions proposalOptions = options;
+    proposalOptions.runtimeBaselineRegistry = artifacts.paths.runtimeRegistryJson.string();
+    proposalOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    proposalOptions.runtimeRefreshManifest = artifacts.paths.runtimeRefreshJson.string();
+    proposalOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    proposalOptions.proposalOut = artifacts.paths.runtimeProposalJson.string();
+    run_runtime_propose_rebaseline_case(proposalOptions);
+    return artifacts;
+}
+
+void approve_runtime_rebaseline_smoke_artifacts(
+    const TestOptions& options,
+    const RuntimeRebaselineSmokeArtifacts& artifacts
+) {
+    TestOptions approveOptions = options;
+    approveOptions.runtimeBaselineRegistry = artifacts.paths.runtimeRegistryJson.string();
+    approveOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    approveOptions.runtimeBaselineManifest = artifacts.approvedBaselineJson.string();
+    approveOptions.proposalOut = artifacts.paths.runtimeProposalJson.string();
+    approveOptions.archiveProposal = artifacts.archivedProposalJson.string();
+    approveOptions.baselineTag = "phase25-runtime-approved";
+    approveOptions.activate = true;
+    approveOptions.requireAcceptableStatus = true;
+    run_runtime_approve_rebaseline_case(approveOptions);
+}
+
+void refresh_runtime_after_rebaseline_smoke_artifacts(
+    const TestOptions& options,
+    const RuntimeRebaselineSmokeArtifacts& artifacts
+) {
+    TestOptions refreshOptions = options;
+    refreshOptions.runtimeBaselineRegistry = artifacts.paths.runtimeRegistryJson.string();
+    refreshOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    refreshOptions.runtimeRefreshManifest = artifacts.refreshedRuntimeJson.string();
+    run_runtime_gate_refresh_case(refreshOptions);
+}
+
+void rerun_plan_after_rebaseline_smoke_artifacts(
+    const TestOptions& options,
+    const RuntimeRebaselineSmokeArtifacts& artifacts
+) {
+    TestOptions rerunOptions = options;
+    rerunOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    rerunOptions.runtimeRefreshManifest = artifacts.refreshedRuntimeJson.string();
+    rerunOptions.runtimeRerunPlan = artifacts.rerunRuntimeJson.string();
+    run_runtime_gate_plan_rerun_case(rerunOptions);
+}
+
+void run_runtime_fingerprint_roundtrip_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_fingerprint_roundtrip_smoke");
+    const string json = slurp_text_file(paths.runtimeCurrentJson);
+    require_test(
+        json.find("\"host_fingerprint\"") != string::npos,
+        "runtime fingerprint roundtrip smoke expected host fingerprint"
+    );
+    require_test(
+        json.find("\"toolchain_fingerprint\"") != string::npos,
+        "runtime fingerprint roundtrip smoke expected toolchain fingerprint"
+    );
+    require_test(
+        json.find("\"runner_tag\": \"smoke-runner\"") != string::npos,
+        "runtime fingerprint roundtrip smoke expected runner tag"
+    );
+}
+
+void run_runtime_not_comparable_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_not_comparable_smoke");
+    mutate_runtime_runner_tag_or_throw(paths.runtimeCurrentJson, "runner-shifted", "synthetic-runner-shift-");
+    TestOptions refreshOptions = options;
+    refreshOptions.runtimeBaselineManifest = paths.runtimeBaselineJson.string();
+    refreshOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    refreshOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    run_runtime_gate_refresh_case(refreshOptions);
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(
+        refreshText.find("\"comparability_verdict\": \"NOT_COMPARABLE\"") != string::npos,
+        "runtime not comparable smoke expected NOT_COMPARABLE"
+    );
+}
+
+void run_runtime_refresh_same_fingerprint_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_refresh_same_fingerprint_smoke");
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(refreshText.find("\"freshness_verdict\": \"FRESH\"") != string::npos, "runtime refresh same fingerprint expected FRESH");
+    require_test(refreshText.find("\"comparability_verdict\": \"COMPARABLE\"") != string::npos, "runtime refresh same fingerprint expected COMPARABLE");
+}
+
+void run_runtime_baseline_promote_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_baseline_promote_smoke");
+    TestOptions promoteOptions = options;
+    promoteOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    promoteOptions.runtimeBaselineManifest = (paths.root / "manifests" / "policy_runtime_promoted.json").string();
+    promoteOptions.baselineTag = "phase22-runtime-approved";
+    run_runtime_gate_promote_baseline_case(promoteOptions);
+    const string baselineText = slurp_text_file(*promoteOptions.runtimeBaselineManifest);
+    require_test(baselineText.find("\"manifest_role\": \"baseline\"") != string::npos, "runtime baseline promote smoke expected baseline role");
+    require_test(baselineText.find("\"baseline_tag\": \"phase22-runtime-approved\"") != string::npos, "runtime baseline promote smoke expected baseline tag");
+}
+
+void run_runtime_registry_promote_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_promote_smoke");
+    const string registryText = slurp_text_file(paths.runtimeRegistryJson);
+    require_test(
+        registryText.find("\"registry_version\": \"runtime_baseline_registry_v1\"") != string::npos,
+        "runtime registry promote smoke expected registry version"
+    );
+    require_test(
+        registryText.find("\"status\": \"active\"") != string::npos,
+        "runtime registry promote smoke expected active baseline entry"
+    );
+}
+
+void run_runtime_registry_activate_retire_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_activate_retire_smoke");
+    const string initialRegistry = slurp_text_file(paths.runtimeRegistryJson);
+    const string baselineId = extract_json_string_field_or_throw(initialRegistry, "baseline_id");
+    TestOptions retireOptions = options;
+    retireOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    retireOptions.retireBaseline = baselineId;
+    run_runtime_registry_promote_baseline_case(retireOptions);
+    const string retiredRegistry = slurp_text_file(paths.runtimeRegistryJson);
+    require_test(
+        retiredRegistry.find("\"status\": \"retired\"") != string::npos,
+        "runtime registry activate retire smoke expected retired status"
+    );
+}
+
+void run_runtime_registry_roundtrip_smoke_case(const TestOptions& options) {
+    TestOptions smokeOptions = options;
+    smokeOptions.caseName = "runtime_registry_promote_smoke";
+    run_runtime_registry_promote_smoke_case(smokeOptions);
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_roundtrip_smoke");
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const filesystem::path selectionPath = default_runtime_selection_output_path(paths.runtimeCurrentJson);
+    const string selectionText = slurp_text_file(selectionPath);
+    require_test(
+        selectionText.find("\"comparability_verdict\": \"COMPARABLE\"") != string::npos,
+        "runtime registry roundtrip smoke expected COMPARABLE selection"
+    );
+}
+
+void run_runtime_registry_select_exact_match_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_select_exact_match_smoke");
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(
+        selectionText.find("\"comparability_verdict\": \"COMPARABLE\"") != string::npos,
+        "runtime registry select exact match smoke expected COMPARABLE"
+    );
+}
+
+void run_runtime_registry_select_no_match_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_select_no_match_smoke");
+    replace_in_file_or_throw(paths.runtimeCurrentJson, "\"fingerprint_hash\": \"", "\"fingerprint_hash\": \"synthetic-no-match-");
+    replace_in_file_or_throw(paths.runtimeCurrentJson, "\"compiler_id\": \"appleclang\"", "\"compiler_id\": \"gcc\"");
+    replace_in_file_or_throw(paths.runtimeCurrentJson, "\"compiler_id\": \"appleclang\"", "\"compiler_id\": \"gcc\"");
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(
+        selectionText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos,
+        "runtime registry select no match smoke expected REBASELINE_REQUIRED"
+    );
+}
+
+void run_runtime_registry_rebaseline_required_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_rebaseline_required_smoke");
+    replace_in_file_or_throw(paths.runtimeCurrentJson, "\"fingerprint_hash\": \"", "\"fingerprint_hash\": \"synthetic-rebaseline-");
+    replace_in_file_or_throw(paths.runtimeCurrentJson, "\"compiler_id\": \"appleclang\"", "\"compiler_id\": \"gcc\"");
+    replace_in_file_or_throw(paths.runtimeCurrentJson, "\"compiler_id\": \"appleclang\"", "\"compiler_id\": \"gcc\"");
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(
+        selectionText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos,
+        "runtime registry rebaseline required smoke expected REBASELINE_REQUIRED"
+    );
+}
+
+void run_runtime_refresh_against_promoted_baseline_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_refresh_against_promoted_baseline_smoke");
+    TestOptions refreshOptions = options;
+    refreshOptions.runtimeBaselineManifest = paths.runtimeBaselineJson.string();
+    refreshOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    refreshOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    run_runtime_gate_refresh_case(refreshOptions);
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(refreshText.find("\"freshness_verdict\": \"FRESH\"") != string::npos, "runtime refresh promoted baseline smoke expected FRESH");
+    require_test(refreshText.find("\"runtime_severity\": \"OK\"") != string::npos, "runtime refresh promoted baseline smoke expected OK");
+}
+
+void run_runtime_rerun_plan_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_rerun_plan_smoke");
+    write_runtime_current_smoke_manifest(paths, 180.0, 480.0, 900.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime rerun plan smoke expected refresh"
+    );
+    TestOptions planOptions = options;
+    planOptions.runtimeBaselineManifest = paths.runtimeBaselineJson.string();
+    planOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    planOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    planOptions.runtimeRerunPlan = paths.runtimeRerunJson.string();
+    run_runtime_gate_plan_rerun_case(planOptions);
+    const string planText = slurp_text_file(paths.runtimeRerunJson);
+    require_test(planText.find("\"selected_entry_count\": 1") != string::npos, "runtime rerun plan smoke expected one entry");
+    require_test(planText.find("release_full_rerun") != string::npos, "runtime rerun plan smoke expected release_full rerun");
+}
+
+void run_runtime_rerun_plan_empty_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_rerun_plan_empty_smoke");
+    const string planText = slurp_text_file(paths.runtimeRerunJson);
+    require_test(planText.find("\"summary_verdict\": \"PASS\"") != string::npos, "runtime rerun empty smoke expected PASS");
+    require_test(planText.find("\"selected_entry_count\": 0") != string::npos, "runtime rerun empty smoke expected zero entries");
+}
+
+void run_runtime_synthetic_warn_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_synthetic_warn_smoke");
+    write_runtime_current_smoke_manifest(paths, 300.0, 480.0, 900.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "promote-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag phase22-runtime-warn",
+            }
+        ) == 0,
+        "runtime synthetic warn smoke expected baseline promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime synthetic warn smoke expected refresh"
+    );
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(refreshText.find("\"current_verdict\": \"WARN\"") != string::npos, "runtime synthetic warn smoke expected WARN verdict");
+    require_test(refreshText.find("\"freshness_verdict\": \"FRESH\"") != string::npos, "runtime synthetic warn smoke expected FRESH");
+    require_test(refreshText.find("\"runtime_severity\": \"WARN\"") != string::npos, "runtime synthetic warn smoke expected WARN severity");
+}
+
+void run_runtime_synthetic_action_required_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_synthetic_action_required_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 900.0, "other-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime synthetic action required smoke expected refresh"
+    );
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(refreshText.find("\"comparability_verdict\": \"NOT_COMPARABLE\"") != string::npos, "runtime synthetic action required smoke expected NOT_COMPARABLE");
+    require_test(refreshText.find("\"runtime_severity\": \"ACTION_REQUIRED\"") != string::npos, "runtime synthetic action required smoke expected ACTION_REQUIRED");
+}
+
+void run_runtime_synthetic_fail_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_synthetic_fail_smoke");
+    write_runtime_current_smoke_manifest(paths, 600.0, 480.0, 900.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime synthetic fail smoke expected refresh"
+    );
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(refreshText.find("\"current_verdict\": \"FAIL\"") != string::npos, "runtime synthetic fail smoke expected FAIL verdict");
+    require_test(refreshText.find("\"runtime_severity\": \"FAIL\"") != string::npos, "runtime synthetic fail smoke expected FAIL severity");
+}
+
+void run_runtime_missing_baseline_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_missing_baseline_smoke");
+    filesystem::remove(paths.runtimeBaselineJson);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime missing baseline smoke expected refresh output"
+    );
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(refreshText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos, "runtime missing baseline smoke expected REBASELINE_REQUIRED");
+}
+
+void run_runtime_fingerprint_mismatch_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_fingerprint_mismatch_smoke");
+    mutate_runtime_os_arch_or_throw(paths.runtimeCurrentJson, "Linux", "x86_64", "synthetic-cross-host-");
+    TestOptions refreshOptions = options;
+    refreshOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    refreshOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    refreshOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    run_runtime_gate_refresh_case(refreshOptions);
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(
+        refreshText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos,
+        "runtime fingerprint mismatch smoke expected REBASELINE_REQUIRED"
+    );
+    require_test(
+        refreshText.find("\"runtime_severity\": \"ACTION_REQUIRED\"") != string::npos,
+        "runtime fingerprint mismatch smoke expected ACTION_REQUIRED"
+    );
+}
+
+void run_runtime_history_append_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_append_smoke");
+    const string historyText = slurp_text_file(paths.runtimeHistoryIndexJson);
+    require_test(
+        historyText.find("\"history_version\": \"runtime_history_index_v1\"") != string::npos,
+        "runtime history append smoke expected history version"
+    );
+    require_test(
+        historyText.find("\"release_full\"") != string::npos,
+        "runtime history append smoke expected release_full sample"
+    );
+}
+
+void run_runtime_history_summary_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_summary_smoke");
+    for (double releaseSeconds : {121.0, 119.0, 120.0}) {
+        write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime history summary smoke expected history append"
+        );
+    }
+    TestOptions historyOptions = options;
+    historyOptions.runtimeHistoryIndex = paths.runtimeHistoryIndexJson.string();
+    run_runtime_history_summary_case(historyOptions);
+    const string summaryText = slurp_text_file(paths.runtimeHistorySummaryJson);
+    require_test(
+        summaryText.find("\"summary_version\": \"runtime_history_summary_v1\"") != string::npos,
+        "runtime history summary smoke expected summary version"
+    );
+    require_test(
+        summaryText.find("\"trend_direction\": \"stable\"") != string::npos,
+        "runtime history summary smoke expected stable trend"
+    );
+}
+
+void run_runtime_history_jitter_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_jitter_smoke");
+    for (double releaseSeconds : {120.0, 180.0, 125.0}) {
+        write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime history jitter smoke expected history append"
+        );
+    }
+    const string summaryText = slurp_text_file(paths.runtimeHistorySummaryJson);
+    require_test(
+        summaryText.find("\"sample_count\": 4") != string::npos,
+        "runtime history jitter smoke expected accumulated samples"
+    );
+}
+
+void run_runtime_rebaseline_proposal_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_rebaseline_proposal_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 900.0, "other-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime rebaseline proposal smoke expected refresh"
+    );
+    TestOptions proposalOptions = options;
+    proposalOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    proposalOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    proposalOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    proposalOptions.proposalOut = paths.runtimeProposalJson.string();
+    run_runtime_propose_rebaseline_case(proposalOptions);
+    const string proposalText = slurp_text_file(paths.runtimeProposalJson);
+    require_test(
+        proposalText.find("\"proposal_needed\": true") != string::npos,
+        "runtime rebaseline proposal smoke expected proposal_needed"
+    );
+}
+
+void run_runtime_rebaseline_noop_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_rebaseline_noop_smoke");
+    const string proposalText = slurp_text_file(paths.runtimeProposalJson);
+    require_test(
+        proposalText.find("\"proposal_needed\": false") != string::npos,
+        "runtime rebaseline noop smoke expected no-op proposal"
+    );
+}
+
+void run_policy_pipeline_quick_registry_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_pipeline_quick_registry_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "quick", true, true, false, "");
+    require_test(rc == 0, "policy pipeline quick registry smoke expected success");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(
+        summary.find("\"runtime_selected_baseline_id\"") != string::npos,
+        "policy pipeline quick registry smoke expected selected baseline"
+    );
+}
+
+void run_policy_pipeline_nightly_history_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_pipeline_nightly_history_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "nightly", true, true, false, "");
+    require_test(rc == 0, "policy pipeline nightly history smoke expected success");
+    require_test(
+        filesystem::exists(paths.runtimeHistoryIndexJson),
+        "policy pipeline nightly history smoke expected runtime history index"
+    );
+}
+
+void run_policy_pipeline_rebaseline_needed_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_pipeline_rebaseline_needed_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--synthetic-runtime-fixture cross_host"
+    );
+    require_test(rc == 20, "policy pipeline rebaseline needed smoke expected ACTION_REQUIRED");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(
+        summary.find("\"runtime_rebaseline_proposal_needed\": true") != string::npos,
+        "policy pipeline rebaseline needed smoke expected rebaseline proposal"
+    );
+}
+
+void run_runtime_registry_unknown_fingerprint_smoke_case(const TestOptions& options) {
+    TestOptions smokeOptions = options;
+    smokeOptions.caseName = "runtime_registry_rebaseline_required_smoke";
+    run_runtime_registry_rebaseline_required_smoke_case(smokeOptions);
+}
+
+void run_runtime_registry_multiple_candidate_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_multiple_candidate_smoke");
+    const filesystem::path altBaselineJson = paths.root / "manifests" / "policy_runtime_baseline_alt.json";
+    filesystem::copy_file(paths.runtimeBaselineJson, altBaselineJson, filesystem::copy_options::overwrite_existing);
+    replace_in_file_or_throw(
+        altBaselineJson,
+        "\"approval_timestamp_utc\": \"",
+        "\"approval_timestamp_utc\": \"synthetic-"
+    );
+    TestOptions promoteOptions = options;
+    promoteOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    promoteOptions.runtimeBaselineManifest = altBaselineJson.string();
+    promoteOptions.baselineTag = "phase22-runtime-approved-v2";
+    promoteOptions.activate = true;
+    run_runtime_registry_promote_baseline_case(promoteOptions);
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(
+        selectionText.find("\"candidate_count\": 2") != string::npos,
+        "runtime registry multiple candidate smoke expected multiple candidates"
+    );
+}
+
+void run_runtime_registry_retired_only_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_retired_only_smoke");
+    const string registryText = slurp_text_file(paths.runtimeRegistryJson);
+    const string baselineId = extract_json_string_field_or_throw(registryText, "baseline_id");
+    TestOptions retireOptions = options;
+    retireOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    retireOptions.retireBaseline = baselineId;
+    run_runtime_registry_promote_baseline_case(retireOptions);
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(
+        selectionText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos,
+        "runtime registry retired only smoke expected REBASELINE_REQUIRED"
+    );
+}
+
+void run_runtime_registry_multi_fingerprint_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_multi_fingerprint_smoke");
+    const filesystem::path runnerBaseline = clone_runtime_manifest_or_throw(
+        paths.runtimeBaselineJson,
+        paths.root / "manifests" / "policy_runtime_runner_alt.json"
+    );
+    mutate_runtime_runner_tag_or_throw(runnerBaseline, "alt-runner", "synthetic-runner-alt-");
+    TestOptions runnerPromote = options;
+    runnerPromote.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    runnerPromote.runtimeBaselineManifest = runnerBaseline.string();
+    runnerPromote.baselineTag = "phase22-runtime-runner-alt";
+    runnerPromote.activate = true;
+    run_runtime_registry_promote_baseline_case(runnerPromote);
+
+    const filesystem::path compilerBaseline = clone_runtime_manifest_or_throw(
+        paths.runtimeBaselineJson,
+        paths.root / "manifests" / "policy_runtime_compiler_alt.json"
+    );
+    mutate_runtime_compiler_version_or_throw(
+        compilerBaseline,
+        "Apple clang version 17.0.1 (clang-1700.6.5.1)",
+        "synthetic-compiler-alt-"
+    );
+    TestOptions compilerPromote = options;
+    compilerPromote.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    compilerPromote.runtimeBaselineManifest = compilerBaseline.string();
+    compilerPromote.baselineTag = "phase22-runtime-compiler-alt";
+    compilerPromote.activate = true;
+    run_runtime_registry_promote_baseline_case(compilerPromote);
+
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(selectionText.find("\"comparability_verdict\": \"COMPARABLE\"") != string::npos, "runtime registry multi fingerprint smoke expected COMPARABLE");
+    require_test(selectionText.find("\"candidate_count\": 3") != string::npos, "runtime registry multi fingerprint smoke expected candidate_count=3");
+    require_test(selectionText.find("\"exact_match_count\": 1") != string::npos, "runtime registry multi fingerprint smoke expected exact match");
+    require_test(selectionText.find("\"compatible_match_count\": 2") != string::npos, "runtime registry multi fingerprint smoke expected compatible matches");
+}
+
+void run_runtime_registry_same_host_compiler_bump_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_same_host_compiler_bump_smoke");
+    mutate_runtime_compiler_version_or_throw(
+        paths.runtimeCurrentJson,
+        "Apple clang version 17.0.1 (clang-1700.6.5.1)",
+        "synthetic-current-compiler-bump-"
+    );
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(selectionText.find("\"comparability_verdict\": \"NOT_COMPARABLE\"") != string::npos, "runtime registry compiler bump smoke expected NOT_COMPARABLE");
+    require_test(selectionText.find("\"exact_match_count\": 0") != string::npos, "runtime registry compiler bump smoke expected zero exact matches");
+    require_test(selectionText.find("\"compatible_match_count\": 1") != string::npos, "runtime registry compiler bump smoke expected compatible match");
+}
+
+void run_runtime_registry_sanitizer_change_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_sanitizer_change_smoke");
+    mutate_runtime_sanitizer_or_throw(paths.runtimeCurrentJson, "none", "asan-lite");
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(selectionText.find("\"comparability_verdict\": \"NOT_COMPARABLE\"") != string::npos, "runtime registry sanitizer change smoke expected NOT_COMPARABLE");
+    require_test(selectionText.find("\"compatible_match_count\": 1") != string::npos, "runtime registry sanitizer change smoke expected compatible match");
+}
+
+void run_runtime_registry_runner_tag_change_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_runner_tag_change_smoke");
+    mutate_runtime_runner_tag_or_throw(paths.runtimeCurrentJson, "runner-shifted", "synthetic-runner-shift-");
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(selectionText.find("\"comparability_verdict\": \"NOT_COMPARABLE\"") != string::npos, "runtime registry runner tag smoke expected NOT_COMPARABLE");
+    require_test(selectionText.find("\"compatible_match_count\": 1") != string::npos, "runtime registry runner tag smoke expected compatible match");
+}
+
+void run_runtime_registry_cross_host_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_cross_host_smoke");
+    mutate_runtime_os_arch_or_throw(paths.runtimeCurrentJson, "Linux", "x86_64", "synthetic-cross-host-");
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(paths.runtimeCurrentJson));
+    require_test(selectionText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos, "runtime registry cross host smoke expected REBASELINE_REQUIRED");
+    require_test(selectionText.find("\"compatible_match_count\": 0") != string::npos, "runtime registry cross host smoke expected zero compatible matches");
+}
+
+void run_runtime_history_regression_spike_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_regression_spike_smoke");
+    for (double releaseSeconds : {120.0, 121.0, 180.0}) {
+        write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime history regression spike smoke expected history append"
+        );
+    }
+    const string summaryText = slurp_text_file(paths.runtimeHistorySummaryJson);
+    require_test(
+        summaryText.find("\"trend_direction\": \"regressing\"") != string::npos,
+        "runtime history regression spike smoke expected regressing trend"
+    );
+}
+
+void run_runtime_history_stable_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_stable_smoke");
+    for (double releaseSeconds : {121.0, 119.0, 120.0}) {
+        write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime history stable smoke expected history append"
+        );
+    }
+    const string summaryText = slurp_text_file(paths.runtimeHistorySummaryJson);
+    require_test(summaryText.find("\"trend_direction\": \"stable\"") != string::npos, "runtime history stable smoke expected stable");
+}
+
+void run_runtime_history_noisy_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_noisy_smoke");
+    for (double releaseSeconds : {170.0, 90.0, 145.0, 118.0}) {
+        write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime history noisy smoke expected history append"
+        );
+    }
+    const string summaryText = slurp_text_file(paths.runtimeHistorySummaryJson);
+    require_test(summaryText.find("\"trend_direction\": \"noisy\"") != string::npos, "runtime history noisy smoke expected noisy");
+}
+
+void run_runtime_history_regressing_smoke_case(const TestOptions& options) {
+    TestOptions smokeOptions = options;
+    smokeOptions.caseName = "runtime_history_regression_spike_smoke";
+    run_runtime_history_regression_spike_smoke_case(smokeOptions);
+}
+
+void run_runtime_history_recovery_after_rebaseline_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_recovery_after_rebaseline_smoke");
+    for (double releaseSeconds : {150.0, 170.0}) {
+        write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime history recovery smoke expected pre-rebaseline append"
+        );
+    }
+    write_runtime_current_smoke_manifest(paths, 105.0, 480.0, 900.0, "smoke-runner");
+    replace_in_file_or_throw(paths.runtimeCurrentJson, "\"baseline_tag\": \"phase22-runtime\"", "\"baseline_tag\": \"phase25-runtime-rebased\"");
+    require_test(
+        run_runtime_lifecycle_script(
+            "history-append",
+            {
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime history recovery smoke expected rebaseline append"
+    );
+    const string summaryText = slurp_text_file(paths.runtimeHistorySummaryJson);
+    require_test(summaryText.find("\"trend_direction\": \"improved\"") != string::npos, "runtime history recovery smoke expected improved");
+}
+
+void run_runtime_watch_fixture_smoke_case(
+    const TestOptions& options,
+    const string& stem,
+    const string& fixture,
+    int expectedExitCode,
+    const string& expectedComparability,
+    const string& expectedWatchStatus,
+    const string& expectedRecommendation,
+    const string& expectedSeverity
+) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, stem);
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--synthetic-runtime-fixture " + shell_quote(fixture)
+    );
+    require_test(rc == expectedExitCode, stem + " expected exit code");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(
+        summary.find("\"runtime_comparability_verdict\": \"" + expectedComparability + "\"") != string::npos,
+        stem + " expected comparability verdict"
+    );
+    require_test(
+        summary.find("\"runtime_watch_status\": \"" + expectedWatchStatus + "\"") != string::npos,
+        stem + " expected watch status"
+    );
+    require_test(
+        summary.find("\"runtime_recommendation\": \"" + expectedRecommendation + "\"") != string::npos,
+        stem + " expected runtime recommendation"
+    );
+    require_test(
+        summary.find("\"severity\": \"" + expectedSeverity + "\"") != string::npos,
+        stem + " expected combined severity"
+    );
+}
+
+void run_runtime_watch_campaign_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_campaign_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const string watchCurrent = slurp_text_file(paths.runtimeWatchCurrentJson);
+    require_test(watchCurrent.find("\"overall_watch_status\": \"WATCH_STABLE\"") != string::npos, "runtime watch campaign smoke expected WATCH_STABLE");
+    require_test(watchCurrent.find("\"sample_count\": 5") != string::npos, "runtime watch campaign smoke expected repeat count");
+}
+
+void run_runtime_watch_campaign_longer_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_campaign_longer_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 10);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 10);
+    const string watchCurrent = slurp_text_file(paths.runtimeWatchCurrentJson);
+    require_test(watchCurrent.find("\"overall_watch_status\": \"WATCH_STABLE\"") != string::npos, "runtime watch campaign longer smoke expected WATCH_STABLE");
+    require_test(watchCurrent.find("\"sample_count\": 10") != string::npos, "runtime watch campaign longer smoke expected repeat count");
+}
+
+void run_runtime_watch_multi_fingerprint_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_multi_fingerprint_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "matrix", true, true, false, "");
+    require_test(rc == 20, "runtime watch multi fingerprint smoke expected ACTION_REQUIRED");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"matrix_entry_count\": 6") != string::npos, "runtime watch multi fingerprint smoke expected six fixtures");
+    require_test(
+        summary.find("\"runtime_watch_status\": \"CLEAR\"") != string::npos
+            || summary.find("\"runtime_watch_status\": \"WATCH_STABLE\"") != string::npos
+            || summary.find("\"runtime_watch_status\": \"WATCH\"") != string::npos,
+        "runtime watch multi fingerprint smoke expected exact entry watch state or clear exact-current baseline"
+    );
+    require_test(summary.find("\"runtime_watch_status\": \"REBASELINE_REQUIRED\"") != string::npos, "runtime watch multi fingerprint smoke expected rebaseline watch entries");
+    require_test(summary.find("\"matrix_watch_status_counts\"") != string::npos, "runtime watch multi fingerprint smoke expected watch status counts");
+}
+
+void run_runtime_watch_same_host_compiler_bump_smoke_case(const TestOptions& options) {
+    run_runtime_watch_fixture_smoke_case(
+        options,
+        "runtime_watch_same_host_compiler_bump_smoke",
+        "same_host_compiler_bump",
+        20,
+        "NOT_COMPARABLE",
+        "REBASELINE_REQUIRED",
+        "NOT_COMPARABLE",
+        "ACTION_REQUIRED"
+    );
+}
+
+void run_runtime_watch_sanitizer_change_smoke_case(const TestOptions& options) {
+    run_runtime_watch_fixture_smoke_case(
+        options,
+        "runtime_watch_sanitizer_change_smoke",
+        "sanitizer_change",
+        20,
+        "NOT_COMPARABLE",
+        "REBASELINE_REQUIRED",
+        "NOT_COMPARABLE",
+        "ACTION_REQUIRED"
+    );
+}
+
+void run_runtime_watch_runner_tag_change_smoke_case(const TestOptions& options) {
+    run_runtime_watch_fixture_smoke_case(
+        options,
+        "runtime_watch_runner_tag_change_smoke",
+        "runner_tag_change",
+        20,
+        "NOT_COMPARABLE",
+        "REBASELINE_REQUIRED",
+        "NOT_COMPARABLE",
+        "ACTION_REQUIRED"
+    );
+}
+
+void run_runtime_watch_cross_host_smoke_case(const TestOptions& options) {
+    run_runtime_watch_fixture_smoke_case(
+        options,
+        "runtime_watch_cross_host_smoke",
+        "cross_host",
+        20,
+        "REBASELINE_REQUIRED",
+        "REBASELINE_REQUIRED",
+        "REBASELINE_REQUIRED",
+        "ACTION_REQUIRED"
+    );
+}
+
+void run_runtime_watch_retired_only_smoke_case(const TestOptions& options) {
+    run_runtime_watch_fixture_smoke_case(
+        options,
+        "runtime_watch_retired_only_smoke",
+        "retired_only",
+        20,
+        "REBASELINE_REQUIRED",
+        "REBASELINE_REQUIRED",
+        "REBASELINE_REQUIRED",
+        "ACTION_REQUIRED"
+    );
+}
+
+void run_runtime_watch_stable_overrun_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_stable_overrun_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const string watchRefresh = slurp_text_file(paths.runtimeWatchRefreshJson);
+    require_test(watchRefresh.find("\"overall_watch_status\": \"WATCH_STABLE\"") != string::npos, "runtime watch stable overrun smoke expected WATCH_STABLE");
+    require_test(watchRefresh.find("\"diagnostic_watch_only\": true") != string::npos, "runtime watch stable overrun smoke expected diagnostic-only watch");
+}
+
+void run_runtime_watch_clear_after_recovery_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_clear_after_recovery_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 3);
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2200.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime watch clear smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 2);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const string watchRefresh = slurp_text_file(paths.runtimeWatchRefreshJson);
+    require_test(watchRefresh.find("\"overall_watch_status\": \"CLEAR\"") != string::npos, "runtime watch clear smoke expected CLEAR");
+}
+
+void run_runtime_watch_escalate_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_escalate_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 3);
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 4300.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime watch escalate smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 1);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const string watchRefresh = slurp_text_file(paths.runtimeWatchRefreshJson);
+    require_test(watchRefresh.find("\"overall_watch_status\": \"WATCH_ESCALATE\"") != string::npos, "runtime watch escalate smoke expected WATCH_ESCALATE");
+}
+
+void run_runtime_watch_transition_clear_smoke_case(const TestOptions& options) {
+    run_runtime_watch_clear_after_recovery_smoke_case(options);
+}
+
+void run_runtime_watch_transition_stable_smoke_case(const TestOptions& options) {
+    run_runtime_watch_stable_overrun_smoke_case(options);
+}
+
+void run_runtime_watch_transition_escalate_smoke_case(const TestOptions& options) {
+    run_runtime_watch_escalate_smoke_case(options);
+}
+
+void run_runtime_watch_to_rebaseline_candidate_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_to_rebaseline_candidate_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2300.0, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime watch to rebaseline candidate smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 7);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 7);
+    const string watchRefresh = slurp_text_file(paths.runtimeWatchRefreshJson);
+    require_test(watchRefresh.find("\"overall_watch_status\": \"REBASELINE_CANDIDATE\"") != string::npos, "runtime watch to rebaseline candidate smoke expected REBASELINE_CANDIDATE");
+    require_test(watchRefresh.find("\"overall_watch_recommendation\": \"PROPOSE_RUNTIME_REBASELINE\"") != string::npos, "runtime watch to rebaseline candidate smoke expected proposal recommendation");
+}
+
+void run_runtime_watch_production_hard_fail_smoke_case(const TestOptions& options) {
+    run_combined_pipeline_fail_on_production_budget_smoke_case(options);
+}
+
+void run_runtime_watch_diagnostic_soft_warn_smoke_case(const TestOptions& options) {
+    run_combined_pipeline_continue_monitoring_smoke_case(options);
+}
+
+void run_runtime_budget_role_sensitive_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_budget_role_sensitive_smoke");
+    const string profileJson = slurp_text_file(paths.runtimeBudgetProfileJson);
+    require_test(profileJson.find("\"profile_id\": \"phase28-runtime-budget-v1\"") != string::npos, "runtime budget role sensitive smoke expected profile id");
+    require_test(profileJson.find("\"release_full\"") != string::npos && profileJson.find("\"production_critical\"") != string::npos, "runtime budget role sensitive smoke expected production role");
+    require_test(profileJson.find("\"asan_full\"") != string::npos && profileJson.find("\"diagnostic\"") != string::npos, "runtime budget role sensitive smoke expected diagnostic role");
+    require_test(profileJson.find("\"policy_core\"") != string::npos && profileJson.find("\"operator\"") != string::npos, "runtime budget role sensitive smoke expected operator role");
+}
+
+void run_runtime_recommendation_watch_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_recommendation_watch_smoke");
+    for (double releaseSeconds : {170.0, 90.0, 145.0, 118.0}) {
+        write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                }
+            ) == 0,
+            "runtime recommendation watch smoke expected history append"
+        );
+    }
+    const int rc = run_policy_pipeline_script(options, paths, "quick", true, true, false, "");
+    require_test(rc == 10, "runtime recommendation watch smoke expected WARN exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_recommendation\": \"WATCH_RUNTIME\"") != string::npos, "runtime recommendation watch smoke expected WATCH_RUNTIME");
+}
+
+void run_combined_pipeline_continue_monitoring_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_pipeline_continue_monitoring_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-stage asan_full=2490.11"
+    );
+    require_test(rc == 10, "combined pipeline continue monitoring smoke expected WARN exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_watch_status\": \"WATCH_STABLE\"") != string::npos, "combined pipeline continue monitoring smoke expected WATCH_STABLE");
+    require_test(summary.find("\"runtime_recommendation\": \"CONTINUE_MONITORING\"") != string::npos, "combined pipeline continue monitoring smoke expected CONTINUE_MONITORING");
+}
+
+void run_combined_pipeline_watch_rationale_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_pipeline_watch_rationale_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-stage asan_full=2490.11"
+    );
+    require_test(rc == 10, "combined pipeline watch rationale smoke expected WARN exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("correctness lifecycle is PASS/FRESH") != string::npos, "combined pipeline watch rationale smoke expected correctness rationale");
+    require_test(summary.find("runtime comparability/freshness healthy") != string::npos, "combined pipeline watch rationale smoke expected runtime health rationale");
+    require_test(summary.find("diagnostic-only stable watch remains active") != string::npos, "combined pipeline watch rationale smoke expected diagnostic watch rationale");
+    require_test(summary.find("\"runtime_recommendation\": \"CONTINUE_MONITORING\"") != string::npos, "combined pipeline watch rationale smoke expected CONTINUE_MONITORING");
+}
+
+void run_combined_pipeline_propose_runtime_rebaseline_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_pipeline_propose_runtime_rebaseline_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2300.0, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "combined pipeline propose runtime rebaseline smoke expected refresh generation"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(paths.runtimeRerunJson.string()),
+            }
+        ) == 0,
+        "combined pipeline propose runtime rebaseline smoke expected rerun plan generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 7);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 7);
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-stage asan_full=2490.11"
+    );
+    require_test(rc == 10, "combined pipeline propose runtime rebaseline smoke expected WARN exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_watch_status\": \"REBASELINE_CANDIDATE\"") != string::npos, "combined pipeline propose runtime rebaseline smoke expected REBASELINE_CANDIDATE");
+    require_test(summary.find("\"runtime_recommendation\": \"PROPOSE_RUNTIME_REBASELINE\"") != string::npos, "combined pipeline propose runtime rebaseline smoke expected PROPOSE_RUNTIME_REBASELINE");
+}
+
+void run_combined_pipeline_fail_on_production_budget_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_pipeline_fail_on_production_budget_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-stage release_full=600.0"
+    );
+    require_test(rc == 30, "combined pipeline fail on production budget smoke expected FAIL exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"severity\": \"FAIL\"") != string::npos, "combined pipeline fail on production budget smoke expected FAIL severity");
+}
+
+void run_evidence_bundle_runtime_watch_metadata_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "evidence_bundle_runtime_watch_metadata_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "nightly",
+        true,
+        true,
+        false,
+        "--runtime-stage asan_full=2490.11"
+    );
+    require_test(rc == 10, "evidence bundle runtime watch metadata smoke expected WARN exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    const filesystem::path metadataPath = extract_json_string_field_or_throw(summary, "bundle_metadata");
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(metadata.find("\"runtime_watch_status\": \"WATCH_STABLE\"") != string::npos, "evidence bundle runtime watch metadata smoke expected watch status");
+    require_test(metadata.find("\"runtime_watch_recommendation\": \"CONTINUE_MONITORING\"") != string::npos, "evidence bundle runtime watch metadata smoke expected watch recommendation");
+    require_test(metadata.find("\"runtime_budget_profile_id\": \"phase28-runtime-budget-v1\"") != string::npos, "evidence bundle runtime watch metadata smoke expected budget profile id");
+    require_test(metadata.find("\"diagnostic_watch_only\": true") != string::npos, "evidence bundle runtime watch metadata smoke expected diagnostic watch flag");
+}
+
+void run_evidence_bundle_watch_history_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "evidence_bundle_watch_history_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const int rc = run_policy_pipeline_script(options, paths, "nightly", true, true, false, "--runtime-stage asan_full=2490.11");
+    require_test(rc == 10, "evidence bundle watch history smoke expected WARN exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    const filesystem::path metadataPath = extract_json_string_field_or_throw(summary, "bundle_metadata");
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(metadata.find("\"runtime_watch_fingerprint_count\": 1") != string::npos, "evidence bundle watch history smoke expected one watch fingerprint");
+    require_test(metadata.find("\"runtime_watch_transition_summary\"") != string::npos, "evidence bundle watch history smoke expected transition summary");
+}
+
+void run_evidence_bundle_watch_transition_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "evidence_bundle_watch_transition_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase28-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2200.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "evidence bundle watch transition smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 2);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 5);
+    const int rc = run_policy_pipeline_script(options, paths, "nightly", true, true, false, "");
+    require_test(rc == 0, "evidence bundle watch transition smoke expected OK exit after recovery");
+    const string summary = slurp_text_file(paths.summaryJson);
+    const filesystem::path metadataPath = extract_json_string_field_or_throw(summary, "bundle_metadata");
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(metadata.find("\"transition_count\": 1") != string::npos || metadata.find("\"transition_count\": 2") != string::npos, "evidence bundle watch transition smoke expected watch transition count");
+    require_test(metadata.find("WATCH_STABLE->CLEAR") != string::npos, "evidence bundle watch transition smoke expected stable to clear transition");
+}
+
+void run_evidence_bundle_multi_fingerprint_watch_smoke_case(const TestOptions& options) {
+    auto paths = prepare_policy_pipeline_smoke_artifacts(options, "evidence_bundle_multi_fingerprint_watch_smoke");
+    const int quickRc = run_policy_pipeline_script(options, paths, "quick", true, true, false, "");
+    require_test(quickRc == 0, "evidence bundle multi fingerprint watch smoke expected quick success");
+    PolicyPipelineSmokeArtifacts matrixPaths = paths;
+    matrixPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_matrix_phase28.json";
+    const int matrixRc = run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "");
+    require_test(matrixRc == 20, "evidence bundle multi fingerprint watch smoke expected matrix ACTION_REQUIRED");
+    const filesystem::path reportPath = paths.root / "PHASE28_WATCH_BUNDLE_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase28 watch bundle smoke report");
+    const filesystem::path zipPath = paths.root / "raw_engine_phase28_watch_bundle.zip";
+    const filesystem::path curatedZipPath = paths.root / "raw_engine_phase28_watch_bundle_curated.zip";
+    const string command =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase28" +
+        " --artifact-root " + shell_quote(paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(paths.summaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(matrixPaths.summaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-proposal " + shell_quote(paths.runtimeProposalJson.string()) +
+        " --runtime-watch-current " + shell_quote(paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(paths.runtimeWatchHistoryIndexJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string());
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "evidence bundle multi fingerprint watch smoke expected bundle success");
+    const string metadata = slurp_text_file(paths.root / "phase28_evidence_bundle" / "bundle_metadata.json");
+    require_test(metadata.find("\"runtime_watch_multi_fingerprint_summary\"") != string::npos, "evidence bundle multi fingerprint watch smoke expected matrix watch summary");
+    require_test(metadata.find("\"matrix_entry_count\": 6") != string::npos, "evidence bundle multi fingerprint watch smoke expected six matrix entries");
+}
+
+void run_runtime_recommendation_rebaseline_required_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_recommendation_rebaseline_required_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--synthetic-runtime-fixture cross_host"
+    );
+    require_test(rc == 20, "runtime recommendation rebaseline smoke expected ACTION_REQUIRED");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_recommendation\": \"REBASELINE_REQUIRED\"") != string::npos, "runtime recommendation rebaseline smoke expected REBASELINE_REQUIRED");
+}
+
+void run_runtime_recommendation_not_comparable_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_recommendation_not_comparable_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--synthetic-runtime-fixture runner_tag_change"
+    );
+    require_test(rc == 20, "runtime recommendation not comparable smoke expected ACTION_REQUIRED");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_recommendation\": \"NOT_COMPARABLE\"") != string::npos, "runtime recommendation not comparable smoke expected NOT_COMPARABLE");
+}
+
+void run_combined_pipeline_recommendation_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_pipeline_recommendation_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "quick", true, true, false, "");
+    require_test(rc == 0, "combined pipeline recommendation smoke expected success");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_recommendation\"") != string::npos, "combined pipeline recommendation smoke expected runtime recommendation");
+    require_test(summary.find("\"rationale_list\"") != string::npos, "combined pipeline recommendation smoke expected rationale list");
+}
+
+void run_runtime_rebaseline_proposal_multi_candidate_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_rebaseline_proposal_multi_candidate_smoke");
+    const filesystem::path compilerBaseline = clone_runtime_manifest_or_throw(
+        paths.runtimeBaselineJson,
+        paths.root / "manifests" / "policy_runtime_compiler_alt.json"
+    );
+    mutate_runtime_compiler_version_or_throw(
+        compilerBaseline,
+        "Apple clang version 17.0.1 (clang-1700.6.5.1)",
+        "synthetic-compiler-alt-"
+    );
+    TestOptions promoteOptions = options;
+    promoteOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    promoteOptions.runtimeBaselineManifest = compilerBaseline.string();
+    promoteOptions.baselineTag = "phase22-runtime-compiler-alt";
+    promoteOptions.activate = true;
+    run_runtime_registry_promote_baseline_case(promoteOptions);
+    mutate_runtime_runner_tag_or_throw(paths.runtimeCurrentJson, "runner-shifted", "synthetic-runner-shift-");
+    TestOptions proposalOptions = options;
+    proposalOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    proposalOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    proposalOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    proposalOptions.runtimeHistoryIndex = paths.runtimeHistoryIndexJson.string();
+    proposalOptions.proposalOut = paths.runtimeProposalJson.string();
+    run_runtime_gate_refresh_case(proposalOptions);
+    run_runtime_propose_rebaseline_case(proposalOptions);
+    const string proposalText = slurp_text_file(paths.runtimeProposalJson);
+    require_test(proposalText.find("\"proposal_needed\": true") != string::npos, "runtime proposal multi candidate smoke expected proposal");
+    require_test(proposalText.find("\"comparable_candidates\"") != string::npos, "runtime proposal multi candidate smoke expected comparable candidate list");
+    require_test(proposalText.find("\"phase22-runtime-compiler-alt\"") != string::npos, "runtime proposal multi candidate smoke expected alternate compatible baseline");
+}
+
+void run_runtime_rebaseline_proposal_retired_only_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_rebaseline_proposal_retired_only_smoke");
+    const string registryText = slurp_text_file(paths.runtimeRegistryJson);
+    const string baselineId = extract_json_string_field_or_throw(registryText, "baseline_id");
+    TestOptions retireOptions = options;
+    retireOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    retireOptions.retireBaseline = baselineId;
+    run_runtime_registry_promote_baseline_case(retireOptions);
+    TestOptions proposalOptions = options;
+    proposalOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    proposalOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    proposalOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    proposalOptions.runtimeHistoryIndex = paths.runtimeHistoryIndexJson.string();
+    proposalOptions.proposalOut = paths.runtimeProposalJson.string();
+    run_runtime_gate_refresh_case(proposalOptions);
+    run_runtime_propose_rebaseline_case(proposalOptions);
+    const string proposalText = slurp_text_file(paths.runtimeProposalJson);
+    require_test(proposalText.find("\"proposal_needed\": true") != string::npos, "runtime proposal retired only smoke expected proposal");
+    require_test(proposalText.find("retired") != string::npos, "runtime proposal retired only smoke expected retired baseline rationale");
+}
+
+void run_runtime_rebaseline_proposal_cross_host_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_rebaseline_proposal_cross_host_smoke");
+    mutate_runtime_os_arch_or_throw(paths.runtimeCurrentJson, "Linux", "x86_64", "synthetic-cross-host-");
+    TestOptions proposalOptions = options;
+    proposalOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    proposalOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    proposalOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    proposalOptions.runtimeHistoryIndex = paths.runtimeHistoryIndexJson.string();
+    proposalOptions.proposalOut = paths.runtimeProposalJson.string();
+    run_runtime_gate_refresh_case(proposalOptions);
+    run_runtime_propose_rebaseline_case(proposalOptions);
+    const string proposalText = slurp_text_file(paths.runtimeProposalJson);
+    require_test(proposalText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos, "runtime proposal cross host smoke expected REBASELINE_REQUIRED");
+}
+
+void run_runtime_approve_rebaseline_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_approve_rebaseline_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    const string baselineText = slurp_text_file(artifacts.approvedBaselineJson);
+    const filesystem::path approvalMetadataPath =
+        artifacts.approvedBaselineJson.parent_path() / (artifacts.approvedBaselineJson.stem().string() + "_approval_metadata.json");
+    const string approvalMetadata = slurp_text_file(approvalMetadataPath);
+    require_test(
+        baselineText.find("\"baseline_tag\": \"phase25-runtime-approved\"") != string::npos,
+        "runtime approve rebaseline smoke expected approved baseline tag"
+    );
+    require_test(
+        baselineText.find("\"approval_metadata\"") != string::npos,
+        "runtime approve rebaseline smoke expected approval metadata"
+    );
+    require_test(
+        approvalMetadata.find("\"runtime_transition_status\"") != string::npos,
+        "runtime approve rebaseline smoke expected approval metadata sidecar"
+    );
+}
+
+void run_runtime_approve_rebaseline_registry_switch_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_approve_rebaseline_registry_switch_smoke");
+    const string beforeRegistry = slurp_text_file(artifacts.paths.runtimeRegistryJson);
+    const string previousBaselineId = extract_json_string_field_or_throw(beforeRegistry, "baseline_id");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    const string registryText = slurp_text_file(artifacts.paths.runtimeRegistryJson);
+    require_test(
+        registryText.find("\"baseline_tag\": \"phase25-runtime-approved\"") != string::npos,
+        "runtime approve rebaseline registry switch smoke expected new active baseline tag"
+    );
+    require_test(
+        registryText.find("\"status\": \"retired\"") != string::npos,
+        "runtime approve rebaseline registry switch smoke expected retired previous baseline"
+    );
+    require_test(
+        registryText.find("superseded by") != string::npos,
+        "runtime approve rebaseline registry switch smoke expected superseded reason"
+    );
+    require_test(
+        registryText.find(previousBaselineId) != string::npos,
+        "runtime approve rebaseline registry switch smoke expected previous baseline id preserved"
+    );
+}
+
+void run_runtime_approve_rebaseline_archive_proposal_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_approve_rebaseline_archive_proposal_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    const string archivedProposal = slurp_text_file(artifacts.archivedProposalJson);
+    require_test(
+        archivedProposal.find("\"proposal_archived\": true") != string::npos,
+        "runtime approve rebaseline archive smoke expected archived proposal marker"
+    );
+    require_test(
+        archivedProposal.find("\"approved_runtime_baseline_tag\": \"phase25-runtime-approved\"") != string::npos,
+        "runtime approve rebaseline archive smoke expected approved baseline tag"
+    );
+}
+
+void run_runtime_refresh_after_rebaseline_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_refresh_after_rebaseline_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    const string refreshText = slurp_text_file(artifacts.refreshedRuntimeJson);
+    require_test(
+        refreshText.find("\"comparability_verdict\": \"COMPARABLE\"") != string::npos,
+        "runtime refresh after rebaseline smoke expected COMPARABLE"
+    );
+    require_test(
+        refreshText.find("\"freshness_verdict\": \"FRESH\"") != string::npos,
+        "runtime refresh after rebaseline smoke expected FRESH"
+    );
+    require_test(
+        refreshText.find("\"selected_baseline_tag\": \"phase25-runtime-approved\"") != string::npos,
+        "runtime refresh after rebaseline smoke expected new selected baseline"
+    );
+}
+
+void run_runtime_rerun_plan_after_rebaseline_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_rerun_plan_after_rebaseline_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    rerun_plan_after_rebaseline_smoke_artifacts(options, artifacts);
+    const string rerunText = slurp_text_file(artifacts.rerunRuntimeJson);
+    require_test(
+        rerunText.find("\"summary_verdict\": \"PASS\"") != string::npos,
+        "runtime rerun plan after rebaseline smoke expected PASS"
+    );
+    require_test(
+        rerunText.find("\"selected_entry_count\": 0") != string::npos,
+        "runtime rerun plan after rebaseline smoke expected empty rerun plan"
+    );
+}
+
+void run_runtime_selection_after_registry_switch_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_selection_after_registry_switch_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    TestOptions selectOptions = options;
+    selectOptions.runtimeBaselineRegistry = artifacts.paths.runtimeRegistryJson.string();
+    selectOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    run_runtime_registry_select_baseline_case(selectOptions);
+    const string selectionText = slurp_text_file(default_runtime_selection_output_path(artifacts.paths.runtimeCurrentJson));
+    require_test(
+        selectionText.find("\"selected_baseline_tag\": \"phase25-runtime-approved\"") != string::npos,
+        "runtime selection after registry switch smoke expected selected approved baseline"
+    );
+}
+
+void run_combined_pipeline_after_rebaseline_quick_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "combined_pipeline_after_rebaseline_quick_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    rerun_plan_after_rebaseline_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts pipelinePaths = artifacts.paths;
+    pipelinePaths.runtimeBaselineJson = artifacts.approvedBaselineJson;
+    pipelinePaths.runtimeRefreshJson = artifacts.refreshedRuntimeJson;
+    pipelinePaths.runtimeRerunJson = artifacts.rerunRuntimeJson;
+    pipelinePaths.summaryJson = artifacts.quickSummaryJson;
+    pipelinePaths.runtimeProposalJson.clear();
+    const int rc = run_policy_pipeline_script(
+        options,
+        pipelinePaths,
+        "quick",
+        true,
+        true,
+        false,
+        "",
+        "runner-rebaseline"
+    );
+    require_test(rc == 0, "combined pipeline after rebaseline quick smoke expected OK exit");
+    const string summary = slurp_text_file(artifacts.quickSummaryJson);
+    require_test(summary.find("\"severity\": \"OK\"") != string::npos, "combined pipeline after rebaseline quick smoke expected OK severity");
+    require_test(summary.find("\"runtime_rebaseline_proposal_needed\": false") != string::npos, "combined pipeline after rebaseline quick smoke expected cleared proposal flag");
+}
+
+void run_combined_pipeline_after_rebaseline_nightly_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "combined_pipeline_after_rebaseline_nightly_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    rerun_plan_after_rebaseline_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts pipelinePaths = artifacts.paths;
+    pipelinePaths.runtimeBaselineJson = artifacts.approvedBaselineJson;
+    pipelinePaths.runtimeRefreshJson = artifacts.refreshedRuntimeJson;
+    pipelinePaths.runtimeRerunJson = artifacts.rerunRuntimeJson;
+    pipelinePaths.summaryJson = artifacts.nightlySummaryJson;
+    pipelinePaths.runtimeProposalJson.clear();
+    pipelinePaths.reportPath = artifacts.paths.root / "PHASE26_PIPELINE_SMOKE_REPORT.txt";
+    pipelinePaths.zipPath = artifacts.paths.root / "raw_engine_phase26_pipeline_smoke.zip";
+    pipelinePaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase26_pipeline_smoke_curated.zip";
+    const int rc = run_policy_pipeline_script(
+        options,
+        pipelinePaths,
+        "nightly",
+        true,
+        true,
+        false,
+        "",
+        "runner-rebaseline"
+    );
+    require_test(rc == 0, "combined pipeline after rebaseline nightly smoke expected OK exit");
+    const string summary = slurp_text_file(artifacts.nightlySummaryJson);
+    require_test(summary.find("\"severity\": \"OK\"") != string::npos, "combined pipeline after rebaseline nightly smoke expected OK severity");
+}
+
+void run_runtime_history_append_after_rebaseline_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_history_append_after_rebaseline_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    TestOptions historyOptions = options;
+    historyOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    historyOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    historyOptions.runtimeRefreshManifest = artifacts.refreshedRuntimeJson.string();
+    run_runtime_history_append_case(historyOptions);
+    const string historySummary = slurp_text_file(artifacts.paths.runtimeHistorySummaryJson);
+    require_test(historySummary.find("\"transition_count\"") != string::npos, "runtime history append after rebaseline smoke expected transition count");
+    require_test(historySummary.find("\"new_baseline_tag\": \"phase25-runtime-approved\"") != string::npos, "runtime history append after rebaseline smoke expected new baseline tag");
+}
+
+void run_runtime_registry_history_transition_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_registry_history_transition_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    TestOptions historyOptions = options;
+    historyOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    historyOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    historyOptions.runtimeRefreshManifest = artifacts.refreshedRuntimeJson.string();
+    run_runtime_history_append_case(historyOptions);
+    const string registryText = slurp_text_file(artifacts.paths.runtimeRegistryJson);
+    require_test(registryText.find("\"baseline_tag\": \"phase25-runtime-approved\"") != string::npos, "runtime registry history transition smoke expected active phase25 baseline");
+    const string historySummary = slurp_text_file(artifacts.paths.runtimeHistorySummaryJson);
+    require_test(historySummary.find("\"recent_transitions\"") != string::npos, "runtime registry history transition smoke expected recent transitions");
+}
+
+void run_evidence_bundle_contains_rebaseline_transition_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "evidence_bundle_contains_rebaseline_transition_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    rerun_plan_after_rebaseline_smoke_artifacts(options, artifacts);
+    TestOptions historyOptions = options;
+    historyOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    historyOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    historyOptions.runtimeRefreshManifest = artifacts.refreshedRuntimeJson.string();
+    run_runtime_history_append_case(historyOptions);
+
+    PolicyPipelineSmokeArtifacts pipelinePaths = artifacts.paths;
+    pipelinePaths.runtimeBaselineJson = artifacts.approvedBaselineJson;
+    pipelinePaths.runtimeRefreshJson = artifacts.refreshedRuntimeJson;
+    pipelinePaths.runtimeRerunJson = artifacts.rerunRuntimeJson;
+    pipelinePaths.summaryJson = artifacts.quickSummaryJson;
+    pipelinePaths.runtimeProposalJson.clear();
+    require_test(
+        run_policy_pipeline_script(options, pipelinePaths, "quick", true, true, false, "", "runner-rebaseline") == 0,
+        "evidence bundle rebaseline transition smoke expected quick pipeline success"
+    );
+
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE26_STABILIZATION_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase26 evidence bundle rebaseline transition smoke report");
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase26_stabilization.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase26_stabilization_curated.zip";
+    const string command =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase26" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.approvedBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.refreshedRuntimeJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.rerunRuntimeJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-proposal " + shell_quote(artifacts.archivedProposalJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string());
+    require_test(system(command.c_str()) == 0, "evidence bundle rebaseline transition smoke expected bundle success");
+    const string bundleMetadata = slurp_text_file(artifacts.paths.root / "phase26_evidence_bundle" / "bundle_metadata.json");
+    require_test(bundleMetadata.find("\"runtime_approval_metadata\"") != string::npos, "evidence bundle rebaseline transition smoke expected approval metadata path");
+    require_test(bundleMetadata.find("\"runtime_proposal\"") != string::npos, "evidence bundle rebaseline transition smoke expected proposal archive path");
+}
+
+void run_evidence_bundle_runtime_transition_metadata_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "evidence_bundle_runtime_transition_metadata_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    refresh_runtime_after_rebaseline_smoke_artifacts(options, artifacts);
+    rerun_plan_after_rebaseline_smoke_artifacts(options, artifacts);
+    TestOptions historyOptions = options;
+    historyOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    historyOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    historyOptions.runtimeRefreshManifest = artifacts.refreshedRuntimeJson.string();
+    run_runtime_history_append_case(historyOptions);
+
+    PolicyPipelineSmokeArtifacts pipelinePaths = artifacts.paths;
+    pipelinePaths.runtimeBaselineJson = artifacts.approvedBaselineJson;
+    pipelinePaths.runtimeRefreshJson = artifacts.refreshedRuntimeJson;
+    pipelinePaths.runtimeRerunJson = artifacts.rerunRuntimeJson;
+    pipelinePaths.summaryJson = artifacts.quickSummaryJson;
+    pipelinePaths.runtimeProposalJson.clear();
+    require_test(
+        run_policy_pipeline_script(options, pipelinePaths, "quick", true, true, false, "", "runner-rebaseline") == 0,
+        "evidence bundle runtime transition metadata smoke expected quick pipeline success"
+    );
+
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE26_METADATA_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase26 evidence bundle runtime transition metadata smoke report");
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase26_metadata.zip";
+    const string command =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase26" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.approvedBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.refreshedRuntimeJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.rerunRuntimeJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-proposal " + shell_quote(artifacts.archivedProposalJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string());
+    require_test(system(command.c_str()) == 0, "evidence bundle runtime transition metadata smoke expected bundle success");
+    const string bundleMetadata = slurp_text_file(artifacts.paths.root / "phase26_evidence_bundle" / "bundle_metadata.json");
+    require_test(bundleMetadata.find("\"approved_runtime_baseline_hash\"") != string::npos, "evidence bundle runtime transition metadata smoke expected approved baseline hash");
+    require_test(bundleMetadata.find("\"proposal_archive_hash\"") != string::npos, "evidence bundle runtime transition metadata smoke expected proposal archive hash");
+    require_test(bundleMetadata.find("\"previous_active_runtime_baseline_id\"") != string::npos, "evidence bundle runtime transition metadata smoke expected previous active id");
+    require_test(bundleMetadata.find("\"new_active_runtime_baseline_id\"") != string::npos, "evidence bundle runtime transition metadata smoke expected new active id");
+    require_test(bundleMetadata.find("\"runtime_transition_status\"") != string::npos, "evidence bundle runtime transition metadata smoke expected transition status");
+    require_test(bundleMetadata.find("\"combined_pipeline_status_after_rebaseline\"") != string::npos, "evidence bundle runtime transition metadata smoke expected combined pipeline status");
+}
+
+void run_pipeline_matrix_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_matrix_smoke");
+    const filesystem::path runnerCurrent = clone_runtime_manifest_or_throw(
+        paths.runtimeCurrentJson,
+        paths.root / "manifests" / "policy_runtime_current_runner_alt.json"
+    );
+    mutate_runtime_runner_tag_or_throw(runnerCurrent, "runner-shifted", "synthetic-runner-shift-");
+    const filesystem::path matrixConfig = write_runtime_matrix_config_or_throw(
+        paths.root / "manifests" / "runtime_matrix.json",
+        {
+            {"default", paths.runtimeCurrentJson},
+            {"runner_tag_change", runnerCurrent},
+        }
+    );
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "matrix",
+        true,
+        true,
+        false,
+        "--matrix-config " + shell_quote(matrixConfig.string())
+    );
+    require_test(rc == 20, "pipeline matrix smoke expected ACTION_REQUIRED exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"matrix_entry_count\": 2") != string::npos, "pipeline matrix smoke expected two entries");
+}
+
+void run_pipeline_matrix_mixed_fingerprints_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_matrix_mixed_fingerprints_smoke");
+    const filesystem::path runnerCurrent = clone_runtime_manifest_or_throw(
+        paths.runtimeCurrentJson,
+        paths.root / "manifests" / "policy_runtime_current_runner_alt.json"
+    );
+    mutate_runtime_runner_tag_or_throw(runnerCurrent, "runner-shifted", "synthetic-runner-shift-");
+    const filesystem::path crossHostCurrent = clone_runtime_manifest_or_throw(
+        paths.runtimeCurrentJson,
+        paths.root / "manifests" / "policy_runtime_current_cross_host.json"
+    );
+    mutate_runtime_os_arch_or_throw(crossHostCurrent, "Linux", "x86_64", "synthetic-cross-host-");
+    const filesystem::path matrixConfig = write_runtime_matrix_config_or_throw(
+        paths.root / "manifests" / "runtime_matrix_mixed.json",
+        {
+            {"default", paths.runtimeCurrentJson},
+            {"runner_tag_change", runnerCurrent},
+            {"cross_host", crossHostCurrent},
+        }
+    );
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "matrix",
+        true,
+        true,
+        false,
+        "--matrix-config " + shell_quote(matrixConfig.string())
+    );
+    require_test(rc == 20, "pipeline matrix mixed fingerprints smoke expected ACTION_REQUIRED");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"recommended_action\": \"NO_ACTION\"") != string::npos, "pipeline matrix mixed smoke expected NO_ACTION entry");
+    require_test(summary.find("\"recommended_action\": \"NOT_COMPARABLE\"") != string::npos, "pipeline matrix mixed smoke expected NOT_COMPARABLE entry");
+    require_test(summary.find("\"recommended_action\": \"REBASELINE_REQUIRED\"") != string::npos, "pipeline matrix mixed smoke expected REBASELINE_REQUIRED entry");
+}
+
+void run_pipeline_nightly_rebaseline_candidate_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_nightly_rebaseline_candidate_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "rebaseline_candidate",
+        true,
+        true,
+        false,
+        "--synthetic-runtime-fixture cross_host"
+    );
+    require_test(rc == 20, "pipeline rebaseline candidate smoke expected ACTION_REQUIRED");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_recommendation\": \"REBASELINE_REQUIRED\"") != string::npos, "pipeline rebaseline candidate smoke expected REBASELINE_REQUIRED");
+}
+
+void run_combined_policy_runtime_ok_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_policy_runtime_ok_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "quick", true, true, false, "");
+    require_test(rc == 0, "combined policy runtime ok smoke expected exit 0");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"severity\": \"OK\"") != string::npos, "combined policy runtime ok smoke expected OK severity");
+}
+
+void run_combined_policy_runtime_warn_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_policy_runtime_warn_smoke");
+    write_runtime_current_smoke_manifest(paths, 300.0, 480.0, 900.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "promote-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag phase22-runtime-warn",
+            }
+        ) == 0,
+        "combined policy runtime warn smoke expected runtime baseline promotion"
+    );
+    TestOptions registryPromoteOptions = options;
+    registryPromoteOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    registryPromoteOptions.runtimeBaselineManifest = paths.runtimeBaselineJson.string();
+    registryPromoteOptions.baselineTag = "phase22-runtime-warn";
+    registryPromoteOptions.activate = true;
+    require_test(
+        run_runtime_lifecycle_script(
+            "registry-promote-baseline",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag phase22-runtime-warn",
+                "--activate",
+            }
+        ) == 0,
+        "combined policy runtime warn smoke expected registry refresh"
+    );
+    require_test(
+        slurp_text_file(paths.runtimeRegistryJson).find("\"baseline_tag\": \"phase22-runtime-warn\"") != string::npos,
+        "combined policy runtime warn smoke expected warn runtime baseline in registry"
+    );
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-stage release_full=300.0"
+    );
+    require_test(rc == 10, "combined policy runtime warn smoke expected WARN exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_severity\": \"WARN\"") != string::npos, "combined policy runtime warn smoke expected runtime WARN");
+    require_test(summary.find("\"severity\": \"WARN\"") != string::npos, "combined policy runtime warn smoke expected combined WARN");
+}
+
+void run_combined_policy_runtime_action_required_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_policy_runtime_action_required_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--synthetic-runtime-fixture cross_host"
+    );
+    require_test(rc == 20, "combined policy runtime action required smoke expected ACTION_REQUIRED exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_severity\": \"ACTION_REQUIRED\"") != string::npos, "combined policy runtime action required smoke expected runtime ACTION_REQUIRED");
+}
+
+void run_combined_policy_runtime_fail_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "combined_policy_runtime_fail_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-stage release_full=600.0"
+    );
+    require_test(rc == 30, "combined policy runtime fail smoke expected FAIL exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"runtime_severity\": \"FAIL\"") != string::npos, "combined policy runtime fail smoke expected runtime FAIL");
+    require_test(summary.find("\"severity\": \"FAIL\"") != string::npos, "combined policy runtime fail smoke expected combined FAIL");
+}
+
+void run_artifact_index_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "artifact_index_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "bundle_only", true, true, false, "");
+    require_test(rc == 0, "artifact index smoke expected bundle_only success");
+    require_test(
+        filesystem::exists(paths.root / "indexes" / "artifact_index.json"),
+        "artifact index smoke expected artifact_index.json"
+    );
+    require_test(
+        filesystem::exists(paths.root / "indexes" / "bundle_index.json"),
+        "artifact index smoke expected bundle_index.json"
+    );
+}
+
+void run_artifact_prune_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "artifact_prune_smoke";
+    filesystem::remove_all(root);
+    filesystem::create_directories(root / "outputs");
+    filesystem::create_directories(root / "manifests");
+    filesystem::create_directories(root / "nightly_runs" / "run_a");
+    filesystem::create_directories(root / "nightly_runs" / "run_b");
+    filesystem::create_directories(root / "nightly_runs" / "run_c");
+
+    for (const string& name : {"raw_engine_phase20_stabilization.zip", "raw_engine_phase21_stabilization.zip",
+                               "raw_engine_phase22_stabilization.zip", "raw_engine_phase20_stabilization_curated.zip",
+                               "raw_engine_phase21_stabilization_curated.zip", "raw_engine_phase22_stabilization_curated.zip"}) {
+        ofstream ofs(root / "outputs" / name, ios::binary);
+        ofs << "zip placeholder\n";
+    }
+
+    const filesystem::path reportPath = root / "PHASE22_STABILIZATION_REPORT.txt";
+    write_smoke_report_file(reportPath, "artifact prune smoke report");
+    const PolicyGateManifest current = make_policy_gate_smoke_manifest();
+    const filesystem::path currentJson = root / "manifests" / "policy_gate.json";
+    write_policy_gate_outputs(currentJson, current);
+
+    const filesystem::path scriptPath = policy_tools_script_path("build_evidence_bundle.py");
+    ostringstream command;
+    command << shell_quote("/usr/bin/python3") << ' '
+            << shell_quote(scriptPath.string())
+            << " --phase phase22"
+            << " --artifact-root " << shell_quote(root.string())
+            << " --report-out " << shell_quote(reportPath.string())
+            << " --policy-manifest " << shell_quote(currentJson.string())
+            << " --current-manifest " << shell_quote(currentJson.string())
+            << " --zip-out " << shell_quote((root / "outputs" / "raw_engine_phase22_stabilization.zip").string())
+            << " --curated-zip " << shell_quote((root / "outputs" / "raw_engine_phase22_stabilization_curated.zip").string())
+            << " --prune-artifacts"
+            << " --max-bundles 2"
+            << " --max-nightly-runs 1";
+    require_test(system(command.str().c_str()) == 0, "artifact prune smoke expected bundle script success");
+    require_test(
+        !filesystem::exists(root / "outputs" / "raw_engine_phase20_stabilization.zip"),
+        "artifact prune smoke expected oldest bundle pruning"
+    );
+    require_test(
+        !filesystem::exists(root / "nightly_runs" / "run_a"),
+        "artifact prune smoke expected nightly run pruning"
+    );
+}
+
+void run_policy_roundtrip_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_roundtrip_smoke");
+    require_test(run_policy_pipeline_script(options, paths, "quick", true, false, false, "") == 0, "policy roundtrip smoke expected quick success");
+    require_test(run_policy_pipeline_script(options, paths, "bundle_only", true, true, false, "") == 0, "policy roundtrip smoke expected bundle success");
+    const PolicyGateManifest current = load_policy_gate_manifest_text(policy_manifest_text_path(paths.currentJson));
+    const PolicyGateManifest refresh = load_policy_gate_manifest_text(policy_manifest_text_path(paths.refreshJson));
+    const PolicyRerunPlan plan = load_policy_rerun_plan_text(policy_manifest_text_path(paths.rerunJson));
+    require_test(policy_gate_manifest_satisfied(current), "policy roundtrip smoke expected satisfied current manifest");
+    require_test(policy_manifest_freshness_satisfied(refresh), "policy roundtrip smoke expected fresh refresh manifest");
+    require_test(plan.summaryVerdict == "PASS", "policy roundtrip smoke expected PASS rerun plan");
+}
+
+void run_policy_empty_plan_noop_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_empty_plan_noop_smoke");
+    const int rc = run_policy_pipeline_script(options, paths, "nightly", true, true, false, "");
+    require_test(rc == 0, "policy empty plan noop smoke expected nightly success");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"severity\": \"OK\"") != string::npos, "policy empty plan noop smoke expected OK severity");
+    require_test(summary.find("\"rerun_plan_verdict\": \"PASS\"") != string::npos, "policy empty plan noop smoke expected PASS plan");
+}
+
+void run_policy_manifest_missing_input_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_manifest_missing_input_smoke");
+    filesystem::remove(paths.baselineJson);
+    const int rc = run_policy_pipeline_script(options, paths, "quick", true, false, false, "");
+    require_test(rc != 0, "policy manifest missing input smoke expected non-zero exit");
 }
 
 vector<u32> collect_lineage_scenario_seeds(
@@ -10001,8 +15217,32 @@ filesystem::path phase16_resume_gate_smoke_config_path() {
     return filesystem::path(__FILE__).parent_path() / "campaigns" / "phase16_resume_gate_smoke.txt";
 }
 
+filesystem::path localized_phase16_resume_gate_smoke_config_path(const TestOptions& options) {
+    const filesystem::path localRoot = resolve_artifact_dir(options) / options.caseName;
+    filesystem::create_directories(localRoot);
+    const filesystem::path localConfigPath = localRoot / "phase16_resume_gate_smoke.local.txt";
+    string configText = slurp_text_file(phase16_resume_gate_smoke_config_path());
+    const string needle = "artifacts/phase16_resume_gate_smoke";
+    const filesystem::path replacementRoot = filesystem::absolute(localRoot / "campaign_artifacts" / "phase16_resume_gate_smoke");
+    error_code ec;
+    filesystem::path replacementPath = filesystem::relative(replacementRoot, source_package_root(), ec);
+    if (ec || replacementPath.empty() || *replacementPath.begin() == "..") {
+        replacementPath = replacementRoot;
+    }
+    const string replacement = replacementPath.generic_string();
+    size_t pos = 0U;
+    while ((pos = configText.find(needle, pos)) != string::npos) {
+        configText.replace(pos, needle.size(), replacement);
+        pos += replacement.size();
+    }
+    ofstream ofs(localConfigPath);
+    require_test(static_cast<bool>(ofs), "phase16 localized smoke expected writable config");
+    ofs << configText;
+    return localConfigPath;
+}
+
 void run_campaign_phase16_resume_gate_smoke_case(const TestOptions& options) {
-    const filesystem::path configPath = phase16_resume_gate_smoke_config_path();
+    const filesystem::path configPath = localized_phase16_resume_gate_smoke_config_path(options);
     const CampaignConfig config = load_campaign_config(configPath);
     const filesystem::path aggregateSummaryPath = filesystem::absolute(config.aggregateSummaryFile);
     const filesystem::path aggregateRoot = aggregateSummaryPath.parent_path().parent_path();
@@ -10059,7 +15299,7 @@ void run_campaign_phase16_resume_gate_smoke_case(const TestOptions& options) {
 }
 
 void run_campaign_phase16_manifest_compatibility_smoke_case(const TestOptions& options) {
-    const filesystem::path configPath = phase16_resume_gate_smoke_config_path();
+    const filesystem::path configPath = localized_phase16_resume_gate_smoke_config_path(options);
     const CampaignConfig config = load_campaign_config(configPath);
     const filesystem::path aggregateSummaryPath = filesystem::absolute(config.aggregateSummaryFile);
     const filesystem::path aggregateRoot = aggregateSummaryPath.parent_path().parent_path();
@@ -10145,6 +15385,76 @@ void run_campaign_phase16_manifest_compatibility_smoke_case(const TestOptions& o
             string(ex.what()).find("unsupported checkpoint manifest version") != string::npos,
             "phase16 manifest compatibility smoke expected manifest version rejection"
         );
+    }
+}
+
+void run_artifact_dir_uniqueness_smoke_case(const TestOptions& options) {
+    TestOptions first = options;
+    first.caseName = "campaign_phase16_manifest_compatibility_smoke";
+    first.artifactDir = (resolve_artifact_dir(options) / "artifact_dir_uniqueness_smoke" / "first").string();
+    TestOptions second = first;
+    second.artifactDir = (resolve_artifact_dir(options) / "artifact_dir_uniqueness_smoke" / "second").string();
+
+    const filesystem::path firstConfig = localized_phase16_resume_gate_smoke_config_path(first);
+    const filesystem::path secondConfig = localized_phase16_resume_gate_smoke_config_path(second);
+    require_test(firstConfig != secondConfig, "artifact dir uniqueness smoke expected distinct localized config paths");
+
+    const CampaignConfig firstCampaign = load_campaign_config(firstConfig);
+    const CampaignConfig secondCampaign = load_campaign_config(secondConfig);
+    require_test(
+        filesystem::absolute(firstCampaign.aggregateSummaryFile) != filesystem::absolute(secondCampaign.aggregateSummaryFile),
+        "artifact dir uniqueness smoke expected distinct aggregate summary roots"
+    );
+}
+
+void run_campaign_manifest_parallel_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "campaign_manifest_parallel_smoke";
+    filesystem::remove_all(root);
+    const auto [firstRc, secondRc] = run_parallel_child_test_cases(
+        [&]() {
+            return run_child_test_case_process(
+                options,
+                "campaign_phase16_manifest_compatibility_smoke",
+                root / "run_a"
+            );
+        },
+        [&]() {
+            return run_child_test_case_process(
+                options,
+                "campaign_phase16_manifest_compatibility_smoke",
+                root / "run_b"
+            );
+        }
+    );
+    require_test(firstRc == 0, "campaign manifest parallel smoke expected first child success");
+    require_test(secondRc == 0, "campaign manifest parallel smoke expected second child success");
+}
+
+void run_policy_pipeline_parallel_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "policy_pipeline_parallel_smoke";
+    filesystem::remove_all(root);
+    const auto [firstRc, secondRc] = run_parallel_child_test_cases(
+        [&]() {
+            return run_child_test_case_process(options, "policy_roundtrip_smoke", root / "run_a");
+        },
+        [&]() {
+            return run_child_test_case_process(options, "policy_roundtrip_smoke", root / "run_b");
+        }
+    );
+    require_test(firstRc == 0, "policy pipeline parallel smoke expected first child success");
+    require_test(secondRc == 0, "policy pipeline parallel smoke expected second child success");
+}
+
+void run_transient_repro_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "transient_repro_smoke";
+    filesystem::remove_all(root);
+    for (int iter = 0; iter < 3; ++iter) {
+        const int rc = run_child_test_case_process(
+            options,
+            "campaign_phase16_manifest_compatibility_smoke",
+            root / ("run_" + to_string(iter))
+        );
+        require_test(rc == 0, "transient repro smoke expected stable repeated manifest compatibility runs");
     }
 }
 
@@ -10745,8 +16055,72 @@ void run_named_case(const TestOptions& options) {
         run_policy_gate_case(options);
         return;
     }
+    if (options.caseName == "policy_gate_promote_baseline") {
+        run_policy_gate_promote_baseline_case(options);
+        return;
+    }
+    if (options.caseName == "policy_gate_refresh") {
+        run_policy_gate_refresh_case(options);
+        return;
+    }
+    if (options.caseName == "policy_gate_plan_rerun") {
+        run_policy_gate_plan_rerun_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ci_check") {
+        run_policy_ci_check_case(options);
+        return;
+    }
+    if (options.caseName == "policy_nightly_refresh") {
+        run_policy_nightly_refresh_case(options);
+        return;
+    }
     if (options.caseName == "policy_gate_manifest_smoke") {
         run_policy_gate_manifest_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_baseline_promote_smoke") {
+        run_policy_baseline_promote_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_baseline_roundtrip_smoke") {
+        run_policy_baseline_roundtrip_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_promote_reject_fail_smoke") {
+        run_policy_promote_reject_fail_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_smoke") {
+        run_policy_refresh_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_against_promoted_baseline_smoke") {
+        run_policy_refresh_against_promoted_baseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_family_filter_smoke") {
+        run_policy_refresh_family_filter_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_freshness_only_smoke") {
+        run_policy_refresh_freshness_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_stale_hash_smoke") {
+        run_policy_refresh_stale_hash_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_compare_engine_hash_smoke") {
+        run_policy_refresh_compare_engine_hash_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_generator_hash_smoke") {
+        run_policy_refresh_generator_hash_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_campaign_config_hash_smoke") {
+        run_policy_refresh_campaign_config_hash_smoke_case(options);
         return;
     }
     if (options.caseName == "policy_gate_family_filter_smoke") {
@@ -10757,8 +16131,20 @@ void run_named_case(const TestOptions& options) {
         run_policy_gate_non_applicable_smoke_case(options);
         return;
     }
+    if (options.caseName == "policy_gate_non_applicable_drift_smoke") {
+        run_policy_gate_non_applicable_drift_smoke_case(options);
+        return;
+    }
     if (options.caseName == "planner_tie_organic_applicability_drift_smoke") {
         run_planner_tie_organic_applicability_drift_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "planner_tie_organic_reclassify_trigger_smoke") {
+        run_planner_tie_organic_reclassify_trigger_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_reclassify_non_applicable_smoke") {
+        run_policy_reclassify_non_applicable_smoke_case(options);
         return;
     }
     if (options.caseName == "compare_ready_lineage_gate_smoke") {
@@ -10769,8 +16155,24 @@ void run_named_case(const TestOptions& options) {
         run_compare_ready_not_counted_as_pass_smoke_case(options);
         return;
     }
+    if (options.caseName == "policy_gate_diagnostic_only_smoke") {
+        run_policy_gate_diagnostic_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "compare_ready_not_promoted_smoke") {
+        run_compare_ready_not_promoted_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_reject_diagnostic_promotion_smoke") {
+        run_policy_reject_diagnostic_promotion_smoke_case(options);
+        return;
+    }
     if (options.caseName == "policy_gate_nightly_smoke") {
         run_policy_gate_nightly_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_refresh_nightly_smoke") {
+        run_policy_refresh_nightly_smoke_case(options);
         return;
     }
     if (options.caseName == "manifest_roundtrip_smoke") {
@@ -10779,6 +16181,578 @@ void run_named_case(const TestOptions& options) {
     }
     if (options.caseName == "evidence_bundle_smoke") {
         run_evidence_bundle_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_manifest_freshness_smoke") {
+        run_evidence_bundle_manifest_freshness_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_policy_refresh_smoke") {
+        run_evidence_bundle_policy_refresh_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_rerun_plan_smoke") {
+        run_evidence_bundle_rerun_plan_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_idempotent_smoke") {
+        run_evidence_bundle_idempotent_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_policy_summary_smoke") {
+        run_evidence_bundle_policy_summary_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_manifest_smoke") {
+        run_evidence_bundle_runtime_manifest_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_combined_summary_smoke") {
+        run_evidence_bundle_combined_summary_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_severity_smoke") {
+        run_policy_severity_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "pipeline_exit_code_smoke") {
+        run_pipeline_exit_code_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "stale_warn_mode_smoke") {
+        run_stale_warn_mode_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "action_required_mode_smoke") {
+        run_action_required_mode_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_smoke") {
+        run_runtime_budget_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_manifest_roundtrip_smoke") {
+        run_runtime_budget_manifest_roundtrip_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_gate_promote_baseline") {
+        run_runtime_gate_promote_baseline_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_gate_refresh") {
+        run_runtime_gate_refresh_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_gate_plan_rerun") {
+        run_runtime_gate_plan_rerun_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_promote_baseline") {
+        run_runtime_registry_promote_baseline_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_select_baseline") {
+        run_runtime_registry_select_baseline_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_append") {
+        run_runtime_history_append_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_summary") {
+        run_runtime_history_summary_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_campaign") {
+        run_runtime_watch_campaign_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_refresh") {
+        run_runtime_watch_refresh_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_propose_rebaseline") {
+        run_runtime_propose_rebaseline_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_fingerprint_roundtrip_smoke") {
+        run_runtime_fingerprint_roundtrip_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_not_comparable_smoke") {
+        run_runtime_not_comparable_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_refresh_same_fingerprint_smoke") {
+        run_runtime_refresh_same_fingerprint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_baseline_promote_smoke") {
+        run_runtime_baseline_promote_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_promote_smoke") {
+        run_runtime_registry_promote_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_activate_retire_smoke") {
+        run_runtime_registry_activate_retire_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_roundtrip_smoke") {
+        run_runtime_registry_roundtrip_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_select_exact_match_smoke") {
+        run_runtime_registry_select_exact_match_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_select_no_match_smoke") {
+        run_runtime_registry_select_no_match_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_rebaseline_required_smoke") {
+        run_runtime_registry_rebaseline_required_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_refresh_against_promoted_baseline_smoke") {
+        run_runtime_refresh_against_promoted_baseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rerun_plan_smoke") {
+        run_runtime_rerun_plan_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rerun_plan_empty_smoke") {
+        run_runtime_rerun_plan_empty_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_rebaseline") {
+        run_runtime_approve_rebaseline_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_rebaseline_smoke") {
+        run_runtime_approve_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_rebaseline_registry_switch_smoke") {
+        run_runtime_approve_rebaseline_registry_switch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_rebaseline_archive_proposal_smoke") {
+        run_runtime_approve_rebaseline_archive_proposal_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_refresh_after_rebaseline_smoke") {
+        run_runtime_refresh_after_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rerun_plan_after_rebaseline_smoke") {
+        run_runtime_rerun_plan_after_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_selection_after_registry_switch_smoke") {
+        run_runtime_selection_after_registry_switch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_after_rebaseline_quick_smoke") {
+        run_combined_pipeline_after_rebaseline_quick_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_after_rebaseline_nightly_smoke") {
+        run_combined_pipeline_after_rebaseline_nightly_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_append_after_rebaseline_smoke") {
+        run_runtime_history_append_after_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_history_transition_smoke") {
+        run_runtime_registry_history_transition_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_contains_rebaseline_transition_smoke") {
+        run_evidence_bundle_contains_rebaseline_transition_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_transition_metadata_smoke") {
+        run_evidence_bundle_runtime_transition_metadata_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_synthetic_warn_smoke") {
+        run_runtime_synthetic_warn_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_synthetic_action_required_smoke") {
+        run_runtime_synthetic_action_required_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_synthetic_fail_smoke") {
+        run_runtime_synthetic_fail_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_missing_baseline_smoke") {
+        run_runtime_missing_baseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_fingerprint_mismatch_smoke") {
+        run_runtime_fingerprint_mismatch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_append_smoke") {
+        run_runtime_history_append_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_summary_smoke") {
+        run_runtime_history_summary_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_jitter_smoke") {
+        run_runtime_history_jitter_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rebaseline_proposal_smoke") {
+        run_runtime_rebaseline_proposal_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rebaseline_noop_smoke") {
+        run_runtime_rebaseline_noop_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_policy_runtime_ok_smoke") {
+        run_combined_policy_runtime_ok_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_policy_runtime_warn_smoke") {
+        run_combined_policy_runtime_warn_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_policy_runtime_action_required_smoke") {
+        run_combined_policy_runtime_action_required_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_policy_runtime_fail_smoke") {
+        run_combined_policy_runtime_fail_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "artifact_index_smoke") {
+        run_artifact_index_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "artifact_prune_smoke") {
+        run_artifact_prune_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "bundle_index_roundtrip_smoke") {
+        run_bundle_index_roundtrip_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_pipeline_quick_registry_smoke") {
+        run_policy_pipeline_quick_registry_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_pipeline_nightly_history_smoke") {
+        run_policy_pipeline_nightly_history_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_pipeline_rebaseline_needed_smoke") {
+        run_policy_pipeline_rebaseline_needed_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_unknown_fingerprint_smoke") {
+        run_runtime_registry_unknown_fingerprint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_multiple_candidate_smoke") {
+        run_runtime_registry_multiple_candidate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_retired_only_smoke") {
+        run_runtime_registry_retired_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_multi_fingerprint_smoke") {
+        run_runtime_registry_multi_fingerprint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_same_host_compiler_bump_smoke") {
+        run_runtime_registry_same_host_compiler_bump_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_sanitizer_change_smoke") {
+        run_runtime_registry_sanitizer_change_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_runner_tag_change_smoke") {
+        run_runtime_registry_runner_tag_change_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_cross_host_smoke") {
+        run_runtime_registry_cross_host_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_regression_spike_smoke") {
+        run_runtime_history_regression_spike_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_stable_smoke") {
+        run_runtime_history_stable_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_noisy_smoke") {
+        run_runtime_history_noisy_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_regressing_smoke") {
+        run_runtime_history_regressing_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_recovery_after_rebaseline_smoke") {
+        run_runtime_history_recovery_after_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_campaign_smoke") {
+        run_runtime_watch_campaign_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_campaign_longer_smoke") {
+        run_runtime_watch_campaign_longer_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_multi_fingerprint_smoke") {
+        run_runtime_watch_multi_fingerprint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_same_host_compiler_bump_smoke") {
+        run_runtime_watch_same_host_compiler_bump_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_sanitizer_change_smoke") {
+        run_runtime_watch_sanitizer_change_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_runner_tag_change_smoke") {
+        run_runtime_watch_runner_tag_change_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_cross_host_smoke") {
+        run_runtime_watch_cross_host_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_retired_only_smoke") {
+        run_runtime_watch_retired_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_stable_overrun_smoke") {
+        run_runtime_watch_stable_overrun_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_clear_after_recovery_smoke") {
+        run_runtime_watch_clear_after_recovery_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_escalate_smoke") {
+        run_runtime_watch_escalate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_transition_clear_smoke") {
+        run_runtime_watch_transition_clear_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_transition_stable_smoke") {
+        run_runtime_watch_transition_stable_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_transition_escalate_smoke") {
+        run_runtime_watch_transition_escalate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_to_rebaseline_candidate_smoke") {
+        run_runtime_watch_to_rebaseline_candidate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_production_hard_fail_smoke") {
+        run_runtime_watch_production_hard_fail_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_diagnostic_soft_warn_smoke") {
+        run_runtime_watch_diagnostic_soft_warn_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_role_sensitive_smoke") {
+        run_runtime_budget_role_sensitive_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_recommendation_watch_smoke") {
+        run_runtime_recommendation_watch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_recommendation_rebaseline_required_smoke") {
+        run_runtime_recommendation_rebaseline_required_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_recommendation_not_comparable_smoke") {
+        run_runtime_recommendation_not_comparable_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_recommendation_smoke") {
+        run_combined_pipeline_recommendation_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_continue_monitoring_smoke") {
+        run_combined_pipeline_continue_monitoring_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_watch_rationale_smoke") {
+        run_combined_pipeline_watch_rationale_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_propose_runtime_rebaseline_smoke") {
+        run_combined_pipeline_propose_runtime_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_fail_on_production_budget_smoke") {
+        run_combined_pipeline_fail_on_production_budget_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rebaseline_proposal_multi_candidate_smoke") {
+        run_runtime_rebaseline_proposal_multi_candidate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rebaseline_proposal_retired_only_smoke") {
+        run_runtime_rebaseline_proposal_retired_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rebaseline_proposal_cross_host_smoke") {
+        run_runtime_rebaseline_proposal_cross_host_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "pipeline_matrix_smoke") {
+        run_pipeline_matrix_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "pipeline_matrix_mixed_fingerprints_smoke") {
+        run_pipeline_matrix_mixed_fingerprints_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "pipeline_nightly_rebaseline_candidate_smoke") {
+        run_pipeline_nightly_rebaseline_candidate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "campaign_manifest_parallel_smoke") {
+        run_campaign_manifest_parallel_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "artifact_dir_uniqueness_smoke") {
+        run_artifact_dir_uniqueness_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_pipeline_parallel_smoke") {
+        run_policy_pipeline_parallel_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "transient_repro_smoke") {
+        run_transient_repro_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_registry_smoke") {
+        run_evidence_bundle_runtime_registry_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_history_smoke") {
+        run_evidence_bundle_runtime_history_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_registry_snapshot_smoke") {
+        run_evidence_bundle_runtime_registry_snapshot_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_history_snapshot_smoke") {
+        run_evidence_bundle_runtime_history_snapshot_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_proposal_smoke") {
+        run_evidence_bundle_runtime_proposal_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_watch_metadata_smoke") {
+        run_evidence_bundle_runtime_watch_metadata_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_watch_history_smoke") {
+        run_evidence_bundle_watch_history_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_watch_transition_smoke") {
+        run_evidence_bundle_watch_transition_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_multi_fingerprint_watch_smoke") {
+        run_evidence_bundle_multi_fingerprint_watch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "ops_guide_paths_smoke") {
+        run_ops_guide_paths_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_roundtrip_smoke") {
+        run_policy_roundtrip_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_empty_plan_noop_smoke") {
+        run_policy_empty_plan_noop_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_manifest_missing_input_smoke") {
+        run_policy_manifest_missing_input_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "stale_family_selective_rerun_smoke") {
+        run_stale_family_selective_rerun_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_rerun_plan_smoke") {
+        run_policy_rerun_plan_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_rerun_plan_empty_smoke") {
+        run_policy_rerun_plan_empty_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_rerun_plan_family_filter_smoke") {
+        run_policy_rerun_plan_family_filter_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_rerun_plan_mode_selection_smoke") {
+        run_policy_rerun_plan_mode_selection_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_selective_rerun_execute_smoke") {
+        run_policy_selective_rerun_execute_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_selective_rerun_noop_smoke") {
+        run_policy_selective_rerun_noop_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_selective_rerun_n_family_smoke") {
+        run_policy_selective_rerun_n_family_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_baseline_history_smoke") {
+        run_policy_baseline_history_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_baseline_archive_roundtrip_smoke") {
+        run_policy_baseline_archive_roundtrip_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ci_check_smoke") {
+        run_policy_ci_check_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_nightly_refresh_smoke") {
+        run_policy_nightly_refresh_smoke_case(options);
         return;
     }
     if (options.caseName == "compare_evidence_threshold_smoke") {

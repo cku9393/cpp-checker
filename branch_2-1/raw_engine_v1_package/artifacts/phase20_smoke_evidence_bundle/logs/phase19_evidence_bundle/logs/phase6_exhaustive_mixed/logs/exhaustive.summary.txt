@@ -1,0 +1,6 @@
+generated_state_count=104
+canonical_unique_state_count=52
+dedupe_drop_count=52
+collision_spot_check_count=8
+dedupe_ratio=0.5
+family=mixed generated=104 unique=52 dedupe_drops=52 dedupe_ratio=0.5 validator_checks=52 primitive_checks=52 planner_checks=52

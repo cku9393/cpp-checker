@@ -1,0 +1,5 @@
+checkpoint stage: tc54 shape replay diagnosis
+source random campaign zip: artifacts/oracle_random_compare_resume_20260322_192124.zip
+earliest random mismatch: seed1_tc54
+compare replay seam: CASK_REWRITE_OUTPUT_NOT_EQUAL_REPLAY_FINAL
+finalcore replay seam: FCSK_STEP_COUNT_DIFFER / TSK_ALIVE_R_SET_DIFFER

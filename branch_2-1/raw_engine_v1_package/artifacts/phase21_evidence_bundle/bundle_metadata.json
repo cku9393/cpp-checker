@@ -1,0 +1,140 @@
+{
+  "phase": "phase21",
+  "timestamp_utc": "2026-03-22T05:34:10Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
+  "report": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE21_STABILIZATION_REPORT_20260322.txt",
+  "policy_manifest_json": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_v1.json",
+  "policy_manifest_txt": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_v1.txt",
+  "policy_manifest_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_v1.summary.txt",
+  "bundle_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase21_evidence_bundle",
+  "zip_out": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase21_stabilization_20260322.zip",
+  "gate_summary": "policy_gate_summary current_verdict=PASS freshness_verdict=FRESH split_tie_organic_symmetric=PASS/FRESH automorphism_probe_large=PASS/FRESH planner_tie_mixed_organic=NON_APPLICABLE/FRESH planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY/FRESH",
+  "policy_summary": "exact_shadow policy lifecycle healthy: no stale families, no rerun-required families, no reclassification required",
+  "current_verdict": "PASS",
+  "freshness_verdict": "FRESH",
+  "gate_verdict": "PASS",
+  "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_phase21_approved_v1.json",
+  "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_v1.json",
+  "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_refresh_phase21_v1.json",
+  "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_rerun_plan_phase21_v1.json",
+  "baseline_manifest_hash": "027f97aa36c231c174427a402b1e95ef9e1de48e408c0e6421a29431f99e3c66",
+  "current_manifest_hash": "abe8d8465c092648948cea950cd13b5fd3e1ede3c717571829a74d83d2f6ef65",
+  "refresh_manifest_hash": "4c1542418182348f6a2208eba55b5a644598ab8786beb916e51366b79be2c7bd",
+  "rerun_plan_hash": "d94a0ebed975dc312d93d9d5a3a8668bd9f57e6e4ca2acbff8a7b0c6aa4332be",
+  "freshness_summary": {
+    "default_freshness_status": "STALE",
+    "manifest_freshness_status": null,
+    "manifest_freshness_verdict": "FRESH",
+    "family_status_counts": {
+      "FRESH": 4
+    },
+    "stale_family_count": 0,
+    "revalidated_family_count": 4,
+    "reclassify_required_count": 0
+  },
+  "refresh_summary": {
+    "freshness_verdict": "FRESH",
+    "current_verdict": "PASS",
+    "stale_family_count": 0,
+    "requires_rerun_family_count": 0,
+    "reclassify_required_count": 0
+  },
+  "drift_flags": [],
+  "reclassification_needed_families": [],
+  "family_status_summary": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_status_table": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_freshness": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": false
+    }
+  ],
+  "stale_family_count": 0,
+  "requires_rerun_family_count": 0,
+  "reclassify_required_count": 0,
+  "copied_counts": {
+    "reports": 1,
+    "manifests": 15,
+    "curated": 48,
+    "regressions": 2,
+    "logs": 1998
+  }
+}

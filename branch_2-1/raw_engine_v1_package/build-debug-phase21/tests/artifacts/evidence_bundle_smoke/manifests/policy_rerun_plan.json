@@ -1,0 +1,33 @@
+{
+  "plan_version":"policy_rerun_plan_v1",
+  "generated_at_utc":"2026-03-22T06:24:24Z",
+  "artifact_root":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/policy_gate_smoke",
+  "baseline_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase21/tests/artifacts/evidence_bundle_smoke/manifests/policy_gate_baseline.txt",
+  "current_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase21/tests/artifacts/evidence_bundle_smoke/manifests/policy_gate.txt",
+  "refresh_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase21/tests/artifacts/evidence_bundle_smoke/manifests/policy_gate_refresh.txt",
+  "baseline_manifest_hash":"8b01dfd4839855fa",
+  "current_manifest_hash":"f73fa5c81e2d9657",
+  "refresh_manifest_hash":"fcfe73e1afccda6f",
+  "stale_family_count":1,
+  "requires_rerun_family_count":0,
+  "reclassify_required_count":0,
+  "selected_entry_count":1,
+  "stale_families":["split_tie_organic_symmetric"],
+  "requires_rerun_families":[],
+  "summary_verdict":"RERUN_REQUIRED",
+  "rationale":"rerun entries generated for stale or requires_rerun families",
+  "entries":[
+    {
+      "family":"split_tie_organic_symmetric",
+      "current_status":"PASS",
+      "freshness_status":"STALE",
+      "rerun_kind":"direct_compare_rerun",
+      "evidence_mode":"campaign_compare",
+      "campaign_config_path":"tests/campaigns/phase22_split_tie_organic_compare.txt",
+      "recommended_command":"./raw_engine_tests --case campaign --campaign-config tests/campaigns/phase22_split_tie_organic_compare.txt --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes",
+      "expected_stop_criteria":"target-compared-states=32,target-eligible-states=32,semantic_disagreement=0,fallback=0",
+      "status_impact":"PASS family stale",
+      "counts_as_production_evidence":true
+    }
+  ]
+}

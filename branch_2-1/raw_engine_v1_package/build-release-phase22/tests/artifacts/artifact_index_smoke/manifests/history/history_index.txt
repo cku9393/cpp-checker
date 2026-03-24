@@ -1,0 +1,10 @@
+entry_count=1
+
+baseline_tag=
+approval_timestamp_utc=
+report_file=
+bundle_file=
+baseline_manifest_path=
+promoted_from_manifest=
+family_status_snapshot=
+record_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase22/tests/artifacts/artifact_index_smoke/manifests/history/policy_graduation_manifest_phase22_approved_v1_2026-03-22T07_54_52Z_phase22-approved.meta.txt

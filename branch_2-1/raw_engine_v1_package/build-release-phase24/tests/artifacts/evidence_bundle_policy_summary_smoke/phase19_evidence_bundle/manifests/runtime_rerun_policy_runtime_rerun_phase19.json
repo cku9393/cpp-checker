@@ -1,0 +1,18 @@
+{
+  "plan_version": "runtime_rerun_plan_v1",
+  "generated_at_utc": "2026-03-22T10:47:02Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_policy_summary_smoke",
+  "baseline_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_runtime_baseline_phase19_approved.json",
+  "current_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_runtime_current_phase19.json",
+  "refresh_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_runtime_refresh_phase19.json",
+  "baseline_runtime_manifest_hash": "6e80836f104b2124905c37b285a0319ad144f3b425be9ca0c7bd32423e90f4b3",
+  "current_runtime_manifest_hash": "e2f6f94bcb2a06b73ad2ff224f0e08abd0617d2e10a6517ea89c3ae6efd21ca9",
+  "refresh_runtime_manifest_hash": "da902f92a5a4dcb4989f1ec672afe3ce76f70269a835d83525e0eefbaeb9a02e",
+  "stale_entry_count": 0,
+  "requires_rerun_entry_count": 0,
+  "rebaseline_required_count": 0,
+  "selected_entry_count": 0,
+  "entries": [],
+  "summary_verdict": "PASS",
+  "rationale": "no stale or over-budget runtime entries"
+}

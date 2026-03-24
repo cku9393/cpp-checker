@@ -1,0 +1,116 @@
+{
+  "phase": "phase19",
+  "timestamp_utc": "2026-03-22T05:28:04Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke",
+  "report": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/PHASE19_STABILIZATION_REPORT.txt",
+  "policy_manifest_json": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_gate.json",
+  "policy_manifest_txt": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_gate.txt",
+  "policy_manifest_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_gate.summary.txt",
+  "bundle_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/phase19_evidence_bundle",
+  "zip_out": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/raw_engine_phase19_stabilization.zip",
+  "gate_summary": "policy_gate_summary current_verdict=PASS freshness_verdict=FRESH split_tie_organic_symmetric=PASS/FRESH automorphism_probe_large=PASS/FRESH planner_tie_mixed_organic=NON_APPLICABLE/FRESH planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY/FRESH",
+  "policy_summary": "exact_shadow policy lifecycle requires attention: stale=1, requires_rerun=0, reclassify_required=0",
+  "current_verdict": "PASS",
+  "freshness_verdict": "STALE",
+  "gate_verdict": "PASS",
+  "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_gate_baseline.json",
+  "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_gate.json",
+  "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_gate_refresh.json",
+  "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/evidence_bundle_policy_summary_smoke/manifests/policy_rerun_plan.json",
+  "baseline_manifest_hash": "a8fe3f83784c1bd663b885bbde8498cef4297a6c10bbe0a986cac4eac33cd074",
+  "current_manifest_hash": "c6ed4fade79f50057176100c2a113234a057c742bccfa5c067ebb5e0e6b17a95",
+  "refresh_manifest_hash": "a3c27fb1b8acebf2b1a2e7e63480866b1f7e157800c8f9b6625167d526cd4dd1",
+  "rerun_plan_hash": "4e6511d80d83369d3617038f2883da945a50235ee2f8696e3b71ab2a4e1cc0bc",
+  "freshness_summary": {
+    "default_freshness_status": "STALE",
+    "manifest_freshness_status": null,
+    "manifest_freshness_verdict": "STALE",
+    "family_status_counts": {
+      "STALE": 1
+    },
+    "stale_family_count": 1,
+    "revalidated_family_count": 1,
+    "reclassify_required_count": 0
+  },
+  "refresh_summary": {
+    "freshness_verdict": "STALE",
+    "current_verdict": "PASS",
+    "stale_family_count": 1,
+    "requires_rerun_family_count": 0,
+    "reclassify_required_count": 0
+  },
+  "drift_flags": [],
+  "reclassification_needed_families": [],
+  "family_status_summary": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_status_table": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_freshness": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "STALE",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": true
+    }
+  ],
+  "stale_family_count": 1,
+  "requires_rerun_family_count": 0,
+  "reclassify_required_count": 0,
+  "copied_counts": {
+    "reports": 1,
+    "manifests": 15,
+    "curated": 15,
+    "regressions": 1,
+    "logs": 1
+  }
+}

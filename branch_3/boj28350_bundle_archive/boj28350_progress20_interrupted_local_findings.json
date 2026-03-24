@@ -1,0 +1,55 @@
+{
+  "status": "interrupted_by_container_reset",
+  "completed_scope": {
+    "gate_runs": [
+      {
+        "tag": "connector_only_dense_256_local_none_after",
+        "validator_ok": true,
+        "elapsed_sec": 3.46
+      },
+      {
+        "tag": "both_on_dense_256_local_none_after",
+        "validator_ok": true,
+        "elapsed_sec": 3.76
+      },
+      {
+        "tag": "both_on_multi_512_local_sampled_after",
+        "validator_ok": true,
+        "elapsed_sec": 5.16
+      }
+    ],
+    "local_512_before_after": {
+      "before_connector_only_dense_512_base": 49.86,
+      "before_both_on_dense_512_base": 48.82,
+      "before_connector_only_dense_512_sampled": 49.28,
+      "before_both_on_dense_512_sampled": 48.45,
+      "before_both_on_multi_512_sampled": 7.0,
+      "after_connector_only_dense_512_base": 47.34,
+      "after_both_on_dense_512_base": 49.42,
+      "after_connector_only_dense_512_sampled": 45.89,
+      "after_both_on_dense_512_sampled": 51.32,
+      "after_both_on_multi_512_sampled": 6.97
+    },
+    "aggregate_after_sampled_ms": {
+      "boundary_seeded_scan_window_narrowing": 1.986,
+      "transition_state_branch_and_state_load_core": 10.353,
+      "run_boundary_commit_and_count_update": 0.022,
+      "tail_stop_and_early_exit_reuse": 0.605
+    },
+    "aggregate_after_sampled_share_pct": {
+      "boundary_seeded_scan_window_narrowing": 15.3,
+      "transition_state_branch_and_state_load_core": 79.8,
+      "run_boundary_commit_and_count_update": 0.2,
+      "tail_stop_and_early_exit_reuse": 4.7
+    },
+    "current_local_conclusion": "next pivot after one-pass-scan round: transition-state branch and state load core"
+  },
+  "missing": [
+    "dense_1024_release_clean_rerun",
+    "dense_1024_repeat_stability",
+    "multi_1024_release_clean_rerun",
+    "authoritative_clean_4096_reruns",
+    "authoritative_progress20_source_packaging",
+    "authoritative_progress20_merged_json_packaging"
+  ]
+}

@@ -1,0 +1,2 @@
+case_mode	case_n	case_seed	call_idx	currentV	currentE	currentQ	q_over_e	attachCuts	boundarySize	oldBoundarySize	boundaryZero	ccOne	dense_guard	boundary_guard	E_guard	Q_guard	badQueriesShape	fallback_total_ms	fallback_local_id_adj_ms	fallback_step3_ms	fallback_keep_order_ms	fallback_applyPatch_ms	shadow_prefilter_hit	shadow_attempted	shadow_match	shadow_mismatch_reason	validator_shadow_fail
+comb_dense	1024	1	1	1022	93811	34172	0.364264	0	0	0	1	1	1	0	1	1	Q34172_A0_B0_OB0_BZ1_CC1	13.199	0.000	0.000	1.473	0.000	1	1	0	debug_off	0

@@ -1,0 +1,51 @@
+{
+  "registry_version": "runtime_baseline_registry_v1",
+  "generated_at_utc": "2026-03-23T01:08:06Z",
+  "entries": [
+    {
+      "baseline_id": "phase19-runtime-approved-d70f8d6c-20260323_010806",
+      "baseline_tag": "phase19-runtime-approved",
+      "approval_timestamp_utc": "2026-03-23T01:08:06Z",
+      "runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_combined_summary_smoke/manifests/policy_runtime_baseline_phase19_approved.json",
+      "runtime_baseline_manifest_hash": "ab365bfe993c759d6cf8173698cc87b84bbeb52a40402d0aca9c23184cbb3998",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "bundle-smoke",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "d70f8d6cffd368768a47f0875b87eadd51ec53e81a80a0aad5627e8d05b9432d"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "host_fingerprint_hash": "d70f8d6cffd368768a47f0875b87eadd51ec53e81a80a0aad5627e8d05b9432d",
+      "toolchain_fingerprint_hash": "fe28aa4f84449b51b55eae9c4c9fbb0910ef269d1ab13970f6e37bfbf3e054f3",
+      "runtime_fingerprint_key": "8723b12db7f96a860307461f61d0874ba3730d5407a27cba33a6147ee9757edf",
+      "execution_signature_hash": "d52a274832fa4d1c98bd0e653001cf45c8914fa8d3f54541cae7be1c7d7d57ab",
+      "build_classes_covered": [
+        "asan_full",
+        "debug_full",
+        "policy_nightly",
+        "release_full"
+      ],
+      "execution_class_signatures": {
+        "release_full": "Release|none",
+        "debug_full": "Debug|none",
+        "asan_full": "Asan|none",
+        "policy_nightly": "Policy|none"
+      },
+      "runtime_budget_profile_id": "phase19-runtime-approved",
+      "manifest_role": "baseline",
+      "provenance_frozen": true,
+      "status": "active"
+    }
+  ],
+  "active_entry_count": 1,
+  "retired_entry_count": 0,
+  "registry_hash": "06466bf62650e66ef1421d1594d3b971ae6efd6808adcd52ca72a0c58a68cedf"
+}

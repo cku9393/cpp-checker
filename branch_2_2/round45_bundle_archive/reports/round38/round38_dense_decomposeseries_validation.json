@@ -1,0 +1,12 @@
+{
+  "status": "incomplete",
+  "macro_present": true,
+  "env_plumbing_ok": true,
+  "nonempty_case_mode_count": 23,
+  "row_count_census": 121,
+  "row_count_matched": 23,
+  "matched_decompose_rows": 0,
+  "truth_gate_passed": false,
+  "reason": "rows_emitted_only_for_sanity_scale_and_shadow_match_disabled",
+  "observed_shadow_match_counterexample": "profiling build recorded mismatchReason=debug_off for emitted rows"
+}

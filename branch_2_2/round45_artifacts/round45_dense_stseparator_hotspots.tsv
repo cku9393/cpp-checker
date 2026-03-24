@@ -1,0 +1,5 @@
+source	scope	case_mode	metric	value	note
+fresh_current_pass	smoke_gate	comb_dense	source_alignment_smoke_failure	1	no profiling rows emitted
+maintained_prior_artifact	round43	comb_dense_8192	bfs_neighbor_iter	7.272	same-side dominated
+maintained_prior_artifact	round43	comb_rect_dense_8192	bfs_neighbor_iter	7.618	same-side dominated
+maintained_prior_artifact	round43	caterpillar_rect_dense_8192	bfs_neighbor_iter	7.694	same-side dominated

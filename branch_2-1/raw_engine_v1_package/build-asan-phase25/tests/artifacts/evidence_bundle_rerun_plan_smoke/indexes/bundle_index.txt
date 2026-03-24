@@ -1,0 +1,6 @@
+latest_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase25/tests/artifacts/evidence_bundle_rerun_plan_smoke/raw_engine_phase19_stabilization.zip
+latest_delivery_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase25/tests/artifacts/evidence_bundle_rerun_plan_smoke/raw_engine_phase19_stabilization_delivery.zip
+latest_curated_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase25/tests/artifacts/evidence_bundle_rerun_plan_smoke/curated/raw_engine_phase19_curated.zip
+bundle_count=0
+delivery_bundle_count=0
+curated_bundle_count=0

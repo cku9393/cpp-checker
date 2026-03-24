@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -14,6 +15,25 @@ GEN = ROOT / "gen_case.py"
 VAL = ROOT / "validator.py"
 
 
+def parse_env_assignments(items: list[str]) -> dict[str, str]:
+    env = {}
+    for item in items:
+        key, sep, value = item.partition("=")
+        if not sep or not key:
+            raise ValueError(f"invalid --env assignment: {item!r}")
+        env[key] = value
+    return env
+
+
+def build_case_solver_env(outdir: Path, mode: str, n: int, seed: int) -> dict[str, str]:
+    env = os.environ.copy()
+    env["DENSE_PROFILE_OUTDIR"] = str(outdir)
+    env["DENSE_SHADOW_CASE_MODE"] = mode
+    env["DENSE_SHADOW_CASE_N"] = str(n)
+    env["DENSE_SHADOW_CASE_SEED"] = str(seed)
+    return env
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Generate, run, and validate one stress case.")
     ap.add_argument("mode")
@@ -23,6 +43,8 @@ def main() -> int:
     ap.add_argument("shuffle_queries", nargs="?", type=int, default=0)
     ap.add_argument("solver", nargs="?", default=str(default_solver_path(ROOT)))
     ap.add_argument("outdir", nargs="?", default="_case")
+    ap.add_argument("--timeout", type=float, default=None)
+    ap.add_argument("--env", action="append", default=[], help="repeatable KEY=VALUE assignment passed to the solver")
     args = ap.parse_args()
 
     solver = resolve_solver_path(args.solver, root=ROOT)
@@ -41,6 +63,8 @@ def main() -> int:
     hid_path = outdir / "hidden_parent.txt"
     time_path = outdir / "time.txt"
     sol_stderr = outdir / "solver_stderr.txt"
+    solver_env = build_case_solver_env(outdir, args.mode, args.n, args.seed)
+    solver_env.update(parse_env_assignments(args.env))
 
     gen_cmd = [
         sys.executable,
@@ -70,10 +94,12 @@ def main() -> int:
         out_path,
         time_path,
         sol_stderr,
-        timeout=None,
+        timeout=args.timeout,
+        env=solver_env,
+        cwd=outdir,
     )
     if timed_out:
-        print("[run_case] solver timed out unexpectedly", file=sys.stderr)
+        print(f"[run_case] solver timed out after {args.timeout}s", file=sys.stderr)
         return 124
     if rc_sol != 0:
         print(f"[run_case] solver exited with code {rc_sol}", file=sys.stderr)

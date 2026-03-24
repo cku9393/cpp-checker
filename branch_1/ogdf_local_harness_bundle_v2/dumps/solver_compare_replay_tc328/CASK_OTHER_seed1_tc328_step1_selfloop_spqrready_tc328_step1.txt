@@ -1,0 +1,535 @@
+=== SolverCompareReplayBundle ===
+caseName=selfloop_spqrready_tc328_step1
+manifestPath=regressions/rewrite_seq_cases.json
+seed=1
+tc=328
+targetStep=1
+topLevelOk=1
+compareAssemblySeamKind=CASK_OTHER
+compareAssemblyWhy=solver outputs match replay finals, but oracle and rewrite canonical semantics still differ
+firstMismatchDescription=solver outputs match replay finals, but oracle and rewrite canonical semantics still differ
+oracleReplayTerminatedStep=4
+rewriteReplayTerminatedStep=3
+oracleSolverWhy=
+rewriteSolverWhy=
+oracleReplayWhy=
+rewriteReplayWhy=
+rewriteSolverOutputDebugTag=REWRITE_SEQ_TERMINAL_FROM_FINAL_CORE
+rewriteTerminalAssemblyWhy=
+oracleSolverVsReplayEqualRaw=1
+oracleSolverVsReplayEqualCanonical=1
+rewriteSolverVsReplayEqualRaw=1
+rewriteSolverVsReplayEqualCanonical=1
+oracleVsRewriteEqualRaw=0
+oracleVsRewriteEqualCanonical=0
+
+=== InputExplicit ===
+vertices: 1 2 3 4 5 6
+edges:
+  id=0 (1,2)
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=8 (2,4)
+  id=9 (2,5)
+  id=10 (2,6)
+  id=11 (4,6)
+
+=== OracleSolverOutput ===
+valid=1
+actualInvariantOk=1
+baselineKind=ORACLE_FIXPOINT_BASELINE
+debugTag=ORACLE_FIXPOINT
+why=
+parent:
+vertices: 5 6
+edges:
+  id=4 (5,6)
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+=== OracleSolverOutputCanonical ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+=== OracleReplayFinalRaw ===
+vertices: 5 6
+edges:
+  id=4 (5,6)
+
+=== OracleReplayFinalCanonical ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+=== RewriteSolverOutput ===
+valid=1
+actualInvariantOk=1
+debugTag=REWRITE_SEQ_TERMINAL_FROM_FINAL_CORE
+why=
+parent:
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== RewriteSolverOutputCanonical ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== RewriteReplayFinalRaw ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+
+=== RewriteReplayFinalCanonical ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== OracleReplay ===
+ok=1
+terminatedStep=4
+why=
+stepCount=4
+=== FinalExplicitRaw ===
+vertices: 5 6
+edges:
+  id=4 (5,6)
+=== FinalExplicitCanonical ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+steps:
+stepIndex=1
+side=ORACLE
+chosenR=0
+chosenX=2
+stepOk=1
+terminated=0
+terminateReason=
+actualInvariantOk=1
+actualInvariantWhy=
+debugTag=ORACLE_FIXPOINT_STEP:STEP_OK
+=== ExplicitBefore ===
+vertices: 1 2 3 4 5 6
+edges:
+  id=0 (1,2)
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=8 (2,4)
+  id=9 (2,5)
+  id=10 (2,6)
+  id=11 (4,6)
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (8,2,4)
+  (9,2,5)
+  (10,2,6)
+  (11,4,6)
+=== ExplicitAfterDelete ===
+vertices: 1 3 4 5 6
+edges:
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=11 (4,6)
+=== CanonicalExplicitAfterDelete ===
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+=== ExplicitAfterNormalize ===
+vertices: 1 3 4 5 6
+edges:
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=11 (4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+
+stepIndex=2
+side=ORACLE
+chosenR=0
+chosenX=4
+stepOk=1
+terminated=0
+terminateReason=
+actualInvariantOk=1
+actualInvariantWhy=
+debugTag=ORACLE_FIXPOINT_STEP:STEP_OK
+=== ExplicitBefore ===
+vertices: 1 3 4 5 6
+edges:
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=11 (4,6)
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+=== ExplicitAfterDelete ===
+vertices: 1 3 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitAfterDelete ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+=== ExplicitAfterNormalize ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+stepIndex=3
+side=ORACLE
+chosenR=0
+chosenX=1
+stepOk=1
+terminated=0
+terminateReason=
+actualInvariantOk=1
+actualInvariantWhy=
+debugTag=ORACLE_FIXPOINT_STEP:STEP_OK
+=== ExplicitBefore ===
+vertices: 1 3 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+=== ExplicitAfterDelete ===
+vertices: 5 6
+edges:
+  id=4 (5,6)
+=== CanonicalExplicitAfterDelete ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+=== ExplicitAfterNormalize ===
+vertices: 5 6
+edges:
+  id=4 (5,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+stepIndex=4
+side=ORACLE
+chosenR=-1
+chosenX=-1
+stepOk=1
+terminated=1
+terminateReason=NO_TARGET
+actualInvariantOk=1
+actualInvariantWhy=
+debugTag=ORACLE_FIXPOINT_STEP:DONE
+=== ExplicitBefore ===
+vertices: 5 6
+edges:
+  id=4 (5,6)
+=== CanonicalExplicitBefore ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+=== ExplicitAfterDelete ===
+vertices: 5 6
+edges:
+  id=4 (5,6)
+=== CanonicalExplicitAfterDelete ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+=== ExplicitAfterNormalize ===
+vertices: 5 6
+edges:
+  id=4 (5,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+
+=== RewriteReplay ===
+ok=1
+terminatedStep=3
+why=
+stepCount=3
+=== FinalExplicitRaw ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== FinalExplicitCanonical ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+steps:
+stepIndex=1
+side=REWRITE_SEQ
+chosenR=0
+chosenX=2
+stepOk=1
+terminated=0
+terminateReason=
+actualInvariantOk=1
+actualInvariantWhy=
+debugTag=REWRITE_SEQ_STEP:STEP_OK
+=== ExplicitBefore ===
+vertices: 1 2 3 4 5 6
+edges:
+  id=0 (1,2)
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=8 (2,4)
+  id=9 (2,5)
+  id=10 (2,6)
+  id=11 (4,6)
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (8,2,4)
+  (9,2,5)
+  (10,2,6)
+  (11,4,6)
+=== ExplicitAfterDelete ===
+vertices: 1 3 4 5 6
+edges:
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=11 (4,6)
+=== CanonicalExplicitAfterDelete ===
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+=== ExplicitAfterNormalize ===
+vertices: 1 3 4 5 6
+edges:
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=11 (4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+
+stepIndex=2
+side=REWRITE_SEQ
+chosenR=0
+chosenX=4
+stepOk=1
+terminated=0
+terminateReason=
+actualInvariantOk=1
+actualInvariantWhy=
+debugTag=REWRITE_SEQ_STEP:STEP_OK
+=== ExplicitBefore ===
+vertices: 1 3 4 5 6
+edges:
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=11 (4,6)
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+=== ExplicitAfterDelete ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitAfterDelete ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+=== ExplicitAfterNormalize ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+stepIndex=3
+side=REWRITE_SEQ
+chosenR=-1
+chosenX=-1
+stepOk=1
+terminated=1
+terminateReason=NO_TARGET
+actualInvariantOk=1
+actualInvariantWhy=
+debugTag=REWRITE_SEQ_STEP:DONE
+=== ExplicitBefore ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+=== ExplicitAfterDelete ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitAfterDelete ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+=== ExplicitAfterNormalize ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+

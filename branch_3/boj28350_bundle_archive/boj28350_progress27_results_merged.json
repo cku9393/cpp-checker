@@ -1,0 +1,46 @@
+{
+  "package_state": "partial_authoritative",
+  "source_file": "boj28350_literature_progress27_target_resolve_route_local_pointer_pinning.cpp",
+  "from_progress26_partial_close": true,
+  "smoke": {
+    "path": "/mnt/data/p27_runs/smoke_multi64/result.json"
+  },
+  "gate_results": {
+    "gate_connector_only_dense_256_after": "/mnt/data/p27_runs/gate_connector_only_dense_256_after/result.json",
+    "gate_both_on_dense_256_after": "/mnt/data/p27_runs/gate_both_on_dense_256_after/result.json",
+    "gate_both_on_multi_512_after": "/mnt/data/p27_runs/gate_both_on_multi_512_after/result.json"
+  },
+  "sampled_local_results": {
+    "before_connector_only_dense_512_sampled": "/mnt/data/p27_runs/before_connector_only_dense_512_sampled/result.json",
+    "before_both_on_dense_512_sampled": "/mnt/data/p27_runs/before_both_on_dense_512_sampled/result.json",
+    "before_both_on_multi_512_sampled": "/mnt/data/p27_runs/before_both_on_multi_512_sampled/result.json",
+    "after_connector_only_dense_512_sampled": "/mnt/data/p27_runs/after_connector_only_dense_512_sampled/result.json",
+    "after_both_on_dense_512_sampled": "/mnt/data/p27_runs/after_both_on_dense_512_sampled/result.json",
+    "after_both_on_multi_512_sampled": "/mnt/data/p27_runs/after_both_on_multi_512_sampled/result.json"
+  },
+  "base_local_results_partial": {
+    "before_connector_only_dense_512_base2": "/mnt/data/p27_runs/before_connector_only_dense_512_base2/result.json",
+    "after_connector_only_dense_512_base": "/mnt/data/p27_runs/after_connector_only_dense_512_base/result.json",
+    "after_both_on_dense_512_base": "/mnt/data/p27_runs/after_both_on_dense_512_base/result.json"
+  },
+  "release_results_partial": {
+    "after_both_on_multi_1024_release": "/mnt/data/p27_runs/after_both_on_multi_1024_release/result.json"
+  },
+  "aggregate_after_sampled_ms": {
+    "target slot and owner resolve": 17.716068,
+    "route-local pointer hoist miss and fallback": 0.378274,
+    "pointer validation and rebinding": 17.810636000000002,
+    "connector hotpath target pinning": 5.4e-05
+  },
+  "aggregate_after_sampled_share_pct": {
+    "target slot and owner resolve": 49.3414627788105,
+    "route-local pointer hoist miss and fallback": 1.0535403505558776,
+    "pointer validation and rebinding": 49.60484647388701,
+    "connector hotpath target pinning": 0.00015039674661757716
+  },
+  "next_pivot": "pointer validation and rebinding",
+  "notes": [
+    "The target-resolve decomposition is currently proxy-derived from pwrite summary counters and not yet a fully separate hot-loop instrumentation surface.",
+    "Authoritative clean dense 1024 and 4096 representative reruns are still missing in this package."
+  ]
+}

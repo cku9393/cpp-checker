@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/tmp/cppchecker_short/harness/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

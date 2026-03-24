@@ -1,0 +1,258 @@
+=== SolverFinalCoreReplayBundle ===
+caseName=xshared_loopshared_proxy_loop_real_tc56_step1
+manifestPath=regressions/rewrite_seq_cases.json
+seed=1
+tc=56
+targetStep=1
+topLevelOk=1
+finalCoreSeamKind=FCSK_STEP_COUNT_DIFFER
+firstDivergenceStep=4
+finalCoreSeamWhy=trace length differs: solver=3 replay=4
+targetSearchComparedStep=3
+targetSearchSeamKind=TSK_TERMINATION_POLICY_DIFFER
+targetSearchSeamWhy=step 3: candidate snapshots match but termination differs (solver=1:NO_NEXT_TARGET_AFTER_STEP, replay=0:)
+solverWhy=
+replayWhy=
+solverStats.success=1
+solverStats.reachedFixpoint=1
+solverStats.hadSequenceFallback=1
+solverStats.maxStepReached=0
+solverStats.completedSteps=3
+
+solverStats.solverShadowResyncAttemptCount=3
+solverStats.solverShadowResyncAppliedCount=2
+solverStats.solverShadowResyncNoopCount=1
+solverStats.solverShadowResyncNoTargetToHasTargetCount=1
+solverStats.solverShadowResyncAliveRSetDifferCount=1
+
+=== SolverFinalCoreSignature ===
+aliveNodeCount=0
+aliveArcCount=0
+root=-1
+canonicalVertices:
+canonicalEdges:
+nodeSummaries:
+
+=== ReplayFinalCoreSignature ===
+aliveNodeCount=0
+aliveArcCount=0
+root=-1
+canonicalVertices:
+canonicalEdges:
+nodeSummaries:
+
+=== SolverPostStepTargetSnapshotCompared ===
+stepIndex=3
+aliveRNodes=[]
+hasNextTarget=0
+chosenR=-1
+chosenX=-1
+noTargetReason=NO_ALIVE_R_NODE
+candidates:
+
+=== ReplayPostStepTargetSnapshotCompared ===
+stepIndex=3
+aliveRNodes=[]
+hasNextTarget=0
+chosenR=-1
+chosenX=-1
+noTargetReason=NO_ALIVE_R_NODE
+candidates:
+
+
+solverTrace:
+stepIndex=1
+chosenR=0
+chosenX=3
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,5)
+  (7,3,5)
+  (8,3,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 2 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,5)
+
+stepIndex=2
+chosenR=0
+chosenX=1
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,5)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 4 5 6
+canonicalEdges:
+  (3,4,5)
+  (4,5,6)
+
+stepIndex=3
+chosenR=0
+chosenX=5
+terminated=1
+terminateReason=NO_NEXT_TARGET_AFTER_STEP
+=== CanonicalExplicitBefore ===
+canonicalVertices: 4 5 6
+canonicalEdges:
+  (3,4,5)
+  (4,5,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices:
+canonicalEdges:
+
+replayTrace:
+stepIndex=1
+chosenR=0
+chosenX=3
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,5)
+  (7,3,5)
+  (8,3,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 2 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,5)
+
+stepIndex=2
+chosenR=0
+chosenX=1
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,5)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 4 5 6
+canonicalEdges:
+  (3,4,5)
+  (4,5,6)
+
+stepIndex=3
+chosenR=0
+chosenX=5
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 4 5 6
+canonicalEdges:
+  (3,4,5)
+  (4,5,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices:
+canonicalEdges:
+
+stepIndex=4
+chosenR=-1
+chosenX=-1
+terminated=1
+terminateReason=NO_TARGET
+=== CanonicalExplicitBefore ===
+canonicalVertices:
+canonicalEdges:
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices:
+canonicalEdges:
+
+solverPostStepTargetSnapshots:
+=== SolverPostStepTargetSnapshot ===
+stepIndex=1
+aliveRNodes=[0]
+hasNextTarget=1
+chosenR=0
+chosenX=1
+noTargetReason=
+candidates:
+  rNode=0 x=1 scorePrimary=3 scoreSecondary=-1 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=5 scorePrimary=3 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=6 scorePrimary=2 scoreSecondary=-6 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+
+=== SolverPostStepTargetSnapshot ===
+stepIndex=2
+aliveRNodes=[0]
+hasNextTarget=1
+chosenR=0
+chosenX=5
+noTargetReason=
+candidates:
+  rNode=0 x=5 scorePrimary=2 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+
+=== SolverPostStepTargetSnapshot ===
+stepIndex=3
+aliveRNodes=[]
+hasNextTarget=0
+chosenR=-1
+chosenX=-1
+noTargetReason=NO_ALIVE_R_NODE
+candidates:
+
+replayPostStepTargetSnapshots:
+=== ReplayPostStepTargetSnapshot ===
+stepIndex=1
+aliveRNodes=[0]
+hasNextTarget=1
+chosenR=0
+chosenX=1
+noTargetReason=
+candidates:
+  rNode=0 x=1 scorePrimary=3 scoreSecondary=-1 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=5 scorePrimary=3 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=6 scorePrimary=2 scoreSecondary=-6 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+
+=== ReplayPostStepTargetSnapshot ===
+stepIndex=2
+aliveRNodes=[0]
+hasNextTarget=1
+chosenR=0
+chosenX=5
+noTargetReason=
+candidates:
+  rNode=0 x=5 scorePrimary=2 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+
+=== ReplayPostStepTargetSnapshot ===
+stepIndex=3
+aliveRNodes=[]
+hasNextTarget=0
+chosenR=-1
+chosenX=-1
+noTargetReason=NO_ALIVE_R_NODE
+candidates:
+

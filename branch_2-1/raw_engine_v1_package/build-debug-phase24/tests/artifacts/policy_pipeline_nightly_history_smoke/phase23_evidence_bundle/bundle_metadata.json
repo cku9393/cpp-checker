@@ -1,0 +1,1181 @@
+{
+  "phase": "phase23",
+  "timestamp_utc": "2026-03-22T11:11:15Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke",
+  "report": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/PHASE22_PIPELINE_SMOKE_REPORT.txt",
+  "policy_manifest_json": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.json",
+  "policy_manifest_txt": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.txt",
+  "policy_manifest_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.summary.txt",
+  "bundle_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/phase23_evidence_bundle",
+  "zip_out": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/raw_engine_phase22_pipeline_smoke.zip",
+  "delivery_zip": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/raw_engine_phase22_pipeline_smoke_delivery.zip",
+  "gate_summary": "policy_gate_summary current_verdict=PASS freshness_verdict=FRESH split_tie_organic_symmetric=PASS/FRESH automorphism_probe_large=PASS/FRESH planner_tie_mixed_organic=NON_APPLICABLE/FRESH planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY/FRESH",
+  "policy_summary": "exact_shadow policy lifecycle healthy: no stale families, no rerun-required families, no reclassification required; pipeline severity=OK",
+  "current_verdict": "PASS",
+  "freshness_verdict": "FRESH",
+  "gate_verdict": "PASS",
+  "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+  "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.json",
+  "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+  "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+  "pipeline_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_pipeline_summary.json",
+  "runtime_manifest": null,
+  "runtime_baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+  "runtime_current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+  "runtime_refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json",
+  "runtime_rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_rerun_phase22.json",
+  "runtime_registry": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_baseline_registry_v1.json",
+  "runtime_history_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_history_index_v1.json",
+  "runtime_proposal": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_rebaseline_proposal_phase22.json",
+  "runtime_host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "smoke-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+  },
+  "runtime_toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "runtime_current_verdict": "PASS",
+  "runtime_freshness_verdict": "FRESH",
+  "runtime_comparability_verdict": "COMPARABLE",
+  "runtime_budget_verdict": "PASS",
+  "pipeline_severity": "OK",
+  "runtime_severity": "OK",
+  "pipeline_exit_code": 0,
+  "pipeline_recommended_next_action": "no action required; exact_shadow lifecycle remains healthy",
+  "baseline_manifest_hash": "7784b2533d8b304e7ef195562354a3c949d5a6ffb3f14344fb962d271b9e4711",
+  "current_manifest_hash": "e33940f88888f5112c624f4d439c39a71057f159f8063ab36cf130a9948da249",
+  "refresh_manifest_hash": "e2be91bd649155199775604b8979f340f82ad9cce2b3547a8d42d27623286afe",
+  "rerun_plan_hash": "7a2e8d0d7b0e226febcfa3a81461e8356567e3f4bce5571366fefa42b0b8435a",
+  "pipeline_summary_hash": "eae0398208011e22d9e97174663fd3954727bbcfc36e93a8238adebbc575988f",
+  "runtime_manifest_hash": null,
+  "runtime_baseline_manifest_hash": "323226e8a004d62de1c9c6a725a7b929681048fa92d1a978ca0eb0b88cb5137a",
+  "runtime_current_manifest_hash": "ec94a0fbe6adab1ea6d36460be06b11c67ed24818a92ce3d62e4ea12da0267a6",
+  "runtime_refresh_manifest_hash": "e7b76c1a86b2a1816bf6c26a6e6b1ef452dc375c5d693c0797768a4fa02c0a14",
+  "runtime_rerun_plan_hash": "d21ebd22a973b21ebdf2bd05205b1cc02cc5274b0453f7273efa8326afe52d76",
+  "runtime_registry_hash": "f557ce5da05ebc22d97b9508fff7df3bf138f7b5d73152ce68f44b4070f8c3c2",
+  "runtime_history_index_hash": "05ae804ffad3816e390bc1d23d8d8148dff00a064e4cc2ce8d21ec8f22ae9a36",
+  "runtime_proposal_hash": "3191183d4825a617bbdf22067a1ca21391e0004fa2ceedadf8622bf4ad3bbdd7",
+  "freshness_summary": {
+    "default_freshness_status": "STALE",
+    "manifest_freshness_status": null,
+    "manifest_freshness_verdict": "FRESH",
+    "family_status_counts": {
+      "FRESH": 4
+    },
+    "stale_family_count": 0,
+    "revalidated_family_count": 4,
+    "reclassify_required_count": 0
+  },
+  "refresh_summary": {
+    "freshness_verdict": "FRESH",
+    "current_verdict": "PASS",
+    "stale_family_count": 0,
+    "requires_rerun_family_count": 0,
+    "reclassify_required_count": 0
+  },
+  "pipeline_summary_data": {
+    "summary_version": "policy_pipeline_summary_v3",
+    "timestamp_utc": "2026-03-22T11:11:16Z",
+    "phase": "phase23",
+    "mode": "nightly",
+    "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke",
+    "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+    "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.json",
+    "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+    "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+    "runtime_baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+    "runtime_baseline_registry": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_baseline_registry_v1.json",
+    "runtime_current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+    "runtime_refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json",
+    "runtime_rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_rerun_phase22.json",
+    "runtime_history_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_history_index_v1.json",
+    "runtime_proposal": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_rebaseline_proposal_phase22.json",
+    "bundle_metadata": null,
+    "current_verdict": "PASS",
+    "freshness_verdict": "FRESH",
+    "rerun_plan_verdict": "PASS",
+    "stale_family_count": 0,
+    "requires_rerun_family_count": 0,
+    "reclassify_required_count": 0,
+    "runtime_current_verdict": "PASS",
+    "runtime_freshness_verdict": "FRESH",
+    "runtime_comparability_verdict": "COMPARABLE",
+    "runtime_selected_baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_111115",
+    "runtime_selected_baseline_tag": "phase22-runtime-approved",
+    "runtime_rerun_plan_verdict": "PASS",
+    "runtime_budget_verdict": "PASS",
+    "runtime_stale_entry_count": 0,
+    "runtime_requires_rerun_entry_count": 0,
+    "runtime_rebaseline_required_count": 0,
+    "runtime_not_comparable_count": 0,
+    "runtime_warn_count": 0,
+    "runtime_fail_count": 0,
+    "runtime_registry_entry_count": 1,
+    "runtime_history_fingerprint_count": 1,
+    "runtime_rebaseline_proposal_needed": false,
+    "runtime_rebaseline_proposal_reason": "current runtime remains within the selected baseline",
+    "policy_severity": "OK",
+    "runtime_severity": "OK",
+    "severity": "OK",
+    "exit_code": 0,
+    "recommended_next_action": "no action required; exact_shadow lifecycle remains healthy",
+    "stages": [
+      {
+        "name": "policy_nightly_refresh",
+        "status": "PASS",
+        "duration_seconds": 0.027,
+        "command": [
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/raw_engine_tests",
+          "--case",
+          "policy_nightly_refresh",
+          "--baseline-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+          "--current-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.json",
+          "--refresh-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+          "--rerun-plan",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+          "--emit-summary",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_pipeline_summary.txt",
+          "--allow-empty-plan"
+        ],
+        "note": "policy_lifecycle_summary case=policy_nightly_refresh current_verdict=PASS freshness_verdict=FRESH plan_verdict=PASS stale_family_count=0 requires_rerun_family_count=0 reclassify_required_count=0 selected_entry_count=0\nbaseline_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.txt\ncurrent_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.json\nrefresh_manifest=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json\nrerun_plan=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_rerun_plan_phase22_v1.json\npolicy_rerun_execution_summary summary_verdict=PASS selected_family_count=0 executed_family_count=0 noop_family_count=0 failed_family_count=0 artifact_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts rationale=no stale families detected; nightly refresh no-op\nfamily_status=family=split_tie_organic_symmetric current_status=PASS freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=1 rationale=direct compare evidence satisfied\nfamily_status=family=automorphism_probe_large current_status=PASS freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=1 rationale=direct compare evidence satisfied\nfamily_status=family=planner_tie_mixed_organic current_status=NON_APPLICABLE freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=0 rationale=no_split_ready remained dominant and compare relevance stayed below threshold\nfamily_status=family=planner_tie_mixed_organic_compare_ready current_status=DIAGNOSTIC_ONLY freshness_status=FRESH drift_flag=0 reclassify_required=0 counts_as_production_evidence=0 rationale=diagnostic compare family met bounded compare and lineage consistency, but followup preservation or structure-only enrichment did not hold; counts_as_production_evidence=false\nraw_engine_v1 tests passed case=policy_nightly_refresh"
+      },
+      {
+        "name": "runtime_write_current",
+        "status": "PASS",
+        "duration_seconds": 0.075,
+        "command": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+          "write-current",
+          "--phase",
+          "phase23",
+          "--artifact-root",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke",
+          "--runtime-current-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+          "--runner-tag",
+          "smoke-runner",
+          "--entry",
+          "execution_class=release_full,wall_time_sec=120.0,test_count=10,build_type=Release,sanitizer_flags=none",
+          "--entry",
+          "execution_class=debug_full,wall_time_sec=480.0,test_count=10,build_type=Debug,sanitizer_flags=none",
+          "--entry",
+          "execution_class=asan_full,wall_time_sec=900.0,test_count=10,build_type=Asan,sanitizer_flags=none",
+          "--entry",
+          "execution_class=policy_core,wall_time_sec=1.0,build_type=Policy,sanitizer_flags=none",
+          "--entry",
+          "execution_class=policy_refresh,wall_time_sec=1.0,build_type=Policy,sanitizer_flags=none",
+          "--entry",
+          "execution_class=policy_nightly,wall_time_sec=0.027,build_type=Policy,sanitizer_flags=none",
+          "--baseline-tag",
+          "phase22-runtime"
+        ],
+        "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json"
+      },
+      {
+        "name": "runtime_gate_refresh",
+        "status": "PASS",
+        "duration_seconds": 0.06,
+        "command": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+          "refresh",
+          "--runtime-current-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+          "--runtime-refresh-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json",
+          "--runtime-baseline-registry",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_baseline_registry_v1.json"
+        ],
+        "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json"
+      },
+      {
+        "name": "runtime_gate_plan_rerun",
+        "status": "PASS",
+        "duration_seconds": 0.059,
+        "command": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+          "plan-rerun",
+          "--runtime-current-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+          "--runtime-refresh-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json",
+          "--runtime-rerun-plan",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_rerun_phase22.json"
+        ],
+        "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_rerun_phase22.json"
+      },
+      {
+        "name": "runtime_propose_rebaseline",
+        "status": "PASS",
+        "duration_seconds": 0.059,
+        "command": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+          "propose-rebaseline",
+          "--runtime-current-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+          "--runtime-refresh-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json",
+          "--runtime-baseline-registry",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_baseline_registry_v1.json",
+          "--proposal-out",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_rebaseline_proposal_phase22.json"
+        ],
+        "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_rebaseline_proposal_phase22.json"
+      },
+      {
+        "name": "runtime_history_append",
+        "status": "PASS",
+        "duration_seconds": 0.059,
+        "command": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+          "history-append",
+          "--runtime-history-index",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_history_index_v1.json",
+          "--runtime-current-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+          "--runtime-refresh-manifest",
+          "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json"
+        ],
+        "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_history_index_v1_summary.json"
+      }
+    ]
+  },
+  "runtime_summary": {
+    "manifest_version": "runtime_current_manifest_v1",
+    "manifest_role": "current",
+    "generated_at_utc": "2026-03-22T11:11:15Z",
+    "phase": "phase23",
+    "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke",
+    "baseline_tag": "phase22-runtime",
+    "host_fingerprint": {
+      "os": "Darwin",
+      "os_release": "25.3.0",
+      "arch": "arm64",
+      "runner_tag": "smoke-runner",
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+      "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+    },
+    "toolchain_fingerprint": {
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+    },
+    "entries": [
+      {
+        "execution_class": "release_full",
+        "wall_time_sec": 120.0,
+        "test_count": 10,
+        "build_type": "Release",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 260.0,
+          "hard_seconds": 520.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "b46d1d3861c339d12eb9b9a88c45da68821d1b118e9c7ffd129a9f557301f51a"
+      },
+      {
+        "execution_class": "debug_full",
+        "wall_time_sec": 480.0,
+        "test_count": 10,
+        "build_type": "Debug",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 900.0,
+          "hard_seconds": 1800.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "82c28f997575f450a1a1a3053fee1feac0dc8eb2f45b7ab72e15f48d67bbbb68"
+      },
+      {
+        "execution_class": "asan_full",
+        "wall_time_sec": 900.0,
+        "test_count": 10,
+        "build_type": "Asan",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 2400.0,
+          "hard_seconds": 4200.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "bc986af3162ef077f634415d1157973c43f6185c54fc187cccbb052096279473"
+      },
+      {
+        "execution_class": "policy_core",
+        "wall_time_sec": 1.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "45f4612f6c11b0f00887419b64cb4b4bbdc66412a723e9b07e23705afb6d7967"
+      },
+      {
+        "execution_class": "policy_refresh",
+        "wall_time_sec": 1.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "a415d4ba7560aa838396dd4b51e880509a214409a0248edcca58b6174e9aab93"
+      },
+      {
+        "execution_class": "policy_nightly",
+        "wall_time_sec": 0.027,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 180.0,
+          "hard_seconds": 600.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "349fdaefcbf16d9878d8f6613a8f9327fb2ce9210abca63dec651e016a540961"
+      }
+    ],
+    "warn_count": 0,
+    "fail_count": 0,
+    "overall_status": "OK",
+    "current_verdict": "PASS",
+    "overall_budget_verdict": "PASS",
+    "current_runtime_manifest_hash": "d5833a96004448c2bcee3ad98dc502041e3ae16db60080f43cef9724ccaeee78"
+  },
+  "runtime_baseline_summary": {
+    "manifest_version": "runtime_baseline_manifest_v1",
+    "manifest_role": "baseline",
+    "generated_at_utc": "2026-03-22T11:11:15Z",
+    "phase": "phase22",
+    "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke",
+    "baseline_tag": "phase22-runtime-approved",
+    "host_fingerprint": {
+      "os": "Darwin",
+      "os_release": "25.3.0",
+      "arch": "arm64",
+      "runner_tag": "smoke-runner",
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+      "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+    },
+    "toolchain_fingerprint": {
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+    },
+    "entries": [
+      {
+        "execution_class": "release_full",
+        "wall_time_sec": 120.0,
+        "test_count": 10,
+        "build_type": "Release",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 260.0,
+          "hard_seconds": 520.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "b46d1d3861c339d12eb9b9a88c45da68821d1b118e9c7ffd129a9f557301f51a"
+      },
+      {
+        "execution_class": "debug_full",
+        "wall_time_sec": 480.0,
+        "test_count": 10,
+        "build_type": "Debug",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 900.0,
+          "hard_seconds": 1800.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "82c28f997575f450a1a1a3053fee1feac0dc8eb2f45b7ab72e15f48d67bbbb68"
+      },
+      {
+        "execution_class": "asan_full",
+        "wall_time_sec": 900.0,
+        "test_count": 10,
+        "build_type": "Asan",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 2400.0,
+          "hard_seconds": 4200.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "bc986af3162ef077f634415d1157973c43f6185c54fc187cccbb052096279473"
+      },
+      {
+        "execution_class": "policy_core",
+        "wall_time_sec": 1.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "45f4612f6c11b0f00887419b64cb4b4bbdc66412a723e9b07e23705afb6d7967"
+      },
+      {
+        "execution_class": "policy_refresh",
+        "wall_time_sec": 1.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "a415d4ba7560aa838396dd4b51e880509a214409a0248edcca58b6174e9aab93"
+      },
+      {
+        "execution_class": "policy_nightly",
+        "wall_time_sec": 2.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "budget_thresholds": {
+          "soft_seconds": 180.0,
+          "hard_seconds": 600.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "delta_percent": 0.0,
+        "rationale": "runtime remained within budget",
+        "fingerprint_hash": "349fdaefcbf16d9878d8f6613a8f9327fb2ce9210abca63dec651e016a540961"
+      }
+    ],
+    "warn_count": 0,
+    "fail_count": 0,
+    "overall_status": "OK",
+    "current_verdict": "PASS",
+    "overall_budget_verdict": "PASS",
+    "current_runtime_manifest_hash": "69e93ffcf31867a25b70cbea452921706165f1c43bef27e5b593a98baebb15dc",
+    "approval_timestamp_utc": "2026-03-22T11:11:15Z",
+    "promoted_from_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+    "provenance_frozen": true
+  },
+  "runtime_refresh_summary": {
+    "manifest_version": "runtime_refresh_manifest_v1",
+    "manifest_role": "refresh",
+    "generated_at_utc": "2026-03-22T11:11:15Z",
+    "baseline_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+    "current_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+    "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_baseline_registry_v1.json",
+    "baseline_runtime_manifest_hash": "323226e8a004d62de1c9c6a725a7b929681048fa92d1a978ca0eb0b88cb5137a",
+    "current_runtime_manifest_hash": "9662718019ade092ff6d51c3c7cb25317227ec9cbeaca9bc72e4bcf5a4a669e3",
+    "phase": "phase23",
+    "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke",
+    "baseline_tag": "phase22-runtime",
+    "host_fingerprint": {
+      "os": "Darwin",
+      "os_release": "25.3.0",
+      "arch": "arm64",
+      "runner_tag": "smoke-runner",
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+      "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+    },
+    "toolchain_fingerprint": {
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+    },
+    "current_verdict": "PASS",
+    "freshness_verdict": "FRESH",
+    "comparability_verdict": "COMPARABLE",
+    "selected_baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_111115",
+    "selected_baseline_tag": "phase22-runtime-approved",
+    "selection_candidate_count": 1,
+    "selection_exact_match_count": 1,
+    "selection_compatible_match_count": 0,
+    "selection_retired_match_count": 0,
+    "comparability_reason": "active exact runtime fingerprint match",
+    "overall_budget_verdict": "PASS",
+    "runtime_severity": "OK",
+    "recommended_next_action": "runtime budget is within the approved baseline",
+    "stale_entry_count": 0,
+    "requires_rerun_entry_count": 0,
+    "rebaseline_required_count": 0,
+    "not_comparable_count": 0,
+    "warn_count": 0,
+    "fail_count": 0,
+    "entries": [
+      {
+        "execution_class": "release_full",
+        "wall_time_sec": 120.0,
+        "baseline_wall_time_sec": 120.0,
+        "test_count": 10,
+        "build_type": "Release",
+        "sanitizer_flags": "none",
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0,
+        "budget_thresholds": {
+          "soft_seconds": 260.0,
+          "hard_seconds": 520.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "rationale": "runtime remained within baseline budget"
+      },
+      {
+        "execution_class": "debug_full",
+        "wall_time_sec": 480.0,
+        "baseline_wall_time_sec": 480.0,
+        "test_count": 10,
+        "build_type": "Debug",
+        "sanitizer_flags": "none",
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0,
+        "budget_thresholds": {
+          "soft_seconds": 900.0,
+          "hard_seconds": 1800.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "rationale": "runtime remained within baseline budget"
+      },
+      {
+        "execution_class": "asan_full",
+        "wall_time_sec": 900.0,
+        "baseline_wall_time_sec": 900.0,
+        "test_count": 10,
+        "build_type": "Asan",
+        "sanitizer_flags": "none",
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0,
+        "budget_thresholds": {
+          "soft_seconds": 2400.0,
+          "hard_seconds": 4200.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0
+        },
+        "rationale": "runtime remained within baseline budget"
+      },
+      {
+        "execution_class": "policy_core",
+        "wall_time_sec": 1.0,
+        "baseline_wall_time_sec": 1.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0,
+        "budget_thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "rationale": "runtime remained within baseline budget"
+      },
+      {
+        "execution_class": "policy_refresh",
+        "wall_time_sec": 1.0,
+        "baseline_wall_time_sec": 1.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0,
+        "budget_thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "rationale": "runtime remained within baseline budget"
+      },
+      {
+        "execution_class": "policy_nightly",
+        "wall_time_sec": 0.027,
+        "baseline_wall_time_sec": 2.0,
+        "test_count": 0,
+        "build_type": "Policy",
+        "sanitizer_flags": "none",
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": -98.65,
+        "budget_thresholds": {
+          "soft_seconds": 180.0,
+          "hard_seconds": 600.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0
+        },
+        "rationale": "runtime remained within baseline budget"
+      }
+    ]
+  },
+  "runtime_rerun_plan_summary": {
+    "plan_version": "runtime_rerun_plan_v1",
+    "generated_at_utc": "2026-03-22T11:11:15Z",
+    "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke",
+    "baseline_runtime_manifest_path": null,
+    "current_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+    "refresh_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json",
+    "baseline_runtime_manifest_hash": null,
+    "current_runtime_manifest_hash": "ec94a0fbe6adab1ea6d36460be06b11c67ed24818a92ce3d62e4ea12da0267a6",
+    "refresh_runtime_manifest_hash": "e7b76c1a86b2a1816bf6c26a6e6b1ef452dc375c5d693c0797768a4fa02c0a14",
+    "stale_entry_count": 0,
+    "requires_rerun_entry_count": 0,
+    "rebaseline_required_count": 0,
+    "selected_entry_count": 0,
+    "entries": [],
+    "summary_verdict": "PASS",
+    "rationale": "no stale or over-budget runtime entries"
+  },
+  "runtime_registry_summary": {
+    "registry_version": "runtime_baseline_registry_v1",
+    "generated_at_utc": "2026-03-22T11:11:15Z",
+    "entries": [
+      {
+        "baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_111115",
+        "baseline_tag": "phase22-runtime-approved",
+        "approval_timestamp_utc": "2026-03-22T11:11:15Z",
+        "runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+        "runtime_baseline_manifest_hash": "323226e8a004d62de1c9c6a725a7b929681048fa92d1a978ca0eb0b88cb5137a",
+        "host_fingerprint": {
+          "os": "Darwin",
+          "os_release": "25.3.0",
+          "arch": "arm64",
+          "runner_tag": "smoke-runner",
+          "compiler_command": "/usr/bin/c++",
+          "compiler_id": "appleclang",
+          "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+          "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+        },
+        "toolchain_fingerprint": {
+          "compiler_command": "/usr/bin/c++",
+          "compiler_id": "appleclang",
+          "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+        },
+        "host_fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d",
+        "toolchain_fingerprint_hash": "fe28aa4f84449b51b55eae9c4c9fbb0910ef269d1ab13970f6e37bfbf3e054f3",
+        "runtime_fingerprint_key": "6d60f632282438f5e2a5c0571528135e8b473821da4cac863777bf0c04f1c8f6",
+        "build_classes_covered": [
+          "asan_full",
+          "debug_full",
+          "policy_core",
+          "policy_nightly",
+          "policy_refresh",
+          "release_full"
+        ],
+        "runtime_budget_profile_id": "phase22-runtime-approved",
+        "status": "active"
+      }
+    ],
+    "active_entry_count": 1,
+    "retired_entry_count": 0,
+    "registry_hash": "2886c0e792e51b22d85872a74776c7d175eee91d46d8789b19c9c550c32ad21a"
+  },
+  "runtime_history_summary": {
+    "summary_version": "runtime_history_summary_v1",
+    "generated_at_utc": "2026-03-22T11:11:16Z",
+    "runtime_history_index_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_history_index_v1.json",
+    "fingerprint_count": 1,
+    "fingerprints": [
+      {
+        "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d",
+        "host_fingerprint": {
+          "os": "Darwin",
+          "os_release": "25.3.0",
+          "arch": "arm64",
+          "runner_tag": "smoke-runner",
+          "compiler_command": "/usr/bin/c++",
+          "compiler_id": "appleclang",
+          "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+          "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+        },
+        "toolchain_fingerprint": {
+          "compiler_command": "/usr/bin/c++",
+          "compiler_id": "appleclang",
+          "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+        },
+        "execution_classes": [
+          {
+            "execution_class": "asan_full",
+            "sample_count": 2,
+            "latest_wall_time_sec": 900.0,
+            "baseline_wall_time_sec": 900.0,
+            "latest_delta_percent": 0.0,
+            "rolling_median_wall_time_sec": 900.0,
+            "rolling_p90_wall_time_sec": 900.0,
+            "rolling_p95_wall_time_sec": 900.0,
+            "mad_wall_time_sec": 0.0,
+            "jitter_estimate_percent": 0.0,
+            "trend_direction": "stable"
+          },
+          {
+            "execution_class": "debug_full",
+            "sample_count": 2,
+            "latest_wall_time_sec": 480.0,
+            "baseline_wall_time_sec": 480.0,
+            "latest_delta_percent": 0.0,
+            "rolling_median_wall_time_sec": 480.0,
+            "rolling_p90_wall_time_sec": 480.0,
+            "rolling_p95_wall_time_sec": 480.0,
+            "mad_wall_time_sec": 0.0,
+            "jitter_estimate_percent": 0.0,
+            "trend_direction": "stable"
+          },
+          {
+            "execution_class": "policy_core",
+            "sample_count": 2,
+            "latest_wall_time_sec": 1.0,
+            "baseline_wall_time_sec": 1.0,
+            "latest_delta_percent": 0.0,
+            "rolling_median_wall_time_sec": 1.0,
+            "rolling_p90_wall_time_sec": 1.0,
+            "rolling_p95_wall_time_sec": 1.0,
+            "mad_wall_time_sec": 0.0,
+            "jitter_estimate_percent": 0.0,
+            "trend_direction": "stable"
+          },
+          {
+            "execution_class": "policy_nightly",
+            "sample_count": 2,
+            "latest_wall_time_sec": 0.027,
+            "baseline_wall_time_sec": 2.0,
+            "latest_delta_percent": -98.65,
+            "rolling_median_wall_time_sec": 1.014,
+            "rolling_p90_wall_time_sec": 2.0,
+            "rolling_p95_wall_time_sec": 2.0,
+            "mad_wall_time_sec": 0.986,
+            "jitter_estimate_percent": 97.34,
+            "trend_direction": "stable"
+          },
+          {
+            "execution_class": "policy_refresh",
+            "sample_count": 2,
+            "latest_wall_time_sec": 1.0,
+            "baseline_wall_time_sec": 1.0,
+            "latest_delta_percent": 0.0,
+            "rolling_median_wall_time_sec": 1.0,
+            "rolling_p90_wall_time_sec": 1.0,
+            "rolling_p95_wall_time_sec": 1.0,
+            "mad_wall_time_sec": 0.0,
+            "jitter_estimate_percent": 0.0,
+            "trend_direction": "stable"
+          },
+          {
+            "execution_class": "release_full",
+            "sample_count": 2,
+            "latest_wall_time_sec": 120.0,
+            "baseline_wall_time_sec": 120.0,
+            "latest_delta_percent": 0.0,
+            "rolling_median_wall_time_sec": 120.0,
+            "rolling_p90_wall_time_sec": 120.0,
+            "rolling_p95_wall_time_sec": 120.0,
+            "mad_wall_time_sec": 0.0,
+            "jitter_estimate_percent": 0.0,
+            "trend_direction": "stable"
+          }
+        ]
+      }
+    ],
+    "summary_hash": "59ad6961aae6028492a8ed118253e1027c1d2f865c3a1dccc83c7f400398cbfd"
+  },
+  "runtime_proposal_summary": {
+    "proposal_version": "runtime_rebaseline_proposal_v1",
+    "generated_at_utc": "2026-03-22T11:11:15Z",
+    "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+    "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_baseline_registry_v1.json",
+    "selected_baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_111115",
+    "selected_baseline_tag": "phase22-runtime-approved",
+    "selected_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+    "current_host_fingerprint": {
+      "os": "Darwin",
+      "os_release": "25.3.0",
+      "arch": "arm64",
+      "runner_tag": "smoke-runner",
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+      "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+    },
+    "current_toolchain_fingerprint": {
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+    },
+    "comparability_verdict": "COMPARABLE",
+    "proposal_needed": false,
+    "why_rebaseline_is_needed": "current runtime remains within the selected baseline",
+    "affected_execution_classes": [
+      {
+        "execution_class": "release_full",
+        "wall_time_sec": 120.0,
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0
+      },
+      {
+        "execution_class": "debug_full",
+        "wall_time_sec": 480.0,
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0
+      },
+      {
+        "execution_class": "asan_full",
+        "wall_time_sec": 900.0,
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0
+      },
+      {
+        "execution_class": "policy_core",
+        "wall_time_sec": 1.0,
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0
+      },
+      {
+        "execution_class": "policy_refresh",
+        "wall_time_sec": 1.0,
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": 0.0
+      },
+      {
+        "execution_class": "policy_nightly",
+        "wall_time_sec": 0.027,
+        "current_status": "OK",
+        "freshness_status": "FRESH",
+        "comparability": "COMPARABLE",
+        "delta_percent": -98.65
+      }
+    ],
+    "measured_runtime_deltas": {
+      "release_full": 0.0,
+      "debug_full": 0.0,
+      "asan_full": 0.0,
+      "policy_core": 0.0,
+      "policy_refresh": 0.0,
+      "policy_nightly": -98.65
+    },
+    "suggested_next_command": "none",
+    "approval_checklist": [
+      "confirm the host/toolchain fingerprint is the intended long-lived runtime baseline target",
+      "confirm correctness lifecycle remains PASS/FRESH before approving a runtime rebaseline",
+      "confirm the affected execution classes are stable across at least one clean rerun"
+    ],
+    "registry_entry_count": 1,
+    "proposal_hash": "823f9191a981daa57df801c27a24d91d466f1122dd9f8b7dfdb332c1ff2ad9b1"
+  },
+  "runtime_budget_summary": {
+    "current_verdict": "PASS",
+    "freshness_verdict": "FRESH",
+    "comparability_verdict": "COMPARABLE",
+    "budget_verdict": "PASS",
+    "runtime_severity": "OK",
+    "warn_count": 0,
+    "fail_count": 0,
+    "stale_entry_count": 0,
+    "requires_rerun_entry_count": 0,
+    "rebaseline_required_count": 0,
+    "not_comparable_count": 0,
+    "selected_baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_111115",
+    "selected_baseline_tag": "phase22-runtime-approved"
+  },
+  "combined_summary": {
+    "severity": "OK",
+    "runtime_severity": "OK",
+    "recommended_next_action": "no action required; exact_shadow lifecycle remains healthy",
+    "runtime_selected_baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_111115",
+    "runtime_rebaseline_proposal_needed": false
+  },
+  "drift_flags": [],
+  "reclassification_needed_families": [],
+  "family_status_summary": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_status_table": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "counts_as_production_evidence": false
+    }
+  ],
+  "family_freshness": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "automorphism_probe_large",
+      "current_status": "PASS",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": true
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "current_status": "NON_APPLICABLE",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": false
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "current_status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH",
+      "drift_flag": false,
+      "reclassify_required": false,
+      "counts_as_production_evidence": false
+    }
+  ],
+  "stale_family_count": 0,
+  "requires_rerun_family_count": 0,
+  "reclassify_required_count": 0,
+  "copied_counts": {
+    "reports": 1,
+    "manifests": 43,
+    "curated": 42,
+    "regressions": 2,
+    "logs": 0
+  },
+  "artifact_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/indexes/artifact_index.json",
+  "bundle_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/indexes/bundle_index.json",
+  "retention": {
+    "prune_artifacts": false,
+    "max_bundles": 5,
+    "max_nightly_runs": 5,
+    "keep_approved": false,
+    "pruned": {
+      "bundles": [],
+      "curated_bundles": [],
+      "evidence_bundles": [],
+      "nightly_runs": []
+    }
+  },
+  "delivery_bundle_items": [
+    {
+      "label": "report",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/PHASE22_PIPELINE_SMOKE_REPORT.txt",
+      "sha256": "c542987a50a32e83ce3511a73571eef57e040eedf67a5c7cda98416fc95ec2b6"
+    },
+    {
+      "label": "current_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_v1.json",
+      "sha256": "e33940f88888f5112c624f4d439c39a71057f159f8063ab36cf130a9948da249"
+    },
+    {
+      "label": "approved_baseline",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+      "sha256": "7784b2533d8b304e7ef195562354a3c949d5a6ffb3f14344fb962d271b9e4711"
+    },
+    {
+      "label": "refresh_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+      "sha256": "e2be91bd649155199775604b8979f340f82ad9cce2b3547a8d42d27623286afe"
+    },
+    {
+      "label": "rerun_plan",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+      "sha256": "7a2e8d0d7b0e226febcfa3a81461e8356567e3f4bce5571366fefa42b0b8435a"
+    },
+    {
+      "label": "nightly_pipeline_summary",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_pipeline_summary.json",
+      "sha256": "eae0398208011e22d9e97174663fd3954727bbcfc36e93a8238adebbc575988f"
+    },
+    {
+      "label": "runtime_baseline_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+      "sha256": "323226e8a004d62de1c9c6a725a7b929681048fa92d1a978ca0eb0b88cb5137a"
+    },
+    {
+      "label": "runtime_current_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_current_phase22.json",
+      "sha256": "ec94a0fbe6adab1ea6d36460be06b11c67ed24818a92ce3d62e4ea12da0267a6"
+    },
+    {
+      "label": "runtime_refresh_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_refresh_phase22.json",
+      "sha256": "e7b76c1a86b2a1816bf6c26a6e6b1ef452dc375c5d693c0797768a4fa02c0a14"
+    },
+    {
+      "label": "runtime_rerun_plan",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/policy_runtime_rerun_phase22.json",
+      "sha256": "d21ebd22a973b21ebdf2bd05205b1cc02cc5274b0453f7273efa8326afe52d76"
+    },
+    {
+      "label": "runtime_registry",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_baseline_registry_v1.json",
+      "sha256": "f557ce5da05ebc22d97b9508fff7df3bf138f7b5d73152ce68f44b4070f8c3c2"
+    },
+    {
+      "label": "runtime_history_index",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_history_index_v1.json",
+      "sha256": "05ae804ffad3816e390bc1d23d8d8148dff00a064e4cc2ce8d21ec8f22ae9a36"
+    },
+    {
+      "label": "runtime_proposal",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/manifests/runtime_rebaseline_proposal_phase22.json",
+      "sha256": "3191183d4825a617bbdf22067a1ca21391e0004fa2ceedadf8622bf4ad3bbdd7"
+    },
+    {
+      "label": "bundle_metadata",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/phase23_evidence_bundle/bundle_metadata.json",
+      "sha256": "baff98063bf9d7b867a84db5377de414641d0bc91cb072c63970d43347398c0a"
+    },
+    {
+      "label": "bundle_zip",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/raw_engine_phase22_pipeline_smoke.zip",
+      "sha256": "63c0c759c3cfe0a5ba8f70cebbef5900f66db4cd23c2fc4a4a1b79f7efab2ab9"
+    },
+    {
+      "label": "curated_zip",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/policy_pipeline_nightly_history_smoke/raw_engine_phase22_pipeline_smoke_curated.zip",
+      "sha256": "88f96b26257c6f8b4eb0cb63033f5f918719d62aa7a2f1152524fcb80fe265aa"
+    }
+  ],
+  "delivery_zip_hash": "5552f13c600f66134c9f35604987224b5aac4160b06d5a02e308cef83f066985"
+}

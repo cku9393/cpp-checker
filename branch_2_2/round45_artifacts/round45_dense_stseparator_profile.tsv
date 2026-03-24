@@ -1,0 +1,14 @@
+source	scope	metric	value	note
+fresh_current_pass	smoke_gate	source_alignment_passed	0	fresh current-pass source inspection
+fresh_current_pass	smoke_gate	hook_same_side_probe_present	0	fresh source inspection
+fresh_current_pass	smoke_gate	hook_candidate_rows_present	0	fresh source inspection
+fresh_current_pass	smoke_gate	hook_prefilter_rows_present	0	fresh source inspection
+fresh_current_pass	smoke_gate	header_sink_present	0	fresh source inspection
+fresh_current_pass	smoke_gate	smoke_comb_dense_256_census_rows	0	fresh smoke run
+fresh_current_pass	smoke_gate	smoke_comb_dense_256_candidate_rows	0	fresh smoke run
+fresh_current_pass	smoke_gate	smoke_comb_dense_256_prefilter_rows	0	fresh smoke run
+fresh_current_pass	smoke_gate	smoke_comb_dense_1024_census_rows	0	fresh smoke run
+fresh_current_pass	smoke_gate	smoke_comb_dense_1024_candidate_rows	0	fresh smoke run
+fresh_current_pass	smoke_gate	smoke_comb_dense_1024_prefilter_rows	0	fresh smoke run
+maintained_prior_artifact	round43	dominant_raw_build_hotspot	bfs_neighbor_iter	from round43 artifact, not fresh round45
+maintained_prior_artifact	round43	dense_8192_structure	E_guard_dense_guard_Q_guard	from round43 artifact, not fresh round45

@@ -1,0 +1,237 @@
+PHASE19 stabilization report
+date=2026-03-20
+package=raw_engine_v1_package
+
+1. modified/added files
+- modified
+  - README.md
+  - tests/CMakeLists.txt
+  - tests/raw_engine_cases.cpp
+  - tests/raw_engine_main.cpp
+  - tests/test_harness.hpp
+  - tests/policy_gate.hpp
+  - tests/policy_gate.cpp
+  - tests/tools/build_evidence_bundle.py
+- added
+  - tests/policy_manifest_freshness.hpp
+  - tests/policy_manifest_freshness.cpp
+  - PHASE19_STABILIZATION_REPORT_20260320.txt
+- no `src/` primitive or planner production semantics changes were introduced in this phase
+
+2. evidence freshness model design
+- machine-readable outputs:
+  - `artifacts/manifests/policy_graduation_manifest_v1.json`
+  - `artifacts/manifests/policy_graduation_manifest_v1.txt`
+  - `artifacts/manifests/policy_graduation_manifest_v1.summary.txt`
+  - `artifacts/manifests/policy_graduation_manifest_refresh_v1.json`
+  - `artifacts/manifests/policy_graduation_manifest_refresh_v1.txt`
+  - `artifacts/manifests/policy_graduation_manifest_refresh_v1.summary.txt`
+- implementation:
+  - `tests/policy_gate.hpp`
+  - `tests/policy_gate.cpp`
+  - `tests/policy_manifest_freshness.hpp`
+  - `tests/policy_manifest_freshness.cpp`
+  - `tests/raw_engine_cases.cpp`
+  - `tests/raw_engine_main.cpp`
+  - `tests/test_harness.hpp`
+- the manifest now separates:
+  - baseline manifest: last approved policy snapshot
+  - current manifest: current measured evidence and hashes
+  - refresh manifest: baseline vs current freshness verdict
+- family evidence sources are encoded as:
+  - `direct_compare`
+  - `applicability_only`
+  - `diagnostic_lineage`
+  - `campaign_compare`
+- family-level relevant input hashes:
+  - `planner_semantics_hash`
+  - `generator_family_hash`
+  - `compare_engine_hash`
+  - `campaign_config_hash`
+  - `combined_hash`
+- freshness states:
+  - `FRESH`
+  - `STALE`
+  - `REQUIRES_RERUN`
+- current gate states:
+  - `PASS`
+  - `NON_APPLICABLE`
+  - `DIAGNOSTIC_ONLY`
+  - `FAIL`
+  - `INSUFFICIENT_EVIDENCE`
+- refresh rules in phase19:
+  - `PASS` families require direct-compare provenance; hash deltas mark them stale and missing baseline hashes force `REQUIRES_RERUN`
+  - `NON_APPLICABLE` families require applicability provenance; drift or missing baseline hashes force `REQUIRES_RERUN`
+  - `DIAGNOSTIC_ONLY` families stay diagnostic-only and missing lineage/diagnostic provenance also forces `REQUIRES_RERUN`
+  - `planner_tie_mixed_organic_compare_ready` is explicitly rejected if `counts_as_production_evidence=true`
+
+3. family current status and freshness results
+- current manifest:
+  - `build_tag=build-release`
+  - `current_verdict=PASS`
+  - `freshness_verdict=FRESH`
+  - `fresh_family_count=4`
+  - `stale_family_count=0`
+  - `requires_rerun_family_count=0`
+  - `reclassify_required_count=0`
+- current family results:
+  - `split_tie_organic_symmetric = PASS / FRESH`
+  - `automorphism_probe_large = PASS / FRESH`
+  - `planner_tie_mixed_organic = NON_APPLICABLE / FRESH`
+  - `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY / FRESH`
+- baseline refresh result against preserved phase18 manifest copy:
+  - baseline:
+    - `artifacts/manifests/policy_graduation_manifest_phase18_baseline_v1.json`
+  - current:
+    - `artifacts/manifests/policy_graduation_manifest_v1.json`
+  - refresh verdict:
+    - `current_verdict=PASS`
+    - `freshness_verdict=REQUIRES_RERUN`
+    - `fresh_family_count=0`
+    - `stale_family_count=0`
+    - `requires_rerun_family_count=4`
+  - refreshed families:
+    - `split_tie_organic_symmetric = PASS / REQUIRES_RERUN`
+    - `automorphism_probe_large = PASS / REQUIRES_RERUN`
+    - `planner_tie_mixed_organic = NON_APPLICABLE / REQUIRES_RERUN`
+    - `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY / REQUIRES_RERUN`
+  - refresh rationale:
+    - the preserved phase18 baseline does not carry phase19 relevant-input hash provenance
+    - phase19 therefore treats every family as `REQUIRES_RERUN` rather than silently inheriting stale approval
+
+4. planner_tie_mixed_organic applicability drift result
+- output:
+  - `artifacts/phase19_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt`
+- measured result:
+  - `generated_state_count=48`
+  - `split_ready_state_count=0`
+  - `tie_ready_state_count=0`
+  - `compare_eligible_state_count=0`
+  - `compare_ineligible_state_count=48`
+  - `compare_ineligible_reason_histogram={"no_split_ready":48}`
+  - `actual_split_hits=0`
+  - `actual_join_hits=48`
+  - `actual_integrate_hits=48`
+  - `split_ready_relevance=0`
+  - `tie_ready_relevance=0`
+  - `compare_relevance=0`
+  - `dominant_ineligible_reason=no_split_ready`
+  - `dominant_ineligible_reason_confidence=1`
+  - `classification=NON_APPLICABLE`
+- interpretation:
+  - no applicability drift was observed
+  - `planner_tie_mixed_organic` remains a mixed follow-up family with join/integrate activity but no compare-eligible split-tie states
+  - no planner reclassification is required in the current status manifest
+  - refresh still requires rerun only because the preserved baseline lacks freshness provenance, not because of current-family drift
+
+5. why compare_ready stays diagnostic-only
+- output:
+  - `artifacts/phase19_lineage/logs/compare_ready_lineage_audit.summary.txt`
+- measured result:
+  - `derived_from_base_state_count=16`
+  - `compare_ready_state_count=16`
+  - `compare_completed_state_count=16`
+  - `lineage_sample_count=16`
+  - `same_semantic_class_count=16`
+  - `same_final_state_count=16`
+  - `same_trace_class_count=16`
+  - `forced_split_ready_support_count=16`
+  - `followup_pattern_preserved_count=0`
+  - `structure_only_enrichment_count=0`
+- interpretation:
+  - semantic/final/trace consistency is still good enough for diagnostic monitoring
+  - the precursor still depends on forced split-ready support
+  - followup preservation remains absent
+  - because `followup_pattern_preserved_count=0` and `structure_only_enrichment_count=0`, phase19 keeps `planner_tie_mixed_organic_compare_ready` pinned at `DIAGNOSTIC_ONLY`
+  - the manifest hard-codes `counts_as_production_evidence=0` and the refresh layer escalates any accidental promotion to `REQUIRES_RERUN`
+
+6. policy_refresh and nightly wiring
+- new CLI path:
+  - `--case policy_gate_refresh`
+  - `--baseline-manifest <path>`
+  - `--current-manifest <path>`
+  - `--freshness-only`
+  - `--revalidate-families <csv>`
+  - `--mark-stale-on-hash-change`
+  - `--allow-stale`
+- operational behaviors:
+  - one-family revalidation via `--revalidate-families` and `--gate-family`
+  - selective stale-family smoke via `stale_family_selective_rerun_smoke`
+  - reclassification trigger smoke via `planner_tie_organic_reclassify_trigger_smoke`
+  - diagnostic-only pin smoke via `policy_gate_diagnostic_only_smoke`
+- new CTest policy tiers:
+  - `policy_core`
+  - `policy_refresh`
+  - `policy_nightly`
+- nightly interpretation in phase19:
+  - `policy_gate` records current status and live hashes
+  - `policy_gate_refresh` compares the approved baseline vs current evidence
+  - applicability audit and lineage audit remain separate refresh inputs for `NON_APPLICABLE` and `DIAGNOSTIC_ONLY`
+
+7. evidence bundle freshness inclusion
+- script:
+  - `tests/tools/build_evidence_bundle.py`
+- new bundle metadata fields:
+  - `baseline_manifest`
+  - `current_manifest`
+  - `baseline_manifest_hash`
+  - `current_manifest_hash`
+  - `freshness_summary`
+  - `drift_flags`
+  - `reclassification_needed_families`
+  - `family_freshness`
+- curated bundle content is also refreshed with:
+  - latest policy-gate summary
+  - latest planner applicability summary
+  - latest compare-ready lineage summary
+
+8. explicit executions
+- passed:
+  - `./build-release/tests/raw_engine_tests --case policy_gate --gate-strict --gate-output artifacts/manifests/policy_graduation_manifest_v1.json`
+  - `./build-release/tests/raw_engine_tests --case policy_gate --gate-strict --gate-output artifacts/manifests/policy_gate.json`
+  - `./build-release/tests/raw_engine_tests --case policy_gate_refresh --baseline-manifest artifacts/manifests/policy_graduation_manifest_phase18_baseline_v1.json --current-manifest artifacts/manifests/policy_graduation_manifest_v1.json --freshness-only --gate-output artifacts/manifests/policy_graduation_manifest_refresh_v1.json`
+  - `./build-release/tests/raw_engine_tests --case policy_gate_refresh --baseline-manifest artifacts/manifests/policy_graduation_manifest_phase18_baseline_v1.json --current-manifest artifacts/manifests/policy_graduation_manifest_v1.json --revalidate-families planner_tie_mixed_organic --gate-family planner_tie_mixed_organic --allow-stale --gate-output artifacts/manifests/policy_refresh_planner_tie.json`
+  - `./build-release/tests/raw_engine_tests --case planner_tie_organic_applicability_audit --artifact-dir artifacts/phase19_applicability`
+  - `./build-release/tests/raw_engine_tests --case compare_ready_lineage_audit --artifact-dir artifacts/phase19_lineage`
+  - `./build-release/tests/raw_engine_tests --case stale_family_selective_rerun_smoke --artifact-dir artifacts/phase19_policy_refresh`
+  - `python3 tests/tools/build_evidence_bundle.py --phase phase19 --artifact-root artifacts --report-out PHASE19_STABILIZATION_REPORT_20260320.txt --policy-manifest artifacts/manifests/policy_graduation_manifest_v1.json --baseline-manifest artifacts/manifests/policy_graduation_manifest_phase18_baseline_v1.json --current-manifest artifacts/manifests/policy_graduation_manifest_refresh_v1.json --zip-out raw_engine_phase19_stabilization_20260320.zip --curated-zip raw_engine_phase19_stabilization_curated_20260320.zip`
+
+9. full build / CTest results
+- Release:
+  - build dir: `build-release`
+  - result: `115/115` passed
+  - wall time: `186.94 sec`
+- Debug:
+  - build dir: `build-debug-phase19`
+  - result: `115/115` passed
+  - wall time: `712.98 sec`
+- isolated ASan/UBSan:
+  - build dir: `build-asan-phase19`
+  - result: `115/115` passed
+  - wall time: `2111.59 sec`
+
+10. semantic counterexample / regression status
+- new semantic counterexample:
+  - none
+- new regression list:
+  - none
+- dump/reduce/regression pipeline:
+  - unchanged and still available if a future semantic mismatch reappears
+
+11. final verdict
+- `exact_shadow` remains the production split-choice policy
+- current status evidence still supports:
+  - `PASS`
+  - `NON_APPLICABLE`
+  - `DIAGNOSTIC_ONLY`
+- phase19 does not introduce a gate `FAIL`
+- phase19 does not introduce a semantic mismatch
+- phase19 does introduce explicit freshness enforcement:
+  - the preserved phase18 baseline is not freshness-complete
+  - therefore the refresh manifest intentionally returns `REQUIRES_RERUN` until a phase19 baseline with relevant-input hashes is approved
+- no evidence in phase19 justifies changing `src/raw_planner.cpp` or any primitive implementation
+
+12. remaining risks
+- direct expensive compare evidence for `split_tie_organic_symmetric` and `automorphism_probe_large` still comes from the previously approved compare campaign summaries; phase19 now surfaces that those legacy approvals must be rerun once a freshness-capable baseline is expected
+- `planner_tie_mixed_organic` remains applicability-only; any future rise in `compare_eligible_state_count`, `split_ready_state_count`, or loss of dominant `no_split_ready` must trigger reclassification
+- `planner_tie_mixed_organic_compare_ready` remains structurally enriched and followup-divergent, so it must stay diagnostic-only unless future lineage work proves structure-only and followup preservation

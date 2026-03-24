@@ -1,0 +1,1 @@
+runtime_baseline_selection_summary comparability_verdict=COMPARABLE selected_baseline_id=phase25-runtime-approved-c89a575d-20260323_003527 candidate_count=3 exact_match_count=1 compatible_match_count=0 retired_match_count=2 reason=active exact runtime fingerprint match

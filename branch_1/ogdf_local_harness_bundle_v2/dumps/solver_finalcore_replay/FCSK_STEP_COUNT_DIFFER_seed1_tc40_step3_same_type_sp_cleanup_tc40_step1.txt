@@ -1,0 +1,193 @@
+=== SolverFinalCoreReplayBundle ===
+caseName=same_type_sp_cleanup_tc40_step1
+manifestPath=regressions/rewrite_seq_cases.json
+seed=1
+tc=40
+targetStep=1
+topLevelOk=1
+finalCoreSeamKind=FCSK_STEP_COUNT_DIFFER
+firstDivergenceStep=3
+finalCoreSeamWhy=trace length differs: solver=2 replay=5
+solverWhy=
+replayWhy=
+solverStats.success=1
+solverStats.reachedFixpoint=1
+solverStats.hadSequenceFallback=0
+solverStats.maxStepReached=0
+solverStats.completedSteps=2
+
+=== SolverFinalCoreSignature ===
+aliveNodeCount=1
+aliveArcCount=0
+root=0
+canonicalVertices: 2 3 4 6
+canonicalEdges:
+  (1,2,3)
+  (2,3,4)
+  (9,2,6)
+  (11,4,6)
+nodeSummaries:
+  node=0 type=S alive=1 adjArcs=[] realEdgesHere=[1,2,9,11] slots=[slot=6,REAL,poles=(2,3),realEdge=1;slot=8,REAL,poles=(2,6),realEdge=9;slot=9,REAL,poles=(3,4),realEdge=2;slot=10,REAL,poles=(4,6),realEdge=11]
+
+=== ReplayFinalCoreSignature ===
+aliveNodeCount=0
+aliveArcCount=0
+root=-1
+canonicalVertices:
+canonicalEdges:
+nodeSummaries:
+
+solverTrace:
+stepIndex=1
+chosenR=0
+chosenX=5
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (8,2,5)
+  (9,2,6)
+  (10,3,5)
+  (11,4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 2 3 4 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (5,1,6)
+  (6,1,3)
+  (9,2,6)
+  (11,4,6)
+
+stepIndex=2
+chosenR=0
+chosenX=1
+terminated=1
+terminateReason=NO_NEXT_TARGET_AFTER_STEP
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (5,1,6)
+  (6,1,3)
+  (9,2,6)
+  (11,4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 2 3 4 6
+canonicalEdges:
+  (1,2,3)
+  (2,3,4)
+  (9,2,6)
+  (11,4,6)
+
+replayTrace:
+stepIndex=1
+chosenR=0
+chosenX=5
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (8,2,5)
+  (9,2,6)
+  (10,3,5)
+  (11,4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 1 2 3 4 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (5,1,6)
+  (6,1,3)
+  (9,2,6)
+  (11,4,6)
+
+stepIndex=2
+chosenR=0
+chosenX=1
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 1 2 3 4 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (5,1,6)
+  (6,1,3)
+  (9,2,6)
+  (11,4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 2 3 4 6
+canonicalEdges:
+  (1,2,3)
+  (2,3,4)
+  (9,2,6)
+  (11,4,6)
+
+stepIndex=3
+chosenR=0
+chosenX=2
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 2 3 4 6
+canonicalEdges:
+  (1,2,3)
+  (2,3,4)
+  (9,2,6)
+  (11,4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices: 3 4 6
+canonicalEdges:
+  (2,3,4)
+  (11,4,6)
+
+stepIndex=4
+chosenR=0
+chosenX=4
+terminated=0
+terminateReason=
+=== CanonicalExplicitBefore ===
+canonicalVertices: 3 4 6
+canonicalEdges:
+  (2,3,4)
+  (11,4,6)
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices:
+canonicalEdges:
+
+stepIndex=5
+chosenR=-1
+chosenX=-1
+terminated=1
+terminateReason=NO_TARGET
+=== CanonicalExplicitBefore ===
+canonicalVertices:
+canonicalEdges:
+=== CanonicalExplicitAfterNormalize ===
+canonicalVertices:
+canonicalEdges:
+

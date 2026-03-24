@@ -1,0 +1,20 @@
+{
+  "manifest_version": "policy_runtime_manifest_v1",
+  "timestamp_utc": "2026-03-22T07:03:30Z",
+  "phase": "phase22",
+  "mode": "nightly",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase22/tests/artifacts/policy_empty_plan_noop_smoke",
+  "entries": [
+    {
+      "stage": "policy_nightly_refresh",
+      "wall_seconds": 0.06,
+      "baseline_wall_seconds": null,
+      "soft_threshold_seconds": null,
+      "hard_threshold_seconds": null,
+      "delta_percent": null,
+      "budget_verdict": "NO_BASELINE"
+    }
+  ],
+  "total_wall_seconds": 0.06,
+  "overall_budget_verdict": "NO_BASELINE"
+}

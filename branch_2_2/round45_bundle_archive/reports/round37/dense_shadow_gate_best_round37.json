@@ -1,0 +1,5 @@
+{
+  "gate_found": false,
+  "status": "not_completed",
+  "reason": "truth gate failed before gate search"
+}

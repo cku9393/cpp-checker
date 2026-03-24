@@ -1,0 +1,46 @@
+caseName=xshared_loopshared_proxy_loop_real_tc56_step1
+manifestPath=regressions/rewrite_seq_cases.json
+seed=1
+tcIndex=56
+targetStep=1
+topLevelOk=1
+requestedSource=REWRITE
+stopBeforeOgdf=0
+runChild=1
+sourceSide=REWRITE
+callSiteTag=INFER_SINGLE_ZERO_ARC_TYPE
+phaseTag=DISPATCH_BLOCKED
+dispatchKind=CDK_WHOLE_CORE_FALLBACK
+directRawAllowed=0
+directRawBlockedReason=shared compact dispatch: conservative whole-core fallback
+usedSharedDispatchPath=0
+usedWholeCoreFallback=1
+stepIndex=2
+chosenR=0
+chosenX=1
+compactGraphCanonicalSummary=vertices=5 edges=3 selfLoops=0 multiplicity=[REAL:(1,2)x1;REAL:(4,5)x1;REAL:(5,6)x1]
+compactGraphDumpPath=dumps/ogdf_raw_crash_replay_after_gate/rewrite/compact_REWRITE_INFER_SINGLE_ZERO_ARC_TYPE_seed1_tc56_step2_xshared_loopshared_proxy_loop_real_tc56_step1.txt
+childExitCode=0
+childSignal=-1
+crashed=0
+crashWhy=child buildRaw succeeded
+lldbBacktracePath=
+notes=probe-ok:INFER_SINGLE_ZERO_ARC_TYPE | no buildRaw reached for source REWRITE
+precheckSummary:
+  edgeCount=3
+  vertexCount=5
+  selfLoopCount=0
+  connectedComponentCount=2
+  connected=0
+  biconnected=0
+  spqrReady=0
+  spqrReadyWhy=rewriteR: compact local graph not biconnected
+  tooSmallSubtype=TS_OTHER
+  notBiconnectedSubtype=NB_DISCONNECTED
+  selfLoopSubtype=SL_OTHER
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=-1
+origOfCv: [0->1] [1->2] [2->4] [3->5] [4->6]
+edge#0 kind=REAL cv=(0,1) orig=(1,2) realEdge=0
+edge#1 kind=REAL cv=(2,3) orig=(4,5) realEdge=3
+edge#2 kind=REAL cv=(3,4) orig=(5,6) realEdge=4

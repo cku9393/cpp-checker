@@ -1,0 +1,177 @@
+PHASE21 STABILIZATION REPORT
+date=2026-03-22
+package=raw_engine_v1_package
+branch=2_1
+authoritative_source=split tree
+production_split_choice_policy=exact_shadow
+status=phase21_completed
+
+1. Modified / Added Files
+- README.md
+- tests/CMakeLists.txt
+- tests/policy_gate.hpp
+- tests/policy_gate.cpp
+- tests/policy_baseline.cpp
+- tests/policy_manifest_freshness.cpp
+- tests/raw_engine_cases.cpp
+- tests/tools/build_evidence_bundle.py
+- tests/campaigns/phase21_split_tie_organic_compare.txt
+- tests/campaigns/phase21_automorphism_compare.txt
+- PHASE21_HANDOFF_20260320.txt
+
+2. Policy Lifecycle Runner Design
+- `policy_ci_check` and `policy_nightly_refresh` now treat baseline/current/refresh/rerun-plan as one lifecycle set.
+- Lifecycle rerun planning now includes `DIAGNOSTIC_ONLY` and `NON_APPLICABLE` families by default, and fails if stale families are omitted without an explicit family filter.
+- External rerun plans are validated against baseline/current/refresh manifest paths and hashes before execution.
+- `policy_nightly_refresh` keeps the no-op steady state machine-readable:
+  `selected_entry_count=0`, `selected_family_count=0`, `executed_family_count=0`, `failed_family_count=0`.
+
+3. Baseline Promotion / History / Archive
+- `policy_gate_promote_baseline --freeze-provenance` now preserves the source manifest's recorded relevant-input hashes instead of recomputing live provenance from the current checkout.
+- Baseline promotion now rejects partial manifests by requiring the full expected family set:
+  `split_tie_organic_symmetric`
+  `automorphism_probe_large`
+  `planner_tie_mixed_organic`
+  `planner_tie_mixed_organic_compare_ready`
+- Baseline history metadata now records `bundle_file` alongside `report_file`, `baseline_tag`, `approval_timestamp_utc`, `baseline_manifest_path`, `promoted_from_manifest`, and `family_status_snapshot`.
+- History remains append-only under `artifacts/manifests/history/` via `.meta.txt` records and synchronized `baseline_history_index.{txt,json}` / `history_index.{txt,json}`.
+
+4. Freshness / Rerun Policy Changes
+- `planner_tie_mixed_organic_compare_ready` freshness inputs were reduced to `DIAGNOSTIC_LINEAGE` only.
+- This keeps compare-ready explicitly diagnostic-only and aligns freshness with the generated rerun mode.
+- `build_policy_gate_manifest()` now emits `report_version=phase21`.
+- Direct compare evidence now prefers phase21 canonical compare outputs first:
+  `artifacts/phase21_campaigns_compare/split_tie_organic/...`
+  `artifacts/phase21_campaigns_compare/automorphism_probe/...`
+- Selective rerun writeback is now canonical for non-production families:
+  `NON_APPLICABLE -> artifacts/phase21_applicability`
+  `DIAGNOSTIC_ONLY -> artifacts/phase21_lineage`
+
+5. Evidence Bundle Changes
+- `build_evidence_bundle.py` now prefers manifest-linked summary paths from `source_summary_path` instead of picking applicability/lineage summaries purely by latest mtime.
+- Curated zip generation is always regenerated from the current curated directory when `--curated-zip` is supplied.
+- Bundle metadata continues to include:
+  `baseline_manifest_hash`
+  `current_manifest_hash`
+  `refresh_manifest_hash`
+  `rerun_plan_hash`
+  `policy_summary`
+  `current_verdict`
+  `freshness_verdict`
+  `family_status_summary`
+  `family_freshness`
+  `drift_flags`
+  `reclassification_needed_families`
+
+6. Current Policy Results
+- current manifest:
+  `split_tie_organic_symmetric = PASS / FRESH`
+  `automorphism_probe_large = PASS / FRESH`
+  `planner_tie_mixed_organic = NON_APPLICABLE / FRESH`
+  `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY / FRESH`
+- approved baseline:
+  `split_tie_organic_symmetric = PASS / FRESH`
+  `automorphism_probe_large = PASS / FRESH`
+  `planner_tie_mixed_organic = NON_APPLICABLE / FRESH`
+  `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY / FRESH`
+- refresh against promoted baseline:
+  `split_tie_organic_symmetric = PASS / FRESH`
+  `automorphism_probe_large = PASS / FRESH`
+  `planner_tie_mixed_organic = NON_APPLICABLE / FRESH`
+  `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY / FRESH`
+- rerun plan:
+  `summary_verdict=PASS`
+  `stale_family_count=0`
+  `requires_rerun_family_count=0`
+  `reclassify_required_count=0`
+  `selected_entry_count=0`
+
+7. Direct Evidence / Applicability / Lineage
+- phase21 split-tie direct compare:
+  `compared=36 eligible=36 completed=36 semantic_disagreement=0 fallback=0 semantic_shift=0 gate=PASS`
+- phase21 automorphism direct compare:
+  `compared=36 eligible=36 completed=36 semantic_disagreement=0 fallback=0 semantic_shift=0 gate=PASS`
+- phase21 applicability audit:
+  `generated=48 split_ready=0 eligible=0 no_split_ready=48 actual_join=48 actual_integrate=48 classification=NON_APPLICABLE`
+- phase21 compare-ready lineage audit:
+  `lineage_sample_count=16`
+  `derived_from_base_state_count=16`
+  `same_semantic_class_count=16`
+  `same_final_state_count=16`
+  `same_trace_class_count=16`
+  `followup_pattern_preserved_count=0`
+  `structure_only_enrichment_count=0`
+- compare-ready remains diagnostic-only because lineage consistency is strong, but followup preservation and structure-only enrichment remain zero. `counts_as_production_evidence=false` is preserved.
+
+8. Synthetic Stale / Drift / Promotion-Rejection Results
+- synthetic compare-engine hash drift:
+  `freshness_verdict=STALE`
+  `split_tie_organic_symmetric=PASS/STALE`
+  `automorphism_probe_large=PASS/STALE`
+  `planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY/STALE`
+- synthetic applicability drift on `planner_tie_mixed_organic`:
+  `freshness_verdict=REQUIRES_RERUN`
+  `planner_tie_mixed_organic=NON_APPLICABLE/REQUIRES_RERUN`
+  `drift_flag=1`
+  `reclassify_required=1`
+- synthetic diagnostic promotion on `planner_tie_mixed_organic_compare_ready`:
+  `freshness_verdict=REQUIRES_RERUN`
+  `planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY/REQUIRES_RERUN`
+  `reclassify_required=1`
+
+9. Selective Rerun Execution
+- `policy_selective_rerun_execute_smoke` passed after lifecycle wiring changes.
+- `policy_nightly_refresh` explicit run is currently a no-op steady state:
+  `selected_entry_count=0`
+  `selected_family_count=0`
+  `executed_family_count=0`
+  `failed_family_count=0`
+- Generated rerun modes remain:
+  `PASS -> direct_compare_rerun`
+  `NON_APPLICABLE -> applicability_audit_rerun`
+  `DIAGNOSTIC_ONLY -> lineage_audit_rerun`
+
+10. Explicit Commands Executed
+- `policy_gate --gate-strict`
+- `policy_gate_promote_baseline --freeze-provenance`
+- `policy_gate_refresh` against promoted baseline
+- `policy_gate_plan_rerun`
+- `policy_ci_check`
+- `policy_nightly_refresh`
+- `planner_tie_organic_applicability_audit --artifact-dir artifacts/phase21_applicability`
+- `compare_ready_lineage_audit --artifact-dir artifacts/phase21_lineage --iters 8`
+- `campaign --campaign-config tests/campaigns/phase21_split_tie_organic_compare.txt --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes`
+- `campaign --campaign-config tests/campaigns/phase21_automorphism_compare.txt --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes`
+- synthetic hash drift refresh
+- synthetic applicability drift refresh
+- synthetic diagnostic promotion refresh
+
+11. Full Validation
+- Release full CTest:
+  `140/140 PASS`
+  `108.56s`
+- Debug full CTest:
+  `140/140 PASS`
+  `334.67s`
+- ASan/UBSan full CTest:
+  `140/140 PASS`
+  `878.53s`
+  `isolated rerun with ASAN_OPTIONS=detect_leaks=0:abort_on_error=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1`
+
+12. Semantic Counterexamples / Regressions
+- New semantic counterexample:
+  none
+- New regression added:
+  none
+
+13. Exact Shadow Final Verdict
+- `exact_shadow` remains the production split-choice policy.
+- Production evidence is still carried only by direct compare `PASS` families.
+- `planner_tie_mixed_organic` remains `NON_APPLICABLE` on applicability evidence.
+- `planner_tie_mixed_organic_compare_ready` remains `DIAGNOSTIC_ONLY` and is not promoted into production evidence.
+
+14. Remaining Risks
+- Evidence freshness is now operationally managed, but long direct-compare refresh still costs wall-clock time.
+- `planner_tie_mixed_organic_compare_ready` remains a diagnostic support family because followup preservation and structure-only enrichment are still zero.
+- Parallel CTest policy smokes can race if they reuse hard-coded artifact subdirectories; one such race was fixed in `policy_gate_diagnostic_only_smoke`, and future wrappers should keep artifact roots case-specific.
+- Final bundle generation and curated zip are complete after the passing isolated ASan/UBSan rerun.

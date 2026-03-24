@@ -1,0 +1,8 @@
+{
+  "round": "round43_dense_sameside",
+  "bundle_type": "status_hold",
+  "baseline_fallback": true,
+  "baseline_source": "/mnt/data/lca_tree_stress_v5_round41_dense_candidateevents_hold.zip",
+  "created_at": 1774199807.7280848,
+  "report": "/mnt/data/round43_dense_sameside_report.md"
+}

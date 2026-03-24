@@ -1,0 +1,18 @@
+{
+  "plan_version": "runtime_rerun_plan_v1",
+  "generated_at_utc": "2026-03-24T02:16:02Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
+  "baseline_runtime_manifest_path": null,
+  "current_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_current.json",
+  "refresh_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_refresh.json",
+  "baseline_runtime_manifest_hash": null,
+  "current_runtime_manifest_hash": "96c0d7d11e5156e004e8541f0b44758962be3dbe1769263c16168a62a2daef5c",
+  "refresh_runtime_manifest_hash": "46c510c4d2db3d202d3f04981df31e0ca190e31175ec34c11f24d5098356d366",
+  "stale_entry_count": 0,
+  "requires_rerun_entry_count": 0,
+  "rebaseline_required_count": 0,
+  "selected_entry_count": 0,
+  "entries": [],
+  "summary_verdict": "PASS",
+  "rationale": "no stale or over-budget runtime entries"
+}

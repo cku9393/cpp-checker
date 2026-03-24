@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2026-03-24T10:11:53",
+  "branch": "main",
+  "commit": "ad0399141f8e2948e304cae645f94d2fb72550ef",
+  "hardCompareSummaryPath": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/integration_finalize/hard_compare/summary.json",
+  "randomSanitySummaryPath": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/integration_finalize/random_sanity_s1_r100/summary.json",
+  "directSolverSmokeLogPath": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/dumps/integration_finalize/direct_solver_smoke/run.log",
+  "defaultFlipPolicyDocPath": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_default_flip_policy_ko.md",
+  "regressionPolicyDocPath": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_regression_policy_ko.md",
+  "releaseManifestPath": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_1/ogdf_local_harness_bundle_v2/release/rewrite_seq_release_manifest.json"
+}

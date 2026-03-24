@@ -52,5 +52,7 @@
 
 - freeze note:
   - `docs/rewrite_seq_engine_freeze_ko.md`
+- regression policy:
+  - `docs/rewrite_seq_regression_policy_ko.md`
 - regression manifest:
   - `regressions/rewrite_seq_cases.json`

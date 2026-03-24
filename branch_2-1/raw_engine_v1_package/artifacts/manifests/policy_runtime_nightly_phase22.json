@@ -1,0 +1,56 @@
+{
+  "manifest_version": "policy_runtime_manifest_v1",
+  "timestamp_utc": "2026-03-22T07:09:25Z",
+  "phase": "phase22",
+  "mode": "nightly",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
+  "entries": [
+    {
+      "stage": "policy_nightly_refresh",
+      "wall_seconds": 0.028,
+      "baseline_wall_seconds": null,
+      "soft_threshold_seconds": null,
+      "hard_threshold_seconds": null,
+      "delta_percent": null,
+      "budget_verdict": "NO_BASELINE"
+    },
+    {
+      "stage": "build_evidence_bundle",
+      "wall_seconds": 2.725,
+      "baseline_wall_seconds": null,
+      "soft_threshold_seconds": null,
+      "hard_threshold_seconds": null,
+      "delta_percent": null,
+      "budget_verdict": "NO_BASELINE"
+    },
+    {
+      "stage": "release_full_ctest",
+      "wall_seconds": 220.35,
+      "baseline_wall_seconds": null,
+      "soft_threshold_seconds": null,
+      "hard_threshold_seconds": null,
+      "delta_percent": null,
+      "budget_verdict": "NO_BASELINE"
+    },
+    {
+      "stage": "debug_full_ctest",
+      "wall_seconds": 720.0,
+      "baseline_wall_seconds": null,
+      "soft_threshold_seconds": null,
+      "hard_threshold_seconds": null,
+      "delta_percent": null,
+      "budget_verdict": "NO_BASELINE"
+    },
+    {
+      "stage": "asan_full_ctest",
+      "wall_seconds": 667.93,
+      "baseline_wall_seconds": null,
+      "soft_threshold_seconds": null,
+      "hard_threshold_seconds": null,
+      "delta_percent": null,
+      "budget_verdict": "NO_BASELINE"
+    }
+  ],
+  "total_wall_seconds": 1611.033,
+  "overall_budget_verdict": "NO_BASELINE"
+}

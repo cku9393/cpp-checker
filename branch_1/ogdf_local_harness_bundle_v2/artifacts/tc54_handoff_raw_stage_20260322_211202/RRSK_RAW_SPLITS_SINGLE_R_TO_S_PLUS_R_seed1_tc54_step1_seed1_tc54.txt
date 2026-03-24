@@ -1,0 +1,114 @@
+=== HandoffRawReplayBundle ===
+caseName=seed1_tc54
+manifestPath=dumps/solver_compare_oracle_random/seed1_tc54_manifest.json
+seed=1
+tc=54
+targetStep=1
+sourceStep=1
+topLevelOk=1
+rawReplaySeamKind=RRSK_RAW_SPLITS_SINGLE_R_TO_S_PLUS_R
+rawReplaySeamWhy=raw replay seam: shared explicit rebuild splits single-R live core into S+R raw decomposition
+sourceWhy=
+rawWhy=
+
+=== SharedHandoffExplicit ===
+vertices: 1 3 4 5 6
+edges:
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,3)
+  id=7 (1,5)
+  id=11 (4,6)
+
+=== SourceLiveCoreSnapshot ===
+stepIndex=2
+side=SOURCE_REPLAY
+root=0
+aliveNodeCount=1
+aliveArcCount=0
+rNodeCount=1
+sNodeCount=0
+pNodeCount=0
+aliveRNodes=[0]
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+=== TargetSnapshot ===
+stepIndex=2
+aliveRNodes=[0]
+hasNextTarget=1
+chosenR=0
+chosenX=1
+noTargetReason=
+candidates:
+  rNode=0 x=1 scorePrimary=3 scoreSecondary=-1 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=4 scorePrimary=3 scoreSecondary=-4 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=5 scorePrimary=3 scoreSecondary=-5 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=6 scorePrimary=3 scoreSecondary=-6 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+  rNode=0 x=3 scorePrimary=2 scoreSecondary=-3 sourceTag=REAL_ENDPOINT_MULTIPLICITY
+nodeSummaries:
+  node=0 type=R alive=1 adjArcs=[] realEdgesHere=[2,3,4,5,6,7,11] slots=[slot=0,REAL,poles=(3,4),realEdge=2;slot=1,REAL,poles=(4,5),realEdge=3;slot=2,REAL,poles=(5,6),realEdge=4;slot=3,REAL,poles=(1,6),realEdge=5;slot=4,REAL,poles=(1,3),realEdge=6;slot=5,REAL,poles=(1,5),realEdge=7;slot=6,REAL,poles=(4,6),realEdge=11]
+
+=== RawReplaySnapshot ===
+ok=1
+why=
+compactGraphCanonicalSummary=vertices=5 edges=7 selfLoops=0 multiplicity=[REAL:(1,3)x1;REAL:(1,5)x1;REAL:(1,6)x1;REAL:(3,4)x1;REAL:(4,5)x1;REAL:(4,6)x1;REAL:(5,6)x1]
+rawNodeCount=2
+rawTreeEdgeCount=1
+rawRNodeCount=1
+rawSNodeCount=1
+rawPNodeCount=0
+inputExplicit:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,3)
+  (7,1,5)
+  (11,4,6)
+precheckSummary:
+  edgeCount=7
+  vertexCount=5
+  selfLoopCount=0
+  connectedComponentCount=1
+  connected=1
+  biconnected=1
+  spqrReady=1
+  spqrReadyWhy=
+  tooSmallSubtype=TS_OTHER
+  notBiconnectedSubtype=NB_OTHER
+  selfLoopSubtype=SL_OTHER
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=-1
+origOfCv: [0->1] [1->3] [2->4] [3->5] [4->6]
+edge#0 kind=REAL cv=(1,2) orig=(3,4) realEdge=2
+edge#1 kind=REAL cv=(2,3) orig=(4,5) realEdge=3
+edge#2 kind=REAL cv=(3,4) orig=(5,6) realEdge=4
+edge#3 kind=REAL cv=(0,4) orig=(1,6) realEdge=5
+edge#4 kind=REAL cv=(0,1) orig=(1,3) realEdge=6
+edge#5 kind=REAL cv=(0,3) orig=(1,5) realEdge=7
+edge#6 kind=REAL cv=(2,4) orig=(4,6) realEdge=11
+compactEdgeSummaries:
+  edge#0 kind=REAL cv=(1,2) orig=(3,4) realEdge=2
+  edge#1 kind=REAL cv=(2,3) orig=(4,5) realEdge=3
+  edge#2 kind=REAL cv=(3,4) orig=(5,6) realEdge=4
+  edge#3 kind=REAL cv=(0,4) orig=(1,6) realEdge=5
+  edge#4 kind=REAL cv=(0,1) orig=(1,3) realEdge=6
+  edge#5 kind=REAL cv=(0,3) orig=(1,5) realEdge=7
+  edge#6 kind=REAL cv=(2,4) orig=(4,6) realEdge=11
+rawNodeSummaries:
+  node=0 type=S alive=1 slots=[slot=0,INPUT,poles=(3,4),inputEdgeId=0;slot=1,INPUT,poles=(1,3),inputEdgeId=4;slot=2,TREE,poles=(1,4),treeEdgeId=0]
+  node=1 type=R alive=1 slots=[slot=0,INPUT,poles=(1,6),inputEdgeId=3;slot=1,INPUT,poles=(5,6),inputEdgeId=2;slot=2,INPUT,poles=(1,5),inputEdgeId=5;slot=3,INPUT,poles=(4,5),inputEdgeId=1;slot=4,INPUT,poles=(4,6),inputEdgeId=6;slot=5,TREE,poles=(1,4),treeEdgeId=0]
+rawTreeEdgeSummaries:
+  treeEdge=0 a=0 slotInA=2 b=1 slotInB=5 poles=(1,4)
+

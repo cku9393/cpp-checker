@@ -1,0 +1,6 @@
+round41 hold bundle
+
+This bundle is a baseline-equivalent hold snapshot created after the prior round41 workdir reset.
+No retained optimization patch was selected.
+Candidate-event truth evidence indicated the dominant hotspot was BFS neighbor iteration inside decomposeSeries candidate evaluation.
+No zero-mismatch positive-speedup release gate was found.

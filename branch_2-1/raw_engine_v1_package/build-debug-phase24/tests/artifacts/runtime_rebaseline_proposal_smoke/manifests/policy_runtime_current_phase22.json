@@ -1,0 +1,139 @@
+{
+  "manifest_version": "runtime_current_manifest_v1",
+  "manifest_role": "current",
+  "generated_at_utc": "2026-03-22T11:11:07Z",
+  "phase": "phase22",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/runtime_rebaseline_proposal_smoke",
+  "baseline_tag": "phase22-runtime",
+  "host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "other-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "f559a64c8837468319c7d3edb188f9b3254699149d7c82c75a732a657b0573dc"
+  },
+  "toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "wall_time_sec": 120.0,
+      "test_count": 10,
+      "build_type": "Release",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 260.0,
+        "hard_seconds": 520.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0
+      },
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "c6a5363b9d5a4ee457fee0d279fcc5444dd9ddcc861711d7ca1ffea0d7393f08"
+    },
+    {
+      "execution_class": "debug_full",
+      "wall_time_sec": 480.0,
+      "test_count": 10,
+      "build_type": "Debug",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 900.0,
+        "hard_seconds": 1800.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0
+      },
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "54d28c09c33c87fc140fa7baf8557bedf25aed3d4647de5aafcdfa84e8c8ec6c"
+    },
+    {
+      "execution_class": "asan_full",
+      "wall_time_sec": 900.0,
+      "test_count": 10,
+      "build_type": "Asan",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 2400.0,
+        "hard_seconds": 4200.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0
+      },
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "b3455f65aeec80ae1ecb469faa6b5b357cb98e39afa65ccbedbf8df6bbc15da9"
+    },
+    {
+      "execution_class": "policy_core",
+      "wall_time_sec": 1.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0
+      },
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "bafa380ea1f5432f6230604929736875b88d16ef5c6a8e823eb1fe6d61fea832"
+    },
+    {
+      "execution_class": "policy_refresh",
+      "wall_time_sec": 1.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0
+      },
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "a31dacd8f2dbeef410783de02ea6dfc072b451a63ec07ecaa791c9fb2b71d672"
+    },
+    {
+      "execution_class": "policy_nightly",
+      "wall_time_sec": 2.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 180.0,
+        "hard_seconds": 600.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0
+      },
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "f8ce9e41efea3a81c937456d6b5a6fef73ccca5ea83d68ac3b8ce2fb6a8f44aa"
+    }
+  ],
+  "warn_count": 0,
+  "fail_count": 0,
+  "overall_status": "OK",
+  "current_verdict": "PASS",
+  "overall_budget_verdict": "PASS",
+  "current_runtime_manifest_hash": "86e4451e9a09b454db8b5378939c188b707060c32a37c3f42ef9561fe6f25d31"
+}

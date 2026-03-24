@@ -12,7 +12,7 @@
       "tcIndex": 40,
       "targetStep": 1,
       "passed": true,
-      "elapsedMs": 3.12254,
+      "elapsedMs": 2.6775,
       "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc40_step1.txt",
       "failures": []
     },
@@ -22,7 +22,7 @@
       "tcIndex": 56,
       "targetStep": 1,
       "passed": true,
-      "elapsedMs": 2.54004,
+      "elapsedMs": 2.25021,
       "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc56_step1.txt",
       "failures": []
     },
@@ -32,7 +32,7 @@
       "tcIndex": 328,
       "targetStep": 1,
       "passed": true,
-      "elapsedMs": 2.25292,
+      "elapsedMs": 1.52808,
       "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc328_step1.txt",
       "failures": []
     },
@@ -42,7 +42,7 @@
       "tcIndex": 444,
       "targetStep": 1,
       "passed": true,
-      "elapsedMs": 2.15462,
+      "elapsedMs": 1.56488,
       "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed2_tc444_step1.txt",
       "failures": []
     },
@@ -52,7 +52,7 @@
       "tcIndex": 851,
       "targetStep": 1,
       "passed": true,
-      "elapsedMs": 1.46058,
+      "elapsedMs": 1.24842,
       "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc851_step1.txt",
       "failures": []
     },
@@ -62,7 +62,7 @@
       "tcIndex": 33,
       "targetStep": 1,
       "passed": true,
-      "elapsedMs": 1.0445,
+      "elapsedMs": 2.38413,
       "dumpPath": "dumps/rewrite_r_seq_regression/SEQ_REPLAY_CAPTURE_seed1_tc33_step1.txt",
       "failures": []
     }

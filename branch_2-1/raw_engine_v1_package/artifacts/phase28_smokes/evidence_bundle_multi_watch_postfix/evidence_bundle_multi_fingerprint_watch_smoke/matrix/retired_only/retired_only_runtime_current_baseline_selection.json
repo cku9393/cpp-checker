@@ -1,0 +1,60 @@
+{
+  "selection_version": "runtime_baseline_selection_v1",
+  "generated_at_utc": "2026-03-24T00:41:34Z",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase28_smokes/evidence_bundle_multi_watch_postfix/evidence_bundle_multi_fingerprint_watch_smoke/matrix/retired_only/retired_only_runtime_current.json",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase28_smokes/evidence_bundle_multi_watch_postfix/evidence_bundle_multi_fingerprint_watch_smoke/matrix/retired_only/retired_only_runtime_registry.json",
+  "candidate_count": 1,
+  "exact_match_count": 0,
+  "compatible_match_count": 0,
+  "retired_match_count": 1,
+  "current_host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "smoke-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+  },
+  "current_toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "current_execution_classes": [
+    "asan_full",
+    "debug_full",
+    "policy_core",
+    "policy_nightly",
+    "policy_refresh",
+    "release_full"
+  ],
+  "current_execution_signatures": [
+    "asan_full|Asan|none",
+    "debug_full|Debug|none",
+    "policy_core|Policy|none",
+    "policy_nightly|Policy|none",
+    "policy_refresh|Policy|none",
+    "release_full|Release|none"
+  ],
+  "current_fingerprint_key": "cb0afc72bce7e27f6a3db83110fde20b37c7faaa52001e6ed24cec36b870aeeb",
+  "comparability_verdict": "REBASELINE_REQUIRED",
+  "comparability_reason": "only retired runtime baselines match the current host/toolchain",
+  "selected_baseline_id": "phase22-runtime-approved-7fbf1adc-20260324_004130",
+  "selected_baseline_tag": "phase22-runtime-approved",
+  "selected_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase28_smokes/evidence_bundle_multi_watch_postfix/evidence_bundle_multi_fingerprint_watch_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+  "selected_runtime_baseline_manifest_hash": "99a0630fb24401bc1ab251a163112f91c188fab2aab8ec14680a0ae56fd04b04",
+  "selected_entry_status": "retired",
+  "selected_execution_signature_hash": "a9a2bbf68b1e8cb7c0221e9195e48674a27525cfb6c5ec0279bd71c94d93bd6d",
+  "candidates": [
+    {
+      "baseline_id": "phase22-runtime-approved-7fbf1adc-20260324_004130",
+      "baseline_tag": "phase22-runtime-approved",
+      "status": "retired",
+      "match_kind": "retired",
+      "match_reason": "compatible active runtime baseline differs in host/toolchain details"
+    }
+  ],
+  "selection_hash": "cfae9aa15613214b2337b9d65233be7b843c376c5cee27f1a0d43b6b4ffaa74d"
+}

@@ -1,0 +1,20 @@
+{
+  "manifest_version": "policy_runtime_manifest_v1",
+  "timestamp_utc": "2026-03-22T07:03:29Z",
+  "phase": "phase22",
+  "mode": "bundle_only",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase22/tests/artifacts/artifact_index_smoke",
+  "entries": [
+    {
+      "stage": "build_evidence_bundle",
+      "wall_seconds": 0.097,
+      "baseline_wall_seconds": null,
+      "soft_threshold_seconds": null,
+      "hard_threshold_seconds": null,
+      "delta_percent": null,
+      "budget_verdict": "NO_BASELINE"
+    }
+  ],
+  "total_wall_seconds": 0.097,
+  "overall_budget_verdict": "NO_BASELINE"
+}

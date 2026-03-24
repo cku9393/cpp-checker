@@ -1,0 +1,164 @@
+{
+  "manifest_version": "runtime_refresh_manifest_v1",
+  "manifest_role": "refresh",
+  "generated_at_utc": "2026-03-22T11:12:07Z",
+  "baseline_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase24/tests/artifacts/runtime_fingerprint_mismatch_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+  "current_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase24/tests/artifacts/runtime_fingerprint_mismatch_smoke/manifests/policy_runtime_current_phase22.json",
+  "runtime_baseline_registry_path": null,
+  "baseline_runtime_manifest_hash": "36f6b193873cb337f2eadc99eb47c9deb60b9868e0e57a64b54a02a165e6313e",
+  "current_runtime_manifest_hash": "f03b89edab650a9943420ce56d541e3009f5b8cd386d29227e6bdd3c7038faaf",
+  "phase": "phase22",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase24/tests/artifacts/runtime_fingerprint_mismatch_smoke",
+  "baseline_tag": "phase22-runtime",
+  "host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "smoke-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "9110b903a8e49858d2e4f92cd2848efcdd409d827ccae5f9e84f38e5f3ee1afd",
+    "synthetic_mismatch": "host-drift"
+  },
+  "toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "current_verdict": "PASS",
+  "freshness_verdict": "REBASELINE_REQUIRED",
+  "comparability_verdict": "REBASELINE_REQUIRED",
+  "selected_baseline_id": null,
+  "selected_baseline_tag": null,
+  "selection_candidate_count": 0,
+  "selection_exact_match_count": 0,
+  "selection_compatible_match_count": 0,
+  "selection_retired_match_count": 0,
+  "comparability_reason": "",
+  "overall_budget_verdict": "PASS",
+  "runtime_severity": "ACTION_REQUIRED",
+  "recommended_next_action": "runtime baseline is not comparable; rerun on a matching host/toolchain or promote a new runtime baseline",
+  "stale_entry_count": 0,
+  "requires_rerun_entry_count": 0,
+  "rebaseline_required_count": 6,
+  "not_comparable_count": 6,
+  "warn_count": 0,
+  "fail_count": 0,
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "wall_time_sec": 120.0,
+      "baseline_wall_time_sec": null,
+      "test_count": 10,
+      "build_type": "Release",
+      "sanitizer_flags": "none",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null,
+      "budget_thresholds": {
+        "soft_seconds": 260.0,
+        "hard_seconds": 520.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0
+      },
+      "rationale": "runtime host fingerprint mismatch requires runtime rebaseline"
+    },
+    {
+      "execution_class": "debug_full",
+      "wall_time_sec": 480.0,
+      "baseline_wall_time_sec": null,
+      "test_count": 10,
+      "build_type": "Debug",
+      "sanitizer_flags": "none",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null,
+      "budget_thresholds": {
+        "soft_seconds": 900.0,
+        "hard_seconds": 1800.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0
+      },
+      "rationale": "runtime host fingerprint mismatch requires runtime rebaseline"
+    },
+    {
+      "execution_class": "asan_full",
+      "wall_time_sec": 900.0,
+      "baseline_wall_time_sec": null,
+      "test_count": 10,
+      "build_type": "Asan",
+      "sanitizer_flags": "none",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null,
+      "budget_thresholds": {
+        "soft_seconds": 2400.0,
+        "hard_seconds": 4200.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0
+      },
+      "rationale": "runtime host fingerprint mismatch requires runtime rebaseline"
+    },
+    {
+      "execution_class": "policy_core",
+      "wall_time_sec": 1.0,
+      "baseline_wall_time_sec": null,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null,
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0
+      },
+      "rationale": "runtime host fingerprint mismatch requires runtime rebaseline"
+    },
+    {
+      "execution_class": "policy_refresh",
+      "wall_time_sec": 1.0,
+      "baseline_wall_time_sec": null,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null,
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0
+      },
+      "rationale": "runtime host fingerprint mismatch requires runtime rebaseline"
+    },
+    {
+      "execution_class": "policy_nightly",
+      "wall_time_sec": 2.0,
+      "baseline_wall_time_sec": null,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null,
+      "budget_thresholds": {
+        "soft_seconds": 180.0,
+        "hard_seconds": 600.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0
+      },
+      "rationale": "runtime host fingerprint mismatch requires runtime rebaseline"
+    }
+  ]
+}

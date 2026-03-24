@@ -1,0 +1,1 @@
+runtime_rebaseline_proposal_summary proposal_needed=1 comparability_verdict=NOT_COMPARABLE selected_baseline_id=phase24-runtime-approved-c89a575d-20260322_112025 comparable_candidate_count=2

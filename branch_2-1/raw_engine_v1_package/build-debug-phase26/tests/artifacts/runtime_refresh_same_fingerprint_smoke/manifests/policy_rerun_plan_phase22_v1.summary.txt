@@ -1,0 +1,1 @@
+policy_rerun_plan_summary summary_verdict=PASS stale_family_count=0 requires_rerun_family_count=0 reclassify_required_count=0 selected_entry_count=0

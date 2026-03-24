@@ -1,0 +1,516 @@
+{
+  "provenance": {
+    "status": "reconstructed_from_completed_session_notes_and_surviving_progress14_artifacts",
+    "source_cpp": "boj28350_literature_progress15_inplace_stable_compaction.cpp",
+    "proxy_baseline": "progress14 after rows are used as semantic before baseline for progress15 stable-compaction bucket",
+    "limitations": [
+      "Raw progress15 per-run directories are not present in the current filesystem.",
+      "Gate and 512 LOCAL before/after rows were recovered from completed session notes.",
+      "Primary dense 1024 release timeout row is known, but compact diag rerun and remaining release/representative artifacts were not preserved.",
+      "Exact per-case volume rows beyond the recovered dense both_on sampled row are not preserved."
+    ],
+    "syntax_only_check": "current source passes g++ -std=gnu++17 -O2 -fsyntax-only"
+  },
+  "run_matrix": [
+    {
+      "tag": "gate_connector_only_dense_256_after",
+      "solver": "LOCAL",
+      "toggle": "connector_only",
+      "mode": "comb_rect_dense",
+      "n": 256,
+      "profile_mode": "PROFILE_NONE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true,
+      "stdout_nonempty": true,
+      "stderr_nonempty": true
+    },
+    {
+      "tag": "gate_both_on_dense_256_after",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 256,
+      "profile_mode": "PROFILE_NONE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true,
+      "stdout_nonempty": true,
+      "stderr_nonempty": true
+    },
+    {
+      "tag": "gate_both_on_multi_512_after",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "multi_comb_rect",
+      "n": 512,
+      "profile_mode": "PROFILE_SAMPLED",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true,
+      "stdout_nonempty": true,
+      "stderr_nonempty": true
+    },
+    {
+      "tag": "before_connector_only_dense_512_base",
+      "solver": "LOCAL",
+      "toggle": "connector_only",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 0,
+      "elapsed_solver_s": 57.9,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "after_connector_only_dense_512_base",
+      "solver": "LOCAL",
+      "toggle": "connector_only",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": 59.52,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "before_both_on_dense_512_base",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 0,
+      "elapsed_solver_s": 61.96,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "after_both_on_dense_512_base",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": 62.8,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "before_connector_only_dense_512_sampled",
+      "solver": "LOCAL",
+      "toggle": "connector_only",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_SAMPLED",
+      "stable_compaction_opt": 0,
+      "elapsed_solver_s": 63.23,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "after_connector_only_dense_512_sampled",
+      "solver": "LOCAL",
+      "toggle": "connector_only",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_SAMPLED",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": 59.9,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "before_both_on_dense_512_sampled",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_SAMPLED",
+      "stable_compaction_opt": 0,
+      "elapsed_solver_s": 64.31,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "after_both_on_dense_512_sampled",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 512,
+      "profile_mode": "PROFILE_SAMPLED",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": 63.33,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "before_both_on_multi_512_sampled",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "multi_comb_rect",
+      "n": 512,
+      "profile_mode": "PROFILE_SAMPLED",
+      "stable_compaction_opt": 0,
+      "elapsed_solver_s": 6.99,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "after_both_on_multi_512_sampled",
+      "solver": "LOCAL",
+      "toggle": "both_on",
+      "mode": "multi_comb_rect",
+      "n": 512,
+      "profile_mode": "PROFILE_SAMPLED",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": 7.03,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    {
+      "tag": "after_both_on_dense_1024_release",
+      "solver": "RELEASE",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 1024,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": -9,
+      "timed_out": true,
+      "validator_ok": false,
+      "note": "Primary release attempt timed out in surviving session note."
+    },
+    {
+      "tag": "after_both_on_dense_1024_release_diag",
+      "solver": "RELEASE",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 1024,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": null,
+      "timed_out": null,
+      "validator_ok": null,
+      "status": "pending_or_unrecovered",
+      "note": "Compact release diag batch had been started but final artifact was not preserved."
+    },
+    {
+      "tag": "after_both_on_multi_1024_release",
+      "solver": "RELEASE",
+      "toggle": "both_on",
+      "mode": "multi_comb_rect",
+      "n": 1024,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": null,
+      "timed_out": null,
+      "validator_ok": null,
+      "status": "pending_or_unrecovered"
+    },
+    {
+      "tag": "after_both_on_dense_4096_release",
+      "solver": "RELEASE",
+      "toggle": "both_on",
+      "mode": "comb_rect_dense",
+      "n": 4096,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": null,
+      "timed_out": null,
+      "validator_ok": null,
+      "status": "pending_or_unrecovered"
+    },
+    {
+      "tag": "after_both_on_multi_4096_release",
+      "solver": "RELEASE",
+      "toggle": "both_on",
+      "mode": "multi_comb_rect",
+      "n": 4096,
+      "profile_mode": "PROFILE_BASE",
+      "stable_compaction_opt": 1,
+      "elapsed_solver_s": null,
+      "rc": null,
+      "timed_out": null,
+      "validator_ok": null,
+      "status": "pending_or_unrecovered"
+    }
+  ],
+  "correctness_gates": [
+    {
+      "tag": "gate_connector_only_dense_256_after",
+      "validator_ok": true,
+      "local_active_mismatch": 0,
+      "local_active_partition_mismatch": 0,
+      "debug_touched_missing_classes": 0,
+      "piece_materialize_fallback_calls": 0,
+      "support_rebuild_fallback_calls": 0,
+      "unanimous_baseline_path_calls": 0
+    },
+    {
+      "tag": "gate_both_on_dense_256_after",
+      "validator_ok": true,
+      "local_active_mismatch": 0,
+      "local_active_partition_mismatch": 0,
+      "debug_touched_missing_classes": 0,
+      "piece_materialize_fallback_calls": 0,
+      "support_rebuild_fallback_calls": 0,
+      "unanimous_baseline_path_calls": 0
+    },
+    {
+      "tag": "gate_both_on_multi_512_after",
+      "validator_ok": true,
+      "local_active_mismatch": 0,
+      "local_active_partition_mismatch": 0,
+      "debug_touched_missing_classes": 0,
+      "piece_materialize_fallback_calls": 0,
+      "support_rebuild_fallback_calls": 0,
+      "unanimous_baseline_path_calls": 0
+    }
+  ],
+  "before_after": [
+    {
+      "label": "connector_only, comb_rect_dense 512 LOCAL",
+      "before_base_elapsed_s": 57.9,
+      "after_base_elapsed_s": 59.52,
+      "before_sampled_elapsed_s": 63.23,
+      "after_sampled_elapsed_s": 59.9,
+      "before_in_place_stable_compaction_ms_proxy_from_progress14": 32.955,
+      "after_in_place_stable_compaction_ms": 2.998,
+      "stable_compaction_drop_pct": 90.9
+    },
+    {
+      "label": "both_on, comb_rect_dense 512 LOCAL",
+      "before_base_elapsed_s": 61.96,
+      "after_base_elapsed_s": 62.8,
+      "before_sampled_elapsed_s": 64.31,
+      "after_sampled_elapsed_s": 63.33,
+      "before_in_place_stable_compaction_ms_proxy_from_progress14": 26.668,
+      "after_in_place_stable_compaction_ms": 2.927,
+      "stable_compaction_drop_pct": 89.0
+    },
+    {
+      "label": "both_on, multi_comb_rect 512 LOCAL",
+      "before_base_elapsed_s": null,
+      "after_base_elapsed_s": null,
+      "before_sampled_elapsed_s": 6.99,
+      "after_sampled_elapsed_s": 7.03,
+      "before_in_place_stable_compaction_ms_proxy_from_progress14": 7.399,
+      "after_in_place_stable_compaction_ms": 0.829,
+      "stable_compaction_drop_pct": 88.8
+    }
+  ],
+  "scomp_scope_correction": [
+    {
+      "label": "connector_only, comb_rect_dense 512 LOCAL",
+      "scomp_total_ms": 2.998,
+      "sum_grouped_exclusive_ms": 2.998,
+      "gap_ms": 0.0
+    },
+    {
+      "label": "both_on, comb_rect_dense 512 LOCAL",
+      "scomp_total_ms": 2.927,
+      "sum_grouped_exclusive_ms": 2.927,
+      "gap_ms": 0.0
+    },
+    {
+      "label": "both_on, multi_comb_rect 512 LOCAL",
+      "scomp_total_ms": 0.829,
+      "sum_grouped_exclusive_ms": 0.829,
+      "gap_ms": 0.0
+    }
+  ],
+  "scomp_exclusive_after": [
+    {
+      "label": "connector_only, comb_rect_dense 512 LOCAL",
+      "after_stable_compaction_ms": 2.998,
+      "after_run_discovery_coalescing_ms": 1.15,
+      "after_run_discovery_coalescing_share_pct": 38.4,
+      "after_contiguous_run_block_copy_compaction_ms": 1.2,
+      "after_contiguous_run_block_copy_compaction_share_pct": 40.0,
+      "after_scratch_reuse_and_allocation_avoidance_ms": 0.316,
+      "after_scratch_reuse_and_allocation_avoidance_share_pct": 10.5,
+      "after_tail_cleanup_and_final_resize_fast_path_ms": 0.332,
+      "after_tail_cleanup_and_final_resize_fast_path_share_pct": 11.1
+    },
+    {
+      "label": "both_on, comb_rect_dense 512 LOCAL",
+      "after_stable_compaction_ms": 2.927,
+      "after_run_discovery_coalescing_ms": 1.156,
+      "after_run_discovery_coalescing_share_pct": 39.5,
+      "after_contiguous_run_block_copy_compaction_ms": 1.17,
+      "after_contiguous_run_block_copy_compaction_share_pct": 40.0,
+      "after_scratch_reuse_and_allocation_avoidance_ms": 0.278,
+      "after_scratch_reuse_and_allocation_avoidance_share_pct": 9.5,
+      "after_tail_cleanup_and_final_resize_fast_path_ms": 0.323,
+      "after_tail_cleanup_and_final_resize_fast_path_share_pct": 11.0
+    },
+    {
+      "label": "both_on, multi_comb_rect 512 LOCAL",
+      "after_stable_compaction_ms": 0.829,
+      "after_run_discovery_coalescing_ms": 0.319,
+      "after_run_discovery_coalescing_share_pct": 38.5,
+      "after_contiguous_run_block_copy_compaction_ms": 0.289,
+      "after_contiguous_run_block_copy_compaction_share_pct": 34.9,
+      "after_scratch_reuse_and_allocation_avoidance_ms": 0.109,
+      "after_scratch_reuse_and_allocation_avoidance_share_pct": 13.1,
+      "after_tail_cleanup_and_final_resize_fast_path_ms": 0.112,
+      "after_tail_cleanup_and_final_resize_fast_path_share_pct": 13.5
+    }
+  ],
+  "scomp_group_aggregate": {
+    "scomp_total_ms": 6.754,
+    "run_discovery_coalescing_ms": 2.625,
+    "run_discovery_coalescing_share_pct": 38.9,
+    "contiguous_run_block_copy_compaction_ms": 2.659,
+    "contiguous_run_block_copy_compaction_share_pct": 39.4,
+    "scratch_reuse_and_allocation_avoidance_ms": 0.703,
+    "scratch_reuse_and_allocation_avoidance_share_pct": 10.4,
+    "tail_cleanup_and_final_resize_fast_path_ms": 0.767,
+    "tail_cleanup_and_final_resize_fast_path_share_pct": 11.4,
+    "next_pivot_after_stable_compaction_round": "contiguous run block copy compaction",
+    "strict_dominant_exists": false
+  },
+  "scomp_volume_counters_after_recovered": [
+    {
+      "label": "connector_only, comb_rect_dense 512 LOCAL",
+      "note": "Exact per-case volume row was not preserved in surviving progress15 artifacts; only qualitative shift is known."
+    },
+    {
+      "label": "both_on, comb_rect_dense 512 LOCAL",
+      "scomp_block_copied_handles": 1947857,
+      "scomp_elementwise_emitted_handles": 41892,
+      "scomp_contiguous_middle_memmove_calls": 2540,
+      "scomp_single_middle_run_calls": 2540,
+      "scomp_suffix_only_calls": 64
+    },
+    {
+      "label": "both_on, multi_comb_rect 512 LOCAL",
+      "note": "Exact per-case volume row was not preserved in surviving progress15 artifacts; only qualitative shift is known."
+    }
+  ],
+  "watch_churn_proxy_from_progress14": [
+    {
+      "label": "connector_only, comb_rect_dense 512 LOCAL",
+      "watch_churn_ms_proxy_from_progress13": 1863.212,
+      "watch_unregister_ms_proxy_from_progress13": 615.157,
+      "watch_register_ms_proxy_from_progress13": 274.625,
+      "watch_diff_build_ms_proxy_from_progress13": 973.429,
+      "publish_ms_proxy_from_progress13": 318.532,
+      "global_delete_dfs_ms_proxy_from_progress13": 102.429,
+      "query_incident_ms_proxy_from_progress13": 1.954,
+      "note": "Broader measured residual still points to watch churn as the larger proxy bucket; progress14 session notes only preserved the retained-vector delta exactly."
+    },
+    {
+      "label": "both_on, comb_rect_dense 512 LOCAL",
+      "watch_churn_ms_proxy_from_progress13": 1880.921,
+      "watch_unregister_ms_proxy_from_progress13": 637.656,
+      "watch_register_ms_proxy_from_progress13": 290.92,
+      "watch_diff_build_ms_proxy_from_progress13": 952.345,
+      "publish_ms_proxy_from_progress13": 341.688,
+      "global_delete_dfs_ms_proxy_from_progress13": 106.691,
+      "query_incident_ms_proxy_from_progress13": 1.986,
+      "note": "Broader measured residual still points to watch churn as the larger proxy bucket; progress14 session notes only preserved the retained-vector delta exactly."
+    },
+    {
+      "label": "both_on, multi_comb_rect 512 LOCAL",
+      "watch_churn_ms_proxy_from_progress13": 436.572,
+      "watch_unregister_ms_proxy_from_progress13": 131.123,
+      "watch_register_ms_proxy_from_progress13": 67.726,
+      "watch_diff_build_ms_proxy_from_progress13": 237.722,
+      "publish_ms_proxy_from_progress13": 126.687,
+      "global_delete_dfs_ms_proxy_from_progress13": 29.722,
+      "query_incident_ms_proxy_from_progress13": 1.83,
+      "note": "Broader measured residual still points to watch churn as the larger proxy bucket; progress14 session notes only preserved the retained-vector delta exactly."
+    }
+  ],
+  "topk_summary": {
+    "connector_only_dense_512": "Residual slow deletions are no longer driven by sparse remove build. The surviving qualitative pattern is long moved suffixes with short removed runs, where per-handle emit was reduced but not fully eliminated.",
+    "both_on_dense_512": "The densest both_on case shifted toward contiguous middle-run and kept-run copy structure. Duplicate full scan is no longer the story here; the remaining cost sits in stable suffix movement and related bookkeeping.",
+    "both_on_multi_512": "The multi case improved less in wall time than dense, and the remaining stable-compaction residual is split between run discovery and block-copy work with no strict dominant.",
+    "raw_topk_status": "Exact per-deletion raw topK rows were not preserved in the current filesystem. The summary above is reconstructed from completed session notes."
+  },
+  "release_and_representative": [
+    {
+      "tag": "after_both_on_dense_1024_release",
+      "elapsed_solver_s": null,
+      "rc": -9,
+      "timed_out": true,
+      "validator_ok": false,
+      "note": "Primary release attempt timed out. Compact diag rerun had been started later, but final artifact was not preserved."
+    },
+    {
+      "tag": "after_both_on_multi_1024_release",
+      "elapsed_solver_s": null,
+      "rc": null,
+      "timed_out": null,
+      "validator_ok": null,
+      "status": "pending_or_unrecovered"
+    },
+    {
+      "tag": "after_both_on_dense_4096_release",
+      "elapsed_solver_s": null,
+      "rc": null,
+      "timed_out": null,
+      "validator_ok": null,
+      "status": "pending_or_unrecovered"
+    },
+    {
+      "tag": "after_both_on_multi_4096_release",
+      "elapsed_solver_s": null,
+      "rc": null,
+      "timed_out": null,
+      "validator_ok": null,
+      "status": "pending_or_unrecovered"
+    }
+  ],
+  "final_decision": {
+    "kept_vector_internal_residual_table": [
+      {
+        "category": "run discovery coalescing",
+        "aggregate_ms": 2.625
+      },
+      {
+        "category": "contiguous run block copy compaction",
+        "aggregate_ms": 2.659
+      },
+      {
+        "category": "scratch reuse and allocation avoidance",
+        "aggregate_ms": 0.703
+      },
+      {
+        "category": "tail cleanup and final resize fast path",
+        "aggregate_ms": 0.767
+      },
+      {
+        "category": "stronger watch compression (broader proxy from progress14 carry-forward)",
+        "aggregate_ms": 4180.705
+      }
+    ],
+    "broader_measured_residual_note": "Broader measured residual still points to watch churn as the larger proxy bucket. The pivot rule for this round, however, is inside the stable-compaction bucket.",
+    "next_pivot_after_stable_compaction_round": "contiguous run block copy compaction"
+  }
+}

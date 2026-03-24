@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import statistics
 import sys
 from collections import defaultdict
@@ -92,6 +93,15 @@ def stage_rows_to_scaling(rows: List[Row]) -> Dict[str, Dict]:
     return out
 
 
+def build_case_solver_env(case_dir: Path, mode: str, n: int, seed: int) -> Dict[str, str]:
+    env = os.environ.copy()
+    env['DENSE_PROFILE_OUTDIR'] = str(case_dir)
+    env['DENSE_SHADOW_CASE_MODE'] = mode
+    env['DENSE_SHADOW_CASE_N'] = str(n)
+    env['DENSE_SHADOW_CASE_SEED'] = str(seed)
+    return env
+
+
 def run_one_case(solver: Path, out_dir: Path, stage_name: str, mode: str, n: int, seed: int,
                  shuffle_labels: int, shuffle_queries: int, timeout: Optional[float]) -> Row:
     case_dir = out_dir / 'runs' / stage_name / mode / f'n{n}' / f'seed{seed}_L{shuffle_labels}_Q{shuffle_queries}'
@@ -119,7 +129,17 @@ def run_one_case(solver: Path, out_dir: Path, stage_name: str, mode: str, n: int
     if not gen_ok:
         return Row(stage_name, mode, n, seed, shuffle_labels, shuffle_queries, 0, 127, 0, 0, None, None, str(case_dir))
 
-    rc_sol, to_sol, sec, rss = run_solver_with_time(solver, in_path, out_path, time_path, sol_stderr, timeout)
+    solver_env = build_case_solver_env(case_dir, mode, n, seed)
+    rc_sol, to_sol, sec, rss = run_solver_with_time(
+        solver,
+        in_path,
+        out_path,
+        time_path,
+        sol_stderr,
+        timeout,
+        env=solver_env,
+        cwd=case_dir,
+    )
 
     val_ok = 0
     if (rc_sol == 0) and (not to_sol) and out_path.exists():

@@ -1,0 +1,6 @@
+raw_corpus_v1
+entries 4
+entry best_integrate family_planner_mixed_targeted_s2_j2_i2 943102 random default planner_mixed_targeted 2 2 2 4 200000 2 2 2 2 2 2 4 4
+entry best_join family_planner_mixed_targeted_s2_j2_i2 943102 random default planner_mixed_targeted 2 2 2 4 200000 2 2 2 2 2 2 4 4
+entry best_split family_planner_mixed_targeted_s2_j2_i2 943102 random default planner_mixed_targeted 2 2 2 4 200000 2 2 2 2 2 2 4 4
+entry diverse_trace family_planner_mixed_targeted_s2_j2_i2 943102 random default planner_mixed_targeted 2 2 2 4 200000 2 2 2 2 2 2 4 4

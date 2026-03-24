@@ -1,0 +1,23 @@
+{
+  "mode": "solver-finalcore-replay",
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "caseName": "same_type_sp_cleanup_tc40_step1",
+  "outputDumpDir": "dumps/solver_finalcore_replay_after_patch",
+  "bundlePath": "dumps/solver_finalcore_replay_after_patch/FCSK_STEP_COUNT_DIFFER_seed1_tc40_step3_same_type_sp_cleanup_tc40_step1.txt",
+  "topLevelOk": true,
+  "finalCoreSeamKind": "FCSK_STEP_COUNT_DIFFER",
+  "firstDivergenceStep": 3,
+  "finalCoreSeamWhy": "trace length differs: solver=2 replay=5",
+  "targetSearchComparedStep": 2,
+  "targetSearchSeamKind": "TSK_ALIVE_R_SET_DIFFER",
+  "targetSearchSeamWhy": "alive R-node set differs",
+  "solverTraceLength": 2,
+  "replayTraceLength": 5,
+  "solverTargetSnapshotCount": 2,
+  "replayTargetSnapshotCount": 4,
+  "solverStatsCompletedSteps": 2,
+  "solverStatsReachedFixpoint": true,
+  "solverStatsHadSequenceFallback": false,
+  "solverWhy": "",
+  "replayWhy": ""
+}

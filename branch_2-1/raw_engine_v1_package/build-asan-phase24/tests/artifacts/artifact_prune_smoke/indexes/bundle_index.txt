@@ -1,0 +1,6 @@
+latest_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase24/tests/artifacts/artifact_prune_smoke/outputs/raw_engine_phase22_stabilization.zip
+latest_delivery_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase24/tests/artifacts/artifact_prune_smoke/outputs/raw_engine_phase22_stabilization_delivery.zip
+latest_curated_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase24/tests/artifacts/artifact_prune_smoke/outputs/raw_engine_phase22_stabilization_curated.zip
+bundle_count=2
+delivery_bundle_count=0
+curated_bundle_count=2

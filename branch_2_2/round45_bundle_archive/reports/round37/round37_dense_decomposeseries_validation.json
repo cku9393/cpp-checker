@@ -1,0 +1,6 @@
+{
+  "status": "not_completed",
+  "matched_decompose_rows": 0,
+  "truth_gate_passed": false,
+  "reason": "fresh current-pass truth profiling did not emit matched decomposeSeries rows with populated subcolumns"
+}

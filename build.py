@@ -43,12 +43,20 @@ def _compiler_path(name: str) -> str | None:
     return shutil.which(name)
 
 
-def _build_commands(compiler: str, source: Path, output: Path, static_mode: str) -> List[List[str]]:
+def _build_commands(
+    compiler: str,
+    source: Path,
+    output: Path,
+    static_mode: str,
+    defines: List[str],
+) -> List[List[str]]:
     base = Path(compiler).name.lower()
     if base in {"cl", "cl.exe"}:
-        return [[compiler, "/O2", "/std:c++17", "/EHsc", "/nologo", f"/Fe{output}", str(source)]]
+        define_args = [f"/D{define}" for define in defines]
+        return [[compiler, "/O2", "/std:c++17", "/EHsc", "/nologo", *define_args, f"/Fe{output}", str(source)]]
 
-    common = [compiler, "-O2", "-std=c++17"]
+    define_args = [f"-D{define}" for define in defines]
+    common = [compiler, "-O2", "-std=c++17", *define_args]
     if not IS_WINDOWS:
         common.append("-pipe")
 
@@ -67,6 +75,12 @@ def main() -> int:
     ap.add_argument("--compiler", default=None, help="compiler executable to use")
     ap.add_argument("--source", default="solve.cpp")
     ap.add_argument("--out", default=None, help="output binary path")
+    ap.add_argument(
+        "--define",
+        action="append",
+        default=[],
+        help="preprocessor define to add to the build, e.g. NAME or NAME=VALUE",
+    )
     ap.add_argument(
         "--static",
         choices=("auto", "always", "never"),
@@ -89,12 +103,14 @@ def main() -> int:
         compiler = _compiler_path(candidate)
         if not compiler:
             continue
-        for cmd in _build_commands(compiler, source, output, args.static):
+        for cmd in _build_commands(compiler, source, output, args.static, args.define):
             tried.append(" ".join(cmd))
             last = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
             if last.returncode == 0:
                 print(f"[build] compiler={compiler}")
                 print(f"[build] output={output}")
+                if args.define:
+                    print(f"[build] defines={','.join(args.define)}")
                 return 0
 
     print("[build] failed to compile solve.cpp", file=sys.stderr)

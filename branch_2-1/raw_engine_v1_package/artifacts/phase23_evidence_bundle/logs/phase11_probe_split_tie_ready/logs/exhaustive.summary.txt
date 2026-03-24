@@ -1,0 +1,24 @@
+generated_state_count=300
+canonical_unique_state_count=300
+dedupe_drop_count=0
+collision_spot_check_count=0
+organic_duplicate_example_count=0
+exact_audited_state_count=0
+exact_audit_skipped_cap_count=0
+exact_audit_skipped_budget_count=0
+exact_audit_skipped_sample_count=0
+fast_unique_count=0
+exact_unique_count=0
+fast_vs_exact_disagreement_count=0
+false_merge_count=0
+false_split_count=0
+build_order_duplicate_count=0
+commit_order_duplicate_count=0
+hosted_occ_order_duplicate_count=0
+relabel_duplicate_count=0
+occid_duplicate_count=0
+symmetric_structure_duplicate_count=0
+mixed_duplicate_count=0
+unknown_duplicate_count=0
+dedupe_ratio=0
+family=split_tie_ready generated=300 unique=300 dedupe_drops=0 dedupe_ratio=0 validator_checks=300 primitive_checks=300 planner_checks=300

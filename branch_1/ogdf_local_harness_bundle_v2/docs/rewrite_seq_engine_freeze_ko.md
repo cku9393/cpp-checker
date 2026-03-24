@@ -15,6 +15,8 @@ freeze gate:
 
 - regression manifest:
   - `regressions/rewrite_seq_cases.json`
+- diagnostic manifest:
+  - `diagnostics/rewrite_seq_diagnostic_cases.json`
 - regression mode:
   - `--mode rewrite-r-seq-regression`
 - bench mode:
@@ -35,6 +37,16 @@ representative replay corpus:
 - `selfloop_remainder_spqrready_tc328_step1`
 - `selfloop_remainder_oneedge_tc444_step1`
 - `xshared_spqrready_tc851_step1`
+- `xincident_oneedge_tc33_step1`
+
+hard-gate policy:
+
+- hard gate:
+  - 현재 6개 fixed case만 사용
+  - manifest는 generator 좌표뿐 아니라 `inputExplicit` snapshot도 함께 들고 있어 immutable input으로 취급
+- diagnostic-only:
+  - exploratory replay/random 케이스는 `diagnostics/` 아래 별도 manifest로 분리
+  - 추적/분석용이고 hard regression pass/fail 기준에는 포함하지 않음
 
 solver integration freeze rule:
 

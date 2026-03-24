@@ -1,0 +1,1 @@
+runtime_refresh_summary current_verdict=WARN freshness_verdict=FRESH comparability_verdict=COMPARABLE overall_budget_verdict=BUDGET_WARN runtime_severity=WARN stale_entry_count=0 requires_rerun_entry_count=0 rebaseline_required_count=0

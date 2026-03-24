@@ -1,0 +1,6 @@
+latest_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase28_smokes/policy_pipeline_parallel/policy_pipeline_parallel_smoke/run_a/policy_roundtrip_smoke/raw_engine_phase22_pipeline_smoke.zip
+latest_delivery_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase28_smokes/policy_pipeline_parallel/policy_pipeline_parallel_smoke/run_a/policy_roundtrip_smoke/raw_engine_phase22_pipeline_smoke_delivery.zip
+latest_curated_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase28_smokes/policy_pipeline_parallel/policy_pipeline_parallel_smoke/run_a/policy_roundtrip_smoke/raw_engine_phase22_pipeline_smoke_curated.zip
+bundle_count=0
+delivery_bundle_count=0
+curated_bundle_count=0

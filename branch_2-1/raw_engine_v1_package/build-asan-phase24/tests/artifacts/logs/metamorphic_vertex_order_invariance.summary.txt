@@ -1,0 +1,12 @@
+family=integrate_ready invariant=hosted_occ_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=integrate_ready invariant=vertex_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=join_ready invariant=hosted_occ_order primitive_only_hits=1 planner_step_hits=0 planner_multistep_hits=1 replay_step_hits=0
+family=join_ready invariant=vertex_order primitive_only_hits=1 planner_step_hits=0 planner_multistep_hits=1 replay_step_hits=0
+family=mixed invariant=hosted_occ_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=mixed invariant=vertex_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_ready invariant=hosted_occ_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_ready invariant=vertex_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_tie_ready invariant=hosted_occ_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_tie_ready invariant=vertex_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_tie_structural invariant=hosted_occ_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0
+family=split_tie_structural invariant=vertex_order primitive_only_hits=1 planner_step_hits=1 planner_multistep_hits=0 replay_step_hits=0

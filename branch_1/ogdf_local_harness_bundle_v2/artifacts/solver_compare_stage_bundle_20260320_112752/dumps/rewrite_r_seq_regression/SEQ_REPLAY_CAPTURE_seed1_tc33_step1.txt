@@ -1,0 +1,258 @@
+=== HarnessBundle ===
+seed=1
+tc=33
+backend=OGDF
+stage=SEQ_REPLAY_CAPTURE
+where=runRewriteRSequenceReplayDumpAware
+why=captured target sequence step
+
+targetTcIndex=33
+targetStep=1
+stepIndex=1
+sequenceLengthSoFar=2
+chosenR=0
+chosenX=3
+postcheckSubtype=GPS_OTHER
+normalizeOk=1
+normalizeWhy=
+actualInvariantOk=1
+actualInvariantWhy=
+oracleBuildOk=1
+oracleEquivalentOk=1
+
+=== ExplicitInput ===
+vertices: 1 2 3 4 5
+edges:
+  id=0 (1,2)
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (1,5)
+  id=5 (1,4)
+  id=6 (3,5)
+
+=== ActualBeforeRewrite ===
+blockId=0 root=0 totalAgg=(4,4,4)
+node 0 type=R localAgg=(3,3,3) subAgg=(3,3,3)
+  realEdgesHere: 2 3 6
+  slot 0 kind=REAL poles=(3,4) realEdge=2
+  slot 1 kind=REAL poles=(4,5) realEdge=3
+  slot 2 kind=REAL poles=(3,5) realEdge=6
+  slot 3 kind=VIRTUAL poles=(3,3) arcId=0
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 1
+  slot 0 kind=REAL poles=(2,3) realEdge=1
+  slot 1 kind=VIRTUAL poles=(3,3) arcId=0
+
+=== ActualAfterRewrite ===
+blockId=0 root=0 totalAgg=(2,4,2)
+node 0 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 3
+  slot 0 kind=REAL poles=(4,5) realEdge=3
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 1
+  slot 0 kind=REAL poles=(2,3) realEdge=1
+
+=== ActualAfterNormalize ===
+blockId=0 root=0 totalAgg=(2,4,4)
+node 0 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 3
+  slot 0 kind=REAL poles=(4,5) realEdge=3
+node 1 type=R localAgg=(1,2,2) subAgg=(1,2,2)
+  realEdgesHere: 1
+  slot 0 kind=REAL poles=(2,3) realEdge=1
+
+=== GraftTrace ===
+actualOfMini: [0->0]
+actualNodes: 0
+actualSlotOfMiniSlot:
+  mini 0: [0->0]
+rewiredProxyEdges:
+resolvedProxyEndpoints:
+preservedProxyArcs:
+affectedAdjRepairNodes:
+affectedNodesAfterInPlaceApply:
+oldNodeAdjArcsBeforeRepair:
+oldNodeAdjArcsAfterRepair:
+firstBadAdjNode=-1
+expectedAdj:
+actualAdj:
+sameTypeSPCleanupSeedNodes:
+sameTypeSPCleanupMergeCount=0
+sameTypeSPCleanupMergedPairs:
+
+graftRewireSubtype=GRB_OTHER graftOtherSubtype=GOS_OTHER postcheckSubtype=GPS_OTHER preCleanupPostcheckSubtype=GPS_OTHER postCleanupPostcheckSubtype=GPS_OTHER deferredSameTypeSP=0 preservedProxyArcsCount=0 inPlaceLoopSharedApplied=0 loopInputEdgeId=-1 realInputEdgeId=-1 loopSharedCutVertex=-1 loopSharedChildNode=-1 sameNodeRehomeAttempted=0 sameNodeRehomeSucceeded=0 failingPreservedInputEdge=-1 failingPreservedOldArc=-1 failingPreservedOldSlot=-1 failingNewSlot=-1 failingInputEdge=-1 failingOldArc=-1 failingOwnerMini=-1 failingOwnerMiniSlot=-1
+weakRepairEntered=0 weakRepairGateSubtype=WRG_OTHER weakRepairCandidateSubtype=WRC_OTHER weakRepairCommitOutcome=WCO_NOT_ATTEMPTED weakRepairInputEdgeId=-1 weakRepairOriginalOldArc=-1 weakRepairResolvedArc=-1 weakRepairOriginalOutsideNode=-1 weakRepairResolvedOutsideNode=-1
+oldNodeSnapshotsByPhase:
+ phase=BEFORE_CLEAR
+  node 0 alive=1 type=R
+    adjArcs: 0
+    realEdgesHere: 2 3 6
+    slots:
+    slot 0 alive=1 kind=REAL poles=(3,4) realEdge=2
+    slot 1 alive=1 kind=REAL poles=(4,5) realEdge=3
+    slot 2 alive=1 kind=REAL poles=(3,5) realEdge=6
+    slot 3 alive=1 kind=VIRTUAL poles=(3,3) arcId=0
+    neighboringLiveArcs:
+    arcId=0 otherNode=1 slotInNode=3 slotInOther=1 poles=(3,3)
+ phase=AFTER_CLEAR_PRESERVE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    neighboringLiveArcs:
+ phase=AFTER_MATERIALIZE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_INTERNAL_ARC_CONNECT
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_PROXY_REWIRE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_ADJ_REPAIR
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_NORMALIZE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere: 3
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+affectedNodeSnapshotsByPhase:
+ phase=BEFORE_CLEAR
+  node 1 alive=1 type=R
+    adjArcs: 0
+    realEdgesHere: 1
+    slots:
+    slot 0 alive=1 kind=REAL poles=(2,3) realEdge=1
+    slot 1 alive=1 kind=VIRTUAL poles=(3,3) arcId=0
+    neighboringLiveArcs:
+    arcId=0 otherNode=0 slotInNode=1 slotInOther=3 poles=(3,3)
+ phase=AFTER_CLEAR_PRESERVE
+ phase=AFTER_MATERIALIZE
+ phase=AFTER_INTERNAL_ARC_CONNECT
+ phase=AFTER_PROXY_REWIRE
+ phase=AFTER_ADJ_REPAIR
+ phase=AFTER_NORMALIZE
+
+bundle.oldNodeSnapshotsByPhase:
+ phase=BEFORE_CLEAR
+  node 0 alive=1 type=R
+    adjArcs: 0
+    realEdgesHere: 2 3 6
+    slots:
+    slot 0 alive=1 kind=REAL poles=(3,4) realEdge=2
+    slot 1 alive=1 kind=REAL poles=(4,5) realEdge=3
+    slot 2 alive=1 kind=REAL poles=(3,5) realEdge=6
+    slot 3 alive=1 kind=VIRTUAL poles=(3,3) arcId=0
+    neighboringLiveArcs:
+    arcId=0 otherNode=1 slotInNode=3 slotInOther=1 poles=(3,3)
+ phase=AFTER_CLEAR_PRESERVE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    neighboringLiveArcs:
+ phase=AFTER_MATERIALIZE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_INTERNAL_ARC_CONNECT
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_PROXY_REWIRE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_ADJ_REPAIR
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere:
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+ phase=AFTER_NORMALIZE
+  node 0 alive=1 type=R
+    adjArcs:
+    realEdgesHere: 3
+    slots:
+    slot 0 alive=1 kind=REAL poles=(4,5) realEdge=3
+    neighboringLiveArcs:
+
+bundle.affectedNodeSnapshotsByPhase:
+ phase=BEFORE_CLEAR
+  node 1 alive=1 type=R
+    adjArcs: 0
+    realEdgesHere: 1
+    slots:
+    slot 0 alive=1 kind=REAL poles=(2,3) realEdge=1
+    slot 1 alive=1 kind=VIRTUAL poles=(3,3) arcId=0
+    neighboringLiveArcs:
+    arcId=0 otherNode=0 slotInNode=1 slotInOther=3 poles=(3,3)
+ phase=AFTER_CLEAR_PRESERVE
+ phase=AFTER_MATERIALIZE
+ phase=AFTER_INTERNAL_ARC_CONNECT
+ phase=AFTER_PROXY_REWIRE
+ phase=AFTER_ADJ_REPAIR
+ phase=AFTER_NORMALIZE
+
+=== ExplicitBefore ===
+vertices: 2 3 4 5
+edges:
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=6 (3,5)
+
+=== ExplicitAfter ===
+vertices: 2 3 4 5
+edges:
+  id=1 (2,3)
+  id=3 (4,5)
+
+=== ExplicitAfterNormalize ===
+vertices: 2 3 4 5
+edges:
+  id=1 (2,3)
+  id=3 (4,5)
+
+=== ExplicitExpected ===
+vertices: 2 3 4 5
+edges:
+  id=1 (2,3)
+  id=3 (4,5)
+
+=== ExplicitGot ===
+vertices: 2 3 4 5
+edges:
+  id=1 (2,3)
+  id=3 (4,5)
+

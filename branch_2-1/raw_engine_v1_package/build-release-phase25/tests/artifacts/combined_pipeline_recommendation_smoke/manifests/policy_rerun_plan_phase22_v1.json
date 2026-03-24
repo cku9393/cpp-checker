@@ -1,0 +1,21 @@
+{
+  "plan_version":"policy_rerun_plan_v1",
+  "generated_at_utc":"2026-03-23T01:07:40Z",
+  "artifact_root":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/policy_gate_smoke",
+  "baseline_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/combined_pipeline_recommendation_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.txt",
+  "current_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/combined_pipeline_recommendation_smoke/manifests/policy_graduation_manifest_v1.json",
+  "refresh_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/combined_pipeline_recommendation_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+  "baseline_manifest_hash":"7fff1b4ac9bc2573",
+  "current_manifest_hash":"8653e25866e52acc",
+  "refresh_manifest_hash":"d7bc3169a8a8acc9",
+  "stale_family_count":0,
+  "requires_rerun_family_count":0,
+  "reclassify_required_count":0,
+  "selected_entry_count":0,
+  "stale_families":[],
+  "requires_rerun_families":[],
+  "summary_verdict":"PASS",
+  "rationale":"no stale or requires_rerun families detected",
+  "entries":[
+  ]
+}

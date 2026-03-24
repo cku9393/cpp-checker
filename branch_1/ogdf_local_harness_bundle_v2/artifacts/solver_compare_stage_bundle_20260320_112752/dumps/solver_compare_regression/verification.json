@@ -1,0 +1,14 @@
+{
+  "hardGateImmutable": true,
+  "hardGateCaseCount": 6,
+  "rewriteSeqRegressionGreen": true,
+  "rewriteSeqRegressionPassedCases": 6,
+  "solverCompareGreen": false,
+  "solverCompareCases": 6,
+  "solverCompareFailed": 6,
+  "randomCompareRun": false,
+  "randomCompareNotRunReason": "hard regression compare failed",
+  "earliestFailedCase": "same_type_sp_cleanup_tc40_step1",
+  "earliestFailedDumpPath": "dumps/solver_compare_regression/solver_compare_baseline_fail_seed1_tc40_step1_same_type_sp_cleanup_tc40_step1.txt",
+  "earliestFailedReason": "baseline solver failed: actual reduced: dead relay forbidden"
+}

@@ -1,0 +1,6 @@
+latest_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/raw_engine_phase26_metadata.zip
+latest_delivery_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/raw_engine_phase26_metadata_delivery.zip
+latest_curated_bundle=None
+bundle_count=0
+delivery_bundle_count=0
+curated_bundle_count=0

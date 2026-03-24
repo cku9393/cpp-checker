@@ -1,0 +1,2 @@
+policy_gate_summary current_verdict=PASS freshness_verdict=FRESH planner_tie_mixed_organic=NON_APPLICABLE/FRESH
+family=planner_tie_mixed_organic current_status=NON_APPLICABLE freshness_status=FRESH role=production_family compared=0 eligible=0 completed=0 drift_flag=0 reclassify_required=0 counts_as_production_evidence=0 rationale=no_split_ready remained dominant and compare relevance stayed below threshold freshness_rationale=baseline-aligned evidence remains fresh

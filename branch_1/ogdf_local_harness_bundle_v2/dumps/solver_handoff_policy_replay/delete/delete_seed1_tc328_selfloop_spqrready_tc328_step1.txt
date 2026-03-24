@@ -1,0 +1,421 @@
+=== SolverHandoffPolicyReplayBundle ===
+caseName=selfloop_spqrready_tc328_step1
+manifestPath=regressions/rewrite_seq_cases.json
+seed=1
+tc=328
+targetStep=1
+topLevelOk=1
+oracleHandoffPolicy=OHP_DELETE_EXPLICIT
+deleteVsRewriteCanonicalEqual=0
+normalizeVsRewriteCanonicalEqual=1
+deleteVsNormalizeCanonicalEqual=0
+oracleDeleteWhy=
+oracleNormalizeWhy=
+rewriteWhy=
+
+=== OracleDeletePolicyFinalExplicit ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+=== OracleNormalizePolicyFinalExplicit ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== RewriteFinalExplicit ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+oracleDeleteTrace:
+=== OracleDeleteTraceStep ===
+stepIndex=1
+side=ORACLE
+chosenR=0
+chosenX=2
+terminated=0
+terminateReason=
+nextInputSourceKind=SHSK_FROM_DELETE
+explicitBefore:
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (8,2,4)
+  (9,2,5)
+  (10,2,6)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+explicitAfterNormalize:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+nextInputExplicit:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+
+=== OracleDeleteTraceStep ===
+stepIndex=2
+side=ORACLE
+chosenR=0
+chosenX=4
+terminated=0
+terminateReason=
+nextInputSourceKind=SHSK_FROM_DELETE
+explicitBefore:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterNormalize:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+nextInputExplicit:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== OracleDeleteTraceStep ===
+stepIndex=3
+side=ORACLE
+chosenR=0
+chosenX=1
+terminated=0
+terminateReason=
+nextInputSourceKind=SHSK_FROM_DELETE
+explicitBefore:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterDelete:
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+explicitAfterNormalize:
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+nextInputExplicit:
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+=== OracleDeleteTraceStep ===
+stepIndex=4
+side=ORACLE
+chosenR=-1
+chosenX=-1
+terminated=1
+terminateReason=NO_TARGET
+nextInputSourceKind=SHSK_NONE_TERMINATE
+explicitBefore:
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+explicitAfterDelete:
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+explicitAfterNormalize:
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+nextInputExplicit:
+canonicalVertices:
+canonicalEdges:
+
+oracleNormalizeTrace:
+=== OracleNormalizeTraceStep ===
+stepIndex=1
+side=ORACLE
+chosenR=0
+chosenX=2
+terminated=0
+terminateReason=
+nextInputSourceKind=SHSK_FROM_NORMALIZE
+explicitBefore:
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (8,2,4)
+  (9,2,5)
+  (10,2,6)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+explicitAfterNormalize:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+nextInputExplicit:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+
+=== OracleNormalizeTraceStep ===
+stepIndex=2
+side=ORACLE
+chosenR=0
+chosenX=4
+terminated=0
+terminateReason=
+nextInputSourceKind=SHSK_FROM_NORMALIZE
+explicitBefore:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterNormalize:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+nextInputExplicit:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== OracleNormalizeTraceStep ===
+stepIndex=3
+side=ORACLE
+chosenR=-1
+chosenX=-1
+terminated=1
+terminateReason=NO_TARGET
+nextInputSourceKind=SHSK_NONE_TERMINATE
+explicitBefore:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterDelete:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterNormalize:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+nextInputExplicit:
+canonicalVertices:
+canonicalEdges:
+
+rewriteTrace:
+=== RewriteTraceStep ===
+stepIndex=1
+side=REWRITE
+chosenR=0
+chosenX=2
+terminated=0
+terminateReason=
+nextInputSourceKind=SHSK_FROM_NORMALIZE
+explicitBefore:
+canonicalVertices: 1 2 3 4 5 6
+canonicalEdges:
+  (0,1,2)
+  (1,2,3)
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (8,2,4)
+  (9,2,5)
+  (10,2,6)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+explicitAfterNormalize:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+nextInputExplicit:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+
+=== RewriteTraceStep ===
+stepIndex=2
+side=REWRITE
+chosenR=0
+chosenX=4
+terminated=0
+terminateReason=
+nextInputSourceKind=SHSK_FROM_NORMALIZE
+explicitBefore:
+canonicalVertices: 1 3 4 5 6
+canonicalEdges:
+  (2,3,4)
+  (3,4,5)
+  (4,5,6)
+  (5,1,6)
+  (6,1,4)
+  (7,1,5)
+  (11,4,6)
+explicitAfterDelete:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterNormalize:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+nextInputExplicit:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== RewriteTraceStep ===
+stepIndex=3
+side=REWRITE
+chosenR=-1
+chosenX=-1
+terminated=1
+terminateReason=NO_TARGET
+nextInputSourceKind=SHSK_NONE_TERMINATE
+explicitBefore:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterDelete:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterNormalize:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+nextInputExplicit:
+canonicalVertices:
+canonicalEdges:
+

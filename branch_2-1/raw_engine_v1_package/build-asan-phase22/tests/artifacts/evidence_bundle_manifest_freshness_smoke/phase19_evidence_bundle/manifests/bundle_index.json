@@ -1,0 +1,10 @@
+{
+  "generated_at_utc": "2026-03-22T07:03:26Z",
+  "latest_bundle": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase22/tests/artifacts/evidence_bundle_manifest_freshness_smoke/raw_engine_phase19_stabilization.zip",
+  "latest_curated_bundle": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase22/tests/artifacts/evidence_bundle_manifest_freshness_smoke/curated/raw_engine_phase19_curated.zip",
+  "bundle_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase22/tests/artifacts/evidence_bundle_manifest_freshness_smoke/phase19_evidence_bundle",
+  "bundles": [],
+  "curated_bundles": [],
+  "pipeline_summary": null,
+  "runtime_manifest": null
+}

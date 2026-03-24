@@ -1,0 +1,77 @@
+=== SolverCompareBundle ===
+inputCaseId=xshared_spqrready_tc851_step1
+seed=1
+tc=851
+targetStep=1
+legacyWhy=
+oracleWhy=
+rewriteSeqWhy=
+oracleVsRewriteEquivalent=0
+oracleVsRewriteRawExplicitEquivalent=0
+oracleVsRewriteCanonicalExplicitEquivalent=0
+firstMismatchDescription=oracle vs rewrite canonical explicit mismatch: canonical explicit mismatch: expected edges[(4,5,6)] vertices[5, 6] got edges[(1,2,3), (3,4,5), (4,5,6), (10,4,6)] vertices[2, 3, 4, 5, 6]
+legacyElapsedMs=0
+oracleElapsedMs=0.476541
+rewriteSeqElapsedMs=0.937666
+
+=== InputExplicit ===
+vertices: 1 2 3 4 5 6
+edges:
+  id=0 (1,2)
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=5 (1,6)
+  id=6 (1,4)
+  id=7 (1,5)
+  id=8 (3,5)
+  id=9 (3,6)
+  id=10 (4,6)
+
+=== OracleCanonicalExplicit ===
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+=== RewriteSeqCanonicalExplicit ===
+canonicalVertices: 2 3 4 5 6
+canonicalEdges:
+  (1,2,3)
+  (3,4,5)
+  (4,5,6)
+  (10,4,6)
+
+=== OracleOutput ===
+valid=1
+actualInvariantOk=1
+baselineKind=ORACLE_FIXPOINT_BASELINE
+debugTag=ORACLE_FIXPOINT
+why=
+parent:
+vertices: 5 6
+edges:
+  id=4 (5,6)
+canonicalVertices: 5 6
+canonicalEdges:
+  (4,5,6)
+
+=== RewriteSeqOutput ===
+valid=1
+actualInvariantOk=1
+debugTag=REWRITE_SEQ_TERMINAL_FROM_FINAL_CORE
+why=
+parent:
+vertices: 2 3 4 5 6
+edges:
+  id=1 (2,3)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=10 (4,6)
+canonicalVertices: 2 3 4 5 6
+canonicalEdges:
+  (1,2,3)
+  (3,4,5)
+  (4,5,6)
+  (10,4,6)
+

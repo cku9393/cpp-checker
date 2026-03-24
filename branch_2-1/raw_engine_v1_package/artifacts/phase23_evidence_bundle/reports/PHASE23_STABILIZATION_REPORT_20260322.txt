@@ -1,0 +1,242 @@
+PHASE23 STABILIZATION REPORT
+date=2026-03-22
+package=raw_engine_v1_package
+branch=2_1
+authoritative_source=split tree
+production_split_choice_policy=exact_shadow
+status=phase23_completed
+
+1. Modified / Added Files
+- README.md
+- tests/CMakeLists.txt
+- tests/raw_engine_cases.cpp
+- tests/raw_engine_main.cpp
+- tests/test_harness.hpp
+- tests/tools/build_evidence_bundle.py
+- tests/tools/run_policy_pipeline.py
+- tests/tools/runtime_gate.py
+- tests/tools/runtime_gate_lib.py
+- tests/runtime_budget_phase23.json
+
+2. Runtime Lifecycle Design
+- Phase23 lifts runtime into the same lifecycle shape as correctness:
+  `runtime current manifest`
+  `runtime approved baseline`
+  `runtime refresh manifest`
+  `runtime rerun plan`
+- Runtime entries are now tracked per execution class:
+  `release_full`
+  `debug_full`
+  `asan_full`
+  `policy_core`
+  `policy_refresh`
+  `policy_nightly`
+- `tests/tools/runtime_gate_lib.py` owns the machine-readable runtime lifecycle:
+  current-manifest generation
+  approved-baseline promotion
+  refresh against baseline
+  rerun-plan generation
+  synthetic drift injection
+- `tests/tools/run_policy_pipeline.py` now combines correctness lifecycle plus runtime lifecycle into one operator summary with:
+  `severity`
+  `exit_code`
+  `recommended_next_action`
+  runtime/current/freshness/comparability/budget rollups
+- `tests/runtime_budget_phase23.json` is the operator config for runtime budgets. It keeps strict deltas for full Release/Debug/ASan runs and looser delta thresholds for `policy_core` / `policy_refresh` / `policy_nightly` so tiny operator-stage jitter does not create false stale results.
+
+3. Host / Toolchain Fingerprint And Comparability
+- Runtime current/baseline manifests now carry:
+  `host_fingerprint`
+  `toolchain_fingerprint`
+  per-entry `fingerprint_hash`
+- Host fingerprint includes:
+  OS
+  OS release
+  CPU/arch
+  compiler id/version
+  runner tag
+- Per-entry comparability additionally distinguishes:
+  build type
+  sanitizer flags
+  execution class
+- Comparability rules are now explicit:
+  same fingerprint => `COMPARABLE`
+  missing provenance => `NOT_COMPARABLE`
+  host mismatch => `REBASELINE_REQUIRED`
+  toolchain/build/sanitizer mismatch => `NOT_COMPARABLE` or `REBASELINE_REQUIRED` depending on the refresh path
+- Cross-host/cross-toolchain runtime mismatch no longer contaminates correctness gate state. It only affects runtime severity and operator action.
+
+4. Runtime Baseline / Current / Refresh / Rerun Results
+- Phase23 runtime current manifest:
+  `artifacts/manifests/policy_runtime_current_phase23.json`
+- Phase23 runtime approved baseline:
+  `artifacts/manifests/policy_runtime_baseline_phase23_approved.json`
+- Phase23 runtime refresh:
+  `artifacts/manifests/policy_runtime_refresh_phase23.json`
+- Phase23 runtime rerun plan:
+  `artifacts/manifests/policy_runtime_rerun_phase23.json`
+- Runtime current wall times:
+  `release_full=247.22s`
+  `debug_full=789.76s`
+  `asan_full=2267.78s`
+  `policy_core=0.023s`
+  `policy_refresh=0.023s`
+  `policy_nightly=0.015s`
+- Runtime baseline wall times:
+  `release_full=247.22s`
+  `debug_full=789.76s`
+  `asan_full=2267.78s`
+  `policy_core=0.029s`
+  `policy_refresh=0.029s`
+  `policy_nightly=0.015s`
+- Runtime refresh verdict:
+  `current_verdict=PASS`
+  `freshness_verdict=FRESH`
+  `comparability_verdict=COMPARABLE`
+  `overall_budget_verdict=PASS`
+  `runtime_severity=OK`
+- Runtime rerun plan verdict:
+  `summary_verdict=PASS`
+  `selected_entry_count=0`
+  `stale_entry_count=0`
+  `requires_rerun_entry_count=0`
+  `rebaseline_required_count=0`
+
+5. Correctness Lifecycle Revalidation
+- Correctness baseline remained the approved phase22 baseline:
+  `artifacts/manifests/policy_graduation_manifest_phase22_approved_v1.json`
+- Phase23 refresh and rerun-plan were regenerated on top of that baseline:
+  `artifacts/manifests/policy_graduation_manifest_refresh_phase23_v1.json`
+  `artifacts/manifests/policy_rerun_plan_phase23_v1.json`
+- Family status remains stable:
+  `split_tie_organic_symmetric = PASS / FRESH`
+  `automorphism_probe_large = PASS / FRESH`
+  `planner_tie_mixed_organic = NON_APPLICABLE / FRESH`
+  `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY / FRESH`
+- Direct production evidence remains:
+  `split_tie_organic_symmetric: compared=36 eligible=36 completed=36 semantic_disagreement=0 fallback=0 semantic_shift=0`
+  `automorphism_probe_large: compared=36 eligible=36 completed=36 semantic_disagreement=0 fallback=0 semantic_shift=0`
+- Applicability evidence remains:
+  `planner_tie_mixed_organic: generated=48 eligible=0 no_split_ready=48 dominant_reason=no_split_ready confidence=1.0`
+- Diagnostic lineage remains:
+  `planner_tie_mixed_organic_compare_ready: compared=32 eligible=32 completed=32 lineage_sample_count=16 same_semantic=16 same_final=16 same_trace=16 followup_pattern_preserved=0 structure_only_enrichment=0`
+- `planner_tie_mixed_organic_compare_ready` remains `DIAGNOSTIC_ONLY` and `counts_as_production_evidence=false`.
+
+6. Combined Severity / Exit-Code Model
+- Combined operator severity remains:
+  `OK`
+  `WARN`
+  `ACTION_REQUIRED`
+  `FAIL`
+- Combined exit codes remain:
+  `0=OK`
+  `10=WARN`
+  `20=ACTION_REQUIRED`
+  `30=FAIL`
+- `policy_pipeline quick` result:
+  `severity=OK`
+  `exit_code=0`
+  `current_verdict=PASS`
+  `freshness_verdict=FRESH`
+  `runtime_current_verdict=PASS`
+  `runtime_freshness_verdict=FRESH`
+  `runtime_comparability_verdict=COMPARABLE`
+  `runtime_budget_verdict=PASS`
+  `runtime_severity=OK`
+- `policy_pipeline nightly` result:
+  `severity=OK`
+  `exit_code=0`
+  `current_verdict=PASS`
+  `freshness_verdict=FRESH`
+  `runtime_current_verdict=PASS`
+  `runtime_freshness_verdict=FRESH`
+  `runtime_comparability_verdict=COMPARABLE`
+  `runtime_budget_verdict=PASS`
+  `runtime_severity=OK`
+- Stable operator recommendation:
+  `no action required; exact_shadow lifecycle remains healthy`
+
+7. Synthetic Runtime Drift Injection
+- The phase23 targeted smoke set revalidated runtime drift behavior:
+  `runtime_synthetic_warn_smoke`
+  `runtime_synthetic_action_required_smoke`
+  `runtime_synthetic_fail_smoke`
+  `runtime_fingerprint_mismatch_smoke`
+  `combined_policy_runtime_ok_smoke`
+  `combined_policy_runtime_warn_smoke`
+  `combined_policy_runtime_action_required_smoke`
+  `combined_policy_runtime_fail_smoke`
+- Observed behavior stays aligned with the phase23 gate model:
+  soft-budget overrun without freshness break => `WARN`
+  host fingerprint mismatch or runtime rerun requirement => `ACTION_REQUIRED`
+  hard-budget overrun => `FAIL`
+
+8. Evidence Bundle Runtime Inclusion
+- Bundle outputs:
+  `artifacts/phase23_evidence_bundle/bundle_metadata.json`
+  `raw_engine_phase23_stabilization_20260322.zip`
+  `raw_engine_phase23_stabilization_curated_20260322.zip`
+  `raw_engine_phase23_stabilization_delivery_20260322.zip`
+- Bundle metadata now includes runtime lifecycle top-level fields:
+  `runtime_current_verdict`
+  `runtime_freshness_verdict`
+  `runtime_comparability_verdict`
+  `runtime_budget_verdict`
+  `runtime_severity`
+  runtime manifest hashes
+  host/toolchain fingerprints
+  runtime budget summary
+- Delivery zip payload now includes both correctness and runtime lifecycle deliverables rather than only correctness-side artifacts.
+- Bundle indexing and retention remain active through:
+  `artifacts/indexes/artifact_index.json`
+  `artifacts/indexes/bundle_index.json`
+
+9. Full Validation
+- Release full CTest:
+  `171/171 PASS`
+  `247.22s`
+- Debug full CTest:
+  `171/171 PASS`
+  `789.76s`
+- Isolated ASan/UBSan full CTest:
+  `171/171 PASS`
+  `2267.78s`
+  command environment:
+  `ASAN_OPTIONS=detect_leaks=0:abort_on_error=1`
+  `UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1`
+- Additional explicit runtime/operator execution completed:
+  runtime baseline promotion
+  runtime refresh against promoted baseline
+  runtime rerun-plan generation
+  combined policy pipeline quick
+  combined policy pipeline nightly
+  evidence bundle generation
+
+10. Semantic Counterexamples / Regressions
+- New semantic counterexample:
+  none
+- Reproduction command:
+  none
+- New regression added:
+  none
+
+11. Exact Shadow Final Verdict
+- `exact_shadow` remains the production split-choice policy.
+- Production retention still rests on three distinct evidence classes:
+  direct compare `PASS` families
+  applicability-based `NON_APPLICABLE`
+  diagnostic-only lineage support
+- Direct production evidence remains:
+  `split_tie_organic_symmetric = PASS`
+  `automorphism_probe_large = PASS`
+- Applicability evidence remains:
+  `planner_tie_mixed_organic = NON_APPLICABLE`
+- Diagnostic-only support remains:
+  `planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY`
+- Phase23 adds runtime lifecycle validation on top of the correctness lifecycle and both combined pipeline modes remain `OK`.
+
+12. Remaining Risks
+- Runtime baseline is now operational, but the baseline is still single-host and single-toolchain. New runners or compiler changes should trigger `REBASELINE_REQUIRED` instead of being compared directly.
+- `policy_core` / `policy_refresh` / `policy_nightly` are intentionally budgeted with relaxed delta thresholds because their wall times are tiny. Operators should still investigate large absolute regressions, but tiny proportional jitter is expected.
+- `planner_tie_mixed_organic_compare_ready` remains intentionally diagnostic-only because followup preservation and structure-only enrichment are still zero.
+- No semantic mismatch or policy-gate failure exists today; any future mismatch or gate fail still escalates to dump/reduce/regression before planner or primitive semantics can be changed.

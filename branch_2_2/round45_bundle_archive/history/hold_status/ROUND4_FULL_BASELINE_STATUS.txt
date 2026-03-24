@@ -1,0 +1,2 @@
+Full runnable round4 baseline reconstructed from round2 harness + round4 keep_order solve.cpp.
+Measured in this container with clang++ two-step static build.

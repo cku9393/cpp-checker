@@ -1,0 +1,18 @@
+rewrite-seq release candidate
+branch: main
+commit: ad0399141f8e2948e304cae645f94d2fb72550ef
+short: ad03991
+generatedAt: 2026-03-24T10:11:53
+
+status:
+- default solver path = rewrite-seq
+- legacy path = diagnostic-only
+- hard compare = 6 passed / 0 failed
+- random sanity = 100 passed / 0 failed
+- summary writer = atomic + validated
+
+recommended compare:
+./build/rewrite_r_harness --backend ogdf --mode solver-compare --manifest regressions/rewrite_seq_cases.json --baseline oracle --oracle-handoff normalize --dump-dir dumps/integration_finalize/hard_compare
+
+recommended direct smoke:
+./build/rewrite_r_harness --backend ogdf --mode rewrite-seq --seed 1 --rounds 10 --dump-dir dumps/integration_finalize/direct_solver_smoke

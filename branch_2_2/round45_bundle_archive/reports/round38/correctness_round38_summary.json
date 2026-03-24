@@ -1,0 +1,8 @@
+{
+  "status": "incomplete",
+  "completed_cases": 92,
+  "total_cases_planned": 151,
+  "mismatch_in_completed_cases": 1,
+  "all_same_in_completed_cases": false,
+  "reason": "current-pass correctness sweep did not finish to completion in this run"
+}

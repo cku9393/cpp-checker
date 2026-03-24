@@ -1,0 +1,86 @@
+=== SolverSemanticTransitionReplayBundle ===
+caseName=selfloop_spqrready_tc328_step1
+manifestPath=regressions/rewrite_seq_cases.json
+seed=1
+tc=328
+targetStep=1
+sourceStep=2
+topLevelOk=1
+transitionSeamKind=TRSK_BOTH_DIFFER_FROM_SHADOW_DELETE
+transitionSeamWhy=transition seam: both oracle and rewrite diverge from direct delete
+sharedExplicitWhy=
+oracleWhy=
+rewriteWhy=
+shadowWhy=
+
+=== SharedExplicitBefore ===
+vertices: 1 5 6
+edges:
+  id=4 (5,6)
+  id=5 (1,6)
+  id=7 (1,5)
+
+=== SharedExplicitBeforeCanonical ===
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== OracleTransitionSnapshot ===
+sourceStep=2
+chosenR=-1
+chosenX=-1
+terminated=1
+terminateReason=NO_TARGET
+ok=1
+why=
+explicitBefore:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterDelete:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterStep:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== RewriteTransitionSnapshot ===
+sourceStep=2
+chosenR=-1
+chosenX=-1
+terminated=1
+terminateReason=NO_TARGET
+ok=1
+why=
+explicitBefore:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterDelete:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+explicitAfterStep:
+canonicalVertices: 1 5 6
+canonicalEdges:
+  (4,5,6)
+  (5,1,6)
+  (7,1,5)
+
+=== ShadowDeleteExplicit ===
+canonicalVertices:
+canonicalEdges:

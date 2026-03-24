@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 project(rewrite_r_harness LANGUAGES CXX)
 
 option(USE_OGDF "Enable OGDF-backed raw SPQR backend" OFF)
+option(USE_REWRITE_SEQ_ENGINE
+  "Use rewrite-r-seq engine in solver adapter by default"
+  ON)
 option(HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS
   "Call project free-function hooks from ProjectHarnessOps"
   OFF)
@@ -13,6 +16,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(DetectOGDFFeatures)
+
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/ogdf_feature_config.hpp.in
@@ -43,6 +48,11 @@ target_compile_definitions(rewrite_r_harness_core
 
 target_compile_definitions(rewrite_r_harness_core
   PUBLIC
+    $<$<BOOL:${USE_REWRITE_SEQ_ENGINE}>:USE_REWRITE_SEQ_ENGINE>
+)
+
+target_compile_definitions(rewrite_r_harness_core
+  PUBLIC
     $<$<BOOL:${HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS}>:HARNESS_PROJECT_USE_FREE_FUNCTIONS>
 )
 
@@ -66,6 +76,7 @@ add_executable(rewrite_r_harness src/rewrite_r_harness_main.cpp)
 target_link_libraries(rewrite_r_harness PRIVATE rewrite_r_harness_core)
 
 message(STATUS "USE_OGDF=${USE_OGDF}")
+message(STATUS "USE_REWRITE_SEQ_ENGINE=${USE_REWRITE_SEQ_ENGINE}")
 message(STATUS "HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS=${HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS}")
 message(STATUS "OGDF_INCLUDE_DIRS=${OGDF_INCLUDE_DIRS}")
 message(STATUS "OGDF_LIBRARY_DIRS=${OGDF_LIBRARY_DIRS}")

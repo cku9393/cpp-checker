@@ -1,0 +1,10 @@
+branch=main
+commit=ad0399141f8e2948e304cae645f94d2fb72550ef
+subject=Add remaining non-ignored local files
+defaultSolverPath=rewrite-seq
+legacyPathStatus=diagnostic-only
+hardCompareStatus=green
+randomSanityStatus=green
+directSolverSmokeStatus=green
+summaryWriterMode=atomic
+summaryValidated=true

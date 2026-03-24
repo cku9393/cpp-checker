@@ -1,0 +1,6 @@
+{
+  "gate_found": false,
+  "reason": "rows_emitted_only_for_sanity_scale_and_shadow_match_disabled",
+  "coverage_count": 0,
+  "selected_gate": null
+}

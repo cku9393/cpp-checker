@@ -1,0 +1,34 @@
+{
+  "macro_present": false,
+  "env_plumbing_ok": true,
+  "shadowcheck_enabled": false,
+  "header_ok": false,
+  "candidate_row_append_ok": false,
+  "prefilter_row_append_ok": false,
+  "nonempty_case_mode_count": 0,
+  "row_count_census": 0,
+  "row_count_matched": 0,
+  "row_count_candidate": 0,
+  "row_count_prefilter": 0,
+  "row_count_same_side_reject": 0,
+  "row_count_accepted": 0,
+  "matched_decompose_rows": 0,
+  "matched_truth_panel_rows": 0,
+  "truth_gate_passed": false,
+  "reason": "source_alignment_smoke_gate_failed",
+  "source_alignment_passed": false,
+  "smoke_counts": {
+    "smoke_comb_dense_256_s1": {
+      "census_rows.tsv": 0,
+      "candidate_rows.tsv": 0,
+      "prefilter_rows.tsv": 0,
+      "decompose_rows.tsv": 0
+    },
+    "smoke_comb_dense_1024_s1": {
+      "census_rows.tsv": 0,
+      "candidate_rows.tsv": 0,
+      "prefilter_rows.tsv": 0,
+      "decompose_rows.tsv": 0
+    }
+  }
+}

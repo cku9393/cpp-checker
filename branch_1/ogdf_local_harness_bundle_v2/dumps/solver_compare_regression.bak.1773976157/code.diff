@@ -1,0 +1,1261 @@
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/CMakeLists.txt b/branch_1/ogdf_local_harness_bundle_v2/CMakeLists.txt
+index b21a549..6746428 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/CMakeLists.txt
++++ b/branch_1/ogdf_local_harness_bundle_v2/CMakeLists.txt
+@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.16)
+ project(rewrite_r_harness LANGUAGES CXX)
+ 
+ option(USE_OGDF "Enable OGDF-backed raw SPQR backend" OFF)
++option(USE_REWRITE_SEQ_ENGINE
++  "Use rewrite-r-seq engine in solver adapter by default"
++  OFF)
+ option(HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS
+   "Call project free-function hooks from ProjectHarnessOps"
+   OFF)
+@@ -41,6 +44,11 @@ target_compile_definitions(rewrite_r_harness_core
+     $<$<BOOL:${USE_OGDF}>:USE_OGDF>
+ )
+ 
++target_compile_definitions(rewrite_r_harness_core
++  PUBLIC
++    $<$<BOOL:${USE_REWRITE_SEQ_ENGINE}>:USE_REWRITE_SEQ_ENGINE>
++)
++
+ target_compile_definitions(rewrite_r_harness_core
+   PUBLIC
+     $<$<BOOL:${HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS}>:HARNESS_PROJECT_USE_FREE_FUNCTIONS>
+@@ -66,6 +74,7 @@ add_executable(rewrite_r_harness src/rewrite_r_harness_main.cpp)
+ target_link_libraries(rewrite_r_harness PRIVATE rewrite_r_harness_core)
+ 
+ message(STATUS "USE_OGDF=${USE_OGDF}")
++message(STATUS "USE_REWRITE_SEQ_ENGINE=${USE_REWRITE_SEQ_ENGINE}")
+ message(STATUS "HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS=${HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS}")
+ message(STATUS "OGDF_INCLUDE_DIRS=${OGDF_INCLUDE_DIRS}")
+ message(STATUS "OGDF_LIBRARY_DIRS=${OGDF_LIBRARY_DIRS}")
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_engine_freeze_ko.md b/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_engine_freeze_ko.md
+index 4161609..7ded3a5 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_engine_freeze_ko.md
++++ b/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_engine_freeze_ko.md
+@@ -15,6 +15,8 @@ freeze gate:
+ 
+ - regression manifest:
+   - `regressions/rewrite_seq_cases.json`
++- diagnostic manifest:
++  - `diagnostics/rewrite_seq_diagnostic_cases.json`
+ - regression mode:
+   - `--mode rewrite-r-seq-regression`
+ - bench mode:
+@@ -35,6 +37,16 @@ representative replay corpus:
+ - `selfloop_remainder_spqrready_tc328_step1`
+ - `selfloop_remainder_oneedge_tc444_step1`
+ - `xshared_spqrready_tc851_step1`
++- `xincident_oneedge_tc33_step1`
++
++hard-gate policy:
++
++- hard gate:
++  - 현재 6개 fixed case만 사용
++  - manifest는 generator 좌표뿐 아니라 `inputExplicit` snapshot도 함께 들고 있어 immutable input으로 취급
++- diagnostic-only:
++  - exploratory replay/random 케이스는 `diagnostics/` 아래 별도 manifest로 분리
++  - 추적/분석용이고 hard regression pass/fail 기준에는 포함하지 않음
+ 
+ solver integration freeze rule:
+ 
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_solver_integration_checklist_ko.md b/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_solver_integration_checklist_ko.md
+index 6c217f9..2438771 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_solver_integration_checklist_ko.md
++++ b/branch_1/ogdf_local_harness_bundle_v2/docs/rewrite_seq_solver_integration_checklist_ko.md
+@@ -52,5 +52,7 @@
+ 
+ - freeze note:
+   - `docs/rewrite_seq_engine_freeze_ko.md`
++- regression policy:
++  - `docs/rewrite_seq_regression_policy_ko.md`
+ - regression manifest:
+   - `regressions/rewrite_seq_cases.json`
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/include/harness/dump.hpp b/branch_1/ogdf_local_harness_bundle_v2/include/harness/dump.hpp
+index 8902acf..dddf89e 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/include/harness/dump.hpp
++++ b/branch_1/ogdf_local_harness_bundle_v2/include/harness/dump.hpp
+@@ -12,6 +12,9 @@ void dumpStaticMiniCore(const StaticMiniCore &mini, std::ostream &os);
+ void dumpActualCore(const ReducedSPQRCore &C, std::ostream &os);
+ void dumpGraftTrace(const GraftTrace &T, std::ostream &os);
+ void dumpExplicitBlockGraph(const ExplicitBlockGraph &G, std::ostream &os);
++void dumpSolverOutput(const SolverOutput &out, std::ostream &os);
++void dumpSolverCompareBundle(const SolverCompareBundle &bundle,
++                             const std::string &path);
+ void dumpHarnessBundle(const HarnessBundle &B, const std::string &path);
+ 
+ inline HarnessBundle makeBaseBundle(uint64_t seed,
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/include/harness/project_static_adapter.hpp b/branch_1/ogdf_local_harness_bundle_v2/include/harness/project_static_adapter.hpp
+index 888f210..ddb2f39 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/include/harness/project_static_adapter.hpp
++++ b/branch_1/ogdf_local_harness_bundle_v2/include/harness/project_static_adapter.hpp
+@@ -944,6 +944,18 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
+                                   RewriteSeqStats &stats,
+                                   std::string &why);
+ 
++bool solveWithBaselineRewriteSolver(const ExplicitBlockGraph &input,
++                                    SolverOutput &out,
++                                    std::string &why);
++
++bool solveWithRewriteSeqEngine(const ExplicitBlockGraph &input,
++                               SolverOutput &out,
++                               std::string &why);
++
++bool solveWithConfiguredRewriteSolver(const ExplicitBlockGraph &input,
++                                      SolverOutput &out,
++                                      std::string &why);
++
+ bool rebuildWholeCoreFromExplicit(const ExplicitBlockGraph &G,
+                                   ReducedSPQRCore &out,
+                                   std::string &why);
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/include/harness/types.hpp b/branch_1/ogdf_local_harness_bundle_v2/include/harness/types.hpp
+index 3c95918..6b5345e 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/include/harness/types.hpp
++++ b/branch_1/ogdf_local_harness_bundle_v2/include/harness/types.hpp
+@@ -533,6 +533,47 @@ struct DummyActualEnvelope {
+ struct ExplicitEdge { EdgeId id = -1; VertexId u = -1, v = -1; };
+ struct ExplicitBlockGraph { std::vector<ExplicitEdge> edges; std::vector<VertexId> vertices; };
+ 
++struct SolverOutput {
++    ExplicitBlockGraph explicitGraph;
++    std::vector<int> parent;
++    std::string debugTag;
++    bool valid = false;
++    bool actualInvariantOk = false;
++};
++
++struct SolverCompareBundle {
++    std::string inputCaseId;
++    uint64_t seed = 0;
++    int tc = -1;
++    std::optional<int> targetStep;
++    ExplicitBlockGraph inputExplicit;
++    std::optional<SolverOutput> baselineOutput;
++    std::optional<SolverOutput> rewriteSeqOutput;
++    std::string baselineWhy;
++    std::string rewriteSeqWhy;
++    bool explicitEquivalent = false;
++    std::optional<bool> parentEquivalent;
++    std::string firstMismatchDescription;
++    double baselineElapsedMs = 0.0;
++    double rewriteSeqElapsedMs = 0.0;
++};
++
++struct SolverCompareStats {
++    uint64_t compareCases = 0;
++    uint64_t comparePassed = 0;
++    uint64_t compareFailed = 0;
++    uint64_t baselineFailCount = 0;
++    uint64_t rewriteSeqFailCount = 0;
++    uint64_t explicitMismatchCount = 0;
++    uint64_t parentMismatchCount = 0;
++    double totalBaselineMs = 0.0;
++    double totalRewriteSeqMs = 0.0;
++    double averageBaselineMs = 0.0;
++    double averageRewriteSeqMs = 0.0;
++    double maxBaselineMs = 0.0;
++    double maxRewriteSeqMs = 0.0;
++};
++
+ struct HarnessBundle {
+     uint64_t seed = 0;
+     int tc = -1;
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/regressions/rewrite_seq_cases.json b/branch_1/ogdf_local_harness_bundle_v2/regressions/rewrite_seq_cases.json
+index f7e8ce8..f7b04f7 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/regressions/rewrite_seq_cases.json
++++ b/branch_1/ogdf_local_harness_bundle_v2/regressions/rewrite_seq_cases.json
+@@ -13,7 +13,79 @@
+         "SEQ_SP_CLEANUP",
+         "SEQ_ADJ_REPAIR",
+         "SEQ_CLEAR_PRESERVE"
+-      ]
++      ],
++      "inputExplicit": {
++        "vertices": [
++          1,
++          2,
++          3,
++          4,
++          5,
++          6
++        ],
++        "edges": [
++          {
++            "id": 0,
++            "u": 1,
++            "v": 2
++          },
++          {
++            "id": 1,
++            "u": 2,
++            "v": 3
++          },
++          {
++            "id": 2,
++            "u": 3,
++            "v": 4
++          },
++          {
++            "id": 3,
++            "u": 4,
++            "v": 5
++          },
++          {
++            "id": 4,
++            "u": 5,
++            "v": 6
++          },
++          {
++            "id": 5,
++            "u": 1,
++            "v": 6
++          },
++          {
++            "id": 6,
++            "u": 1,
++            "v": 3
++          },
++          {
++            "id": 7,
++            "u": 1,
++            "v": 5
++          },
++          {
++            "id": 8,
++            "u": 2,
++            "v": 5
++          },
++          {
++            "id": 9,
++            "u": 2,
++            "v": 6
++          },
++          {
++            "id": 10,
++            "u": 3,
++            "v": 5
++          },
++          {
++            "id": 11,
++            "u": 4,
++            "v": 6
++          }
++        ]
++      }
+     },
+     {
+       "name": "xshared_loopshared_proxy_loop_real_tc56_step1",
+@@ -28,7 +100,64 @@
+         "SPECIAL_LOOP_SHARED",
+         "SEQ_ADJ_REPAIR",
+         "SEQ_CLEAR_PRESERVE"
+-      ]
++      ],
++      "inputExplicit": {
++        "vertices": [
++          1,
++          2,
++          3,
++          4,
++          5,
++          6
++        ],
++        "edges": [
++          {
++            "id": 0,
++            "u": 1,
++            "v": 2
++          },
++          {
++            "id": 1,
++            "u": 2,
++            "v": 3
++          },
++          {
++            "id": 2,
++            "u": 3,
++            "v": 4
++          },
++          {
++            "id": 3,
++            "u": 4,
++            "v": 5
++          },
++          {
++            "id": 4,
++            "u": 5,
++            "v": 6
++          },
++          {
++            "id": 5,
++            "u": 1,
++            "v": 6
++          },
++          {
++            "id": 6,
++            "u": 1,
++            "v": 5
++          },
++          {
++            "id": 7,
++            "u": 3,
++            "v": 5
++          },
++          {
++            "id": 8,
++            "u": 3,
++            "v": 6
++          }
++        ]
++      }
+     },
+     {
+       "name": "selfloop_spqrready_tc328_step1",
+@@ -42,7 +171,79 @@
+       "expectedSpecialPathTags": [
+         "SPECIAL_SELF_LOOP_SPQR_READY",
+         "SEQ_CLEAR_PRESERVE"
+-      ]
++      ],
++      "inputExplicit": {
++        "vertices": [
++          1,
++          2,
++          3,
++          4,
++          5,
++          6
++        ],
++        "edges": [
++          {
++            "id": 0,
++            "u": 1,
++            "v": 2
++          },
++          {
++            "id": 1,
++            "u": 2,
++            "v": 3
++          },
++          {
++            "id": 2,
++            "u": 3,
++            "v": 4
++          },
++          {
++            "id": 3,
++            "u": 4,
++            "v": 5
++          },
++          {
++            "id": 4,
++            "u": 5,
++            "v": 6
++          },
++          {
++            "id": 5,
++            "u": 1,
++            "v": 6
++          },
++          {
++            "id": 6,
++            "u": 1,
++            "v": 4
++          },
++          {
++            "id": 7,
++            "u": 1,
++            "v": 5
++          },
++          {
++            "id": 8,
++            "u": 2,
++            "v": 4
++          },
++          {
++            "id": 9,
++            "u": 2,
++            "v": 5
++          },
++          {
++            "id": 10,
++            "u": 2,
++            "v": 6
++          },
++          {
++            "id": 11,
++            "u": 4,
++            "v": 6
++          }
++        ]
++      }
+     },
+     {
+       "name": "selfloop_oneedge_tc444_step1",
+@@ -56,7 +257,64 @@
+       "expectedSpecialPathTags": [
+         "SPECIAL_SELF_LOOP_ONE_EDGE",
+         "SEQ_CLEAR_PRESERVE"
+-      ]
++      ],
++      "inputExplicit": {
++        "vertices": [
++          1,
++          2,
++          3,
++          4,
++          5,
++          6
++        ],
++        "edges": [
++          {
++            "id": 0,
++            "u": 1,
++            "v": 2
++          },
++          {
++            "id": 1,
++            "u": 2,
++            "v": 3
++          },
++          {
++            "id": 2,
++            "u": 3,
++            "v": 4
++          },
++          {
++            "id": 3,
++            "u": 4,
++            "v": 5
++          },
++          {
++            "id": 4,
++            "u": 5,
++            "v": 6
++          },
++          {
++            "id": 5,
++            "u": 1,
++            "v": 6
++          },
++          {
++            "id": 6,
++            "u": 1,
++            "v": 4
++          },
++          {
++            "id": 7,
++            "u": 2,
++            "v": 6
++          },
++          {
++            "id": 8,
++            "u": 4,
++            "v": 6
++          }
++        ]
++      }
+     },
+     {
+       "name": "xshared_spqrready_tc851_step1",
+@@ -70,7 +328,74 @@
+       "expectedSpecialPathTags": [
+         "DIRECT_SPQR",
+         "SEQ_XINCIDENT_SPQR_READY"
+-      ]
++      ],
++      "inputExplicit": {
++        "vertices": [
++          1,
++          2,
++          3,
++          4,
++          5,
++          6
++        ],
++        "edges": [
++          {
++            "id": 0,
++            "u": 1,
++            "v": 2
++          },
++          {
++            "id": 1,
++            "u": 2,
++            "v": 3
++          },
++          {
++            "id": 2,
++            "u": 3,
++            "v": 4
++          },
++          {
++            "id": 3,
++            "u": 4,
++            "v": 5
++          },
++          {
++            "id": 4,
++            "u": 5,
++            "v": 6
++          },
++          {
++            "id": 5,
++            "u": 1,
++            "v": 6
++          },
++          {
++            "id": 6,
++            "u": 1,
++            "v": 4
++          },
++          {
++            "id": 7,
++            "u": 1,
++            "v": 5
++          },
++          {
++            "id": 8,
++            "u": 3,
++            "v": 5
++          },
++          {
++            "id": 9,
++            "u": 3,
++            "v": 6
++          },
++          {
++            "id": 10,
++            "u": 4,
++            "v": 6
++          }
++        ]
++      }
+     },
+     {
+       "name": "xincident_oneedge_tc33_step1",
+@@ -84,7 +409,53 @@
+       "expectedSpecialPathTags": [
+         "SPECIAL_ONE_EDGE",
+         "SEQ_XINCIDENT_ONE_EDGE"
+-      ]
++      ],
++      "inputExplicit": {
++        "vertices": [
++          1,
++          2,
++          3,
++          4,
++          5
++        ],
++        "edges": [
++          {
++            "id": 0,
++            "u": 1,
++            "v": 2
++          },
++          {
++            "id": 1,
++            "u": 2,
++            "v": 3
++          },
++          {
++            "id": 2,
++            "u": 3,
++            "v": 4
++          },
++          {
++            "id": 3,
++            "u": 4,
++            "v": 5
++          },
++          {
++            "id": 4,
++            "u": 1,
++            "v": 5
++          },
++          {
++            "id": 5,
++            "u": 1,
++            "v": 4
++          },
++          {
++            "id": 6,
++            "u": 3,
++            "v": 5
++          }
++        ]
++      }
+     }
+   ]
+ }
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/src/dump.cpp b/branch_1/ogdf_local_harness_bundle_v2/src/dump.cpp
+index fda886b..2afe493 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/src/dump.cpp
++++ b/branch_1/ogdf_local_harness_bundle_v2/src/dump.cpp
+@@ -303,6 +303,53 @@ void dumpExplicitBlockGraph(const ExplicitBlockGraph &G, std::ostream &os) {
+     }
+ }
+ 
++void dumpSolverOutput(const SolverOutput &out, std::ostream &os) {
++    os << "valid=" << (out.valid ? 1 : 0) << "\n";
++    os << "actualInvariantOk=" << (out.actualInvariantOk ? 1 : 0) << "\n";
++    os << "debugTag=" << out.debugTag << "\n";
++    os << "parent:";
++    for (int value : out.parent) os << ' ' << value;
++    os << "\n";
++    dumpExplicitBlockGraph(out.explicitGraph, os);
++}
++
++void dumpSolverCompareBundle(const SolverCompareBundle &bundle,
++                             const std::string &path) {
++    std::filesystem::create_directories(std::filesystem::path(path).parent_path());
++    std::ofstream ofs(path);
++    ofs << "=== SolverCompareBundle ===\n";
++    ofs << "inputCaseId=" << bundle.inputCaseId << "\n";
++    ofs << "seed=" << bundle.seed << "\n";
++    ofs << "tc=" << bundle.tc << "\n";
++    if (bundle.targetStep.has_value()) {
++        ofs << "targetStep=" << *bundle.targetStep << "\n";
++    }
++    ofs << "baselineWhy=" << bundle.baselineWhy << "\n";
++    ofs << "rewriteSeqWhy=" << bundle.rewriteSeqWhy << "\n";
++    ofs << "explicitEquivalent=" << (bundle.explicitEquivalent ? 1 : 0) << "\n";
++    if (bundle.parentEquivalent.has_value()) {
++        ofs << "parentEquivalent=" << (*bundle.parentEquivalent ? 1 : 0) << "\n";
++    }
++    ofs << "firstMismatchDescription=" << bundle.firstMismatchDescription << "\n";
++    ofs << "baselineElapsedMs=" << bundle.baselineElapsedMs << "\n";
++    ofs << "rewriteSeqElapsedMs=" << bundle.rewriteSeqElapsedMs << "\n\n";
++
++    ofs << "=== InputExplicit ===\n";
++    dumpExplicitBlockGraph(bundle.inputExplicit, ofs);
++    ofs << "\n";
++
++    if (bundle.baselineOutput.has_value()) {
++        ofs << "=== BaselineOutput ===\n";
++        dumpSolverOutput(*bundle.baselineOutput, ofs);
++        ofs << "\n";
++    }
++    if (bundle.rewriteSeqOutput.has_value()) {
++        ofs << "=== RewriteSeqOutput ===\n";
++        dumpSolverOutput(*bundle.rewriteSeqOutput, ofs);
++        ofs << "\n";
++    }
++}
++
+ void dumpHarnessBundle(const HarnessBundle &B, const std::string &path) {
+     std::ofstream ofs(path);
+     ofs << "=== HarnessBundle ===\n";
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/src/project_static_adapter.cpp b/branch_1/ogdf_local_harness_bundle_v2/src/project_static_adapter.cpp
+index 43dea78..627e57a 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/src/project_static_adapter.cpp
++++ b/branch_1/ogdf_local_harness_bundle_v2/src/project_static_adapter.cpp
+@@ -11199,6 +11199,7 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
+         stats.completedSteps = step + 1;
+         if (nextChooseStatus == SequenceFixpointChooseStatus::NONE) {
+             stats.reachedFixpoint = true;
++            stats.success = true;
+             why.clear();
+             return true;
+         }
+@@ -11221,6 +11222,155 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
+         nullptr);
+ }
+ 
++namespace {
++
++bool runBaselineRewriteToFixpoint(ReducedSPQRCore &core,
++                                  std::string &why) {
++    constexpr int kMaxSequenceSteps = 64;
++
++    ProjectHarnessOps ops;
++    for (int step = 0; step < kMaxSequenceSteps; ++step) {
++        const ExplicitBlockGraph explicitBefore = ops.materializeWholeCoreExplicit(core);
++
++        NodeId chosenR = -1;
++        VertexId chosenX = -1;
++        const SequenceChooseStatus chooseStatus =
++            chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
++        if (chooseStatus == SequenceChooseStatus::ERROR) {
++            return false;
++        }
++        if (chooseStatus == SequenceChooseStatus::NONE) {
++            why.clear();
++            return true;
++        }
++
++        ReducedSPQRCore after = core;
++        setRewriteRSequenceMode(false);
++        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
++        setRewriteRSequenceMode(false);
++        if (!rewriteOk) {
++            return false;
++        }
++
++        if (!ops.normalizeTouchedRegion(after, why)) {
++            return false;
++        }
++
++        if (!ops.checkActualReducedInvariant(after, nullptr, why)) {
++            return false;
++        }
++
++        const ExplicitBlockGraph explicitAfter = ops.materializeWholeCoreExplicit(after);
++
++        ReducedSPQRCore oracle;
++        if (!buildWholeCoreForTesting(explicitAfter, oracle, why)) {
++            return false;
++        }
++        const ExplicitBlockGraph explicitExpected =
++            ops.materializeWholeCoreExplicit(oracle);
++        if (!ops.checkEquivalentExplicitGraphs(explicitAfter, explicitExpected, why)) {
++            return false;
++        }
++
++        NodeId nextR = -1;
++        VertexId nextX = -1;
++        const SequenceChooseStatus nextChooseStatus =
++            chooseDeterministicSequenceRewriteTarget(oracle, nextR, nextX, why);
++        if (nextChooseStatus == SequenceChooseStatus::ERROR) {
++            return false;
++        }
++        if (explicitExpected.edges.size() >= explicitBefore.edges.size() &&
++            nextChooseStatus == SequenceChooseStatus::FOUND) {
++            why =
++                "baseline rewrite solver made no edge-count progress while another rewrite target remains";
++            return false;
++        }
++
++        core = std::move(oracle);
++        if (nextChooseStatus == SequenceChooseStatus::NONE) {
++            why.clear();
++            return true;
++        }
++    }
++
++    why = "baseline rewrite solver reached maxSteps without exhausting rewrite targets";
++    return false;
++}
++
++} // namespace
++
++bool solveWithBaselineRewriteSolver(const ExplicitBlockGraph &input,
++                                    SolverOutput &out,
++                                    std::string &why) {
++    out = {};
++
++    ReducedSPQRCore core;
++    if (!buildWholeCoreForTesting(input, core, why)) {
++        return false;
++    }
++
++    if (!runBaselineRewriteToFixpoint(core, why)) {
++        return false;
++    }
++
++    ProjectHarnessOps ops;
++    if (!ops.checkActualReducedInvariant(core, nullptr, why)) {
++        return false;
++    }
++
++    out.explicitGraph = ops.materializeWholeCoreExplicit(core);
++    out.debugTag = "baseline-rewrite-solver";
++    out.valid = true;
++    out.actualInvariantOk = true;
++    why.clear();
++    return true;
++}
++
++bool solveWithRewriteSeqEngine(const ExplicitBlockGraph &input,
++                               SolverOutput &out,
++                               std::string &why) {
++    out = {};
++
++    noteRewriteSeqCaseStart();
++    ReducedSPQRCore core;
++    if (!buildWholeCoreForTesting(input, core, why)) {
++        noteRewriteSeqCaseFinish(false, 0, false, false);
++        return false;
++    }
++
++    RewriteSeqStats stats;
++    const bool ok = runRewriteSequenceToFixpoint(core, stats, why);
++    noteRewriteSeqCaseFinish(ok,
++                             stats.completedSteps,
++                             stats.hadSequenceFallback,
++                             stats.maxStepReached);
++    if (!ok) {
++        return false;
++    }
++
++    ProjectHarnessOps ops;
++    if (!ops.checkActualReducedInvariant(core, nullptr, why)) {
++        return false;
++    }
++
++    out.explicitGraph = ops.materializeWholeCoreExplicit(core);
++    out.debugTag = "rewrite-seq-engine";
++    out.valid = true;
++    out.actualInvariantOk = true;
++    why.clear();
++    return true;
++}
++
++bool solveWithConfiguredRewriteSolver(const ExplicitBlockGraph &input,
++                                      SolverOutput &out,
++                                      std::string &why) {
++#ifdef USE_REWRITE_SEQ_ENGINE
++    return solveWithRewriteSeqEngine(input, out, why);
++#else
++    return solveWithBaselineRewriteSolver(input, out, why);
++#endif
++}
++
+ void pruneCompactGraphForSpqr(CompactGraph &H) {
+     std::vector<CompactEdge> keptEdges;
+     keptEdges.reserve(H.edges.size());
+diff --git a/branch_1/ogdf_local_harness_bundle_v2/src/rewrite_r_harness_main.cpp b/branch_1/ogdf_local_harness_bundle_v2/src/rewrite_r_harness_main.cpp
+index 21ca2a3..952538d 100644
+--- a/branch_1/ogdf_local_harness_bundle_v2/src/rewrite_r_harness_main.cpp
++++ b/branch_1/ogdf_local_harness_bundle_v2/src/rewrite_r_harness_main.cpp
+@@ -10,6 +10,7 @@
+ #include <optional>
+ #include <sstream>
+ #include <string>
++#include <tuple>
+ #include <variant>
+ #include <vector>
+ #include "harness/ogdf_wrapper.hpp"
+@@ -38,7 +39,7 @@ RunConfig parseArgs(int argc, char **argv) {
+         else if (a == "--dump-dir") cfg.dumpDir = next("--dump-dir");
+         else if (a == "--backend") { (void)next("--backend"); }
+         else if (a == "--help") {
+-            std::cout << "--backend ogdf --mode {static|dummy|rewrite-r|rewrite-r-seq|rewrite-seq|rewrite-r-seq-replay|rewrite-r-seq-regression|rewrite-r-seq-bench} "
++            std::cout << "--backend ogdf --mode {static|dummy|rewrite-r|rewrite-r-seq|rewrite-seq|rewrite-r-seq-replay|rewrite-r-seq-regression|rewrite-r-seq-bench|solver-compare} "
+                          "--seed N --rounds N --tc-index N --target-step N --manifest PATH --manual-only --dump-dir DIR\n";
+             std::exit(0);
+         } else {
+@@ -236,6 +237,7 @@ struct RegressionCaseSpec {
+     bool expectedOracleEquivalentOk = true;
+     std::optional<std::string> expectedPostcheckSubtype;
+     std::vector<std::string> expectedSpecialPathTags;
++    std::optional<ExplicitBlockGraph> inputExplicit;
+ };
+ 
+ struct RegressionCaseResult {
+@@ -249,6 +251,22 @@ struct RegressionCaseResult {
+     std::vector<std::string> failures;
+ };
+ 
++struct SolverCompareCaseResult {
++    std::string name;
++    uint64_t seed = 1;
++    int tcIndex = -1;
++    std::optional<int> targetStep;
++    bool passed = false;
++    bool baselineOk = false;
++    bool rewriteSeqOk = false;
++    bool explicitEquivalent = false;
++    std::optional<bool> parentEquivalent;
++    double baselineElapsedMs = 0.0;
++    double rewriteSeqElapsedMs = 0.0;
++    std::string dumpPath;
++    std::vector<std::string> failures;
++};
++
+ std::string readTextFile(const std::string &path) {
+     std::ifstream ifs(path);
+     if (!ifs) {
+@@ -337,6 +355,56 @@ std::vector<std::string> optionalStringListField(const JsonValue::Object &obj,
+     return out;
+ }
+ 
++ExplicitBlockGraph normalizeExplicitBlockGraph(ExplicitBlockGraph G) {
++    std::sort(G.vertices.begin(), G.vertices.end());
++    G.vertices.erase(std::unique(G.vertices.begin(), G.vertices.end()), G.vertices.end());
++    for (auto &edge : G.edges) {
++        if (edge.u > edge.v) std::swap(edge.u, edge.v);
++    }
++    std::sort(G.edges.begin(),
++              G.edges.end(),
++              [](const ExplicitEdge &lhs, const ExplicitEdge &rhs) {
++                  return std::tie(lhs.id, lhs.u, lhs.v) <
++                         std::tie(rhs.id, rhs.u, rhs.v);
++              });
++    return G;
++}
++
++ExplicitBlockGraph parseExplicitBlockGraphValue(const JsonValue &value) {
++    if (!value.isObject()) {
++        throw std::runtime_error("inputExplicit must be an object");
++    }
++    const auto &obj = value.asObject();
++    const JsonValue *verticesValue = findField(obj, "vertices");
++    const JsonValue *edgesValue = findField(obj, "edges");
++    if (!verticesValue || !verticesValue->isArray()) {
++        throw std::runtime_error("inputExplicit.vertices must be an array");
++    }
++    if (!edgesValue || !edgesValue->isArray()) {
++        throw std::runtime_error("inputExplicit.edges must be an array");
++    }
++
++    ExplicitBlockGraph G;
++    for (const auto &item : verticesValue->asArray()) {
++        if (!item.isInt()) {
++            throw std::runtime_error("inputExplicit.vertices contains non-integer");
++        }
++        G.vertices.push_back(static_cast<int>(item.asInt()));
++    }
++    for (const auto &item : edgesValue->asArray()) {
++        if (!item.isObject()) {
++            throw std::runtime_error("inputExplicit.edges contains non-object");
++        }
++        const auto &edgeObj = item.asObject();
++        ExplicitEdge edge;
++        edge.id = requiredIntField(edgeObj, "id");
++        edge.u = requiredIntField(edgeObj, "u");
++        edge.v = requiredIntField(edgeObj, "v");
++        G.edges.push_back(edge);
++    }
++    return normalizeExplicitBlockGraph(std::move(G));
++}
++
+ std::vector<RegressionCaseSpec> loadRegressionManifest(const std::string &path) {
+     const JsonValue root = JsonParser(readTextFile(path)).parse();
+     const JsonValue::Array *cases = nullptr;
+@@ -378,11 +446,25 @@ std::vector<RegressionCaseSpec> loadRegressionManifest(const std::string &path)
+             spec.expectedSpecialPathTags =
+                 optionalStringListField(obj, "expectedSpecialPathTag");
+         }
++        if (const JsonValue *inputExplicit = findField(obj, "inputExplicit");
++            inputExplicit != nullptr && !inputExplicit->isNull()) {
++            spec.inputExplicit = parseExplicitBlockGraphValue(*inputExplicit);
++        }
+         out.push_back(std::move(spec));
+     }
+     return out;
+ }
+ 
++std::string sanitizePathComponent(std::string value) {
++    for (char &ch : value) {
++        const unsigned char uch = static_cast<unsigned char>(ch);
++        if (std::isalnum(uch) != 0 || ch == '-' || ch == '_' || ch == '.') continue;
++        ch = '_';
++    }
++    if (value.empty()) value = "case";
++    return value;
++}
++
+ uint64_t statDeltaForSpecialPathTag(const RewriteRStats &before,
+                                     const RewriteRStats &after,
+                                     const std::string &tag,
+@@ -454,7 +536,8 @@ int main(int argc, char **argv) {
+             cfg.mode == "rewrite-seq" ||
+             cfg.mode == "rewrite-r-seq-replay" ||
+             cfg.mode == "rewrite-r-seq-regression" ||
+-            cfg.mode == "rewrite-r-seq-bench") {
++            cfg.mode == "rewrite-r-seq-bench" ||
++            cfg.mode == "solver-compare") {
+             resetRewriteRStats();
+         }
+ 
+@@ -465,7 +548,8 @@ int main(int argc, char **argv) {
+                 cfg.mode != "rewrite-seq" &&
+                 cfg.mode != "rewrite-r-seq-replay" &&
+                 cfg.mode != "rewrite-r-seq-regression" &&
+-                cfg.mode != "rewrite-r-seq-bench") {
++                cfg.mode != "rewrite-r-seq-bench" &&
++                cfg.mode != "solver-compare") {
+                 return;
+             }
+             const RewriteRStats stats = getRewriteRStats();
+@@ -1308,6 +1392,98 @@ int main(int argc, char **argv) {
+             ++tc;
+             return true;
+         };
++        auto runSolverCompareCase = [&](const std::string &caseName,
++                                        uint64_t caseSeed,
++                                        int caseTc,
++                                        std::optional<int> targetStep,
++                                        const ExplicitBlockGraph &G,
++                                        SolverCompareCaseResult &result) {
++            result = {};
++            result.name = caseName;
++            result.seed = caseSeed;
++            result.tcIndex = caseTc;
++            result.targetStep = targetStep;
++
++            SolverCompareBundle bundle;
++            bundle.inputCaseId = caseName;
++            bundle.seed = caseSeed;
++            bundle.tc = caseTc;
++            bundle.targetStep = targetStep;
++            bundle.inputExplicit = G;
++
++            SolverOutput baselineOutput;
++            std::string baselineWhy;
++            setRewriteRCaseContext(caseSeed, caseTc);
++            const auto baselineStartedAt = Clock::now();
++            result.baselineOk =
++                solveWithBaselineRewriteSolver(G, baselineOutput, baselineWhy);
++            result.baselineElapsedMs =
++                std::chrono::duration<double, std::milli>(Clock::now() - baselineStartedAt)
++                    .count();
++            bundle.baselineElapsedMs = result.baselineElapsedMs;
++            bundle.baselineWhy = baselineWhy;
++            if (result.baselineOk) {
++                bundle.baselineOutput = baselineOutput;
++            } else {
++                result.failures.push_back("baseline solver failed: " + baselineWhy);
++            }
++
++            SolverOutput rewriteSeqOutput;
++            std::string rewriteSeqWhy;
++            setRewriteRCaseContext(caseSeed, caseTc);
++            const auto rewriteSeqStartedAt = Clock::now();
++            result.rewriteSeqOk =
++                solveWithRewriteSeqEngine(G, rewriteSeqOutput, rewriteSeqWhy);
++            result.rewriteSeqElapsedMs =
++                std::chrono::duration<double, std::milli>(Clock::now() - rewriteSeqStartedAt)
++                    .count();
++            bundle.rewriteSeqElapsedMs = result.rewriteSeqElapsedMs;
++            bundle.rewriteSeqWhy = rewriteSeqWhy;
++            if (result.rewriteSeqOk) {
++                bundle.rewriteSeqOutput = rewriteSeqOutput;
++            } else {
++                result.failures.push_back("rewrite-seq solver failed: " + rewriteSeqWhy);
++            }
++
++            if (result.baselineOk && result.rewriteSeqOk) {
++                std::string eqWhy;
++                result.explicitEquivalent = ops.checkEquivalentExplicitGraphs(
++                    baselineOutput.explicitGraph, rewriteSeqOutput.explicitGraph, eqWhy);
++                bundle.explicitEquivalent = result.explicitEquivalent;
++                if (!result.explicitEquivalent) {
++                    result.failures.push_back("explicit graph mismatch: " + eqWhy);
++                }
++
++                if (!baselineOutput.parent.empty() || !rewriteSeqOutput.parent.empty()) {
++                    result.parentEquivalent =
++                        baselineOutput.parent == rewriteSeqOutput.parent;
++                    bundle.parentEquivalent = result.parentEquivalent;
++                    if (!*result.parentEquivalent) {
++                        result.failures.push_back("parent output mismatch");
++                    }
++                }
++            }
++
++            result.passed = result.failures.empty();
++            if (!result.passed) {
++                bundle.firstMismatchDescription = result.failures.front();
++                std::ostringstream oss;
++                if (!result.baselineOk && result.rewriteSeqOk) {
++                    oss << cfg.dumpDir << "/solver_compare_baseline_fail";
++                } else if (result.baselineOk && !result.rewriteSeqOk) {
++                    oss << cfg.dumpDir << "/solver_compare_rewriteseq_fail";
++                } else if (!result.baselineOk && !result.rewriteSeqOk) {
++                    oss << cfg.dumpDir << "/solver_compare_both_fail";
++                } else {
++                    oss << cfg.dumpDir << "/solver_compare_mismatch";
++                }
++                oss << "_seed" << caseSeed << "_tc" << caseTc;
++                if (targetStep.has_value()) oss << "_step" << *targetStep;
++                oss << "_" << sanitizePathComponent(caseName) << ".txt";
++                result.dumpPath = oss.str();
++                dumpSolverCompareBundle(bundle, result.dumpPath);
++            }
++        };
+ 
+         if (cfg.mode == "rewrite-r-seq-regression") {
+             if (cfg.manualOnly) {
+@@ -1329,8 +1505,9 @@ int main(int argc, char **argv) {
+             for (const auto &spec : cases) {
+                 const auto caseStart = Clock::now();
+                 const RewriteRStats beforeStats = getRewriteRStats();
+-                const ExplicitBlockGraph G =
+-                    makeRandomRewriteCase(spec.seed, spec.tcIndex);
++                const ExplicitBlockGraph G = spec.inputExplicit.has_value()
++                                                ? *spec.inputExplicit
++                                                : makeRandomRewriteCase(spec.seed, spec.tcIndex);
+                 HarnessResult r = runRewriteRSequenceReplayDumpAware(
+                     G,
+                     backend,
+@@ -1470,6 +1647,174 @@ int main(int argc, char **argv) {
+             std::cout << "[OK] completed tc=" << results.size() << "\n";
+             printRewriteStats();
+             return 0;
++        } else if (cfg.mode == "solver-compare") {
++            std::vector<SolverCompareCaseResult> results;
++            SolverCompareStats compareStats;
++            std::vector<std::string> failedCaseNames;
++
++            auto recordCompareResult = [&](SolverCompareCaseResult result) {
++                ++compareStats.compareCases;
++                compareStats.totalBaselineMs += result.baselineElapsedMs;
++                compareStats.totalRewriteSeqMs += result.rewriteSeqElapsedMs;
++                compareStats.maxBaselineMs =
++                    std::max(compareStats.maxBaselineMs, result.baselineElapsedMs);
++                compareStats.maxRewriteSeqMs =
++                    std::max(compareStats.maxRewriteSeqMs, result.rewriteSeqElapsedMs);
++                if (!result.baselineOk) ++compareStats.baselineFailCount;
++                if (!result.rewriteSeqOk) ++compareStats.rewriteSeqFailCount;
++                if (result.baselineOk && result.rewriteSeqOk && !result.explicitEquivalent) {
++                    ++compareStats.explicitMismatchCount;
++                }
++                if (result.parentEquivalent.has_value() && !*result.parentEquivalent) {
++                    ++compareStats.parentMismatchCount;
++                }
++                if (result.passed) {
++                    ++compareStats.comparePassed;
++                } else {
++                    ++compareStats.compareFailed;
++                    failedCaseNames.push_back(result.name);
++                    std::cerr << "[COMPARE_FAIL] case=" << result.name;
++                    if (!result.dumpPath.empty()) {
++                        std::cerr << " bundle=" << result.dumpPath;
++                    }
++                    std::cerr << "\n";
++                    for (const auto &failure : result.failures) {
++                        std::cerr << "  - " << failure << "\n";
++                    }
++                }
++                results.push_back(std::move(result));
++            };
++
++            if (cfg.manifestPath.empty()) {
++                if (cfg.manualOnly) {
++                    int manualIndex = 0;
++                    for (const auto &G : buildManualRewriteCases()) {
++                        SolverCompareCaseResult result;
++                        runSolverCompareCase("manual_" + std::to_string(manualIndex),
++                                             cfg.seed,
++                                             manualIndex,
++                                             std::nullopt,
++                                             G,
++                                             result);
++                        recordCompareResult(std::move(result));
++                        ++manualIndex;
++                    }
++                } else {
++                    for (int i = 0; i < cfg.rounds; ++i) {
++                        const ExplicitBlockGraph G = makeRandomRewriteCase(cfg.seed, i);
++                        SolverCompareCaseResult result;
++                        runSolverCompareCase("seed" + std::to_string(cfg.seed) +
++                                                 "_tc" + std::to_string(i),
++                                             cfg.seed,
++                                             i,
++                                             std::nullopt,
++                                             G,
++                                             result);
++                        recordCompareResult(std::move(result));
++                    }
++                }
++            } else {
++                if (cfg.manualOnly) {
++                    throw std::runtime_error("solver-compare does not support --manual-only together with --manifest");
++                }
++                const auto cases = loadRegressionManifest(cfg.manifestPath);
++                if (cases.empty()) {
++                    throw std::runtime_error("solver-compare manifest contains no cases");
++                }
++                for (const auto &spec : cases) {
++                    const ExplicitBlockGraph G = spec.inputExplicit.has_value()
++                                                    ? *spec.inputExplicit
++                                                    : makeRandomRewriteCase(spec.seed, spec.tcIndex);
++                    SolverCompareCaseResult result;
++                    runSolverCompareCase(spec.name,
++                                         spec.seed,
++                                         spec.tcIndex,
++                                         spec.targetStep,
++                                         G,
++                                         result);
++                    recordCompareResult(std::move(result));
++                }
++            }
++
++            if (compareStats.compareCases != 0) {
++                compareStats.averageBaselineMs =
++                    compareStats.totalBaselineMs / static_cast<double>(compareStats.compareCases);
++                compareStats.averageRewriteSeqMs =
++                    compareStats.totalRewriteSeqMs / static_cast<double>(compareStats.compareCases);
++            }
++
++            const std::string summaryPath = cfg.dumpDir + "/summary.json";
++            std::ofstream ofs(summaryPath);
++            ofs << "{\n";
++            ofs << "  \"mode\": \"solver-compare\",\n";
++            if (!cfg.manifestPath.empty()) {
++                ofs << "  \"manifestPath\": \"" << jsonEscape(cfg.manifestPath) << "\",\n";
++            }
++            ofs << "  \"outputDumpDir\": \"" << jsonEscape(cfg.dumpDir) << "\",\n";
++            ofs << "  \"compareCases\": " << compareStats.compareCases << ",\n";
++            ofs << "  \"comparePassed\": " << compareStats.comparePassed << ",\n";
++            ofs << "  \"compareFailed\": " << compareStats.compareFailed << ",\n";
++            ofs << "  \"baselineFailCount\": " << compareStats.baselineFailCount << ",\n";
++            ofs << "  \"rewriteSeqFailCount\": " << compareStats.rewriteSeqFailCount << ",\n";
++            ofs << "  \"explicitMismatchCount\": " << compareStats.explicitMismatchCount << ",\n";
++            ofs << "  \"parentMismatchCount\": " << compareStats.parentMismatchCount << ",\n";
++            ofs << "  \"averageBaselineMs\": " << compareStats.averageBaselineMs << ",\n";
++            ofs << "  \"averageRewriteSeqMs\": " << compareStats.averageRewriteSeqMs << ",\n";
++            ofs << "  \"maxBaselineMs\": " << compareStats.maxBaselineMs << ",\n";
++            ofs << "  \"maxRewriteSeqMs\": " << compareStats.maxRewriteSeqMs << ",\n";
++            ofs << "  \"failedCaseNames\": [";
++            for (size_t i = 0; i < failedCaseNames.size(); ++i) {
++                if (i != 0) ofs << ", ";
++                ofs << "\"" << jsonEscape(failedCaseNames[i]) << "\"";
++            }
++            ofs << "],\n";
++            ofs << "  \"cases\": [\n";
++            for (size_t i = 0; i < results.size(); ++i) {
++                const auto &result = results[i];
++                ofs << "    {\n";
++                ofs << "      \"name\": \"" << jsonEscape(result.name) << "\",\n";
++                ofs << "      \"seed\": " << result.seed << ",\n";
++                ofs << "      \"tcIndex\": " << result.tcIndex << ",\n";
++                if (result.targetStep.has_value()) {
++                    ofs << "      \"targetStep\": " << *result.targetStep << ",\n";
++                }
++                ofs << "      \"passed\": " << (result.passed ? "true" : "false") << ",\n";
++                ofs << "      \"baselineOk\": " << (result.baselineOk ? "true" : "false") << ",\n";
++                ofs << "      \"rewriteSeqOk\": " << (result.rewriteSeqOk ? "true" : "false") << ",\n";
++                ofs << "      \"explicitEquivalent\": "
++                    << (result.explicitEquivalent ? "true" : "false") << ",\n";
++                if (result.parentEquivalent.has_value()) {
++                    ofs << "      \"parentEquivalent\": "
++                        << (*result.parentEquivalent ? "true" : "false") << ",\n";
++                }
++                ofs << "      \"baselineElapsedMs\": " << result.baselineElapsedMs << ",\n";
++                ofs << "      \"rewriteSeqElapsedMs\": " << result.rewriteSeqElapsedMs << ",\n";
++                ofs << "      \"dumpPath\": \"" << jsonEscape(result.dumpPath) << "\",\n";
++                ofs << "      \"failures\": [";
++                for (size_t j = 0; j < result.failures.size(); ++j) {
++                    if (j != 0) ofs << ", ";
++                    ofs << "\"" << jsonEscape(result.failures[j]) << "\"";
++                }
++                ofs << "]\n";
++                ofs << "    }" << (i + 1 == results.size() ? "\n" : ",\n");
++            }
++            ofs << "  ]\n";
++            ofs << "}\n";
++
++            std::cout << "[SOLVER_COMPARE] summary=" << summaryPath
++                      << " compareCases=" << compareStats.compareCases
++                      << " comparePassed=" << compareStats.comparePassed
++                      << " compareFailed=" << compareStats.compareFailed
++                      << " explicitMismatchCount=" << compareStats.explicitMismatchCount
++                      << " parentMismatchCount=" << compareStats.parentMismatchCount
++                      << "\n";
++            if (!failedCaseNames.empty()) {
++                printRewriteStats();
++                return 1;
++            }
++            std::cout << "[OK] completed tc=" << compareStats.compareCases << "\n";
++            printRewriteStats();
++            return 0;
+         } else if (cfg.mode == "rewrite-r-seq-bench") {
+             if (cfg.manualOnly) {
+                 throw std::runtime_error("rewrite-r-seq-bench does not support --manual-only");

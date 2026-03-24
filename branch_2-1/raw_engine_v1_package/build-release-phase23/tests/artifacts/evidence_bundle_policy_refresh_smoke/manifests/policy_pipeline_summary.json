@@ -1,0 +1,5 @@
+{
+  "severity": "OK",
+  "runtime_severity": "OK",
+  "recommended_next_action": "no action required; exact_shadow lifecycle remains healthy"
+}

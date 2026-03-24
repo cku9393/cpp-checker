@@ -1,0 +1,144 @@
+Start testing: Mar 22 14:15 KST
+----------------------------------------------------------
+36/140 Testing: raw_engine_campaign_phase16_manifest_compatibility_smoke
+36/140 Test: raw_engine_campaign_phase16_manifest_compatibility_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/raw_engine_tests" "--case" "campaign_phase16_manifest_compatibility_smoke" "--artifact-dir" "artifacts/campaign_phase16_manifest_compatibility_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests
+"raw_engine_campaign_phase16_manifest_compatibility_smoke" start time: Mar 22 14:15 KST
+Output:
+----------------------------------------------------------
+raw_engine_tests error: filesystem error: in remove_all: No such file or directory ["/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/artifacts/phase16_resume_gate_smoke"]
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --artifact-root <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --checkpoint-dir <path>
+  --checkpoint-every <N>
+  --resume-from <path>
+  --max-wall-seconds <sec>
+  --target-compared-states <N>
+  --target-eligible-states <N>
+  --target-lineage-samples <N>
+  --target-applicability-confidence <0..1>
+  --stop-when-gate-passes
+  --max-partial-runs <N>
+  --stop-after-checkpoint
+  --policy-manifest <path>
+  --source-manifest <path>
+  --baseline-manifest <path>
+  --baseline-out <path>
+  --baseline-tag <string>
+  --current-manifest <path>
+  --refresh-manifest <path>
+  --gate-family <name>
+  --gate-strict
+  --gate-output <path>
+  --rerun-plan <path>
+  --plan-out <path>
+  --emit-summary <path>
+  --freshness-only
+  --revalidate-families <csv>
+  --family-filter <csv>
+  --mark-stale-on-hash-change
+  --allow-stale
+  --strict-refresh
+  --allow-empty-plan
+  --require-acceptable-status
+  --freeze-provenance
+  --include-diagnostic
+  --include-non-applicable
+  --synthetic-hash-drift <planner_semantics_hash|generator_family_hash|compare_engine_hash|campaign_config_hash>
+  --synthetic-applicability-drift <family>
+  --synthetic-diagnostic-promotion <family>
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --max-split-choice-eval <N>
+  --exact-canonical-cap <N>
+  --exact-canonical-sample-rate <N>
+  --exact-audit-sample-rate <N>
+  --exact-audit-budget <N>
+  --exact-audit-family <scenario-family>
+  --split-choice-policy fast|exact_shadow|exact_full (default: exact_shadow)
+  --compare-against none|exact_full
+  --compare-sample-rate <double>
+  --compare-budget <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|automorphism_probe_large|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed|split_tie_symmetric_large|planner_tie_mixed_symmetric|canonical_collision_probe|split_tie_organic_symmetric|planner_tie_mixed_organic|planner_tie_mixed_organic_compare_ready|automorphism_probe_large
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help
+<end of output>
+Test time =   0.22 sec
+----------------------------------------------------------
+Test Failed.
+"raw_engine_campaign_phase16_manifest_compatibility_smoke" end time: Mar 22 14:15 KST
+"raw_engine_campaign_phase16_manifest_compatibility_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+62/140 Testing: raw_engine_policy_gate_nightly_smoke
+62/140 Test: raw_engine_policy_gate_nightly_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/raw_engine_tests" "--case" "policy_gate_nightly_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests
+"raw_engine_policy_gate_nightly_smoke" start time: Mar 22 14:15 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=policy_gate_nightly_smoke
+<end of output>
+Test time =   0.26 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_gate_nightly_smoke" end time: Mar 22 14:15 KST
+"raw_engine_policy_gate_nightly_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+63/140 Testing: raw_engine_policy_refresh_nightly_smoke
+63/140 Test: raw_engine_policy_refresh_nightly_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests/raw_engine_tests" "--case" "policy_refresh_nightly_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase21/tests
+"raw_engine_policy_refresh_nightly_smoke" start time: Mar 22 14:15 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=policy_refresh_nightly_smoke
+<end of output>
+Test time =   0.29 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_policy_refresh_nightly_smoke" end time: Mar 22 14:15 KST
+"raw_engine_policy_refresh_nightly_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+

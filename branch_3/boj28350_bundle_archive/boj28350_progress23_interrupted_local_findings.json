@@ -1,0 +1,46 @@
+{
+  "status": "interrupted_partial_reconstruction",
+  "base": "boj28350_literature_progress22_state_load_materialization_collapse.cpp",
+  "gates": [
+    {
+      "tag": "connector_only_dense_256_after",
+      "validator_ok": true
+    },
+    {
+      "tag": "both_on_dense_256_after",
+      "validator_ok": true
+    },
+    {
+      "tag": "both_on_multi_512_after",
+      "validator_ok": true
+    }
+  ],
+  "local_elapsed_sec": {
+    "before_connector_only_dense_512_base": 49.21,
+    "after_connector_only_dense_512_base": 48.53,
+    "before_both_on_dense_512_base": 46.22,
+    "after_both_on_dense_512_base": 48.91,
+    "before_connector_only_dense_512_sampled": 47.73,
+    "after_connector_only_dense_512_sampled": 48.10,
+    "before_both_on_dense_512_sampled": 47.50,
+    "after_both_on_dense_512_sampled": 48.38,
+    "before_both_on_multi_512_sampled": 8.17,
+    "after_both_on_multi_512_sampled": 8.41
+  },
+  "after_sampled_aggregate_ms": {
+    "boundary_seed_bootstrap_and_refresh": 1.177,
+    "previous_state_scalar_materialize_and_pack": 25.275,
+    "carry_reuse_check_and_hit_fast_path": 25.851,
+    "carry_invalidation_and_reseed_fallback": 0.291
+  },
+  "release_observed": {
+    "after_both_on_multi_1024_release": {
+      "validator_ok": true,
+      "elapsed_sec": 35.13
+    },
+    "after_both_on_dense_1024_release": {
+      "status": "in_progress_lost_on_reset"
+    }
+  },
+  "current_reconstructed_conclusion": "next pivot after prev-state round: carry reuse check and hit fast path"
+}

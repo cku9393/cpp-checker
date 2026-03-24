@@ -1,0 +1,63 @@
+case=exhaustive
+family=split_tie_ready
+cluster_key=e2cd9a247ef2475
+category=harmless_multiclass
+admissible_pair_count=6
+semantic_class_count=4
+representative_shifted=0
+fast_selected_pair=2,6
+exact_shadow_selected_pair=2,8
+exact_full_selected_pair=2,8
+stop_condition_divergence=0
+final_state_divergence=0
+scenario_label=split_tie_ready_seed882396
+witness_state=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase13_explicit3/exhaustive_split_tie_ready/logs/multiclass_catalog/exhaustive_e2cd9a247ef2475.state.txt
+selected_pair=2,8
+fast_selected_pair=2,6
+policy_selected_pair=2,8
+exact_shadow_selected_pair=2,8
+exact_full_selected_pair=2,8
+exact_representative_pair=2,8
+admissible_pair_count=6
+compared_pair_count=6
+fully_equivalent_count=1
+same_stop_different_final_state_count=1
+semantic_mismatch_count=4
+selected_equivalence_class_size=1
+max_equivalence_class_size=1
+selected_pair_representative=1
+exact_audit_available=1
+fast_class_count=4
+exact_class_count=4
+exact_vs_fast_class_disagreement_count=0
+representative_shift_count=0
+representative_shift_same_class_count=0
+representative_shift_semantic_divergence_count=0
+representative_shift_followup_divergence_count=0
+representative_shift_trace_divergence_count=0
+harmless_shift_count=0
+trace_only_shift_count=0
+semantic_shift_count=0
+representative_shift_kind=none
+representative_shifted=0
+exact_representative_selected=1
+split_choice_compare_state_count=1
+split_choice_exact_shadow_eval_count=6
+split_choice_exact_full_eval_count=6
+split_choice_fallback_count=0
+split_choice_same_representative_count=1
+split_choice_same_semantic_class_count=1
+split_choice_same_final_state_count=1
+split_choice_semantic_disagreement_count=0
+split_choice_cap_hit_count=0
+split_choice_harmless_compare_count=0
+split_choice_trace_only_compare_count=0
+split_choice_exact_shadow_vs_exact_full_shifted=0
+split_choice_exact_shadow_vs_exact_full_shift_kind=none
+multiclass_catalog_key=af486829c893d1f
+pair=2,6 selected=0 fast_selected=1 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=same_stop_different_final_state stop=1 final=2c74cbeb43d31689 target_prepare=44ea7ab95f9d7f47 trace=47fe0d7eaf8e51e3 fast_class=4e7660b8556d2320 exact_class=b4aa6141e9e52a07
+pair=2,8 selected=1 fast_selected=0 policy_selected=1 exact_shadow_selected=1 exact_full_selected=1 grade=fully_equivalent stop=1 final=c136187719cdaaef target_prepare=44ea7ab95f9d7f47 trace=47fe0d7eaf8e51e3 fast_class=d171a7116829d414 exact_class=2ab5245535b59a55
+pair=4,6 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=389d936868aebdb target_prepare=44ea7ab95f9d7f47 trace=47fe0d7eaf8e51e3 fast_class=d551223d94615c0d exact_class=c748f14c77b5b8d5
+pair=4,8 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=8f3555ee2018660d target_prepare=44ea7ab95f9d7f47 trace=47fe0d7eaf8e51e3 fast_class=4e7660b8556d2320 exact_class=b4aa6141e9e52a07
+pair=4,3420 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=435c7ac41983cbca target_prepare=44ea7ab95f9d7f47 trace=47fe0d7eaf8e51e3 fast_class=a38c5be1eac8800b exact_class=7e623cb1a1c0795c
+pair=6,3420 selected=0 fast_selected=0 policy_selected=0 exact_shadow_selected=0 exact_full_selected=0 grade=semantic_mismatch stop=1 final=af5af0b2700b0d5a target_prepare=44ea7ab95f9d7f47 trace=47fe0d7eaf8e51e3 fast_class=a38c5be1eac8800b exact_class=7e623cb1a1c0795c

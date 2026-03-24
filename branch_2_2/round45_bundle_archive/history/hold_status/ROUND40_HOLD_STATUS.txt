@@ -1,0 +1,5 @@
+round40 status: hold
+fresh current-pass execution not completed for the user-requested round40 task.
+requested start zip round39_dense_decomposeseries_hold.zip was not present in /mnt/data during this attempt.
+this zip is baseline-equivalent and packaged only as a hold bundle with status note.
+latest retained diagnostic evidence remains the round39 dense decomposeSeries artifacts.

@@ -4,12 +4,17 @@
 #include "harness/project_hooks.hpp"
 
 #include <algorithm>
+#include <cctype>
+#include <cstdio>
 #include <exception>
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <queue>
 #include <sstream>
+#include <sys/wait.h>
 #include <tuple>
+#include <unistd.h>
 
 bool validateRawSpqrDecomp(const harness::CompactGraph &,
                            const harness::RawSpqrDecomp &,
@@ -22,6 +27,15 @@ void normalizeWholeMiniCore(harness::StaticMiniCore &);
 bool buildDummyActualCoreEnvelope(const harness::CompactGraph &,
                                   harness::DummyActualEnvelope &,
                                   std::string &);
+bool buildDummyActualCoreEnvelopeWithSubphaseSnapshots(
+    const harness::CompactGraph &,
+    harness::DummyActualEnvelope &,
+    harness::MaterializeCoreSubphaseSnapshot *,
+    harness::MaterializeCoreSubphaseSnapshot *,
+    harness::MaterializeCoreSubphaseSnapshot *,
+    harness::MaterializeCoreSubphaseSnapshot *,
+    harness::MaterializeCoreSubphaseSnapshot *,
+    std::string &);
 bool chooseKeepMiniNode(const harness::StaticMiniCore &,
                         int &,
                         std::string &);
@@ -39,6 +53,18 @@ namespace harness {
 namespace {
 
 void dumpCompactBCResult(const CompactBCResult &bc, std::ostream &os);
+
+struct OgdfRawCrashReplaySession {
+    bool active = false;
+    bool captured = false;
+    bool stopBeforeOgdf = false;
+    bool runChild = true;
+    std::string dumpDir;
+    OgdfRawCrashReplayBundle *bundle = nullptr;
+    CrashReplayContext currentContext;
+};
+
+thread_local OgdfRawCrashReplaySession gOgdfRawCrashReplaySession;
 
 bool fail(std::string &why, const std::string &msg) {
     why = msg;
@@ -71,6 +97,174 @@ bool failTree(std::string &why,
     return fail(why, oss.str());
 }
 
+std::string sanitizePathComponentForCrashReplay(std::string value) {
+    for (char &ch : value) {
+        const unsigned char uch = static_cast<unsigned char>(ch);
+        if ((uch >= 'a' && uch <= 'z') ||
+            (uch >= 'A' && uch <= 'Z') ||
+            (uch >= '0' && uch <= '9')) {
+            continue;
+        }
+        ch = '_';
+    }
+    return value;
+}
+
+std::string summarizeCompactGraphCanonicalForCrashReplay(const CompactGraph &H) {
+    std::map<std::tuple<int, int, int>, int> multiplicity;
+    int selfLoopCount = 0;
+    for (const auto &edge : H.edges) {
+        VertexId u = -1;
+        VertexId v = -1;
+        if (edge.a >= 0 && edge.a < static_cast<int>(H.origOfCv.size())) {
+            u = H.origOfCv[edge.a];
+        }
+        if (edge.b >= 0 && edge.b < static_cast<int>(H.origOfCv.size())) {
+            v = H.origOfCv[edge.b];
+        }
+        const auto [cu, cv] = canonPole(u, v);
+        if (cu == cv) ++selfLoopCount;
+        ++multiplicity[std::make_tuple(static_cast<int>(edge.kind), cu, cv)];
+    }
+
+    std::ostringstream oss;
+    oss << "vertices=" << H.origOfCv.size()
+        << " edges=" << H.edges.size()
+        << " selfLoops=" << selfLoopCount
+        << " multiplicity=[";
+    bool first = true;
+    for (const auto &[key, count] : multiplicity) {
+        if (!first) oss << ';';
+        first = false;
+        oss << (std::get<0>(key) == static_cast<int>(CompactEdgeKind::REAL) ? "REAL" : "PROXY")
+            << ":(" << std::get<1>(key) << "," << std::get<2>(key) << ")x" << count;
+    }
+    oss << "]";
+    return oss.str();
+}
+
+void resetOgdfRawCrashReplaySession() {
+    gOgdfRawCrashReplaySession = {};
+}
+
+void setOgdfRawCrashReplaySourceSide(const std::string &sourceSide) {
+    if (!gOgdfRawCrashReplaySession.active) return;
+    gOgdfRawCrashReplaySession.currentContext.sourceSide = sourceSide;
+}
+
+void setOgdfRawCrashReplayStepContext(int stepIndex,
+                                      int chosenR,
+                                      int chosenX,
+                                      const std::string &phaseTag) {
+    if (!gOgdfRawCrashReplaySession.active) return;
+    gOgdfRawCrashReplaySession.currentContext.stepIndex = stepIndex;
+    gOgdfRawCrashReplaySession.currentContext.chosenR = chosenR;
+    gOgdfRawCrashReplaySession.currentContext.chosenX = chosenX;
+    gOgdfRawCrashReplaySession.currentContext.phaseTag = phaseTag;
+}
+
+std::string makeOgdfRawCrashReplayCompactDumpPath(const OgdfRawCrashReplayBundle &bundle,
+                                                  const std::string &dumpDir,
+                                                  const std::string &callSiteTag) {
+    std::ostringstream oss;
+    oss << dumpDir << "/compact_"
+        << sanitizePathComponentForCrashReplay(bundle.sourceSide.empty()
+                                                   ? ogdfRawCrashReplaySourceKindName(
+                                                         bundle.requestedSource)
+                                                   : bundle.sourceSide)
+        << "_" << sanitizePathComponentForCrashReplay(callSiteTag)
+        << "_seed" << bundle.seed
+        << "_tc" << bundle.tcIndex;
+    if (bundle.stepIndex >= 0) {
+        oss << "_step" << bundle.stepIndex;
+    } else if (bundle.targetStep.has_value()) {
+        oss << "_step" << *bundle.targetStep;
+    }
+    oss << "_" << sanitizePathComponentForCrashReplay(bundle.caseName) << ".txt";
+    return oss.str();
+}
+
+void captureOgdfRawCrashReplayCompactState(const char *callSiteTag,
+                                           const char *phaseTag,
+                                           const CompactGraph &H) {
+    if (!gOgdfRawCrashReplaySession.active || gOgdfRawCrashReplaySession.bundle == nullptr) {
+        return;
+    }
+
+    auto &session = gOgdfRawCrashReplaySession;
+    auto &bundle = *session.bundle;
+    bundle.sourceSide = session.currentContext.sourceSide;
+    bundle.callSiteTag = callSiteTag ? callSiteTag : "UNKNOWN_CALLSITE";
+    bundle.phaseTag = phaseTag ? phaseTag : "UNKNOWN_PHASE";
+    bundle.stepIndex = session.currentContext.stepIndex;
+    bundle.chosenR = session.currentContext.chosenR;
+    bundle.chosenX = session.currentContext.chosenX;
+    bundle.compactGraphRaw = H;
+    bundle.compactGraphCanonicalSummary = summarizeCompactGraphCanonicalForCrashReplay(H);
+    std::string precheckWhy;
+    if (!buildCompactPrecheckSummary(H, bundle.precheckSummary, precheckWhy) &&
+        bundle.notes.empty()) {
+        bundle.notes = "precheck summary failed: " + precheckWhy;
+    }
+    bundle.compactGraphDumpPath =
+        makeOgdfRawCrashReplayCompactDumpPath(bundle, session.dumpDir, bundle.callSiteTag);
+    std::string dumpWhy;
+    if (!dumpCompactGraphForCrashReplay(H, bundle.compactGraphDumpPath, dumpWhy)) {
+        if (!bundle.notes.empty()) bundle.notes += " | ";
+        bundle.notes += "compact dump failed: " + dumpWhy;
+    }
+}
+
+bool buildRawMaybeInterceptForCrashReplay(const char *callSiteTag,
+                                          const CompactGraph &H,
+                                          RawSpqrDecomp &raw,
+                                          std::string &err) {
+    OgdfRawSpqrBackend backend;
+    if (!gOgdfRawCrashReplaySession.active || gOgdfRawCrashReplaySession.bundle == nullptr ||
+        gOgdfRawCrashReplaySession.captured) {
+        return backend.buildRaw(H, raw, err);
+    }
+
+    auto &session = gOgdfRawCrashReplaySession;
+    auto &bundle = *session.bundle;
+    captureOgdfRawCrashReplayCompactState(callSiteTag, "BEFORE_BUILDRAW", H);
+
+    if (session.stopBeforeOgdf) {
+        session.captured = true;
+        bundle.topLevelOk = true;
+        bundle.crashWhy = "ogdf-raw-crash-replay: stopped before buildRaw";
+        err = bundle.crashWhy;
+        return false;
+    }
+
+    if (session.runChild) {
+        ChildRunResult child;
+        std::string childWhy;
+        if (!runOgdfBuildRawInChild(H, child, childWhy)) {
+            bundle.topLevelOk = false;
+            bundle.crashWhy = childWhy;
+            err = childWhy;
+            return false;
+        }
+        bundle.childExitCode = child.childExitCode;
+        bundle.childSignal = child.childSignal;
+        bundle.crashed = child.crashed;
+        bundle.crashWhy = child.childWhy;
+        if (child.crashed || child.childExitCode != 0) {
+            session.captured = true;
+            bundle.topLevelOk = true;
+            err = bundle.crashWhy.empty()
+                      ? "ogdf-raw-crash-replay: child run failed"
+                      : bundle.crashWhy;
+            return false;
+        }
+        if (!bundle.notes.empty()) bundle.notes += " | ";
+        bundle.notes += "probe-ok:" + bundle.callSiteTag;
+    }
+
+    return backend.buildRaw(H, raw, err);
+}
+
 bool failInput(std::string &why,
                int inputId,
                const std::string &msg) {
@@ -78,6 +272,14 @@ bool failInput(std::string &why,
     oss << "ProjectRawSnapshot input edge " << inputId << ": " << msg;
     return fail(why, oss.str());
 }
+
+bool buildBaselineOracleCoreFromExplicit(const ExplicitBlockGraph &G,
+                                         ReducedSPQRCore &core,
+                                         std::string &why);
+
+bool buildCompactGraphFromExplicitForDiagnostics(const ExplicitBlockGraph &G,
+                                                 CompactGraph &H,
+                                                 std::string &why);
 
 bool buildWholeCoreForSequenceTesting(const ExplicitBlockGraph &G,
                                       ReducedSPQRCore &core,
@@ -136,6 +338,29 @@ bool buildWholeCoreForSequenceTesting(const ExplicitBlockGraph &G,
     }
     root.subAgg = root.localAgg;
     core.totalAgg = root.localAgg;
+
+    int aliveNodeCount = 0;
+    int aliveArcCount = 0;
+    for (const auto &node : core.nodes) {
+        if (node.alive) ++aliveNodeCount;
+    }
+    for (const auto &arc : core.arcs) {
+        if (arc.alive) ++aliveArcCount;
+    }
+
+    // Preserve the mini-derived node type only for the narrow single-node/zero-arc case.
+    if (aliveNodeCount == 1 && aliveArcCount == 0) {
+        std::string preserveWhy;
+        CompactGraph compact;
+        if (buildCompactGraphFromExplicitForDiagnostics(G, compact, preserveWhy)) {
+            if (!preserveSingleNodeZeroArcCoreTypeFromMini(compact, core, preserveWhy) &&
+                gOgdfRawCrashReplaySession.captured) {
+                why = preserveWhy;
+                return false;
+            }
+        }
+    }
+
     why.clear();
     return true;
 }
@@ -146,11 +371,24 @@ enum class SequenceFixpointChooseStatus : uint8_t {
     ERROR
 };
 
-SequenceFixpointChooseStatus chooseDeterministicSequenceRewriteTargetForFixpoint(
+namespace {
+
+struct FixpointTargetCandidateInternal {
+    NodeId rNode = -1;
+    VertexId x = -1;
+    int scorePrimary = 0;
+    int scoreSecondary = 0;
+};
+
+bool collectFixpointTargetCandidatesInternal(
     const ReducedSPQRCore &core,
+    std::vector<NodeId> &aliveRNodes,
+    std::vector<FixpointTargetCandidateInternal> &candidates,
     NodeId &chosenR,
     VertexId &chosenX,
     std::string &why) {
+    aliveRNodes.clear();
+    candidates.clear();
     chosenR = -1;
     chosenX = -1;
     why.clear();
@@ -158,36 +396,66 @@ SequenceFixpointChooseStatus chooseDeterministicSequenceRewriteTargetForFixpoint
     for (NodeId nodeId = 0; nodeId < static_cast<NodeId>(core.nodes.size()); ++nodeId) {
         const auto &node = core.nodes[nodeId];
         if (!node.alive || node.type != SPQRType::R_NODE) continue;
+        aliveRNodes.push_back(nodeId);
 
         std::unordered_map<VertexId, int> realCountByVertex;
         for (const auto &slot : node.slots) {
             if (!slot.alive || slot.isVirtual) continue;
             if (slot.poleA < 0 || slot.poleB < 0) {
                 why = "chooseDeterministicSequenceRewriteTarget: invalid REAL slot pole";
-                return SequenceFixpointChooseStatus::ERROR;
+                return false;
             }
             ++realCountByVertex[slot.poleA];
             if (slot.poleB != slot.poleA) ++realCountByVertex[slot.poleB];
         }
 
-        VertexId bestX = -1;
-        int bestCount = -1;
+        std::vector<std::pair<VertexId, int>> nodeCandidates;
+        nodeCandidates.reserve(realCountByVertex.size());
         for (const auto &[vertex, count] : realCountByVertex) {
             if (count < 2) continue;
-            if (count > bestCount || (count == bestCount && (bestX < 0 || vertex < bestX))) {
-                bestX = vertex;
-                bestCount = count;
-            }
+            nodeCandidates.push_back({vertex, count});
+        }
+        std::sort(nodeCandidates.begin(),
+                  nodeCandidates.end(),
+                  [](const auto &lhs, const auto &rhs) {
+                      if (lhs.second != rhs.second) return lhs.second > rhs.second;
+                      return lhs.first < rhs.first;
+                  });
+
+        for (const auto &[vertex, count] : nodeCandidates) {
+            candidates.push_back(FixpointTargetCandidateInternal{
+                .rNode = nodeId,
+                .x = vertex,
+                .scorePrimary = count,
+                .scoreSecondary = -vertex,
+            });
         }
 
-        if (bestX >= 0) {
+        if (chosenR < 0 && !nodeCandidates.empty()) {
             chosenR = nodeId;
-            chosenX = bestX;
-            return SequenceFixpointChooseStatus::FOUND;
+            chosenX = nodeCandidates.front().first;
         }
     }
 
-    return SequenceFixpointChooseStatus::NONE;
+    return true;
+}
+
+} // namespace
+
+SequenceFixpointChooseStatus chooseDeterministicSequenceRewriteTargetForFixpoint(
+    const ReducedSPQRCore &core,
+    NodeId &chosenR,
+    VertexId &chosenX,
+    std::string &why) {
+    std::vector<NodeId> aliveRNodes;
+    std::vector<FixpointTargetCandidateInternal> candidates;
+    if (!collectFixpointTargetCandidatesInternal(
+            core, aliveRNodes, candidates, chosenR, chosenX, why)) {
+        return SequenceFixpointChooseStatus::ERROR;
+    }
+
+    return chosenR >= 0 ? SequenceFixpointChooseStatus::FOUND
+                        : SequenceFixpointChooseStatus::NONE;
 }
 
 bool validNodeId(const ProjectRawSnapshot &snap, int nodeId) {
@@ -522,6 +790,74 @@ void canonicalizeExplicitGraph(ExplicitBlockGraph &graph) {
 bool shouldFallbackToWholeCoreRebuild(const std::string &why) {
     return why.find("S skeleton must have at least 3 edges") != std::string::npos ||
            why.find("not biconnected") != std::string::npos;
+}
+
+CanonicalExplicitGraph canonicalizeExplicitForCompareInternal(const ExplicitBlockGraph &G) {
+    CanonicalExplicitGraph out;
+    out.edges.reserve(G.edges.size());
+    for (const auto &edge : G.edges) {
+        out.edges.emplace_back(edge.id, std::min(edge.u, edge.v), std::max(edge.u, edge.v));
+    }
+
+    std::sort(out.edges.begin(), out.edges.end());
+    out.edges.erase(std::unique(out.edges.begin(), out.edges.end()), out.edges.end());
+
+    out.vertices.reserve(out.edges.size() * 2);
+    for (const auto &[edgeId, u, v] : out.edges) {
+        (void)edgeId;
+        out.vertices.push_back(u);
+        out.vertices.push_back(v);
+    }
+    std::sort(out.vertices.begin(), out.vertices.end());
+    out.vertices.erase(std::unique(out.vertices.begin(), out.vertices.end()),
+                       out.vertices.end());
+    if (out.edges.empty()) {
+        out.vertices.clear();
+    }
+    return out;
+}
+
+namespace {
+
+std::string formatCanonicalExplicitForCompare(const CanonicalExplicitGraph &G) {
+    std::ostringstream oss;
+    oss << "edges[";
+    for (size_t i = 0; i < G.edges.size(); ++i) {
+        if (i != 0) oss << ", ";
+        const auto &[edgeId, u, v] = G.edges[i];
+        oss << '(' << edgeId << ',' << u << ',' << v << ')';
+    }
+    oss << "] vertices[";
+    for (size_t i = 0; i < G.vertices.size(); ++i) {
+        if (i != 0) oss << ", ";
+        oss << G.vertices[i];
+    }
+    oss << ']';
+    return oss.str();
+}
+
+} // namespace
+
+bool areCanonicalExplicitEqualInternal(const ExplicitBlockGraph &A,
+                                       const ExplicitBlockGraph &B,
+                                       std::string &why) {
+    const CanonicalExplicitGraph lhs = canonicalizeExplicitForCompareInternal(A);
+    const CanonicalExplicitGraph rhs = canonicalizeExplicitForCompareInternal(B);
+    if (lhs.edges != rhs.edges || lhs.vertices != rhs.vertices) {
+        why = "canonical explicit mismatch: expected " +
+              formatCanonicalExplicitForCompare(lhs) + " got " +
+              formatCanonicalExplicitForCompare(rhs);
+        return false;
+    }
+
+    ProjectHarnessOps ops;
+    std::string rawWhy;
+    if (!ops.checkEquivalentExplicitGraphs(A, B, rawWhy)) {
+        why = "canonical explicit equal; raw vertex-only difference ignored";
+    } else {
+        why.clear();
+    }
+    return true;
 }
 
 struct RewriteRCaseContext {
@@ -5138,6 +5474,32 @@ const char *selfLoopBuildFailSubtypeName(SelfLoopBuildFailSubtype subtype) {
     return "SL_OTHER";
 }
 
+const char *compactDispatchKindName(CompactDispatchKind kind) {
+    switch (kind) {
+        case CompactDispatchKind::CDK_DIRECT_SPQR_READY:
+            return "CDK_DIRECT_SPQR_READY";
+        case CompactDispatchKind::CDK_TINY_ONE_EDGE:
+            return "CDK_TINY_ONE_EDGE";
+        case CompactDispatchKind::CDK_TINY_TWO_PATH:
+            return "CDK_TINY_TWO_PATH";
+        case CompactDispatchKind::CDK_NB_SINGLE_CUT_TWO_BLOCKS:
+            return "CDK_NB_SINGLE_CUT_TWO_BLOCKS";
+        case CompactDispatchKind::CDK_NB_PATH_OF_BLOCKS:
+            return "CDK_NB_PATH_OF_BLOCKS";
+        case CompactDispatchKind::CDK_SELFLOOP_SPQR_READY:
+            return "CDK_SELFLOOP_SPQR_READY";
+        case CompactDispatchKind::CDK_SELFLOOP_ONE_EDGE:
+            return "CDK_SELFLOOP_ONE_EDGE";
+        case CompactDispatchKind::CDK_WHOLE_CORE_FALLBACK:
+            return "CDK_WHOLE_CORE_FALLBACK";
+        case CompactDispatchKind::CDK_UNHANDLED:
+            return "CDK_UNHANDLED";
+        case CompactDispatchKind::COUNT:
+            return "COUNT";
+    }
+    return "CDK_UNHANDLED";
+}
+
 const char *selfLoopRemainderOtherNBSubtypeName(SelfLoopRemainderOtherNBSubtype subtype) {
     switch (subtype) {
         case SelfLoopRemainderOtherNBSubtype::SLNB_DISCONNECTED:
@@ -7832,10 +8194,12 @@ bool buildSequenceMiniForSelfLoopRemainderSpqrReady(const CompactGraph &Hfull,
         return false;
     }
 
-    OgdfRawSpqrBackend backend;
     RawSpqrDecomp raw;
     std::string err;
-    if (!backend.buildRaw(stripped.Hrem, raw, err)) {
+    if (!buildRawMaybeInterceptForCrashReplay("SELF_LOOP_REMAINDER_SPQR_READY",
+                                              stripped.Hrem,
+                                              raw,
+                                              err)) {
         why = "self-loop remainder spqr-ready: backend.buildRaw failed: " +
               (err.empty() ? std::string("raw backend failed") : err);
         return false;
@@ -8142,10 +8506,12 @@ bool buildSequenceMiniForXSharedSpqrReady(const CompactGraph &Hafter,
                         : "x-shared spqr-ready: " + readyWhy);
     }
 
-    OgdfRawSpqrBackend backend;
     RawSpqrDecomp raw;
     std::string err;
-    if (!backend.buildRaw(Hafter, raw, err)) {
+    if (!buildRawMaybeInterceptForCrashReplay("XSHARED_SPQR_READY",
+                                              Hafter,
+                                              raw,
+                                              err)) {
         why = "x-shared spqr-ready: backend.buildRaw failed: " +
               (err.empty() ? std::string("raw backend failed") : err);
         return false;
@@ -10885,6 +11251,59 @@ bool rebuildWholeCoreFromExplicit(const ExplicitBlockGraph &G,
     return true;
 }
 
+ExplicitOracleInputSubtype classifyExplicitOracleInput(const ExplicitBlockGraph &G) {
+    return G.edges.empty() ? ExplicitOracleInputSubtype::EOI_EMPTY
+                           : ExplicitOracleInputSubtype::EOI_NONEMPTY;
+}
+
+bool buildCanonicalEmptyOracleCore(ReducedSPQRCore &out, std::string &why) {
+    out = {};
+    out.nodes.clear();
+    out.arcs.clear();
+    out.ownerNodeOfRealEdge.clear();
+    out.ownerSlotOfRealEdge.clear();
+    out.occ.clear();
+    out.totalAgg = {};
+    out.root = -1;
+    out.blockId = -1;
+
+    for (const auto &node : out.nodes) {
+        if (node.alive) {
+            why = "oracle empty core: expected no alive nodes/arcs";
+            return false;
+        }
+    }
+    for (const auto &arc : out.arcs) {
+        if (arc.alive) {
+            why = "oracle empty core: expected no alive nodes/arcs";
+            return false;
+        }
+    }
+
+    ProjectHarnessOps ops;
+    const ExplicitBlockGraph explicitEmpty = ops.materializeWholeCoreExplicit(out);
+    if (!explicitEmpty.edges.empty()) {
+        why = "oracle empty materialize: expected zero edges";
+        return false;
+    }
+
+    why.clear();
+    return true;
+}
+
+namespace {
+
+bool buildBaselineOracleCoreFromExplicit(const ExplicitBlockGraph &G,
+                                         ReducedSPQRCore &core,
+                                         std::string &why) {
+    if (classifyExplicitOracleInput(G) == ExplicitOracleInputSubtype::EOI_EMPTY) {
+        return buildCanonicalEmptyOracleCore(core, why);
+    }
+    return buildWholeCoreForSequenceTesting(G, core, why);
+}
+
+} // namespace
+
 bool rebuildWholeCoreAfterDeletingX(ReducedSPQRCore &core,
                                     VertexId x,
                                     std::string &why) {
@@ -10905,7 +11324,7 @@ bool rebuildWholeCoreAfterDeletingX(ReducedSPQRCore &core,
 bool buildWholeCoreForTesting(const ExplicitBlockGraph &G,
                               ReducedSPQRCore &core,
                               std::string &why) {
-    return buildWholeCoreForSequenceTesting(G, core, why);
+    return buildBaselineOracleCoreFromExplicit(G, core, why);
 }
 
 SequenceChooseStatus chooseDeterministicSequenceRewriteTarget(
@@ -10990,6 +11409,7 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
         ReducedSPQRCore after = core;
 
         setRewriteRSequenceStepContext(step, step + 1);
+        setOgdfRawCrashReplayStepContext(step + 1, chosenR, chosenX, "BEFORE_REWRITE");
         const uint64_t seqFallbacksBefore =
             getRewriteRStats().seqRewriteWholeCoreFallbackCount;
         setRewriteRSequenceMode(true);
@@ -11092,7 +11512,7 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
         }
 
         flushSequenceDeferredSameTypeSPDump(after);
-        const ExplicitBlockGraph explicitAfter = ops.materializeWholeCoreExplicit(after);
+        ExplicitBlockGraph explicitAfter = ops.materializeWholeCoreExplicit(after);
 
         if (!ops.checkActualReducedInvariant(after, nullptr, why)) {
             noteRewriteRWeakRepairCommitOutcome(
@@ -11114,6 +11534,46 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
                                  nullptr);
         }
 
+        if (!maybeResyncSolverCoreFromShadow(after, stats, step + 1, why)) {
+            return recordFailure(HarnessStage::SEQ_CHOOSE_RX_FAIL,
+                                 "maybeResyncSolverCoreFromShadow",
+                                 why,
+                                 step,
+                                 step + 1,
+                                 chosenR,
+                                 chosenX,
+                                 &core,
+                                 &after,
+                                 &explicitBefore,
+                                 &explicitAfter,
+                                 nullptr,
+                                 nullptr);
+        }
+
+        explicitAfter = ops.materializeWholeCoreExplicit(after);
+
+        std::string handoffResyncWhy;
+        const bool handoffResynced = attemptSolverShadowResyncAfterHandoff(
+            after, explicitAfter, step + 1, stats, handoffResyncWhy);
+        if (!handoffResynced && !handoffResyncWhy.empty()) {
+            return recordFailure(HarnessStage::SEQ_CHOOSE_RX_FAIL,
+                                 "attemptSolverShadowResyncAfterHandoff",
+                                 handoffResyncWhy,
+                                 step,
+                                 step + 1,
+                                 chosenR,
+                                 chosenX,
+                                 &core,
+                                 &after,
+                                 &explicitBefore,
+                                 &explicitAfter,
+                                 nullptr,
+                                 nullptr);
+        }
+        if (handoffResynced) {
+            explicitAfter = ops.materializeWholeCoreExplicit(after);
+        }
+
         NodeId nextR = -1;
         VertexId nextX = -1;
         const SequenceFixpointChooseStatus nextChooseStatus =
@@ -11133,8 +11593,56 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
                                  nullptr,
                                  nullptr);
         }
+
+        SequenceFixpointChooseStatus effectiveNextChooseStatus = nextChooseStatus;
+        if (effectiveNextChooseStatus == SequenceFixpointChooseStatus::NONE) {
+            std::string resyncWhy;
+            const bool resynced =
+                attemptSolverShadowResyncBeforeTerminate(after, step + 1, stats, resyncWhy);
+            if (!resynced && !resyncWhy.empty()) {
+                return recordFailure(HarnessStage::SEQ_CHOOSE_RX_FAIL,
+                                     "attemptSolverShadowResyncBeforeTerminate",
+                                     resyncWhy,
+                                     step,
+                                     step + 1,
+                                     chosenR,
+                                     chosenX,
+                                     &core,
+                                     &after,
+                                     &explicitBefore,
+                                     &explicitAfter,
+                                     nullptr,
+                                     nullptr);
+            }
+            if (resynced) {
+                explicitAfter = ops.materializeWholeCoreExplicit(after);
+                const SequenceFixpointChooseStatus resyncChooseStatus =
+                    chooseDeterministicSequenceRewriteTargetForFixpoint(after,
+                                                                        nextR,
+                                                                        nextX,
+                                                                        why);
+                if (resyncChooseStatus == SequenceFixpointChooseStatus::ERROR) {
+                    return recordFailure(
+                        HarnessStage::SEQ_CHOOSE_RX_FAIL,
+                        "chooseDeterministicSequenceRewriteTarget(after resync before terminate)",
+                        why,
+                        step,
+                        step + 1,
+                        chosenR,
+                        chosenX,
+                        &core,
+                        &after,
+                        &explicitBefore,
+                        &explicitAfter,
+                        nullptr,
+                        nullptr);
+                }
+                effectiveNextChooseStatus = resyncChooseStatus;
+            }
+        }
+
         if (explicitAfter.edges.size() >= explicitBefore.edges.size() &&
-            nextChooseStatus == SequenceFixpointChooseStatus::FOUND) {
+            effectiveNextChooseStatus == SequenceFixpointChooseStatus::FOUND) {
             return recordFailure(
                 HarnessStage::SEQ_PROGRESS_STUCK,
                 "sequence progress check",
@@ -11197,8 +11705,9 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
                                             {});
         core = std::move(after);
         stats.completedSteps = step + 1;
-        if (nextChooseStatus == SequenceFixpointChooseStatus::NONE) {
+        if (effectiveNextChooseStatus == SequenceFixpointChooseStatus::NONE) {
             stats.reachedFixpoint = true;
+            stats.success = true;
             why.clear();
             return true;
         }
@@ -11219,6 +11728,7971 @@ bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
         nullptr,
         nullptr,
         nullptr);
+}
+
+namespace {
+
+struct BaselineInvariantDiagnostics {
+    std::optional<NodeId> firstFailingNodeId;
+    SolverBaselineInvariantKind kind = SolverBaselineInvariantKind::NONE;
+    std::vector<NodeId> deadRelayCandidateNodes;
+    bool sameTypeSPPresent = false;
+    bool adjacencyMismatchPresent = false;
+    std::string detailedSubtype;
+};
+
+int countAliveNodesActual(const ReducedSPQRCore &core) {
+    int aliveNodeCount = 0;
+    for (const auto &node : core.nodes) {
+        if (node.alive) ++aliveNodeCount;
+    }
+    return aliveNodeCount;
+}
+
+std::vector<NodeId> collectDeadRelayCandidateNodesActual(const ReducedSPQRCore &core) {
+    std::vector<NodeId> candidates;
+    std::vector<int> liveRealSlotCount(core.nodes.size(), 0);
+    std::vector<int> liveArcDegree(core.nodes.size(), 0);
+
+    for (NodeId nodeId = 0; nodeId < static_cast<NodeId>(core.nodes.size()); ++nodeId) {
+        if (!validActualNodeId(core, nodeId) || !core.nodes[nodeId].alive) continue;
+        for (const auto &slot : core.nodes[nodeId].slots) {
+            if (!slot.alive || slot.isVirtual) continue;
+            ++liveRealSlotCount[nodeId];
+        }
+    }
+
+    for (ArcId arcId = 0; arcId < static_cast<ArcId>(core.arcs.size()); ++arcId) {
+        if (!validActualArcId(core, arcId) || !core.arcs[arcId].alive) continue;
+        ++liveArcDegree[core.arcs[arcId].a];
+        ++liveArcDegree[core.arcs[arcId].b];
+    }
+
+    for (NodeId nodeId = 0; nodeId < static_cast<NodeId>(core.nodes.size()); ++nodeId) {
+        if (!validActualNodeId(core, nodeId) || !core.nodes[nodeId].alive) continue;
+        if (liveRealSlotCount[nodeId] == 0 && liveArcDegree[nodeId] <= 2) {
+            candidates.push_back(nodeId);
+        }
+    }
+    return candidates;
+}
+
+BaselineInvariantDiagnostics analyzeBaselineInvariantState(
+    const ReducedSPQRCore &core,
+    const std::string &actualInvariantWhy) {
+    BaselineInvariantDiagnostics diagnostics;
+    diagnostics.deadRelayCandidateNodes = collectDeadRelayCandidateNodesActual(core);
+
+    ArcId offendingArc = -1;
+    NodeId offendingA = -1;
+    NodeId offendingB = -1;
+    diagnostics.sameTypeSPPresent =
+        findForbiddenSameTypeSPAdjacencyActual(core, offendingArc, offendingA, offendingB);
+
+    std::string whyDetailed;
+    const auto postcheck = classifyPostcheckFailureDetailedImpl(core, whyDetailed);
+    diagnostics.adjacencyMismatchPresent = postcheck.adjMismatch;
+
+    int activeSignals = 0;
+    if (!diagnostics.deadRelayCandidateNodes.empty()) ++activeSignals;
+    if (diagnostics.sameTypeSPPresent) ++activeSignals;
+    if (diagnostics.adjacencyMismatchPresent) ++activeSignals;
+
+    if (!diagnostics.deadRelayCandidateNodes.empty() && activeSignals == 1) {
+        diagnostics.kind = SolverBaselineInvariantKind::DEAD_RELAY_ONLY;
+        diagnostics.firstFailingNodeId = diagnostics.deadRelayCandidateNodes.front();
+        diagnostics.detailedSubtype = "DEAD_RELAY_ONLY";
+    } else if (diagnostics.sameTypeSPPresent && activeSignals == 1) {
+        diagnostics.kind = SolverBaselineInvariantKind::SAME_TYPE_SP_ONLY;
+        if (offendingA >= 0) diagnostics.firstFailingNodeId = offendingA;
+        diagnostics.detailedSubtype =
+            whyDetailed.empty() ? "SAME_TYPE_SP_ONLY" : whyDetailed;
+    } else if (diagnostics.adjacencyMismatchPresent && activeSignals == 1) {
+        diagnostics.kind = SolverBaselineInvariantKind::ADJ_ONLY;
+        if (postcheck.firstAdjNode >= 0) diagnostics.firstFailingNodeId = postcheck.firstAdjNode;
+        diagnostics.detailedSubtype =
+            whyDetailed.empty() ? "ADJ_ONLY" : whyDetailed;
+    } else if (activeSignals >= 2) {
+        diagnostics.kind = SolverBaselineInvariantKind::MIXED;
+        if (!diagnostics.deadRelayCandidateNodes.empty()) {
+            diagnostics.firstFailingNodeId = diagnostics.deadRelayCandidateNodes.front();
+        } else if (offendingA >= 0) {
+            diagnostics.firstFailingNodeId = offendingA;
+        } else if (postcheck.firstAdjNode >= 0) {
+            diagnostics.firstFailingNodeId = postcheck.firstAdjNode;
+        }
+        diagnostics.detailedSubtype = "MIXED";
+    } else if (!actualInvariantWhy.empty()) {
+        diagnostics.kind = SolverBaselineInvariantKind::OTHER;
+        diagnostics.detailedSubtype = actualInvariantWhy;
+    }
+
+    return diagnostics;
+}
+
+std::vector<NodeId> collectBaselineReplayFocusNodes(
+    const ReducedSPQRCore &core,
+    const std::optional<NodeId> &chosenR,
+    const std::optional<NodeId> &failingNode,
+    const std::vector<NodeId> &deadRelayCandidateNodes = {}) {
+    std::vector<NodeId> nodes;
+    nodes.reserve(16);
+
+    const auto addNode = [&](NodeId nodeId) {
+        if (!validActualNodeId(core, nodeId) || !core.nodes[nodeId].alive) return;
+        if (std::find(nodes.begin(), nodes.end(), nodeId) == nodes.end()) {
+            nodes.push_back(nodeId);
+        }
+    };
+    const auto addNeighbors = [&](NodeId nodeId) {
+        if (!validActualNodeId(core, nodeId) || !core.nodes[nodeId].alive) return;
+        for (ArcId arcId : collectAuthoritativeLiveAdjArcs(core, nodeId)) {
+            if (!validActualArcId(core, arcId) || !core.arcs[arcId].alive) continue;
+            addNode(otherEndpointOfArc(core.arcs[arcId], nodeId));
+        }
+    };
+
+    addNode(core.root);
+    addNeighbors(core.root);
+    if (chosenR.has_value()) {
+        addNode(*chosenR);
+        addNeighbors(*chosenR);
+    }
+    if (failingNode.has_value()) {
+        addNode(*failingNode);
+        addNeighbors(*failingNode);
+    }
+    for (NodeId nodeId : deadRelayCandidateNodes) {
+        addNode(nodeId);
+    }
+
+    std::sort(nodes.begin(), nodes.end());
+    return nodes;
+}
+
+void appendBaselineReplayPhaseSnapshot(SolverBaselineReplayStepSnapshot &stepSnapshot,
+                                       SolverBaselineReplayPhase phase,
+                                       const ReducedSPQRCore &core,
+                                       const std::optional<NodeId> &chosenR,
+                                       const std::optional<NodeId> &failingNode,
+                                       const std::vector<NodeId> &deadRelayCandidateNodes = {}) {
+    ProjectHarnessOps ops;
+    SolverBaselineReplayPhaseSnapshot phaseSnapshot;
+    phaseSnapshot.phase = phase;
+    phaseSnapshot.aliveNodeCount = countAliveNodesActual(core);
+    phaseSnapshot.currentRoot =
+        (validActualNodeId(core, core.root) && core.nodes[core.root].alive) ? core.root : -1;
+    phaseSnapshot.currentExplicitEdgeCount =
+        static_cast<int>(ops.materializeWholeCoreExplicit(core).edges.size());
+    for (NodeId nodeId :
+         collectBaselineReplayFocusNodes(core,
+                                         chosenR,
+                                         failingNode,
+                                         deadRelayCandidateNodes)) {
+        phaseSnapshot.nodes.push_back(captureReplayNodeSnapshot(core, nodeId));
+    }
+    stepSnapshot.phaseSnapshots.push_back(std::move(phaseSnapshot));
+}
+
+bool runBaselineRewriteToFixpoint(ReducedSPQRCore &core,
+                                  std::string &why) {
+    constexpr int kMaxSequenceSteps = 64;
+
+    ProjectHarnessOps ops;
+    for (int step = 0; step < kMaxSequenceSteps; ++step) {
+        const ExplicitBlockGraph explicitBefore = ops.materializeWholeCoreExplicit(core);
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+        if (chooseStatus == SequenceChooseStatus::ERROR) {
+            return false;
+        }
+        if (chooseStatus == SequenceChooseStatus::NONE) {
+            why.clear();
+            return true;
+        }
+
+        ReducedSPQRCore after = core;
+        setOgdfRawCrashReplayStepContext(step + 1, chosenR, chosenX, "BEFORE_REWRITE");
+        setRewriteRSequenceMode(false);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+        setRewriteRSequenceMode(false);
+        if (!rewriteOk) {
+            return false;
+        }
+
+        if (!ops.normalizeTouchedRegion(after, why)) {
+            return false;
+        }
+
+        if (!ops.checkActualReducedInvariant(after, nullptr, why)) {
+            return false;
+        }
+
+        const ExplicitBlockGraph explicitAfter = ops.materializeWholeCoreExplicit(after);
+
+        ReducedSPQRCore oracle;
+        if (!buildBaselineOracleCoreFromExplicit(explicitAfter, oracle, why)) {
+            return false;
+        }
+        const ExplicitBlockGraph explicitExpected =
+            ops.materializeWholeCoreExplicit(oracle);
+        if (!ops.checkEquivalentExplicitGraphs(explicitAfter, explicitExpected, why)) {
+            return false;
+        }
+
+        NodeId nextR = -1;
+        VertexId nextX = -1;
+        const SequenceChooseStatus nextChooseStatus =
+            chooseDeterministicSequenceRewriteTarget(oracle, nextR, nextX, why);
+        if (nextChooseStatus == SequenceChooseStatus::ERROR) {
+            return false;
+        }
+        if (explicitExpected.edges.size() >= explicitBefore.edges.size() &&
+            nextChooseStatus == SequenceChooseStatus::FOUND) {
+            why =
+                "baseline rewrite solver made no edge-count progress while another rewrite target remains";
+            return false;
+        }
+
+        core = std::move(oracle);
+        if (nextChooseStatus == SequenceChooseStatus::NONE) {
+            why.clear();
+            return true;
+        }
+    }
+
+    why = "baseline rewrite solver reached maxSteps without exhausting rewrite targets";
+    return false;
+}
+
+} // namespace
+
+bool runSolverBaselineReplay(const ExplicitBlockGraph &input,
+                             SolverBaselineReplayBundle &bundle,
+                             std::string &why) {
+    constexpr int kMaxSequenceSteps = 64;
+
+    bundle.explicitInput = input;
+    bundle.debugTag = "baseline-rewrite-replay";
+    bundle.stepIndex.reset();
+    bundle.sequenceLengthSoFar.reset();
+    bundle.chosenR.reset();
+    bundle.chosenX.reset();
+    bundle.explicitBefore.reset();
+    bundle.actualBeforeRewrite.reset();
+    bundle.actualAfterRewrite.reset();
+    bundle.actualAfterNormalize.reset();
+    bundle.actualInvariantOk.reset();
+    bundle.actualInvariantWhy.clear();
+    bundle.actualInvariantDetailedSubtype.clear();
+    bundle.explicitAfter.reset();
+    bundle.oracleEquivalentOk.reset();
+    bundle.oracleWhy.clear();
+    bundle.baselineStage = SolverBaselineStage::BASELINE_DONE;
+    bundle.firstFailingNodeId.reset();
+    bundle.firstFailingInvariantKind = SolverBaselineInvariantKind::NONE;
+    bundle.deadRelayCandidateNodes.clear();
+    bundle.sameTypeSPPresent = false;
+    bundle.adjacencyMismatchPresent = false;
+    bundle.stepSnapshots.clear();
+
+    if (bundle.tc >= 0) {
+        setRewriteRCaseContext(bundle.seed, bundle.tc);
+    }
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    if (!buildBaselineOracleCoreFromExplicit(input, core, why)) {
+        bundle.baselineStage = SolverBaselineStage::BASELINE_BUILD_CORE_FAIL;
+        bundle.debugTag = "baseline-rewrite-replay:BASELINE_BUILD_CORE_FAIL";
+        return false;
+    }
+
+    for (int step = 0; step < kMaxSequenceSteps; ++step) {
+        setRewriteRSequenceStepContext(step + 1, step + 2);
+        SolverBaselineReplayStepSnapshot stepSnapshot;
+        stepSnapshot.stepIndex = step + 1;
+        stepSnapshot.sequenceLengthSoFar = step + 2;
+
+        const ExplicitBlockGraph explicitBefore = ops.materializeWholeCoreExplicit(core);
+        stepSnapshot.aliveNodeCount = countAliveNodesActual(core);
+        stepSnapshot.currentRoot =
+            (validActualNodeId(core, core.root) && core.nodes[core.root].alive) ? core.root : -1;
+        stepSnapshot.currentExplicitEdgeCount =
+            static_cast<int>(explicitBefore.edges.size());
+
+        bundle.stepIndex = step + 1;
+        bundle.sequenceLengthSoFar = step + 2;
+        bundle.explicitBefore = explicitBefore;
+        bundle.actualBeforeRewrite = core;
+        bundle.actualAfterRewrite.reset();
+        bundle.actualAfterNormalize.reset();
+        bundle.actualInvariantOk.reset();
+        bundle.actualInvariantWhy.clear();
+        bundle.actualInvariantDetailedSubtype.clear();
+        bundle.explicitAfter.reset();
+        bundle.oracleEquivalentOk.reset();
+        bundle.oracleWhy.clear();
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+        if (chooseStatus == SequenceChooseStatus::ERROR) {
+            stepSnapshot.sequenceLengthSoFar = step + 1;
+            bundle.sequenceLengthSoFar = step + 1;
+            appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                              SolverBaselineReplayPhase::BEFORE_REWRITE,
+                                              core,
+                                              std::nullopt,
+                                              std::nullopt);
+            bundle.baselineStage = SolverBaselineStage::BASELINE_CHOOSE_RX_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_CHOOSE_RX_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            return false;
+        }
+        if (chooseStatus == SequenceChooseStatus::NONE) {
+            appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                              SolverBaselineReplayPhase::BEFORE_REWRITE,
+                                              core,
+                                              std::nullopt,
+                                              std::nullopt);
+            std::string invariantWhy;
+            const bool invariantOk =
+                ops.checkActualReducedInvariant(core, nullptr, invariantWhy);
+            const auto diagnostics =
+                analyzeBaselineInvariantState(core, invariantWhy);
+            stepSnapshot.actualInvariantOk = invariantOk;
+            stepSnapshot.actualInvariantWhy = invariantWhy;
+            stepSnapshot.actualInvariantDetailedSubtype = diagnostics.detailedSubtype;
+            stepSnapshot.firstFailingNodeId = diagnostics.firstFailingNodeId;
+            stepSnapshot.firstFailingInvariantKind = diagnostics.kind;
+            stepSnapshot.deadRelayCandidateNodes =
+                diagnostics.deadRelayCandidateNodes;
+            stepSnapshot.sameTypeSPPresent = diagnostics.sameTypeSPPresent;
+            stepSnapshot.adjacencyMismatchPresent =
+                diagnostics.adjacencyMismatchPresent;
+            appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                              SolverBaselineReplayPhase::AFTER_INVARIANT,
+                                              core,
+                                              std::nullopt,
+                                              diagnostics.firstFailingNodeId,
+                                              diagnostics.deadRelayCandidateNodes);
+
+            bundle.actualInvariantOk = invariantOk;
+            bundle.actualInvariantWhy = invariantWhy;
+            bundle.actualInvariantDetailedSubtype = diagnostics.detailedSubtype;
+            bundle.firstFailingNodeId = diagnostics.firstFailingNodeId;
+            bundle.firstFailingInvariantKind = diagnostics.kind;
+            bundle.deadRelayCandidateNodes = diagnostics.deadRelayCandidateNodes;
+            bundle.sameTypeSPPresent = diagnostics.sameTypeSPPresent;
+            bundle.adjacencyMismatchPresent = diagnostics.adjacencyMismatchPresent;
+            bundle.actualAfterNormalize = core;
+            bundle.explicitAfter = explicitBefore;
+
+            if (!invariantOk) {
+                bundle.baselineStage =
+                    SolverBaselineStage::BASELINE_ACTUAL_INVARIANT_FAIL;
+                bundle.debugTag =
+                    "baseline-rewrite-replay:BASELINE_ACTUAL_INVARIANT_FAIL";
+                bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+                why = invariantWhy;
+                return false;
+            }
+            bundle.baselineStage = SolverBaselineStage::BASELINE_DONE;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_DONE";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            why.clear();
+            return true;
+        }
+
+        stepSnapshot.chosenR = chosenR;
+        stepSnapshot.chosenX = chosenX;
+        bundle.chosenR = chosenR;
+        bundle.chosenX = chosenX;
+        appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                          SolverBaselineReplayPhase::BEFORE_REWRITE,
+                                          core,
+                                          stepSnapshot.chosenR,
+                                          std::nullopt);
+
+        ReducedSPQRCore after = core;
+        setRewriteRSequenceMode(false);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+        setRewriteRSequenceMode(false);
+
+        bundle.actualAfterRewrite = after;
+        appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                          SolverBaselineReplayPhase::AFTER_REWRITE,
+                                          after,
+                                          stepSnapshot.chosenR,
+                                          std::nullopt);
+        if (!rewriteOk) {
+            bundle.baselineStage = SolverBaselineStage::BASELINE_REWRITE_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_REWRITE_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            return false;
+        }
+
+        if (!ops.normalizeTouchedRegion(after, why)) {
+            bundle.actualAfterNormalize = after;
+            appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                              SolverBaselineReplayPhase::AFTER_NORMALIZE,
+                                              after,
+                                              stepSnapshot.chosenR,
+                                              std::nullopt);
+            bundle.baselineStage = SolverBaselineStage::BASELINE_NORMALIZE_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_NORMALIZE_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            return false;
+        }
+
+        bundle.actualAfterNormalize = after;
+        stepSnapshot.aliveNodeCount = countAliveNodesActual(after);
+        stepSnapshot.currentRoot =
+            (validActualNodeId(after, after.root) && after.nodes[after.root].alive)
+                ? after.root
+                : -1;
+        stepSnapshot.currentExplicitEdgeCount =
+            static_cast<int>(ops.materializeWholeCoreExplicit(after).edges.size());
+        appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                          SolverBaselineReplayPhase::AFTER_NORMALIZE,
+                                          after,
+                                          stepSnapshot.chosenR,
+                                          std::nullopt);
+
+        std::string invariantWhy;
+        const bool invariantOk = ops.checkActualReducedInvariant(after, nullptr, invariantWhy);
+        const auto diagnostics = analyzeBaselineInvariantState(after, invariantWhy);
+        stepSnapshot.actualInvariantOk = invariantOk;
+        stepSnapshot.actualInvariantWhy = invariantWhy;
+        stepSnapshot.actualInvariantDetailedSubtype = diagnostics.detailedSubtype;
+        stepSnapshot.firstFailingNodeId = diagnostics.firstFailingNodeId;
+        stepSnapshot.firstFailingInvariantKind = diagnostics.kind;
+        stepSnapshot.deadRelayCandidateNodes = diagnostics.deadRelayCandidateNodes;
+        stepSnapshot.sameTypeSPPresent = diagnostics.sameTypeSPPresent;
+        stepSnapshot.adjacencyMismatchPresent = diagnostics.adjacencyMismatchPresent;
+
+        bundle.actualInvariantOk = invariantOk;
+        bundle.actualInvariantWhy = invariantWhy;
+        bundle.actualInvariantDetailedSubtype = diagnostics.detailedSubtype;
+        bundle.firstFailingNodeId = diagnostics.firstFailingNodeId;
+        bundle.firstFailingInvariantKind = diagnostics.kind;
+        bundle.deadRelayCandidateNodes = diagnostics.deadRelayCandidateNodes;
+        bundle.sameTypeSPPresent = diagnostics.sameTypeSPPresent;
+        bundle.adjacencyMismatchPresent = diagnostics.adjacencyMismatchPresent;
+
+        appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                          SolverBaselineReplayPhase::AFTER_INVARIANT,
+                                          after,
+                                          stepSnapshot.chosenR,
+                                          diagnostics.firstFailingNodeId,
+                                          diagnostics.deadRelayCandidateNodes);
+        if (!invariantOk) {
+            bundle.explicitAfter = ops.materializeWholeCoreExplicit(after);
+            bundle.baselineStage = SolverBaselineStage::BASELINE_ACTUAL_INVARIANT_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_ACTUAL_INVARIANT_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            why = invariantWhy;
+            return false;
+        }
+
+        const ExplicitBlockGraph explicitAfter = ops.materializeWholeCoreExplicit(after);
+        bundle.explicitAfter = explicitAfter;
+
+        ReducedSPQRCore oracle;
+        if (!buildBaselineOracleCoreFromExplicit(explicitAfter, oracle, why)) {
+            bundle.oracleEquivalentOk = false;
+            bundle.oracleWhy = why;
+            bundle.baselineStage = SolverBaselineStage::BASELINE_ORACLE_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_ORACLE_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            return false;
+        }
+
+        std::string oracleInvariantWhy;
+        const bool oracleInvariantOk =
+            ops.checkActualReducedInvariant(oracle, nullptr, oracleInvariantWhy);
+        const auto oracleDiagnostics =
+            analyzeBaselineInvariantState(oracle, oracleInvariantWhy);
+
+        appendBaselineReplayPhaseSnapshot(stepSnapshot,
+                                          SolverBaselineReplayPhase::AFTER_ORACLE,
+                                          oracle,
+                                          stepSnapshot.chosenR,
+                                          oracleDiagnostics.firstFailingNodeId,
+                                          oracleDiagnostics.deadRelayCandidateNodes);
+        if (!oracleInvariantOk) {
+            stepSnapshot.actualInvariantOk = false;
+            stepSnapshot.actualInvariantWhy =
+                "oracle core invariant failed: " + oracleInvariantWhy;
+            stepSnapshot.actualInvariantDetailedSubtype =
+                oracleDiagnostics.detailedSubtype;
+            stepSnapshot.firstFailingNodeId =
+                oracleDiagnostics.firstFailingNodeId;
+            stepSnapshot.firstFailingInvariantKind = oracleDiagnostics.kind;
+            stepSnapshot.deadRelayCandidateNodes =
+                oracleDiagnostics.deadRelayCandidateNodes;
+            stepSnapshot.sameTypeSPPresent =
+                oracleDiagnostics.sameTypeSPPresent;
+            stepSnapshot.adjacencyMismatchPresent =
+                oracleDiagnostics.adjacencyMismatchPresent;
+            bundle.actualInvariantOk = false;
+            bundle.actualInvariantWhy =
+                "oracle core invariant failed: " + oracleInvariantWhy;
+            bundle.actualInvariantDetailedSubtype =
+                oracleDiagnostics.detailedSubtype;
+            bundle.firstFailingNodeId = oracleDiagnostics.firstFailingNodeId;
+            bundle.firstFailingInvariantKind = oracleDiagnostics.kind;
+            bundle.deadRelayCandidateNodes =
+                oracleDiagnostics.deadRelayCandidateNodes;
+            bundle.sameTypeSPPresent = oracleDiagnostics.sameTypeSPPresent;
+            bundle.adjacencyMismatchPresent =
+                oracleDiagnostics.adjacencyMismatchPresent;
+            bundle.oracleEquivalentOk = false;
+            bundle.oracleWhy = bundle.actualInvariantWhy;
+            bundle.baselineStage = SolverBaselineStage::BASELINE_ORACLE_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_ORACLE_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            why = bundle.actualInvariantWhy;
+            return false;
+        }
+
+        const ExplicitBlockGraph explicitExpected =
+            ops.materializeWholeCoreExplicit(oracle);
+        if (!ops.checkEquivalentExplicitGraphs(explicitAfter, explicitExpected, why)) {
+            bundle.oracleEquivalentOk = false;
+            bundle.oracleWhy = why;
+            bundle.baselineStage = SolverBaselineStage::BASELINE_ORACLE_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_ORACLE_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            return false;
+        }
+
+        bundle.oracleEquivalentOk = true;
+        bundle.oracleWhy.clear();
+
+        NodeId nextR = -1;
+        VertexId nextX = -1;
+        const SequenceChooseStatus nextChooseStatus =
+            chooseDeterministicSequenceRewriteTarget(oracle, nextR, nextX, why);
+        if (nextChooseStatus == SequenceChooseStatus::ERROR) {
+            bundle.baselineStage = SolverBaselineStage::BASELINE_CHOOSE_RX_FAIL;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_CHOOSE_RX_FAIL";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            return false;
+        }
+        if (explicitExpected.edges.size() >= explicitBefore.edges.size() &&
+            nextChooseStatus == SequenceChooseStatus::FOUND) {
+            why =
+                "baseline rewrite solver made no edge-count progress while another rewrite target remains";
+            bundle.baselineStage = SolverBaselineStage::BASELINE_PROGRESS_STUCK;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_PROGRESS_STUCK";
+            bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+            return false;
+        }
+
+        bundle.stepSnapshots.push_back(std::move(stepSnapshot));
+        core = std::move(oracle);
+        if (nextChooseStatus == SequenceChooseStatus::NONE) {
+            std::string finalInvariantWhy;
+            const bool finalInvariantOk =
+                ops.checkActualReducedInvariant(core, nullptr, finalInvariantWhy);
+            if (!finalInvariantOk) {
+                SolverBaselineReplayStepSnapshot finalStepSnapshot;
+                finalStepSnapshot.stepIndex = step + 1;
+                finalStepSnapshot.sequenceLengthSoFar = step + 2;
+                finalStepSnapshot.aliveNodeCount = countAliveNodesActual(core);
+                finalStepSnapshot.currentRoot =
+                    (validActualNodeId(core, core.root) && core.nodes[core.root].alive)
+                        ? core.root
+                        : -1;
+                finalStepSnapshot.currentExplicitEdgeCount =
+                    static_cast<int>(explicitExpected.edges.size());
+                const auto diagnostics =
+                    analyzeBaselineInvariantState(core, finalInvariantWhy);
+                finalStepSnapshot.actualInvariantOk = false;
+                finalStepSnapshot.actualInvariantWhy = finalInvariantWhy;
+                finalStepSnapshot.actualInvariantDetailedSubtype =
+                    diagnostics.detailedSubtype;
+                finalStepSnapshot.firstFailingNodeId =
+                    diagnostics.firstFailingNodeId;
+                finalStepSnapshot.firstFailingInvariantKind = diagnostics.kind;
+                finalStepSnapshot.deadRelayCandidateNodes =
+                    diagnostics.deadRelayCandidateNodes;
+                finalStepSnapshot.sameTypeSPPresent =
+                    diagnostics.sameTypeSPPresent;
+                finalStepSnapshot.adjacencyMismatchPresent =
+                    diagnostics.adjacencyMismatchPresent;
+                appendBaselineReplayPhaseSnapshot(
+                    finalStepSnapshot,
+                    SolverBaselineReplayPhase::AFTER_INVARIANT,
+                    core,
+                    std::nullopt,
+                    diagnostics.firstFailingNodeId,
+                    diagnostics.deadRelayCandidateNodes);
+                bundle.stepIndex = step + 1;
+                bundle.sequenceLengthSoFar = step + 2;
+                bundle.chosenR.reset();
+                bundle.chosenX.reset();
+                bundle.explicitBefore = explicitExpected;
+                bundle.actualBeforeRewrite = core;
+                bundle.actualAfterRewrite.reset();
+                bundle.actualAfterNormalize = core;
+                bundle.actualInvariantOk = false;
+                bundle.actualInvariantWhy = finalInvariantWhy;
+                bundle.actualInvariantDetailedSubtype =
+                    diagnostics.detailedSubtype;
+                bundle.explicitAfter = explicitExpected;
+                bundle.oracleEquivalentOk = true;
+                bundle.oracleWhy.clear();
+                bundle.baselineStage =
+                    SolverBaselineStage::BASELINE_ACTUAL_INVARIANT_FAIL;
+                bundle.debugTag =
+                    "baseline-rewrite-replay:BASELINE_ACTUAL_INVARIANT_FAIL";
+                bundle.firstFailingNodeId = diagnostics.firstFailingNodeId;
+                bundle.firstFailingInvariantKind = diagnostics.kind;
+                bundle.deadRelayCandidateNodes =
+                    diagnostics.deadRelayCandidateNodes;
+                bundle.sameTypeSPPresent = diagnostics.sameTypeSPPresent;
+                bundle.adjacencyMismatchPresent =
+                    diagnostics.adjacencyMismatchPresent;
+                bundle.stepSnapshots.push_back(std::move(finalStepSnapshot));
+                why = finalInvariantWhy;
+                return false;
+            }
+            bundle.stepIndex = step + 1;
+            bundle.sequenceLengthSoFar = step + 2;
+            bundle.chosenR.reset();
+            bundle.chosenX.reset();
+            bundle.explicitBefore = explicitExpected;
+            bundle.actualBeforeRewrite = core;
+            bundle.actualAfterRewrite.reset();
+            bundle.actualAfterNormalize = core;
+            bundle.actualInvariantOk = true;
+            bundle.actualInvariantWhy.clear();
+            bundle.actualInvariantDetailedSubtype = "NONE";
+            bundle.explicitAfter = explicitExpected;
+            bundle.oracleEquivalentOk = true;
+            bundle.oracleWhy.clear();
+            bundle.firstFailingNodeId.reset();
+            bundle.firstFailingInvariantKind = SolverBaselineInvariantKind::NONE;
+            bundle.deadRelayCandidateNodes.clear();
+            bundle.sameTypeSPPresent = false;
+            bundle.adjacencyMismatchPresent = false;
+            bundle.baselineStage = SolverBaselineStage::BASELINE_DONE;
+            bundle.debugTag = "baseline-rewrite-replay:BASELINE_DONE";
+            why.clear();
+            return true;
+        }
+    }
+
+    bundle.baselineStage = SolverBaselineStage::BASELINE_PROGRESS_STUCK;
+    bundle.debugTag = "baseline-rewrite-replay:BASELINE_PROGRESS_STUCK";
+    why = "baseline rewrite solver reached maxSteps without exhausting rewrite targets";
+    return false;
+}
+
+namespace {
+
+ExplicitBlockGraph canonicalizedExplicitCopy(ExplicitBlockGraph graph) {
+    canonicalizeExplicitGraph(graph);
+    return graph;
+}
+
+std::string formatCanonicalExplicitGraph(const CanonicalExplicitGraph &graph) {
+    std::ostringstream oss;
+    oss << "edges[";
+    for (size_t i = 0; i < graph.edges.size(); ++i) {
+        if (i != 0) oss << ", ";
+        const auto &[edgeId, u, v] = graph.edges[i];
+        oss << "(" << edgeId << "," << u << "," << v << ")";
+    }
+    oss << "] vertices[";
+    for (size_t i = 0; i < graph.vertices.size(); ++i) {
+        if (i != 0) oss << ", ";
+        oss << graph.vertices[i];
+    }
+    oss << "]";
+    return oss.str();
+}
+
+bool equalExplicitEdgeMultiset(const ExplicitBlockGraph &lhs,
+                               const ExplicitBlockGraph &rhs,
+                               std::string &why) {
+    const ExplicitBlockGraph lhsCanonical = canonicalizedExplicitCopy(lhs);
+    const ExplicitBlockGraph rhsCanonical = canonicalizedExplicitCopy(rhs);
+
+    if (lhsCanonical.edges.size() != rhsCanonical.edges.size()) {
+        std::ostringstream oss;
+        oss << "edge count mismatch: oracle=" << lhsCanonical.edges.size()
+            << " rewrite=" << rhsCanonical.edges.size();
+        why = oss.str();
+        return false;
+    }
+    for (size_t i = 0; i < lhsCanonical.edges.size(); ++i) {
+        const auto &le = lhsCanonical.edges[i];
+        const auto &re = rhsCanonical.edges[i];
+        if (le.id != re.id || le.u != re.u || le.v != re.v) {
+            std::ostringstream oss;
+            oss << "edge mismatch at index " << i
+                << ": oracle={" << le.id << "," << le.u << "," << le.v << "}"
+                << " rewrite={" << re.id << "," << re.u << "," << re.v << "}";
+            why = oss.str();
+            return false;
+        }
+    }
+    why.clear();
+    return true;
+}
+
+bool equalExplicitVertexSet(const ExplicitBlockGraph &lhs,
+                            const ExplicitBlockGraph &rhs,
+                            std::string &why) {
+    const ExplicitBlockGraph lhsCanonical = canonicalizedExplicitCopy(lhs);
+    const ExplicitBlockGraph rhsCanonical = canonicalizedExplicitCopy(rhs);
+
+    if (lhsCanonical.vertices.size() != rhsCanonical.vertices.size()) {
+        std::ostringstream oss;
+        oss << "vertex count mismatch: oracle=" << lhsCanonical.vertices.size()
+            << " rewrite=" << rhsCanonical.vertices.size();
+        why = oss.str();
+        return false;
+    }
+    for (size_t i = 0; i < lhsCanonical.vertices.size(); ++i) {
+        if (lhsCanonical.vertices[i] != rhsCanonical.vertices[i]) {
+            std::ostringstream oss;
+            oss << "vertex mismatch at index " << i
+                << ": oracle=" << lhsCanonical.vertices[i]
+                << " rewrite=" << rhsCanonical.vertices[i];
+            why = oss.str();
+            return false;
+        }
+    }
+    why.clear();
+    return true;
+}
+
+} // namespace
+
+CanonicalExplicitGraph canonicalizeExplicitForCompare(const ExplicitBlockGraph &G) {
+    return canonicalizeExplicitForCompareInternal(G);
+}
+
+bool areCanonicalExplicitEqual(const ExplicitBlockGraph &A,
+                               const ExplicitBlockGraph &B,
+                               std::string &why) {
+    return areCanonicalExplicitEqualInternal(A, B, why);
+}
+
+namespace {
+
+bool replayOracleFixpointOneStepInternal(const ExplicitBlockGraph &input,
+                                         int stepIndex,
+                                         SemanticStepTrace &out,
+                                         ReducedSPQRCore *normalizedCoreOut,
+                                         std::string &why) {
+    out = {};
+    out.stepIndex = stepIndex;
+    out.side = "ORACLE";
+    out.explicitBefore = input;
+    out.canonicalExplicitBefore = canonicalizeExplicitForCompare(input);
+    out.explicitAfterDelete = input;
+    out.explicitAfterNormalize = input;
+    out.debugTag = "ORACLE_FIXPOINT_STEP";
+    out.stepOk = false;
+    out.terminated = false;
+    out.terminateReason.clear();
+    why.clear();
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    if (!buildBaselineOracleCoreFromExplicit(input, core, why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:BUILD_CORE_FAIL";
+        return false;
+    }
+
+    std::string invariantWhy;
+    if (!ops.checkActualReducedInvariant(core, nullptr, invariantWhy)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = invariantWhy;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:ACTUAL_INVARIANT_FAIL";
+        why = invariantWhy;
+        return false;
+    }
+    out.actualInvariantOk = true;
+    out.actualInvariantWhy.clear();
+
+    NodeId chosenR = -1;
+    VertexId chosenX = -1;
+    const SequenceChooseStatus chooseStatus =
+        chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+    if (chooseStatus == SequenceChooseStatus::ERROR) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:CHOOSE_FAIL";
+        return false;
+    }
+    if (chooseStatus == SequenceChooseStatus::NONE) {
+        out.stepOk = true;
+        out.terminated = true;
+        out.terminateReason = "NO_TARGET";
+        out.explicitAfterDelete = input;
+        out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(core);
+        out.canonicalExplicitAfterDelete =
+            canonicalizeExplicitForCompare(out.explicitAfterDelete);
+        out.canonicalExplicitAfterNormalize =
+            canonicalizeExplicitForCompare(out.explicitAfterNormalize);
+        out.debugTag = "ORACLE_FIXPOINT_STEP:DONE";
+        if (normalizedCoreOut) *normalizedCoreOut = core;
+        why.clear();
+        return true;
+    }
+
+    out.chosenR = chosenR;
+    out.chosenX = chosenX;
+    if (!buildExplicitAfterDeletingVertex(core, chosenX, out.explicitAfterDelete, why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:POST_DELETE_FAIL";
+        return false;
+    }
+
+    ReducedSPQRCore canonicalAfterDelete;
+    if (!buildBaselineOracleCoreFromExplicit(out.explicitAfterDelete,
+                                             canonicalAfterDelete,
+                                             why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:POST_DELETE_BUILD_FAIL";
+        return false;
+    }
+
+    std::string postDeleteInvariantWhy;
+    const bool postDeleteInvariantOk =
+        ops.checkActualReducedInvariant(canonicalAfterDelete, nullptr, postDeleteInvariantWhy);
+    out.actualInvariantOk = postDeleteInvariantOk;
+    out.actualInvariantWhy = postDeleteInvariantWhy;
+    out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(canonicalAfterDelete);
+    out.canonicalExplicitAfterDelete = canonicalizeExplicitForCompare(out.explicitAfterDelete);
+    out.canonicalExplicitAfterNormalize =
+        canonicalizeExplicitForCompare(out.explicitAfterNormalize);
+    out.stepOk = postDeleteInvariantOk;
+    out.debugTag = postDeleteInvariantOk ? "ORACLE_FIXPOINT_STEP:STEP_OK"
+                                         : "ORACLE_FIXPOINT_STEP:POST_DELETE_INVARIANT_FAIL";
+    if (!postDeleteInvariantOk) {
+        why = postDeleteInvariantWhy;
+        return false;
+    }
+
+    if (normalizedCoreOut) *normalizedCoreOut = canonicalAfterDelete;
+    why.clear();
+    return true;
+}
+
+bool replayRewriteSeqOneStepInternal(const ExplicitBlockGraph &input,
+                                     int stepIndex,
+                                     SemanticStepTrace &out,
+                                     ReducedSPQRCore *normalizedCoreOut,
+                                     std::string &why) {
+    out = {};
+    out.stepIndex = stepIndex;
+    out.side = "REWRITE_SEQ";
+    out.explicitBefore = input;
+    out.canonicalExplicitBefore = canonicalizeExplicitForCompare(input);
+    out.debugTag = "REWRITE_SEQ_STEP";
+    out.terminateReason.clear();
+    why.clear();
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    clearSequenceDeferredSameTypeSP();
+    if (!buildWholeCoreForTesting(input, core, why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:BUILD_CORE_FAIL";
+        return false;
+    }
+
+    NodeId chosenR = -1;
+    VertexId chosenX = -1;
+    const SequenceChooseStatus chooseStatus =
+        chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+    if (chooseStatus == SequenceChooseStatus::ERROR) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:CHOOSE_FAIL";
+        return false;
+    }
+
+    if (chooseStatus == SequenceChooseStatus::NONE) {
+        std::string invariantWhy;
+        const bool invariantOk = ops.checkActualReducedInvariant(core, nullptr, invariantWhy);
+        out.actualInvariantOk = invariantOk;
+        out.actualInvariantWhy = invariantWhy;
+        out.explicitAfterDelete = input;
+        out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(core);
+        out.canonicalExplicitAfterDelete =
+            canonicalizeExplicitForCompare(out.explicitAfterDelete);
+        out.canonicalExplicitAfterNormalize =
+            canonicalizeExplicitForCompare(out.explicitAfterNormalize);
+        out.stepOk = invariantOk;
+        out.terminated = true;
+        out.terminateReason = "NO_TARGET";
+        out.debugTag = invariantOk ? "REWRITE_SEQ_STEP:DONE"
+                                   : "REWRITE_SEQ_STEP:ACTUAL_INVARIANT_FAIL";
+        if (normalizedCoreOut) *normalizedCoreOut = core;
+        why = invariantOk ? std::string{} : invariantWhy;
+        return invariantOk;
+    }
+
+    out.chosenR = chosenR;
+    out.chosenX = chosenX;
+
+    ReducedSPQRCore after = core;
+    setRewriteRSequenceStepContext(stepIndex, stepIndex + 1);
+    setRewriteRSequenceMode(true);
+    const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+    setRewriteRSequenceMode(false);
+    out.explicitAfterDelete = ops.materializeWholeCoreExplicit(after);
+    if (!rewriteOk) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:REWRITE_FAIL";
+        clearSequenceDeferredSameTypeSP();
+        return false;
+    }
+
+    if (!ops.normalizeTouchedRegion(after, why)) {
+        out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(after);
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:NORMALIZE_FAIL";
+        clearSequenceDeferredSameTypeSP();
+        return false;
+    }
+
+    if (hasPendingSequenceDeferredSameTypeSP()) {
+        GraftTrace cleanupTrace;
+        if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+            std::string preCleanupWhyDetailed;
+            cleanupTrace.preCleanupPostcheckSubtype =
+                classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+            cleanupTrace.postCleanupPostcheckSubtype =
+                cleanupTrace.preCleanupPostcheckSubtype;
+            if (!preCleanupWhyDetailed.empty()) {
+                cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+            }
+            if (cleanupTrace.preCleanupPostcheckSubtype ==
+                GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                const auto seeds = collectSequenceSPCleanupSeeds(
+                    after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                std::string cleanupWhy;
+                if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                    out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(after);
+                    out.actualInvariantOk = false;
+                    out.actualInvariantWhy = cleanupWhy;
+                    out.debugTag = "REWRITE_SEQ_STEP:SP_CLEANUP_FAIL";
+                    clearSequenceDeferredSameTypeSP();
+                    why = cleanupWhy;
+                    return false;
+                }
+
+                peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                std::string postCleanupWhyDetailed;
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                if (!postCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                }
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            } else {
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            }
+        }
+    }
+
+    flushSequenceDeferredSameTypeSPDump(after);
+    clearSequenceDeferredSameTypeSP();
+    out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(after);
+    out.canonicalExplicitAfterDelete = canonicalizeExplicitForCompare(out.explicitAfterDelete);
+    out.canonicalExplicitAfterNormalize =
+        canonicalizeExplicitForCompare(out.explicitAfterNormalize);
+
+    std::string invariantWhy;
+    const bool invariantOk = ops.checkActualReducedInvariant(after, nullptr, invariantWhy);
+    out.actualInvariantOk = invariantOk;
+    out.actualInvariantWhy = invariantWhy;
+    out.stepOk = invariantOk;
+    out.debugTag = invariantOk ? "REWRITE_SEQ_STEP:STEP_OK"
+                               : "REWRITE_SEQ_STEP:ACTUAL_INVARIANT_FAIL";
+    if (normalizedCoreOut) *normalizedCoreOut = after;
+    why = invariantOk ? std::string{} : invariantWhy;
+    return invariantOk;
+}
+
+} // namespace
+
+bool replayOracleFixpointOneStep(const ExplicitBlockGraph &input,
+                                 int stepIndex,
+                                 SemanticStepTrace &out,
+                                 std::string &why) {
+    return replayOracleFixpointOneStepInternal(input, stepIndex, out, nullptr, why);
+}
+
+bool replayOracleFixpointOneStep(const ExplicitBlockGraph &input,
+                                 OracleHandoffPolicy /*policy*/,
+                                 int stepIndex,
+                                 SemanticStepTrace &out,
+                                 std::string &why) {
+    return replayOracleFixpointOneStepInternal(input, stepIndex, out, nullptr, why);
+}
+
+bool replayRewriteSeqOneStep(const ExplicitBlockGraph &input,
+                             int stepIndex,
+                             SemanticStepTrace &out,
+                             std::string &why) {
+    return replayRewriteSeqOneStepInternal(input, stepIndex, out, nullptr, why);
+}
+
+SemanticDivergenceKind classifySemanticDivergence(
+    const SemanticStepTrace &oracleStep,
+    const SemanticStepTrace &rewriteStep,
+    std::string &why) {
+    if (!oracleStep.stepOk || !rewriteStep.stepOk) {
+        if (oracleStep.stepOk != rewriteStep.stepOk) {
+            std::ostringstream oss;
+            oss << "step status diverged at step " << oracleStep.stepIndex
+                << ": oracleStepOk=" << (oracleStep.stepOk ? 1 : 0)
+                << " rewriteStepOk=" << (rewriteStep.stepOk ? 1 : 0);
+            why = oss.str();
+            return SemanticDivergenceKind::SDK_OTHER;
+        }
+        if (oracleStep.actualInvariantWhy != rewriteStep.actualInvariantWhy) {
+            std::ostringstream oss;
+            oss << "step failure reason diverged at step " << oracleStep.stepIndex
+                << ": oracle=\"" << oracleStep.actualInvariantWhy
+                << "\" rewrite=\"" << rewriteStep.actualInvariantWhy << "\"";
+            why = oss.str();
+            return SemanticDivergenceKind::SDK_OTHER;
+        }
+    }
+
+    if (oracleStep.terminated != rewriteStep.terminated) {
+        std::ostringstream oss;
+        oss << "termination mismatch at step " << oracleStep.stepIndex
+            << ": oracleTerminated=" << (oracleStep.terminated ? 1 : 0)
+            << " rewriteTerminated=" << (rewriteStep.terminated ? 1 : 0);
+        why = oss.str();
+        return SemanticDivergenceKind::SDK_TERMINATION_DIFFER;
+    }
+
+    if (oracleStep.chosenR != rewriteStep.chosenR) {
+        std::ostringstream oss;
+        oss << "chosenR mismatch at step " << oracleStep.stepIndex
+            << ": oracle=" << oracleStep.chosenR
+            << " rewrite=" << rewriteStep.chosenR;
+        why = oss.str();
+        return SemanticDivergenceKind::SDK_CHOICE_R_DIFFER;
+    }
+
+    if (oracleStep.chosenX != rewriteStep.chosenX) {
+        std::ostringstream oss;
+        oss << "chosenX mismatch at step " << oracleStep.stepIndex
+            << ": oracle=" << oracleStep.chosenX
+            << " rewrite=" << rewriteStep.chosenX;
+        why = oss.str();
+        return SemanticDivergenceKind::SDK_CHOICE_X_DIFFER;
+    }
+
+    std::string deleteEdgeWhy;
+    if (!equalExplicitEdgeMultiset(oracleStep.explicitAfterDelete,
+                                   rewriteStep.explicitAfterDelete,
+                                   deleteEdgeWhy)) {
+        why = "post-delete explicit diverged: " + deleteEdgeWhy;
+        return SemanticDivergenceKind::SDK_POST_DELETE_EXPLICIT_DIFFER;
+    }
+
+    std::string deleteVertexWhy;
+    if (!equalExplicitVertexSet(oracleStep.explicitAfterDelete,
+                                rewriteStep.explicitAfterDelete,
+                                deleteVertexWhy)) {
+        why = "post-delete edge sets match but vertex sets differ: " + deleteVertexWhy;
+        return SemanticDivergenceKind::SDK_EDGESET_ONLY_MATCH_VERTEXSET_DIFFER;
+    }
+
+    std::string normalizeEdgeWhy;
+    if (!equalExplicitEdgeMultiset(oracleStep.explicitAfterNormalize,
+                                   rewriteStep.explicitAfterNormalize,
+                                   normalizeEdgeWhy)) {
+        why = "post-normalize explicit diverged: " + normalizeEdgeWhy;
+        return SemanticDivergenceKind::SDK_POST_NORMALIZE_EXPLICIT_DIFFER;
+    }
+
+    std::string normalizeVertexWhy;
+    if (!equalExplicitVertexSet(oracleStep.explicitAfterNormalize,
+                                rewriteStep.explicitAfterNormalize,
+                                normalizeVertexWhy)) {
+        why = "post-normalize edge sets match but vertex sets differ: " +
+              normalizeVertexWhy;
+        return SemanticDivergenceKind::SDK_EDGESET_ONLY_MATCH_VERTEXSET_DIFFER;
+    }
+
+    why.clear();
+    return SemanticDivergenceKind::SDK_NONE;
+}
+
+CanonicalDivergenceKind classifyCanonicalSemanticDivergence(
+    const SemanticStepTrace &oracleStep,
+    const SemanticStepTrace &rewriteStep,
+    std::string &why) {
+    if (!oracleStep.stepOk || !rewriteStep.stepOk) {
+        if (oracleStep.stepOk != rewriteStep.stepOk) {
+            std::ostringstream oss;
+            oss << "step status diverged at step " << oracleStep.stepIndex
+                << ": oracleStepOk=" << (oracleStep.stepOk ? 1 : 0)
+                << " rewriteStepOk=" << (rewriteStep.stepOk ? 1 : 0);
+            why = oss.str();
+            return CanonicalDivergenceKind::CDK_OTHER;
+        }
+        if (oracleStep.actualInvariantWhy != rewriteStep.actualInvariantWhy) {
+            std::ostringstream oss;
+            oss << "step failure reason diverged at step " << oracleStep.stepIndex
+                << ": oracle=\"" << oracleStep.actualInvariantWhy
+                << "\" rewrite=\"" << rewriteStep.actualInvariantWhy << "\"";
+            why = oss.str();
+            return CanonicalDivergenceKind::CDK_OTHER;
+        }
+    }
+
+    if (oracleStep.terminated != rewriteStep.terminated) {
+        std::ostringstream oss;
+        oss << "termination mismatch at step " << oracleStep.stepIndex
+            << ": oracleTerminated=" << (oracleStep.terminated ? 1 : 0)
+            << " rewriteTerminated=" << (rewriteStep.terminated ? 1 : 0);
+        why = oss.str();
+        return CanonicalDivergenceKind::CDK_TERMINATION_DIFFER;
+    }
+
+    if (!oracleStep.terminated && !rewriteStep.terminated) {
+        if (oracleStep.chosenR != rewriteStep.chosenR) {
+            std::ostringstream oss;
+            oss << "chosenR mismatch at step " << oracleStep.stepIndex
+                << ": oracle=" << oracleStep.chosenR
+                << " rewrite=" << rewriteStep.chosenR;
+            why = oss.str();
+            return CanonicalDivergenceKind::CDK_CHOICE_R_DIFFER;
+        }
+
+        if (oracleStep.chosenX != rewriteStep.chosenX) {
+            std::ostringstream oss;
+            oss << "chosenX mismatch at step " << oracleStep.stepIndex
+                << ": oracle=" << oracleStep.chosenX
+                << " rewrite=" << rewriteStep.chosenX;
+            why = oss.str();
+            return CanonicalDivergenceKind::CDK_CHOICE_X_DIFFER;
+        }
+    }
+
+    if (oracleStep.canonicalExplicitAfterDelete.edges != rewriteStep.canonicalExplicitAfterDelete.edges ||
+        oracleStep.canonicalExplicitAfterDelete.vertices != rewriteStep.canonicalExplicitAfterDelete.vertices) {
+        why = "canonical post-delete explicit diverged";
+        return CanonicalDivergenceKind::CDK_POST_DELETE_EXPLICIT_DIFFER;
+    }
+
+    if (oracleStep.canonicalExplicitAfterNormalize.edges !=
+            rewriteStep.canonicalExplicitAfterNormalize.edges ||
+        oracleStep.canonicalExplicitAfterNormalize.vertices !=
+            rewriteStep.canonicalExplicitAfterNormalize.vertices) {
+        why = "canonical post-normalize explicit diverged";
+        return CanonicalDivergenceKind::CDK_POST_NORMALIZE_EXPLICIT_DIFFER;
+    }
+
+    why.clear();
+    return CanonicalDivergenceKind::CDK_NONE;
+}
+
+bool runSolverSemanticReplay(const ExplicitBlockGraph &input,
+                             SemanticReplayStopPolicy stopPolicy,
+                             SolverSemanticReplayBundle &bundle,
+                             std::string &why) {
+    constexpr int kMaxSemanticReplaySteps = 64;
+
+    bundle.explicitInput = input;
+    bundle.stopPolicy = stopPolicy;
+    bundle.divergenceKind = SemanticDivergenceKind::SDK_NONE;
+    bundle.divergenceStepIndex = -1;
+    bundle.divergenceWhy.clear();
+    bundle.rawFirstDivergenceKind = SemanticDivergenceKind::SDK_NONE;
+    bundle.rawFirstDivergenceStep = -1;
+    bundle.rawFirstDivergenceWhy.clear();
+    bundle.canonicalFirstDivergenceKind = CanonicalDivergenceKind::CDK_NONE;
+    bundle.canonicalFirstDivergenceStep = -1;
+    bundle.canonicalFirstDivergenceWhy.clear();
+    bundle.oracleCanonicalExplicit.reset();
+    bundle.rewriteCanonicalExplicit.reset();
+    bundle.oracleTrace.clear();
+    bundle.rewriteTrace.clear();
+    bundle.firstOracleWhy.clear();
+    bundle.firstRewriteWhy.clear();
+    bundle.oracleTerminatedStep = -1;
+    bundle.rewriteTerminatedStep = -1;
+    bundle.canonicalEquivalent = false;
+    bundle.canonicalWhy.clear();
+    bundle.finalCanonicalEquivalent = false;
+    bundle.finalRawEquivalent = false;
+    bundle.topLevelOk = false;
+
+    if (bundle.caseName.empty()) bundle.caseName = "semantic_replay";
+
+    ExplicitBlockGraph oracleCurrent = input;
+    ExplicitBlockGraph rewriteCurrent = input;
+
+    for (int stepIndex = 1; stepIndex <= kMaxSemanticReplaySteps; ++stepIndex) {
+        SemanticStepTrace oracleStep;
+        SemanticStepTrace rewriteStep;
+        std::string oracleWhy;
+        std::string rewriteWhy;
+
+        if (!replayOracleFixpointOneStep(oracleCurrent, stepIndex, oracleStep, oracleWhy)) {
+            bundle.divergenceKind = SemanticDivergenceKind::SDK_OTHER;
+            bundle.divergenceStepIndex = stepIndex;
+            bundle.divergenceWhy = "oracle replay failed: " + oracleWhy;
+            bundle.firstOracleWhy = oracleWhy;
+            bundle.oracleTrace.push_back(std::move(oracleStep));
+            why = bundle.divergenceWhy;
+            return false;
+        }
+        if (!replayRewriteSeqOneStep(rewriteCurrent, stepIndex, rewriteStep, rewriteWhy)) {
+            bundle.divergenceKind = SemanticDivergenceKind::SDK_OTHER;
+            bundle.divergenceStepIndex = stepIndex;
+            bundle.divergenceWhy = "rewrite replay failed: " + rewriteWhy;
+            bundle.firstRewriteWhy = rewriteWhy;
+            bundle.oracleTrace.push_back(std::move(oracleStep));
+            bundle.rewriteTrace.push_back(std::move(rewriteStep));
+            why = bundle.divergenceWhy;
+            return false;
+        }
+
+        bundle.oracleTrace.push_back(oracleStep);
+        bundle.rewriteTrace.push_back(rewriteStep);
+
+        if (oracleStep.terminated && bundle.oracleTerminatedStep < 0) {
+            bundle.oracleTerminatedStep = stepIndex;
+        }
+        if (rewriteStep.terminated && bundle.rewriteTerminatedStep < 0) {
+            bundle.rewriteTerminatedStep = stepIndex;
+        }
+
+        std::string rawDivergenceWhy;
+        const auto rawDivergenceKind =
+            classifySemanticDivergence(oracleStep, rewriteStep, rawDivergenceWhy);
+        if (rawDivergenceKind != SemanticDivergenceKind::SDK_NONE &&
+            bundle.rawFirstDivergenceKind == SemanticDivergenceKind::SDK_NONE) {
+            bundle.rawFirstDivergenceKind = rawDivergenceKind;
+            bundle.rawFirstDivergenceStep = stepIndex;
+            bundle.rawFirstDivergenceWhy = rawDivergenceWhy;
+        }
+
+        std::string canonicalDivergenceWhy;
+        const auto canonicalDivergenceKind =
+            classifyCanonicalSemanticDivergence(oracleStep, rewriteStep, canonicalDivergenceWhy);
+        if (canonicalDivergenceKind != CanonicalDivergenceKind::CDK_NONE &&
+            bundle.canonicalFirstDivergenceKind == CanonicalDivergenceKind::CDK_NONE) {
+            bundle.canonicalFirstDivergenceKind = canonicalDivergenceKind;
+            bundle.canonicalFirstDivergenceStep = stepIndex;
+            bundle.canonicalFirstDivergenceWhy = canonicalDivergenceWhy;
+            bundle.oracleCanonicalExplicit = oracleStep.canonicalExplicitAfterNormalize;
+            bundle.rewriteCanonicalExplicit = rewriteStep.canonicalExplicitAfterNormalize;
+            std::string canonicalWhyLocal;
+            bundle.canonicalEquivalent =
+                areCanonicalExplicitEqual(oracleStep.explicitAfterNormalize,
+                                          rewriteStep.explicitAfterNormalize,
+                                          canonicalWhyLocal);
+            bundle.canonicalWhy = canonicalWhyLocal;
+        }
+
+        if (stopPolicy == SemanticReplayStopPolicy::SRSP_RAW_FIRST_DIFF &&
+            bundle.rawFirstDivergenceKind != SemanticDivergenceKind::SDK_NONE) {
+            bundle.divergenceKind = bundle.rawFirstDivergenceKind;
+            bundle.divergenceStepIndex = bundle.rawFirstDivergenceStep;
+            bundle.divergenceWhy = bundle.rawFirstDivergenceWhy;
+            if (!bundle.oracleCanonicalExplicit.has_value()) {
+                if (areCanonicalExplicitEqual(oracleStep.explicitAfterDelete,
+                                              rewriteStep.explicitAfterDelete,
+                                              bundle.canonicalWhy)) {
+                    bundle.oracleCanonicalExplicit = oracleStep.canonicalExplicitAfterDelete;
+                    bundle.rewriteCanonicalExplicit = rewriteStep.canonicalExplicitAfterDelete;
+                    bundle.canonicalEquivalent = true;
+                } else {
+                    bundle.oracleCanonicalExplicit = oracleStep.canonicalExplicitAfterNormalize;
+                    bundle.rewriteCanonicalExplicit = rewriteStep.canonicalExplicitAfterNormalize;
+                    bundle.canonicalEquivalent =
+                        areCanonicalExplicitEqual(oracleStep.explicitAfterNormalize,
+                                                  rewriteStep.explicitAfterNormalize,
+                                                  bundle.canonicalWhy);
+                }
+            }
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        if (stopPolicy == SemanticReplayStopPolicy::SRSP_CANONICAL_FIRST_DIFF &&
+            bundle.canonicalFirstDivergenceKind != CanonicalDivergenceKind::CDK_NONE) {
+            bundle.divergenceKind = bundle.rawFirstDivergenceKind;
+            bundle.divergenceStepIndex = bundle.canonicalFirstDivergenceStep;
+            bundle.divergenceWhy = bundle.canonicalFirstDivergenceWhy;
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        if (oracleStep.terminated && rewriteStep.terminated) {
+            std::string finalCanonicalWhy;
+            bundle.finalCanonicalEquivalent =
+                areCanonicalExplicitEqual(oracleStep.explicitAfterNormalize,
+                                          rewriteStep.explicitAfterNormalize,
+                                          finalCanonicalWhy);
+            bundle.canonicalWhy = finalCanonicalWhy;
+            bundle.oracleCanonicalExplicit = oracleStep.canonicalExplicitAfterNormalize;
+            bundle.rewriteCanonicalExplicit = rewriteStep.canonicalExplicitAfterNormalize;
+            ProjectHarnessOps ops;
+            std::string finalRawWhy;
+            bundle.finalRawEquivalent =
+                ops.checkEquivalentExplicitGraphs(oracleStep.explicitAfterNormalize,
+                                                 rewriteStep.explicitAfterNormalize,
+                                                 finalRawWhy);
+            bundle.topLevelOk = true;
+            if (bundle.canonicalFirstDivergenceKind == CanonicalDivergenceKind::CDK_NONE &&
+                !bundle.finalCanonicalEquivalent) {
+                bundle.canonicalFirstDivergenceKind =
+                    CanonicalDivergenceKind::CDK_FINAL_EXPLICIT_DIFFER;
+                bundle.canonicalFirstDivergenceStep = stepIndex;
+                bundle.canonicalFirstDivergenceWhy = "final canonical explicit diverged";
+            }
+            if (stopPolicy == SemanticReplayStopPolicy::SRSP_RUN_TO_END) {
+                if (bundle.canonicalFirstDivergenceKind != CanonicalDivergenceKind::CDK_NONE) {
+                    bundle.divergenceKind = bundle.rawFirstDivergenceKind;
+                    bundle.divergenceStepIndex = bundle.canonicalFirstDivergenceStep;
+                    bundle.divergenceWhy = bundle.canonicalFirstDivergenceWhy;
+                } else if (bundle.rawFirstDivergenceKind != SemanticDivergenceKind::SDK_NONE) {
+                    bundle.divergenceKind = bundle.rawFirstDivergenceKind;
+                    bundle.divergenceStepIndex = bundle.rawFirstDivergenceStep;
+                    bundle.divergenceWhy = bundle.rawFirstDivergenceWhy;
+                } else {
+                    bundle.divergenceKind = SemanticDivergenceKind::SDK_NONE;
+                    bundle.divergenceStepIndex = -1;
+                    bundle.divergenceWhy =
+                        "oracle and rewrite-seq remained aligned to fixpoint";
+                }
+            } else {
+                bundle.divergenceKind = SemanticDivergenceKind::SDK_NONE;
+                bundle.divergenceStepIndex = -1;
+                bundle.divergenceWhy =
+                    "oracle and rewrite-seq remained aligned to fixpoint";
+            }
+            bundle.canonicalEquivalent = bundle.finalCanonicalEquivalent;
+            why.clear();
+            return true;
+        }
+
+        oracleCurrent = oracleStep.explicitAfterDelete;
+        rewriteCurrent = rewriteStep.explicitAfterNormalize;
+    }
+
+    bundle.divergenceKind = SemanticDivergenceKind::SDK_OTHER;
+    bundle.divergenceStepIndex = kMaxSemanticReplaySteps;
+    bundle.divergenceWhy =
+        "semantic replay reached maxSteps without convergence or classified divergence";
+    why = bundle.divergenceWhy;
+    return false;
+}
+
+bool collectSemanticTargetSnapshot(const ReducedSPQRCore &core,
+                                   int stepIndex,
+                                   const std::string &side,
+                                   SemanticTargetSnapshot &out,
+                                   std::string &why) {
+    out = {};
+    out.stepIndex = stepIndex;
+    out.side = side;
+
+    ProjectHarnessOps ops;
+    const ExplicitBlockGraph explicitAfterNormalize = ops.materializeWholeCoreExplicit(core);
+    out.canonicalExplicitAfterNormalize =
+        canonicalizeExplicitForCompare(explicitAfterNormalize);
+
+    RewriteTargetSnapshot targetSnapshot;
+    if (!collectRewriteTargetSnapshot(core, stepIndex, targetSnapshot, why)) {
+        return false;
+    }
+
+    out.aliveRNodes = targetSnapshot.aliveRNodes;
+    out.candidates = targetSnapshot.candidates;
+    out.hasNextTarget = targetSnapshot.hasNextTarget;
+    out.chosenR = targetSnapshot.chosenR;
+    out.chosenX = targetSnapshot.chosenX;
+    out.noTargetReason = targetSnapshot.noTargetReason;
+    why.clear();
+    return true;
+}
+
+SemanticTargetSeamKind classifySemanticTargetSeam(
+    const SemanticTargetSnapshot &oracleSnap,
+    const SemanticTargetSnapshot &rewriteSnap,
+    const SemanticTargetSnapshot &shadowSnap,
+    std::string &why) {
+    if (oracleSnap.canonicalExplicitAfterNormalize.edges !=
+            rewriteSnap.canonicalExplicitAfterNormalize.edges ||
+        oracleSnap.canonicalExplicitAfterNormalize.vertices !=
+            rewriteSnap.canonicalExplicitAfterNormalize.vertices) {
+        std::ostringstream oss;
+        oss << "step " << oracleSnap.stepIndex
+            << ": canonical explicit after normalize differs";
+        why = oss.str();
+        return SemanticTargetSeamKind::STSK_CANONICAL_EXPLICIT_DIFFER;
+    }
+
+    if (oracleSnap.hasNextTarget && !rewriteSnap.hasNextTarget) {
+        std::ostringstream oss;
+        oss << "step " << oracleSnap.stepIndex
+            << ": oracle has next target (R=" << oracleSnap.chosenR
+            << ",x=" << oracleSnap.chosenX << "), rewrite says "
+            << rewriteSnap.noTargetReason << ", shadow "
+            << (shadowSnap.hasNextTarget ? "has next target" : "says " + shadowSnap.noTargetReason);
+        why = oss.str();
+        return shadowSnap.hasNextTarget
+                   ? SemanticTargetSeamKind::
+                         STSK_ORACLE_HAS_TARGET_REWRITE_NO_TARGET_SHADOW_HAS_TARGET
+                   : SemanticTargetSeamKind::
+                         STSK_ORACLE_HAS_TARGET_REWRITE_NO_TARGET_SHADOW_NO_TARGET;
+    }
+
+    if (!oracleSnap.hasNextTarget && rewriteSnap.hasNextTarget) {
+        std::ostringstream oss;
+        oss << "step " << oracleSnap.stepIndex
+            << ": rewrite has next target (R=" << rewriteSnap.chosenR
+            << ",x=" << rewriteSnap.chosenX << "), oracle says "
+            << oracleSnap.noTargetReason;
+        why = oss.str();
+        return SemanticTargetSeamKind::STSK_REWRITE_HAS_TARGET_ORACLE_NO_TARGET;
+    }
+
+    if (oracleSnap.hasNextTarget && rewriteSnap.hasNextTarget &&
+        (oracleSnap.chosenR != rewriteSnap.chosenR ||
+         oracleSnap.chosenX != rewriteSnap.chosenX)) {
+        std::ostringstream oss;
+        oss << "step " << oracleSnap.stepIndex
+            << ": oracle chooses (R=" << oracleSnap.chosenR
+            << ",x=" << oracleSnap.chosenX << "), rewrite chooses (R="
+            << rewriteSnap.chosenR << ",x=" << rewriteSnap.chosenX << ")";
+        why = oss.str();
+        return SemanticTargetSeamKind::STSK_BOTH_HAVE_TARGET_CHOICE_DIFFER;
+    }
+
+    why = "target snapshots differ but did not match a classified target seam";
+    return SemanticTargetSeamKind::STSK_OTHER;
+}
+
+bool runSolverSemanticTargetReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                                const std::string &manifestPath,
+                                                const std::string &caseName,
+                                                uint64_t seed,
+                                                int tc,
+                                                std::optional<int> targetStep,
+                                                SolverSemanticTargetReplayBundle &bundle,
+                                                std::string &why) {
+    constexpr int kMaxSemanticReplaySteps = 64;
+
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.explicitInput = input;
+
+    ExplicitBlockGraph oracleCurrent = input;
+    ExplicitBlockGraph rewriteCurrent = input;
+
+    for (int stepIndex = 1; stepIndex <= kMaxSemanticReplaySteps; ++stepIndex) {
+        SemanticStepTrace oracleStep;
+        SemanticStepTrace rewriteStep;
+        ReducedSPQRCore oracleCoreAfterNormalize;
+        ReducedSPQRCore rewriteCoreAfterNormalize;
+
+        if (!replayOracleFixpointOneStepInternal(
+                oracleCurrent, stepIndex, oracleStep, &oracleCoreAfterNormalize, bundle.oracleWhy)) {
+            bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_OTHER;
+            bundle.semanticTargetSeamWhy = "oracle semantic target replay failed: " + bundle.oracleWhy;
+            bundle.divergenceStepIndex = stepIndex;
+            bundle.oracleSemanticTrace.push_back(std::move(oracleStep));
+            why = bundle.semanticTargetSeamWhy;
+            return false;
+        }
+        if (!replayRewriteSeqOneStepInternal(
+                rewriteCurrent, stepIndex, rewriteStep, &rewriteCoreAfterNormalize, bundle.rewriteWhy)) {
+            bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_OTHER;
+            bundle.semanticTargetSeamWhy = "rewrite semantic target replay failed: " + bundle.rewriteWhy;
+            bundle.divergenceStepIndex = stepIndex;
+            bundle.oracleSemanticTrace.push_back(std::move(oracleStep));
+            bundle.rewriteSemanticTrace.push_back(std::move(rewriteStep));
+            why = bundle.semanticTargetSeamWhy;
+            return false;
+        }
+
+        bundle.oracleSemanticTrace.push_back(oracleStep);
+        bundle.rewriteSemanticTrace.push_back(rewriteStep);
+
+        SemanticTargetSnapshot oracleSnap;
+        if (!collectSemanticTargetSnapshot(
+                oracleCoreAfterNormalize, stepIndex, "ORACLE", oracleSnap, bundle.oracleWhy)) {
+            bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_OTHER;
+            bundle.semanticTargetSeamWhy =
+                "oracle target snapshot collection failed: " + bundle.oracleWhy;
+            bundle.divergenceStepIndex = stepIndex;
+            why = bundle.semanticTargetSeamWhy;
+            return false;
+        }
+
+        SemanticTargetSnapshot rewriteSnap;
+        if (!collectSemanticTargetSnapshot(
+                rewriteCoreAfterNormalize, stepIndex, "REWRITE", rewriteSnap, bundle.rewriteWhy)) {
+            bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_OTHER;
+            bundle.semanticTargetSeamWhy =
+                "rewrite target snapshot collection failed: " + bundle.rewriteWhy;
+            bundle.divergenceStepIndex = stepIndex;
+            why = bundle.semanticTargetSeamWhy;
+            return false;
+        }
+
+        const bool canonicalSame =
+            oracleSnap.canonicalExplicitAfterNormalize.edges ==
+                rewriteSnap.canonicalExplicitAfterNormalize.edges &&
+            oracleSnap.canonicalExplicitAfterNormalize.vertices ==
+                rewriteSnap.canonicalExplicitAfterNormalize.vertices;
+        const bool targetStateDiffers =
+            oracleSnap.aliveRNodes != rewriteSnap.aliveRNodes ||
+            oracleSnap.candidates != rewriteSnap.candidates ||
+            oracleSnap.hasNextTarget != rewriteSnap.hasNextTarget ||
+            oracleSnap.chosenR != rewriteSnap.chosenR ||
+            oracleSnap.chosenX != rewriteSnap.chosenX ||
+            oracleSnap.noTargetReason != rewriteSnap.noTargetReason;
+
+        if (!canonicalSame) {
+            bundle.semanticTargetSeamKind =
+                SemanticTargetSeamKind::STSK_CANONICAL_EXPLICIT_DIFFER;
+            bundle.semanticTargetSeamWhy =
+                "step " + std::to_string(stepIndex) +
+                ": canonical explicit after normalize differs";
+            bundle.divergenceStepIndex = stepIndex;
+            bundle.oracleTargetSnapshot = std::move(oracleSnap);
+            bundle.rewriteTargetSnapshot = std::move(rewriteSnap);
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        if (targetStateDiffers) {
+            ReducedSPQRCore shadowCore;
+            if (!buildShadowCoreFromExplicit(
+                    oracleStep.explicitAfterNormalize, shadowCore, bundle.shadowWhy)) {
+                bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_OTHER;
+                bundle.semanticTargetSeamWhy =
+                    "shadow rebuild failed: " + bundle.shadowWhy;
+                bundle.divergenceStepIndex = stepIndex;
+                bundle.oracleTargetSnapshot = std::move(oracleSnap);
+                bundle.rewriteTargetSnapshot = std::move(rewriteSnap);
+                why = bundle.semanticTargetSeamWhy;
+                return false;
+            }
+
+            SemanticTargetSnapshot shadowSnap;
+            if (!collectSemanticTargetSnapshot(
+                    shadowCore, stepIndex, "SHADOW", shadowSnap, bundle.shadowWhy)) {
+                bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_OTHER;
+                bundle.semanticTargetSeamWhy =
+                    "shadow target snapshot collection failed: " + bundle.shadowWhy;
+                bundle.divergenceStepIndex = stepIndex;
+                bundle.oracleTargetSnapshot = std::move(oracleSnap);
+                bundle.rewriteTargetSnapshot = std::move(rewriteSnap);
+                why = bundle.semanticTargetSeamWhy;
+                return false;
+            }
+
+            bundle.semanticTargetSeamKind =
+                classifySemanticTargetSeam(oracleSnap, rewriteSnap, shadowSnap, bundle.semanticTargetSeamWhy);
+            bundle.divergenceStepIndex = stepIndex;
+            bundle.oracleTargetSnapshot = std::move(oracleSnap);
+            bundle.rewriteTargetSnapshot = std::move(rewriteSnap);
+            bundle.shadowTargetSnapshot = std::move(shadowSnap);
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        if (oracleStep.terminated && rewriteStep.terminated) {
+            bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_NONE;
+            bundle.semanticTargetSeamWhy =
+                "oracle and rewrite target snapshots remained aligned to termination";
+            bundle.divergenceStepIndex = -1;
+            bundle.oracleTargetSnapshot = std::move(oracleSnap);
+            bundle.rewriteTargetSnapshot = std::move(rewriteSnap);
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        oracleCurrent = oracleStep.explicitAfterDelete;
+        rewriteCurrent = rewriteStep.explicitAfterNormalize;
+    }
+
+    bundle.semanticTargetSeamKind = SemanticTargetSeamKind::STSK_OTHER;
+    bundle.semanticTargetSeamWhy =
+        "semantic target replay reached maxSteps without classified divergence";
+    bundle.divergenceStepIndex = kMaxSemanticReplaySteps;
+    why = bundle.semanticTargetSeamWhy;
+    return false;
+}
+
+bool runOracleSemanticReplayToEnd(const ExplicitBlockGraph &input,
+                                  SemanticReplayResult &out,
+                                  std::string &why) {
+    constexpr int kMaxSemanticReplaySteps = 64;
+
+    out = {};
+    ExplicitBlockGraph current = input;
+    for (int stepIndex = 1; stepIndex <= kMaxSemanticReplaySteps; ++stepIndex) {
+        SemanticStepTrace step;
+        std::string stepWhy;
+        if (!replayOracleFixpointOneStep(current, stepIndex, step, stepWhy)) {
+            out.ok = false;
+            out.steps.push_back(std::move(step));
+            out.why = stepWhy;
+            why = stepWhy;
+            return false;
+        }
+
+        out.steps.push_back(step);
+        if (step.terminated) {
+            out.ok = true;
+            out.finalExplicitRaw = step.explicitAfterNormalize;
+            out.finalExplicitCanonical = step.canonicalExplicitAfterNormalize;
+            out.terminatedStep = stepIndex;
+            out.why.clear();
+            why.clear();
+            return true;
+        }
+
+        current = step.explicitAfterDelete;
+    }
+
+    out.ok = false;
+    out.why = "oracle semantic replay: reached maxSteps without termination";
+    why = out.why;
+    return false;
+}
+
+bool extractSharedCanonicalExplicitAtStep(const ExplicitBlockGraph &input,
+                                          int sourceStep,
+                                          ExplicitBlockGraph &out,
+                                          std::string &why) {
+    if (sourceStep <= 0) {
+        return fail(why, "transition replay: sourceStep must be positive");
+    }
+
+    ExplicitBlockGraph oracleCurrent = input;
+    ExplicitBlockGraph rewriteCurrent = input;
+    for (int stepIndex = 1; stepIndex <= sourceStep; ++stepIndex) {
+        SemanticStepTrace oracleStep;
+        SemanticStepTrace rewriteStep;
+        std::string oracleWhy;
+        std::string rewriteWhy;
+        if (!replayOracleFixpointOneStepInternal(
+                oracleCurrent, stepIndex, oracleStep, nullptr, oracleWhy)) {
+            return fail(why,
+                        "transition replay: oracle step extraction failed at step " +
+                            std::to_string(stepIndex) + ": " + oracleWhy);
+        }
+        if (!replayRewriteSeqOneStepInternal(
+                rewriteCurrent, stepIndex, rewriteStep, nullptr, rewriteWhy)) {
+            return fail(why,
+                        "transition replay: rewrite step extraction failed at step " +
+                            std::to_string(stepIndex) + ": " + rewriteWhy);
+        }
+        if (stepIndex == sourceStep) {
+            if (oracleStep.canonicalExplicitAfterDelete.edges !=
+                    rewriteStep.canonicalExplicitAfterNormalize.edges ||
+                oracleStep.canonicalExplicitAfterDelete.vertices !=
+                    rewriteStep.canonicalExplicitAfterNormalize.vertices) {
+                return fail(why,
+                            "transition replay: shared explicit differs at source step " +
+                                std::to_string(sourceStep));
+            }
+            out = oracleStep.explicitAfterDelete;
+            canonicalizeExplicitGraph(out);
+            why.clear();
+            return true;
+        }
+
+        oracleCurrent = oracleStep.explicitAfterDelete;
+        rewriteCurrent = rewriteStep.explicitAfterNormalize;
+    }
+
+    return fail(why, "transition replay: failed to extract shared explicit at source step");
+}
+
+bool replayOracleSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                              int sourceStep,
+                                              TransitionReplaySnapshot &out,
+                                              std::string &why) {
+    out = {};
+    out.sourceStep = sourceStep;
+    out.explicitBefore = canonicalizeExplicitForCompare(inputExplicit);
+
+    SemanticStepTrace step;
+    if (!replayOracleFixpointOneStepInternal(
+            inputExplicit, sourceStep + 1, step, nullptr, why)) {
+        out.ok = false;
+        out.why = why;
+        return false;
+    }
+
+    out.chosenR = step.chosenR;
+    out.chosenX = step.chosenX;
+    out.explicitAfterDelete = step.canonicalExplicitAfterDelete;
+    out.explicitAfterStep = step.canonicalExplicitAfterNormalize;
+    out.terminated = step.terminated;
+    out.terminateReason = step.terminateReason;
+    out.ok = true;
+    out.why.clear();
+    why.clear();
+    return true;
+}
+
+bool replayRewriteSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                               int sourceStep,
+                                               TransitionReplaySnapshot &out,
+                                               std::string &why) {
+    out = {};
+    out.sourceStep = sourceStep;
+    out.explicitBefore = canonicalizeExplicitForCompare(inputExplicit);
+
+    SemanticStepTrace step;
+    if (!replayRewriteSeqOneStepInternal(
+            inputExplicit, sourceStep + 1, step, nullptr, why)) {
+        out.ok = false;
+        out.why = why;
+        return false;
+    }
+
+    out.chosenR = step.chosenR;
+    out.chosenX = step.chosenX;
+    out.explicitAfterDelete = step.canonicalExplicitAfterDelete;
+    out.explicitAfterStep = step.canonicalExplicitAfterNormalize;
+    out.terminated = step.terminated;
+    out.terminateReason = step.terminateReason;
+    out.ok = true;
+    out.why.clear();
+    why.clear();
+    return true;
+}
+
+bool buildShadowDeleteExplicitFromSharedInput(const ExplicitBlockGraph &inputExplicit,
+                                              int /*chosenR*/,
+                                              int chosenX,
+                                              CanonicalExplicitGraph &out,
+                                              std::string &why) {
+    ReducedSPQRCore core;
+    if (!buildShadowCoreFromExplicit(inputExplicit, core, why)) {
+        return false;
+    }
+    ExplicitBlockGraph explicitAfterDelete;
+    if (!buildExplicitAfterDeletingVertex(core, chosenX, explicitAfterDelete, why)) {
+        return false;
+    }
+    out = canonicalizeExplicitForCompare(explicitAfterDelete);
+    why.clear();
+    return true;
+}
+
+TransitionSeamKind classifyTransitionSeam(const TransitionReplaySnapshot &oracleSnap,
+                                          const TransitionReplaySnapshot &rewriteSnap,
+                                          const CanonicalExplicitGraph &shadowDelete,
+                                          std::string &why) {
+    const auto canonicalEqual = [](const CanonicalExplicitGraph &lhs,
+                                   const CanonicalExplicitGraph &rhs) {
+        return lhs.edges == rhs.edges && lhs.vertices == rhs.vertices;
+    };
+
+    if (oracleSnap.chosenR != rewriteSnap.chosenR ||
+        oracleSnap.chosenX != rewriteSnap.chosenX) {
+        std::ostringstream oss;
+        oss << "transition seam: choice differs "
+            << "(oracle R=" << oracleSnap.chosenR << ",x=" << oracleSnap.chosenX
+            << " rewrite R=" << rewriteSnap.chosenR << ",x=" << rewriteSnap.chosenX
+            << ")";
+        why = oss.str();
+        return TransitionSeamKind::TRSK_CHOICE_DIFFER;
+    }
+
+    if (oracleSnap.chosenR < 0 && oracleSnap.chosenX < 0 &&
+        rewriteSnap.chosenR < 0 && rewriteSnap.chosenX < 0) {
+        if (canonicalEqual(oracleSnap.explicitAfterStep, rewriteSnap.explicitAfterStep)) {
+            why = "transition seam: shared-input replay has no next target on both sides";
+            return TransitionSeamKind::TRSK_NONE;
+        }
+        why =
+            "transition seam: shared-input replay has no next target on both sides but "
+            "post-step explicit differs";
+        return TransitionSeamKind::TRSK_DELETE_EQUAL_STEP_DIFFER;
+    }
+
+    const bool oracleDeleteMatches = canonicalEqual(oracleSnap.explicitAfterDelete, shadowDelete);
+    const bool rewriteDeleteMatches =
+        canonicalEqual(rewriteSnap.explicitAfterDelete, shadowDelete);
+
+    if (oracleDeleteMatches && !rewriteDeleteMatches) {
+        why = "transition seam: oracle matches direct delete, rewrite diverges at delete";
+        return TransitionSeamKind::TRSK_ORACLE_MATCHES_SHADOW_DELETE_REWRITE_DIFFERS;
+    }
+    if (rewriteDeleteMatches && !oracleDeleteMatches) {
+        why = "transition seam: rewrite matches direct delete, oracle diverges at delete";
+        return TransitionSeamKind::TRSK_REWRITE_MATCHES_SHADOW_DELETE_ORACLE_DIFFERS;
+    }
+    if (!oracleDeleteMatches && !rewriteDeleteMatches) {
+        why = "transition seam: both oracle and rewrite diverge from direct delete";
+        return TransitionSeamKind::TRSK_BOTH_DIFFER_FROM_SHADOW_DELETE;
+    }
+
+    if (oracleDeleteMatches && rewriteDeleteMatches &&
+        !canonicalEqual(oracleSnap.explicitAfterStep, rewriteSnap.explicitAfterStep)) {
+        why = "transition seam: delete equal, divergence occurs in post-delete step semantics";
+        return TransitionSeamKind::TRSK_DELETE_EQUAL_STEP_DIFFER;
+    }
+
+    if (oracleDeleteMatches && rewriteDeleteMatches &&
+        canonicalEqual(oracleSnap.explicitAfterStep, rewriteSnap.explicitAfterStep)) {
+        if (!oracleSnap.terminated && !rewriteSnap.terminated) {
+            why = "transition seam: oracle and rewrite remained aligned through the step";
+            return TransitionSeamKind::TRSK_NONE;
+        }
+        why =
+            "transition seam: shared-input replay has no next target on both sides; divergence "
+            "lies in oracle-side step semantics/handoff before this replay";
+        return TransitionSeamKind::TRSK_ORACLE_SIDE_STEP_SEMANTICS_DIFFER;
+    }
+
+    why = "transition seam: snapshots do not match a classified transition seam";
+    return TransitionSeamKind::TRSK_OTHER;
+}
+
+bool runSolverSemanticTransitionReplayCaseDumpAware(
+    const ExplicitBlockGraph &input,
+    const std::string &manifestPath,
+    const std::string &caseName,
+    uint64_t seed,
+    int tc,
+    std::optional<int> targetStep,
+    int sourceStep,
+    SolverSemanticTransitionReplayBundle &bundle,
+    std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.sourceStep = sourceStep;
+
+    if (!extractSharedCanonicalExplicitAtStep(
+            input, sourceStep, bundle.sharedExplicitBefore, bundle.sharedExplicitWhy)) {
+        bundle.transitionSeamKind = TransitionSeamKind::TRSK_OTHER;
+        bundle.transitionSeamWhy = bundle.sharedExplicitWhy;
+        why = bundle.transitionSeamWhy;
+        return false;
+    }
+    bundle.sharedExplicitBeforeCanonical =
+        canonicalizeExplicitForCompare(bundle.sharedExplicitBefore);
+
+    if (!replayOracleSingleTransitionFromExplicit(
+            bundle.sharedExplicitBefore,
+            sourceStep,
+            bundle.oracleTransitionSnapshot,
+            bundle.oracleWhy)) {
+        bundle.transitionSeamKind = TransitionSeamKind::TRSK_OTHER;
+        bundle.transitionSeamWhy =
+            "transition replay: oracle single-step failed: " + bundle.oracleWhy;
+        why = bundle.transitionSeamWhy;
+        return false;
+    }
+
+    if (!replayRewriteSingleTransitionFromExplicit(
+            bundle.sharedExplicitBefore,
+            sourceStep,
+            bundle.rewriteTransitionSnapshot,
+            bundle.rewriteWhy)) {
+        bundle.transitionSeamKind = TransitionSeamKind::TRSK_OTHER;
+        bundle.transitionSeamWhy =
+            "transition replay: rewrite single-step failed: " + bundle.rewriteWhy;
+        why = bundle.transitionSeamWhy;
+        return false;
+    }
+
+    if (bundle.oracleTransitionSnapshot.chosenR ==
+            bundle.rewriteTransitionSnapshot.chosenR &&
+        bundle.oracleTransitionSnapshot.chosenX ==
+            bundle.rewriteTransitionSnapshot.chosenX &&
+        bundle.oracleTransitionSnapshot.chosenX >= 0) {
+        if (!buildShadowDeleteExplicitFromSharedInput(
+                bundle.sharedExplicitBefore,
+                bundle.oracleTransitionSnapshot.chosenR,
+                bundle.oracleTransitionSnapshot.chosenX,
+                bundle.shadowDeleteExplicit,
+                bundle.shadowWhy)) {
+            bundle.transitionSeamKind = TransitionSeamKind::TRSK_OTHER;
+            bundle.transitionSeamWhy =
+                "transition replay: direct shadow delete failed: " + bundle.shadowWhy;
+            why = bundle.transitionSeamWhy;
+            return false;
+        }
+    }
+
+    bundle.transitionSeamKind = classifyTransitionSeam(bundle.oracleTransitionSnapshot,
+                                                       bundle.rewriteTransitionSnapshot,
+                                                       bundle.shadowDeleteExplicit,
+                                                       bundle.transitionSeamWhy);
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+namespace {
+
+bool canonicalExplicitEqual(const CanonicalExplicitGraph &lhs,
+                            const CanonicalExplicitGraph &rhs) {
+    return lhs.edges == rhs.edges && lhs.vertices == rhs.vertices;
+}
+
+StepHandoffSourceKind stepHandoffSourceKindForOraclePolicy(OracleHandoffPolicy policy) {
+    switch (policy) {
+        case OracleHandoffPolicy::OHP_DELETE_EXPLICIT:
+            return StepHandoffSourceKind::SHSK_FROM_DELETE;
+        case OracleHandoffPolicy::OHP_NORMALIZE_EXPLICIT:
+            return StepHandoffSourceKind::SHSK_FROM_NORMALIZE;
+    }
+    return StepHandoffSourceKind::SHSK_OTHER;
+}
+
+void setStepHandoffSnapshotFromSemanticStep(const SemanticStepTrace &step,
+                                            const char *side,
+                                            StepHandoffSnapshot &out) {
+    out = {};
+    out.stepIndex = step.stepIndex;
+    out.side = side;
+    out.explicitBefore = step.canonicalExplicitBefore;
+    out.chosenR = step.chosenR;
+    out.chosenX = step.chosenX;
+    out.explicitAfterDelete = step.canonicalExplicitAfterDelete;
+    out.explicitAfterNormalize = step.canonicalExplicitAfterNormalize;
+    out.terminated = step.terminated;
+    out.terminateReason = step.terminateReason;
+}
+
+bool replayOracleStepWithHandoffInternal(const ExplicitBlockGraph &inputExplicit,
+                                         OracleHandoffPolicy policy,
+                                         int stepIndex,
+                                         StepHandoffSnapshot &out,
+                                         ExplicitBlockGraph *nextInputRawOut,
+                                         std::string &why) {
+    SemanticStepTrace step;
+    if (!replayOracleFixpointOneStepInternal(
+            inputExplicit, stepIndex, step, nullptr, why)) {
+        out = {};
+        out.stepIndex = stepIndex;
+        out.side = "ORACLE";
+        return false;
+    }
+
+    setStepHandoffSnapshotFromSemanticStep(step, "ORACLE", out);
+    if (step.terminated) {
+        out.nextInputSourceKind = StepHandoffSourceKind::SHSK_NONE_TERMINATE;
+        out.nextInputExplicit = {};
+        if (nextInputRawOut) *nextInputRawOut = {};
+    } else {
+        out.nextInputSourceKind = stepHandoffSourceKindForOraclePolicy(policy);
+        if (policy == OracleHandoffPolicy::OHP_NORMALIZE_EXPLICIT) {
+            out.nextInputExplicit = step.canonicalExplicitAfterNormalize;
+            if (nextInputRawOut) *nextInputRawOut = step.explicitAfterNormalize;
+        } else {
+            out.nextInputExplicit = step.canonicalExplicitAfterDelete;
+            if (nextInputRawOut) *nextInputRawOut = step.explicitAfterDelete;
+        }
+    }
+
+    why.clear();
+    return true;
+}
+
+bool replayRewriteStepWithHandoffInternal(const ExplicitBlockGraph &inputExplicit,
+                                          int stepIndex,
+                                          StepHandoffSnapshot &out,
+                                          ExplicitBlockGraph *nextInputRawOut,
+                                          std::string &why) {
+    SemanticStepTrace step;
+    if (!replayRewriteSeqOneStepInternal(
+            inputExplicit, stepIndex, step, nullptr, why)) {
+        out = {};
+        out.stepIndex = stepIndex;
+        out.side = "REWRITE";
+        return false;
+    }
+
+    setStepHandoffSnapshotFromSemanticStep(step, "REWRITE", out);
+    if (step.terminated) {
+        out.nextInputSourceKind = StepHandoffSourceKind::SHSK_NONE_TERMINATE;
+        out.nextInputExplicit = {};
+        if (nextInputRawOut) *nextInputRawOut = {};
+    } else {
+        out.nextInputExplicit = step.canonicalExplicitAfterNormalize;
+        out.nextInputSourceKind = StepHandoffSourceKind::SHSK_FROM_NORMALIZE;
+        if (nextInputRawOut) *nextInputRawOut = step.explicitAfterNormalize;
+    }
+
+    why.clear();
+    return true;
+}
+
+} // namespace
+
+bool replayOracleStepWithHandoff(const ExplicitBlockGraph &inputExplicit,
+                                 StepHandoffSnapshot &out,
+                                 std::string &why) {
+    return replayOracleStepWithHandoffInternal(
+        inputExplicit, OracleHandoffPolicy::OHP_DELETE_EXPLICIT, 1, out, nullptr, why);
+}
+
+bool replayOracleStepWithHandoff(const ExplicitBlockGraph &inputExplicit,
+                                 OracleHandoffPolicy policy,
+                                 StepHandoffSnapshot &out,
+                                 std::string &why) {
+    return replayOracleStepWithHandoffInternal(inputExplicit, policy, 1, out, nullptr, why);
+}
+
+bool replayRewriteStepWithHandoff(const ExplicitBlockGraph &inputExplicit,
+                                  StepHandoffSnapshot &out,
+                                  std::string &why) {
+    return replayRewriteStepWithHandoffInternal(inputExplicit, 1, out, nullptr, why);
+}
+
+HandoffSeamKind classifyHandoffSeam(const StepHandoffSnapshot &oracleSnap,
+                                    const StepHandoffSnapshot &rewriteSnap,
+                                    std::string &why) {
+    if (oracleSnap.nextInputSourceKind == StepHandoffSourceKind::SHSK_FROM_DELETE &&
+        rewriteSnap.nextInputSourceKind ==
+            StepHandoffSourceKind::SHSK_FROM_NORMALIZE) {
+        why = "handoff seam: oracle uses post-delete, rewrite uses post-normalize";
+        return HandoffSeamKind::HSK_ORACLE_DELETE_REWRITE_NORMALIZE;
+    }
+
+    if (oracleSnap.nextInputSourceKind == StepHandoffSourceKind::SHSK_FROM_DELETE &&
+        rewriteSnap.nextInputSourceKind ==
+            StepHandoffSourceKind::SHSK_NONE_TERMINATE) {
+        why = "handoff seam: oracle hands off delete explicit, rewrite terminates";
+        return HandoffSeamKind::HSK_ORACLE_DELETE_REWRITE_TERMINATE;
+    }
+
+    if (oracleSnap.nextInputSourceKind ==
+            StepHandoffSourceKind::SHSK_NONE_TERMINATE &&
+        rewriteSnap.nextInputSourceKind ==
+            StepHandoffSourceKind::SHSK_FROM_NORMALIZE) {
+        why = "handoff seam: oracle terminates, rewrite hands off post-normalize";
+        return HandoffSeamKind::HSK_ORACLE_TERMINATE_REWRITE_NORMALIZE;
+    }
+
+    if (oracleSnap.nextInputSourceKind == rewriteSnap.nextInputSourceKind) {
+        if (!canonicalExplicitEqual(oracleSnap.nextInputExplicit,
+                                    rewriteSnap.nextInputExplicit)) {
+            why = "handoff seam: both sides use the same handoff source kind but "
+                  "nextInputExplicit differs";
+            return HandoffSeamKind::HSK_BOTH_SAME_SOURCE_BUT_NEXT_INPUT_DIFFERS;
+        }
+        why = "handoff seam: oracle and rewrite handoff snapshots are aligned";
+        return HandoffSeamKind::HSK_NONE;
+    }
+
+    why = "handoff seam: snapshots do not match a classified handoff seam";
+    return HandoffSeamKind::HSK_OTHER;
+}
+
+bool runSolverHandoffReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                         const std::string &manifestPath,
+                                         const std::string &caseName,
+                                         uint64_t seed,
+                                         int tc,
+                                         std::optional<int> targetStep,
+                                         SolverHandoffReplayBundle &bundle,
+                                         std::string &why) {
+    constexpr int kMaxSemanticReplaySteps = 64;
+    constexpr int kDefaultHandoffStep = 2;
+
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.handoffStepIndex = kDefaultHandoffStep;
+
+    ExplicitBlockGraph oracleCurrent = input;
+    ExplicitBlockGraph rewriteCurrent = input;
+
+    if (!extractSharedCanonicalExplicitAtStep(input,
+                                              bundle.handoffStepIndex,
+                                              bundle.transitionSharedExplicit,
+                                              bundle.transitionSharedWhy)) {
+        bundle.handoffSeamKind = HandoffSeamKind::HSK_OTHER;
+        bundle.handoffSeamWhy = bundle.transitionSharedWhy;
+        why = bundle.handoffSeamWhy;
+        return false;
+    }
+    bundle.transitionSharedExplicitCanonical =
+        canonicalizeExplicitForCompare(bundle.transitionSharedExplicit);
+
+    for (int stepIndex = 1; stepIndex <= kMaxSemanticReplaySteps; ++stepIndex) {
+        StepHandoffSnapshot oracleSnap;
+        StepHandoffSnapshot rewriteSnap;
+        ExplicitBlockGraph oracleNextRaw;
+        ExplicitBlockGraph rewriteNextRaw;
+
+        if (!replayOracleStepWithHandoffInternal(
+                oracleCurrent,
+                OracleHandoffPolicy::OHP_DELETE_EXPLICIT,
+                stepIndex,
+                oracleSnap,
+                &oracleNextRaw,
+                bundle.oracleWhy)) {
+            bundle.handoffSeamKind = HandoffSeamKind::HSK_OTHER;
+            bundle.handoffSeamWhy =
+                "oracle handoff replay failed at step " + std::to_string(stepIndex) +
+                ": " + bundle.oracleWhy;
+            why = bundle.handoffSeamWhy;
+            return false;
+        }
+        if (!replayRewriteStepWithHandoffInternal(
+                rewriteCurrent, stepIndex, rewriteSnap, &rewriteNextRaw, bundle.rewriteWhy)) {
+            bundle.handoffSeamKind = HandoffSeamKind::HSK_OTHER;
+            bundle.handoffSeamWhy =
+                "rewrite handoff replay failed at step " + std::to_string(stepIndex) +
+                ": " + bundle.rewriteWhy;
+            bundle.oracleHandoffTrace.push_back(oracleSnap);
+            why = bundle.handoffSeamWhy;
+            return false;
+        }
+
+        bundle.oracleHandoffTrace.push_back(oracleSnap);
+        bundle.rewriteHandoffTrace.push_back(rewriteSnap);
+
+        if (stepIndex == bundle.handoffStepIndex) {
+            bundle.oracleHandoffSnapshot = oracleSnap;
+            bundle.rewriteHandoffSnapshot = rewriteSnap;
+            bundle.oracleNextMatchesTransitionShared =
+                canonicalExplicitEqual(bundle.oracleHandoffSnapshot.nextInputExplicit,
+                                       bundle.transitionSharedExplicitCanonical);
+            bundle.rewriteNextMatchesTransitionShared =
+                canonicalExplicitEqual(bundle.rewriteHandoffSnapshot.nextInputExplicit,
+                                       bundle.transitionSharedExplicitCanonical);
+
+            bundle.handoffSeamKind = classifyHandoffSeam(bundle.oracleHandoffSnapshot,
+                                                         bundle.rewriteHandoffSnapshot,
+                                                         bundle.handoffSeamWhy);
+            if (bundle.handoffSeamKind == HandoffSeamKind::HSK_NONE &&
+                !bundle.oracleNextMatchesTransitionShared &&
+                !bundle.rewriteNextMatchesTransitionShared) {
+                bundle.handoffSeamKind = HandoffSeamKind::HSK_SHARED_INPUT_EXTRACTION_BUG;
+                bundle.handoffSeamWhy =
+                    "handoff seam: shared-input extraction does not match actual next input";
+            }
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        if (oracleSnap.terminated || rewriteSnap.terminated) {
+            bundle.handoffSeamKind = HandoffSeamKind::HSK_OTHER;
+            bundle.handoffSeamWhy =
+                "handoff replay terminated before reaching step " +
+                std::to_string(bundle.handoffStepIndex);
+            why = bundle.handoffSeamWhy;
+            return false;
+        }
+
+        oracleCurrent = oracleNextRaw;
+        rewriteCurrent = rewriteNextRaw;
+    }
+
+    bundle.handoffSeamKind = HandoffSeamKind::HSK_OTHER;
+    bundle.handoffSeamWhy =
+        "handoff replay reached maxSteps without reaching the target handoff step";
+    why = bundle.handoffSeamWhy;
+    return false;
+}
+
+namespace {
+
+bool runOracleHandoffTraceToEndInternal(const ExplicitBlockGraph &input,
+                                        OracleHandoffPolicy policy,
+                                        std::vector<StepHandoffSnapshot> &trace,
+                                        CanonicalExplicitGraph &finalExplicit,
+                                        std::string &why) {
+    constexpr int kMaxOracleSteps = 64;
+
+    trace.clear();
+    ExplicitBlockGraph current = input;
+    for (int stepIndex = 1; stepIndex <= kMaxOracleSteps; ++stepIndex) {
+        StepHandoffSnapshot snap;
+        ExplicitBlockGraph nextRaw;
+        if (!replayOracleStepWithHandoffInternal(
+                current, policy, stepIndex, snap, &nextRaw, why)) {
+            return false;
+        }
+        trace.push_back(snap);
+        if (snap.terminated) {
+            finalExplicit = snap.explicitAfterNormalize;
+            why.clear();
+            return true;
+        }
+        current = std::move(nextRaw);
+    }
+    return fail(why, "oracle handoff policy replay: reached maxSteps without termination");
+}
+
+bool runRewriteHandoffTraceToEndInternal(const ExplicitBlockGraph &input,
+                                         std::vector<StepHandoffSnapshot> &trace,
+                                         CanonicalExplicitGraph &finalExplicit,
+                                         std::string &why) {
+    constexpr int kMaxRewriteSteps = 64;
+
+    trace.clear();
+    ExplicitBlockGraph current = input;
+    for (int stepIndex = 1; stepIndex <= kMaxRewriteSteps; ++stepIndex) {
+        StepHandoffSnapshot snap;
+        ExplicitBlockGraph nextRaw;
+        if (!replayRewriteStepWithHandoffInternal(
+                current, stepIndex, snap, &nextRaw, why)) {
+            return false;
+        }
+        trace.push_back(snap);
+        if (snap.terminated) {
+            finalExplicit = snap.explicitAfterNormalize;
+            why.clear();
+            return true;
+        }
+        current = std::move(nextRaw);
+    }
+    return fail(why, "rewrite handoff policy replay: reached maxSteps without termination");
+}
+
+} // namespace
+
+bool runSolverHandoffPolicyReplayCaseDumpAware(
+    const ExplicitBlockGraph &input,
+    const std::string &manifestPath,
+    const std::string &caseName,
+    uint64_t seed,
+    int tc,
+    std::optional<int> targetStep,
+    OracleHandoffPolicy oracleHandoffPolicy,
+    SolverHandoffPolicyReplayBundle &bundle,
+    std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.oracleHandoffPolicy = oracleHandoffPolicy;
+
+    SolverOutput oracleDeleteOut;
+    setRewriteRCaseContext(seed, tc);
+    if (!solveWithOracleFixpointBaseline(
+            input,
+            OracleHandoffPolicy::OHP_DELETE_EXPLICIT,
+            oracleDeleteOut,
+            bundle.oracleDeleteWhy)) {
+        why = "oracle delete handoff solve failed: " + bundle.oracleDeleteWhy;
+        return false;
+    }
+    bundle.oracleDeletePolicyFinalExplicit = oracleDeleteOut.canonicalExplicitGraph;
+
+    SolverOutput oracleNormalizeOut;
+    setRewriteRCaseContext(seed, tc);
+    if (!solveWithOracleFixpointBaseline(
+            input,
+            OracleHandoffPolicy::OHP_NORMALIZE_EXPLICIT,
+            oracleNormalizeOut,
+            bundle.oracleNormalizeWhy)) {
+        why = "oracle normalize handoff solve failed: " + bundle.oracleNormalizeWhy;
+        return false;
+    }
+    bundle.oracleNormalizePolicyFinalExplicit = oracleNormalizeOut.canonicalExplicitGraph;
+
+    SolverOutput rewriteOut;
+    setRewriteRCaseContext(seed, tc);
+    if (!solveWithRewriteSeqEngine(input, rewriteOut, bundle.rewriteWhy)) {
+        why = "rewrite handoff policy replay solve failed: " + bundle.rewriteWhy;
+        return false;
+    }
+    bundle.rewriteFinalExplicit = rewriteOut.canonicalExplicitGraph;
+
+    setRewriteRCaseContext(seed, tc);
+    if (!runOracleHandoffTraceToEndInternal(input,
+                                            OracleHandoffPolicy::OHP_DELETE_EXPLICIT,
+                                            bundle.oracleDeleteTrace,
+                                            bundle.oracleDeletePolicyFinalExplicit,
+                                            bundle.oracleDeleteWhy)) {
+        why = "oracle delete handoff trace failed: " + bundle.oracleDeleteWhy;
+        return false;
+    }
+
+    setRewriteRCaseContext(seed, tc);
+    if (!runOracleHandoffTraceToEndInternal(input,
+                                            OracleHandoffPolicy::OHP_NORMALIZE_EXPLICIT,
+                                            bundle.oracleNormalizeTrace,
+                                            bundle.oracleNormalizePolicyFinalExplicit,
+                                            bundle.oracleNormalizeWhy)) {
+        why = "oracle normalize handoff trace failed: " + bundle.oracleNormalizeWhy;
+        return false;
+    }
+
+    setRewriteRCaseContext(seed, tc);
+    if (!runRewriteHandoffTraceToEndInternal(
+            input, bundle.rewriteTrace, bundle.rewriteFinalExplicit, bundle.rewriteWhy)) {
+        why = "rewrite handoff trace failed: " + bundle.rewriteWhy;
+        return false;
+    }
+
+    bundle.deleteVsRewriteCanonicalEqual =
+        canonicalExplicitEqual(bundle.oracleDeletePolicyFinalExplicit,
+                               bundle.rewriteFinalExplicit);
+    bundle.normalizeVsRewriteCanonicalEqual =
+        canonicalExplicitEqual(bundle.oracleNormalizePolicyFinalExplicit,
+                               bundle.rewriteFinalExplicit);
+    bundle.deleteVsNormalizeCanonicalEqual =
+        canonicalExplicitEqual(bundle.oracleDeletePolicyFinalExplicit,
+                               bundle.oracleNormalizePolicyFinalExplicit);
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+namespace {
+
+ExplicitBlockGraph buildExplicitFromCanonicalGraph(
+    const CanonicalExplicitGraph &canonical) {
+    ExplicitBlockGraph out;
+    out.vertices = canonical.vertices;
+    out.edges.reserve(canonical.edges.size());
+    for (const auto &[edgeId, u, v] : canonical.edges) {
+        out.edges.push_back(ExplicitEdge{edgeId, u, v});
+    }
+    canonicalizeExplicitGraph(out);
+    return out;
+}
+
+void setStepTransitionTargetFields(const RewriteTargetSnapshot &targetSnapshot,
+                                   StepTransitionSnapshot &out) {
+    out.nextStepTargetSnapshot = targetSnapshot;
+    out.aliveRNodesForNextStep = targetSnapshot.aliveRNodes;
+    out.nextStepCandidates = targetSnapshot.candidates;
+}
+
+bool rewriteTargetSnapshotsEqual(const RewriteTargetSnapshot &lhs,
+                                 const RewriteTargetSnapshot &rhs) {
+    return lhs.aliveRNodes == rhs.aliveRNodes &&
+           lhs.candidates == rhs.candidates &&
+           lhs.hasNextTarget == rhs.hasNextTarget &&
+           lhs.chosenR == rhs.chosenR &&
+           lhs.chosenX == rhs.chosenX &&
+           lhs.noTargetReason == rhs.noTargetReason;
+}
+
+bool stepTransitionTargetStateEqual(const StepTransitionSnapshot &lhs,
+                                    const StepTransitionSnapshot &rhs) {
+    return rewriteTargetSnapshotsEqual(lhs.nextStepTargetSnapshot,
+                                       rhs.nextStepTargetSnapshot);
+}
+
+bool replaySolverSingleTransitionFromExplicitInternal(
+    const ExplicitBlockGraph &inputExplicit,
+    StepTransitionSnapshot &out,
+    ReducedSPQRCore *nextLiveCoreOut,
+    std::string &why) {
+    out = {};
+    out.side = "SOLVER";
+    out.sourceStep = 1;
+    out.explicitBeforeStep = canonicalizeExplicitForCompare(inputExplicit);
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    clearSequenceDeferredSameTypeSP();
+    if (!buildWholeCoreForTesting(inputExplicit, core, why)) {
+        return false;
+    }
+
+    NodeId chosenR = -1;
+    VertexId chosenX = -1;
+    const SequenceFixpointChooseStatus chooseStatus =
+        chooseDeterministicSequenceRewriteTargetForFixpoint(core, chosenR, chosenX, why);
+    if (chooseStatus == SequenceFixpointChooseStatus::ERROR) {
+        return false;
+    }
+    if (chooseStatus == SequenceFixpointChooseStatus::NONE) {
+        out.terminatedAfterStep = true;
+        out.terminateReason = "NO_TARGET";
+        out.nextInputSourceTag = "NONE";
+        RewriteTargetSnapshot nextTargetSnapshot;
+        if (!collectRewriteTargetSnapshot(core, 2, nextTargetSnapshot, why)) {
+            return false;
+        }
+        setStepTransitionTargetFields(nextTargetSnapshot, out);
+        if (nextLiveCoreOut != nullptr) {
+            *nextLiveCoreOut = std::move(core);
+        }
+        why.clear();
+        return true;
+    }
+
+    out.chosenR = chosenR;
+    out.chosenX = chosenX;
+
+    ExplicitBlockGraph explicitAfterDeleteRaw;
+    if (!buildExplicitAfterDeletingVertex(core, chosenX, explicitAfterDeleteRaw, why)) {
+        return false;
+    }
+    out.explicitAfterDelete = canonicalizeExplicitForCompare(explicitAfterDeleteRaw);
+
+    ReducedSPQRCore after = core;
+    setRewriteRSequenceStepContext(0, 1);
+    setRewriteRSequenceMode(true);
+    const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+    setRewriteRSequenceMode(false);
+    if (!rewriteOk) {
+        clearSequenceDeferredSameTypeSP();
+        return false;
+    }
+
+    if (!ops.normalizeTouchedRegion(after, why)) {
+        clearSequenceDeferredSameTypeSP();
+        return false;
+    }
+
+    if (hasPendingSequenceDeferredSameTypeSP()) {
+        GraftTrace cleanupTrace;
+        if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+            std::string preCleanupWhyDetailed;
+            cleanupTrace.preCleanupPostcheckSubtype =
+                classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+            cleanupTrace.postCleanupPostcheckSubtype =
+                cleanupTrace.preCleanupPostcheckSubtype;
+            if (!preCleanupWhyDetailed.empty()) {
+                cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+            }
+            if (cleanupTrace.preCleanupPostcheckSubtype ==
+                GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                const auto seeds = collectSequenceSPCleanupSeeds(
+                    after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                std::string cleanupWhy;
+                if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                    clearSequenceDeferredSameTypeSP();
+                    why = cleanupWhy;
+                    return false;
+                }
+
+                peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                std::string postCleanupWhyDetailed;
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                if (!postCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                }
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            } else {
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            }
+        }
+    }
+
+    flushSequenceDeferredSameTypeSPDump(after);
+    clearSequenceDeferredSameTypeSP();
+
+    const ExplicitBlockGraph explicitAfterNormalizeRaw =
+        ops.materializeWholeCoreExplicit(after);
+    out.explicitAfterNormalize =
+        canonicalizeExplicitForCompare(explicitAfterNormalizeRaw);
+
+    if (!ops.checkActualReducedInvariant(after, nullptr, why)) {
+        return false;
+    }
+
+    RewriteSeqStats localStats;
+    std::string resyncWhy;
+    if (!maybeResyncSolverCoreFromShadow(after, localStats, 1, resyncWhy)) {
+        why = resyncWhy;
+        return false;
+    }
+
+    ExplicitBlockGraph nextInputRaw = ops.materializeWholeCoreExplicit(after);
+    out.hasSolverHandoffResyncDiagnostics = true;
+    if (!collectRewriteTargetSnapshot(after, 2, out.nextStepLiveTargetBeforeResync, why)) {
+        return false;
+    }
+    ReducedSPQRCore shadowAfterHandoff;
+    if (!buildShadowCoreFromExplicit(nextInputRaw, shadowAfterHandoff, why)) {
+        return false;
+    }
+    shadowAfterHandoff.blockId = after.blockId;
+    if (!collectRewriteTargetSnapshot(shadowAfterHandoff, 2, out.nextStepShadowTarget, why)) {
+        return false;
+    }
+    std::string handoffResyncWhy;
+    const bool handoffResynced =
+        attemptSolverShadowResyncAfterHandoff(after, nextInputRaw, 1, localStats, handoffResyncWhy);
+    if (!handoffResynced && !handoffResyncWhy.empty()) {
+        why = handoffResyncWhy;
+        return false;
+    }
+    out.solverHandoffResyncApplied = handoffResynced;
+    out.solverHandoffResyncWhy = handoffResynced ? handoffResyncWhy : "handoff resync: no-op";
+    if (handoffResynced) {
+        nextInputRaw = ops.materializeWholeCoreExplicit(after);
+    }
+
+    RewriteTargetSnapshot nextTargetSnapshot;
+    if (!collectRewriteTargetSnapshot(after, 2, nextTargetSnapshot, why)) {
+        return false;
+    }
+    out.nextStepLiveTargetAfterResync = nextTargetSnapshot;
+    setStepTransitionTargetFields(nextTargetSnapshot, out);
+
+    NodeId nextR = -1;
+    VertexId nextX = -1;
+    const SequenceFixpointChooseStatus nextChooseStatus =
+        chooseDeterministicSequenceRewriteTargetForFixpoint(after, nextR, nextX, why);
+    if (nextChooseStatus == SequenceFixpointChooseStatus::ERROR) {
+        return false;
+    }
+    if (nextChooseStatus == SequenceFixpointChooseStatus::NONE) {
+        out.terminatedAfterStep = true;
+        out.terminateReason = "NO_NEXT_TARGET_AFTER_STEP";
+        out.nextInputSourceTag = "NONE";
+        if (nextLiveCoreOut != nullptr) {
+            *nextLiveCoreOut = std::move(after);
+        }
+        why.clear();
+        return true;
+    }
+
+    out.nextInputExplicitRaw = nextInputRaw;
+    out.nextInputExplicit = canonicalizeExplicitForCompare(nextInputRaw);
+    out.nextInputSourceTag = "NORMALIZE";
+    if (nextLiveCoreOut != nullptr) {
+        *nextLiveCoreOut = std::move(after);
+    }
+    why.clear();
+    return true;
+}
+
+bool replayRewriteSingleTransitionFromExplicitInternal(
+    const ExplicitBlockGraph &inputExplicit,
+    StepTransitionSnapshot &out,
+    ReducedSPQRCore *nextLiveCoreOut,
+    std::string &why) {
+    out = {};
+    out.side = "REPLAY";
+    out.sourceStep = 1;
+    out.explicitBeforeStep = canonicalizeExplicitForCompare(inputExplicit);
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    clearSequenceDeferredSameTypeSP();
+    if (!buildWholeCoreForTesting(inputExplicit, core, why)) {
+        return false;
+    }
+
+    NodeId chosenR = -1;
+    VertexId chosenX = -1;
+    const SequenceChooseStatus chooseStatus =
+        chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+    if (chooseStatus == SequenceChooseStatus::ERROR) {
+        return false;
+    }
+    if (chooseStatus == SequenceChooseStatus::NONE) {
+        out.terminatedAfterStep = true;
+        out.terminateReason = "NO_TARGET";
+        out.nextInputSourceTag = "NONE";
+        RewriteTargetSnapshot nextTargetSnapshot;
+        if (!collectRewriteTargetSnapshot(core, 2, nextTargetSnapshot, why)) {
+            return false;
+        }
+        setStepTransitionTargetFields(nextTargetSnapshot, out);
+        if (nextLiveCoreOut != nullptr) {
+            *nextLiveCoreOut = std::move(core);
+        }
+        why.clear();
+        return true;
+    }
+
+    out.chosenR = chosenR;
+    out.chosenX = chosenX;
+
+    ExplicitBlockGraph explicitAfterDeleteRaw;
+    if (!buildExplicitAfterDeletingVertex(core, chosenX, explicitAfterDeleteRaw, why)) {
+        return false;
+    }
+    out.explicitAfterDelete = canonicalizeExplicitForCompare(explicitAfterDeleteRaw);
+
+    ReducedSPQRCore after = core;
+    setRewriteRSequenceStepContext(1, 2);
+    setRewriteRSequenceMode(true);
+    const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+    setRewriteRSequenceMode(false);
+    if (!rewriteOk) {
+        clearSequenceDeferredSameTypeSP();
+        return false;
+    }
+
+    if (!ops.normalizeTouchedRegion(after, why)) {
+        clearSequenceDeferredSameTypeSP();
+        return false;
+    }
+
+    if (hasPendingSequenceDeferredSameTypeSP()) {
+        GraftTrace cleanupTrace;
+        if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+            std::string preCleanupWhyDetailed;
+            cleanupTrace.preCleanupPostcheckSubtype =
+                classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+            cleanupTrace.postCleanupPostcheckSubtype =
+                cleanupTrace.preCleanupPostcheckSubtype;
+            if (!preCleanupWhyDetailed.empty()) {
+                cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+            }
+            if (cleanupTrace.preCleanupPostcheckSubtype ==
+                GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                const auto seeds = collectSequenceSPCleanupSeeds(
+                    after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                std::string cleanupWhy;
+                if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                    clearSequenceDeferredSameTypeSP();
+                    why = cleanupWhy;
+                    return false;
+                }
+
+                peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                std::string postCleanupWhyDetailed;
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                if (!postCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                }
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            } else {
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            }
+        }
+    }
+
+    flushSequenceDeferredSameTypeSPDump(after);
+    clearSequenceDeferredSameTypeSP();
+
+    if (!ops.checkActualReducedInvariant(after, nullptr, why)) {
+        return false;
+    }
+
+    const ExplicitBlockGraph nextInputRaw = ops.materializeWholeCoreExplicit(after);
+    out.explicitAfterNormalize = canonicalizeExplicitForCompare(nextInputRaw);
+    out.nextInputExplicitRaw = nextInputRaw;
+    out.nextInputExplicit = out.explicitAfterNormalize;
+    out.nextInputSourceTag = "NORMALIZE";
+
+    ReducedSPQRCore nextCore;
+    if (!buildWholeCoreForTesting(nextInputRaw, nextCore, why)) {
+        return false;
+    }
+
+    RewriteTargetSnapshot nextTargetSnapshot;
+    if (!collectRewriteTargetSnapshot(nextCore, 2, nextTargetSnapshot, why)) {
+        return false;
+    }
+    setStepTransitionTargetFields(nextTargetSnapshot, out);
+    if (nextLiveCoreOut != nullptr) {
+        *nextLiveCoreOut = std::move(nextCore);
+    }
+    why.clear();
+    return true;
+}
+
+} // namespace
+
+bool replaySolverSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                              StepTransitionSnapshot &out,
+                                              std::string &why) {
+    return replaySolverSingleTransitionFromExplicitInternal(
+        inputExplicit, out, nullptr, why);
+}
+
+bool replayRewriteSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                               StepTransitionSnapshot &out,
+                                               std::string &why) {
+    return replayRewriteSingleTransitionFromExplicitInternal(
+        inputExplicit, out, nullptr, why);
+}
+
+bool buildLiveCoreAndTargetSnapshotFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                                const std::string &side,
+                                                StepTransitionSnapshot &out,
+                                                std::string &why) {
+    out = {};
+    out.side = side;
+    out.sourceStep = 2;
+    out.explicitBeforeStep = canonicalizeExplicitForCompare(inputExplicit);
+    out.nextInputExplicitRaw = inputExplicit;
+    out.nextInputExplicit = out.explicitBeforeStep;
+    out.nextInputSourceTag = "SHADOW";
+
+    ReducedSPQRCore core;
+    if (!buildWholeCoreForTesting(inputExplicit, core, why)) {
+        return false;
+    }
+
+    RewriteTargetSnapshot nextTargetSnapshot;
+    if (!collectRewriteTargetSnapshot(core, 2, nextTargetSnapshot, why)) {
+        return false;
+    }
+    setStepTransitionTargetFields(nextTargetSnapshot, out);
+    why.clear();
+    return true;
+}
+
+StepTransitionSeamKind classifyStepTransitionSeam(
+    const StepTransitionSnapshot &solverStep1,
+    const StepTransitionSnapshot &rewriteStep1,
+    const StepTransitionSnapshot *shadowStep2,
+    std::string &why) {
+    if (!canonicalExplicitEqual(solverStep1.nextInputExplicit,
+                                rewriteStep1.nextInputExplicit)) {
+        why = "step1 handoff explicit differs between solver and replay";
+        return StepTransitionSeamKind::STSK_STEP1_HANDOFF_EXPLICIT_DIFFER;
+    }
+
+    const bool solverMatchesReplay =
+        stepTransitionTargetStateEqual(solverStep1, rewriteStep1);
+    const bool hasShadow = shadowStep2 != nullptr;
+    const bool solverMatchesShadow =
+        hasShadow && stepTransitionTargetStateEqual(solverStep1, *shadowStep2);
+    const bool replayMatchesShadow =
+        hasShadow && stepTransitionTargetStateEqual(rewriteStep1, *shadowStep2);
+
+    if (!hasShadow) {
+        if (!solverMatchesReplay) {
+            why = "step1 handoff equal, but step2 live-core target snapshot differs";
+            return StepTransitionSeamKind::STSK_STEP1_HANDOFF_EQUAL_STEP2_LIVE_CORE_DIFFER;
+        }
+        why = "step1 handoff equal and step2 live target state aligned";
+        return StepTransitionSeamKind::STSK_OTHER;
+    }
+
+    if (!solverMatchesShadow && replayMatchesShadow) {
+        why = "step1 handoff equal, solver step2 live core differs but replay matches shadow";
+        return StepTransitionSeamKind::STSK_STEP1_HANDOFF_EQUAL_STEP2_SHADOW_MATCHES_REPLAY;
+    }
+    if (!replayMatchesShadow && solverMatchesShadow) {
+        why = "step1 handoff equal, replay step2 live core differs but solver matches shadow";
+        return StepTransitionSeamKind::STSK_STEP1_HANDOFF_EQUAL_STEP2_SHADOW_MATCHES_SOLVER;
+    }
+    if (!solverMatchesShadow && !replayMatchesShadow) {
+        why = "step1 handoff equal, both solver and replay step2 live cores differ from shadow";
+        return StepTransitionSeamKind::STSK_STEP1_HANDOFF_EQUAL_BOTH_DIFFER_FROM_SHADOW;
+    }
+
+    if (!solverMatchesReplay) {
+        why = "step1 handoff equal, step2 live-core target snapshot differs";
+        return StepTransitionSeamKind::STSK_STEP1_HANDOFF_EQUAL_STEP2_LIVE_CORE_DIFFER;
+    }
+
+    why = "step1 handoff equal and step2 live target state aligned";
+    return StepTransitionSeamKind::STSK_OTHER;
+}
+
+bool runSolverStepTransitionReplayCaseDumpAware(
+    const ExplicitBlockGraph &input,
+    const std::string &manifestPath,
+    const std::string &caseName,
+    uint64_t seed,
+    int tc,
+    std::optional<int> targetStep,
+    SolverStepTransitionReplayBundle &bundle,
+    std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+
+    setRewriteRCaseContext(seed, tc);
+    if (!replaySolverSingleTransitionFromExplicit(input, bundle.solverStep1Snapshot, bundle.solverWhy)) {
+        bundle.stepTransitionSeamKind = StepTransitionSeamKind::STSK_OTHER;
+        bundle.stepTransitionSeamWhy =
+            "solver step transition replay failed: " + bundle.solverWhy;
+        why = bundle.stepTransitionSeamWhy;
+        return false;
+    }
+
+    setRewriteRCaseContext(seed, tc);
+    if (!replayRewriteSingleTransitionFromExplicit(input,
+                                                   bundle.rewriteStep1Snapshot,
+                                                   bundle.rewriteWhy)) {
+        bundle.stepTransitionSeamKind = StepTransitionSeamKind::STSK_OTHER;
+        bundle.stepTransitionSeamWhy =
+            "rewrite step transition replay failed: " + bundle.rewriteWhy;
+        why = bundle.stepTransitionSeamWhy;
+        return false;
+    }
+
+    if (canonicalExplicitEqual(bundle.solverStep1Snapshot.nextInputExplicit,
+                               bundle.rewriteStep1Snapshot.nextInputExplicit) &&
+        !bundle.solverStep1Snapshot.terminatedAfterStep &&
+        !bundle.rewriteStep1Snapshot.terminatedAfterStep) {
+        const ExplicitBlockGraph shadowExplicit =
+            buildExplicitFromCanonicalGraph(bundle.solverStep1Snapshot.nextInputExplicit);
+        setRewriteRCaseContext(seed, tc);
+        if (!buildLiveCoreAndTargetSnapshotFromExplicit(
+                shadowExplicit, "SHADOW", bundle.shadowStep2Snapshot, bundle.shadowWhy)) {
+            bundle.stepTransitionSeamKind = StepTransitionSeamKind::STSK_OTHER;
+            bundle.stepTransitionSeamWhy =
+                "shadow step2 rebuild failed: " + bundle.shadowWhy;
+            why = bundle.stepTransitionSeamWhy;
+            return false;
+        }
+        bundle.hasShadowStep2Snapshot = true;
+    }
+
+    bundle.stepTransitionSeamKind = classifyStepTransitionSeam(
+        bundle.solverStep1Snapshot,
+        bundle.rewriteStep1Snapshot,
+        bundle.hasShadowStep2Snapshot ? &bundle.shadowStep2Snapshot : nullptr,
+        bundle.stepTransitionSeamWhy);
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+bool extractSharedHandoffExplicitFromTransition(const ExplicitBlockGraph &input,
+                                                const std::string &caseName,
+                                                int sourceStep,
+                                                ExplicitBlockGraph &out,
+                                                StepTransitionSnapshot &solverStep,
+                                                StepTransitionSnapshot &rewriteStep,
+                                                std::string &why) {
+    (void)caseName;
+    out = {};
+    solverStep = {};
+    rewriteStep = {};
+    if (sourceStep != 1) {
+        return fail(why,
+                    "explicit-core-builder-replay handoff source currently requires sourceStep=1");
+    }
+
+    if (!replaySolverSingleTransitionFromExplicitInternal(input, solverStep, nullptr, why)) {
+        return false;
+    }
+    if (!replayRewriteSingleTransitionFromExplicitInternal(input, rewriteStep, nullptr, why)) {
+        return false;
+    }
+    if (solverStep.terminatedAfterStep || rewriteStep.terminatedAfterStep) {
+        return fail(why,
+                    "handoff explicit missing because solver or replay terminated after source step");
+    }
+    if (!canonicalExplicitEqual(solverStep.nextInputExplicit,
+                                rewriteStep.nextInputExplicit)) {
+        return fail(why, "handoff explicit mismatch");
+    }
+
+    out = buildExplicitFromCanonicalGraph(solverStep.nextInputExplicit);
+    why.clear();
+    return true;
+}
+
+bool extractSharedHandoffExplicitForTc54(const ExplicitBlockGraph &input,
+                                         const std::string &caseName,
+                                         ExplicitBlockGraph &out,
+                                         CoreShapeSnapshot &sourceLiveCore,
+                                         std::string &why) {
+    out = {};
+    sourceLiveCore = {};
+
+    StepTransitionSnapshot solverStep;
+    StepTransitionSnapshot rewriteStep;
+    if (!extractSharedHandoffExplicitFromTransition(
+            input, caseName, 1, out, solverStep, rewriteStep, why)) {
+        if (why.empty()) {
+            why = "handoff raw replay: shared handoff explicit mismatch";
+        } else {
+            why = "handoff raw replay: " + why;
+        }
+        return false;
+    }
+
+    ReducedSPQRCore nextLiveCore;
+    std::string replayWhy;
+    if (!replayRewriteSingleTransitionFromExplicitInternal(
+            input, rewriteStep, &nextLiveCore, replayWhy)) {
+        why = "handoff raw replay: failed to capture source live core: " + replayWhy;
+        return false;
+    }
+    if (rewriteStep.terminatedAfterStep || rewriteStep.nextInputExplicit.edges.empty()) {
+        why = "handoff raw replay: failed to capture source live core";
+        return false;
+    }
+    if (!buildCoreShapeSnapshot(nextLiveCore, 2, "SOURCE_REPLAY", sourceLiveCore, why)) {
+        why = "handoff raw replay: failed to capture source live core: " + why;
+        return false;
+    }
+    why.clear();
+    return true;
+}
+
+bool runRewriteSemanticReplayToEnd(const ExplicitBlockGraph &input,
+                                   SemanticReplayResult &out,
+                                   std::string &why) {
+    constexpr int kMaxSemanticReplaySteps = 64;
+
+    out = {};
+    ExplicitBlockGraph current = input;
+    for (int stepIndex = 1; stepIndex <= kMaxSemanticReplaySteps; ++stepIndex) {
+        SemanticStepTrace step;
+        std::string stepWhy;
+        if (!replayRewriteSeqOneStep(current, stepIndex, step, stepWhy)) {
+            out.ok = false;
+            out.steps.push_back(std::move(step));
+            out.why = stepWhy;
+            why = stepWhy;
+            return false;
+        }
+
+        out.steps.push_back(step);
+        if (step.terminated) {
+            out.ok = true;
+            out.finalExplicitRaw = step.explicitAfterNormalize;
+            out.finalExplicitCanonical = step.canonicalExplicitAfterNormalize;
+            out.terminatedStep = stepIndex;
+            out.why.clear();
+            why.clear();
+            return true;
+        }
+
+        current = step.explicitAfterNormalize;
+    }
+
+    out.ok = false;
+    out.why = "rewrite semantic replay: reached maxSteps without termination";
+    why = out.why;
+    return false;
+}
+
+CanonicalExplicitGraph canonicalizeSolverOutput(const SolverOutput &out) {
+    return canonicalizeExplicitForCompare(out.explicitGraph);
+}
+
+CompareAssemblySeamKind classifyCompareAssemblySeam(
+    const SolverOutput &oracleSolverOut,
+    const SolverOutput &rewriteSolverOut,
+    const SemanticReplayResult &oracleReplay,
+    const SemanticReplayResult &rewriteReplay,
+    std::string &why) {
+    const CanonicalExplicitGraph oracleSolverCanonical =
+        canonicalizeSolverOutput(oracleSolverOut);
+    const CanonicalExplicitGraph rewriteSolverCanonical =
+        canonicalizeSolverOutput(rewriteSolverOut);
+
+    const bool oracleSolverVsReplayCanonical =
+        oracleSolverCanonical.edges == oracleReplay.finalExplicitCanonical.edges &&
+        oracleSolverCanonical.vertices == oracleReplay.finalExplicitCanonical.vertices;
+    if (!oracleSolverVsReplayCanonical) {
+        why = "baseline solver output assembly differs from oracle replay final canonical explicit";
+        return CompareAssemblySeamKind::CASK_BASELINE_OUTPUT_NOT_EQUAL_REPLAY_FINAL;
+    }
+
+    const bool rewriteSolverVsReplayCanonical =
+        rewriteSolverCanonical.edges == rewriteReplay.finalExplicitCanonical.edges &&
+        rewriteSolverCanonical.vertices == rewriteReplay.finalExplicitCanonical.vertices;
+    if (!rewriteSolverVsReplayCanonical) {
+        why = "rewrite solver output assembly differs from rewrite replay final canonical explicit";
+        return CompareAssemblySeamKind::CASK_REWRITE_OUTPUT_NOT_EQUAL_REPLAY_FINAL;
+    }
+
+    const bool oracleVsRewriteCanonical =
+        oracleSolverCanonical.edges == rewriteSolverCanonical.edges &&
+        oracleSolverCanonical.vertices == rewriteSolverCanonical.vertices;
+
+    ProjectHarnessOps ops;
+    std::string oracleSolverVsReplayRawWhy;
+    const bool oracleSolverVsReplayRaw = ops.checkEquivalentExplicitGraphs(
+        oracleSolverOut.explicitGraph, oracleReplay.finalExplicitRaw, oracleSolverVsReplayRawWhy);
+    std::string rewriteSolverVsReplayRawWhy;
+    const bool rewriteSolverVsReplayRaw = ops.checkEquivalentExplicitGraphs(
+        rewriteSolverOut.explicitGraph, rewriteReplay.finalExplicitRaw, rewriteSolverVsReplayRawWhy);
+    std::string oracleVsRewriteRawWhy;
+    const bool oracleVsRewriteRaw = ops.checkEquivalentExplicitGraphs(
+        oracleSolverOut.explicitGraph, rewriteSolverOut.explicitGraph, oracleVsRewriteRawWhy);
+
+    if (!oracleVsRewriteCanonical) {
+        why = "solver outputs match replay finals, but oracle and rewrite canonical semantics still differ";
+        return CompareAssemblySeamKind::CASK_OTHER;
+    }
+
+    if (!oracleSolverVsReplayRaw || !rewriteSolverVsReplayRaw || !oracleVsRewriteRaw) {
+        why = "canonical solver outputs agree; raw representation-only difference remains";
+        return CompareAssemblySeamKind::CASK_COMPARE_CANONICALIZATION_MISMATCH;
+    }
+
+    why.clear();
+    return CompareAssemblySeamKind::CASK_NONE;
+}
+
+bool runSolverCompareReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                         const std::string &manifestPath,
+                                         const std::string &caseName,
+                                         uint64_t seed,
+                                         int tc,
+                                         std::optional<int> targetStep,
+                                         SolverCompareReplayBundle &bundle,
+                                         std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.inputExplicit = input;
+
+    SolverOutput oracleSolverOut;
+    setRewriteRCaseContext(seed, tc);
+    if (!solveWithOracleFixpointBaseline(input, oracleSolverOut, bundle.oracleSolverWhy)) {
+        bundle.compareAssemblySeamKind =
+            CompareAssemblySeamKind::CASK_COMPARE_SELECTION_OR_ROUTING_MISMATCH;
+        bundle.compareAssemblyWhy = "oracle baseline solver failed: " + bundle.oracleSolverWhy;
+        bundle.firstMismatchDescription = bundle.compareAssemblyWhy;
+        why = bundle.compareAssemblyWhy;
+        return false;
+    }
+    bundle.oracleSolverOutput = oracleSolverOut;
+    bundle.oracleSolverOutputCanonical = canonicalizeSolverOutput(oracleSolverOut);
+
+    SolverOutput rewriteSolverOut;
+    setRewriteRCaseContext(seed, tc);
+    if (!solveWithRewriteSeqEngine(input, rewriteSolverOut, bundle.rewriteSolverWhy)) {
+        bundle.compareAssemblySeamKind =
+            CompareAssemblySeamKind::CASK_COMPARE_SELECTION_OR_ROUTING_MISMATCH;
+        bundle.compareAssemblyWhy = "rewrite solver failed: " + bundle.rewriteSolverWhy;
+        bundle.firstMismatchDescription = bundle.compareAssemblyWhy;
+        why = bundle.compareAssemblyWhy;
+        return false;
+    }
+    bundle.rewriteSolverOutput = rewriteSolverOut;
+    bundle.rewriteSolverOutputCanonical = canonicalizeSolverOutput(rewriteSolverOut);
+    bundle.rewriteSolverOutputDebugTag = rewriteSolverOut.debugTag;
+    bundle.rewriteTerminalAssemblyWhy = rewriteSolverOut.why;
+
+    SemanticReplayResult oracleReplay;
+    setRewriteRCaseContext(seed, tc);
+    if (!runOracleSemanticReplayToEnd(input, oracleReplay, bundle.oracleReplayWhy)) {
+        bundle.compareAssemblySeamKind =
+            CompareAssemblySeamKind::CASK_COMPARE_SELECTION_OR_ROUTING_MISMATCH;
+        bundle.compareAssemblyWhy = "oracle semantic replay failed: " + bundle.oracleReplayWhy;
+        bundle.firstMismatchDescription = bundle.compareAssemblyWhy;
+        why = bundle.compareAssemblyWhy;
+        return false;
+    }
+    bundle.oracleReplay = oracleReplay;
+    bundle.oracleReplayFinalRaw = oracleReplay.finalExplicitRaw;
+    bundle.oracleReplayFinalCanonical = oracleReplay.finalExplicitCanonical;
+    bundle.oracleReplayTerminatedStep = oracleReplay.terminatedStep;
+
+    SemanticReplayResult rewriteReplay;
+    setRewriteRCaseContext(seed, tc);
+    if (!runRewriteSemanticReplayToEnd(input, rewriteReplay, bundle.rewriteReplayWhy)) {
+        bundle.compareAssemblySeamKind =
+            CompareAssemblySeamKind::CASK_COMPARE_SELECTION_OR_ROUTING_MISMATCH;
+        bundle.compareAssemblyWhy = "rewrite semantic replay failed: " + bundle.rewriteReplayWhy;
+        bundle.firstMismatchDescription = bundle.compareAssemblyWhy;
+        why = bundle.compareAssemblyWhy;
+        return false;
+    }
+    bundle.rewriteReplay = rewriteReplay;
+    bundle.rewriteReplayFinalRaw = rewriteReplay.finalExplicitRaw;
+    bundle.rewriteReplayFinalCanonical = rewriteReplay.finalExplicitCanonical;
+    bundle.rewriteReplayTerminatedStep = rewriteReplay.terminatedStep;
+
+    ProjectHarnessOps ops;
+    std::string oracleSolverVsReplayRawWhy;
+    bundle.oracleSolverVsReplayEqualRaw = ops.checkEquivalentExplicitGraphs(
+        oracleSolverOut.explicitGraph, oracleReplay.finalExplicitRaw, oracleSolverVsReplayRawWhy);
+    bundle.oracleSolverVsReplayEqualCanonical =
+        bundle.oracleSolverOutputCanonical->edges == oracleReplay.finalExplicitCanonical.edges &&
+        bundle.oracleSolverOutputCanonical->vertices ==
+            oracleReplay.finalExplicitCanonical.vertices;
+
+    std::string rewriteSolverVsReplayRawWhy;
+    bundle.rewriteSolverVsReplayEqualRaw = ops.checkEquivalentExplicitGraphs(
+        rewriteSolverOut.explicitGraph,
+        rewriteReplay.finalExplicitRaw,
+        rewriteSolverVsReplayRawWhy);
+    bundle.rewriteSolverVsReplayEqualCanonical =
+        bundle.rewriteSolverOutputCanonical->edges == rewriteReplay.finalExplicitCanonical.edges &&
+        bundle.rewriteSolverOutputCanonical->vertices ==
+            rewriteReplay.finalExplicitCanonical.vertices;
+
+    std::string oracleVsRewriteRawWhy;
+    bundle.oracleVsRewriteEqualRaw = ops.checkEquivalentExplicitGraphs(
+        oracleSolverOut.explicitGraph, rewriteSolverOut.explicitGraph, oracleVsRewriteRawWhy);
+    bundle.oracleVsRewriteEqualCanonical =
+        bundle.oracleSolverOutputCanonical->edges == bundle.rewriteSolverOutputCanonical->edges &&
+        bundle.oracleSolverOutputCanonical->vertices ==
+            bundle.rewriteSolverOutputCanonical->vertices;
+
+    bundle.compareAssemblySeamKind = classifyCompareAssemblySeam(
+        oracleSolverOut, rewriteSolverOut, oracleReplay, rewriteReplay, bundle.compareAssemblyWhy);
+    bundle.firstMismatchDescription = bundle.compareAssemblyWhy;
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+bool buildRewriteSeqTerminalOutputFromCore(const ReducedSPQRCore &core,
+                                           SolverOutput &out,
+                                           std::string &why) {
+    ProjectHarnessOps ops;
+    out.explicitGraph = ops.materializeWholeCoreExplicit(core);
+    out.canonicalExplicitGraph = canonicalizeExplicitForCompare(out.explicitGraph);
+    out.parent.clear();
+    out.debugTag = "REWRITE_SEQ_TERMINAL_FROM_FINAL_CORE";
+    out.valid = true;
+    why.clear();
+    return true;
+}
+
+bool validateRewriteSeqTerminalOutputAgainstCore(const ReducedSPQRCore &core,
+                                                 const SolverOutput &out,
+                                                 std::string &why) {
+    ProjectHarnessOps ops;
+    const ExplicitBlockGraph fresh = ops.materializeWholeCoreExplicit(core);
+    const CanonicalExplicitGraph freshCanonical = canonicalizeExplicitForCompare(fresh);
+    const CanonicalExplicitGraph outCanonical =
+        canonicalizeExplicitForCompare(out.explicitGraph);
+    if (freshCanonical.edges != outCanonical.edges ||
+        freshCanonical.vertices != outCanonical.vertices) {
+        why = "rewrite terminal output mismatch vs final core canonical explicit";
+        return false;
+    }
+    why.clear();
+    return true;
+}
+
+bool runRewriteSeqEngineToFinalCoreDebug(const ExplicitBlockGraph &input,
+                                         ReducedSPQRCore &finalCore,
+                                         std::vector<FinalCoreStepTrace> &trace,
+                                         std::vector<RewriteTargetSnapshot> &postStepTargetSnapshots,
+                                         RewriteSeqStats &stats,
+                                         std::string &why) {
+    constexpr int kMaxSequenceSteps = 64;
+
+    finalCore = {};
+    trace.clear();
+    postStepTargetSnapshots.clear();
+    stats = {};
+    why.clear();
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    if (!buildWholeCoreForTesting(input, core, why)) {
+        stats.failureStage = HarnessStage::SEQ_BUILD_CORE_FAIL;
+        stats.failureWhere = "buildWholeCoreForTesting";
+        stats.failureWhy = why;
+        return false;
+    }
+
+    for (int step = 0; step < kMaxSequenceSteps; ++step) {
+        const int stepIndex = step + 1;
+        const ExplicitBlockGraph explicitBefore = ops.materializeWholeCoreExplicit(core);
+
+        FinalCoreStepTrace stepTrace;
+        stepTrace.stepIndex = stepIndex;
+        stepTrace.canonicalExplicitBefore = canonicalizeExplicitForCompare(explicitBefore);
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceFixpointChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTargetForFixpoint(core, chosenR, chosenX, why);
+        if (chooseStatus == SequenceFixpointChooseStatus::ERROR) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "chooseDeterministicSequenceRewriteTargetForFixpoint";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step;
+            return false;
+        }
+        if (chooseStatus == SequenceFixpointChooseStatus::NONE) {
+            stepTrace.terminated = true;
+            stepTrace.terminateReason = "NO_TARGET";
+            stepTrace.canonicalExplicitAfterNormalize =
+                canonicalizeExplicitForCompare(ops.materializeWholeCoreExplicit(core));
+            trace.push_back(std::move(stepTrace));
+            finalCore = core;
+            stats.success = true;
+            stats.reachedFixpoint = true;
+            stats.completedSteps = step;
+            why.clear();
+            return true;
+        }
+
+        stepTrace.chosenR = chosenR;
+        stepTrace.chosenX = chosenX;
+
+        ReducedSPQRCore after = core;
+        setRewriteRSequenceStepContext(step, step + 1);
+        const uint64_t seqFallbacksBefore =
+            getRewriteRStats().seqRewriteWholeCoreFallbackCount;
+        setRewriteRSequenceMode(true);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+        setRewriteRSequenceMode(false);
+        const uint64_t seqFallbacksAfter =
+            getRewriteRStats().seqRewriteWholeCoreFallbackCount;
+        stats.hadSequenceFallback =
+            stats.hadSequenceFallback || (seqFallbacksAfter > seqFallbacksBefore);
+        if (!rewriteOk) {
+            stats.failureStage = HarnessStage::SEQ_REWRITE_R_FAIL;
+            stats.failureWhere = "rewriteR_fallback";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            return false;
+        }
+
+        if (!ops.normalizeTouchedRegion(after, why)) {
+            stats.failureStage = HarnessStage::SEQ_NORMALIZE_FAIL;
+            stats.failureWhere = "normalizeTouchedRegion";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            return false;
+        }
+
+        if (hasPendingSequenceDeferredSameTypeSP()) {
+            GraftTrace cleanupTrace;
+            if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+                std::string preCleanupWhyDetailed;
+                cleanupTrace.preCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    cleanupTrace.preCleanupPostcheckSubtype;
+                if (!preCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+                }
+                if (cleanupTrace.preCleanupPostcheckSubtype ==
+                    GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                    const auto seeds = collectSequenceSPCleanupSeeds(
+                        after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                    cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                    std::string cleanupWhy;
+                    if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                        stats.failureStage = HarnessStage::SEQ_ACTUAL_INVARIANT_FAIL;
+                        stats.failureWhere = "cleanupSequenceSameTypeSPAdjacency";
+                        stats.failureWhy = cleanupWhy;
+                        stats.failureStepIndex = step;
+                        stats.sequenceLengthSoFar = step + 1;
+                        stats.chosenR = chosenR;
+                        stats.chosenX = chosenX;
+                        clearSequenceDeferredSameTypeSP();
+                        why = cleanupWhy;
+                        return false;
+                    }
+
+                    peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                    std::string postCleanupWhyDetailed;
+                    cleanupTrace.postCleanupPostcheckSubtype =
+                        classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                    if (!postCleanupWhyDetailed.empty()) {
+                        cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                    }
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                } else {
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                }
+            }
+        }
+
+        flushSequenceDeferredSameTypeSPDump(after);
+        ExplicitBlockGraph explicitAfter = ops.materializeWholeCoreExplicit(after);
+
+        if (!ops.checkActualReducedInvariant(after, nullptr, why)) {
+            stats.failureStage = HarnessStage::SEQ_ACTUAL_INVARIANT_FAIL;
+            stats.failureWhere = "checkActualReducedInvariant";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        if (!maybeResyncSolverCoreFromShadow(after, stats, stepIndex, why)) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "maybeResyncSolverCoreFromShadow";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        explicitAfter = ops.materializeWholeCoreExplicit(after);
+        stepTrace.canonicalExplicitAfterNormalize =
+            canonicalizeExplicitForCompare(explicitAfter);
+        stepTrace.solverStepNextInputExplicit = stepTrace.canonicalExplicitAfterNormalize;
+
+        stepTrace.hasSolverHandoffResyncDiagnostics = true;
+        if (!collectRewriteTargetSnapshot(
+                after, stepIndex + 1, stepTrace.solverStep2LiveTargetBeforeResync, why)) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "collectRewriteTargetSnapshot(before handoff resync)";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        ReducedSPQRCore shadowAfterHandoff;
+        if (!buildShadowCoreFromExplicit(explicitAfter, shadowAfterHandoff, why)) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "buildShadowCoreFromExplicit(after handoff)";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+        shadowAfterHandoff.blockId = after.blockId;
+        if (!collectRewriteTargetSnapshot(
+                shadowAfterHandoff, stepIndex + 1, stepTrace.solverStep2ShadowTarget, why)) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "collectRewriteTargetSnapshot(shadow after handoff)";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        std::string handoffResyncWhy;
+        const bool handoffResynced = attemptSolverShadowResyncAfterHandoff(
+            after, explicitAfter, stepIndex, stats, handoffResyncWhy);
+        if (!handoffResynced && !handoffResyncWhy.empty()) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "attemptSolverShadowResyncAfterHandoff";
+            stats.failureWhy = handoffResyncWhy;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            why = handoffResyncWhy;
+            return false;
+        }
+        stepTrace.solverHandoffResyncApplied = handoffResynced;
+        stepTrace.solverHandoffResyncWhy =
+            handoffResynced ? handoffResyncWhy : "handoff resync: no-op";
+        if (handoffResynced) {
+            explicitAfter = ops.materializeWholeCoreExplicit(after);
+            stepTrace.canonicalExplicitAfterNormalize =
+                canonicalizeExplicitForCompare(explicitAfter);
+            stepTrace.solverStepNextInputExplicit =
+                stepTrace.canonicalExplicitAfterNormalize;
+        }
+        if (!collectRewriteTargetSnapshot(
+                after, stepIndex + 1, stepTrace.solverStep2LiveTargetAfterResync, why)) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "collectRewriteTargetSnapshot(after handoff resync)";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        RewriteTargetSnapshot nextTargetSnapshot;
+        if (!collectRewriteTargetSnapshot(after, stepIndex, nextTargetSnapshot, why)) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "collectRewriteTargetSnapshot(after)";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        NodeId nextR = -1;
+        VertexId nextX = -1;
+        const SequenceFixpointChooseStatus nextChooseStatus =
+            chooseDeterministicSequenceRewriteTargetForFixpoint(after, nextR, nextX, why);
+        if (nextChooseStatus == SequenceFixpointChooseStatus::ERROR) {
+            stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+            stats.failureWhere = "chooseDeterministicSequenceRewriteTargetForFixpoint(after)";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        SequenceFixpointChooseStatus effectiveNextChooseStatus = nextChooseStatus;
+        if (effectiveNextChooseStatus == SequenceFixpointChooseStatus::NONE) {
+            stepTrace.hasSolverResyncBeforeTerminateDiagnostics = true;
+            stepTrace.solverPostStepTargetSnapshotBeforeResync = nextTargetSnapshot;
+
+            ReducedSPQRCore shadowBeforeTerminate;
+            if (!buildShadowCoreFromCurrentExplicit(after, shadowBeforeTerminate, why)) {
+                stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+                stats.failureWhere = "buildShadowCoreFromCurrentExplicit(before terminate)";
+                stats.failureWhy = why;
+                stats.failureStepIndex = step;
+                stats.sequenceLengthSoFar = step + 1;
+                stats.chosenR = chosenR;
+                stats.chosenX = chosenX;
+                clearSequenceDeferredSameTypeSP();
+                return false;
+            }
+            if (!collectRewriteTargetSnapshot(shadowBeforeTerminate,
+                                              stepIndex,
+                                              stepTrace.solverShadowTargetSnapshot,
+                                              why)) {
+                stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+                stats.failureWhere = "collectRewriteTargetSnapshot(shadow before terminate)";
+                stats.failureWhy = why;
+                stats.failureStepIndex = step;
+                stats.sequenceLengthSoFar = step + 1;
+                stats.chosenR = chosenR;
+                stats.chosenX = chosenX;
+                clearSequenceDeferredSameTypeSP();
+                return false;
+            }
+
+            std::string resyncWhy;
+            const bool resynced = attemptSolverShadowResyncBeforeTerminate(
+                after, stepIndex, stats, resyncWhy);
+            if (!resynced && !resyncWhy.empty()) {
+                stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+                stats.failureWhere = "attemptSolverShadowResyncBeforeTerminate";
+                stats.failureWhy = resyncWhy;
+                stats.failureStepIndex = step;
+                stats.sequenceLengthSoFar = step + 1;
+                stats.chosenR = chosenR;
+                stats.chosenX = chosenX;
+                clearSequenceDeferredSameTypeSP();
+                why = resyncWhy;
+                return false;
+            }
+
+            stepTrace.solverResyncBeforeTerminateApplied = resynced;
+            if (resynced) {
+                stepTrace.solverResyncBeforeTerminateReason = resyncWhy;
+            } else if (!stepTrace.solverPostStepTargetSnapshotBeforeResync.hasNextTarget &&
+                       !stepTrace.solverShadowTargetSnapshot.hasNextTarget) {
+                stepTrace.solverResyncBeforeTerminateReason =
+                    "solver resync before terminate: shadow also has no target";
+            } else {
+                stepTrace.solverResyncBeforeTerminateReason =
+                    "solver resync before terminate: no-op";
+            }
+
+            if (!collectRewriteTargetSnapshot(after,
+                                              stepIndex,
+                                              stepTrace.solverPostStepTargetSnapshotAfterResync,
+                                              why)) {
+                stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+                stats.failureWhere = "collectRewriteTargetSnapshot(after resync before terminate)";
+                stats.failureWhy = why;
+                stats.failureStepIndex = step;
+                stats.sequenceLengthSoFar = step + 1;
+                stats.chosenR = chosenR;
+                stats.chosenX = chosenX;
+                clearSequenceDeferredSameTypeSP();
+                return false;
+            }
+            nextTargetSnapshot = stepTrace.solverPostStepTargetSnapshotAfterResync;
+
+            if (resynced) {
+                explicitAfter = ops.materializeWholeCoreExplicit(after);
+                const SequenceFixpointChooseStatus resyncChooseStatus =
+                    chooseDeterministicSequenceRewriteTargetForFixpoint(after,
+                                                                        nextR,
+                                                                        nextX,
+                                                                        why);
+                if (resyncChooseStatus == SequenceFixpointChooseStatus::ERROR) {
+                    stats.failureStage = HarnessStage::SEQ_CHOOSE_RX_FAIL;
+                    stats.failureWhere =
+                        "chooseDeterministicSequenceRewriteTargetForFixpoint(after resync before terminate)";
+                    stats.failureWhy = why;
+                    stats.failureStepIndex = step;
+                    stats.sequenceLengthSoFar = step + 1;
+                    stats.chosenR = chosenR;
+                    stats.chosenX = chosenX;
+                    clearSequenceDeferredSameTypeSP();
+                    return false;
+                }
+                effectiveNextChooseStatus = resyncChooseStatus;
+            }
+        }
+
+        if (explicitAfter.edges.size() >= explicitBefore.edges.size() &&
+            effectiveNextChooseStatus == SequenceFixpointChooseStatus::FOUND) {
+            stats.failureStage = HarnessStage::SEQ_PROGRESS_STUCK;
+            stats.failureWhere = "sequence progress check";
+            stats.failureWhy =
+                "rewrite sequence made no edge-count progress while another rewrite target remains";
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            why = stats.failureWhy;
+            return false;
+        }
+
+        ReducedSPQRCore oracle;
+        if (!buildWholeCoreForSequenceTesting(explicitAfter, oracle, why)) {
+            stats.failureStage = HarnessStage::SEQ_ORACLE_FAIL;
+            stats.failureWhere = "buildWholeCoreForSequenceTesting";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        const ExplicitBlockGraph explicitExpected = ops.materializeWholeCoreExplicit(oracle);
+        if (!ops.checkEquivalentExplicitGraphs(explicitAfter, explicitExpected, why)) {
+            stats.failureStage = HarnessStage::SEQ_ORACLE_FAIL;
+            stats.failureWhere = "checkEquivalentExplicitGraphs";
+            stats.failureWhy = why;
+            stats.failureStepIndex = step;
+            stats.sequenceLengthSoFar = step + 1;
+            stats.chosenR = chosenR;
+            stats.chosenX = chosenX;
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        clearSequenceDeferredSameTypeSP();
+        stats.completedSteps = step + 1;
+        postStepTargetSnapshots.push_back(nextTargetSnapshot);
+        if (effectiveNextChooseStatus == SequenceFixpointChooseStatus::NONE) {
+            stepTrace.terminated = true;
+            stepTrace.terminateReason = "NO_NEXT_TARGET_AFTER_STEP";
+            trace.push_back(std::move(stepTrace));
+            finalCore = after;
+            stats.success = true;
+            stats.reachedFixpoint = true;
+            why.clear();
+            return true;
+        }
+
+        trace.push_back(std::move(stepTrace));
+        core = std::move(after);
+    }
+
+    stats.maxStepReached = true;
+    stats.failureStage = HarnessStage::SEQ_MAX_STEPS_REACHED;
+    stats.failureWhere = "runRewriteSequenceToFixpoint";
+    stats.failureWhy = "rewrite sequence reached max steps";
+    why = stats.failureWhy;
+    return false;
+}
+
+bool runRewriteSeqReplayToFinalCoreDebug(const ExplicitBlockGraph &input,
+                                         ReducedSPQRCore &finalCore,
+                                         std::vector<FinalCoreStepTrace> &trace,
+                                         std::vector<RewriteTargetSnapshot> &postStepTargetSnapshots,
+                                         std::string &why) {
+    constexpr int kMaxSemanticReplaySteps = 64;
+
+    finalCore = {};
+    trace.clear();
+    postStepTargetSnapshots.clear();
+    why.clear();
+    ExplicitBlockGraph current = input;
+    ProjectHarnessOps ops;
+
+    for (int stepIndex = 1; stepIndex <= kMaxSemanticReplaySteps; ++stepIndex) {
+        ReducedSPQRCore core;
+        clearSequenceDeferredSameTypeSP();
+        if (!buildWholeCoreForTesting(current, core, why)) {
+            return false;
+        }
+
+        FinalCoreStepTrace stepTrace;
+        stepTrace.stepIndex = stepIndex;
+        stepTrace.canonicalExplicitBefore = canonicalizeExplicitForCompare(current);
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+        if (chooseStatus == SequenceChooseStatus::ERROR) {
+            return false;
+        }
+        if (chooseStatus == SequenceChooseStatus::NONE) {
+            stepTrace.terminated = true;
+            stepTrace.terminateReason = "NO_TARGET";
+            stepTrace.canonicalExplicitAfterNormalize =
+                canonicalizeExplicitForCompare(ops.materializeWholeCoreExplicit(core));
+            trace.push_back(std::move(stepTrace));
+            finalCore = core;
+            why.clear();
+            return true;
+        }
+
+        stepTrace.chosenR = chosenR;
+        stepTrace.chosenX = chosenX;
+
+        ReducedSPQRCore after = core;
+        setRewriteRSequenceStepContext(stepIndex, stepIndex + 1);
+        setRewriteRSequenceMode(true);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+        setRewriteRSequenceMode(false);
+        if (!rewriteOk) {
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        if (!ops.normalizeTouchedRegion(after, why)) {
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        if (hasPendingSequenceDeferredSameTypeSP()) {
+            GraftTrace cleanupTrace;
+            if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+                std::string preCleanupWhyDetailed;
+                cleanupTrace.preCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    cleanupTrace.preCleanupPostcheckSubtype;
+                if (!preCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+                }
+                if (cleanupTrace.preCleanupPostcheckSubtype ==
+                    GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                    const auto seeds = collectSequenceSPCleanupSeeds(
+                        after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                    cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                    std::string cleanupWhy;
+                    if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                        clearSequenceDeferredSameTypeSP();
+                        why = cleanupWhy;
+                        return false;
+                    }
+
+                    peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                    std::string postCleanupWhyDetailed;
+                    cleanupTrace.postCleanupPostcheckSubtype =
+                        classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                    if (!postCleanupWhyDetailed.empty()) {
+                        cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                    }
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                } else {
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                }
+            }
+        }
+
+        flushSequenceDeferredSameTypeSPDump(after);
+        clearSequenceDeferredSameTypeSP();
+        const ExplicitBlockGraph explicitAfterNormalize =
+            ops.materializeWholeCoreExplicit(after);
+        stepTrace.canonicalExplicitAfterNormalize =
+            canonicalizeExplicitForCompare(explicitAfterNormalize);
+
+        std::string invariantWhy;
+        if (!ops.checkActualReducedInvariant(after, nullptr, invariantWhy)) {
+            why = invariantWhy;
+            return false;
+        }
+
+        ReducedSPQRCore nextCore;
+        if (!buildWholeCoreForTesting(explicitAfterNormalize, nextCore, why)) {
+            return false;
+        }
+
+        RewriteTargetSnapshot nextTargetSnapshot;
+        if (!collectRewriteTargetSnapshot(nextCore, stepIndex, nextTargetSnapshot, why)) {
+            return false;
+        }
+
+        trace.push_back(std::move(stepTrace));
+        postStepTargetSnapshots.push_back(std::move(nextTargetSnapshot));
+        current = std::move(explicitAfterNormalize);
+    }
+
+    why = "rewrite semantic replay debug: reached maxSteps without termination";
+    return false;
+}
+
+bool buildFinalCoreSignature(const ReducedSPQRCore &core,
+                             FinalCoreSignature &sig,
+                             std::string &why) {
+    sig = {};
+    sig.root = core.root;
+    ProjectHarnessOps ops;
+    const ExplicitBlockGraph materialized = ops.materializeWholeCoreExplicit(core);
+    sig.canonicalExplicit = canonicalizeExplicitForCompare(materialized);
+
+    auto typeChar = [](SPQRType type) {
+        return type == SPQRType::S_NODE ? 'S' : type == SPQRType::P_NODE ? 'P' : 'R';
+    };
+
+    sig.aliveNodeCount = 0;
+    for (size_t nodeId = 0; nodeId < core.nodes.size(); ++nodeId) {
+        const auto &node = core.nodes[nodeId];
+        if (!node.alive) continue;
+        ++sig.aliveNodeCount;
+
+        std::ostringstream oss;
+        oss << "node=" << nodeId
+            << " type=" << typeChar(node.type)
+            << " alive=1 adjArcs=[";
+        for (size_t i = 0; i < node.adjArcs.size(); ++i) {
+            if (i != 0) oss << ',';
+            oss << node.adjArcs[i];
+        }
+        oss << "] realEdgesHere=[";
+        for (size_t i = 0; i < node.realEdgesHere.size(); ++i) {
+            if (i != 0) oss << ',';
+            oss << node.realEdgesHere[i];
+        }
+        oss << "] slots=[";
+        bool firstSlot = true;
+        for (size_t slotId = 0; slotId < node.slots.size(); ++slotId) {
+            const auto &slot = node.slots[slotId];
+            if (!slot.alive) continue;
+            if (!firstSlot) oss << ';';
+            firstSlot = false;
+            oss << "slot=" << slotId
+                << "," << (slot.isVirtual ? "VIRTUAL" : "REAL")
+                << ",poles=(" << slot.poleA << "," << slot.poleB << ")";
+            if (slot.isVirtual) {
+                oss << ",arcId=" << slot.arcId;
+            } else {
+                oss << ",realEdge=" << slot.realEdge;
+            }
+        }
+        oss << "]";
+        sig.nodeSummaries.push_back(oss.str());
+    }
+
+    sig.aliveArcCount = 0;
+    for (const auto &arc : core.arcs) {
+        if (arc.alive) ++sig.aliveArcCount;
+    }
+
+    why.clear();
+    return true;
+}
+
+bool collectRewriteTargetSnapshot(const ReducedSPQRCore &core,
+                                  int stepIndex,
+                                  RewriteTargetSnapshot &out,
+                                  std::string &why) {
+    out = {};
+    out.stepIndex = stepIndex;
+
+    NodeId chosenR = -1;
+    VertexId chosenX = -1;
+    std::vector<NodeId> aliveRNodes;
+    std::vector<FixpointTargetCandidateInternal> candidates;
+    if (!collectFixpointTargetCandidatesInternal(
+            core, aliveRNodes, candidates, chosenR, chosenX, why)) {
+        return false;
+    }
+
+    out.aliveRNodes.assign(aliveRNodes.begin(), aliveRNodes.end());
+    out.candidates.reserve(candidates.size());
+    for (const auto &candidate : candidates) {
+        out.candidates.push_back(RewriteTargetCandidate{
+            .rNode = candidate.rNode,
+            .x = candidate.x,
+            .scorePrimary = candidate.scorePrimary,
+            .scoreSecondary = candidate.scoreSecondary,
+            .sourceTag = "REAL_ENDPOINT_MULTIPLICITY",
+        });
+    }
+
+    out.hasNextTarget = chosenR >= 0;
+    out.chosenR = chosenR;
+    out.chosenX = chosenX;
+    if (!out.hasNextTarget) {
+        if (out.aliveRNodes.empty()) {
+            out.noTargetReason = "NO_ALIVE_R_NODE";
+        } else if (out.candidates.empty()) {
+            out.noTargetReason = "NO_REAL_ENDPOINT_MULTIPLICITY_GE_2";
+        } else {
+            out.noTargetReason = "NO_TARGET_OTHER";
+        }
+    }
+
+    why.clear();
+    return true;
+}
+
+bool buildShadowCoreFromCurrentExplicit(const ReducedSPQRCore &liveCore,
+                                        ReducedSPQRCore &shadow,
+                                        std::string &why) {
+    const BlockId originalBlockId = liveCore.blockId;
+    ProjectHarnessOps ops;
+    const ExplicitBlockGraph explicitNow = ops.materializeWholeCoreExplicit(liveCore);
+    if (!buildWholeCoreForTesting(explicitNow, shadow, why)) {
+        if (!why.empty()) {
+            why = "solver resync: shadow rebuild failed: " + why;
+        }
+        return false;
+    }
+    shadow.blockId = originalBlockId;
+
+    const ExplicitBlockGraph explicitShadow = ops.materializeWholeCoreExplicit(shadow);
+    std::string eqWhy;
+    if (!areCanonicalExplicitEqual(explicitNow, explicitShadow, eqWhy)) {
+        why = "solver resync: shadow rebuild canonical mismatch";
+        if (!eqWhy.empty()) {
+            why += ": " + eqWhy;
+        }
+        return false;
+    }
+
+    why.clear();
+    return true;
+}
+
+bool attemptSolverShadowResyncAfterHandoff(ReducedSPQRCore &liveCore,
+                                           const ExplicitBlockGraph &nextInputExplicit,
+                                           int stepIndex,
+                                           RewriteSeqStats &stats,
+                                           std::string &why) {
+    why.clear();
+    ++stats.solverHandoffResyncAttemptCount;
+    ++gRewriteRStats.solverHandoffResyncAttemptCount;
+
+    if (nextInputExplicit.vertices.empty() && nextInputExplicit.edges.empty()) {
+        ++stats.solverHandoffResyncNoopCount;
+        ++gRewriteRStats.solverHandoffResyncNoopCount;
+        return false;
+    }
+
+    ProjectHarnessOps ops;
+    const ExplicitBlockGraph explicitLive = ops.materializeWholeCoreExplicit(liveCore);
+    std::string eqWhy;
+    if (!areCanonicalExplicitEqual(explicitLive, nextInputExplicit, eqWhy)) {
+        why = "handoff resync: live canonical mismatch vs nextInputExplicit";
+        if (!eqWhy.empty()) why += ": " + eqWhy;
+        return false;
+    }
+
+    ReducedSPQRCore shadow;
+    std::string shadowWhy;
+    if (!buildShadowCoreFromExplicit(nextInputExplicit, shadow, shadowWhy)) {
+        ++stats.solverHandoffResyncBuildFailCount;
+        ++gRewriteRStats.solverHandoffResyncBuildFailCount;
+        why = shadowWhy.empty() ? "handoff resync: shadow build failed"
+                                : "handoff resync: shadow build failed: " + shadowWhy;
+        return false;
+    }
+    shadow.blockId = liveCore.blockId;
+
+    const ExplicitBlockGraph explicitShadow = ops.materializeWholeCoreExplicit(shadow);
+    if (!areCanonicalExplicitEqual(nextInputExplicit, explicitShadow, eqWhy)) {
+        why = "handoff resync: shadow canonical mismatch";
+        if (!eqWhy.empty()) why += ": " + eqWhy;
+        return false;
+    }
+
+    RewriteTargetSnapshot liveSnap;
+    if (!collectRewriteTargetSnapshot(liveCore, stepIndex + 1, liveSnap, why)) {
+        return false;
+    }
+
+    RewriteTargetSnapshot shadowSnap;
+    if (!collectRewriteTargetSnapshot(shadow, stepIndex + 1, shadowSnap, why)) {
+        return false;
+    }
+
+    if (liveSnap.aliveRNodes != shadowSnap.aliveRNodes) {
+        liveCore = std::move(shadow);
+        ++stats.solverHandoffResyncAppliedCount;
+        ++stats.solverHandoffResyncAliveRSetDifferCount;
+        ++gRewriteRStats.solverHandoffResyncAppliedCount;
+        ++gRewriteRStats.solverHandoffResyncAliveRSetDifferCount;
+        why = "handoff resync: live step2 aliveR set differs from shadow rebuild";
+        return true;
+    }
+
+    if (liveSnap.hasNextTarget != shadowSnap.hasNextTarget) {
+        liveCore = std::move(shadow);
+        ++stats.solverHandoffResyncAppliedCount;
+        ++stats.solverHandoffResyncHasTargetDifferCount;
+        ++gRewriteRStats.solverHandoffResyncAppliedCount;
+        ++gRewriteRStats.solverHandoffResyncHasTargetDifferCount;
+        why = "handoff resync: live step2 has-target state differs from shadow rebuild";
+        return true;
+    }
+
+    const bool chosenDiffers =
+        liveSnap.chosenR != shadowSnap.chosenR || liveSnap.chosenX != shadowSnap.chosenX;
+    const bool candidatesDiffer = liveSnap.candidates != shadowSnap.candidates;
+    if (liveSnap.hasNextTarget && (chosenDiffers || candidatesDiffer)) {
+        liveCore = std::move(shadow);
+        ++stats.solverHandoffResyncAppliedCount;
+        ++stats.solverHandoffResyncCandidateSetDifferCount;
+        ++gRewriteRStats.solverHandoffResyncAppliedCount;
+        ++gRewriteRStats.solverHandoffResyncCandidateSetDifferCount;
+        why = "handoff resync: live step2 target snapshot differs from shadow rebuild";
+        return true;
+    }
+
+    ++stats.solverHandoffResyncNoopCount;
+    ++gRewriteRStats.solverHandoffResyncNoopCount;
+    return false;
+}
+
+bool attemptSolverShadowResyncBeforeTerminate(ReducedSPQRCore &liveCore,
+                                              int stepIndex,
+                                              RewriteSeqStats &stats,
+                                              std::string &why) {
+    why.clear();
+    ++stats.solverResyncBeforeTerminateAttemptCount;
+    ++gRewriteRStats.solverResyncBeforeTerminateAttemptCount;
+
+    ProjectHarnessOps ops;
+    const ExplicitBlockGraph explicitNow = ops.materializeWholeCoreExplicit(liveCore);
+
+    RewriteTargetSnapshot liveSnap;
+    if (!collectRewriteTargetSnapshot(liveCore, stepIndex, liveSnap, why)) {
+        return false;
+    }
+
+    ReducedSPQRCore shadow;
+    if (!buildShadowCoreFromCurrentExplicit(liveCore, shadow, why)) {
+        return false;
+    }
+
+    RewriteTargetSnapshot shadowSnap;
+    if (!collectRewriteTargetSnapshot(shadow, stepIndex, shadowSnap, why)) {
+        return false;
+    }
+
+    const ExplicitBlockGraph explicitShadow = ops.materializeWholeCoreExplicit(shadow);
+    std::string eqWhy;
+    if (!areCanonicalExplicitEqual(explicitNow, explicitShadow, eqWhy)) {
+        why = "solver resync before terminate: shadow canonical mismatch";
+        if (!eqWhy.empty()) why += ": " + eqWhy;
+        return false;
+    }
+
+    if (!liveSnap.hasNextTarget && shadowSnap.hasNextTarget) {
+        liveCore = std::move(shadow);
+        ++stats.solverResyncBeforeTerminateAppliedCount;
+        ++stats.solverResyncBeforeTerminateNoTargetToHasTargetCount;
+        ++gRewriteRStats.solverResyncBeforeTerminateAppliedCount;
+        ++gRewriteRStats.solverResyncBeforeTerminateNoTargetToHasTargetCount;
+        why = "solver resync before terminate: live has no target, shadow has next target";
+        return true;
+    }
+
+    if (liveSnap.aliveRNodes != shadowSnap.aliveRNodes) {
+        liveCore = std::move(shadow);
+        ++stats.solverResyncBeforeTerminateAppliedCount;
+        ++stats.solverResyncBeforeTerminateAliveRSetDifferCount;
+        ++gRewriteRStats.solverResyncBeforeTerminateAppliedCount;
+        ++gRewriteRStats.solverResyncBeforeTerminateAliveRSetDifferCount;
+        why = "solver resync before terminate: aliveR set differs from shadow";
+        return true;
+    }
+
+    ++stats.solverResyncBeforeTerminateNoopCount;
+    ++gRewriteRStats.solverResyncBeforeTerminateNoopCount;
+    why.clear();
+    return false;
+}
+
+bool maybeResyncSolverCoreFromShadow(ReducedSPQRCore &liveCore,
+                                     RewriteSeqStats &stats,
+                                     int stepIndex,
+                                     std::string &why) {
+    why.clear();
+    ++stats.solverShadowResyncAttemptCount;
+    ++gRewriteRStats.solverShadowResyncAttemptCount;
+
+    RewriteTargetSnapshot liveSnap;
+    if (!collectRewriteTargetSnapshot(liveCore, stepIndex, liveSnap, why)) {
+        return false;
+    }
+
+    ReducedSPQRCore shadow;
+    if (!buildShadowCoreFromCurrentExplicit(liveCore, shadow, why)) {
+        return false;
+    }
+
+    RewriteTargetSnapshot shadowSnap;
+    if (!collectRewriteTargetSnapshot(shadow, stepIndex, shadowSnap, why)) {
+        return false;
+    }
+
+    if (!liveSnap.hasNextTarget && shadowSnap.hasNextTarget) {
+        liveCore = std::move(shadow);
+        ++stats.solverShadowResyncAppliedCount;
+        ++stats.solverShadowResyncNoTargetToHasTargetCount;
+        ++gRewriteRStats.solverShadowResyncAppliedCount;
+        ++gRewriteRStats.solverShadowResyncNoTargetToHasTargetCount;
+        why = "solver resync: live has no target, shadow has next target";
+        return true;
+    }
+
+    if (liveSnap.aliveRNodes != shadowSnap.aliveRNodes) {
+        liveCore = std::move(shadow);
+        ++stats.solverShadowResyncAppliedCount;
+        ++stats.solverShadowResyncAliveRSetDifferCount;
+        ++gRewriteRStats.solverShadowResyncAppliedCount;
+        ++gRewriteRStats.solverShadowResyncAliveRSetDifferCount;
+        why = "solver resync: aliveR set differs from shadow";
+        return true;
+    }
+
+    ++stats.solverShadowResyncNoopCount;
+    ++gRewriteRStats.solverShadowResyncNoopCount;
+    why.clear();
+    return true;
+}
+
+bool buildShadowCoreFromExplicit(const ExplicitBlockGraph &input,
+                                 ReducedSPQRCore &core,
+                                 std::string &why) {
+    return buildWholeCoreForTesting(input, core, why);
+}
+
+namespace {
+
+bool buildCompactGraphFromExplicitForDiagnostics(const ExplicitBlockGraph &G,
+                                                 CompactGraph &H,
+                                                 std::string &why) {
+    why.clear();
+    H = {};
+
+    ExplicitBlockGraph canonical = G;
+    canonicalizeExplicitGraph(canonical);
+
+    std::unordered_set<VertexId> vertexSet(canonical.vertices.begin(),
+                                           canonical.vertices.end());
+    std::unordered_set<EdgeId> seenEdgeIds;
+    for (const auto &edge : canonical.edges) {
+        if (edge.id < 0) return fail(why, "builder replay: explicit edge id must be non-negative");
+        if (edge.u < 0 || edge.v < 0) {
+            return fail(why, "builder replay: explicit edge endpoint must be non-negative");
+        }
+        if (!seenEdgeIds.insert(edge.id).second) {
+            return fail(why, "builder replay: duplicate explicit edge id");
+        }
+        vertexSet.insert(edge.u);
+        vertexSet.insert(edge.v);
+    }
+
+    std::vector<VertexId> vertices(vertexSet.begin(), vertexSet.end());
+    std::sort(vertices.begin(), vertices.end());
+
+    H.block = 0;
+    H.ownerR = 0;
+    H.deletedX = -1;
+    H.origOfCv = vertices;
+    H.touchedVertices = vertices;
+    for (int cv = 0; cv < static_cast<int>(H.origOfCv.size()); ++cv) {
+        H.cvOfOrig[H.origOfCv[cv]] = cv;
+    }
+
+    for (int inputId = 0; inputId < static_cast<int>(canonical.edges.size()); ++inputId) {
+        const auto &edge = canonical.edges[inputId];
+        const auto itU = H.cvOfOrig.find(edge.u);
+        const auto itV = H.cvOfOrig.find(edge.v);
+        if (itU == H.cvOfOrig.end() || itV == H.cvOfOrig.end()) {
+            return fail(why, "builder replay: explicit edge endpoint missing from vertex set");
+        }
+        CompactEdge compactEdge;
+        compactEdge.id = inputId;
+        compactEdge.kind = CompactEdgeKind::REAL;
+        compactEdge.a = itU->second;
+        compactEdge.b = itV->second;
+        compactEdge.realEdge = edge.id;
+        H.edges.push_back(compactEdge);
+    }
+
+    return true;
+}
+
+struct RawReplayTypeCounts {
+    int nodeCount = 0;
+    int treeEdgeCount = 0;
+    int rNodeCount = 0;
+    int sNodeCount = 0;
+    int pNodeCount = 0;
+};
+
+RawReplayTypeCounts countAliveRawTypes(const RawSpqrDecomp &raw) {
+    RawReplayTypeCounts counts;
+    for (const auto &node : raw.nodes) {
+        if (!node.alive) continue;
+        ++counts.nodeCount;
+        switch (node.type) {
+            case SPQRType::R_NODE: ++counts.rNodeCount; break;
+            case SPQRType::S_NODE: ++counts.sNodeCount; break;
+            case SPQRType::P_NODE: ++counts.pNodeCount; break;
+        }
+    }
+    for (const auto &treeEdge : raw.treeEdges) {
+        if (treeEdge.alive) ++counts.treeEdgeCount;
+    }
+    return counts;
+}
+
+std::string makeRawSingleRSplitCanonSamplePath(const std::string &tag, uint64_t ordinal) {
+    std::filesystem::path dir("dumps/raw_single_r_canon");
+    std::filesystem::create_directories(dir);
+
+    std::ostringstream filename;
+    filename << "raw_single_r_canon_" << tag
+             << "_seed" << gRewriteRCaseContext.seed
+             << "_tc" << gRewriteRCaseContext.tc;
+    if (gRewriteRCaseContext.stepIndex >= 0) {
+        filename << "_step" << gRewriteRCaseContext.stepIndex;
+    }
+    filename << "_attempt" << ordinal << ".txt";
+    return (dir / filename.str()).string();
+}
+
+void rememberRawSingleRSplitCanonSamplePath(const std::string &path) {
+    if (!gRewriteRStats.firstRawSingleRSplitCanonDumped &&
+        gRewriteRStats.firstRawSingleRSplitCanonDumpPath.empty()) {
+        gRewriteRStats.firstRawSingleRSplitCanonDumpPath = path;
+        gRewriteRStats.firstRawSingleRSplitCanonDumped = true;
+    }
+}
+
+void dumpRawSingleRSplitCanonSample(const std::string &tag,
+                                    const CompactGraph &H,
+                                    const RawSpqrDecomp &rawBefore,
+                                    const RawSpqrDecomp *rawAfter,
+                                    const std::string &why,
+                                    bool validationOk,
+                                    const std::string &validationWhy) {
+    const uint64_t ordinal = gRewriteRStats.rawSingleRSplitCanonAttemptCount;
+    const std::string path = makeRawSingleRSplitCanonSamplePath(tag, ordinal);
+    rememberRawSingleRSplitCanonSamplePath(path);
+
+    ExplicitBlockGraph explicitInput;
+    ProjectExplicitBlockGraph projection;
+    materializeProjectCompactRealProjection(H, projection);
+    exportProjectExplicitBlockGraph(projection, explicitInput);
+
+    std::ofstream ofs(path);
+    ofs << "seed=" << gRewriteRCaseContext.seed << "\n";
+    ofs << "tc=" << gRewriteRCaseContext.tc << "\n";
+    ofs << "stepIndex=" << gRewriteRCaseContext.stepIndex << "\n";
+    ofs << "sequenceLengthSoFar=" << gRewriteRCaseContext.sequenceLengthSoFar << "\n";
+    ofs << "chosenR=" << gRewriteRCaseContext.currentRNode << "\n";
+    ofs << "chosenX=" << gRewriteRCaseContext.currentX << "\n";
+    ofs << "tag=" << tag << "\n";
+    ofs << "why=" << why << "\n";
+    ofs << "validationOk=" << (validationOk ? 1 : 0) << "\n";
+    ofs << "validationWhy=" << validationWhy << "\n\n";
+
+    ofs << "=== InputExplicit ===\n";
+    dumpExplicitBlockGraph(explicitInput, ofs);
+    ofs << "\n=== CompactGraph ===\n";
+    dumpCompactGraph(H, ofs);
+    ofs << "\n";
+
+    const RawReplayTypeCounts beforeCounts = countAliveRawTypes(rawBefore);
+    ofs << "=== RawBeforeCounts ===\n";
+    ofs << "aliveNodeCount=" << beforeCounts.nodeCount << "\n";
+    ofs << "aliveTreeEdgeCount=" << beforeCounts.treeEdgeCount << "\n";
+    ofs << "rNodeCount=" << beforeCounts.rNodeCount << "\n";
+    ofs << "sNodeCount=" << beforeCounts.sNodeCount << "\n";
+    ofs << "pNodeCount=" << beforeCounts.pNodeCount << "\n";
+    ofs << "\n=== RawBefore ===\n";
+    dumpRawSpqrDecomp(rawBefore, ofs);
+    ofs << "\n";
+
+    if (rawAfter != nullptr) {
+        const RawReplayTypeCounts afterCounts = countAliveRawTypes(*rawAfter);
+        ofs << "=== RawAfterCounts ===\n";
+        ofs << "aliveNodeCount=" << afterCounts.nodeCount << "\n";
+        ofs << "aliveTreeEdgeCount=" << afterCounts.treeEdgeCount << "\n";
+        ofs << "rNodeCount=" << afterCounts.rNodeCount << "\n";
+        ofs << "sNodeCount=" << afterCounts.sNodeCount << "\n";
+        ofs << "pNodeCount=" << afterCounts.pNodeCount << "\n";
+        ofs << "\n=== RawAfter ===\n";
+        dumpRawSpqrDecomp(*rawAfter, ofs);
+        ofs << "\n";
+    }
+}
+
+} // namespace
+
+bool canonicalizeRawSingleRSplitIfSafe(const CompactGraph &H,
+                                       RawSpqrDecomp &raw,
+                                       std::string &why) {
+    ++gRewriteRStats.rawSingleRSplitCanonAttemptCount;
+
+    const RawSpqrDecomp rawBefore = raw;
+    dumpRawSingleRSplitCanonSample("attempt",
+                                   H,
+                                   rawBefore,
+                                   nullptr,
+                                   "raw single-r canonicalize: attempt",
+                                   false,
+                                   "");
+
+    ProjectRawSnapshot snapBefore;
+    std::string stageWhy;
+    if (!buildProjectRawSnapshot(H, raw, snapBefore, stageWhy) ||
+        !checkProjectRawSnapshot(snapBefore, stageWhy)) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = stageWhy.empty()
+                  ? "raw single-r canonicalize: raw snapshot validation failed before merge"
+                  : "raw single-r canonicalize: raw snapshot validation failed before merge: " +
+                        stageWhy;
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, stageWhy);
+        return false;
+    }
+
+    if (raw.nodes.size() != 2 || raw.treeEdges.size() != 1) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: raw is not 2 nodes / 1 tree edge / {S,R}";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    const RawReplayTypeCounts beforeCounts = countAliveRawTypes(raw);
+    if (beforeCounts.nodeCount != 2 || beforeCounts.treeEdgeCount != 1 ||
+        beforeCounts.rNodeCount != 1 || beforeCounts.sNodeCount != 1 ||
+        beforeCounts.pNodeCount != 0) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: raw is not 2 nodes / 1 tree edge / {S,R}";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    int sNodeId = -1;
+    int rNodeId = -1;
+    for (int nodeId = 0; nodeId < static_cast<int>(raw.nodes.size()); ++nodeId) {
+        const auto &node = raw.nodes[nodeId];
+        if (!node.alive) continue;
+        if (node.type == SPQRType::S_NODE) sNodeId = nodeId;
+        if (node.type == SPQRType::R_NODE) rNodeId = nodeId;
+    }
+    if (sNodeId < 0 || rNodeId < 0) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: raw is not 2 nodes / 1 tree edge / {S,R}";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    const auto &sNode = raw.nodes[sNodeId];
+    const auto &rNode = raw.nodes[rNodeId];
+    int sInputCount = 0;
+    int sTreeCount = 0;
+    int rInputCount = 0;
+    int rTreeCount = 0;
+    for (const auto &slot : sNode.slots) {
+        if (!slot.alive) continue;
+        if (slot.kind == RawSlotKind::INPUT_EDGE) ++sInputCount;
+        else ++sTreeCount;
+    }
+    for (const auto &slot : rNode.slots) {
+        if (!slot.alive) continue;
+        if (slot.kind == RawSlotKind::INPUT_EDGE) ++rInputCount;
+        else ++rTreeCount;
+    }
+    if (sInputCount != 2 || sTreeCount != 1 || (sInputCount + sTreeCount) != 3) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: S node is not 2-input + 1-tree";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+    if (rInputCount < 1 || rTreeCount != 1) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: R node input/tree slots do not match expected split";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    const auto &treeEdge = raw.treeEdges[0];
+    if (!treeEdge.alive ||
+        !((treeEdge.a == sNodeId && treeEdge.b == rNodeId) ||
+          (treeEdge.a == rNodeId && treeEdge.b == sNodeId))) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: tree edge does not connect S and R";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    if (static_cast<int>(raw.ownerOfInputEdge.size()) != static_cast<int>(H.edges.size())) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: ownerOfInputEdge incomplete";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    std::vector<std::tuple<int, int, int>> explicitEdges;
+    explicitEdges.reserve(H.edges.size());
+    for (const auto &edge : H.edges) {
+        if (edge.kind != CompactEdgeKind::REAL ||
+            edge.a < 0 || edge.a >= static_cast<int>(H.origOfCv.size()) ||
+            edge.b < 0 || edge.b >= static_cast<int>(H.origOfCv.size())) {
+            ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+            why = "raw single-r canonicalize: compact graph is not all REAL input edges";
+            dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+            return false;
+        }
+        const auto [u, v] = canonPole(H.origOfCv[edge.a], H.origOfCv[edge.b]);
+        explicitEdges.emplace_back(edge.realEdge, u, v);
+    }
+    std::sort(explicitEdges.begin(), explicitEdges.end());
+
+    std::vector<std::tuple<int, int, int>> rawInputEdges;
+    rawInputEdges.reserve(H.edges.size());
+    for (const auto &node : raw.nodes) {
+        if (!node.alive) continue;
+        for (const auto &slot : node.slots) {
+            if (!slot.alive || slot.kind != RawSlotKind::INPUT_EDGE) continue;
+            if (slot.inputEdgeId < 0 || slot.inputEdgeId >= static_cast<int>(H.edges.size())) {
+                ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+                why = "raw single-r canonicalize: ownerOfInputEdge incomplete";
+                dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+                return false;
+            }
+            const auto &edge = H.edges[slot.inputEdgeId];
+            const auto [u, v] = canonPole(slot.poleA, slot.poleB);
+            rawInputEdges.emplace_back(edge.realEdge, u, v);
+        }
+    }
+    std::sort(rawInputEdges.begin(), rawInputEdges.end());
+    if (rawInputEdges != explicitEdges) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: raw inputs do not cover explicit edge set";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    std::vector<VertexId> skelVertices;
+    for (const auto &[edgeId, u, v] : explicitEdges) {
+        (void)edgeId;
+        skelVertices.push_back(u);
+        skelVertices.push_back(v);
+    }
+    std::sort(skelVertices.begin(), skelVertices.end());
+    skelVertices.erase(std::unique(skelVertices.begin(), skelVertices.end()), skelVertices.end());
+    if (skelVertices.size() < 2) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        why = "raw single-r canonicalize: merged R skeleton has fewer than 2 vertices";
+        dumpRawSingleRSplitCanonSample("reject", H, rawBefore, nullptr, why, false, "");
+        return false;
+    }
+
+    std::unordered_map<VertexId, int> skelIndex;
+    for (int i = 0; i < static_cast<int>(skelVertices.size()); ++i) {
+        skelIndex[skelVertices[i]] = i;
+    }
+
+    RawSpqrDecomp merged;
+    merged.valid = true;
+    merged.error = RawDecompError::NONE;
+    merged.nodes.resize(1);
+    merged.treeEdges.clear();
+    merged.ownerOfInputEdge.assign(H.edges.size(), {-1, -1});
+
+    auto &mergedNode = merged.nodes[0];
+    mergedNode.alive = true;
+    mergedNode.type = SPQRType::R_NODE;
+    mergedNode.cycleSlots.clear();
+    mergedNode.pShape.reset();
+    mergedNode.rShape = RawRShape{};
+    mergedNode.rShape->skelVertices = skelVertices;
+    mergedNode.rShape->incSlots.assign(skelVertices.size(), {});
+
+    auto appendInputSlots = [&](const RawSpqrNode &node) -> bool {
+        for (const auto &slot : node.slots) {
+            if (!slot.alive || slot.kind != RawSlotKind::INPUT_EDGE) continue;
+            const auto itA = skelIndex.find(slot.poleA);
+            const auto itB = skelIndex.find(slot.poleB);
+            if (itA == skelIndex.end() || itB == skelIndex.end() || itA->second == itB->second) {
+                why = "raw single-r canonicalize: merged R skeleton endpoint mismatch";
+                return false;
+            }
+            if (slot.inputEdgeId < 0 || slot.inputEdgeId >= static_cast<int>(H.edges.size())) {
+                why = "raw single-r canonicalize: input slot id out of range during merge";
+                return false;
+            }
+
+            RawSlot mergedSlot = slot;
+            mergedSlot.kind = RawSlotKind::INPUT_EDGE;
+            mergedSlot.treeEdgeId = -1;
+            const int newSlotId = static_cast<int>(mergedNode.slots.size());
+            mergedNode.slots.push_back(mergedSlot);
+            merged.ownerOfInputEdge[slot.inputEdgeId] = {0, newSlotId};
+            mergedNode.rShape->endsOfSlot.push_back({itA->second, itB->second});
+            mergedNode.rShape->incSlots[itA->second].push_back(newSlotId);
+            mergedNode.rShape->incSlots[itB->second].push_back(newSlotId);
+        }
+        return true;
+    };
+
+    if (!appendInputSlots(sNode) || !appendInputSlots(rNode)) {
+        ++gRewriteRStats.rawSingleRSplitCanonRejectedCount;
+        const std::string rejectWhy = why;
+        dumpRawSingleRSplitCanonSample("reject",
+                                       H,
+                                       rawBefore,
+                                       nullptr,
+                                       rejectWhy,
+                                       false,
+                                       "");
+        return false;
+    }
+
+    std::string validateWhy;
+    if (!::validateRawSpqrDecomp(H, merged, validateWhy)) {
+        ++gRewriteRStats.rawSingleRSplitCanonRollbackCount;
+        why = validateWhy.empty()
+                  ? "raw single-r canonicalize: validator failed after merge"
+                  : "raw single-r canonicalize: validator failed after merge: " + validateWhy;
+        dumpRawSingleRSplitCanonSample("rollback",
+                                       H,
+                                       rawBefore,
+                                       &merged,
+                                       why,
+                                       false,
+                                       validateWhy);
+        return false;
+    }
+
+    ProjectRawSnapshot mergedSnap;
+    if (!buildProjectRawSnapshot(H, merged, mergedSnap, validateWhy) ||
+        !checkProjectRawSnapshot(mergedSnap, validateWhy)) {
+        ++gRewriteRStats.rawSingleRSplitCanonRollbackCount;
+        why = validateWhy.empty()
+                  ? "raw single-r canonicalize: validator failed after merge"
+                  : "raw single-r canonicalize: validator failed after merge: " + validateWhy;
+        dumpRawSingleRSplitCanonSample("rollback",
+                                       H,
+                                       rawBefore,
+                                       &merged,
+                                       why,
+                                       false,
+                                       validateWhy);
+        return false;
+    }
+
+    raw = std::move(merged);
+    ++gRewriteRStats.rawSingleRSplitCanonAppliedCount;
+    why = "raw single-r canonicalize: merged {S,R} raw split into single R";
+    dumpRawSingleRSplitCanonSample("success", H, rawBefore, &raw, why, true, "");
+    return true;
+}
+
+namespace {
+
+std::string summarizeRawNodeForBuilderReplay(const ProjectRawNode &node, int nodeId) {
+    auto typeChar = [](SPQRType type) {
+        return type == SPQRType::S_NODE ? 'S' : type == SPQRType::P_NODE ? 'P' : 'R';
+    };
+    std::ostringstream oss;
+    oss << "node=" << nodeId << " type=" << typeChar(node.type)
+        << " alive=" << (node.alive ? 1 : 0) << " slots=[";
+    bool first = true;
+    for (int slotId = 0; slotId < static_cast<int>(node.slots.size()); ++slotId) {
+        const auto &slot = node.slots[slotId];
+        if (!slot.alive) continue;
+        if (!first) oss << ';';
+        first = false;
+        oss << "slot=" << slotId << ","
+            << (slot.kind == RawSlotKind::TREE_EDGE ? "TREE" : "INPUT")
+            << ",poles=(" << slot.poleA << "," << slot.poleB << ")";
+        if (slot.kind == RawSlotKind::TREE_EDGE) {
+            oss << ",treeEdgeId=" << slot.treeEdgeId;
+        } else {
+            oss << ",inputEdgeId=" << slot.inputEdgeId;
+        }
+    }
+    oss << "]";
+    return oss.str();
+}
+
+std::string summarizeCompactEdgeForRawReplay(const CompactGraph &H,
+                                             const CompactEdge &edge) {
+    std::ostringstream oss;
+    oss << "edge#" << edge.id
+        << " kind=" << (edge.kind == CompactEdgeKind::REAL ? "REAL" : "PROXY")
+        << " cv=(" << edge.a << "," << edge.b << ")";
+    if (edge.a >= 0 && edge.a < static_cast<int>(H.origOfCv.size()) &&
+        edge.b >= 0 && edge.b < static_cast<int>(H.origOfCv.size())) {
+        oss << " orig=(" << H.origOfCv[edge.a] << "," << H.origOfCv[edge.b] << ")";
+    }
+    if (edge.kind == CompactEdgeKind::REAL) {
+        oss << " realEdge=" << edge.realEdge;
+    } else {
+        oss << " oldArc=" << edge.oldArc
+            << " outsideNode=" << edge.outsideNode
+            << " oldSlotInU=" << edge.oldSlotInU
+            << " sideAgg=(" << edge.sideAgg.edgeCnt << ","
+            << edge.sideAgg.vertexCnt << "," << edge.sideAgg.watchedCnt << ")";
+    }
+    return oss.str();
+}
+
+std::string summarizeRawTreeEdgeForReplay(const ProjectRawTreeEdge &treeEdge, int treeId) {
+    std::ostringstream oss;
+    oss << "treeEdge=" << treeId
+        << " a=" << treeEdge.a
+        << " slotInA=" << treeEdge.slotInA
+        << " b=" << treeEdge.b
+        << " slotInB=" << treeEdge.slotInB
+        << " poles=(" << treeEdge.poleA << "," << treeEdge.poleB << ")";
+    return oss.str();
+}
+
+std::string summarizeMiniNodeForBuilderReplay(const MiniNode &node, int nodeId) {
+    auto typeChar = [](SPQRType type) {
+        return type == SPQRType::S_NODE ? 'S' : type == SPQRType::P_NODE ? 'P' : 'R';
+    };
+    std::ostringstream oss;
+    oss << "node=" << nodeId << " type=" << typeChar(node.type)
+        << " alive=" << (node.alive ? 1 : 0)
+        << " adjArcs=[";
+    for (size_t i = 0; i < node.adjArcs.size(); ++i) {
+        if (i != 0) oss << ',';
+        oss << node.adjArcs[i];
+    }
+    oss << "] slots=[";
+    bool first = true;
+    for (int slotId = 0; slotId < static_cast<int>(node.slots.size()); ++slotId) {
+        const auto &slot = node.slots[slotId];
+        if (!slot.alive) continue;
+        if (!first) oss << ';';
+        first = false;
+        oss << "slot=" << slotId << ",";
+        switch (slot.kind) {
+            case MiniSlotKind::REAL_INPUT: oss << "REAL_INPUT"; break;
+            case MiniSlotKind::PROXY_INPUT: oss << "PROXY_INPUT"; break;
+            case MiniSlotKind::INTERNAL_VIRTUAL: oss << "INTERNAL_VIRTUAL"; break;
+        }
+        oss << ",poles=(" << slot.poleA << "," << slot.poleB << ")";
+        if (slot.kind == MiniSlotKind::INTERNAL_VIRTUAL) {
+            oss << ",miniArcId=" << slot.miniArcId;
+        } else {
+            oss << ",inputEdgeId=" << slot.inputEdgeId << ",realEdge=" << slot.realEdge;
+        }
+    }
+    oss << "]";
+    return oss.str();
+}
+
+std::string buildNodeSummaryForCompareReplay(const ReducedSPQRCore &core, int nodeId) {
+    auto typeChar = [](SPQRType type) {
+        return type == SPQRType::S_NODE ? 'S' : type == SPQRType::P_NODE ? 'P' : 'R';
+    };
+    std::ostringstream oss;
+    if (!validActualNodeId(core, nodeId)) {
+        oss << "node=" << nodeId << " invalid";
+        return oss.str();
+    }
+    const auto &node = core.nodes[nodeId];
+    oss << "node=" << nodeId << " type=" << typeChar(node.type)
+        << " alive=" << (node.alive ? 1 : 0)
+        << " adjArcs=[";
+    for (size_t i = 0; i < node.adjArcs.size(); ++i) {
+        if (i != 0) oss << ',';
+        oss << node.adjArcs[i];
+    }
+    oss << "] realEdgesHere=[";
+    for (size_t i = 0; i < node.realEdgesHere.size(); ++i) {
+        if (i != 0) oss << ',';
+        oss << node.realEdgesHere[i];
+    }
+    oss << "] slots=[";
+    bool first = true;
+    for (int slotId = 0; slotId < static_cast<int>(node.slots.size()); ++slotId) {
+        const auto &slot = node.slots[slotId];
+        if (!slot.alive) continue;
+        if (!first) oss << ';';
+        first = false;
+        oss << "slot=" << slotId << ","
+            << (slot.isVirtual ? "VIRTUAL" : "REAL")
+            << ",poles=(" << slot.poleA << "," << slot.poleB << ")";
+        if (slot.isVirtual) {
+            oss << ",arcId=" << slot.arcId;
+        } else {
+            oss << ",realEdge=" << slot.realEdge;
+        }
+    }
+    oss << "]";
+    return oss.str();
+}
+
+void fillBuilderStageSnapshotFromCore(const ReducedSPQRCore &core,
+                                      const std::string &stage,
+                                      BuilderStageSnapshot &out) {
+    out = {};
+    out.stage = stage;
+    out.root = core.root;
+    ProjectHarnessOps ops;
+    out.canonicalExplicit = canonicalizeExplicitForCompare(ops.materializeWholeCoreExplicit(core));
+    for (int nodeId = 0; nodeId < static_cast<int>(core.nodes.size()); ++nodeId) {
+        const auto &node = core.nodes[nodeId];
+        if (!node.alive) continue;
+        ++out.aliveNodeCount;
+        switch (node.type) {
+            case SPQRType::R_NODE: ++out.rNodeCount; break;
+            case SPQRType::S_NODE: ++out.sNodeCount; break;
+            case SPQRType::P_NODE: ++out.pNodeCount; break;
+        }
+        out.nodeSummaries.push_back(buildNodeSummaryForCompareReplay(core, nodeId));
+    }
+    for (const auto &arc : core.arcs) {
+        if (arc.alive) ++out.aliveArcCount;
+    }
+}
+
+void fillMaterializeCoreSubphaseSnapshotFromCore(const ReducedSPQRCore &core,
+                                                 const std::string &subphase,
+                                                 MaterializeCoreSubphaseSnapshot &out) {
+    out = {};
+    out.subphase = subphase;
+    ProjectHarnessOps ops;
+    out.canonicalExplicit = canonicalizeExplicitForCompare(ops.materializeWholeCoreExplicit(core));
+    for (int nodeId = 0; nodeId < static_cast<int>(core.nodes.size()); ++nodeId) {
+        const auto &node = core.nodes[nodeId];
+        if (!node.alive) continue;
+        ++out.aliveNodeCount;
+        switch (node.type) {
+            case SPQRType::R_NODE: ++out.rNodeCount; break;
+            case SPQRType::S_NODE: ++out.sNodeCount; break;
+            case SPQRType::P_NODE: ++out.pNodeCount; break;
+        }
+        out.nodeSummaries.push_back(buildNodeSummaryForCompareReplay(core, nodeId));
+        for (const auto &slot : node.slots) {
+            if (slot.alive) ++out.liveSlotCount;
+        }
+    }
+    for (const auto &arc : core.arcs) {
+        if (arc.alive) ++out.aliveArcCount;
+    }
+}
+
+std::string stripTypeMarkerFromNodeSummary(std::string summary) {
+    const auto pos = summary.find("type=");
+    if (pos == std::string::npos || pos + 5 >= summary.size()) return summary;
+    summary[pos + 5] = '*';
+    return summary;
+}
+
+bool extractSourceStepCoreForBuilderReplay(const ExplicitBlockGraph &input,
+                                           int sourceStep,
+                                           const std::string &sourceSide,
+                                           ReducedSPQRCore &outCore,
+                                           ExplicitBlockGraph &outExplicitAfterNormalize,
+                                           std::string &why) {
+    if (sourceStep <= 0) return fail(why, "builder replay: sourceStep must be positive");
+
+    auto runSolverStep = [&](ReducedSPQRCore &core,
+                             int stepIndex,
+                             ReducedSPQRCore &afterOut,
+                             ExplicitBlockGraph &explicitAfterNormalizeOut,
+                             std::string &stepWhy) -> bool {
+        ProjectHarnessOps ops;
+        clearSequenceDeferredSameTypeSP();
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceFixpointChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTargetForFixpoint(core, chosenR, chosenX, stepWhy);
+        if (chooseStatus != SequenceFixpointChooseStatus::FOUND) {
+            if (chooseStatus == SequenceFixpointChooseStatus::NONE) {
+                stepWhy = "builder replay: solver path has no target before source step";
+            }
+            return false;
+        }
+
+        ReducedSPQRCore after = core;
+        setRewriteRSequenceStepContext(stepIndex - 1, stepIndex);
+        setRewriteRSequenceMode(true);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, stepWhy);
+        setRewriteRSequenceMode(false);
+        if (!rewriteOk) return false;
+        if (!ops.normalizeTouchedRegion(after, stepWhy)) return false;
+
+        if (hasPendingSequenceDeferredSameTypeSP()) {
+            GraftTrace cleanupTrace;
+            if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+                std::string preCleanupWhyDetailed;
+                cleanupTrace.preCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    cleanupTrace.preCleanupPostcheckSubtype;
+                if (!preCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+                }
+                if (cleanupTrace.preCleanupPostcheckSubtype ==
+                    GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                    const auto seeds = collectSequenceSPCleanupSeeds(
+                        after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                    cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                    std::string cleanupWhy;
+                    if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                        clearSequenceDeferredSameTypeSP();
+                        stepWhy = cleanupWhy;
+                        return false;
+                    }
+
+                    peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                    std::string postCleanupWhyDetailed;
+                    cleanupTrace.postCleanupPostcheckSubtype =
+                        classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                    if (!postCleanupWhyDetailed.empty()) {
+                        cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                    }
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                } else {
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                }
+            }
+        }
+
+        flushSequenceDeferredSameTypeSPDump(after);
+        clearSequenceDeferredSameTypeSP();
+        if (!ops.checkActualReducedInvariant(after, nullptr, stepWhy)) return false;
+        explicitAfterNormalizeOut = ops.materializeWholeCoreExplicit(after);
+        afterOut = std::move(after);
+        stepWhy.clear();
+        return true;
+    };
+
+    auto runReplayStep = [&](const ExplicitBlockGraph &currentExplicit,
+                             int stepIndex,
+                             ReducedSPQRCore &afterOut,
+                             ExplicitBlockGraph &explicitAfterNormalizeOut,
+                             std::string &stepWhy) -> bool {
+        ProjectHarnessOps ops;
+        clearSequenceDeferredSameTypeSP();
+        ReducedSPQRCore core;
+        if (!buildWholeCoreForTesting(currentExplicit, core, stepWhy)) return false;
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, stepWhy);
+        if (chooseStatus != SequenceChooseStatus::FOUND) {
+            if (chooseStatus == SequenceChooseStatus::NONE) {
+                stepWhy = "builder replay: replay path has no target before source step";
+            }
+            return false;
+        }
+
+        ReducedSPQRCore after = core;
+        setRewriteRSequenceStepContext(stepIndex, stepIndex + 1);
+        setRewriteRSequenceMode(true);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, stepWhy);
+        setRewriteRSequenceMode(false);
+        if (!rewriteOk) {
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+        if (!ops.normalizeTouchedRegion(after, stepWhy)) {
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        if (hasPendingSequenceDeferredSameTypeSP()) {
+            GraftTrace cleanupTrace;
+            if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+                std::string preCleanupWhyDetailed;
+                cleanupTrace.preCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    cleanupTrace.preCleanupPostcheckSubtype;
+                if (!preCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+                }
+                if (cleanupTrace.preCleanupPostcheckSubtype ==
+                    GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                    const auto seeds = collectSequenceSPCleanupSeeds(
+                        after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                    cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                    std::string cleanupWhy;
+                    if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                        clearSequenceDeferredSameTypeSP();
+                        stepWhy = cleanupWhy;
+                        return false;
+                    }
+
+                    peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                    std::string postCleanupWhyDetailed;
+                    cleanupTrace.postCleanupPostcheckSubtype =
+                        classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                    if (!postCleanupWhyDetailed.empty()) {
+                        cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                    }
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                } else {
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                }
+            }
+        }
+
+        flushSequenceDeferredSameTypeSPDump(after);
+        clearSequenceDeferredSameTypeSP();
+        if (!ops.checkActualReducedInvariant(after, nullptr, stepWhy)) return false;
+        explicitAfterNormalizeOut = ops.materializeWholeCoreExplicit(after);
+        afterOut = std::move(after);
+        stepWhy.clear();
+        return true;
+    };
+
+    if (sourceSide == "solver") {
+        ReducedSPQRCore core;
+        if (!buildWholeCoreForTesting(input, core, why)) return false;
+        for (int stepIndex = 1; stepIndex <= sourceStep; ++stepIndex) {
+            ReducedSPQRCore after;
+            ExplicitBlockGraph explicitAfter;
+            if (!runSolverStep(core, stepIndex, after, explicitAfter, why)) return false;
+            if (stepIndex == sourceStep) {
+                outCore = std::move(after);
+                outExplicitAfterNormalize = std::move(explicitAfter);
+                why.clear();
+                return true;
+            }
+            core = std::move(after);
+        }
+    } else {
+        ExplicitBlockGraph current = input;
+        for (int stepIndex = 1; stepIndex <= sourceStep; ++stepIndex) {
+            ReducedSPQRCore after;
+            ExplicitBlockGraph explicitAfter;
+            if (!runReplayStep(current, stepIndex, after, explicitAfter, why)) return false;
+            if (stepIndex == sourceStep) {
+                if (sourceSide == "shadow") {
+                    if (!buildShadowCoreFromExplicit(explicitAfter, outCore, why)) return false;
+                } else {
+                    outCore = std::move(after);
+                }
+                outExplicitAfterNormalize = std::move(explicitAfter);
+                why.clear();
+                return true;
+            }
+            current = std::move(explicitAfter);
+        }
+    }
+
+    return fail(why, "builder replay: source step not reached");
+}
+
+} // namespace
+
+bool buildCompactGraphFromExplicitForReplay(const ExplicitBlockGraph &inputExplicit,
+                                            CompactGraph &H,
+                                            std::string &why) {
+    return buildCompactGraphFromExplicitForDiagnostics(inputExplicit, H, why);
+}
+
+bool buildCoreShapeSnapshot(const ReducedSPQRCore &core,
+                            int stepIndex,
+                            const std::string &side,
+                            CoreShapeSnapshot &out,
+                            std::string &why) {
+    out = {};
+    out.stepIndex = stepIndex;
+    out.side = side;
+
+    FinalCoreSignature sig;
+    if (!buildFinalCoreSignature(core, sig, why)) {
+        return false;
+    }
+    out.root = sig.root;
+    out.aliveNodeCount = sig.aliveNodeCount;
+    out.aliveArcCount = sig.aliveArcCount;
+    out.nodeSummaries = sig.nodeSummaries;
+    out.canonicalExplicit = sig.canonicalExplicit;
+
+    for (const auto &node : core.nodes) {
+        if (!node.alive) continue;
+        switch (node.type) {
+            case SPQRType::R_NODE: ++out.rNodeCount; break;
+            case SPQRType::S_NODE: ++out.sNodeCount; break;
+            case SPQRType::P_NODE: ++out.pNodeCount; break;
+        }
+    }
+
+    if (!collectRewriteTargetSnapshot(core, stepIndex, out.targetSnapshot, why)) {
+        return false;
+    }
+    out.aliveRNodes = out.targetSnapshot.aliveRNodes;
+
+    why.clear();
+    return true;
+}
+
+bool dumpCompactGraphForCrashReplay(const CompactGraph &H,
+                                    const std::string &path,
+                                    std::string &why) {
+    std::ofstream os(path);
+    if (!os) {
+        return fail(why, "ogdf-raw-crash-replay: failed to open compact dump path");
+    }
+
+    os << "=== Crash Replay CompactGraph ===\n";
+    dumpCompactGraph(H, os);
+    os << "touchedVertices:";
+    for (VertexId v : H.touchedVertices) os << ' ' << v;
+    os << "\n";
+
+    std::map<std::pair<VertexId, VertexId>, int> multiplicity;
+    int selfLoopCount = 0;
+    for (const auto &edge : H.edges) {
+        VertexId u = -1;
+        VertexId v = -1;
+        if (edge.a >= 0 && edge.a < static_cast<int>(H.origOfCv.size())) u = H.origOfCv[edge.a];
+        if (edge.b >= 0 && edge.b < static_cast<int>(H.origOfCv.size())) v = H.origOfCv[edge.b];
+        const auto key = canonPole(u, v);
+        ++multiplicity[key];
+        if (key.first == key.second) ++selfLoopCount;
+    }
+    os << "edgeMultiplicityByOrigPair:\n";
+    for (const auto &[key, count] : multiplicity) {
+        os << "  (" << key.first << "," << key.second << ") -> " << count << "\n";
+    }
+    os << "selfLoopCount=" << selfLoopCount << "\n";
+
+    CompactPrecheckSummary precheck;
+    std::string precheckWhy;
+    if (buildCompactPrecheckSummary(H, precheck, precheckWhy)) {
+        os << "precheck:"
+           << " vertexCount=" << precheck.vertexCount
+           << " edgeCount=" << precheck.edgeCount
+           << " selfLoopCount=" << precheck.selfLoopCount
+           << " connectedComponentCount=" << precheck.connectedComponentCount
+           << " connected=" << (precheck.connected ? 1 : 0)
+           << " biconnected=" << (precheck.biconnected ? 1 : 0)
+           << " spqrReady=" << (precheck.spqrReady ? 1 : 0)
+           << " tooSmall=" << precheck.tooSmallSubtype
+           << " notBiconnected=" << precheck.notBiconnectedSubtype
+           << " selfLoopSubtype=" << precheck.selfLoopSubtype
+           << " spqrReadyWhy=\"" << precheck.spqrReadyWhy << "\"\n";
+    } else {
+        os << "precheckBuildFailed=\"" << precheckWhy << "\"\n";
+    }
+
+    why.clear();
+    return true;
+}
+
+bool buildCompactPrecheckSummary(const CompactGraph &H,
+                                 CompactPrecheckSummary &out,
+                                 std::string &why) {
+    out = {};
+    out.edgeCount = static_cast<int>(H.edges.size());
+    out.vertexCount = static_cast<int>(H.origOfCv.size());
+    for (const auto &edge : H.edges) {
+        if (edge.a >= 0 && edge.a < static_cast<int>(H.origOfCv.size()) &&
+            edge.b >= 0 && edge.b < static_cast<int>(H.origOfCv.size()) &&
+            H.origOfCv[edge.a] == H.origOfCv[edge.b]) {
+            ++out.selfLoopCount;
+        } else if (edge.a == edge.b) {
+            ++out.selfLoopCount;
+        }
+    }
+    out.connectedComponentCount =
+        out.vertexCount == 0 ? 0 : countCompactConnectedComponents(H);
+    out.connected = (out.vertexCount == 0) || (out.connectedComponentCount <= 1);
+
+    CompactRejectReason rejectReason = CompactRejectReason::OTHER;
+    out.spqrReady = isCompactGraphSpqrReady(H, &rejectReason, out.spqrReadyWhy);
+    out.tooSmallSubtype = tooSmallSubtypeName(classifyTooSmallCompact(H));
+    out.selfLoopSubtype =
+        selfLoopBuildFailSubtypeName(classifySelfLoopBuildFailDetailed(H, why));
+    why.clear();
+
+    CompactBCResult bc;
+    std::string bcWhy;
+    std::string validateWhy;
+    if (decomposeCompactIntoBC(H, bc, bcWhy) && validateCompactBC(H, bc, validateWhy)) {
+        out.notBiconnectedSubtype =
+            notBiconnectedSubtypeName(classifyNotBiconnected(H, bc));
+        out.biconnected = out.connected &&
+                          out.selfLoopCount == 0 &&
+                          out.notBiconnectedSubtype == "NB_OTHER";
+    } else {
+        out.notBiconnectedSubtype = out.connected ? "NB_OTHER" : "NB_DISCONNECTED";
+        out.biconnected = false;
+        if (!bcWhy.empty()) {
+            if (!out.spqrReadyWhy.empty()) out.spqrReadyWhy += " | ";
+            out.spqrReadyWhy += "bc=" + bcWhy;
+        } else if (!validateWhy.empty()) {
+            if (!out.spqrReadyWhy.empty()) out.spqrReadyWhy += " | ";
+            out.spqrReadyWhy += "bcValidate=" + validateWhy;
+        }
+    }
+
+    why.clear();
+    return true;
+}
+
+bool runOgdfBuildRawInChild(const CompactGraph &H,
+                            ChildRunResult &out,
+                            std::string &why) {
+    out = {};
+    why.clear();
+
+    int pipefd[2] = {-1, -1};
+    if (::pipe(pipefd) != 0) {
+        return fail(why, "ogdf-raw-crash-replay: pipe() failed");
+    }
+
+    std::fflush(nullptr);
+    const pid_t pid = ::fork();
+    if (pid < 0) {
+        ::close(pipefd[0]);
+        ::close(pipefd[1]);
+        return fail(why, "ogdf-raw-crash-replay: fork() failed");
+    }
+
+    out.launched = true;
+    if (pid == 0) {
+        ::close(pipefd[0]);
+        OgdfRawSpqrBackend backend;
+        RawSpqrDecomp raw;
+        std::string err;
+        const bool ok = backend.buildRaw(H, raw, err);
+        if (!ok && !err.empty()) {
+            (void)::write(pipefd[1], err.data(), err.size());
+        }
+        ::close(pipefd[1]);
+        _exit(ok ? 0 : 100);
+    }
+
+    ::close(pipefd[1]);
+    std::string childMessage;
+    char buffer[512];
+    while (true) {
+        const ssize_t n = ::read(pipefd[0], buffer, sizeof(buffer));
+        if (n <= 0) break;
+        childMessage.append(buffer, static_cast<size_t>(n));
+    }
+    ::close(pipefd[0]);
+
+    int status = 0;
+    if (::waitpid(pid, &status, 0) < 0) {
+        return fail(why, "ogdf-raw-crash-replay: waitpid() failed");
+    }
+
+    out.exited = true;
+    if (WIFSIGNALED(status)) {
+        out.crashed = true;
+        out.childSignal = WTERMSIG(status);
+        out.childWhy = "child crashed with signal " + std::to_string(out.childSignal);
+        if (!childMessage.empty()) {
+            out.childWhy += " | err=" + childMessage;
+        }
+    } else if (WIFEXITED(status)) {
+        out.childExitCode = WEXITSTATUS(status);
+        if (out.childExitCode == 0) {
+            out.childWhy = "child buildRaw succeeded";
+        } else {
+            out.childWhy = childMessage.empty()
+                               ? "child buildRaw returned failure"
+                               : childMessage;
+        }
+    } else {
+        out.childWhy = "child ended with unknown waitpid status";
+    }
+
+    why.clear();
+    return true;
+}
+
+bool runOgdfRawCrashReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                        const std::string &manifestPath,
+                                        const std::string &caseName,
+                                        uint64_t seed,
+                                        int tc,
+                                        std::optional<int> targetStep,
+                                        const std::string &source,
+                                        bool stopBeforeOgdf,
+                                        bool runChild,
+                                        const std::string &dumpDir,
+                                        OgdfRawCrashReplayBundle &bundle,
+                                        std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tcIndex = tc;
+    bundle.targetStep = targetStep;
+    bundle.stopBeforeOgdf = stopBeforeOgdf;
+    bundle.runChild = runChild;
+
+    auto parseSource = [&](std::string value, OgdfRawCrashReplaySourceKind &outKind) {
+        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {
+            return static_cast<char>(std::tolower(ch));
+        });
+        if (value == "oracle") {
+            outKind = OgdfRawCrashReplaySourceKind::ORACLE;
+            return true;
+        }
+        if (value == "rewrite") {
+            outKind = OgdfRawCrashReplaySourceKind::REWRITE;
+            return true;
+        }
+        if (value == "baseline") {
+            outKind = OgdfRawCrashReplaySourceKind::BASELINE;
+            return true;
+        }
+        if (value == "auto") {
+            outKind = OgdfRawCrashReplaySourceKind::AUTO;
+            return true;
+        }
+        return false;
+    };
+
+    OgdfRawCrashReplaySourceKind requestedSource = OgdfRawCrashReplaySourceKind::AUTO;
+    if (!parseSource(source, requestedSource)) {
+        return fail(why, "ogdf-raw-crash-replay: invalid --source");
+    }
+    bundle.requestedSource = requestedSource;
+
+    auto runSingleSource = [&](OgdfRawCrashReplaySourceKind sourceKind,
+                               bool &captured) -> bool {
+        captured = false;
+        resetOgdfRawCrashReplaySession();
+        gOgdfRawCrashReplaySession.active = true;
+        gOgdfRawCrashReplaySession.stopBeforeOgdf = stopBeforeOgdf;
+        gOgdfRawCrashReplaySession.runChild = runChild;
+        gOgdfRawCrashReplaySession.dumpDir = dumpDir;
+        gOgdfRawCrashReplaySession.bundle = &bundle;
+        setOgdfRawCrashReplaySourceSide(ogdfRawCrashReplaySourceKindName(sourceKind));
+
+        SolverOutput out;
+        std::string runWhy;
+        bool ok = false;
+        switch (sourceKind) {
+            case OgdfRawCrashReplaySourceKind::ORACLE:
+                ok = solveWithOracleFixpointBaseline(input, out, runWhy);
+                break;
+            case OgdfRawCrashReplaySourceKind::REWRITE:
+                ok = solveWithRewriteSeqEngine(input, out, runWhy);
+                break;
+            case OgdfRawCrashReplaySourceKind::BASELINE:
+                ok = solveWithBaselineRewriteSolver(input, out, runWhy);
+                break;
+            case OgdfRawCrashReplaySourceKind::AUTO:
+                ok = false;
+                runWhy = "ogdf-raw-crash-replay: AUTO is not a concrete source";
+                break;
+        }
+        captured = gOgdfRawCrashReplaySession.captured;
+        resetOgdfRawCrashReplaySession();
+
+        bundle.sourceSide = ogdfRawCrashReplaySourceKindName(sourceKind);
+        if (captured) {
+            if (!runWhy.empty()) {
+                if (!bundle.notes.empty()) bundle.notes += " | ";
+                bundle.notes += "runWhy=" + runWhy;
+            }
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+        if (ok) {
+            if (!bundle.notes.empty()) bundle.notes += " | ";
+            bundle.notes += "no buildRaw reached for source " +
+                            std::string(ogdfRawCrashReplaySourceKindName(sourceKind));
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        bundle.topLevelOk = false;
+        bundle.crashWhy = runWhy;
+        why = runWhy.empty() ? "ogdf-raw-crash-replay: source run failed before buildRaw capture"
+                             : runWhy;
+        return false;
+    };
+
+    if (requestedSource != OgdfRawCrashReplaySourceKind::AUTO) {
+        bool captured = false;
+        return runSingleSource(requestedSource, captured);
+    }
+
+    for (OgdfRawCrashReplaySourceKind sourceKind :
+         {OgdfRawCrashReplaySourceKind::ORACLE,
+          OgdfRawCrashReplaySourceKind::REWRITE,
+          OgdfRawCrashReplaySourceKind::BASELINE}) {
+        bool captured = false;
+        const bool ok = runSingleSource(sourceKind, captured);
+        if (!ok) return false;
+        if (captured) return true;
+    }
+
+    why = "ogdf-raw-crash-replay: no buildRaw reached for any source";
+    return false;
+}
+
+bool buildRawStageSnapshot(const CompactGraph &H,
+                           BuilderStageSnapshot &out,
+                           std::string &why) {
+    out = {};
+    out.stage = "RAW";
+
+    std::string stageWhy;
+    RawSpqrDecomp raw;
+    std::string err;
+    if (!buildRawMaybeInterceptForCrashReplay("BUILDER_RAW_STAGE", H, raw, err)) {
+        why = err.empty() ? "builder replay raw: backend.buildRaw failed"
+                          : "builder replay raw: backend.buildRaw failed: " + err;
+        return false;
+    }
+    std::string canonWhy;
+    (void)canonicalizeRawSingleRSplitIfSafe(H, raw, canonWhy);
+    if (!::validateRawSpqrDecomp(H, raw, stageWhy)) {
+        why = stageWhy.empty() ? "builder replay raw: validation failed"
+                               : "builder replay raw: validation failed: " + stageWhy;
+        return false;
+    }
+
+    ProjectRawSnapshot snap;
+    if (!buildProjectRawSnapshot(H, raw, snap, stageWhy)) {
+        why = stageWhy.empty() ? "builder replay raw: buildProjectRawSnapshot failed"
+                               : "builder replay raw: buildProjectRawSnapshot failed: " +
+                                     stageWhy;
+        return false;
+    }
+    if (!checkProjectRawSnapshot(snap, stageWhy)) {
+        why = stageWhy.empty() ? "builder replay raw: checkProjectRawSnapshot failed"
+                               : "builder replay raw: checkProjectRawSnapshot failed: " +
+                                     stageWhy;
+        return false;
+    }
+
+    ProjectExplicitBlockGraph projection;
+    ExplicitBlockGraph explicitProjection;
+    materializeProjectCompactRealProjection(H, projection);
+    exportProjectExplicitBlockGraph(projection, explicitProjection);
+    out.canonicalExplicit = canonicalizeExplicitForCompare(explicitProjection);
+
+    for (int nodeId = 0; nodeId < static_cast<int>(snap.nodes.size()); ++nodeId) {
+        const auto &node = snap.nodes[nodeId];
+        if (!node.alive) continue;
+        ++out.aliveNodeCount;
+        switch (node.type) {
+            case SPQRType::R_NODE: ++out.rNodeCount; break;
+            case SPQRType::S_NODE: ++out.sNodeCount; break;
+            case SPQRType::P_NODE: ++out.pNodeCount; break;
+        }
+        out.nodeSummaries.push_back(summarizeRawNodeForBuilderReplay(node, nodeId));
+    }
+    for (const auto &treeEdge : snap.treeEdges) {
+        if (treeEdge.alive) ++out.aliveArcCount;
+    }
+    out.nodeSummaries.push_back("ownerCoverage=" +
+                                std::to_string(std::count_if(snap.ownerOfInputEdge.begin(),
+                                                             snap.ownerOfInputEdge.end(),
+                                                             [](const auto &owner) {
+                                                                 return owner.first >= 0 &&
+                                                                        owner.second >= 0;
+                                                             })) +
+                                "/" + std::to_string(snap.ownerOfInputEdge.size()));
+
+    why.clear();
+    return true;
+}
+
+bool buildMiniStageSnapshots(const CompactGraph &H,
+                             BuilderStageSnapshot &beforeNormalize,
+                             BuilderStageSnapshot &afterNormalize,
+                             StaticMiniCore *normalizedMiniOut,
+                             std::string &why) {
+    beforeNormalize = {};
+    afterNormalize = {};
+
+    std::string stageWhy;
+    RawSpqrDecomp raw;
+    std::string err;
+    if (!buildRawMaybeInterceptForCrashReplay("BUILDER_MINI_STAGE", H, raw, err)) {
+        why = err.empty() ? "builder replay mini: backend.buildRaw failed"
+                          : "builder replay mini: backend.buildRaw failed: " + err;
+        return false;
+    }
+    std::string canonWhy;
+    (void)canonicalizeRawSingleRSplitIfSafe(H, raw, canonWhy);
+    if (!::validateRawSpqrDecomp(H, raw, stageWhy)) {
+        why = stageWhy.empty() ? "builder replay mini: validation failed"
+                               : "builder replay mini: validation failed: " + stageWhy;
+        return false;
+    }
+
+    StaticMiniCore mini;
+    if (!::materializeMiniCore(H, raw, mini, stageWhy)) {
+        why = stageWhy.empty() ? "builder replay mini: materializeMiniCore failed"
+                               : "builder replay mini: materializeMiniCore failed: " +
+                                     stageWhy;
+        return false;
+    }
+
+    auto fillFromMini = [&](const StaticMiniCore &src,
+                            const std::string &stage,
+                            BuilderStageSnapshot &dst) {
+        dst = {};
+        dst.stage = stage;
+        ProjectExplicitBlockGraph projection;
+        ExplicitBlockGraph explicitProjection;
+        materializeProjectCompactRealProjection(H, projection);
+        exportProjectExplicitBlockGraph(projection, explicitProjection);
+        dst.canonicalExplicit = canonicalizeExplicitForCompare(explicitProjection);
+        for (int nodeId = 0; nodeId < static_cast<int>(src.nodes.size()); ++nodeId) {
+            const auto &node = src.nodes[nodeId];
+            if (!node.alive) continue;
+            ++dst.aliveNodeCount;
+            switch (node.type) {
+                case SPQRType::R_NODE: ++dst.rNodeCount; break;
+                case SPQRType::S_NODE: ++dst.sNodeCount; break;
+                case SPQRType::P_NODE: ++dst.pNodeCount; break;
+            }
+            dst.nodeSummaries.push_back(summarizeMiniNodeForBuilderReplay(node, nodeId));
+        }
+        for (const auto &arc : src.arcs) {
+            if (arc.alive) ++dst.aliveArcCount;
+        }
+        dst.nodeSummaries.push_back("ownerCoverage=" +
+                                    std::to_string(std::count_if(
+                                        src.ownerOfInputEdge.begin(),
+                                        src.ownerOfInputEdge.end(),
+                                        [](const auto &owner) {
+                                            return owner.first >= 0 && owner.second >= 0;
+                                        })) +
+                                    "/" + std::to_string(src.ownerOfInputEdge.size()));
+    };
+
+    fillFromMini(mini, "MINI_BEFORE", beforeNormalize);
+
+    try {
+        ::normalizeWholeMiniCore(mini);
+    } catch (const std::exception &e) {
+        why = std::string("builder replay mini: normalizeWholeMiniCore threw: ") +
+              e.what();
+        return false;
+    } catch (...) {
+        why = "builder replay mini: normalizeWholeMiniCore threw";
+        return false;
+    }
+
+    fillFromMini(mini, "MINI_AFTER", afterNormalize);
+    if (normalizedMiniOut != nullptr) *normalizedMiniOut = mini;
+    why.clear();
+    return true;
+}
+
+bool buildCoreStageSnapshotsFromMini(const CompactGraph &H,
+                                     const StaticMiniCore &mini,
+                                     BuilderStageSnapshot &afterMaterialize,
+                                     BuilderStageSnapshot &afterNormalize,
+                                     std::string &why) {
+    (void)mini;
+    afterMaterialize = {};
+    afterNormalize = {};
+
+    DummyActualEnvelope env;
+    if (!::buildDummyActualCoreEnvelope(H, env, why)) {
+        why = why.empty() ? "builder replay core: buildDummyActualCoreEnvelope failed"
+                          : "builder replay core: buildDummyActualCoreEnvelope failed: " + why;
+        return false;
+    }
+    fillBuilderStageSnapshotFromCore(env.core, "CORE_AFTER_MAT", afterMaterialize);
+
+    ReducedSPQRCore normalized = env.core;
+    std::string normalizeWhy;
+    if (!normalizeProjectTouchedRegion(normalized, normalizeWhy)) {
+        why = normalizeWhy.empty()
+                  ? "builder replay core: normalizeProjectTouchedRegion failed"
+                  : "builder replay core: normalizeProjectTouchedRegion failed: " +
+                        normalizeWhy;
+        return false;
+    }
+    fillBuilderStageSnapshotFromCore(normalized, "CORE_AFTER_NORM", afterNormalize);
+    why.clear();
+    return true;
+}
+
+BuilderPipelineSeamKind classifyBuilderPipelineSeam(
+    const CoreShapeSnapshot &sourceLiveCore,
+    const BuilderStageSnapshot &rawSnap,
+    const BuilderStageSnapshot &miniBefore,
+    const BuilderStageSnapshot &miniAfter,
+    const BuilderStageSnapshot &coreAfterMat,
+    const BuilderStageSnapshot &coreAfterNorm,
+    std::string &why) {
+    const bool sourceHasR = !sourceLiveCore.aliveRNodes.empty();
+    const auto sourceExplicit = sourceLiveCore.canonicalExplicit;
+
+    auto stageDiffers = [&](const BuilderStageSnapshot &stage,
+                            std::string &stageWhy) -> bool {
+        const bool stageHasR = stage.rNodeCount > 0;
+        if (stageHasR != sourceHasR) {
+            std::ostringstream oss;
+            oss << stage.stage << ": sourceHasR=" << (sourceHasR ? 1 : 0)
+                << " stageCounts(R,S,P)=(" << stage.rNodeCount << ","
+                << stage.sNodeCount << "," << stage.pNodeCount << ")";
+            stageWhy = oss.str();
+            return true;
+        }
+        if (stage.canonicalExplicit.edges != sourceExplicit.edges ||
+            stage.canonicalExplicit.vertices != sourceExplicit.vertices) {
+            stageWhy = stage.stage + ": canonical explicit differs from source live core";
+            return true;
+        }
+        return false;
+    };
+
+    if (stageDiffers(rawSnap, why)) {
+        return BuilderPipelineSeamKind::BPSK_RAW_TYPE_DIVERGENCE;
+    }
+    if (stageDiffers(miniBefore, why)) {
+        return BuilderPipelineSeamKind::BPSK_MINI_BEFORE_NORMALIZE_DIVERGENCE;
+    }
+    if (stageDiffers(miniAfter, why)) {
+        return BuilderPipelineSeamKind::BPSK_MINI_AFTER_NORMALIZE_DIVERGENCE;
+    }
+    if (stageDiffers(coreAfterMat, why)) {
+        return BuilderPipelineSeamKind::BPSK_CORE_AFTER_MATERIALIZE_DIVERGENCE;
+    }
+    if (stageDiffers(coreAfterNorm, why)) {
+        return BuilderPipelineSeamKind::BPSK_CORE_AFTER_FINAL_NORMALIZE_DIVERGENCE;
+    }
+
+    why.clear();
+    return BuilderPipelineSeamKind::BPSK_NONE;
+}
+
+BuilderPipelineSeamKind classifySharedInputBuilderSeam(
+    const CoreShapeSnapshot &solverLive,
+    const CoreShapeSnapshot &replayLive,
+    const BuilderStageSnapshot &rawSnap,
+    const BuilderStageSnapshot &miniBefore,
+    const BuilderStageSnapshot &miniAfter,
+    const BuilderStageSnapshot &coreAfterMat,
+    const BuilderStageSnapshot &coreAfterNorm,
+    std::string &why) {
+    auto stageMatchesLive = [&](const BuilderStageSnapshot &stage,
+                                const CoreShapeSnapshot &live,
+                                std::string &stageWhy) -> bool {
+        if (!canonicalExplicitEqual(stage.canonicalExplicit, live.canonicalExplicit)) {
+            stageWhy = stage.stage + ": canonical explicit differs from " + live.side +
+                       " live core";
+            return false;
+        }
+        if (stage.aliveNodeCount != live.aliveNodeCount ||
+            stage.aliveArcCount != live.aliveArcCount) {
+            std::ostringstream oss;
+            oss << stage.stage << ": alive counts differ from " << live.side
+                << " live core (stage nodes/arcs=" << stage.aliveNodeCount << "/"
+                << stage.aliveArcCount << ", live=" << live.aliveNodeCount << "/"
+                << live.aliveArcCount << ")";
+            stageWhy = oss.str();
+            return false;
+        }
+        if (stage.rNodeCount != live.rNodeCount ||
+            stage.sNodeCount != live.sNodeCount ||
+            stage.pNodeCount != live.pNodeCount) {
+            std::ostringstream oss;
+            oss << stage.stage << ": node type counts differ from " << live.side
+                << " live core (stage R/S/P=" << stage.rNodeCount << "/"
+                << stage.sNodeCount << "/" << stage.pNodeCount << ", live="
+                << live.rNodeCount << "/" << live.sNodeCount << "/"
+                << live.pNodeCount << ")";
+            stageWhy = oss.str();
+            return false;
+        }
+        if ((stage.stage == "CORE_AFTER_MAT" || stage.stage == "CORE_AFTER_NORM") &&
+            stage.nodeSummaries != live.nodeSummaries) {
+            stageWhy = stage.stage + ": node summaries differ from " + live.side +
+                       " live core";
+            return false;
+        }
+        return true;
+    };
+
+    auto stageDiffers = [&](const BuilderStageSnapshot &stage) -> bool {
+        std::string solverWhy;
+        std::string replayWhy;
+        const bool solverMatches = stageMatchesLive(stage, solverLive, solverWhy);
+        const bool replayMatches = stageMatchesLive(stage, replayLive, replayWhy);
+        if (solverMatches && replayMatches) return false;
+        if (!solverMatches && !replayMatches) {
+            why = stage.stage + ": differs from both solver and replay live cores; solver=" +
+                  solverWhy + "; replay=" + replayWhy;
+        } else if (!solverMatches) {
+            why = stage.stage + ": differs from solver live core; " + solverWhy;
+        } else {
+            why = stage.stage + ": differs from replay live core; " + replayWhy;
+        }
+        return true;
+    };
+
+    if (stageDiffers(rawSnap)) {
+        return BuilderPipelineSeamKind::BPSK_RAW_TYPE_DIVERGENCE;
+    }
+    if (stageDiffers(miniBefore)) {
+        return BuilderPipelineSeamKind::BPSK_MINI_BEFORE_NORMALIZE_DIVERGENCE;
+    }
+    if (stageDiffers(miniAfter)) {
+        return BuilderPipelineSeamKind::BPSK_MINI_AFTER_NORMALIZE_DIVERGENCE;
+    }
+    if (stageDiffers(coreAfterMat)) {
+        return BuilderPipelineSeamKind::BPSK_CORE_AFTER_MATERIALIZE_DIVERGENCE;
+    }
+    if (stageDiffers(coreAfterNorm)) {
+        return BuilderPipelineSeamKind::BPSK_CORE_AFTER_FINAL_NORMALIZE_DIVERGENCE;
+    }
+
+    why.clear();
+    return BuilderPipelineSeamKind::BPSK_NONE;
+}
+
+bool buildRawReplaySnapshot(const ExplicitBlockGraph &inputExplicit,
+                            RawReplaySnapshot &out,
+                            std::string &why) {
+    out = {};
+    out.inputExplicit = canonicalizeExplicitForCompare(inputExplicit);
+
+    if (!buildCompactGraphFromExplicitForReplay(inputExplicit, out.compactGraph, why)) {
+        out.why = why;
+        return false;
+    }
+
+    out.compactGraphCanonicalSummary =
+        summarizeCompactGraphCanonicalForCrashReplay(out.compactGraph);
+    std::string precheckWhy;
+    if (!buildCompactPrecheckSummary(out.compactGraph, out.precheckSummary, precheckWhy)) {
+        out.why = "handoff raw replay: compact precheck failed: " + precheckWhy;
+        why = out.why;
+        return false;
+    }
+
+    for (const auto &edge : out.compactGraph.edges) {
+        out.compactEdgeSummaries.push_back(
+            summarizeCompactEdgeForRawReplay(out.compactGraph, edge));
+    }
+
+    OgdfRawSpqrBackend backend;
+    RawSpqrDecomp raw;
+    std::string err;
+    if (!backend.buildRaw(out.compactGraph, raw, err)) {
+        out.why = err.empty() ? "handoff raw replay: buildRaw failed"
+                              : "handoff raw replay: buildRaw failed: " + err;
+        why = out.why;
+        return false;
+    }
+    std::string canonWhy;
+    (void)canonicalizeRawSingleRSplitIfSafe(out.compactGraph, raw, canonWhy);
+
+    std::string stageWhy;
+    if (!::validateRawSpqrDecomp(out.compactGraph, raw, stageWhy)) {
+        out.why = stageWhy.empty()
+                      ? "handoff raw replay: validateRawSpqrDecomp failed"
+                      : "handoff raw replay: validateRawSpqrDecomp failed: " + stageWhy;
+        why = out.why;
+        return false;
+    }
+
+    ProjectRawSnapshot snap;
+    if (!buildProjectRawSnapshot(out.compactGraph, raw, snap, stageWhy)) {
+        out.why = stageWhy.empty()
+                      ? "handoff raw replay: buildProjectRawSnapshot failed"
+                      : "handoff raw replay: buildProjectRawSnapshot failed: " + stageWhy;
+        why = out.why;
+        return false;
+    }
+    if (!checkProjectRawSnapshot(snap, stageWhy)) {
+        out.why = stageWhy.empty()
+                      ? "handoff raw replay: checkProjectRawSnapshot failed"
+                      : "handoff raw replay: checkProjectRawSnapshot failed: " + stageWhy;
+        why = out.why;
+        return false;
+    }
+
+    for (int nodeId = 0; nodeId < static_cast<int>(snap.nodes.size()); ++nodeId) {
+        const auto &node = snap.nodes[nodeId];
+        if (!node.alive) continue;
+        ++out.rawNodeCount;
+        switch (node.type) {
+            case SPQRType::R_NODE: ++out.rawRNodeCount; break;
+            case SPQRType::S_NODE: ++out.rawSNodeCount; break;
+            case SPQRType::P_NODE: ++out.rawPNodeCount; break;
+        }
+        out.rawNodeSummaries.push_back(summarizeRawNodeForBuilderReplay(node, nodeId));
+    }
+    for (int treeId = 0; treeId < static_cast<int>(snap.treeEdges.size()); ++treeId) {
+        const auto &treeEdge = snap.treeEdges[treeId];
+        if (!treeEdge.alive) continue;
+        ++out.rawTreeEdgeCount;
+        out.rawTreeEdgeSummaries.push_back(summarizeRawTreeEdgeForReplay(treeEdge, treeId));
+    }
+
+    out.ok = true;
+    out.why.clear();
+    why.clear();
+    return true;
+}
+
+RawReplaySeamKind classifyRawReplaySeam(const CoreShapeSnapshot &sourceLiveCore,
+                                        const RawReplaySnapshot &rawSnap,
+                                        std::string &why) {
+    auto explicitEndpointSummary = [](const CanonicalExplicitGraph &graph) {
+        std::vector<std::pair<int, int>> pairs;
+        pairs.reserve(graph.edges.size());
+        for (const auto &[edgeId, u, v] : graph.edges) {
+            (void)edgeId;
+            if (u <= v) pairs.emplace_back(u, v);
+            else pairs.emplace_back(v, u);
+        }
+        std::sort(pairs.begin(), pairs.end());
+        return pairs;
+    };
+    auto compactEndpointSummary = [](const CompactGraph &H) {
+        std::vector<std::pair<int, int>> pairs;
+        pairs.reserve(H.edges.size());
+        for (const auto &edge : H.edges) {
+            if (edge.a < 0 || edge.a >= static_cast<int>(H.origOfCv.size()) ||
+                edge.b < 0 || edge.b >= static_cast<int>(H.origOfCv.size())) {
+                pairs.emplace_back(-1, -1);
+                continue;
+            }
+            const int u = H.origOfCv[edge.a];
+            const int v = H.origOfCv[edge.b];
+            if (u <= v) pairs.emplace_back(u, v);
+            else pairs.emplace_back(v, u);
+        }
+        std::sort(pairs.begin(), pairs.end());
+        return pairs;
+    };
+
+    if (rawSnap.inputExplicit.vertices != sourceLiveCore.canonicalExplicit.vertices ||
+        rawSnap.inputExplicit.edges != sourceLiveCore.canonicalExplicit.edges) {
+        why = "raw replay seam: source live core canonical explicit differs from shared handoff explicit";
+        return RawReplaySeamKind::RRSK_OTHER;
+    }
+
+    if (rawSnap.inputExplicit.vertices != std::vector<int>(rawSnap.compactGraph.origOfCv.begin(),
+                                                           rawSnap.compactGraph.origOfCv.end()) ||
+        explicitEndpointSummary(rawSnap.inputExplicit) != compactEndpointSummary(rawSnap.compactGraph)) {
+        why = "raw replay seam: compact build already differs from source explicit";
+        return RawReplaySeamKind::RRSK_EXPLICIT_TO_COMPACT_DIFFER;
+    }
+
+    const bool sourceSingleR =
+        sourceLiveCore.aliveNodeCount == 1 && sourceLiveCore.aliveArcCount == 0 &&
+        sourceLiveCore.rNodeCount == 1 && sourceLiveCore.sNodeCount == 0 &&
+        sourceLiveCore.pNodeCount == 0 && sourceLiveCore.aliveRNodes.size() == 1;
+
+    if (sourceSingleR && rawSnap.rawNodeCount == 2 && rawSnap.rawTreeEdgeCount == 1 &&
+        rawSnap.rawRNodeCount == 1 && rawSnap.rawSNodeCount == 1 &&
+        rawSnap.rawPNodeCount == 0) {
+        why =
+            "raw replay seam: shared explicit rebuild splits single-R live core into S+R raw decomposition";
+        return RawReplaySeamKind::RRSK_RAW_SPLITS_SINGLE_R_TO_S_PLUS_R;
+    }
+    if (sourceSingleR && rawSnap.rawNodeCount == 2 && rawSnap.rawTreeEdgeCount == 1 &&
+        rawSnap.rawRNodeCount == 1 && rawSnap.rawSNodeCount == 0 &&
+        rawSnap.rawPNodeCount == 1) {
+        why =
+            "raw replay seam: shared explicit rebuild splits single-R live core into P+R raw decomposition";
+        return RawReplaySeamKind::RRSK_RAW_SPLITS_SINGLE_R_TO_P_PLUS_R;
+    }
+
+    const bool sameStructure =
+        rawSnap.rawNodeCount == sourceLiveCore.aliveNodeCount &&
+        rawSnap.rawTreeEdgeCount == sourceLiveCore.aliveArcCount;
+    const bool sameNodeTypes =
+        rawSnap.rawRNodeCount == sourceLiveCore.rNodeCount &&
+        rawSnap.rawSNodeCount == sourceLiveCore.sNodeCount &&
+        rawSnap.rawPNodeCount == sourceLiveCore.pNodeCount;
+
+    if (!sameStructure) {
+        std::ostringstream oss;
+        oss << "raw replay seam: raw structure differs before mini materialization"
+            << " (raw nodes/treeEdges=" << rawSnap.rawNodeCount << "/"
+            << rawSnap.rawTreeEdgeCount << ", source nodes/arcs="
+            << sourceLiveCore.aliveNodeCount << "/" << sourceLiveCore.aliveArcCount << ")";
+        why = oss.str();
+        return RawReplaySeamKind::RRSK_RAW_STRUCTURE_DIFFER;
+    }
+    if (!sameNodeTypes) {
+        std::ostringstream oss;
+        oss << "raw replay seam: raw node types differ with structure preserved"
+            << " (raw R/S/P=" << rawSnap.rawRNodeCount << "/" << rawSnap.rawSNodeCount
+            << "/" << rawSnap.rawPNodeCount << ", source="
+            << sourceLiveCore.rNodeCount << "/" << sourceLiveCore.sNodeCount << "/"
+            << sourceLiveCore.pNodeCount << ")";
+        why = oss.str();
+        return RawReplaySeamKind::RRSK_RAW_NODETYPE_ONLY_DIFFER;
+    }
+
+    why = "raw replay seam: no narrower classification matched";
+    return RawReplaySeamKind::RRSK_OTHER;
+}
+
+namespace {
+
+size_t compactDispatchKindIndex(CompactDispatchKind kind) {
+    return static_cast<size_t>(kind);
+}
+
+void noteCompareCompactDispatch(CompactDispatchKind kind) {
+    ++gRewriteRStats.compareSharedDispatchCounts[compactDispatchKindIndex(kind)];
+}
+
+void recordCompactDispatchForCrashReplay(const char *callSiteTag,
+                                         const CompactGraph &H,
+                                         CompactDispatchKind kind,
+                                         bool directRawAllowed,
+                                         const std::string &directRawBlockedReason,
+                                         bool usedSharedDispatchPath,
+                                         bool usedWholeCoreFallback) {
+    if (!gOgdfRawCrashReplaySession.active || gOgdfRawCrashReplaySession.bundle == nullptr ||
+        gOgdfRawCrashReplaySession.captured) {
+        return;
+    }
+
+    if (!directRawAllowed) {
+        captureOgdfRawCrashReplayCompactState(callSiteTag, "DISPATCH_BLOCKED", H);
+    }
+
+    auto &bundle = *gOgdfRawCrashReplaySession.bundle;
+    bundle.dispatchKind = compactDispatchKindName(kind);
+    bundle.directRawAllowed = directRawAllowed;
+    bundle.directRawBlockedReason = directRawBlockedReason;
+    bundle.usedSharedDispatchPath = usedSharedDispatchPath;
+    bundle.usedWholeCoreFallback = usedWholeCoreFallback;
+}
+
+bool inferSingleNodeZeroArcTypeFromMiniCandidate(const StaticMiniCore &miniCandidate,
+                                                 SPQRType &outType,
+                                                 std::string &why) {
+    StaticMiniCore mini = miniCandidate;
+    try {
+        ::normalizeWholeMiniCore(mini);
+    } catch (const std::exception &e) {
+        why = std::string("single-node zero-arc type inference: normalizeWholeMiniCore threw: ") +
+              e.what();
+        return false;
+    } catch (...) {
+        why = "single-node zero-arc type inference: normalizeWholeMiniCore threw";
+        return false;
+    }
+
+    int aliveNodeCount = 0;
+    int aliveArcCount = 0;
+    int aliveNodeId = -1;
+    for (int nodeId = 0; nodeId < static_cast<int>(mini.nodes.size()); ++nodeId) {
+        if (!mini.nodes[nodeId].alive) continue;
+        ++aliveNodeCount;
+        aliveNodeId = nodeId;
+    }
+    for (const auto &arc : mini.arcs) {
+        if (arc.alive) ++aliveArcCount;
+    }
+    if (aliveNodeCount != 1 || aliveArcCount != 0 || aliveNodeId < 0) {
+        std::ostringstream oss;
+        oss << "single-node zero-arc type inference: mini is not single-node zero-arc "
+            << "(aliveNodeCount=" << aliveNodeCount
+            << ", aliveArcCount=" << aliveArcCount << ")";
+        why = oss.str();
+        return false;
+    }
+
+    outType = mini.nodes[aliveNodeId].type;
+    why.clear();
+    return true;
+}
+
+bool buildMiniBySharedCompactDispatch(const CompactGraph &H,
+                                      CompactDispatchKind kind,
+                                      StaticMiniCore &mini,
+                                      std::string &why) {
+    mini = {};
+    switch (kind) {
+        case CompactDispatchKind::CDK_TINY_ONE_EDGE:
+            return buildSyntheticMiniForOneEdgeRemainder(H, mini, why);
+        case CompactDispatchKind::CDK_TINY_TWO_PATH:
+            return buildSyntheticMiniForTooSmallTwoPath(H, mini, why);
+        case CompactDispatchKind::CDK_NB_SINGLE_CUT_TWO_BLOCKS: {
+            CompactBCResult bc;
+            std::string bcWhy;
+            std::string validateWhy;
+            if (!decomposeCompactIntoBC(H, bc, bcWhy)) {
+                why = bcWhy.empty()
+                          ? "shared compact dispatch: single-cut BC decomposition failed"
+                          : "shared compact dispatch: " + bcWhy;
+                return false;
+            }
+            if (!validateCompactBC(H, bc, validateWhy)) {
+                why = validateWhy.empty()
+                          ? "shared compact dispatch: single-cut BC validation failed"
+                          : "shared compact dispatch: " + validateWhy;
+                return false;
+            }
+            return buildSyntheticMiniForSingleCutTwoBlocks(H, bc, mini, why);
+        }
+        case CompactDispatchKind::CDK_NB_PATH_OF_BLOCKS: {
+            CompactBCResult bc;
+            std::string bcWhy;
+            std::string validateWhy;
+            if (!decomposeCompactIntoBC(H, bc, bcWhy)) {
+                why = bcWhy.empty()
+                          ? "shared compact dispatch: path-of-blocks BC decomposition failed"
+                          : "shared compact dispatch: " + bcWhy;
+                return false;
+            }
+            if (!validateCompactBC(H, bc, validateWhy)) {
+                why = validateWhy.empty()
+                          ? "shared compact dispatch: path-of-blocks BC validation failed"
+                          : "shared compact dispatch: " + validateWhy;
+                return false;
+            }
+            return buildSyntheticMiniForPathOfBlocks(H, bc, mini, why);
+        }
+        case CompactDispatchKind::CDK_SELFLOOP_SPQR_READY: {
+            int keep = -1;
+            return buildSequenceMiniForSelfLoopRemainderSpqrReady(H, mini, keep, why);
+        }
+        case CompactDispatchKind::CDK_SELFLOOP_ONE_EDGE: {
+            int keep = -1;
+            return buildSequenceMiniForSelfLoopRemainderOneEdge(H, mini, keep, why);
+        }
+        case CompactDispatchKind::CDK_DIRECT_SPQR_READY:
+            return fail(why, "shared compact dispatch: direct raw required");
+        case CompactDispatchKind::CDK_WHOLE_CORE_FALLBACK:
+            return fail(why, "shared compact dispatch: conservative whole-core fallback");
+        case CompactDispatchKind::CDK_UNHANDLED:
+            return fail(why, "shared compact dispatch: unhandled compact category");
+        case CompactDispatchKind::COUNT:
+            return fail(why, "shared compact dispatch: invalid dispatch kind");
+    }
+    return fail(why, "shared compact dispatch: invalid dispatch kind");
+}
+
+} // namespace
+
+bool classifyCompactDispatchKind(const CompactGraph &H,
+                                 CompactDispatchKind &kind,
+                                 std::string &why) {
+    kind = CompactDispatchKind::CDK_UNHANDLED;
+    why.clear();
+
+    CompactRejectReason rejectReason = CompactRejectReason::OTHER;
+    std::string readyWhy;
+    if (isCompactGraphSpqrReady(H, &rejectReason, readyWhy)) {
+        kind = CompactDispatchKind::CDK_DIRECT_SPQR_READY;
+        why = "compact dispatch: SPQR-ready";
+        return true;
+    }
+
+    const TooSmallSubtype tinySubtype = classifyTooSmallCompact(H);
+    if (tinySubtype == TooSmallSubtype::TS_ONE_EDGE) {
+        kind = CompactDispatchKind::CDK_TINY_ONE_EDGE;
+        why = "compact dispatch: TS_ONE_EDGE";
+        return true;
+    }
+    if (tinySubtype == TooSmallSubtype::TS_TWO_PATH) {
+        kind = CompactDispatchKind::CDK_TINY_TWO_PATH;
+        why = "compact dispatch: TS_TWO_PATH";
+        return true;
+    }
+
+    CompactBCResult bc;
+    std::string bcWhy;
+    std::string validateWhy;
+    if (decomposeCompactIntoBC(H, bc, bcWhy) && validateCompactBC(H, bc, validateWhy)) {
+        const NotBiconnectedSubtype nbSubtype = classifyNotBiconnected(H, bc);
+        if (nbSubtype == NotBiconnectedSubtype::NB_SINGLE_CUT_TWO_BLOCKS) {
+            kind = CompactDispatchKind::CDK_NB_SINGLE_CUT_TWO_BLOCKS;
+            why = "compact dispatch: NB_SINGLE_CUT_TWO_BLOCKS";
+            return true;
+        }
+        if (nbSubtype == NotBiconnectedSubtype::NB_PATH_OF_BLOCKS) {
+            kind = CompactDispatchKind::CDK_NB_PATH_OF_BLOCKS;
+            why = "compact dispatch: NB_PATH_OF_BLOCKS";
+            return true;
+        }
+    }
+
+    std::string selfLoopWhy;
+    const SelfLoopBuildFailSubtype selfLoopSubtype =
+        classifySelfLoopBuildFailDetailed(H, selfLoopWhy);
+    if (selfLoopSubtype == SelfLoopBuildFailSubtype::SL_PROXY_ONLY_REMAINDER_SPQR_READY) {
+        kind = CompactDispatchKind::CDK_SELFLOOP_SPQR_READY;
+        why = "compact dispatch: SL_PROXY_ONLY_REMAINDER_SPQR_READY";
+        return true;
+    }
+    if (selfLoopSubtype ==
+        SelfLoopBuildFailSubtype::SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED) {
+        StaticMiniCore probeMini;
+        int keep = -1;
+        std::string probeWhy;
+        if (buildSequenceMiniForSelfLoopRemainderOneEdge(H, probeMini, keep, probeWhy)) {
+            kind = CompactDispatchKind::CDK_SELFLOOP_ONE_EDGE;
+            why = "compact dispatch: SL_PROXY_ONLY_REMAINDER_OTHER_NOT_BICONNECTED/ONE_EDGE";
+            return true;
+        }
+    }
+
+    kind = CompactDispatchKind::CDK_WHOLE_CORE_FALLBACK;
+    if (!bcWhy.empty()) {
+        why = "compact dispatch: whole-core fallback (" + bcWhy + ")";
+    } else if (!validateWhy.empty()) {
+        why = "compact dispatch: whole-core fallback (" + validateWhy + ")";
+    } else if (!selfLoopWhy.empty()) {
+        why = "compact dispatch: whole-core fallback (" + selfLoopWhy + ")";
+    } else if (!readyWhy.empty()) {
+        why = "compact dispatch: whole-core fallback (" + readyWhy + ")";
+    } else {
+        why = "compact dispatch: whole-core fallback";
+    }
+    return true;
+}
+
+bool inferSingleNodeZeroArcCoreTypeFromMini(const CompactGraph &H,
+                                            SPQRType &outType,
+                                            std::string &why) {
+    CompactDispatchKind dispatchKind = CompactDispatchKind::CDK_UNHANDLED;
+    std::string dispatchWhy;
+    if (!classifyCompactDispatchKind(H, dispatchKind, dispatchWhy)) {
+        why = dispatchWhy.empty()
+                  ? "single-node zero-arc type inference: compact dispatch classification failed"
+                  : dispatchWhy;
+        return false;
+    }
+
+    noteCompareCompactDispatch(dispatchKind);
+    recordCompactDispatchForCrashReplay("INFER_SINGLE_ZERO_ARC_TYPE",
+                                        H,
+                                        dispatchKind,
+                                        dispatchKind == CompactDispatchKind::CDK_DIRECT_SPQR_READY,
+                                        dispatchKind == CompactDispatchKind::CDK_DIRECT_SPQR_READY
+                                            ? std::string()
+                                            : dispatchWhy,
+                                        false,
+                                        false);
+
+    if (dispatchKind != CompactDispatchKind::CDK_DIRECT_SPQR_READY) {
+        ++gRewriteRStats.compareDirectRawBlockedCount;
+
+        StaticMiniCore sharedMini;
+        std::string stageWhy;
+        if (!buildMiniBySharedCompactDispatch(H, dispatchKind, sharedMini, stageWhy)) {
+            ++gRewriteRStats.compareSharedDispatchFallbackCount;
+            recordCompactDispatchForCrashReplay("INFER_SINGLE_ZERO_ARC_TYPE",
+                                                H,
+                                                dispatchKind,
+                                                false,
+                                                stageWhy.empty() ? dispatchWhy : stageWhy,
+                                                false,
+                                                true);
+            why = stageWhy.empty()
+                      ? "single-node zero-arc type inference: shared dispatch fallback"
+                      : stageWhy;
+            return false;
+        }
+
+        recordCompactDispatchForCrashReplay("INFER_SINGLE_ZERO_ARC_TYPE",
+                                            H,
+                                            dispatchKind,
+                                            false,
+                                            dispatchWhy,
+                                            true,
+                                            false);
+        return inferSingleNodeZeroArcTypeFromMiniCandidate(sharedMini, outType, why);
+    }
+
+    ++gRewriteRStats.compareDirectRawCallCount;
+
+    std::string stageWhy;
+    RawSpqrDecomp raw;
+    std::string err;
+    if (!buildRawMaybeInterceptForCrashReplay("INFER_SINGLE_ZERO_ARC_TYPE", H, raw, err)) {
+        why = err.empty() ? "single-node zero-arc type inference: backend.buildRaw failed"
+                          : "single-node zero-arc type inference: backend.buildRaw failed: " +
+                                err;
+        return false;
+    }
+    std::string canonWhy;
+    (void)canonicalizeRawSingleRSplitIfSafe(H, raw, canonWhy);
+    if (!::validateRawSpqrDecomp(H, raw, stageWhy)) {
+        why = stageWhy.empty()
+                  ? "single-node zero-arc type inference: raw validation failed"
+                  : "single-node zero-arc type inference: raw validation failed: " + stageWhy;
+        return false;
+    }
+
+    StaticMiniCore mini;
+    if (!::materializeMiniCore(H, raw, mini, stageWhy)) {
+        why = stageWhy.empty()
+                  ? "single-node zero-arc type inference: materializeMiniCore failed"
+                  : "single-node zero-arc type inference: materializeMiniCore failed: " +
+                        stageWhy;
+        return false;
+    }
+    return inferSingleNodeZeroArcTypeFromMiniCandidate(mini, outType, why);
+}
+
+bool preserveSingleNodeZeroArcCoreTypeFromMini(const CompactGraph &H,
+                                               ReducedSPQRCore &core,
+                                               std::string &why) {
+    int aliveNodeCount = 0;
+    int aliveArcCount = 0;
+    NodeId onlyNode = -1;
+    for (NodeId nodeId = 0; nodeId < static_cast<NodeId>(core.nodes.size()); ++nodeId) {
+        if (!core.nodes[nodeId].alive) continue;
+        ++aliveNodeCount;
+        onlyNode = nodeId;
+    }
+    for (const auto &arc : core.arcs) {
+        if (arc.alive) ++aliveArcCount;
+    }
+    if (aliveNodeCount != 1 || aliveArcCount != 0 || onlyNode < 0) {
+        why.clear();
+        return true;
+    }
+
+    SPQRType inferredType = SPQRType::R_NODE;
+    std::string inferWhy;
+    if (!inferSingleNodeZeroArcCoreTypeFromMini(H, inferredType, inferWhy)) {
+        if (gOgdfRawCrashReplaySession.captured) {
+            why = inferWhy;
+            return false;
+        }
+        why.clear();
+        return true;
+    }
+
+    core.nodes[onlyNode].type = inferredType;
+    why.clear();
+    return true;
+}
+
+bool buildMaterializeCoreSubphaseSnapshots(
+    const CompactGraph &H,
+    const StaticMiniCore &miniAfter,
+    MaterializeCoreSubphaseSnapshot &allocateSnapshot,
+    MaterializeCoreSubphaseSnapshot &installSlotsSnapshot,
+    MaterializeCoreSubphaseSnapshot &connectArcsSnapshot,
+    MaterializeCoreSubphaseSnapshot &postMetadataSnapshot,
+    MaterializeCoreSubphaseSnapshot &finalNormalizeSnapshot,
+    std::string &why) {
+    allocateSnapshot = {};
+    installSlotsSnapshot = {};
+    connectArcsSnapshot = {};
+    postMetadataSnapshot = {};
+    finalNormalizeSnapshot = {};
+    (void)miniAfter;
+
+    DummyActualEnvelope env;
+    env.H = H;
+    env.root = 0;
+    env.oldR = 0;
+    env.core.blockId = H.block;
+    env.core.root = env.root;
+    env.core.nodes.resize(1 + H.edges.size());
+    for (auto &node : env.core.nodes) {
+        node.alive = false;
+    }
+    env.stubOfInputEdge.assign(H.edges.size(), -1);
+    env.arcOfInputEdge.assign(H.edges.size(), -1);
+
+    auto &oldR = env.core.nodes[env.oldR];
+    oldR.alive = true;
+    oldR.type = SPQRType::R_NODE;
+    fillMaterializeCoreSubphaseSnapshotFromCore(
+        env.core,
+        coreMaterializeSubphaseName(CoreMaterializeSubphase::CMS_ALLOCATE_NODE),
+        allocateSnapshot);
+
+    std::unordered_set<VertexId> touched(H.touchedVertices.begin(), H.touchedVertices.end());
+
+    struct PendingProxyArc {
+        int inputId = -1;
+        int oldSlotId = -1;
+        NodeId stubId = -1;
+        int stubVirtualSlotId = -1;
+        VertexId poleA = -1;
+        VertexId poleB = -1;
+    };
+    std::vector<PendingProxyArc> pendingProxyArcs;
+
+    for (int inputId = 0; inputId < static_cast<int>(H.edges.size()); ++inputId) {
+        const auto &edge = H.edges[inputId];
+        auto &storedEdge = env.H.edges[inputId];
+        if (edge.a < 0 || edge.a >= static_cast<int>(H.origOfCv.size()) ||
+            edge.b < 0 || edge.b >= static_cast<int>(H.origOfCv.size())) {
+            why = "materialize-core replay: compact edge endpoint out of range";
+            return false;
+        }
+
+        const VertexId poleA = H.origOfCv[edge.a];
+        const VertexId poleB = H.origOfCv[edge.b];
+        if (edge.kind == CompactEdgeKind::REAL) {
+            const int oldRealSlotId = static_cast<int>(oldR.slots.size());
+            oldR.slots.push_back({true, poleA, poleB, false, edge.realEdge, -1});
+            env.core.ownerNodeOfRealEdge[edge.realEdge] = env.oldR;
+            env.core.ownerSlotOfRealEdge[edge.realEdge] = oldRealSlotId;
+            storedEdge.oldArc = -1;
+            storedEdge.outsideNode = -1;
+            storedEdge.oldSlotInU = -1;
+            continue;
+        }
+
+        const NodeId stubId = 1 + inputId;
+        auto &stub = env.core.nodes[stubId];
+        stub.alive = true;
+        stub.type = SPQRType::R_NODE;
+        env.stubNodes.insert(stubId);
+        env.stubOfInputEdge[inputId] = stubId;
+
+        const int oldSlotId = static_cast<int>(oldR.slots.size());
+        oldR.slots.push_back({true, poleA, poleB, true, -1, -1});
+
+        const int stubVirtualSlotId = static_cast<int>(stub.slots.size());
+        stub.slots.push_back({true, poleA, poleB, true, -1, -1});
+        stub.localAgg = edge.sideAgg;
+        if (stub.localAgg.repVertex < 0) stub.localAgg.repVertex = poleA;
+        stub.subAgg = stub.localAgg;
+
+        storedEdge.oldArc = -1;
+        storedEdge.outsideNode = stubId;
+        storedEdge.oldSlotInU = oldSlotId;
+        pendingProxyArcs.push_back(
+            {inputId, oldSlotId, stubId, stubVirtualSlotId, poleA, poleB});
+    }
+
+    fillMaterializeCoreSubphaseSnapshotFromCore(
+        env.core,
+        coreMaterializeSubphaseName(CoreMaterializeSubphase::CMS_INSTALL_INPUT_SLOTS),
+        installSlotsSnapshot);
+
+    for (const auto &pending : pendingProxyArcs) {
+        auto &storedEdge = env.H.edges[pending.inputId];
+        auto &stub = env.core.nodes[pending.stubId];
+        const ArcId arcId = static_cast<ArcId>(env.core.arcs.size());
+        oldR.slots[pending.oldSlotId].arcId = arcId;
+        stub.slots[pending.stubVirtualSlotId].arcId = arcId;
+        oldR.adjArcs.push_back(arcId);
+        stub.adjArcs.push_back(arcId);
+        env.core.arcs.push_back({true,
+                                 env.oldR,
+                                 pending.stubId,
+                                 pending.oldSlotId,
+                                 pending.stubVirtualSlotId,
+                                 pending.poleA,
+                                 pending.poleB});
+        env.arcOfInputEdge[pending.inputId] = arcId;
+        storedEdge.oldArc = arcId;
+    }
+
+    fillMaterializeCoreSubphaseSnapshotFromCore(
+        env.core,
+        coreMaterializeSubphaseName(CoreMaterializeSubphase::CMS_CONNECT_INTERNAL_ARCS),
+        connectArcsSnapshot);
+
+    rebuildActualRealEdgesHereNode(oldR);
+    oldR.localAgg = recomputeActualLocalAgg(oldR, touched);
+    oldR.subAgg = oldR.localAgg;
+    env.core.totalAgg = oldR.localAgg;
+    rebuildAllOccurrencesActual(env.core);
+
+    {
+        std::string preserveWhy;
+        if (!preserveSingleNodeZeroArcCoreTypeFromMini(H, env.core, preserveWhy)) {
+            why = preserveWhy.empty()
+                      ? "materialize-core replay: single-node zero-arc type preserve failed"
+                      : "materialize-core replay: single-node zero-arc type preserve failed: " +
+                            preserveWhy;
+            return false;
+        }
+    }
+
+    fillMaterializeCoreSubphaseSnapshotFromCore(
+        env.core,
+        coreMaterializeSubphaseName(CoreMaterializeSubphase::CMS_POST_MAT_METADATA),
+        postMetadataSnapshot);
+
+    ReducedSPQRCore normalized = env.core;
+    std::string normalizeWhy;
+    if (!normalizeProjectTouchedRegion(normalized, normalizeWhy)) {
+        why = normalizeWhy.empty()
+                  ? "materialize-core replay: normalizeProjectTouchedRegion failed"
+                  : "materialize-core replay: normalizeProjectTouchedRegion failed: " +
+                        normalizeWhy;
+        return false;
+    }
+
+    fillMaterializeCoreSubphaseSnapshotFromCore(
+        normalized,
+        coreMaterializeSubphaseName(CoreMaterializeSubphase::CMS_FINAL_NORMALIZE),
+        finalNormalizeSnapshot);
+
+    why.clear();
+    return true;
+}
+
+CoreMaterializeSubphaseSeamKind classifyMaterializeSubphaseSeam(
+    const BuilderStageSnapshot &miniAfter,
+    const MaterializeCoreSubphaseSnapshot &alloc,
+    const MaterializeCoreSubphaseSnapshot &slots,
+    const MaterializeCoreSubphaseSnapshot &arcs,
+    const MaterializeCoreSubphaseSnapshot &postMeta,
+    const MaterializeCoreSubphaseSnapshot &finalNorm,
+    std::string &why) {
+    auto typeCountsEqual = [](int r1, int s1, int p1, int r2, int s2, int p2) {
+        return r1 == r2 && s1 == s2 && p1 == p2;
+    };
+    auto countSlotsInSummaries = [](const std::vector<std::string> &summaries) {
+        int slotCount = 0;
+        for (const auto &summary : summaries) {
+            size_t pos = 0;
+            while ((pos = summary.find("slot=", pos)) != std::string::npos) {
+                ++slotCount;
+                pos += 5;
+            }
+        }
+        return slotCount;
+    };
+    const int miniSlotCount = countSlotsInSummaries(miniAfter.nodeSummaries);
+    auto structureEqual = [&](const BuilderStageSnapshot &mini,
+                              const MaterializeCoreSubphaseSnapshot &stage) {
+        if (mini.aliveNodeCount != stage.aliveNodeCount ||
+            mini.aliveArcCount != stage.aliveArcCount) {
+            return false;
+        }
+        if (mini.canonicalExplicit.edges != stage.canonicalExplicit.edges ||
+            mini.canonicalExplicit.vertices != stage.canonicalExplicit.vertices) {
+            return false;
+        }
+        if (stage.liveSlotCount != 0 && miniSlotCount != stage.liveSlotCount) {
+            return false;
+        }
+        return true;
+    };
+    auto pureTypeOnlyDiff = [&](const MaterializeCoreSubphaseSnapshot &stage) {
+        return structureEqual(miniAfter, stage) &&
+               !typeCountsEqual(miniAfter.rNodeCount,
+                                miniAfter.sNodeCount,
+                                miniAfter.pNodeCount,
+                                stage.rNodeCount,
+                                stage.sNodeCount,
+                                stage.pNodeCount);
+    };
+    auto typeSummary = [](const auto &stage) {
+        std::ostringstream oss;
+        oss << "(R,S,P)=(" << stage.rNodeCount << "," << stage.sNodeCount << ","
+            << stage.pNodeCount << ")";
+        return oss.str();
+    };
+
+    const bool allocTypeDiff =
+        !typeCountsEqual(miniAfter.rNodeCount,
+                         miniAfter.sNodeCount,
+                         miniAfter.pNodeCount,
+                         alloc.rNodeCount,
+                         alloc.sNodeCount,
+                         alloc.pNodeCount);
+
+    const bool slotsTypeOnly = pureTypeOnlyDiff(slots);
+    const bool arcsTypeOnly = pureTypeOnlyDiff(arcs);
+    const bool postTypeOnly = pureTypeOnlyDiff(postMeta);
+    const bool finalTypeOnly = pureTypeOnlyDiff(finalNorm);
+
+    if ((slotsTypeOnly || arcsTypeOnly) && allocTypeDiff) {
+        why = "type differs from MINI_AFTER starting at ALLOCATE; first structure-equal stage is " +
+              std::string(slotsTypeOnly ? slots.subphase : arcs.subphase) +
+              " mini=" + typeSummary(miniAfter) + " alloc=" + typeSummary(alloc) +
+              " slotCount=" + std::to_string(miniSlotCount);
+        return CoreMaterializeSubphaseSeamKind::CMSS_TYPE_COERCION_AT_ALLOC;
+    }
+    if (postTypeOnly || finalTypeOnly) {
+        why = "type differs from MINI_AFTER after post-materialize metadata; mini=" +
+              typeSummary(miniAfter) + " postMeta=" + typeSummary(postMeta) +
+              " slotCount=" + std::to_string(miniSlotCount);
+        return CoreMaterializeSubphaseSeamKind::CMSS_TYPE_COERCION_AT_POST_METADATA;
+    }
+
+    if (!structureEqual(miniAfter, alloc) ||
+        !structureEqual(miniAfter, slots) ||
+        !structureEqual(miniAfter, arcs)) {
+        why = "structure diverges before metadata";
+        return CoreMaterializeSubphaseSeamKind::CMSS_STRUCTURE_DIFFER_BEFORE_METADATA;
+    }
+    if (!structureEqual(miniAfter, postMeta) || !structureEqual(miniAfter, finalNorm)) {
+        why = "structure diverges after metadata";
+        return CoreMaterializeSubphaseSeamKind::CMSS_STRUCTURE_DIFFER_AFTER_METADATA;
+    }
+
+    if (typeCountsEqual(miniAfter.rNodeCount,
+                        miniAfter.sNodeCount,
+                        miniAfter.pNodeCount,
+                        finalNorm.rNodeCount,
+                        finalNorm.sNodeCount,
+                        finalNorm.pNodeCount)) {
+        why.clear();
+        return CoreMaterializeSubphaseSeamKind::CMSS_NONE;
+    }
+
+    why = "materialize subphase seam could not be classified";
+    return CoreMaterializeSubphaseSeamKind::CMSS_OTHER;
+}
+
+TargetSearchSeamKind classifyTargetSearchSeam(
+    const RewriteTargetSnapshot &solverSnap,
+    const RewriteTargetSnapshot &replaySnap,
+    std::string &why) {
+    if (solverSnap.aliveRNodes != replaySnap.aliveRNodes) {
+        why = "alive R-node set differs";
+        return TargetSearchSeamKind::TSK_ALIVE_R_SET_DIFFER;
+    }
+    if (solverSnap.candidates != replaySnap.candidates) {
+        why = "rewrite target candidate set differs";
+        return TargetSearchSeamKind::TSK_CANDIDATE_SET_DIFFER;
+    }
+    if (solverSnap.chosenR != replaySnap.chosenR ||
+        solverSnap.chosenX != replaySnap.chosenX) {
+        std::ostringstream oss;
+        oss << "chosen target differs (solver=(" << solverSnap.chosenR << ","
+            << solverSnap.chosenX << "), replay=(" << replaySnap.chosenR << ","
+            << replaySnap.chosenX << "))";
+        why = oss.str();
+        return TargetSearchSeamKind::TSK_CHOSEN_TARGET_DIFFER;
+    }
+    if (!solverSnap.hasNextTarget && replaySnap.hasNextTarget) {
+        why = "solver reports no next target while replay still has one";
+        return TargetSearchSeamKind::TSK_NO_TARGET_SOLVER_ONLY;
+    }
+    if (solverSnap.hasNextTarget && !replaySnap.hasNextTarget) {
+        why = "replay reports no next target while solver still has one";
+        return TargetSearchSeamKind::TSK_NO_TARGET_REPLAY_ONLY;
+    }
+    if (solverSnap.hasNextTarget && replaySnap.hasNextTarget) {
+        why = "candidate snapshots match but solver terminated anyway";
+        return TargetSearchSeamKind::TSK_TERMINATION_POLICY_DIFFER;
+    }
+    why.clear();
+    return TargetSearchSeamKind::TSK_NONE;
+}
+
+CoreShapeSeamKind classifyCoreShapeSeam(const CoreShapeSnapshot &solverSnap,
+                                        const CoreShapeSnapshot &replaySnap,
+                                        const CoreShapeSnapshot &shadowSnap,
+                                        std::string &why) {
+    const bool solverEqShadow = solverSnap.aliveRNodes == shadowSnap.aliveRNodes;
+    const bool replayEqShadow = replaySnap.aliveRNodes == shadowSnap.aliveRNodes;
+    const bool solverEqReplay = solverSnap.aliveRNodes == replaySnap.aliveRNodes;
+
+    std::ostringstream oss;
+    oss << "step " << solverSnap.stepIndex
+        << ": solver aliveR=[";
+    for (size_t i = 0; i < solverSnap.aliveRNodes.size(); ++i) {
+        if (i != 0) oss << ',';
+        oss << solverSnap.aliveRNodes[i];
+    }
+    oss << "], replay aliveR=[";
+    for (size_t i = 0; i < replaySnap.aliveRNodes.size(); ++i) {
+        if (i != 0) oss << ',';
+        oss << replaySnap.aliveRNodes[i];
+    }
+    oss << "], shadow aliveR=[";
+    for (size_t i = 0; i < shadowSnap.aliveRNodes.size(); ++i) {
+        if (i != 0) oss << ',';
+        oss << shadowSnap.aliveRNodes[i];
+    }
+    oss << "]";
+
+    if (!solverEqShadow && replayEqShadow) {
+        why = oss.str();
+        return CoreShapeSeamKind::CSS_SOLVER_DIFFERS_SHADOW_REPLAY_MATCHES;
+    }
+    if (!replayEqShadow && solverEqShadow) {
+        why = oss.str();
+        return CoreShapeSeamKind::CSS_REPLAY_DIFFERS_SHADOW_SOLVER_MATCHES;
+    }
+    if (!solverEqShadow && !replayEqShadow && solverEqReplay) {
+        why = oss.str();
+        return CoreShapeSeamKind::CSS_SOLVER_AND_REPLAY_BOTH_DIFFER_FROM_SHADOW;
+    }
+    if (!solverEqShadow && !replayEqShadow && !solverEqReplay) {
+        why = oss.str();
+        return CoreShapeSeamKind::CSS_ALL_THREE_DIFFER;
+    }
+    if (solverEqShadow && replayEqShadow) {
+        why.clear();
+        return CoreShapeSeamKind::CSS_NONE;
+    }
+    why = oss.str();
+    return CoreShapeSeamKind::CSS_OTHER;
+}
+
+FinalCoreSeamKind classifyFinalCoreSeam(
+    const std::vector<FinalCoreStepTrace> &solverTrace,
+    const std::vector<FinalCoreStepTrace> &replayTrace,
+    const FinalCoreSignature &solverSig,
+    const FinalCoreSignature &replaySig,
+    int &firstDivergenceStep,
+    std::string &why) {
+    firstDivergenceStep = -1;
+    if (solverTrace.size() != replayTrace.size()) {
+        firstDivergenceStep =
+            static_cast<int>(std::min(solverTrace.size(), replayTrace.size())) + 1;
+        std::ostringstream oss;
+        oss << "trace length differs: solver=" << solverTrace.size()
+            << " replay=" << replayTrace.size();
+        why = oss.str();
+        return FinalCoreSeamKind::FCSK_STEP_COUNT_DIFFER;
+    }
+
+    for (size_t i = 0; i < solverTrace.size(); ++i) {
+        const auto &solverStep = solverTrace[i];
+        const auto &replayStep = replayTrace[i];
+        if (solverStep.chosenR != replayStep.chosenR) {
+            firstDivergenceStep = solverStep.stepIndex;
+            std::ostringstream oss;
+            oss << "step " << solverStep.stepIndex << ": chosenR differs (solver="
+                << solverStep.chosenR << ", replay=" << replayStep.chosenR << ")";
+            why = oss.str();
+            return FinalCoreSeamKind::FCSK_CHOSEN_R_DIFFER;
+        }
+        if (solverStep.chosenX != replayStep.chosenX) {
+            firstDivergenceStep = solverStep.stepIndex;
+            std::ostringstream oss;
+            oss << "step " << solverStep.stepIndex << ": chosenX differs (solver="
+                << solverStep.chosenX << ", replay=" << replayStep.chosenX << ")";
+            why = oss.str();
+            return FinalCoreSeamKind::FCSK_CHOSEN_X_DIFFER;
+        }
+        if (solverStep.canonicalExplicitAfterNormalize.edges !=
+                replayStep.canonicalExplicitAfterNormalize.edges ||
+            solverStep.canonicalExplicitAfterNormalize.vertices !=
+                replayStep.canonicalExplicitAfterNormalize.vertices) {
+            firstDivergenceStep = solverStep.stepIndex;
+            std::ostringstream oss;
+            oss << "step " << solverStep.stepIndex
+                << ": post-normalize canonical explicit differs";
+            why = oss.str();
+            return FinalCoreSeamKind::FCSK_POST_NORMALIZE_EXPLICIT_DIFFER;
+        }
+        if (solverStep.terminated != replayStep.terminated ||
+            solverStep.terminateReason != replayStep.terminateReason) {
+            firstDivergenceStep = solverStep.stepIndex;
+            std::ostringstream oss;
+            oss << "step " << solverStep.stepIndex << ": termination differs (solver="
+                << (solverStep.terminated ? 1 : 0) << ":" << solverStep.terminateReason
+                << ", replay=" << (replayStep.terminated ? 1 : 0) << ":"
+                << replayStep.terminateReason << ")";
+            why = oss.str();
+            return FinalCoreSeamKind::FCSK_TERMINATION_DIFFER;
+        }
+    }
+
+    if (solverSig.canonicalExplicit.edges != replaySig.canonicalExplicit.edges ||
+        solverSig.canonicalExplicit.vertices != replaySig.canonicalExplicit.vertices) {
+        why = "final canonical explicit differs";
+        return FinalCoreSeamKind::FCSK_FINAL_CORE_EXPLICIT_DIFFER;
+    }
+
+    if (solverSig.aliveNodeCount != replaySig.aliveNodeCount ||
+        solverSig.aliveArcCount != replaySig.aliveArcCount ||
+        solverSig.root != replaySig.root ||
+        solverSig.nodeSummaries != replaySig.nodeSummaries) {
+        why = "final canonical explicit equal but final core metadata differs";
+        return FinalCoreSeamKind::FCSK_FINAL_CORE_METADATA_DIFFER;
+    }
+
+    why.clear();
+    return FinalCoreSeamKind::FCSK_NONE;
+}
+
+bool runSolverFinalCoreReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                           const std::string &manifestPath,
+                                           const std::string &caseName,
+                                           uint64_t seed,
+                                           int tc,
+                                           std::optional<int> targetStep,
+                                           SolverFinalCoreReplayBundle &bundle,
+                                           std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+
+    ReducedSPQRCore solverFinalCore;
+    RewriteSeqStats solverStats;
+    setRewriteRCaseContext(seed, tc);
+    if (!runRewriteSeqEngineToFinalCoreDebug(
+            input,
+            solverFinalCore,
+            bundle.solverTrace,
+            bundle.solverPostStepTargetSnapshots,
+            solverStats,
+            bundle.solverWhy)) {
+        bundle.finalCoreSeamKind = FinalCoreSeamKind::FCSK_OTHER;
+        bundle.finalCoreSeamWhy = "solver final-core debug failed: " + bundle.solverWhy;
+        why = bundle.finalCoreSeamWhy;
+        return false;
+    }
+    bundle.solverStats.success = solverStats.success;
+    bundle.solverStats.reachedFixpoint = solverStats.reachedFixpoint;
+    bundle.solverStats.hadSequenceFallback = solverStats.hadSequenceFallback;
+    bundle.solverStats.maxStepReached = solverStats.maxStepReached;
+    bundle.solverStats.completedSteps = solverStats.completedSteps;
+    bundle.solverStats.solverShadowResyncAttemptCount =
+        solverStats.solverShadowResyncAttemptCount;
+    bundle.solverStats.solverShadowResyncAppliedCount =
+        solverStats.solverShadowResyncAppliedCount;
+    bundle.solverStats.solverShadowResyncNoopCount =
+        solverStats.solverShadowResyncNoopCount;
+    bundle.solverStats.solverShadowResyncNoTargetToHasTargetCount =
+        solverStats.solverShadowResyncNoTargetToHasTargetCount;
+    bundle.solverStats.solverShadowResyncAliveRSetDifferCount =
+        solverStats.solverShadowResyncAliveRSetDifferCount;
+    bundle.solverStats.solverResyncBeforeTerminateAttemptCount =
+        solverStats.solverResyncBeforeTerminateAttemptCount;
+    bundle.solverStats.solverResyncBeforeTerminateAppliedCount =
+        solverStats.solverResyncBeforeTerminateAppliedCount;
+    bundle.solverStats.solverResyncBeforeTerminateNoopCount =
+        solverStats.solverResyncBeforeTerminateNoopCount;
+    bundle.solverStats.solverResyncBeforeTerminateNoTargetToHasTargetCount =
+        solverStats.solverResyncBeforeTerminateNoTargetToHasTargetCount;
+    bundle.solverStats.solverResyncBeforeTerminateAliveRSetDifferCount =
+        solverStats.solverResyncBeforeTerminateAliveRSetDifferCount;
+    bundle.solverStats.solverHandoffResyncAttemptCount =
+        solverStats.solverHandoffResyncAttemptCount;
+    bundle.solverStats.solverHandoffResyncAppliedCount =
+        solverStats.solverHandoffResyncAppliedCount;
+    bundle.solverStats.solverHandoffResyncNoopCount =
+        solverStats.solverHandoffResyncNoopCount;
+    bundle.solverStats.solverHandoffResyncBuildFailCount =
+        solverStats.solverHandoffResyncBuildFailCount;
+    bundle.solverStats.solverHandoffResyncAliveRSetDifferCount =
+        solverStats.solverHandoffResyncAliveRSetDifferCount;
+    bundle.solverStats.solverHandoffResyncHasTargetDifferCount =
+        solverStats.solverHandoffResyncHasTargetDifferCount;
+    bundle.solverStats.solverHandoffResyncCandidateSetDifferCount =
+        solverStats.solverHandoffResyncCandidateSetDifferCount;
+    ReducedSPQRCore replayFinalCore;
+    setRewriteRCaseContext(seed, tc);
+    if (!runRewriteSeqReplayToFinalCoreDebug(
+            input,
+            replayFinalCore,
+            bundle.replayTrace,
+            bundle.replayPostStepTargetSnapshots,
+            bundle.replayWhy)) {
+        bundle.finalCoreSeamKind = FinalCoreSeamKind::FCSK_OTHER;
+        bundle.finalCoreSeamWhy = "replay final-core debug failed: " + bundle.replayWhy;
+        why = bundle.finalCoreSeamWhy;
+        return false;
+    }
+
+    if (!buildFinalCoreSignature(solverFinalCore, bundle.solverFinalCoreSignature, why)) {
+        bundle.finalCoreSeamKind = FinalCoreSeamKind::FCSK_OTHER;
+        bundle.finalCoreSeamWhy = "build solver final core signature failed: " + why;
+        return false;
+    }
+    if (!buildFinalCoreSignature(replayFinalCore, bundle.replayFinalCoreSignature, why)) {
+        bundle.finalCoreSeamKind = FinalCoreSeamKind::FCSK_OTHER;
+        bundle.finalCoreSeamWhy = "build replay final core signature failed: " + why;
+        return false;
+    }
+
+    bundle.finalCoreSeamKind = classifyFinalCoreSeam(bundle.solverTrace,
+                                                     bundle.replayTrace,
+                                                     bundle.solverFinalCoreSignature,
+                                                     bundle.replayFinalCoreSignature,
+                                                     bundle.firstDivergenceStep,
+                                                     bundle.finalCoreSeamWhy);
+
+    const int comparedStep =
+        bundle.firstDivergenceStep > 1 ? bundle.firstDivergenceStep - 1 : 2;
+    bundle.targetSearchComparedStep = comparedStep;
+    const auto findSnapshotByStep = [&](const std::vector<RewriteTargetSnapshot> &snapshots)
+        -> const RewriteTargetSnapshot * {
+        for (const auto &snapshot : snapshots) {
+            if (snapshot.stepIndex == comparedStep) return &snapshot;
+        }
+        return nullptr;
+    };
+    const RewriteTargetSnapshot *solverTargetSnapshot =
+        findSnapshotByStep(bundle.solverPostStepTargetSnapshots);
+    const RewriteTargetSnapshot *replayTargetSnapshot =
+        findSnapshotByStep(bundle.replayPostStepTargetSnapshots);
+    if (solverTargetSnapshot != nullptr && replayTargetSnapshot != nullptr) {
+        bundle.targetSearchSeamKind = classifyTargetSearchSeam(
+            *solverTargetSnapshot, *replayTargetSnapshot, bundle.targetSearchSeamWhy);
+        if (bundle.targetSearchSeamKind == TargetSearchSeamKind::TSK_NONE &&
+            comparedStep > 0 && comparedStep <= static_cast<int>(bundle.solverTrace.size()) &&
+            comparedStep <= static_cast<int>(bundle.replayTrace.size())) {
+            const auto &solverStep = bundle.solverTrace[comparedStep - 1];
+            const auto &replayStep = bundle.replayTrace[comparedStep - 1];
+            if (solverStep.terminated != replayStep.terminated ||
+                solverStep.terminateReason != replayStep.terminateReason) {
+                bundle.targetSearchSeamKind =
+                    TargetSearchSeamKind::TSK_TERMINATION_POLICY_DIFFER;
+                std::ostringstream oss;
+                oss << "step " << comparedStep
+                    << ": candidate snapshots match but termination differs (solver="
+                    << (solverStep.terminated ? 1 : 0) << ":" << solverStep.terminateReason
+                    << ", replay=" << (replayStep.terminated ? 1 : 0) << ":"
+                    << replayStep.terminateReason << ")";
+                bundle.targetSearchSeamWhy = oss.str();
+            }
+        }
+    } else {
+        bundle.targetSearchSeamKind = TargetSearchSeamKind::TSK_OTHER;
+        std::ostringstream oss;
+        oss << "missing target snapshot at comparedStep=" << comparedStep
+            << " (solver=" << (solverTargetSnapshot != nullptr ? 1 : 0)
+            << ", replay=" << (replayTargetSnapshot != nullptr ? 1 : 0) << ")";
+        bundle.targetSearchSeamWhy = oss.str();
+    }
+
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+bool runSolverShapeReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                       const std::string &manifestPath,
+                                       const std::string &caseName,
+                                       uint64_t seed,
+                                       int tc,
+                                       std::optional<int> targetStep,
+                                       SolverShapeReplayBundle &bundle,
+                                       std::string &why) {
+    constexpr int kComparedStep = 2;
+
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.seamStepIndex = kComparedStep;
+    why.clear();
+
+    auto runSolverStep = [&](ReducedSPQRCore &core,
+                             int stepIndex,
+                             ReducedSPQRCore &afterOut,
+                             ExplicitBlockGraph &explicitAfterNormalizeOut,
+                             std::string &stepWhy) -> bool {
+        ProjectHarnessOps ops;
+        clearSequenceDeferredSameTypeSP();
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceFixpointChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTargetForFixpoint(core, chosenR, chosenX, stepWhy);
+        if (chooseStatus != SequenceFixpointChooseStatus::FOUND) {
+            if (chooseStatus == SequenceFixpointChooseStatus::NONE) {
+                stepWhy = "solver shape replay: no target before compared step";
+            }
+            return false;
+        }
+
+        ReducedSPQRCore after = core;
+        setRewriteRSequenceStepContext(stepIndex - 1, stepIndex);
+        setRewriteRSequenceMode(true);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, stepWhy);
+        setRewriteRSequenceMode(false);
+        if (!rewriteOk) return false;
+
+        if (!ops.normalizeTouchedRegion(after, stepWhy)) return false;
+
+        if (hasPendingSequenceDeferredSameTypeSP()) {
+            GraftTrace cleanupTrace;
+            if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+                std::string preCleanupWhyDetailed;
+                cleanupTrace.preCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    cleanupTrace.preCleanupPostcheckSubtype;
+                if (!preCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+                }
+                if (cleanupTrace.preCleanupPostcheckSubtype ==
+                    GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                    const auto seeds = collectSequenceSPCleanupSeeds(
+                        after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                    cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                    std::string cleanupWhy;
+                    if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                        clearSequenceDeferredSameTypeSP();
+                        stepWhy = cleanupWhy;
+                        return false;
+                    }
+
+                    peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                    std::string postCleanupWhyDetailed;
+                    cleanupTrace.postCleanupPostcheckSubtype =
+                        classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                    if (!postCleanupWhyDetailed.empty()) {
+                        cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                    }
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                } else {
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                }
+            }
+        }
+
+        flushSequenceDeferredSameTypeSPDump(after);
+        clearSequenceDeferredSameTypeSP();
+
+        if (!ops.checkActualReducedInvariant(after, nullptr, stepWhy)) return false;
+
+        explicitAfterNormalizeOut = ops.materializeWholeCoreExplicit(after);
+
+        ReducedSPQRCore oracle;
+        if (!buildWholeCoreForSequenceTesting(explicitAfterNormalizeOut, oracle, stepWhy)) {
+            return false;
+        }
+        const ExplicitBlockGraph explicitExpected = ops.materializeWholeCoreExplicit(oracle);
+        if (!ops.checkEquivalentExplicitGraphs(
+                explicitAfterNormalizeOut, explicitExpected, stepWhy)) {
+            return false;
+        }
+
+        afterOut = std::move(after);
+        stepWhy.clear();
+        return true;
+    };
+
+    auto runReplayStep = [&](const ExplicitBlockGraph &currentExplicit,
+                             int stepIndex,
+                             ReducedSPQRCore &afterOut,
+                             ExplicitBlockGraph &explicitAfterNormalizeOut,
+                             std::string &stepWhy) -> bool {
+        ProjectHarnessOps ops;
+        clearSequenceDeferredSameTypeSP();
+        ReducedSPQRCore core;
+        if (!buildWholeCoreForTesting(currentExplicit, core, stepWhy)) return false;
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, stepWhy);
+        if (chooseStatus != SequenceChooseStatus::FOUND) {
+            if (chooseStatus == SequenceChooseStatus::NONE) {
+                stepWhy = "replay shape replay: no target before compared step";
+            }
+            return false;
+        }
+
+        ReducedSPQRCore after = core;
+        setRewriteRSequenceStepContext(stepIndex, stepIndex + 1);
+        setRewriteRSequenceMode(true);
+        const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, stepWhy);
+        setRewriteRSequenceMode(false);
+        if (!rewriteOk) {
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        if (!ops.normalizeTouchedRegion(after, stepWhy)) {
+            clearSequenceDeferredSameTypeSP();
+            return false;
+        }
+
+        if (hasPendingSequenceDeferredSameTypeSP()) {
+            GraftTrace cleanupTrace;
+            if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+                std::string preCleanupWhyDetailed;
+                cleanupTrace.preCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    cleanupTrace.preCleanupPostcheckSubtype;
+                if (!preCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+                }
+                if (cleanupTrace.preCleanupPostcheckSubtype ==
+                    GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                    const auto seeds = collectSequenceSPCleanupSeeds(
+                        after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                    cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                    std::string cleanupWhy;
+                    if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                        clearSequenceDeferredSameTypeSP();
+                        stepWhy = cleanupWhy;
+                        return false;
+                    }
+
+                    peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                    std::string postCleanupWhyDetailed;
+                    cleanupTrace.postCleanupPostcheckSubtype =
+                        classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                    if (!postCleanupWhyDetailed.empty()) {
+                        cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                    }
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                } else {
+                    setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                }
+            }
+        }
+
+        flushSequenceDeferredSameTypeSPDump(after);
+        clearSequenceDeferredSameTypeSP();
+
+        if (!ops.checkActualReducedInvariant(after, nullptr, stepWhy)) return false;
+
+        explicitAfterNormalizeOut = ops.materializeWholeCoreExplicit(after);
+        afterOut = std::move(after);
+        stepWhy.clear();
+        return true;
+    };
+
+    ReducedSPQRCore solverCore;
+    if (!buildWholeCoreForTesting(input, solverCore, bundle.solverWhy)) {
+        bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+        bundle.coreShapeSeamWhy = "solver shape replay: initial core build failed: " +
+                                  bundle.solverWhy;
+        why = bundle.coreShapeSeamWhy;
+        return false;
+    }
+
+    ExplicitBlockGraph replayCurrent = input;
+
+    for (int stepIndex = 1; stepIndex <= kComparedStep; ++stepIndex) {
+        setRewriteRCaseContext(seed, tc);
+
+        ReducedSPQRCore solverAfter;
+        ExplicitBlockGraph solverExplicitAfterNormalize;
+        if (!runSolverStep(
+                solverCore, stepIndex, solverAfter, solverExplicitAfterNormalize, bundle.solverWhy)) {
+            bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+            bundle.coreShapeSeamWhy = bundle.solverWhy;
+            why = bundle.coreShapeSeamWhy;
+            return false;
+        }
+
+        setRewriteRCaseContext(seed, tc);
+
+        ReducedSPQRCore replayAfter;
+        ExplicitBlockGraph replayExplicitAfterNormalize;
+        if (!runReplayStep(replayCurrent,
+                           stepIndex,
+                           replayAfter,
+                           replayExplicitAfterNormalize,
+                           bundle.replayWhy)) {
+            bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+            bundle.coreShapeSeamWhy = bundle.replayWhy;
+            why = bundle.coreShapeSeamWhy;
+            return false;
+        }
+
+        const CanonicalExplicitGraph solverCanonical =
+            canonicalizeExplicitForCompare(solverExplicitAfterNormalize);
+        const CanonicalExplicitGraph replayCanonical =
+            canonicalizeExplicitForCompare(replayExplicitAfterNormalize);
+        if (solverCanonical.edges != replayCanonical.edges ||
+            solverCanonical.vertices != replayCanonical.vertices) {
+            bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+            bundle.coreShapeSeamWhy =
+                "solver shape replay: canonical explicit mismatch before shadow build";
+            why = bundle.coreShapeSeamWhy;
+            return false;
+        }
+
+        if (stepIndex == kComparedStep) {
+            ReducedSPQRCore shadowCore;
+            if (!buildShadowCoreFromExplicit(
+                    solverExplicitAfterNormalize, shadowCore, bundle.shadowWhy)) {
+                bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+                bundle.coreShapeSeamWhy =
+                    "solver shape replay: shadow rebuild failed: " + bundle.shadowWhy;
+                why = bundle.coreShapeSeamWhy;
+                return false;
+            }
+
+            if (!buildCoreShapeSnapshot(
+                    solverAfter, stepIndex, "SOLVER", bundle.solverShapeSnapshot, why)) {
+                bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+                bundle.coreShapeSeamWhy =
+                    "solver shape replay: build solver snapshot failed: " + why;
+                return false;
+            }
+            if (!buildCoreShapeSnapshot(
+                    replayAfter, stepIndex, "REPLAY", bundle.replayShapeSnapshot, why)) {
+                bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+                bundle.coreShapeSeamWhy =
+                    "solver shape replay: build replay snapshot failed: " + why;
+                return false;
+            }
+            if (!buildCoreShapeSnapshot(
+                    shadowCore, stepIndex, "SHADOW", bundle.shadowShapeSnapshot, why)) {
+                bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+                bundle.coreShapeSeamWhy =
+                    "solver shape replay: build shadow snapshot failed: " + why;
+                return false;
+            }
+
+            bundle.coreShapeSeamKind = classifyCoreShapeSeam(bundle.solverShapeSnapshot,
+                                                             bundle.replayShapeSnapshot,
+                                                             bundle.shadowShapeSnapshot,
+                                                             bundle.coreShapeSeamWhy);
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        solverCore = std::move(solverAfter);
+        replayCurrent = std::move(replayExplicitAfterNormalize);
+    }
+
+    bundle.coreShapeSeamKind = CoreShapeSeamKind::CSS_OTHER;
+    bundle.coreShapeSeamWhy = "solver shape replay: compared step not reached";
+    why = bundle.coreShapeSeamWhy;
+    return false;
+}
+
+bool runExplicitCoreBuilderReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                               const std::string &manifestPath,
+                                               const std::string &caseName,
+                                               uint64_t seed,
+                                               int tc,
+                                               std::optional<int> targetStep,
+                                               int sourceStep,
+                                               const std::string &sourceKind,
+                                               const std::string &sourceSide,
+                                               ExplicitCoreBuilderReplayBundle &bundle,
+                                               std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.sourceStep = sourceStep;
+    bundle.sourceKind = sourceKind;
+    bundle.sourceSide = sourceKind == "handoff" ? "handoff" : sourceSide;
+
+    ExplicitBlockGraph sourceExplicit;
+    if (sourceKind == "handoff") {
+        if (sourceStep != 1) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: handoff source requires sourceStep=1";
+            why = bundle.builderPipelineSeamWhy;
+            return false;
+        }
+
+        ReducedSPQRCore solverLiveCore;
+        ReducedSPQRCore replayLiveCore;
+        setRewriteRCaseContext(seed, tc);
+        if (!replaySolverSingleTransitionFromExplicitInternal(
+                input, bundle.solverStep1Snapshot, &solverLiveCore, bundle.sourceWhy)) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: solver handoff extraction failed: " +
+                bundle.sourceWhy;
+            why = bundle.builderPipelineSeamWhy;
+            return false;
+        }
+
+        setRewriteRCaseContext(seed, tc);
+        if (!replayRewriteSingleTransitionFromExplicitInternal(
+                input, bundle.rewriteStep1Snapshot, &replayLiveCore, bundle.sourceWhy)) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: replay handoff extraction failed: " +
+                bundle.sourceWhy;
+            why = bundle.builderPipelineSeamWhy;
+            return false;
+        }
+
+        if (bundle.solverStep1Snapshot.terminatedAfterStep ||
+            bundle.rewriteStep1Snapshot.terminatedAfterStep) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: handoff source terminated before shared input";
+            why = bundle.builderPipelineSeamWhy;
+            return false;
+        }
+        if (!canonicalExplicitEqual(bundle.solverStep1Snapshot.nextInputExplicit,
+                                    bundle.rewriteStep1Snapshot.nextInputExplicit)) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: handoff explicit mismatch";
+            why = bundle.builderPipelineSeamWhy;
+            return false;
+        }
+
+        sourceExplicit =
+            buildExplicitFromCanonicalGraph(bundle.solverStep1Snapshot.nextInputExplicit);
+
+        if (!buildCoreShapeSnapshot(
+                solverLiveCore, sourceStep + 1, "SOLVER", bundle.solverLiveCore, why)) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: solver live core snapshot failed: " + why;
+            return false;
+        }
+        if (!buildCoreShapeSnapshot(
+                replayLiveCore, sourceStep + 1, "REPLAY", bundle.replayLiveCore, why)) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: replay live core snapshot failed: " + why;
+            return false;
+        }
+        bundle.sourceLiveCore = bundle.replayLiveCore;
+    } else {
+        ReducedSPQRCore sourceCore;
+        if (!extractSourceStepCoreForBuilderReplay(
+                input, sourceStep, sourceSide, sourceCore, sourceExplicit, bundle.sourceWhy)) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: source extraction failed: " +
+                bundle.sourceWhy;
+            why = bundle.builderPipelineSeamWhy;
+            return false;
+        }
+
+        if (!buildCoreShapeSnapshot(
+                sourceCore, sourceStep, sourceSide, bundle.sourceLiveCore, why)) {
+            bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+            bundle.builderPipelineSeamWhy =
+                "explicit-core-builder-replay: source live core snapshot failed: " + why;
+            return false;
+        }
+    }
+
+    canonicalizeExplicitGraph(sourceExplicit);
+    bundle.inputExplicit = sourceExplicit;
+
+    CompactGraph H;
+    if (!buildCompactGraphFromExplicitForDiagnostics(sourceExplicit, H, bundle.builderWhy)) {
+        bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+        bundle.builderPipelineSeamWhy =
+            "explicit-core-builder-replay: compact build failed: " + bundle.builderWhy;
+        why = bundle.builderPipelineSeamWhy;
+        return false;
+    }
+
+    if (!buildRawStageSnapshot(H, bundle.rawSnapshot, bundle.builderWhy)) {
+        bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+        bundle.builderPipelineSeamWhy =
+            "explicit-core-builder-replay: raw snapshot failed: " + bundle.builderWhy;
+        why = bundle.builderPipelineSeamWhy;
+        return false;
+    }
+
+    StaticMiniCore normalizedMini;
+    if (!buildMiniStageSnapshots(H,
+                                 bundle.miniBeforeSnapshot,
+                                 bundle.miniAfterSnapshot,
+                                 &normalizedMini,
+                                 bundle.builderWhy)) {
+        bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+        bundle.builderPipelineSeamWhy =
+            "explicit-core-builder-replay: mini snapshots failed: " + bundle.builderWhy;
+        why = bundle.builderPipelineSeamWhy;
+        return false;
+    }
+
+    if (!buildCoreStageSnapshotsFromMini(H,
+                                         normalizedMini,
+                                         bundle.coreAfterMaterializeSnapshot,
+                                         bundle.coreAfterNormalizeSnapshot,
+                                         bundle.builderWhy)) {
+        bundle.builderPipelineSeamKind = BuilderPipelineSeamKind::BPSK_OTHER;
+        bundle.builderPipelineSeamWhy =
+            "explicit-core-builder-replay: core snapshots failed: " + bundle.builderWhy;
+        why = bundle.builderPipelineSeamWhy;
+        return false;
+    }
+
+    if (sourceKind == "handoff") {
+        bundle.builderPipelineSeamKind = classifySharedInputBuilderSeam(
+            bundle.solverLiveCore,
+            bundle.replayLiveCore,
+            bundle.rawSnapshot,
+            bundle.miniBeforeSnapshot,
+            bundle.miniAfterSnapshot,
+            bundle.coreAfterMaterializeSnapshot,
+            bundle.coreAfterNormalizeSnapshot,
+            bundle.builderPipelineSeamWhy);
+    } else {
+        bundle.builderPipelineSeamKind = classifyBuilderPipelineSeam(
+            bundle.sourceLiveCore,
+            bundle.rawSnapshot,
+            bundle.miniBeforeSnapshot,
+            bundle.miniAfterSnapshot,
+            bundle.coreAfterMaterializeSnapshot,
+            bundle.coreAfterNormalizeSnapshot,
+            bundle.builderPipelineSeamWhy);
+    }
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+bool runMaterializeCoreReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                           const std::string &manifestPath,
+                                           const std::string &caseName,
+                                           uint64_t seed,
+                                           int tc,
+                                           std::optional<int> targetStep,
+                                           int sourceStep,
+                                           const std::string &sourceSide,
+                                           MaterializeCoreReplayBundle &bundle,
+                                           std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.sourceStep = sourceStep;
+    bundle.sourceSide = sourceSide;
+
+    ReducedSPQRCore sourceCore;
+    ExplicitBlockGraph sourceExplicit;
+    if (!extractSourceStepCoreForBuilderReplay(
+            input, sourceStep, sourceSide, sourceCore, sourceExplicit, bundle.sourceWhy)) {
+        bundle.seamKind = CoreMaterializeSubphaseSeamKind::CMSS_OTHER;
+        bundle.seamWhy = "materialize-core-replay: source extraction failed: " +
+                         bundle.sourceWhy;
+        why = bundle.seamWhy;
+        return false;
+    }
+
+    canonicalizeExplicitGraph(sourceExplicit);
+    bundle.inputExplicit = sourceExplicit;
+
+    if (!buildCoreShapeSnapshot(
+            sourceCore, sourceStep, sourceSide, bundle.sourceLiveCore, why)) {
+        bundle.seamKind = CoreMaterializeSubphaseSeamKind::CMSS_OTHER;
+        bundle.seamWhy = "materialize-core-replay: source live core snapshot failed: " + why;
+        return false;
+    }
+
+    CompactGraph H;
+    if (!buildCompactGraphFromExplicitForDiagnostics(sourceExplicit, H, bundle.builderWhy)) {
+        bundle.seamKind = CoreMaterializeSubphaseSeamKind::CMSS_OTHER;
+        bundle.seamWhy =
+            "materialize-core-replay: compact build failed: " + bundle.builderWhy;
+        why = bundle.seamWhy;
+        return false;
+    }
+
+    BuilderStageSnapshot miniBefore;
+    StaticMiniCore normalizedMini;
+    if (!buildMiniStageSnapshots(H,
+                                 miniBefore,
+                                 bundle.miniAfterSnapshot,
+                                 &normalizedMini,
+                                 bundle.builderWhy)) {
+        bundle.seamKind = CoreMaterializeSubphaseSeamKind::CMSS_OTHER;
+        bundle.seamWhy =
+            "materialize-core-replay: mini snapshot build failed: " + bundle.builderWhy;
+        why = bundle.seamWhy;
+        return false;
+    }
+
+    if (!buildMaterializeCoreSubphaseSnapshots(H,
+                                               normalizedMini,
+                                               bundle.allocateSnapshot,
+                                               bundle.installSlotsSnapshot,
+                                               bundle.connectArcsSnapshot,
+                                               bundle.postMetadataSnapshot,
+                                               bundle.finalNormalizeSnapshot,
+                                               bundle.builderWhy)) {
+        bundle.seamKind = CoreMaterializeSubphaseSeamKind::CMSS_OTHER;
+        bundle.seamWhy =
+            "materialize-core-replay: subphase snapshot build failed: " + bundle.builderWhy;
+        why = bundle.seamWhy;
+        return false;
+    }
+
+    bundle.seamKind = classifyMaterializeSubphaseSeam(bundle.miniAfterSnapshot,
+                                                      bundle.allocateSnapshot,
+                                                      bundle.installSlotsSnapshot,
+                                                      bundle.connectArcsSnapshot,
+                                                      bundle.postMetadataSnapshot,
+                                                      bundle.finalNormalizeSnapshot,
+                                                      bundle.seamWhy);
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+bool runHandoffRawReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                      const std::string &manifestPath,
+                                      const std::string &caseName,
+                                      uint64_t seed,
+                                      int tc,
+                                      std::optional<int> targetStep,
+                                      int sourceStep,
+                                      HandoffRawReplayBundle &bundle,
+                                      std::string &why) {
+    bundle = {};
+    bundle.caseName = caseName;
+    bundle.manifestPath = manifestPath;
+    bundle.seed = seed;
+    bundle.tc = tc;
+    bundle.targetStep = targetStep;
+    bundle.sourceStep = sourceStep;
+
+    if (sourceStep != 1) {
+        bundle.rawReplaySeamKind = RawReplaySeamKind::RRSK_OTHER;
+        bundle.rawReplaySeamWhy =
+            "handoff-raw-replay currently requires sourceStep=1";
+        why = bundle.rawReplaySeamWhy;
+        return false;
+    }
+
+    setRewriteRCaseContext(seed, tc);
+    if (!extractSharedHandoffExplicitForTc54(
+            input, caseName, bundle.sharedHandoffExplicit, bundle.sourceLiveCoreSnapshot, bundle.sourceWhy)) {
+        bundle.rawReplaySeamKind = RawReplaySeamKind::RRSK_OTHER;
+        bundle.rawReplaySeamWhy =
+            "handoff-raw-replay: source extraction failed: " + bundle.sourceWhy;
+        why = bundle.rawReplaySeamWhy;
+        return false;
+    }
+
+    setRewriteRCaseContext(seed, tc);
+    if (!buildRawReplaySnapshot(bundle.sharedHandoffExplicit, bundle.rawReplaySnapshot, bundle.rawWhy)) {
+        bundle.rawReplaySeamKind = RawReplaySeamKind::RRSK_OTHER;
+        bundle.rawReplaySeamWhy =
+            "handoff-raw-replay: raw snapshot failed: " + bundle.rawWhy;
+        why = bundle.rawReplaySeamWhy;
+        return false;
+    }
+
+    bundle.rawReplaySeamKind = classifyRawReplaySeam(bundle.sourceLiveCoreSnapshot,
+                                                     bundle.rawReplaySnapshot,
+                                                     bundle.rawReplaySeamWhy);
+    bundle.topLevelOk = true;
+    why.clear();
+    return true;
+}
+
+bool solveWithBaselineRewriteSolver(const ExplicitBlockGraph &input,
+                                    SolverOutput &out,
+                                    std::string &why) {
+    out = {};
+    out.baselineKind = CompareBaselineKind::LEGACY_BASELINE;
+    setOgdfRawCrashReplaySourceSide("BASELINE");
+
+    ReducedSPQRCore core;
+    if (!buildBaselineOracleCoreFromExplicit(input, core, why)) {
+        out.why = why;
+        return false;
+    }
+
+    if (!runBaselineRewriteToFixpoint(core, why)) {
+        out.why = why;
+        return false;
+    }
+
+    ProjectHarnessOps ops;
+    if (!ops.checkActualReducedInvariant(core, nullptr, why)) {
+        out.why = why;
+        return false;
+    }
+
+    out.explicitGraph = ops.materializeWholeCoreExplicit(core);
+    out.canonicalExplicitGraph = canonicalizeExplicitForCompare(out.explicitGraph);
+    out.debugTag = "baseline-rewrite-solver";
+    out.why.clear();
+    out.valid = true;
+    out.actualInvariantOk = true;
+    why.clear();
+    return true;
+}
+
+bool solveWithOracleFixpointBaseline(const ExplicitBlockGraph &input,
+                                     OracleHandoffPolicy policy,
+                                     SolverOutput &out,
+                                     std::string &why) {
+    constexpr int kMaxOracleSteps = 64;
+
+    out = {};
+    out.baselineKind = CompareBaselineKind::ORACLE_FIXPOINT_BASELINE;
+    setOgdfRawCrashReplaySourceSide("ORACLE");
+
+    ProjectHarnessOps ops;
+    ExplicitBlockGraph current = input;
+
+    for (int step = 0; step < kMaxOracleSteps; ++step) {
+        ReducedSPQRCore core;
+        if (!buildBaselineOracleCoreFromExplicit(current, core, why)) {
+            std::ostringstream oss;
+            oss << "oracle baseline: build core failed at step " << step
+                << ": " << why;
+            why = oss.str();
+            out.why = why;
+            return false;
+        }
+
+        if (!ops.checkActualReducedInvariant(core, nullptr, why)) {
+            std::ostringstream oss;
+            oss << "oracle baseline: built core invariant failed at step " << step
+                << ": " << why;
+            why = oss.str();
+            out.why = why;
+            return false;
+        }
+
+        NodeId chosenR = -1;
+        VertexId chosenX = -1;
+        const SequenceChooseStatus chooseStatus =
+            chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+        if (chooseStatus == SequenceChooseStatus::ERROR) {
+            std::ostringstream oss;
+            oss << "oracle baseline: choose target failed at step " << step
+                << ": " << why;
+            why = oss.str();
+            out.why = why;
+            return false;
+        }
+
+        if (chooseStatus == SequenceChooseStatus::NONE) {
+            out.explicitGraph = current;
+            out.canonicalExplicitGraph = canonicalizeExplicitForCompare(out.explicitGraph);
+            out.debugTag = policy == OracleHandoffPolicy::OHP_NORMALIZE_EXPLICIT
+                               ? "ORACLE_FIXPOINT:OHP_NORMALIZE_EXPLICIT"
+                               : "ORACLE_FIXPOINT:OHP_DELETE_EXPLICIT";
+            out.why.clear();
+            out.valid = true;
+            out.actualInvariantOk = true;
+            why.clear();
+            return true;
+        }
+
+        ExplicitBlockGraph next;
+        if (!buildExplicitAfterDeletingVertex(core, chosenX, next, why)) {
+            std::ostringstream oss;
+            oss << "oracle baseline: build explicit after deleting x failed at step "
+                << step << ": " << why;
+            why = oss.str();
+            out.why = why;
+            return false;
+        }
+
+        if (next.edges.size() >= current.edges.size()) {
+            std::ostringstream oss;
+            oss << "oracle baseline: progress stuck at step " << step
+                << " (before=" << current.edges.size()
+                << ", after=" << next.edges.size() << ")";
+            why = oss.str();
+            out.why = why;
+            return false;
+        }
+
+        if (policy == OracleHandoffPolicy::OHP_NORMALIZE_EXPLICIT) {
+            ReducedSPQRCore canonicalAfterDelete;
+            if (!buildBaselineOracleCoreFromExplicit(next, canonicalAfterDelete, why)) {
+                std::ostringstream oss;
+                oss << "oracle baseline: normalize handoff rebuild failed at step "
+                    << step << ": " << why;
+                why = oss.str();
+                out.why = why;
+                return false;
+            }
+            if (!ops.checkActualReducedInvariant(canonicalAfterDelete, nullptr, why)) {
+                std::ostringstream oss;
+                oss << "oracle baseline: normalize handoff invariant failed at step "
+                    << step << ": " << why;
+                why = oss.str();
+                out.why = why;
+                return false;
+            }
+            current = ops.materializeWholeCoreExplicit(canonicalAfterDelete);
+        } else {
+            current = std::move(next);
+        }
+    }
+
+    why = "oracle baseline: reached maxSteps without exhausting rewrite targets";
+    out.why = why;
+    return false;
+}
+
+bool solveWithOracleFixpointBaseline(const ExplicitBlockGraph &input,
+                                     SolverOutput &out,
+                                     std::string &why) {
+    return solveWithOracleFixpointBaseline(
+        input, OracleHandoffPolicy::OHP_DELETE_EXPLICIT, out, why);
+}
+
+#if 0
+namespace {
+
+ExplicitBlockGraph canonicalizedExplicitCopy(ExplicitBlockGraph graph) {
+    canonicalizeExplicitGraph(graph);
+    return graph;
+}
+
+bool equalExplicitEdgeMultiset(const ExplicitBlockGraph &lhs,
+                               const ExplicitBlockGraph &rhs,
+                               std::string &why) {
+    const ExplicitBlockGraph lhsCanonical = canonicalizedExplicitCopy(lhs);
+    const ExplicitBlockGraph rhsCanonical = canonicalizedExplicitCopy(rhs);
+
+    if (lhsCanonical.edges.size() != rhsCanonical.edges.size()) {
+        std::ostringstream oss;
+        oss << "edge count mismatch: oracle=" << lhsCanonical.edges.size()
+            << " rewrite=" << rhsCanonical.edges.size();
+        why = oss.str();
+        return false;
+    }
+    for (size_t i = 0; i < lhsCanonical.edges.size(); ++i) {
+        const auto &le = lhsCanonical.edges[i];
+        const auto &re = rhsCanonical.edges[i];
+        if (le.id != re.id || le.u != re.u || le.v != re.v) {
+            std::ostringstream oss;
+            oss << "edge mismatch at index " << i
+                << ": oracle={" << le.id << "," << le.u << "," << le.v << "}"
+                << " rewrite={" << re.id << "," << re.u << "," << re.v << "}";
+            why = oss.str();
+            return false;
+        }
+    }
+    why.clear();
+    return true;
+}
+
+bool equalExplicitVertexSet(const ExplicitBlockGraph &lhs,
+                            const ExplicitBlockGraph &rhs,
+                            std::string &why) {
+    const ExplicitBlockGraph lhsCanonical = canonicalizedExplicitCopy(lhs);
+    const ExplicitBlockGraph rhsCanonical = canonicalizedExplicitCopy(rhs);
+
+    if (lhsCanonical.vertices.size() != rhsCanonical.vertices.size()) {
+        std::ostringstream oss;
+        oss << "vertex count mismatch: oracle=" << lhsCanonical.vertices.size()
+            << " rewrite=" << rhsCanonical.vertices.size();
+        why = oss.str();
+        return false;
+    }
+    for (size_t i = 0; i < lhsCanonical.vertices.size(); ++i) {
+        if (lhsCanonical.vertices[i] != rhsCanonical.vertices[i]) {
+            std::ostringstream oss;
+            oss << "vertex mismatch at index " << i
+                << ": oracle=" << lhsCanonical.vertices[i]
+                << " rewrite=" << rhsCanonical.vertices[i];
+            why = oss.str();
+            return false;
+        }
+    }
+    why.clear();
+    return true;
+}
+
+} // namespace
+
+bool replayOracleFixpointOneStep(const ExplicitBlockGraph &input,
+                                 int stepIndex,
+                                 SemanticStepTrace &out,
+                                 std::string &why) {
+    out = {};
+    out.stepIndex = stepIndex;
+    out.side = "ORACLE";
+    out.explicitBefore = input;
+    out.debugTag = "ORACLE_FIXPOINT_STEP";
+    why.clear();
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    if (!buildBaselineOracleCoreFromExplicit(input, core, why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:BUILD_CORE_FAIL";
+        return false;
+    }
+
+    std::string invariantWhy;
+    if (!ops.checkActualReducedInvariant(core, nullptr, invariantWhy)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = invariantWhy;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:ACTUAL_INVARIANT_FAIL";
+        why = invariantWhy;
+        return false;
+    }
+    out.actualInvariantOk = true;
+    out.actualInvariantWhy.clear();
+
+    NodeId chosenR = -1;
+    VertexId chosenX = -1;
+    const SequenceChooseStatus chooseStatus =
+        chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+    if (chooseStatus == SequenceChooseStatus::ERROR) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:CHOOSE_FAIL";
+        return false;
+    }
+    if (chooseStatus == SequenceChooseStatus::NONE) {
+        out.stepOk = true;
+        out.terminated = true;
+        out.explicitAfterDelete = input;
+        out.explicitAfterNormalize = input;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:DONE";
+        why.clear();
+        return true;
+    }
+
+    out.chosenR = chosenR;
+    out.chosenX = chosenX;
+    if (!buildExplicitAfterDeletingVertex(core, chosenX, out.explicitAfterDelete, why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "ORACLE_FIXPOINT_STEP:POST_DELETE_FAIL";
+        return false;
+    }
+    out.explicitAfterNormalize = out.explicitAfterDelete;
+    out.stepOk = true;
+    out.debugTag = "ORACLE_FIXPOINT_STEP:STEP_OK";
+    why.clear();
+    return true;
+}
+
+bool replayRewriteSeqOneStep(const ExplicitBlockGraph &input,
+                             int stepIndex,
+                             SemanticStepTrace &out,
+                             std::string &why) {
+    out = {};
+    out.stepIndex = stepIndex;
+    out.side = "REWRITE_SEQ";
+    out.explicitBefore = input;
+    out.explicitAfterDelete = input;
+    out.explicitAfterNormalize = input;
+    out.debugTag = "REWRITE_SEQ_STEP";
+    out.stepOk = false;
+    out.terminated = false;
+    clearSequenceDeferredSameTypeSP();
+    why.clear();
+
+    ProjectHarnessOps ops;
+    ReducedSPQRCore core;
+    if (!buildWholeCoreForTesting(input, core, why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:BUILD_CORE_FAIL";
+        return false;
+    }
+
+    NodeId chosenR = -1;
+    VertexId chosenX = -1;
+    const SequenceChooseStatus chooseStatus =
+        chooseDeterministicSequenceRewriteTarget(core, chosenR, chosenX, why);
+    if (chooseStatus == SequenceChooseStatus::ERROR) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:CHOOSE_FAIL";
+        return false;
+    }
+
+    if (chooseStatus == SequenceChooseStatus::NONE) {
+        std::string invariantWhy;
+        const bool invariantOk = ops.checkActualReducedInvariant(core, nullptr, invariantWhy);
+        out.actualInvariantOk = invariantOk;
+        out.actualInvariantWhy = invariantWhy;
+        out.explicitAfterDelete = input;
+        out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(core);
+        out.stepOk = invariantOk;
+        out.terminated = true;
+        out.debugTag = invariantOk ? "REWRITE_SEQ_STEP:DONE"
+                                   : "REWRITE_SEQ_STEP:ACTUAL_INVARIANT_FAIL";
+        why = invariantOk ? std::string{} : invariantWhy;
+        return invariantOk;
+    }
+
+    out.chosenR = chosenR;
+    out.chosenX = chosenX;
+    if (!buildExplicitAfterDeletingVertex(core, chosenX, out.explicitAfterDelete, why)) {
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:POST_DELETE_FAIL";
+        return false;
+    }
+
+    ReducedSPQRCore after = core;
+    setRewriteRSequenceStepContext(std::max(0, stepIndex - 1), stepIndex);
+    setRewriteRSequenceMode(true);
+    const bool rewriteOk = ops.rewriteRFallback(after, chosenR, chosenX, why);
+    setRewriteRSequenceMode(false);
+    if (!rewriteOk) {
+        out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(after);
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:REWRITE_FAIL";
+        return false;
+    }
+
+    if (!ops.normalizeTouchedRegion(after, why)) {
+        out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(after);
+        out.actualInvariantOk = false;
+        out.actualInvariantWhy = why;
+        out.debugTag = "REWRITE_SEQ_STEP:NORMALIZE_FAIL";
+        return false;
+    }
+
+    if (hasPendingSequenceDeferredSameTypeSP()) {
+        GraftTrace cleanupTrace;
+        if (peekSequenceDeferredSameTypeSPTrace(cleanupTrace)) {
+            std::string preCleanupWhyDetailed;
+            cleanupTrace.preCleanupPostcheckSubtype =
+                classifyPostcheckFailureDetailed(after, preCleanupWhyDetailed);
+            cleanupTrace.postCleanupPostcheckSubtype =
+                cleanupTrace.preCleanupPostcheckSubtype;
+            if (!preCleanupWhyDetailed.empty()) {
+                cleanupTrace.postcheckWhyDetailed = preCleanupWhyDetailed;
+            }
+            if (cleanupTrace.preCleanupPostcheckSubtype ==
+                GraftPostcheckSubtype::GPS_SAME_TYPE_SP_ONLY) {
+                const auto seeds = collectSequenceSPCleanupSeeds(
+                    after, chosenR, &cleanupTrace, &cleanupTrace.preservedProxyArcs);
+                cleanupTrace.sameTypeSPCleanupSeedNodes = seeds;
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+
+                std::string cleanupWhy;
+                if (!cleanupSequenceSameTypeSPAdjacency(after, seeds, cleanupWhy)) {
+                    out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(after);
+                    out.actualInvariantOk = false;
+                    out.actualInvariantWhy = cleanupWhy;
+                    out.debugTag = "REWRITE_SEQ_STEP:SP_CLEANUP_FAIL";
+                    why = cleanupWhy;
+                    return false;
+                }
+
+                peekSequenceDeferredSameTypeSPTrace(cleanupTrace);
+                std::string postCleanupWhyDetailed;
+                cleanupTrace.postCleanupPostcheckSubtype =
+                    classifyPostcheckFailureDetailed(after, postCleanupWhyDetailed);
+                if (!postCleanupWhyDetailed.empty()) {
+                    cleanupTrace.postcheckWhyDetailed = postCleanupWhyDetailed;
+                }
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            } else {
+                setSequenceDeferredSameTypeSPTrace(cleanupTrace);
+            }
+        }
+    }
+
+    flushSequenceDeferredSameTypeSPDump(after);
+    clearSequenceDeferredSameTypeSP();
+    out.explicitAfterNormalize = ops.materializeWholeCoreExplicit(after);
+
+    std::string invariantWhy;
+    const bool invariantOk = ops.checkActualReducedInvariant(after, nullptr, invariantWhy);
+    out.actualInvariantOk = invariantOk;
+    out.actualInvariantWhy = invariantWhy;
+    out.stepOk = invariantOk;
+    out.debugTag = invariantOk ? "REWRITE_SEQ_STEP:STEP_OK"
+                               : "REWRITE_SEQ_STEP:ACTUAL_INVARIANT_FAIL";
+    why = invariantOk ? std::string{} : invariantWhy;
+    return invariantOk;
+}
+
+SemanticDivergenceKind classifySemanticDivergence(
+    const SemanticStepTrace &oracleStep,
+    const SemanticStepTrace &rewriteStep,
+    std::string &why) {
+    if (!oracleStep.stepOk || !rewriteStep.stepOk) {
+        if (oracleStep.stepOk != rewriteStep.stepOk) {
+            std::ostringstream oss;
+            oss << "step status diverged: oracleStepOk=" << oracleStep.stepOk
+                << " rewriteStepOk=" << rewriteStep.stepOk;
+            why = oss.str();
+            return SemanticDivergenceKind::SDK_OTHER;
+        }
+        if (oracleStep.actualInvariantWhy != rewriteStep.actualInvariantWhy) {
+            std::ostringstream oss;
+            oss << "step failure reason diverged: oracle=\"" << oracleStep.actualInvariantWhy
+                << "\" rewrite=\"" << rewriteStep.actualInvariantWhy << "\"";
+            why = oss.str();
+            return SemanticDivergenceKind::SDK_OTHER;
+        }
+    }
+
+    if (oracleStep.terminated != rewriteStep.terminated) {
+        std::ostringstream oss;
+        oss << "termination diverged: oracleTerminated=" << oracleStep.terminated
+            << " rewriteTerminated=" << rewriteStep.terminated;
+        why = oss.str();
+        return SemanticDivergenceKind::SDK_TERMINATION_DIFFER;
+    }
+
+    if (!oracleStep.terminated && !rewriteStep.terminated) {
+        if (oracleStep.chosenR != rewriteStep.chosenR) {
+            std::ostringstream oss;
+            oss << "chosenR diverged: oracle=" << oracleStep.chosenR
+                << " rewrite=" << rewriteStep.chosenR;
+            why = oss.str();
+            return SemanticDivergenceKind::SDK_CHOICE_R_DIFFER;
+        }
+        if (oracleStep.chosenX != rewriteStep.chosenX) {
+            std::ostringstream oss;
+            oss << "chosenX diverged: oracle=" << oracleStep.chosenX
+                << " rewrite=" << rewriteStep.chosenX;
+            why = oss.str();
+            return SemanticDivergenceKind::SDK_CHOICE_X_DIFFER;
+        }
+    }
+
+    std::string deleteEdgeWhy;
+    if (!equalExplicitEdgeMultiset(oracleStep.explicitAfterDelete,
+                                   rewriteStep.explicitAfterDelete,
+                                   deleteEdgeWhy)) {
+        why = "post-delete explicit diverged: " + deleteEdgeWhy;
+        return SemanticDivergenceKind::SDK_POST_DELETE_EXPLICIT_DIFFER;
+    }
+
+    std::string normalizeEdgeWhy;
+    if (!equalExplicitEdgeMultiset(oracleStep.explicitAfterNormalize,
+                                   rewriteStep.explicitAfterNormalize,
+                                   normalizeEdgeWhy)) {
+        why = "post-normalize explicit diverged: " + normalizeEdgeWhy;
+        return SemanticDivergenceKind::SDK_POST_NORMALIZE_EXPLICIT_DIFFER;
+    }
+
+    std::string normalizeVertexWhy;
+    if (!equalExplicitVertexSet(oracleStep.explicitAfterNormalize,
+                                rewriteStep.explicitAfterNormalize,
+                                normalizeVertexWhy)) {
+        why = "edge sets match but vertex sets differ: " + normalizeVertexWhy;
+        return SemanticDivergenceKind::SDK_EDGESET_ONLY_MATCH_VERTEXSET_DIFFER;
+    }
+
+    why.clear();
+    return SemanticDivergenceKind::SDK_NONE;
+}
+
+bool runSolverSemanticReplay(const ExplicitBlockGraph &input,
+                             SolverSemanticReplayBundle &bundle,
+                             std::string &why) {
+    constexpr int kMaxSemanticReplaySteps = 64;
+
+    bundle.explicitInput = input;
+    bundle.divergenceKind = SemanticDivergenceKind::SDK_NONE;
+    bundle.divergenceStepIndex = -1;
+    bundle.divergenceWhy.clear();
+    bundle.oracleTrace.clear();
+    bundle.rewriteTrace.clear();
+    bundle.firstOracleWhy.clear();
+    bundle.firstRewriteWhy.clear();
+    bundle.topLevelOk = false;
+    why.clear();
+
+    ExplicitBlockGraph oracleCurrent = input;
+    ExplicitBlockGraph rewriteCurrent = input;
+
+    for (int step = 0; step < kMaxSemanticReplaySteps; ++step) {
+        SemanticStepTrace oracleStep;
+        SemanticStepTrace rewriteStep;
+        std::string oracleWhy;
+        std::string rewriteWhy;
+
+        const bool oracleOk = replayOracleFixpointOneStep(oracleCurrent, step, oracleStep, oracleWhy);
+        const bool rewriteOk =
+            replayRewriteSeqOneStep(rewriteCurrent, step, rewriteStep, rewriteWhy);
+
+        if (bundle.firstOracleWhy.empty() && !oracleWhy.empty()) {
+            bundle.firstOracleWhy = oracleWhy;
+        }
+        if (bundle.firstRewriteWhy.empty() && !rewriteWhy.empty()) {
+            bundle.firstRewriteWhy = rewriteWhy;
+        }
+
+        bundle.oracleTrace.push_back(oracleStep);
+        bundle.rewriteTrace.push_back(rewriteStep);
+
+        if (!oracleOk || !rewriteOk) {
+            bundle.divergenceKind = SemanticDivergenceKind::SDK_OTHER;
+            bundle.divergenceStepIndex = step;
+            if (!oracleOk && !rewriteOk) {
+                bundle.divergenceWhy =
+                    "both sides failed at step " + std::to_string(step) +
+                    ": oracle=\"" + oracleWhy + "\" rewrite=\"" + rewriteWhy + "\"";
+            } else if (!oracleOk) {
+                bundle.divergenceWhy =
+                    "oracle side failed at step " + std::to_string(step) + ": " + oracleWhy;
+            } else {
+                bundle.divergenceWhy =
+                    "rewrite side failed at step " + std::to_string(step) + ": " + rewriteWhy;
+            }
+            why = bundle.divergenceWhy;
+            return false;
+        }
+
+        std::string divergenceWhy;
+        const SemanticDivergenceKind divergenceKind =
+            classifySemanticDivergence(oracleStep, rewriteStep, divergenceWhy);
+        if (divergenceKind != SemanticDivergenceKind::SDK_NONE) {
+            bundle.divergenceKind = divergenceKind;
+            bundle.divergenceStepIndex = step;
+            bundle.divergenceWhy = divergenceWhy;
+            why = divergenceWhy;
+            return false;
+        }
+
+        if (oracleStep.terminated && rewriteStep.terminated) {
+            bundle.topLevelOk = true;
+            why.clear();
+            return true;
+        }
+
+        oracleCurrent = oracleStep.explicitAfterNormalize;
+        rewriteCurrent = rewriteStep.explicitAfterNormalize;
+    }
+
+    bundle.divergenceKind = SemanticDivergenceKind::SDK_OTHER;
+    bundle.divergenceStepIndex = kMaxSemanticReplaySteps;
+    bundle.divergenceWhy =
+        "semantic replay reached maxSteps without convergence or divergence";
+    why = bundle.divergenceWhy;
+    return false;
+}
+#endif
+
+bool solveWithRewriteSeqEngine(const ExplicitBlockGraph &input,
+                               SolverOutput &out,
+                               std::string &why) {
+    out = {};
+    setOgdfRawCrashReplaySourceSide("REWRITE");
+
+    noteRewriteSeqCaseStart();
+    ReducedSPQRCore core;
+    if (!buildWholeCoreForTesting(input, core, why)) {
+        noteRewriteSeqCaseFinish(false, 0, false, false);
+        out.why = why;
+        return false;
+    }
+
+    RewriteSeqStats stats;
+    const bool ok = runRewriteSequenceToFixpoint(core, stats, why);
+    noteRewriteSeqCaseFinish(ok,
+                             stats.completedSteps,
+                             stats.hadSequenceFallback,
+                             stats.maxStepReached);
+    if (!ok) {
+        out.why = why;
+        return false;
+    }
+
+    ProjectHarnessOps ops;
+    if (!ops.checkActualReducedInvariant(core, nullptr, why)) {
+        out.why = why;
+        return false;
+    }
+
+    if (!buildRewriteSeqTerminalOutputFromCore(core, out, why)) {
+        out.why = why;
+        return false;
+    }
+    if (!validateRewriteSeqTerminalOutputAgainstCore(core, out, why)) {
+        out.why = why;
+        return false;
+    }
+    out.why.clear();
+    out.valid = true;
+    out.actualInvariantOk = true;
+    why.clear();
+    return true;
+}
+
+bool solveWithConfiguredRewriteSolver(const ExplicitBlockGraph &input,
+                                      SolverOutput &out,
+                                      std::string &why) {
+#ifdef USE_REWRITE_SEQ_ENGINE
+    return solveWithRewriteSeqEngine(input, out, why);
+#else
+    return solveWithBaselineRewriteSolver(input, out, why);
+#endif
 }
 
 void pruneCompactGraphForSpqr(CompactGraph &H) {
@@ -12669,10 +21143,9 @@ bool rewriteProjectRFallback(ReducedSPQRCore &core,
     }
     ++gRewriteRStats.compactReadyCount;
 
-    OgdfRawSpqrBackend backend;
     RawSpqrDecomp raw;
     std::string err;
-    if (!backend.buildRaw(H, raw, err)) {
+    if (!buildRawMaybeInterceptForCrashReplay("REWRITE_R_DIRECT_SPQR", H, raw, err)) {
         if (shouldFallbackToWholeCoreRebuild(err)) {
             ++gRewriteRStats.backendBuildRawFallbackCount;
             const RewriteFallbackTrigger trigger =

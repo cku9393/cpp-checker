@@ -1,0 +1,21 @@
+{
+  "mode": "ogdf-raw-crash-replay",
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "caseName": "xshared_loopshared_proxy_loop_real_tc56_step1",
+  "outputDumpDir": "dumps/ogdf_raw_crash_replay/rewrite_final",
+  "bundlePath": "dumps/ogdf_raw_crash_replay/rewrite_final/ogdf_raw_REWRITE_INFER_SINGLE_ZERO_ARC_TYPE_seed1_tc56_step1_xshared_loopshared_proxy_loop_real_tc56_step1.txt",
+  "topLevelOk": true,
+  "requestedSource": "REWRITE",
+  "sourceSide": "REWRITE",
+  "callSiteTag": "INFER_SINGLE_ZERO_ARC_TYPE",
+  "phaseTag": "BEFORE_BUILDRAW",
+  "stepIndex": 1,
+  "chosenR": 0,
+  "chosenX": 3,
+  "compactGraphDumpPath": "dumps/ogdf_raw_crash_replay/rewrite_final/compact_REWRITE_INFER_SINGLE_ZERO_ARC_TYPE_seed1_tc56_step1_xshared_loopshared_proxy_loop_real_tc56_step1.txt",
+  "childExitCode": -1,
+  "childSignal": 11,
+  "crashed": true,
+  "crashWhy": "child crashed with signal 11",
+  "notes": "probe-ok:INFER_SINGLE_ZERO_ARC_TYPE | runWhy=single-node zero-arc type inference: backend.buildRaw failed: child crashed with signal 11"
+}

@@ -1,0 +1,14 @@
+{
+  "macro_present": false,
+  "namespace_present": false,
+  "field_seed_scan_present": false,
+  "field_queue_reset_present": false,
+  "field_queue_pushpop_present": false,
+  "field_neighbor_iter_present": false,
+  "field_label_write_present": false,
+  "field_touched_reset_present": false,
+  "field_other_present": false,
+  "instrumentation_supported": false,
+  "status": "instrumentation_failure",
+  "reason": "source_does_not_contain_round36_componentlabel_truth_hooks"
+}

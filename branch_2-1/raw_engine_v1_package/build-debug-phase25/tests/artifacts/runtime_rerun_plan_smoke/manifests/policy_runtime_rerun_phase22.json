@@ -1,0 +1,29 @@
+{
+  "plan_version": "runtime_rerun_plan_v1",
+  "generated_at_utc": "2026-03-23T01:18:54Z",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase25/tests/artifacts/runtime_rerun_plan_smoke",
+  "baseline_runtime_manifest_path": null,
+  "current_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase25/tests/artifacts/runtime_rerun_plan_smoke/manifests/policy_runtime_current_phase22.json",
+  "refresh_runtime_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase25/tests/artifacts/runtime_rerun_plan_smoke/manifests/policy_runtime_refresh_phase22.json",
+  "baseline_runtime_manifest_hash": null,
+  "current_runtime_manifest_hash": "f4f2e6a25980ac36813510dabd5179eb194e052ea8413f3bf91da5b1fad2d66b",
+  "refresh_runtime_manifest_hash": "738203a59325611c494df1be9666cf85784e8edd22336d44767b593cd569b61d",
+  "stale_entry_count": 1,
+  "requires_rerun_entry_count": 0,
+  "rebaseline_required_count": 0,
+  "selected_entry_count": 1,
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "current_status": "OK",
+      "freshness_status": "STALE",
+      "comparability": "COMPARABLE",
+      "rerun_kind": "release_full_rerun",
+      "recommended_command": "ctest --test-dir build-release-phase23 --output-on-failure",
+      "expected_stop_criteria": "wall_time within soft budget",
+      "status_impact": "release_full runtime requires refresh"
+    }
+  ],
+  "summary_verdict": "ACTION_REQUIRED",
+  "rationale": "runtime entries require refresh"
+}

@@ -1,0 +1,24 @@
+case=campaign_weighted_integrate_heavy
+weight_profile=weighted_integrate_heavy
+precondition_bias_profile=default
+scenario_family=random
+bias_split=3
+bias_join=2
+bias_integrate=5
+iterations=2000
+split_ready_count=1075
+join_candidate_count=494
+integrate_candidate_count=1533
+actual_split_hits=1075
+actual_join_hits=247
+actual_integrate_hits=993
+split_conversion=1.000000
+join_conversion=0.500000
+integrate_conversion=0.647750
+unique_trace_prefix_count=6
+unique_primitive_multiset_count=5
+isolate_heavy_ratio=0.219488
+split_hit_density=0.537500
+join_hit_density=0.123500
+integrate_hit_density=0.496500
+seed=850003 iterations=2000 split_ready=1075 join_candidate=494 integrate_candidate=1533 actual_split=1075 actual_join=247 actual_integrate=993 split_conversion=1.000000 join_conversion=0.500000 integrate_conversion=0.647750 unique_trace_prefix_count=6 unique_primitive_multiset_count=5

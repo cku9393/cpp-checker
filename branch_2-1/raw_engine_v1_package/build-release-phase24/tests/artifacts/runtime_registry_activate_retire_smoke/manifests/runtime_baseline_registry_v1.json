@@ -1,0 +1,46 @@
+{
+  "registry_version": "runtime_baseline_registry_v1",
+  "generated_at_utc": "2026-03-22T10:47:09Z",
+  "entries": [
+    {
+      "baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_104708",
+      "baseline_tag": "phase22-runtime-approved",
+      "approval_timestamp_utc": "2026-03-22T10:47:08Z",
+      "runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase24/tests/artifacts/runtime_registry_activate_retire_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+      "runtime_baseline_manifest_hash": "70702577e1c3ba537f803ec6a824f5adf75c1aaa6049b62a411f8a8a7413269c",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "smoke-runner",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "host_fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d",
+      "toolchain_fingerprint_hash": "fe28aa4f84449b51b55eae9c4c9fbb0910ef269d1ab13970f6e37bfbf3e054f3",
+      "runtime_fingerprint_key": "6d60f632282438f5e2a5c0571528135e8b473821da4cac863777bf0c04f1c8f6",
+      "build_classes_covered": [
+        "asan_full",
+        "debug_full",
+        "policy_core",
+        "policy_nightly",
+        "policy_refresh",
+        "release_full"
+      ],
+      "runtime_budget_profile_id": "phase22-runtime-approved",
+      "status": "retired",
+      "retired_timestamp_utc": "2026-03-22T10:47:09Z",
+      "retired_reason": "retired by operator action"
+    }
+  ],
+  "active_entry_count": 0,
+  "retired_entry_count": 1,
+  "registry_hash": "9ee68f2fddc9f0da433548213b30faaa8de601a7b89dbf14ae817421fad722cf"
+}

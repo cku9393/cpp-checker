@@ -1,0 +1,1 @@
+runtime_refresh_summary current_verdict=FAIL freshness_verdict=REQUIRES_RERUN comparability_verdict=COMPARABLE selected_baseline_id=None overall_budget_verdict=BUDGET_FAIL runtime_severity=FAIL stale_entry_count=0 requires_rerun_entry_count=1 rebaseline_required_count=0

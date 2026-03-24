@@ -1,0 +1,52 @@
+{
+  "selection_version": "runtime_baseline_selection_v1",
+  "generated_at_utc": "2026-03-23T05:48:06Z",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase26/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/policy_runtime_current_phase22.json",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase26/tests/artifacts/runtime_registry_select_no_match_smoke/manifests/runtime_baseline_registry_v1.json",
+  "candidate_count": 0,
+  "exact_match_count": 0,
+  "compatible_match_count": 0,
+  "retired_match_count": 0,
+  "current_host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "smoke-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "gcc",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "4e41deffaf52341ab168f30c0314eeab090846d8c4ec23f6fe0447407bd9e408"
+  },
+  "current_toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "gcc",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "current_execution_classes": [
+    "asan_full",
+    "debug_full",
+    "policy_core",
+    "policy_nightly",
+    "policy_refresh",
+    "release_full"
+  ],
+  "current_execution_signatures": [
+    "asan_full|Asan|none",
+    "debug_full|Debug|none",
+    "policy_core|Policy|none",
+    "policy_nightly|Policy|none",
+    "policy_refresh|Policy|none",
+    "release_full|Release|none"
+  ],
+  "current_fingerprint_key": "64dddd37fa6bae01959ce8cf0d8526a8142b2cfc91c305e0ba06d8927513443b",
+  "comparability_verdict": "REBASELINE_REQUIRED",
+  "comparability_reason": "no compatible active runtime baseline in registry",
+  "selected_baseline_id": null,
+  "selected_baseline_tag": null,
+  "selected_runtime_baseline_manifest_path": null,
+  "selected_runtime_baseline_manifest_hash": null,
+  "selected_entry_status": null,
+  "selected_execution_signature_hash": null,
+  "candidates": [],
+  "selection_hash": "a1875f86e5505c69cc5d8095988787ebe4c1fd063d07e09e03e077d60e2a4c0b"
+}

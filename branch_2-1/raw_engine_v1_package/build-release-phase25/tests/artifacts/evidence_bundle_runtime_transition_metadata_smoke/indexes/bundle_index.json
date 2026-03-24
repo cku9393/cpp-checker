@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-03-23T01:06:41Z",
+  "latest_bundle": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/raw_engine_phase26_metadata.zip",
+  "latest_delivery_bundle": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/raw_engine_phase26_metadata_delivery.zip",
+  "latest_curated_bundle": null,
+  "bundle_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/phase26_evidence_bundle",
+  "bundles": [],
+  "delivery_bundles": [],
+  "curated_bundles": [],
+  "pipeline_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/manifests/policy_pipeline_quick_phase26.json",
+  "runtime_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/manifests/policy_runtime_current_phase22.json",
+  "runtime_registry": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/manifests/runtime_baseline_registry_v1.json",
+  "runtime_history_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/manifests/runtime_history_index_v1.json",
+  "runtime_proposal": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/evidence_bundle_runtime_transition_metadata_smoke/manifests/runtime_rebaseline_proposal_phase25_archived.json"
+}

@@ -1,0 +1,40 @@
+Start testing: Mar 23 14:47 KST
+----------------------------------------------------------
+35/235 Testing: raw_engine_campaign_phase16_resume_gate_smoke
+35/235 Test: raw_engine_campaign_phase16_resume_gate_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/raw_engine_tests" "--case" "campaign_phase16_resume_gate_smoke" "--artifact-dir" "artifacts/campaign_phase16_resume_gate_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests
+"raw_engine_campaign_phase16_resume_gate_smoke" start time: Mar 23 14:47 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=campaign_phase16_resume_gate_smoke
+<end of output>
+Test time =  68.25 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_campaign_phase16_resume_gate_smoke" end time: Mar 23 14:48 KST
+"raw_engine_campaign_phase16_resume_gate_smoke" time elapsed: 00:01:08
+----------------------------------------------------------
+
+36/235 Testing: raw_engine_campaign_phase16_manifest_compatibility_smoke
+36/235 Test: raw_engine_campaign_phase16_manifest_compatibility_smoke
+Command: "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests/raw_engine_tests" "--case" "campaign_phase16_manifest_compatibility_smoke" "--artifact-dir" "artifacts/campaign_phase16_manifest_compatibility_smoke"
+Directory: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase26/tests
+"raw_engine_campaign_phase16_manifest_compatibility_smoke" start time: Mar 23 14:48 KST
+Output:
+----------------------------------------------------------
+raw_engine_v1 tests passed case=campaign_phase16_manifest_compatibility_smoke
+<end of output>
+Test time =  65.99 sec
+----------------------------------------------------------
+Test Passed.
+"raw_engine_campaign_phase16_manifest_compatibility_smoke" end time: Mar 23 14:49 KST
+"raw_engine_campaign_phase16_manifest_compatibility_smoke" time elapsed: 00:01:05
+----------------------------------------------------------
+
+End testing: Mar 23 14:49 KST
+
+compare = 134.24 sec*proc
+
+core =  65.99 sec*proc
+

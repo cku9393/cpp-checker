@@ -1,0 +1,15 @@
+mode	n	seed	shuffle_labels	shuffle_queries
+comb_dense	4096	1	1	1
+comb_dense	8192	1	1	1
+comb_dense	8192	2	1	1
+comb_dense	8192	3	1	1
+comb_rect_dense	4096	1	1	1
+comb_rect_dense	8192	1	1	1
+comb_rect_dense	8192	2	1	1
+comb_rect_dense	8192	3	1	1
+caterpillar_rect_dense	4096	1	1	1
+caterpillar_rect_dense	8192	1	1	1
+caterpillar_rect_dense	8192	2	1	1
+caterpillar_rect_dense	8192	3	1	1
+comb_plus_unary	32768	1	1	1
+comb_core	32768	1	1	1

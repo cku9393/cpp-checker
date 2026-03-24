@@ -1,5 +1,6 @@
 #include "harness/project_static_adapter.hpp"
 #include "harness/types.hpp"
+#include "harness/ogdf_wrapper.hpp"
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -10,6 +11,41 @@ bool failShim(std::string &why, const char *hook, const char *target) {
     why = std::string("project_hook_shims.cpp: TODO wire ") + hook +
           " -> " + target;
     return false;
+}
+
+harness::ExplicitBlockGraph materializeWholeCoreExplicit(
+    const harness::ReducedSPQRCore &core);
+
+void rebuildRealEdgesHereNode(harness::SPQRNodeCore &node) {
+    node.realEdgesHere.clear();
+    for (const auto &slot : node.slots) {
+        if (!slot.alive || slot.isVirtual || slot.realEdge < 0) continue;
+        node.realEdgesHere.push_back(slot.realEdge);
+    }
+}
+
+harness::Agg recomputeLocalAgg(
+    const harness::SPQRNodeCore &node,
+    const std::unordered_set<harness::VertexId> &touched) {
+    harness::Agg agg;
+    std::unordered_set<harness::VertexId> liveVertices;
+    std::unordered_set<harness::VertexId> watchedVertices;
+
+    for (const auto &slot : node.slots) {
+        if (!slot.alive || slot.isVirtual) continue;
+        ++agg.edgeCnt;
+        agg.incCnt += 2;
+        if (agg.repEdge < 0) agg.repEdge = slot.realEdge;
+        if (agg.repVertex < 0) agg.repVertex = slot.poleA;
+        liveVertices.insert(slot.poleA);
+        liveVertices.insert(slot.poleB);
+        if (touched.count(slot.poleA)) watchedVertices.insert(slot.poleA);
+        if (touched.count(slot.poleB)) watchedVertices.insert(slot.poleB);
+    }
+
+    agg.vertexCnt = static_cast<int>(liveVertices.size());
+    agg.watchedCnt = static_cast<int>(watchedVertices.size());
+    return agg;
 }
 
 bool validCompactVertex(const harness::CompactGraph &H, int cv) {
@@ -83,6 +119,247 @@ std::string formatAdjArcs(const std::vector<harness::ArcId> &adjArcs) {
     }
     oss << ']';
     return oss.str();
+}
+
+std::string summarizeActualNodeForMaterializeReplay(const harness::ReducedSPQRCore &core,
+                                                    harness::NodeId nodeId) {
+    auto typeChar = [](harness::SPQRType type) {
+        return type == harness::SPQRType::S_NODE
+                   ? 'S'
+                   : type == harness::SPQRType::P_NODE ? 'P' : 'R';
+    };
+    if (!validCoreNode(core, nodeId)) return "node=" + std::to_string(nodeId) + " invalid";
+    const auto &node = core.nodes[nodeId];
+    std::ostringstream oss;
+    oss << "node=" << nodeId << " type=" << typeChar(node.type)
+        << " alive=" << (node.alive ? 1 : 0)
+        << " adjArcs=" << formatAdjArcs(node.adjArcs)
+        << " realEdgesHere=[";
+    for (size_t i = 0; i < node.realEdgesHere.size(); ++i) {
+        if (i) oss << ',';
+        oss << node.realEdgesHere[i];
+    }
+    oss << "] slots=[";
+    bool first = true;
+    for (int slotId = 0; slotId < static_cast<int>(node.slots.size()); ++slotId) {
+        const auto &slot = node.slots[slotId];
+        if (!slot.alive) continue;
+        if (!first) oss << ';';
+        first = false;
+        oss << "slot=" << slotId << ','
+            << (slot.isVirtual ? "VIRTUAL" : "REAL")
+            << ",poles=(" << slot.poleA << "," << slot.poleB << ")";
+        if (slot.isVirtual) {
+            oss << ",arcId=" << slot.arcId;
+        } else {
+            oss << ",realEdge=" << slot.realEdge;
+        }
+    }
+    oss << "]";
+    return oss.str();
+}
+
+void fillMaterializeSubphaseSnapshot(const harness::ReducedSPQRCore &core,
+                                     const std::string &subphase,
+                                     harness::MaterializeCoreSubphaseSnapshot *out) {
+    if (out == nullptr) return;
+    *out = {};
+    out->subphase = subphase;
+    harness::ProjectExplicitBlockGraph project;
+    harness::materializeProjectWholeCoreExplicit(core, project);
+    harness::ExplicitBlockGraph explicitGraph;
+    harness::exportProjectExplicitBlockGraph(project, explicitGraph);
+    out->canonicalExplicit =
+        harness::canonicalizeExplicitForCompare(explicitGraph);
+    for (harness::NodeId nodeId = 0;
+         nodeId < static_cast<harness::NodeId>(core.nodes.size());
+         ++nodeId) {
+        const auto &node = core.nodes[nodeId];
+        if (!node.alive) continue;
+        ++out->aliveNodeCount;
+        switch (node.type) {
+            case harness::SPQRType::R_NODE: ++out->rNodeCount; break;
+            case harness::SPQRType::S_NODE: ++out->sNodeCount; break;
+            case harness::SPQRType::P_NODE: ++out->pNodeCount; break;
+        }
+        out->nodeSummaries.push_back(summarizeActualNodeForMaterializeReplay(core, nodeId));
+        for (const auto &slot : node.slots) {
+            if (slot.alive) ++out->liveSlotCount;
+        }
+    }
+    for (const auto &arc : core.arcs) {
+        if (arc.alive) ++out->aliveArcCount;
+    }
+}
+
+bool buildDummyActualCoreEnvelopeImpl(
+    const harness::CompactGraph &H,
+    harness::DummyActualEnvelope &env,
+    harness::MaterializeCoreSubphaseSnapshot *allocateSnapshot,
+    harness::MaterializeCoreSubphaseSnapshot *installSlotsSnapshot,
+    harness::MaterializeCoreSubphaseSnapshot *connectArcsSnapshot,
+    harness::MaterializeCoreSubphaseSnapshot *postMetadataSnapshot,
+    harness::MaterializeCoreSubphaseSnapshot *finalNormalizeSnapshot,
+    std::string &why) {
+    env = {};
+    env.H = H;
+    env.root = 0;
+    env.oldR = 0;
+    env.core.blockId = H.block;
+    env.core.root = env.root;
+    env.core.nodes.resize(1 + H.edges.size());
+    for (auto &node : env.core.nodes) {
+        node.alive = false;
+    }
+    env.stubOfInputEdge.assign(H.edges.size(), -1);
+    env.arcOfInputEdge.assign(H.edges.size(), -1);
+
+    auto &oldR = env.core.nodes[env.oldR];
+    oldR.alive = true;
+    oldR.type = harness::SPQRType::R_NODE;
+    fillMaterializeSubphaseSnapshot(
+        env.core,
+        harness::coreMaterializeSubphaseName(
+            harness::CoreMaterializeSubphase::CMS_ALLOCATE_NODE),
+        allocateSnapshot);
+
+    std::unordered_set<harness::VertexId> touched(H.touchedVertices.begin(),
+                                                  H.touchedVertices.end());
+
+    struct PendingProxyArc {
+        int inputId = -1;
+        int oldSlotId = -1;
+        harness::NodeId stubId = -1;
+        int stubVirtualSlotId = -1;
+        harness::VertexId poleA = -1;
+        harness::VertexId poleB = -1;
+    };
+    std::vector<PendingProxyArc> pendingProxyArcs;
+
+    for (int inputId = 0; inputId < static_cast<int>(H.edges.size()); ++inputId) {
+        const auto &edge = H.edges[inputId];
+        auto &storedEdge = env.H.edges[inputId];
+        if (!validCompactVertex(H, edge.a) || !validCompactVertex(H, edge.b)) {
+            why = "buildDummyActualCoreEnvelope: compact edge endpoint out of range";
+            return false;
+        }
+
+        const harness::VertexId poleA = H.origOfCv[edge.a];
+        const harness::VertexId poleB = H.origOfCv[edge.b];
+        if (edge.kind == harness::CompactEdgeKind::REAL) {
+            const int oldRealSlotId = static_cast<int>(oldR.slots.size());
+            oldR.slots.push_back({true, poleA, poleB, false, edge.realEdge, -1});
+            env.core.ownerNodeOfRealEdge[edge.realEdge] = env.oldR;
+            env.core.ownerSlotOfRealEdge[edge.realEdge] = oldRealSlotId;
+            storedEdge.oldArc = -1;
+            storedEdge.outsideNode = -1;
+            storedEdge.oldSlotInU = -1;
+            continue;
+        }
+
+        const harness::NodeId stubId = 1 + inputId;
+        auto &stub = env.core.nodes[stubId];
+        stub.alive = true;
+        stub.type = harness::SPQRType::R_NODE;
+        env.stubNodes.insert(stubId);
+        env.stubOfInputEdge[inputId] = stubId;
+
+        const int oldSlotId = static_cast<int>(oldR.slots.size());
+        oldR.slots.push_back({true, poleA, poleB, true, -1, -1});
+
+        const int stubVirtualSlotId = static_cast<int>(stub.slots.size());
+        stub.slots.push_back({true, poleA, poleB, true, -1, -1});
+        stub.localAgg = edge.sideAgg;
+        if (stub.localAgg.repVertex < 0) stub.localAgg.repVertex = poleA;
+        stub.subAgg = stub.localAgg;
+
+        storedEdge.oldArc = -1;
+        storedEdge.outsideNode = stubId;
+        storedEdge.oldSlotInU = oldSlotId;
+        pendingProxyArcs.push_back(
+            {inputId, oldSlotId, stubId, stubVirtualSlotId, poleA, poleB});
+    }
+
+    fillMaterializeSubphaseSnapshot(
+        env.core,
+        harness::coreMaterializeSubphaseName(
+            harness::CoreMaterializeSubphase::CMS_INSTALL_INPUT_SLOTS),
+        installSlotsSnapshot);
+
+    for (const auto &pending : pendingProxyArcs) {
+        auto &storedEdge = env.H.edges[pending.inputId];
+        auto &stub = env.core.nodes[pending.stubId];
+        const harness::ArcId arcId = static_cast<harness::ArcId>(env.core.arcs.size());
+        oldR.slots[pending.oldSlotId].arcId = arcId;
+        stub.slots[pending.stubVirtualSlotId].arcId = arcId;
+        addAdjArc(oldR, arcId);
+        addAdjArc(stub, arcId);
+        env.core.arcs.push_back({true,
+                                 env.oldR,
+                                 pending.stubId,
+                                 pending.oldSlotId,
+                                 pending.stubVirtualSlotId,
+                                 pending.poleA,
+                                 pending.poleB});
+        env.arcOfInputEdge[pending.inputId] = arcId;
+        storedEdge.oldArc = arcId;
+    }
+
+    fillMaterializeSubphaseSnapshot(
+        env.core,
+        harness::coreMaterializeSubphaseName(
+            harness::CoreMaterializeSubphase::CMS_CONNECT_INTERNAL_ARCS),
+        connectArcsSnapshot);
+
+    rebuildRealEdgesHereNode(oldR);
+    oldR.localAgg = recomputeLocalAgg(oldR, touched);
+    oldR.subAgg = oldR.localAgg;
+    env.core.totalAgg = oldR.localAgg;
+
+    for (harness::NodeId nodeId = 0; nodeId < static_cast<harness::NodeId>(env.core.nodes.size());
+         ++nodeId) {
+        const auto &node = env.core.nodes[nodeId];
+        if (!node.alive) continue;
+        for (int slotId = 0; slotId < static_cast<int>(node.slots.size()); ++slotId) {
+            const auto &slot = node.slots[slotId];
+            if (!slot.alive) continue;
+            addOccurrence(env.core, nodeId, slotId, slot.poleA);
+            if (slot.poleB != slot.poleA) {
+                addOccurrence(env.core, nodeId, slotId, slot.poleB);
+            }
+        }
+    }
+
+    std::string preserveWhy;
+    if (!preserveSingleNodeZeroArcCoreTypeFromMini(H, env.core, preserveWhy)) {
+        why = preserveWhy;
+        return false;
+    }
+
+    fillMaterializeSubphaseSnapshot(
+        env.core,
+        harness::coreMaterializeSubphaseName(
+            harness::CoreMaterializeSubphase::CMS_POST_MAT_METADATA),
+        postMetadataSnapshot);
+
+    if (finalNormalizeSnapshot != nullptr) {
+        harness::ReducedSPQRCore normalized = env.core;
+        std::string normalizeWhy;
+        if (!harness::normalizeProjectTouchedRegion(normalized, normalizeWhy)) {
+            why = normalizeWhy.empty()
+                      ? "buildDummyActualCoreEnvelopeWithSubphaseSnapshots: normalizeProjectTouchedRegion failed"
+                      : "buildDummyActualCoreEnvelopeWithSubphaseSnapshots: normalizeProjectTouchedRegion failed: " +
+                            normalizeWhy;
+            return false;
+        }
+        fillMaterializeSubphaseSnapshot(
+            normalized,
+            harness::coreMaterializeSubphaseName(
+                harness::CoreMaterializeSubphase::CMS_FINAL_NORMALIZE),
+            finalNormalizeSnapshot);
+    }
+
+    return true;
 }
 
 void eraseRealOwnershipForNode(harness::ReducedSPQRCore &core, harness::NodeId nodeId) {
@@ -231,37 +508,6 @@ void removeTouchedOccurrencesForNodes(harness::ReducedSPQRCore &core,
             core.occ.erase(it);
         }
     }
-}
-
-void rebuildRealEdgesHereNode(harness::SPQRNodeCore &node) {
-    node.realEdgesHere.clear();
-    for (const auto &slot : node.slots) {
-        if (!slot.alive || slot.isVirtual || slot.realEdge < 0) continue;
-        node.realEdgesHere.push_back(slot.realEdge);
-    }
-}
-
-harness::Agg recomputeLocalAgg(const harness::SPQRNodeCore &node,
-                               const std::unordered_set<harness::VertexId> &touched) {
-    harness::Agg agg;
-    std::unordered_set<harness::VertexId> liveVertices;
-    std::unordered_set<harness::VertexId> watchedVertices;
-
-    for (const auto &slot : node.slots) {
-        if (!slot.alive || slot.isVirtual) continue;
-        ++agg.edgeCnt;
-        agg.incCnt += 2;
-        if (agg.repEdge < 0) agg.repEdge = slot.realEdge;
-        if (agg.repVertex < 0) agg.repVertex = slot.poleA;
-        liveVertices.insert(slot.poleA);
-        liveVertices.insert(slot.poleB);
-        if (touched.count(slot.poleA)) watchedVertices.insert(slot.poleA);
-        if (touched.count(slot.poleB)) watchedVertices.insert(slot.poleB);
-    }
-
-    agg.vertexCnt = static_cast<int>(liveVertices.size());
-    agg.watchedCnt = static_cast<int>(watchedVertices.size());
-    return agg;
 }
 
 bool connectVirtualArc(harness::ReducedSPQRCore &core,
@@ -562,6 +808,12 @@ bool buildDummyActualCoreEnvelope(const harness::CompactGraph &H,
                 addOccurrence(env.core, nodeId, slotId, slot.poleB);
             }
         }
+    }
+
+    std::string preserveWhy;
+    if (!preserveSingleNodeZeroArcCoreTypeFromMini(H, env.core, preserveWhy)) {
+        why = preserveWhy;
+        return false;
     }
 
     std::unordered_map<harness::EdgeId, harness::OccRef> seenRealSlot;
@@ -1738,13 +1990,76 @@ bool rebuildActualMetadata(harness::ReducedSPQRCore &,
     return true;
 }
 
-harness::ExplicitBlockGraph materializeWholeCoreExplicit(const harness::ReducedSPQRCore &core) {
+harness::ExplicitBlockGraph materializeWholeCoreExplicit(
+    const harness::ReducedSPQRCore &core) {
     harness::ProjectExplicitBlockGraph project;
     harness::materializeProjectWholeCoreExplicit(core, project);
 
     harness::ExplicitBlockGraph out;
     harness::exportProjectExplicitBlockGraph(project, out);
     return out;
+}
+
+bool preserveSingleNodeZeroArcCoreTypeFromMini(const harness::CompactGraph &H,
+                                               harness::ReducedSPQRCore &core,
+                                               std::string &why) {
+    int aliveNodeCount = 0;
+    int aliveArcCount = 0;
+    harness::NodeId onlyAliveNode = -1;
+    for (harness::NodeId nodeId = 0;
+         nodeId < static_cast<harness::NodeId>(core.nodes.size());
+         ++nodeId) {
+        if (!core.nodes[nodeId].alive) continue;
+        ++aliveNodeCount;
+        onlyAliveNode = nodeId;
+    }
+    for (const auto &arc : core.arcs) {
+        if (arc.alive) ++aliveArcCount;
+    }
+    if (aliveNodeCount != 1 || aliveArcCount != 0 || onlyAliveNode < 0) {
+        why.clear();
+        return true;
+    }
+
+    harness::OgdfRawSpqrBackend backend;
+    harness::RawSpqrDecomp raw;
+    std::string err;
+    if (!backend.buildRaw(H, raw, err)) {
+        why = err.empty() ? "dummy envelope: backend.buildRaw failed during single-node type preserve"
+                          : "dummy envelope: backend.buildRaw failed during single-node type preserve: " +
+                                err;
+        return false;
+    }
+
+    harness::StaticMiniCore mini;
+    if (!materializeMiniCore(H, raw, mini, why)) {
+        why = why.empty()
+                  ? "dummy envelope: materializeMiniCore failed during single-node type preserve"
+                  : "dummy envelope: materializeMiniCore failed during single-node type preserve: " +
+                        why;
+        return false;
+    }
+    normalizeWholeMiniCore(mini);
+
+    int aliveMiniNodeCount = 0;
+    int aliveMiniArcCount = 0;
+    int onlyMiniNode = -1;
+    for (int nodeId = 0; nodeId < static_cast<int>(mini.nodes.size()); ++nodeId) {
+        if (!mini.nodes[nodeId].alive) continue;
+        ++aliveMiniNodeCount;
+        onlyMiniNode = nodeId;
+    }
+    for (const auto &arc : mini.arcs) {
+        if (arc.alive) ++aliveMiniArcCount;
+    }
+    if (aliveMiniNodeCount != 1 || aliveMiniArcCount != 0 || onlyMiniNode < 0) {
+        why.clear();
+        return true;
+    }
+
+    core.nodes[onlyAliveNode].type = mini.nodes[onlyMiniNode].type;
+    why.clear();
+    return true;
 }
 
 harness::ExplicitBlockGraph materializeCompactRealProjection(const harness::CompactGraph &H) {

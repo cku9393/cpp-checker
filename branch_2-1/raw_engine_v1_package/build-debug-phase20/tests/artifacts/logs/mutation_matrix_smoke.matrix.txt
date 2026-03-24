@@ -1,0 +1,224 @@
+fault validator primitive_oracle planner_oracle detail
+drop_alloc_nbr 1 1 0 prepare_isolate_neighborhood oracle mismatch
+expected:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+actual:
+orig=5
+allocNbr=[]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+duplicate_alloc_nbr 1 1 0 prepare_isolate_neighborhood oracle mismatch
+expected:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+actual:
+orig=5
+allocNbr=[2,2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+wrong_host_skel 1 0 0 validator skeleton host skeleton or center vertex mismatch
+wrong_center_v 1 0 0 validator skeleton host skeleton or center vertex mismatch
+drop_core_patch_edge 1 1 0 prepare_isolate_neighborhood oracle mismatch
+expected:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+actual:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,7-8]
+add_center_incident_core_edge 1 0 0 validator skeleton corePatch edge not owned by host skeleton
+drop_skeleton_edge 1 1 0 split_separation_pair result mismatch
+expected:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+actual:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+rewire_skeleton_edge 1 1 0 split_separation_pair result mismatch
+expected:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+actual:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|C:9:0],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+flip_boundary_only 0 1 0 split_separation_pair result mismatch
+expected:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+actual:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}},{boundaryOnly=1,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}}]
+omit_after_split_join 0 0 1 planner signature mismatch
+expected:
+stop_condition=1
+target_prepare=
+orig=881
+allocNbr=[]
+ports=[1:3318:9309:0]
+coreVerts=[2,8,3318]
+coreEdges=[2-3318,8-3318]
+final_state=
+{skeletons=[{verts=[C:881:0,R:2,R:3318,R:8],edges=[BRIDGE_PORT:9309:0|C:881:0|R:3318,CORE|R:2|R:3318,CORE|R:3318|R:8],hosted=[0]},{verts=[C:951:1,R:2,R:4738,R:4739,R:8],edges=[BRIDGE_PORT:11309:1|C:951:1|R:4738,CORE|R:2|R:4738,CORE|R:4738|R:4739,CORE|R:4739|R:8],hosted=[1]}],occurrences=[{occ=0,orig=881,host={verts=[C:881:0,R:2,R:3318,R:8],edges=[BRIDGE_PORT:9309:0|C:881:0|R:3318,CORE|R:2|R:3318,CORE|R:3318|R:8],hosted=[0]},center=C:881:0,allocNbr=[],core=[CORE|R:2|R:3318,CORE|R:8|R:3318]},{occ=1,orig=951,host={verts=[C:951:1,R:2,R:4738,R:4739,R:8],edges=[BRIDGE_PORT:11309:1|C:951:1|R:4738,CORE|R:2|R:4738,CORE|R:4738|R:4739,CORE|R:4739|R:8],hosted=[1]},center=C:951:1,allocNbr=[],core=[CORE|R:2|R:4738,CORE|R:4738|R:4739,CORE|R:8|R:4739]}]}
+trace=
+0: join hash=106a867fe44bccc0 join left=0 right=1 sig=merged={skeletons=[{verts=[C:881:0,C:951:1,R:2,R:3318,R:4738,R:4739,R:8],edges=[BRIDGE_PORT:11309:1|C:951:1|R:4738,BRIDGE_PORT:9309:0|C:881:0|R:3318,CORE|R:2|R:3318,CORE|R:2|R:4738,CORE|R:3318|R:8,CORE|R:4738|R:4739,CORE|R:4739|R:8],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=881,host={verts=[C:881:0,C:951:1,R:2,R:3318,R:4738,R:4739,R:8],edges=[BRIDGE_PORT:11309:1|C:951:1|R:4738,BRIDGE_PORT:9309:0|C:881:0|R:3318,CORE|R:2|R:3318,CORE|R:2|R:4738,CORE|R:3318|R:8,CORE|R:4738|R:4739,CORE|R:4739|R:8],hosted=[0,1]},center=C:881:0,allocNbr=[],core=[CORE|R:2|R:3318,CORE|R:8|R:3318]},{occ=1,orig=951,host={verts=[C:881:0,C:951:1,R:2,R:3318,R:4738,R:4739,R:8],edges=[BRIDGE_PORT:11309:1|C:951:1|R:4738,BRIDGE_PORT:9309:0|C:881:0|R:3318,CORE|R:2|R:3318,CORE|R:2|R:4738,CORE|R:3318|R:8,CORE|R:4738|R:4739,CORE|R:4739|R:8],hosted=[0,1]},center=C:951:1,allocNbr=[],core=[CORE|R:2|R:4738,CORE|R:4738|R:4739,CORE|R:8|R:4739]}]
+1: isolate_vertex hash=63394ffd5d9feef9 isolate occ=0 occSkel=1 residualSkel=0
+
+actual:
+stop_condition=1
+target_prepare=
+orig=881
+allocNbr=[]
+ports=[1:3318:9309:0]
+coreVerts=[2,8,3318]
+coreEdges=[2-3318,8-3318]
+final_state=
+{skeletons=[{verts=[C:881:0,R:2,R:3318,R:8],edges=[BRIDGE_PORT:9309:0|C:881:0|R:3318,CORE|R:2|R:3318,CORE|R:3318|R:8],hosted=[0]},{verts=[C:951:1,R:2,R:4738,R:4739,R:8],edges=[BRIDGE_PORT:11309:1|C:951:1|R:4738,CORE|R:2|R:4738,CORE|R:4738|R:4739,CORE|R:4739|R:8],hosted=[1]}],occurrences=[{occ=0,orig=881,host={verts=[C:881:0,R:2,R:3318,R:8],edges=[BRIDGE_PORT:9309:0|C:881:0|R:3318,CORE|R:2|R:3318,CORE|R:3318|R:8],hosted=[0]},center=C:881:0,allocNbr=[],core=[CORE|R:2|R:3318,CORE|R:8|R:3318]},{occ=1,orig=951,host={verts=[C:951:1,R:2,R:4738,R:4739,R:8],edges=[BRIDGE_PORT:11309:1|C:951:1|R:4738,CORE|R:2|R:4738,CORE|R:4738|R:4739,CORE|R:4739|R:8],hosted=[1]},center=C:951:1,allocNbr=[],core=[CORE|R:2|R:4738,CORE|R:4738|R:4739,CORE|R:8|R:4739]}]}
+omit_after_split_integrate 0 0 1 planner signature mismatch
+expected:
+stop_condition=1
+target_prepare=
+orig=890
+allocNbr=[]
+ports=[1:3918:9409:1]
+coreVerts=[2,8,3918]
+coreEdges=[2-3918,8-3918]
+final_state=
+{skeletons=[{verts=[C:890:0,R:2,R:3918,R:8],edges=[BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:3918|R:8],hosted=[0]},{verts=[C:962:1,R:2,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,CORE|R:2|R:4252,CORE|R:4252|R:8],hosted=[1]}],occurrences=[{occ=0,orig=890,host={verts=[C:890:0,R:2,R:3918,R:8],edges=[BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:3918|R:8],hosted=[0]},center=C:890:0,allocNbr=[],core=[CORE|R:2|R:3918,CORE|R:8|R:3918]},{occ=1,orig=962,host={verts=[C:962:1,R:2,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,CORE|R:2|R:4252,CORE|R:4252|R:8],hosted=[1]},center=C:962:1,allocNbr=[],core=[CORE|R:2|R:4252,CORE|R:8|R:4252]}]}
+trace=
+0: integrate hash=19b00b6846f62c15 integrate parent=0 child=2 sig=merged={skeletons=[{verts=[C:890:0,R:2,R:3918,R:8],edges=[BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:8,CORE|R:3918|R:8],hosted=[0]}],occurrences=[]}
+occurrence=[{occ=0,orig=890,host={verts=[C:890:0,R:2,R:3918,R:8],edges=[BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:8,CORE|R:3918|R:8],hosted=[0]},center=C:890:0,allocNbr=[],core=[CORE|R:2|R:3918,CORE|R:8|R:3918]}]
+1: join hash=a4fafa59098cb18 join left=0 right=1 sig=merged={skeletons=[{verts=[C:890:0,C:962:1,R:2,R:3918,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:4252,CORE|R:2|R:8,CORE|R:3918|R:8,CORE|R:4252|R:8],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=890,host={verts=[C:890:0,C:962:1,R:2,R:3918,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:4252,CORE|R:2|R:8,CORE|R:3918|R:8,CORE|R:4252|R:8],hosted=[0,1]},center=C:890:0,allocNbr=[],core=[CORE|R:2|R:3918,CORE|R:8|R:3918]},{occ=1,orig=962,host={verts=[C:890:0,C:962:1,R:2,R:3918,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:4252,CORE|R:2|R:8,CORE|R:3918|R:8,CORE|R:4252|R:8],hosted=[0,1]},center=C:962:1,allocNbr=[],core=[CORE|R:2|R:4252,CORE|R:8|R:4252]}]
+2: isolate_vertex hash=63394ffd5d9feef9 isolate occ=0 occSkel=1 residualSkel=0
+
+actual:
+stop_condition=1
+target_prepare=
+orig=890
+allocNbr=[]
+ports=[1:3918:9409:1]
+coreVerts=[2,8,3918]
+coreEdges=[2-3918,8-3918]
+final_state=
+{skeletons=[{verts=[C:890:0,R:2,R:3918,R:8],edges=[BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:3918|R:8],hosted=[0]},{verts=[C:962:1,R:2,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,CORE|R:2|R:4252,CORE|R:4252|R:8],hosted=[1]},{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[{occ=0,orig=890,host={verts=[C:890:0,R:2,R:3918,R:8],edges=[BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:3918|R:8],hosted=[0]},center=C:890:0,allocNbr=[],core=[CORE|R:2|R:3918,CORE|R:8|R:3918]},{occ=1,orig=962,host={verts=[C:962:1,R:2,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,CORE|R:2|R:4252,CORE|R:4252|R:8],hosted=[1]},center=C:962:1,allocNbr=[],core=[CORE|R:2|R:4252,CORE|R:8|R:4252]}]}
+trace=
+0: join hash=a7daec00792f521b join left=0 right=1 sig=merged={skeletons=[{verts=[C:890:0,C:962:1,R:2,R:3918,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:4252,CORE|R:3918|R:8,CORE|R:4252|R:8],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=890,host={verts=[C:890:0,C:962:1,R:2,R:3918,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:4252,CORE|R:3918|R:8,CORE|R:4252|R:8],hosted=[0,1]},center=C:890:0,allocNbr=[],core=[CORE|R:2|R:3918,CORE|R:8|R:3918]},{occ=1,orig=962,host={verts=[C:890:0,C:962:1,R:2,R:3918,R:4252,R:8],edges=[BRIDGE_PORT:11409:0|C:962:1|R:4252,BRIDGE_PORT:9409:1|C:890:0|R:3918,CORE|R:2|R:3918,CORE|R:2|R:4252,CORE|R:3918|R:8,CORE|R:4252|R:8],hosted=[0,1]},center=C:962:1,allocNbr=[],core=[CORE|R:2|R:4252,CORE|R:8|R:4252]}]
+1: isolate_vertex hash=63394ffd5d9feef9 isolate occ=0 occSkel=1 residualSkel=0
+
+omit_ensure_sole_after_join 0 0 1 planner signature mismatch
+expected:
+stop_condition=1
+target_prepare=
+orig=1291
+allocNbr=[]
+ports=[1:5182:13509:1]
+coreVerts=[2,8,5182]
+coreEdges=[2-5182,8-5182]
+final_state=
+{skeletons=[{verts=[C:1291:0,R:2,R:5182,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,CORE|R:2|R:5182,CORE|R:5182|R:8],hosted=[0]},{verts=[C:1485:1,R:2,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:6490,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[1]}],occurrences=[{occ=0,orig=1291,host={verts=[C:1291:0,R:2,R:5182,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,CORE|R:2|R:5182,CORE|R:5182|R:8],hosted=[0]},center=C:1291:0,allocNbr=[],core=[CORE|R:2|R:5182,CORE|R:8|R:5182]},{occ=1,orig=1485,host={verts=[C:1485:1,R:2,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:6490,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[1]},center=C:1485:1,allocNbr=[],core=[CORE|R:2|R:6490,CORE|R:6490|R:6491,CORE|R:8|R:6491]}]}
+trace=
+0: join hash=a9d2736aeef3acbb join left=0 right=1 sig=merged={skeletons=[{verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=1291,host={verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]},center=C:1291:0,allocNbr=[],core=[CORE|R:2|R:5182,CORE|R:8|R:5182]},{occ=1,orig=1485,host={verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]},center=C:1485:1,allocNbr=[],core=[CORE|R:2|R:6490,CORE|R:6490|R:6491,CORE|R:8|R:6491]}]
+1: isolate_vertex hash=63394ffd5d9feef9 isolate occ=0 occSkel=1 residualSkel=0
+
+actual:
+stop_condition=0
+target_prepare=
+orig=1291
+allocNbr=[]
+ports=[1:5182:13509:1]
+coreVerts=[2,8,5182]
+coreEdges=[2-5182,8-5182]
+final_state=
+{skeletons=[{verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]}],occurrences=[{occ=0,orig=1291,host={verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]},center=C:1291:0,allocNbr=[],core=[CORE|R:2|R:5182,CORE|R:8|R:5182]},{occ=1,orig=1485,host={verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]},center=C:1485:1,allocNbr=[],core=[CORE|R:2|R:6490,CORE|R:6490|R:6491,CORE|R:8|R:6491]}]}
+trace=
+0: join hash=a9d2736aeef3acbb join left=0 right=1 sig=merged={skeletons=[{verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=1291,host={verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]},center=C:1291:0,allocNbr=[],core=[CORE|R:2|R:5182,CORE|R:8|R:5182]},{occ=1,orig=1485,host={verts=[C:1291:0,C:1485:1,R:2,R:5182,R:6490,R:6491,R:8],edges=[BRIDGE_PORT:13509:1|C:1291:0|R:5182,BRIDGE_PORT:15509:1|C:1485:1|R:6490,CORE|R:2|R:5182,CORE|R:2|R:6490,CORE|R:5182|R:8,CORE|R:6490|R:6491,CORE|R:6491|R:8],hosted=[0,1]},center=C:1485:1,allocNbr=[],core=[CORE|R:2|R:6490,CORE|R:6490|R:6491,CORE|R:8|R:6491]}]
+
+omit_ensure_sole_after_integrate 0 0 1 planner signature mismatch
+expected:
+stop_condition=1
+target_prepare=
+orig=1834
+allocNbr=[]
+ports=[1:9800:19609:0]
+coreVerts=[2,8,9800]
+coreEdges=[2-9800,8-9800]
+final_state=
+{skeletons=[{verts=[C:1834:0,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:2|R:9800,CORE|R:8|R:9800],hosted=[0]},{verts=[C:2045:1,R:10035,R:2,R:8],edges=[CORE|R:10035|R:2,CORE|R:10035|R:8,REAL_PORT|C:2045:1|R:10035],hosted=[1]}],occurrences=[{occ=0,orig=1834,host={verts=[C:1834:0,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:2|R:9800,CORE|R:8|R:9800],hosted=[0]},center=C:1834:0,allocNbr=[],core=[CORE|R:2|R:9800,CORE|R:8|R:9800]},{occ=1,orig=2045,host={verts=[C:2045:1,R:10035,R:2,R:8],edges=[CORE|R:10035|R:2,CORE|R:10035|R:8,REAL_PORT|C:2045:1|R:10035],hosted=[1]},center=C:2045:1,allocNbr=[],core=[CORE|R:2|R:10035,CORE|R:8|R:10035]}]}
+trace=
+0: integrate hash=13dde0353de68b7b integrate parent=0 child=1 sig=merged={skeletons=[{verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=1834,host={verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]},center=C:1834:0,allocNbr=[],core=[CORE|R:2|R:9800,CORE|R:8|R:9800]},{occ=1,orig=2045,host={verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]},center=C:2045:1,allocNbr=[],core=[CORE|R:2|R:10035,CORE|R:8|R:10035]}]
+1: isolate_vertex hash=63394ffd5d9feef9 isolate occ=0 occSkel=1 residualSkel=0
+
+actual:
+stop_condition=0
+target_prepare=
+orig=1834
+allocNbr=[]
+ports=[1:9800:19609:0]
+coreVerts=[2,8,9800]
+coreEdges=[2-9800,8-9800]
+final_state=
+{skeletons=[{verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]}],occurrences=[{occ=0,orig=1834,host={verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]},center=C:1834:0,allocNbr=[],core=[CORE|R:2|R:9800,CORE|R:8|R:9800]},{occ=1,orig=2045,host={verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]},center=C:2045:1,allocNbr=[],core=[CORE|R:2|R:10035,CORE|R:8|R:10035]}]}
+trace=
+0: integrate hash=13dde0353de68b7b integrate parent=0 child=1 sig=merged={skeletons=[{verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=1834,host={verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]},center=C:1834:0,allocNbr=[],core=[CORE|R:2|R:9800,CORE|R:8|R:9800]},{occ=1,orig=2045,host={verts=[C:1834:0,C:2045:1,R:10035,R:2,R:8,R:9800],edges=[BRIDGE_PORT:19609:0|C:1834:0|R:9800,CORE|R:10035|R:2,CORE|R:10035|R:8,CORE|R:2|R:9800,CORE|R:8|R:9800,REAL_PORT|C:2045:1|R:10035],hosted=[0,1]},center=C:2045:1,allocNbr=[],core=[CORE|R:2|R:10035,CORE|R:8|R:10035]}]
+
+wrong_branch_routing 0 0 1 planner signature mismatch
+expected:
+stop_condition=1
+target_prepare=
+orig=826
+allocNbr=[]
+ports=[1:3642:9709:0]
+coreVerts=[2,8,3642]
+coreEdges=[2-3642,8-3642]
+final_state=
+{skeletons=[{verts=[C:826:0,R:2,R:3642,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:3642|R:8],hosted=[0]},{verts=[C:906:1,R:2,R:4966,R:4967,R:8],edges=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[1]}],occurrences=[{occ=0,orig=826,host={verts=[C:826:0,R:2,R:3642,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:3642|R:8],hosted=[0]},center=C:826:0,allocNbr=[],core=[CORE|R:2|R:3642,CORE|R:8|R:3642]},{occ=1,orig=906,host={verts=[C:906:1,R:2,R:4966,R:4967,R:8],edges=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[1]},center=C:906:1,allocNbr=[],core=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:8|R:4967]}]}
+trace=
+0: integrate hash=b15101da0b97ce63 integrate parent=0 child=2 sig=merged={skeletons=[{verts=[C:826:0,R:2,R:3642,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:8,CORE|R:3642|R:8],hosted=[0]}],occurrences=[]}
+occurrence=[{occ=0,orig=826,host={verts=[C:826:0,R:2,R:3642,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:8,CORE|R:3642|R:8],hosted=[0]},center=C:826:0,allocNbr=[],core=[CORE|R:2|R:3642,CORE|R:8|R:3642]}]
+1: join hash=a48441fc3ddbed98 join left=0 right=1 sig=merged={skeletons=[{verts=[C:826:0,C:906:1,R:2,R:3642,R:4966,R:4967,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:3642|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=826,host={verts=[C:826:0,C:906:1,R:2,R:3642,R:4966,R:4967,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:3642|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[0,1]},center=C:826:0,allocNbr=[],core=[CORE|R:2|R:3642,CORE|R:8|R:3642]},{occ=1,orig=906,host={verts=[C:826:0,C:906:1,R:2,R:3642,R:4966,R:4967,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:3642|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[0,1]},center=C:906:1,allocNbr=[],core=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:8|R:4967]}]
+2: isolate_vertex hash=63394ffd5d9feef9 isolate occ=0 occSkel=1 residualSkel=0
+
+actual:
+stop_condition=1
+target_prepare=
+orig=826
+allocNbr=[]
+ports=[1:3642:9709:0]
+coreVerts=[2,8,3642]
+coreEdges=[2-3642,8-3642]
+final_state=
+{skeletons=[{verts=[C:826:0,R:2,R:3642,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:3642|R:8],hosted=[0]},{verts=[C:906:1,R:2,R:4966,R:4967,R:8],edges=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[1]}],occurrences=[{occ=0,orig=826,host={verts=[C:826:0,R:2,R:3642,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:3642|R:8],hosted=[0]},center=C:826:0,allocNbr=[],core=[CORE|R:2|R:3642,CORE|R:8|R:3642]},{occ=1,orig=906,host={verts=[C:906:1,R:2,R:4966,R:4967,R:8],edges=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[1]},center=C:906:1,allocNbr=[],core=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:8|R:4967]}]}
+trace=
+0: integrate hash=fc8f5afa4f465287 integrate parent=1 child=2 sig=merged={skeletons=[{verts=[C:906:1,R:2,R:4966,R:4967,R:8],edges=[CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[1]}],occurrences=[]}
+occurrence=[{occ=1,orig=906,host={verts=[C:906:1,R:2,R:4966,R:4967,R:8],edges=[CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[1]},center=C:906:1,allocNbr=[],core=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:8|R:4967]}]
+1: join hash=b44d67072bf72c98 join left=1 right=0 sig=merged={skeletons=[{verts=[C:826:0,C:906:1,R:2,R:3642,R:4966,R:4967,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:3642|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[0,1]}],occurrences=[]}
+occurrence=[{occ=0,orig=826,host={verts=[C:826:0,C:906:1,R:2,R:3642,R:4966,R:4967,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:3642|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[0,1]},center=C:826:0,allocNbr=[],core=[CORE|R:2|R:3642,CORE|R:8|R:3642]},{occ=1,orig=906,host={verts=[C:826:0,C:906:1,R:2,R:3642,R:4966,R:4967,R:8],edges=[BRIDGE_PORT:9709:0|C:826:0|R:3642,CORE|R:2|R:3642,CORE|R:2|R:4966,CORE|R:2|R:8,CORE|R:3642|R:8,CORE|R:4966|R:4967,CORE|R:4967|R:8,REAL_PORT|C:906:1|R:4966],hosted=[0,1]},center=C:906:1,allocNbr=[],core=[CORE|R:2|R:4966,CORE|R:4966|R:4967,CORE|R:8|R:4967]}]
+2: isolate_vertex hash=86c7ad06ff4ce457 isolate occ=0 occSkel=0 residualSkel=1
+

@@ -1,0 +1,20 @@
+{
+  "mode": "solver-baseline-replay",
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "caseName": "same_type_sp_cleanup_tc40_step1",
+  "outputDumpDir": "dumps/solver_baseline_replay",
+  "bundlePath": "dumps/solver_baseline_replay/BASELINE_DONE_seed1_tc40_step4_same_type_sp_cleanup_tc40_step1.txt",
+  "baselineStage": "BASELINE_DONE",
+  "topLevelOk": true,
+  "stepIndex": 4,
+  "sequenceLengthSoFar": 5,
+  "actualInvariantOk": true,
+  "actualInvariantWhy": "",
+  "actualInvariantDetailedSubtype": "NONE",
+  "oracleEquivalentOk": true,
+  "oracleWhy": "",
+  "firstFailingInvariantKind": "NONE",
+  "sameTypeSPPresent": false,
+  "adjacencyMismatchPresent": false,
+  "deadRelayCandidateNodes": []
+}

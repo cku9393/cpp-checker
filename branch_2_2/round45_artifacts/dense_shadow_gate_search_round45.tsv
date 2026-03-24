@@ -1,0 +1,2 @@
+status	reason	coverage_count	shadow_attempted_count	shadow_match_count	shadow_mismatch_count	validator_shadow_fail_count	mean_fallback_ms_saved_proxy
+not_run	source_alignment_smoke_gate_failed	0	0	0	0	0	0

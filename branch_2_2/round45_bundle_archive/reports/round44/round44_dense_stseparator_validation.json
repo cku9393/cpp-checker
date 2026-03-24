@@ -1,0 +1,36 @@
+{
+  "status": "HOLD",
+  "baseline_source": "/mnt/data/lca_tree_stress_v5_round43_dense_sameside_hold.zip",
+  "source_baseline_mismatch": true,
+  "reason": "round43_hold_zip_source_missing_same_side_and_prefilter_instrumentation",
+  "source_checks": {
+    "same_side_probe_present": false,
+    "candidate_rows_sink_present": false,
+    "prefilter_rows_sink_present": false,
+    "round43_macro_present": false,
+    "round44_macro_present": false,
+    "dense_shadow_case_mode_env_present": true
+  },
+  "fresh_current_pass_completed": false,
+  "truth_gate_passed": false,
+  "gate_found": false,
+  "carried_observation_dense_eqguard_strong": true,
+  "carried_observation_dominant_hotspot": "bfs_neighbor_iter_on_same_side_reject_candidates",
+  "round43_validation": {
+    "macro_present": true,
+    "env_plumbing_ok": true,
+    "shadowcheck_enabled": true,
+    "header_ok": true,
+    "candidate_row_append_ok": true,
+    "nonempty_case_mode_count": 28311,
+    "row_count_census": 0,
+    "row_count_matched": 0,
+    "row_count_candidate": 28311,
+    "row_count_same_side_reject": 28295,
+    "row_count_accepted": 0,
+    "matched_decompose_rows": 0,
+    "matched_truth_panel_rows": 0,
+    "truth_gate_passed": false,
+    "reason": "candidate_rows_exist_same_side_rows_exist"
+  }
+}

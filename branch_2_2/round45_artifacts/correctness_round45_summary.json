@@ -1,0 +1,6 @@
+{
+  "status": "not_run",
+  "reason": "source_alignment_smoke_gate_failed",
+  "mismatch_count": 0,
+  "fresh_current_pass": true
+}

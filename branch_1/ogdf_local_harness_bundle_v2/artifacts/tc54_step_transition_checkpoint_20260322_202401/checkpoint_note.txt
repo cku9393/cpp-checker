@@ -1,0 +1,6 @@
+checkpoint stage: tc54 step-transition replay diagnosis
+source random mismatch: seed1_tc54
+compare replay seam: CASK_REWRITE_OUTPUT_NOT_EQUAL_REPLAY_FINAL
+finalcore replay seam: FCSK_STEP_COUNT_DIFFER / TSK_ALIVE_R_SET_DIFFER
+shape replay seam: CSS_OTHER (canonical explicit mismatch before shadow build)
+step-transition seam: STSK_STEP1_HANDOFF_EQUAL_BOTH_DIFFER_FROM_SHADOW

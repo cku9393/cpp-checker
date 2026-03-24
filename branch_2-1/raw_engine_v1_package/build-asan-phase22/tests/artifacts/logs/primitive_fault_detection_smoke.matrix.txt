@@ -1,0 +1,70 @@
+fault validator primitive_oracle planner_oracle detail
+drop_alloc_nbr 1 1 0 prepare_isolate_neighborhood oracle mismatch
+expected:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+actual:
+orig=5
+allocNbr=[]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+duplicate_alloc_nbr 1 1 0 prepare_isolate_neighborhood oracle mismatch
+expected:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+actual:
+orig=5
+allocNbr=[2,2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+wrong_host_skel 1 0 0 validator skeleton host skeleton or center vertex mismatch
+wrong_center_v 1 0 0 validator skeleton host skeleton or center vertex mismatch
+drop_core_patch_edge 1 1 0 prepare_isolate_neighborhood oracle mismatch
+expected:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,2-8,7-8]
+actual:
+orig=5
+allocNbr=[2]
+ports=[0:2:0:0,1:8:41:0]
+coreVerts=[2,7,8]
+coreEdges=[2-7,7-8]
+add_center_incident_core_edge 1 0 0 validator skeleton corePatch edge not owned by host skeleton
+drop_skeleton_edge 1 1 0 split_separation_pair result mismatch
+expected:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+actual:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+rewire_skeleton_edge 1 1 0 split_separation_pair result mismatch
+expected:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+actual:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|C:9:0],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+flip_boundary_only 0 1 0 split_separation_pair result mismatch
+expected:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}},{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}}]
+actual:
+sep=2,8
+childCount=3
+children=[{boundaryOnly=0,hosted=[1],graph={skeletons=[{verts=[C:12:1,R:10,R:2,R:8],edges=[CORE|R:10|R:2,CORE|R:10|R:8,REAL_PORT|C:12:1|R:10],hosted=[1]}],occurrences=[]}},{boundaryOnly=1,hosted=[],graph={skeletons=[{verts=[R:2,R:8],edges=[CORE|R:2|R:8],hosted=[]}],occurrences=[]}},{boundaryOnly=1,hosted=[0],graph={skeletons=[{verts=[C:9:0,R:2,R:6,R:8],edges=[CORE|R:2|R:6,CORE|R:6|R:8,REAL_PORT|C:9:0|R:6],hosted=[0]}],occurrences=[]}}]

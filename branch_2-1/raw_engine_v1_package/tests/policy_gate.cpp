@@ -1,7 +1,6 @@
 #include "policy_gate.hpp"
 
 #include <algorithm>
-#include <array>
 #include <cctype>
 #include <chrono>
 #include <fstream>
@@ -9,6 +8,8 @@
 #include <initializer_list>
 #include <sstream>
 #include <stdexcept>
+
+#include "policy_manifest_freshness.hpp"
 
 using namespace std;
 
@@ -88,10 +89,7 @@ unordered_map<string, size_t> parse_numeric_map(string text) {
         while (offset < text.size() && isspace(static_cast<unsigned char>(text[offset]))) {
             ++offset;
         }
-        if (offset >= text.size()) {
-            break;
-        }
-        if (text[offset] != '"') {
+        if (offset >= text.size() || text[offset] != '"') {
             break;
         }
         const size_t keyEnd = text.find('"', offset + 1U);
@@ -112,6 +110,34 @@ unordered_map<string, size_t> parse_numeric_map(string text) {
         offset = valueEnd + 1U;
     }
     return out;
+}
+
+vector<string> parse_csv_strings(const string& csv) {
+    vector<string> values;
+    size_t start = 0U;
+    while (start < csv.size()) {
+        const size_t comma = csv.find(',', start);
+        const string token = trim(csv.substr(start, comma == string::npos ? string::npos : comma - start));
+        if (!token.empty()) {
+            values.push_back(token);
+        }
+        if (comma == string::npos) {
+            break;
+        }
+        start = comma + 1U;
+    }
+    return values;
+}
+
+string csv_from_strings(const vector<string>& values) {
+    ostringstream oss;
+    for (size_t i = 0; i < values.size(); ++i) {
+        if (i != 0U) {
+            oss << ',';
+        }
+        oss << values[i];
+    }
+    return oss.str();
 }
 
 string json_escape(const string& text) {
@@ -162,6 +188,79 @@ string json_object_from_map(const unordered_map<string, size_t>& values) {
     }
     oss << '}';
     return oss.str();
+}
+
+string json_array_from_strings(const vector<string>& values) {
+    ostringstream oss;
+    oss << '[';
+    for (size_t i = 0; i < values.size(); ++i) {
+        if (i != 0U) {
+            oss << ',';
+        }
+        oss << '"' << json_escape(values[i]) << '"';
+    }
+    oss << ']';
+    return oss.str();
+}
+
+PolicyGateStatus parse_policy_gate_status(const string& value) {
+    if (value == "PASS") {
+        return PolicyGateStatus::PASS;
+    }
+    if (value == "NON_APPLICABLE") {
+        return PolicyGateStatus::NON_APPLICABLE;
+    }
+    if (value == "DIAGNOSTIC_ONLY") {
+        return PolicyGateStatus::DIAGNOSTIC_ONLY;
+    }
+    if (value == "FAIL") {
+        return PolicyGateStatus::FAIL;
+    }
+    return PolicyGateStatus::INSUFFICIENT_EVIDENCE;
+}
+
+PolicyFreshnessStatus parse_policy_freshness_status(const string& value) {
+    if (value == "FRESH") {
+        return PolicyFreshnessStatus::FRESH;
+    }
+    if (value == "STALE") {
+        return PolicyFreshnessStatus::STALE;
+    }
+    return PolicyFreshnessStatus::REQUIRES_RERUN;
+}
+
+vector<PolicyEvidenceSource> parse_policy_evidence_sources_csv(const string& csv) {
+    vector<PolicyEvidenceSource> sources;
+    for (const string& token : parse_csv_strings(csv)) {
+        if (token == "direct_compare") {
+            sources.push_back(PolicyEvidenceSource::DIRECT_COMPARE);
+        } else if (token == "applicability_only") {
+            sources.push_back(PolicyEvidenceSource::APPLICABILITY_ONLY);
+        } else if (token == "diagnostic_lineage") {
+            sources.push_back(PolicyEvidenceSource::DIAGNOSTIC_LINEAGE);
+        } else if (token == "campaign_compare") {
+            sources.push_back(PolicyEvidenceSource::CAMPAIGN_COMPARE);
+        }
+    }
+    return sources;
+}
+
+string csv_from_evidence_sources(const vector<PolicyEvidenceSource>& sources) {
+    vector<string> values;
+    values.reserve(sources.size());
+    for (PolicyEvidenceSource source : sources) {
+        values.emplace_back(policy_evidence_source_name(source));
+    }
+    return csv_from_strings(values);
+}
+
+string json_array_from_evidence_sources(const vector<PolicyEvidenceSource>& sources) {
+    vector<string> values;
+    values.reserve(sources.size());
+    for (PolicyEvidenceSource source : sources) {
+        values.emplace_back(policy_evidence_source_name(source));
+    }
+    return json_array_from_strings(values);
 }
 
 filesystem::path first_existing_path(const filesystem::path& artifactRoot, initializer_list<filesystem::path> rels) {
@@ -322,6 +421,53 @@ PolicyGateThreshold compare_ready_diagnostic_threshold() {
     return threshold;
 }
 
+string policy_gate_current_verdict(const PolicyGateManifest& manifest) {
+    return policy_gate_manifest_satisfied(manifest) ? "PASS" : "FAIL";
+}
+
+string policy_gate_freshness_verdict(const PolicyGateManifest& manifest) {
+    bool anyStale = false;
+    for (const PolicyGateFamilyResult& family : manifest.families) {
+        if (family.freshnessStatus == PolicyFreshnessStatus::REQUIRES_RERUN) {
+            return "REQUIRES_RERUN";
+        }
+        if (family.freshnessStatus == PolicyFreshnessStatus::STALE) {
+            anyStale = true;
+        }
+    }
+    return anyStale ? "STALE" : "FRESH";
+}
+
+void recompute_manifest_rollup(PolicyGateManifest& manifest) {
+    manifest.freshFamilyCount = 0U;
+    manifest.staleFamilyCount = 0U;
+    manifest.requiresRerunFamilyCount = 0U;
+    manifest.reclassifyRequiredCount = 0U;
+    manifest.revalidatedFamilyCount = manifest.families.size();
+    manifest.staleFamilies.clear();
+    manifest.reclassifyRequiredFamilies.clear();
+
+    for (const PolicyGateFamilyResult& family : manifest.families) {
+        switch (family.freshnessStatus) {
+            case PolicyFreshnessStatus::FRESH:
+                ++manifest.freshFamilyCount;
+                break;
+            case PolicyFreshnessStatus::STALE:
+                ++manifest.staleFamilyCount;
+                manifest.staleFamilies.push_back(family.family);
+                break;
+            case PolicyFreshnessStatus::REQUIRES_RERUN:
+                ++manifest.requiresRerunFamilyCount;
+                manifest.staleFamilies.push_back(family.family);
+                break;
+        }
+        if (family.reclassifyRequired) {
+            ++manifest.reclassifyRequiredCount;
+            manifest.reclassifyRequiredFamilies.push_back(family.family);
+        }
+    }
+}
+
 } // namespace
 
 const char* policy_gate_status_name(PolicyGateStatus status) {
@@ -346,6 +492,36 @@ bool policy_gate_status_is_satisfied(PolicyGateStatus status) {
         status == PolicyGateStatus::DIAGNOSTIC_ONLY;
 }
 
+const char* policy_evidence_source_name(PolicyEvidenceSource source) {
+    switch (source) {
+        case PolicyEvidenceSource::DIRECT_COMPARE:
+            return "direct_compare";
+        case PolicyEvidenceSource::APPLICABILITY_ONLY:
+            return "applicability_only";
+        case PolicyEvidenceSource::DIAGNOSTIC_LINEAGE:
+            return "diagnostic_lineage";
+        case PolicyEvidenceSource::CAMPAIGN_COMPARE:
+            return "campaign_compare";
+    }
+    return "campaign_compare";
+}
+
+const char* policy_freshness_status_name(PolicyFreshnessStatus status) {
+    switch (status) {
+        case PolicyFreshnessStatus::FRESH:
+            return "FRESH";
+        case PolicyFreshnessStatus::STALE:
+            return "STALE";
+        case PolicyFreshnessStatus::REQUIRES_RERUN:
+            return "REQUIRES_RERUN";
+    }
+    return "REQUIRES_RERUN";
+}
+
+bool policy_freshness_status_is_satisfied(PolicyFreshnessStatus status) {
+    return status == PolicyFreshnessStatus::FRESH;
+}
+
 PolicyGateFamilyResult evaluate_production_compare_gate(
     const string& family,
     const PolicyGateCompareEvidence& compareEvidence,
@@ -356,6 +532,12 @@ PolicyGateFamilyResult evaluate_production_compare_gate(
     result.role = "production_family";
     result.threshold = compare_threshold(comparedStateCountMin);
     result.sourceSummaryPath = compareEvidence.sourceSummaryPath;
+    result.evidenceSources = {
+        PolicyEvidenceSource::DIRECT_COMPARE,
+        PolicyEvidenceSource::CAMPAIGN_COMPARE,
+    };
+    result.freshnessStatus = PolicyFreshnessStatus::FRESH;
+    result.freshnessRationale = "current manifest records live direct compare evidence";
     result.countsAsProductionEvidence = false;
     copy_compare_evidence(result.measured, compareEvidence);
 
@@ -394,11 +576,17 @@ PolicyGateFamilyResult evaluate_planner_tie_non_applicable_gate(
     result.role = "production_family";
     result.threshold = planner_non_applicable_threshold();
     result.sourceSummaryPath = compareEvidence.sourceSummaryPath;
+    result.evidenceSources = {PolicyEvidenceSource::APPLICABILITY_ONLY};
+    result.freshnessStatus = PolicyFreshnessStatus::FRESH;
+    result.freshnessRationale = "current manifest records live applicability evidence";
     result.countsAsProductionEvidence = false;
 
     result.measured.generatedStateCount = applicability.generatedStateCount;
     result.measured.splitReadyStateCount = applicability.splitReadyStateCount;
     result.measured.tieReadyStateCount = applicability.tieReadyStateCount;
+    result.measured.actualSplitHits = applicability.actualSplitHits;
+    result.measured.actualJoinHits = applicability.actualJoinHits;
+    result.measured.actualIntegrateHits = applicability.actualIntegrateHits;
     result.measured.compareEligibleStateCount = applicability.compareEligibleStateCount;
     result.measured.compareIneligibleStateCount = applicability.compareIneligibleStateCount;
     result.measured.compareIneligibleReasonHistogram = applicability.compareIneligibleReasonHistogram;
@@ -407,6 +595,7 @@ PolicyGateFamilyResult evaluate_planner_tie_non_applicable_gate(
         : applicability.compareIneligibleReasonHistogram.at("no_split_ready");
     result.measured.compareRelevance = applicability.compareRelevance;
     result.measured.splitReadyRelevance = applicability.splitReadyRelevance;
+    result.measured.tieReadyRelevance = applicability.tieReadyRelevance;
     result.measured.dominantIneligibleReason = applicability.dominantIneligibleReason;
     result.measured.dominantIneligibleReasonConfidence = applicability.dominantIneligibleReasonConfidence;
     copy_compare_evidence(result.measured, compareEvidence);
@@ -435,12 +624,13 @@ PolicyGateFamilyResult evaluate_planner_tie_non_applicable_gate(
         applicability.dominantIneligibleReasonConfidence < result.threshold.applicabilityMinDominantReasonConfidence;
     if (result.driftFlag) {
         result.status = PolicyGateStatus::INSUFFICIENT_EVIDENCE;
+        result.reclassifyRequired = true;
         result.rationale = "applicability drift detected; NON_APPLICABLE reclassification required";
         return result;
     }
 
     result.status = PolicyGateStatus::NON_APPLICABLE;
-    result.rationale = "no_split_ready remains dominant and compare relevance stayed below threshold";
+    result.rationale = "no_split_ready remained dominant and compare relevance stayed below threshold";
     return result;
 }
 
@@ -455,6 +645,9 @@ PolicyGateFamilyResult evaluate_compare_ready_diagnostic_gate(
     result.role = "diagnostic_support_family";
     result.threshold = compare_ready_diagnostic_threshold();
     result.sourceSummaryPath = compareEvidence.sourceSummaryPath;
+    result.evidenceSources = {PolicyEvidenceSource::DIAGNOSTIC_LINEAGE};
+    result.freshnessStatus = PolicyFreshnessStatus::FRESH;
+    result.freshnessRationale = "current manifest records live diagnostic lineage evidence";
     result.countsAsProductionEvidence = false;
     copy_compare_evidence(result.measured, compareEvidence);
     result.measured.derivedFromBaseStateCount = lineage.derivedFromBaseStateCount;
@@ -496,8 +689,14 @@ PolicyGateFamilyResult evaluate_compare_ready_diagnostic_gate(
     }
 
     result.status = PolicyGateStatus::DIAGNOSTIC_ONLY;
-    result.rationale =
-        "diagnostic compare family met bounded exact evidence and lineage consistency; not counted as production evidence";
+    if (lineage.followupPatternPreservedCount == 0U || lineage.structureOnlyEnrichmentCount == 0U) {
+        result.rationale =
+            "diagnostic compare family met bounded compare and lineage consistency, but followup preservation or "
+            "structure-only enrichment did not hold; counts_as_production_evidence=false";
+    } else {
+        result.rationale =
+            "diagnostic compare family met bounded compare and lineage consistency; counts_as_production_evidence=false";
+    }
     return result;
 }
 
@@ -527,55 +726,158 @@ PolicyGateCompareEvidence load_policy_gate_compare_evidence(const filesystem::pa
     return evidence;
 }
 
+filesystem::path best_compare_summary_path(
+    const filesystem::path& artifactRoot,
+    initializer_list<filesystem::path> rels
+) {
+    struct Candidate {
+        filesystem::path path;
+        PolicyGateCompareEvidence evidence;
+        string gateStatus;
+        string stopReason;
+        filesystem::file_time_type modifiedAt;
+    };
+
+    auto rank_candidate = [](const Candidate& candidate) {
+        if (candidate.evidence.semanticDisagreementCount != 0U ||
+            candidate.evidence.fallbackCount != 0U ||
+            candidate.evidence.semanticShiftCount != 0U) {
+            return 4;
+        }
+        if (candidate.gateStatus == "PASS") {
+            return 3;
+        }
+        if (!candidate.stopReason.empty() && candidate.stopReason != "pending") {
+            return 2;
+        }
+        return 1;
+    };
+
+    optional<Candidate> best;
+    for (const filesystem::path& rel : rels) {
+        const filesystem::path candidatePath = artifactRoot / rel;
+        if (!filesystem::exists(candidatePath)) {
+            continue;
+        }
+        const unordered_map<string, string> values = read_key_value_file(candidatePath);
+        Candidate candidate;
+        candidate.path = candidatePath;
+        candidate.evidence = load_policy_gate_compare_evidence(candidatePath);
+        candidate.gateStatus = read_string(values, "gate_status");
+        candidate.stopReason = read_string(values, "stop_reason");
+        candidate.modifiedAt = filesystem::last_write_time(candidatePath);
+
+        if (!best.has_value()) {
+            best = std::move(candidate);
+            continue;
+        }
+
+        const int bestRank = rank_candidate(*best);
+        const int candidateRank = rank_candidate(candidate);
+        if (candidateRank != bestRank) {
+            if (candidateRank > bestRank) {
+                best = std::move(candidate);
+            }
+            continue;
+        }
+        if (candidate.evidence.comparedStateCount != best->evidence.comparedStateCount) {
+            if (candidate.evidence.comparedStateCount > best->evidence.comparedStateCount) {
+                best = std::move(candidate);
+            }
+            continue;
+        }
+        if (candidate.evidence.compareEligibleStateCount != best->evidence.compareEligibleStateCount) {
+            if (candidate.evidence.compareEligibleStateCount > best->evidence.compareEligibleStateCount) {
+                best = std::move(candidate);
+            }
+            continue;
+        }
+        if (candidate.evidence.compareCompletedStateCount != best->evidence.compareCompletedStateCount) {
+            if (candidate.evidence.compareCompletedStateCount > best->evidence.compareCompletedStateCount) {
+                best = std::move(candidate);
+            }
+            continue;
+        }
+        if (candidate.modifiedAt > best->modifiedAt) {
+            best = std::move(candidate);
+        }
+    }
+
+    if (best.has_value()) {
+        return best->path;
+    }
+    return artifactRoot / *rels.begin();
+}
+
 PolicyGateManifest build_policy_gate_manifest(
     const filesystem::path& artifactRoot,
     const string& buildTag
 ) {
     PolicyGateManifest manifest;
+    manifest.reportVersion = "phase22";
     manifest.buildTag = buildTag;
     manifest.timestampUtc = timestamp_utc_now();
     manifest.artifactRoot = filesystem::absolute(artifactRoot).string();
+    manifest.manifestRole = "current";
 
-    const filesystem::path splitTieSummary = first_existing_path(
+    const filesystem::path splitTieSummary = best_compare_summary_path(
         artifactRoot,
         {
+            filesystem::path("phase22_campaigns_compare/split_tie_organic/logs/phase22_split_tie_organic_aggregate.summary.txt"),
+            filesystem::path("phase21_campaigns_compare/split_tie_organic/logs/phase21_split_tie_organic_aggregate.summary.txt"),
+            filesystem::path("phase19_campaigns_compare/split_tie_organic/logs/phase19_split_tie_organic_aggregate.summary.txt"),
             filesystem::path("phase18_campaigns_compare/split_tie_organic/logs/phase18_split_tie_organic_aggregate.summary.txt"),
-            filesystem::path("phase17_campaigns_compare/split_tie_organic/logs/phase17_split_tie_organic_aggregate.summary.txt")
+            filesystem::path("phase17_campaigns_compare/split_tie_organic/logs/phase17_split_tie_organic_aggregate.summary.txt"),
         }
     );
-    const filesystem::path automorphismSummary = first_existing_path(
+    const filesystem::path automorphismSummary = best_compare_summary_path(
         artifactRoot,
         {
+            filesystem::path("phase22_campaigns_compare/automorphism_probe/logs/phase22_automorphism_probe_aggregate.summary.txt"),
+            filesystem::path("phase21_campaigns_compare/automorphism_probe/logs/phase21_automorphism_probe_aggregate.summary.txt"),
+            filesystem::path("phase19_campaigns_compare/automorphism_probe/logs/phase19_automorphism_probe_aggregate.summary.txt"),
             filesystem::path("phase18_campaigns_compare/automorphism_probe/logs/phase18_automorphism_probe_aggregate.summary.txt"),
-            filesystem::path("phase17_campaigns_compare/automorphism_probe/logs/phase17_automorphism_probe_aggregate.summary.txt")
+            filesystem::path("phase17_campaigns_compare/automorphism_probe/logs/phase17_automorphism_probe_aggregate.summary.txt"),
         }
     );
-    const filesystem::path plannerGapSummary = first_existing_path(
+    const filesystem::path plannerGapSummary = best_compare_summary_path(
         artifactRoot,
         {
+            filesystem::path("phase22_campaigns_compare/planner_tie_mixed_organic_gap_audit/logs/phase22_planner_tie_mixed_organic_gap_audit_aggregate.summary.txt"),
+            filesystem::path("phase19_campaigns_compare/planner_tie_mixed_organic_gap_audit/logs/phase19_planner_tie_mixed_organic_gap_audit_aggregate.summary.txt"),
             filesystem::path("phase18_campaigns_compare/planner_tie_mixed_organic_gap_audit/logs/phase18_planner_tie_mixed_organic_gap_audit_aggregate.summary.txt"),
-            filesystem::path("phase17_campaigns_compare/planner_tie_mixed_organic_gap_audit/logs/phase17_planner_tie_mixed_organic_gap_audit_aggregate.summary.txt")
+            filesystem::path("phase17_campaigns_compare/planner_tie_mixed_organic_gap_audit/logs/phase17_planner_tie_mixed_organic_gap_audit_aggregate.summary.txt"),
         }
     );
-    const filesystem::path compareReadySummary = first_existing_path(
+    const filesystem::path compareReadySummary = best_compare_summary_path(
         artifactRoot,
         {
+            filesystem::path("phase22_campaigns_compare/planner_tie_mixed_organic_compare_ready/logs/phase22_planner_tie_mixed_organic_compare_ready_aggregate.summary.txt"),
+            filesystem::path("phase19_campaigns_compare/planner_tie_mixed_organic_compare_ready/logs/phase19_planner_tie_mixed_organic_compare_ready_aggregate.summary.txt"),
             filesystem::path("phase18_campaigns_compare/planner_tie_mixed_organic_compare_ready/logs/phase18_planner_tie_mixed_organic_compare_ready_aggregate.summary.txt"),
-            filesystem::path("phase17_campaigns_compare/planner_tie_mixed_organic_compare_ready/logs/phase17_planner_tie_mixed_organic_compare_ready_aggregate.summary.txt")
+            filesystem::path("phase17_campaigns_compare/planner_tie_mixed_organic_compare_ready/logs/phase17_planner_tie_mixed_organic_compare_ready_aggregate.summary.txt"),
         }
     );
     const filesystem::path applicabilitySummary = first_existing_path(
         artifactRoot,
         {
+            filesystem::path("phase22_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt"),
+            filesystem::path("phase21_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt"),
+            filesystem::path("phase20_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt"),
+            filesystem::path("phase19_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt"),
             filesystem::path("phase18_final_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt"),
-            filesystem::path("phase17_final_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt")
+            filesystem::path("phase17_final_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt"),
         }
     );
     const filesystem::path lineageSummary = first_existing_path(
         artifactRoot,
         {
+            filesystem::path("phase22_lineage/logs/compare_ready_lineage_audit.summary.txt"),
+            filesystem::path("phase21_lineage/logs/compare_ready_lineage_audit.summary.txt"),
+            filesystem::path("phase20_lineage/logs/compare_ready_lineage_audit.summary.txt"),
+            filesystem::path("phase19_lineage/logs/compare_ready_lineage_audit.summary.txt"),
             filesystem::path("phase18_final_lineage/logs/compare_ready_lineage_audit.summary.txt"),
-            filesystem::path("phase17_final_lineage/logs/compare_ready_lineage_audit.summary.txt")
+            filesystem::path("phase17_final_lineage/logs/compare_ready_lineage_audit.summary.txt"),
         }
     );
 
@@ -599,10 +901,12 @@ PolicyGateManifest build_policy_gate_manifest(
         : FamilyApplicabilitySummary{};
     PolicyGateFamilyResult plannerTie =
         evaluate_planner_tie_non_applicable_gate(applicability, load_policy_gate_compare_evidence(plannerGapSummary));
-    if (!plannerTie.sourceSummaryPath.empty()) {
-        plannerTie.sourceSummaryPath += ";applicability=" + filesystem::absolute(applicabilitySummary).string();
-    } else {
-        plannerTie.sourceSummaryPath = filesystem::absolute(applicabilitySummary).string();
+    if (filesystem::exists(applicabilitySummary)) {
+        if (!plannerTie.sourceSummaryPath.empty()) {
+            plannerTie.sourceSummaryPath += ";applicability=" + filesystem::absolute(applicabilitySummary).string();
+        } else {
+            plannerTie.sourceSummaryPath = filesystem::absolute(applicabilitySummary).string();
+        }
     }
     manifest.families.push_back(std::move(plannerTie));
 
@@ -611,13 +915,18 @@ PolicyGateManifest build_policy_gate_manifest(
         : CompareReadyLineageSummary{};
     PolicyGateFamilyResult diagnostic =
         evaluate_compare_ready_diagnostic_gate(load_policy_gate_compare_evidence(compareReadySummary), lineage);
-    if (!diagnostic.sourceSummaryPath.empty()) {
-        diagnostic.sourceSummaryPath += ";lineage=" + filesystem::absolute(lineageSummary).string();
-    } else {
-        diagnostic.sourceSummaryPath = filesystem::absolute(lineageSummary).string();
+    if (filesystem::exists(lineageSummary)) {
+        if (!diagnostic.sourceSummaryPath.empty()) {
+            diagnostic.sourceSummaryPath += ";lineage=" + filesystem::absolute(lineageSummary).string();
+        } else {
+            diagnostic.sourceSummaryPath = filesystem::absolute(lineageSummary).string();
+        }
     }
     manifest.families.push_back(std::move(diagnostic));
 
+    assign_policy_manifest_input_hashes(manifest, artifactRoot.parent_path());
+    recompute_manifest_rollup(manifest);
+    manifest.currentManifestHash = hash_policy_manifest_content(manifest);
     return manifest;
 }
 
@@ -635,6 +944,8 @@ PolicyGateManifest filter_policy_gate_manifest(
             filtered.families.push_back(family);
         }
     }
+    recompute_manifest_rollup(filtered);
+    filtered.currentManifestHash = hash_policy_manifest_content(filtered);
     return filtered;
 }
 
@@ -655,17 +966,40 @@ string policy_gate_manifest_text(const PolicyGateManifest& manifest) {
     ostringstream oss;
     oss << "manifest_version=" << manifest.manifestVersion << '\n';
     oss << "report_version=" << manifest.reportVersion << '\n';
+    oss << "manifest_role=" << manifest.manifestRole << '\n';
+    oss << "baseline_version=" << manifest.baselineVersion << '\n';
+    oss << "promoted_from_report=" << manifest.promotedFromReport << '\n';
+    oss << "promoted_from_manifest=" << manifest.promotedFromManifest << '\n';
+    oss << "baseline_tag=" << manifest.baselineTag << '\n';
+    oss << "approval_timestamp_utc=" << manifest.approvalTimestampUtc << '\n';
+    oss << "provenance_frozen=" << (manifest.provenanceFrozen ? 1 : 0) << '\n';
     oss << "build_tag=" << manifest.buildTag << '\n';
     oss << "timestamp_utc=" << manifest.timestampUtc << '\n';
     oss << "artifact_root=" << manifest.artifactRoot << '\n';
+    oss << "baseline_manifest_path=" << manifest.baselineManifestPath << '\n';
+    oss << "baseline_manifest_hash=" << manifest.baselineManifestHash << '\n';
+    oss << "current_manifest_hash=" << manifest.currentManifestHash << '\n';
+    oss << "current_verdict=" << policy_gate_current_verdict(manifest) << '\n';
+    oss << "freshness_verdict=" << policy_gate_freshness_verdict(manifest) << '\n';
+    oss << "fresh_family_count=" << manifest.freshFamilyCount << '\n';
+    oss << "stale_family_count=" << manifest.staleFamilyCount << '\n';
+    oss << "requires_rerun_family_count=" << manifest.requiresRerunFamilyCount << '\n';
+    oss << "reclassify_required_count=" << manifest.reclassifyRequiredCount << '\n';
+    oss << "revalidated_family_count=" << manifest.revalidatedFamilyCount << '\n';
+    oss << "stale_families=" << csv_from_strings(manifest.staleFamilies) << '\n';
+    oss << "reclassify_required_families=" << csv_from_strings(manifest.reclassifyRequiredFamilies) << '\n';
     oss << "family_count=" << manifest.families.size() << '\n';
     for (const PolicyGateFamilyResult& family : manifest.families) {
         oss << '\n';
         oss << "family=" << family.family << '\n';
         oss << "role=" << family.role << '\n';
+        oss << "current_status=" << policy_gate_status_name(family.status) << '\n';
         oss << "status=" << policy_gate_status_name(family.status) << '\n';
+        oss << "freshness_status=" << policy_freshness_status_name(family.freshnessStatus) << '\n';
         oss << "counts_as_production_evidence=" << (family.countsAsProductionEvidence ? 1 : 0) << '\n';
         oss << "drift_flag=" << (family.driftFlag ? 1 : 0) << '\n';
+        oss << "reclassify_required=" << (family.reclassifyRequired ? 1 : 0) << '\n';
+        oss << "evidence_sources=" << csv_from_evidence_sources(family.evidenceSources) << '\n';
         oss << "source_summary_path=" << family.sourceSummaryPath << '\n';
         oss << "threshold_compared_state_count_min=" << family.threshold.comparedStateCountMin << '\n';
         oss << "threshold_compare_eligible_state_count_min=" << family.threshold.compareEligibleStateCountMin << '\n';
@@ -686,6 +1020,9 @@ string policy_gate_manifest_text(const PolicyGateManifest& manifest) {
         oss << "measured_generated_state_count=" << family.measured.generatedStateCount << '\n';
         oss << "measured_split_ready_state_count=" << family.measured.splitReadyStateCount << '\n';
         oss << "measured_tie_ready_state_count=" << family.measured.tieReadyStateCount << '\n';
+        oss << "measured_actual_split_hits=" << family.measured.actualSplitHits << '\n';
+        oss << "measured_actual_join_hits=" << family.measured.actualJoinHits << '\n';
+        oss << "measured_actual_integrate_hits=" << family.measured.actualIntegrateHits << '\n';
         oss << "measured_compared_state_count=" << family.measured.comparedStateCount << '\n';
         oss << "measured_compare_eligible_state_count=" << family.measured.compareEligibleStateCount << '\n';
         oss << "measured_compare_ineligible_state_count=" << family.measured.compareIneligibleStateCount << '\n';
@@ -699,6 +1036,7 @@ string policy_gate_manifest_text(const PolicyGateManifest& manifest) {
         oss << "measured_no_split_ready_count=" << family.measured.noSplitReadyCount << '\n';
         oss << "measured_compare_relevance=" << json_number(family.measured.compareRelevance) << '\n';
         oss << "measured_split_ready_relevance=" << json_number(family.measured.splitReadyRelevance) << '\n';
+        oss << "measured_tie_ready_relevance=" << json_number(family.measured.tieReadyRelevance) << '\n';
         oss << "measured_dominant_ineligible_reason=" << family.measured.dominantIneligibleReason << '\n';
         oss << "measured_dominant_ineligible_reason_confidence="
             << json_number(family.measured.dominantIneligibleReasonConfidence) << '\n';
@@ -709,7 +1047,13 @@ string policy_gate_manifest_text(const PolicyGateManifest& manifest) {
         oss << "measured_followup_pattern_preserved_count=" << family.measured.followupPatternPreservedCount << '\n';
         oss << "measured_structure_only_enrichment_count=" << family.measured.structureOnlyEnrichmentCount << '\n';
         oss << "measured_lineage_sample_count=" << family.measured.lineageSampleCount << '\n';
+        oss << "relevant_input_hash_planner_semantics=" << family.relevantInputHashes.plannerSemanticsHash << '\n';
+        oss << "relevant_input_hash_generator_family=" << family.relevantInputHashes.generatorFamilyHash << '\n';
+        oss << "relevant_input_hash_compare_engine=" << family.relevantInputHashes.compareEngineHash << '\n';
+        oss << "relevant_input_hash_campaign_config=" << family.relevantInputHashes.campaignConfigHash << '\n';
+        oss << "relevant_input_hash_combined=" << family.relevantInputHashes.combinedHash << '\n';
         oss << "rationale=" << family.rationale << '\n';
+        oss << "freshness_rationale=" << family.freshnessRationale << '\n';
     }
     return oss.str();
 }
@@ -719,18 +1063,41 @@ string policy_gate_manifest_json(const PolicyGateManifest& manifest) {
     oss << "{\n";
     oss << "\"manifest_version\":\"" << json_escape(manifest.manifestVersion) << "\",\n";
     oss << "\"report_version\":\"" << json_escape(manifest.reportVersion) << "\",\n";
+    oss << "\"manifest_role\":\"" << json_escape(manifest.manifestRole) << "\",\n";
+    oss << "\"baseline_version\":\"" << json_escape(manifest.baselineVersion) << "\",\n";
+    oss << "\"promoted_from_report\":\"" << json_escape(manifest.promotedFromReport) << "\",\n";
+    oss << "\"promoted_from_manifest\":\"" << json_escape(manifest.promotedFromManifest) << "\",\n";
+    oss << "\"baseline_tag\":\"" << json_escape(manifest.baselineTag) << "\",\n";
+    oss << "\"approval_timestamp_utc\":\"" << json_escape(manifest.approvalTimestampUtc) << "\",\n";
+    oss << "\"provenance_frozen\":" << (manifest.provenanceFrozen ? "true" : "false") << ",\n";
     oss << "\"build_tag\":\"" << json_escape(manifest.buildTag) << "\",\n";
     oss << "\"timestamp_utc\":\"" << json_escape(manifest.timestampUtc) << "\",\n";
     oss << "\"artifact_root\":\"" << json_escape(manifest.artifactRoot) << "\",\n";
+    oss << "\"baseline_manifest_path\":\"" << json_escape(manifest.baselineManifestPath) << "\",\n";
+    oss << "\"baseline_manifest_hash\":\"" << json_escape(manifest.baselineManifestHash) << "\",\n";
+    oss << "\"current_manifest_hash\":\"" << json_escape(manifest.currentManifestHash) << "\",\n";
+    oss << "\"current_verdict\":\"" << policy_gate_current_verdict(manifest) << "\",\n";
+    oss << "\"freshness_verdict\":\"" << policy_gate_freshness_verdict(manifest) << "\",\n";
+    oss << "\"fresh_family_count\":" << manifest.freshFamilyCount << ",\n";
+    oss << "\"stale_family_count\":" << manifest.staleFamilyCount << ",\n";
+    oss << "\"requires_rerun_family_count\":" << manifest.requiresRerunFamilyCount << ",\n";
+    oss << "\"reclassify_required_count\":" << manifest.reclassifyRequiredCount << ",\n";
+    oss << "\"revalidated_family_count\":" << manifest.revalidatedFamilyCount << ",\n";
+    oss << "\"stale_families\":" << json_array_from_strings(manifest.staleFamilies) << ",\n";
+    oss << "\"reclassify_required_families\":" << json_array_from_strings(manifest.reclassifyRequiredFamilies) << ",\n";
     oss << "\"families\":[\n";
     for (size_t i = 0; i < manifest.families.size(); ++i) {
         const PolicyGateFamilyResult& family = manifest.families[i];
         oss << "  {\n";
         oss << "    \"family\":\"" << json_escape(family.family) << "\",\n";
         oss << "    \"role\":\"" << json_escape(family.role) << "\",\n";
+        oss << "    \"current_status\":\"" << policy_gate_status_name(family.status) << "\",\n";
         oss << "    \"status\":\"" << policy_gate_status_name(family.status) << "\",\n";
+        oss << "    \"freshness_status\":\"" << policy_freshness_status_name(family.freshnessStatus) << "\",\n";
         oss << "    \"counts_as_production_evidence\":" << (family.countsAsProductionEvidence ? "true" : "false") << ",\n";
         oss << "    \"drift_flag\":" << (family.driftFlag ? "true" : "false") << ",\n";
+        oss << "    \"reclassify_required\":" << (family.reclassifyRequired ? "true" : "false") << ",\n";
+        oss << "    \"evidence_sources\":" << json_array_from_evidence_sources(family.evidenceSources) << ",\n";
         oss << "    \"source_summary_path\":\"" << json_escape(family.sourceSummaryPath) << "\",\n";
         oss << "    \"threshold\":{\n";
         oss << "      \"compared_state_count_min\":" << family.threshold.comparedStateCountMin << ",\n";
@@ -754,6 +1121,9 @@ string policy_gate_manifest_json(const PolicyGateManifest& manifest) {
         oss << "      \"generated_state_count\":" << family.measured.generatedStateCount << ",\n";
         oss << "      \"split_ready_state_count\":" << family.measured.splitReadyStateCount << ",\n";
         oss << "      \"tie_ready_state_count\":" << family.measured.tieReadyStateCount << ",\n";
+        oss << "      \"actual_split_hits\":" << family.measured.actualSplitHits << ",\n";
+        oss << "      \"actual_join_hits\":" << family.measured.actualJoinHits << ",\n";
+        oss << "      \"actual_integrate_hits\":" << family.measured.actualIntegrateHits << ",\n";
         oss << "      \"compared_state_count\":" << family.measured.comparedStateCount << ",\n";
         oss << "      \"compare_eligible_state_count\":" << family.measured.compareEligibleStateCount << ",\n";
         oss << "      \"compare_ineligible_state_count\":" << family.measured.compareIneligibleStateCount << ",\n";
@@ -767,6 +1137,7 @@ string policy_gate_manifest_json(const PolicyGateManifest& manifest) {
         oss << "      \"no_split_ready_count\":" << family.measured.noSplitReadyCount << ",\n";
         oss << "      \"compare_relevance\":" << json_number(family.measured.compareRelevance) << ",\n";
         oss << "      \"split_ready_relevance\":" << json_number(family.measured.splitReadyRelevance) << ",\n";
+        oss << "      \"tie_ready_relevance\":" << json_number(family.measured.tieReadyRelevance) << ",\n";
         oss << "      \"dominant_ineligible_reason\":\"" << json_escape(family.measured.dominantIneligibleReason) << "\",\n";
         oss << "      \"dominant_ineligible_reason_confidence\":"
             << json_number(family.measured.dominantIneligibleReasonConfidence) << ",\n";
@@ -778,7 +1149,15 @@ string policy_gate_manifest_json(const PolicyGateManifest& manifest) {
         oss << "      \"structure_only_enrichment_count\":" << family.measured.structureOnlyEnrichmentCount << ",\n";
         oss << "      \"lineage_sample_count\":" << family.measured.lineageSampleCount << "\n";
         oss << "    },\n";
-        oss << "    \"rationale\":\"" << json_escape(family.rationale) << "\"\n";
+        oss << "    \"relevant_input_hashes\":{\n";
+        oss << "      \"planner_semantics_hash\":\"" << json_escape(family.relevantInputHashes.plannerSemanticsHash) << "\",\n";
+        oss << "      \"generator_family_hash\":\"" << json_escape(family.relevantInputHashes.generatorFamilyHash) << "\",\n";
+        oss << "      \"compare_engine_hash\":\"" << json_escape(family.relevantInputHashes.compareEngineHash) << "\",\n";
+        oss << "      \"campaign_config_hash\":\"" << json_escape(family.relevantInputHashes.campaignConfigHash) << "\",\n";
+        oss << "      \"combined_hash\":\"" << json_escape(family.relevantInputHashes.combinedHash) << "\"\n";
+        oss << "    },\n";
+        oss << "    \"rationale\":\"" << json_escape(family.rationale) << "\",\n";
+        oss << "    \"freshness_rationale\":\"" << json_escape(family.freshnessRationale) << "\"\n";
         oss << "  }";
         if (i + 1U != manifest.families.size()) {
             oss << ',';
@@ -796,22 +1175,33 @@ string policy_gate_short_summary(
 ) {
     const PolicyGateManifest filtered = filter_policy_gate_manifest(manifest, familyFilter);
     ostringstream oss;
-    oss << "policy_gate_summary";
+    oss << "policy_gate_summary"
+        << " current_verdict=" << policy_gate_current_verdict(filtered)
+        << " freshness_verdict=" << policy_gate_freshness_verdict(filtered);
     for (const PolicyGateFamilyResult& family : filtered.families) {
-        oss << ' ' << family.family << '=' << policy_gate_status_name(family.status);
+        oss << ' ' << family.family << '=' << policy_gate_status_name(family.status)
+            << '/' << policy_freshness_status_name(family.freshnessStatus);
         if (family.driftFlag) {
             oss << "(drift)";
+        }
+        if (family.reclassifyRequired) {
+            oss << "(reclassify)";
         }
     }
     oss << '\n';
     for (const PolicyGateFamilyResult& family : filtered.families) {
         oss << "family=" << family.family
-            << " status=" << policy_gate_status_name(family.status)
+            << " current_status=" << policy_gate_status_name(family.status)
+            << " freshness_status=" << policy_freshness_status_name(family.freshnessStatus)
             << " role=" << family.role
             << " compared=" << family.measured.comparedStateCount
             << " eligible=" << family.measured.compareEligibleStateCount
             << " completed=" << family.measured.compareCompletedStateCount
+            << " drift_flag=" << (family.driftFlag ? 1 : 0)
+            << " reclassify_required=" << (family.reclassifyRequired ? 1 : 0)
+            << " counts_as_production_evidence=" << (family.countsAsProductionEvidence ? 1 : 0)
             << " rationale=" << family.rationale
+            << " freshness_rationale=" << family.freshnessRationale
             << '\n';
     }
     return oss.str();
@@ -868,6 +1258,34 @@ PolicyGateManifest load_policy_gate_manifest_text(const filesystem::path& manife
             manifest.reportVersion = value;
             continue;
         }
+        if (key == "manifest_role") {
+            manifest.manifestRole = value;
+            continue;
+        }
+        if (key == "baseline_version") {
+            manifest.baselineVersion = value;
+            continue;
+        }
+        if (key == "promoted_from_report") {
+            manifest.promotedFromReport = value;
+            continue;
+        }
+        if (key == "promoted_from_manifest") {
+            manifest.promotedFromManifest = value;
+            continue;
+        }
+        if (key == "baseline_tag") {
+            manifest.baselineTag = value;
+            continue;
+        }
+        if (key == "approval_timestamp_utc") {
+            manifest.approvalTimestampUtc = value;
+            continue;
+        }
+        if (key == "provenance_frozen") {
+            manifest.provenanceFrozen = (value == "1" || value == "true");
+            continue;
+        }
         if (key == "build_tag") {
             manifest.buildTag = value;
             continue;
@@ -880,13 +1298,54 @@ PolicyGateManifest load_policy_gate_manifest_text(const filesystem::path& manife
             manifest.artifactRoot = value;
             continue;
         }
-        if (key == "family_count") {
+        if (key == "baseline_manifest_path") {
+            manifest.baselineManifestPath = value;
+            continue;
+        }
+        if (key == "baseline_manifest_hash") {
+            manifest.baselineManifestHash = value;
+            continue;
+        }
+        if (key == "current_manifest_hash") {
+            manifest.currentManifestHash = value;
+            continue;
+        }
+        if (key == "fresh_family_count") {
+            manifest.freshFamilyCount = static_cast<size_t>(stoull(value));
+            continue;
+        }
+        if (key == "stale_family_count") {
+            manifest.staleFamilyCount = static_cast<size_t>(stoull(value));
+            continue;
+        }
+        if (key == "requires_rerun_family_count") {
+            manifest.requiresRerunFamilyCount = static_cast<size_t>(stoull(value));
+            continue;
+        }
+        if (key == "reclassify_required_count") {
+            manifest.reclassifyRequiredCount = static_cast<size_t>(stoull(value));
+            continue;
+        }
+        if (key == "revalidated_family_count") {
+            manifest.revalidatedFamilyCount = static_cast<size_t>(stoull(value));
+            continue;
+        }
+        if (key == "stale_families") {
+            manifest.staleFamilies = parse_csv_strings(value);
+            continue;
+        }
+        if (key == "reclassify_required_families") {
+            manifest.reclassifyRequiredFamilies = parse_csv_strings(value);
+            continue;
+        }
+        if (key == "current_verdict" || key == "freshness_verdict" || key == "family_count") {
             continue;
         }
         if (key == "family") {
             manifest.families.push_back(PolicyGateFamilyResult{});
             current = &manifest.families.back();
             current->family = value;
+            current->freshnessStatus = PolicyFreshnessStatus::FRESH;
             continue;
         }
         if (current == nullptr) {
@@ -894,22 +1353,18 @@ PolicyGateManifest load_policy_gate_manifest_text(const filesystem::path& manife
         }
         if (key == "role") {
             current->role = value;
-        } else if (key == "status") {
-            if (value == "PASS") {
-                current->status = PolicyGateStatus::PASS;
-            } else if (value == "NON_APPLICABLE") {
-                current->status = PolicyGateStatus::NON_APPLICABLE;
-            } else if (value == "DIAGNOSTIC_ONLY") {
-                current->status = PolicyGateStatus::DIAGNOSTIC_ONLY;
-            } else if (value == "FAIL") {
-                current->status = PolicyGateStatus::FAIL;
-            } else {
-                current->status = PolicyGateStatus::INSUFFICIENT_EVIDENCE;
-            }
+        } else if (key == "current_status" || key == "status") {
+            current->status = parse_policy_gate_status(value);
+        } else if (key == "freshness_status") {
+            current->freshnessStatus = parse_policy_freshness_status(value);
         } else if (key == "counts_as_production_evidence") {
             current->countsAsProductionEvidence = (value == "1" || value == "true");
         } else if (key == "drift_flag") {
             current->driftFlag = (value == "1" || value == "true");
+        } else if (key == "reclassify_required") {
+            current->reclassifyRequired = (value == "1" || value == "true");
+        } else if (key == "evidence_sources") {
+            current->evidenceSources = parse_policy_evidence_sources_csv(value);
         } else if (key == "source_summary_path") {
             current->sourceSummaryPath = value;
         } else if (key == "threshold_compared_state_count_min") {
@@ -942,6 +1397,12 @@ PolicyGateManifest load_policy_gate_manifest_text(const filesystem::path& manife
             current->measured.splitReadyStateCount = static_cast<size_t>(stoull(value));
         } else if (key == "measured_tie_ready_state_count") {
             current->measured.tieReadyStateCount = static_cast<size_t>(stoull(value));
+        } else if (key == "measured_actual_split_hits") {
+            current->measured.actualSplitHits = static_cast<size_t>(stoull(value));
+        } else if (key == "measured_actual_join_hits") {
+            current->measured.actualJoinHits = static_cast<size_t>(stoull(value));
+        } else if (key == "measured_actual_integrate_hits") {
+            current->measured.actualIntegrateHits = static_cast<size_t>(stoull(value));
         } else if (key == "measured_compared_state_count") {
             current->measured.comparedStateCount = static_cast<size_t>(stoull(value));
         } else if (key == "measured_compare_eligible_state_count") {
@@ -966,6 +1427,8 @@ PolicyGateManifest load_policy_gate_manifest_text(const filesystem::path& manife
             current->measured.compareRelevance = stod(value);
         } else if (key == "measured_split_ready_relevance") {
             current->measured.splitReadyRelevance = stod(value);
+        } else if (key == "measured_tie_ready_relevance") {
+            current->measured.tieReadyRelevance = stod(value);
         } else if (key == "measured_dominant_ineligible_reason") {
             current->measured.dominantIneligibleReason = value;
         } else if (key == "measured_dominant_ineligible_reason_confidence") {
@@ -984,8 +1447,20 @@ PolicyGateManifest load_policy_gate_manifest_text(const filesystem::path& manife
             current->measured.structureOnlyEnrichmentCount = static_cast<size_t>(stoull(value));
         } else if (key == "measured_lineage_sample_count") {
             current->measured.lineageSampleCount = static_cast<size_t>(stoull(value));
+        } else if (key == "relevant_input_hash_planner_semantics") {
+            current->relevantInputHashes.plannerSemanticsHash = value;
+        } else if (key == "relevant_input_hash_generator_family") {
+            current->relevantInputHashes.generatorFamilyHash = value;
+        } else if (key == "relevant_input_hash_compare_engine") {
+            current->relevantInputHashes.compareEngineHash = value;
+        } else if (key == "relevant_input_hash_campaign_config") {
+            current->relevantInputHashes.campaignConfigHash = value;
+        } else if (key == "relevant_input_hash_combined") {
+            current->relevantInputHashes.combinedHash = value;
         } else if (key == "rationale") {
             current->rationale = value;
+        } else if (key == "freshness_rationale") {
+            current->freshnessRationale = value;
         }
     }
     return manifest;

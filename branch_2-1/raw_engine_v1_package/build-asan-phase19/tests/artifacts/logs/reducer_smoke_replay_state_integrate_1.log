@@ -1,0 +1,3 @@
+Assertion failed: (false), function build_merged_after_integrate, file raw_primitives.cpp, line 495.
+raw_engine_tests fatal signal=6
+failure_context case=replay_state

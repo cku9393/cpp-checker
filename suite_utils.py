@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Mapping, Optional, Sequence, Tuple
 
 
 IS_WINDOWS = os.name == "nt"
@@ -64,12 +64,24 @@ def ensure_executable(p: Path) -> Path:
     return p
 
 
-def _spawn_process(cmd: List[str], stdin, stdout, stderr) -> subprocess.Popen:
+def _spawn_process(
+    cmd: List[str],
+    stdin,
+    stdout,
+    stderr,
+    *,
+    env: Optional[Mapping[str, str]] = None,
+    cwd: Optional[Path] = None,
+) -> subprocess.Popen:
     kwargs = {
         "stdin": stdin,
         "stdout": stdout,
         "stderr": stderr,
     }
+    if env is not None:
+        kwargs["env"] = dict(env)
+    if cwd is not None:
+        kwargs["cwd"] = str(cwd)
     if IS_WINDOWS:
         kwargs["creationflags"] = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
     else:
@@ -94,13 +106,15 @@ def run_cmd(
     stdout_path: Optional[Path] = None,
     stderr_path: Optional[Path] = None,
     timeout: Optional[float] = None,
+    env: Optional[Mapping[str, str]] = None,
+    cwd: Optional[Path] = None,
 ) -> Tuple[int, bool, float]:
     t0 = time.perf_counter()
     stdin_f = open(stdin_path, "rb") if stdin_path else None
     stdout_f = open(stdout_path, "wb") if stdout_path else subprocess.DEVNULL
     stderr_f = open(stderr_path, "wb") if stderr_path else subprocess.DEVNULL
     try:
-        proc = _spawn_process(cmd, stdin_f, stdout_f, stderr_f)
+        proc = _spawn_process(cmd, stdin_f, stdout_f, stderr_f, env=env, cwd=cwd)
         try:
             proc.wait(timeout=timeout)
             timed_out = False
@@ -141,12 +155,14 @@ def _run_solver_posix(
     out_path: Path,
     stderr_path: Path,
     timeout: Optional[float],
+    env: Optional[Mapping[str, str]],
+    cwd: Optional[Path],
 ) -> Tuple[int, bool, float, Optional[int]]:
     stdin_f = open(in_path, "rb")
     stdout_f = open(out_path, "wb")
     stderr_f = open(stderr_path, "wb")
     try:
-        proc = _spawn_process([str(solver)], stdin_f, stdout_f, stderr_f)
+        proc = _spawn_process([str(solver)], stdin_f, stdout_f, stderr_f, env=env, cwd=cwd)
         t0 = time.perf_counter()
         while True:
             pid, status, rusage = os.wait4(proc.pid, os.WNOHANG)
@@ -215,12 +231,14 @@ def _run_solver_windows(
     out_path: Path,
     stderr_path: Path,
     timeout: Optional[float],
+    env: Optional[Mapping[str, str]],
+    cwd: Optional[Path],
 ) -> Tuple[int, bool, float, Optional[int]]:
     stdin_f = open(in_path, "rb")
     stdout_f = open(out_path, "wb")
     stderr_f = open(stderr_path, "wb")
     try:
-        proc = _spawn_process([str(solver)], stdin_f, stdout_f, stderr_f)
+        proc = _spawn_process([str(solver)], stdin_f, stdout_f, stderr_f, env=env, cwd=cwd)
         t0 = time.perf_counter()
         peak_rss_kb = _sample_windows_peak_rss_kb(proc)
         while True:
@@ -257,11 +275,29 @@ def run_solver_with_time(
     time_path: Path,
     stderr_path: Path,
     timeout: Optional[float],
+    env: Optional[Mapping[str, str]] = None,
+    cwd: Optional[Path] = None,
 ) -> Tuple[int, bool, Optional[float], Optional[int]]:
     if not IS_WINDOWS and hasattr(os, "wait4"):
-        rc, timed_out, sec, rss_kb = _run_solver_posix(solver, in_path, out_path, stderr_path, timeout)
+        rc, timed_out, sec, rss_kb = _run_solver_posix(
+            solver,
+            in_path,
+            out_path,
+            stderr_path,
+            timeout,
+            env,
+            cwd,
+        )
     else:
-        rc, timed_out, sec, rss_kb = _run_solver_windows(solver, in_path, out_path, stderr_path, timeout)
+        rc, timed_out, sec, rss_kb = _run_solver_windows(
+            solver,
+            in_path,
+            out_path,
+            stderr_path,
+            timeout,
+            env,
+            cwd,
+        )
 
     if timed_out:
         return rc, True, None, None

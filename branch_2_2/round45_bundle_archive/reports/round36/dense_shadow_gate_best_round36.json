@@ -1,0 +1,5 @@
+{
+  "gate_found": false,
+  "status": "not_run",
+  "reason": "source_does_not_contain_round36_componentlabel_truth_hooks"
+}

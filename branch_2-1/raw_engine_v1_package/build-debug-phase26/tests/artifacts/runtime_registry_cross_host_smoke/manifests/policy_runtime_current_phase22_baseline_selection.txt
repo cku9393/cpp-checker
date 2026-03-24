@@ -1,0 +1,9 @@
+selection_version=runtime_baseline_selection_v1
+comparability_verdict=REBASELINE_REQUIRED
+selected_baseline_id=None
+selected_baseline_tag=None
+candidate_count=0
+exact_match_count=0
+compatible_match_count=0
+retired_match_count=0
+comparability_reason=no compatible active runtime baseline in registry

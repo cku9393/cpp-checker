@@ -1,0 +1,41 @@
+{
+  "selection_version": "runtime_baseline_selection_v1",
+  "generated_at_utc": "2026-03-22T11:10:53Z",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/runtime_refresh_same_fingerprint_smoke/manifests/policy_runtime_current_phase22.json",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/runtime_refresh_same_fingerprint_smoke/manifests/runtime_baseline_registry_v1.json",
+  "candidate_count": 1,
+  "exact_match_count": 1,
+  "compatible_match_count": 0,
+  "retired_match_count": 0,
+  "current_host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "smoke-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "7fbf1adc05cfd70b05c39cee6a0775cf81e7415062df9d20a786eaf8c1e1ad6d"
+  },
+  "current_toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "current_execution_classes": [
+    "asan_full",
+    "debug_full",
+    "policy_core",
+    "policy_nightly",
+    "policy_refresh",
+    "release_full"
+  ],
+  "current_fingerprint_key": "6d60f632282438f5e2a5c0571528135e8b473821da4cac863777bf0c04f1c8f6",
+  "comparability_verdict": "COMPARABLE",
+  "comparability_reason": "active exact runtime fingerprint match",
+  "selected_baseline_id": "phase22-runtime-approved-7fbf1adc-20260322_111053",
+  "selected_baseline_tag": "phase22-runtime-approved",
+  "selected_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/runtime_refresh_same_fingerprint_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+  "selected_entry_status": "active",
+  "selection_hash": "80109ac9819c0ec715dc5b6e10aff8678eaa7f816086799885c66be5c4ea0367"
+}

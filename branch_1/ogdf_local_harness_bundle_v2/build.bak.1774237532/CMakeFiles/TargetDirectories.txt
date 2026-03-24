@@ -1,0 +1,4 @@
+/tmp/cppchecker_short/harness/build/CMakeFiles/rewrite_r_harness_core.dir
+/tmp/cppchecker_short/harness/build/CMakeFiles/rewrite_r_harness.dir
+/tmp/cppchecker_short/harness/build/CMakeFiles/edit_cache.dir
+/tmp/cppchecker_short/harness/build/CMakeFiles/rebuild_cache.dir

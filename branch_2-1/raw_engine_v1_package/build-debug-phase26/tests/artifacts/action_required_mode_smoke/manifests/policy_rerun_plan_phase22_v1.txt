@@ -1,0 +1,29 @@
+plan_version=policy_rerun_plan_v1
+generated_at_utc=2026-03-23T05:47:55Z
+artifact_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/policy_gate_smoke
+baseline_manifest_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase26/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.txt
+current_manifest_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase26/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_v1.json
+refresh_manifest_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase26/tests/artifacts/action_required_mode_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json
+baseline_manifest_hash=6e868001569e80fd
+current_manifest_hash=8653e25866e52acc
+refresh_manifest_hash=46da4aadfc8ceb33
+stale_family_count=0
+requires_rerun_family_count=1
+reclassify_required_count=1
+selected_entry_count=1
+stale_families=
+requires_rerun_families=planner_tie_mixed_organic
+omitted_families=
+summary_verdict=RERUN_REQUIRED
+rationale=rerun entries generated for stale or requires_rerun families
+
+family=planner_tie_mixed_organic
+current_status=NON_APPLICABLE
+freshness_status=REQUIRES_RERUN
+rerun_kind=applicability_audit_rerun
+evidence_mode=applicability_only
+campaign_config_path=
+recommended_command=./raw_engine_tests --case planner_tie_organic_applicability_audit --artifact-dir artifacts/phase22_applicability
+expected_stop_criteria=target-applicability-confidence=0.95,compare_eligible_state_count=0,dominant_reason=no_split_ready
+status_impact=NON_APPLICABLE family stale
+counts_as_production_evidence=0

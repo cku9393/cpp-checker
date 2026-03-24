@@ -1,0 +1,105 @@
+{
+  "proposal_version": "runtime_rebaseline_proposal_v1",
+  "generated_at_utc": "2026-03-23T01:07:45Z",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/runtime_rebaseline_proposal_cross_host_smoke/manifests/policy_runtime_current_phase22.json",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/runtime_rebaseline_proposal_cross_host_smoke/manifests/runtime_baseline_registry_v1.json",
+  "runtime_current_manifest_hash": "7298046ed7e588797a66d31d6e4662fbbf38254a5df4c0d14ef4f12deabb872f",
+  "selected_baseline_id": null,
+  "selected_baseline_tag": null,
+  "selected_runtime_baseline_manifest_path": null,
+  "selected_runtime_baseline_manifest_hash": null,
+  "current_host_fingerprint": {
+    "os": "Linux",
+    "os_release": "25.3.0",
+    "arch": "x86_64",
+    "runner_tag": "smoke-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "2f1c0911046dde03c84ceb739e50dcd463e516ee6f757996a041f26e2df7318a"
+  },
+  "current_toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "comparability_verdict": "REBASELINE_REQUIRED",
+  "proposal_needed": true,
+  "why_rebaseline_is_needed": "no compatible active runtime baseline in registry",
+  "why_selected_baseline_is_insufficient": "no compatible active runtime baseline in registry",
+  "why_no_other_compatible_baseline_works": "no active comparable registry baseline matched strictly",
+  "affected_execution_classes": [
+    {
+      "execution_class": "release_full",
+      "wall_time_sec": 120.0,
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null
+    },
+    {
+      "execution_class": "debug_full",
+      "wall_time_sec": 480.0,
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null
+    },
+    {
+      "execution_class": "asan_full",
+      "wall_time_sec": 900.0,
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null
+    },
+    {
+      "execution_class": "policy_core",
+      "wall_time_sec": 1.0,
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null
+    },
+    {
+      "execution_class": "policy_refresh",
+      "wall_time_sec": 1.0,
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null
+    },
+    {
+      "execution_class": "policy_nightly",
+      "wall_time_sec": 2.0,
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "delta_percent": null
+    }
+  ],
+  "comparable_candidates": [],
+  "registry_history": {
+    "entry_count": 1,
+    "active_entry_count": 1,
+    "retired_entry_count": 0
+  },
+  "recent_trend": [],
+  "measured_runtime_deltas": {
+    "release_full": null,
+    "debug_full": null,
+    "asan_full": null,
+    "policy_core": null,
+    "policy_refresh": null,
+    "policy_nightly": null
+  },
+  "suggested_new_baseline_tag": "phase22-runtime-approved",
+  "suggested_next_command": "./raw_engine_tests --case runtime_approve_rebaseline --runtime-current-manifest /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/runtime_rebaseline_proposal_cross_host_smoke/manifests/policy_runtime_current_phase22.json --runtime-proposal /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/runtime_rebaseline_proposal_cross_host_smoke/manifests/policy_runtime_current_phase22_rebaseline_proposal.json --runtime-baseline-registry /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/runtime_rebaseline_proposal_cross_host_smoke/manifests/runtime_baseline_registry_v1.json --runtime-baseline-out /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/runtime_rebaseline_proposal_cross_host_smoke/manifests/policy_runtime_baseline_phase22_approved.json --baseline-tag phase22-runtime-approved --activate --archive-proposal /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase25/tests/artifacts/runtime_rebaseline_proposal_cross_host_smoke/manifests/policy_runtime_current_phase22_rebaseline_proposal_archived.json",
+  "approval_checklist": [
+    "confirm the host/toolchain fingerprint is the intended long-lived runtime baseline target",
+    "confirm correctness lifecycle remains PASS/FRESH before approving a runtime rebaseline",
+    "confirm the affected execution classes are stable across at least one clean rerun"
+  ],
+  "registry_entry_count": 1,
+  "proposal_hash": "8cf6996c12280d480f69da824114775356be27512ac4ad159f930541126c19a6"
+}

@@ -1,0 +1,1 @@
+runtime_manifest_summary role=current overall_status=FAIL overall_budget_verdict=BUDGET_FAIL entry_count=6 warn_count=0 fail_count=1

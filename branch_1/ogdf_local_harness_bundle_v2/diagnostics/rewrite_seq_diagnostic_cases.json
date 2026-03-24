@@ -1,0 +1,19 @@
+{
+  "policy": "diagnostic-only exploratory replay cases; not part of immutable hard gate",
+  "cases": [
+    {
+      "name": "weak_gate_not_needed_strong_live_tc40_step1",
+      "seed": 1,
+      "tcIndex": 40,
+      "targetStep": 1,
+      "note": "weak repair gate sample; keep out of hard gate"
+    },
+    {
+      "name": "generic_oneedge_real_nonloop_tc328_step2",
+      "seed": 1,
+      "tcIndex": 328,
+      "targetStep": 2,
+      "note": "diagnostic-only SOE_REAL_NONLOOP sample; not replay-stable enough for hard gate"
+    }
+  ]
+}

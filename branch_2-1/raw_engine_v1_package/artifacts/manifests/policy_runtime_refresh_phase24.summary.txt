@@ -1,0 +1,1 @@
+runtime_refresh_summary current_verdict=PASS freshness_verdict=REBASELINE_REQUIRED comparability_verdict=REBASELINE_REQUIRED selected_baseline_id=phase23-runtime-approved-c89a575d-20260322_083433 overall_budget_verdict=PASS runtime_severity=ACTION_REQUIRED stale_entry_count=0 requires_rerun_entry_count=0 rebaseline_required_count=4

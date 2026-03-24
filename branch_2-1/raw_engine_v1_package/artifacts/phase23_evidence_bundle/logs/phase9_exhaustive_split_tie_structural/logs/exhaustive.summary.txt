@@ -1,0 +1,18 @@
+generated_state_count=8000
+canonical_unique_state_count=1025
+dedupe_drop_count=6975
+collision_spot_check_count=8
+organic_duplicate_example_count=16
+exact_audited_state_count=8000
+fast_unique_count=1025
+exact_unique_count=1025
+fast_vs_exact_disagreement_count=0
+false_merge_count=0
+false_split_count=0
+build_order_duplicate_count=0
+relabel_duplicate_count=0
+occid_duplicate_count=64
+organic_structural_duplicate_count=0
+unknown_duplicate_count=0
+dedupe_ratio=0.871875
+family=split_tie_structural generated=8000 unique=1025 dedupe_drops=6975 dedupe_ratio=0.871875 validator_checks=1025 primitive_checks=1025 planner_checks=1025

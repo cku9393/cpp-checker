@@ -1,0 +1,35 @@
+{
+  "solver": "./round45_resume/solve_prof",
+  "timeout": 45.0,
+  "cases": [
+    {
+      "mode": "comb_dense",
+      "n": 256,
+      "seed": 1,
+      "rc": 0,
+      "row_gate_passed": false,
+      "counts": {
+        "census_rows.tsv": 0,
+        "candidate_rows.tsv": 0,
+        "prefilter_rows.tsv": 0,
+        "decompose_rows.tsv": 0
+      },
+      "outdir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2_2/artifacts/round45_resume/smoke/comb_dense_256_s1"
+    },
+    {
+      "mode": "comb_dense",
+      "n": 1024,
+      "seed": 1,
+      "rc": 0,
+      "row_gate_passed": false,
+      "counts": {
+        "census_rows.tsv": 0,
+        "candidate_rows.tsv": 0,
+        "prefilter_rows.tsv": 0,
+        "decompose_rows.tsv": 0
+      },
+      "outdir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2_2/artifacts/round45_resume/smoke/comb_dense_1024_s1"
+    }
+  ],
+  "row_gate_passed": false
+}

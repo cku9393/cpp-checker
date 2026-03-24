@@ -1,0 +1,4 @@
+source	case_mode	case_n	candidate_rows	same_side_rows	accepted_rows	mean_probe_ms	mean_probe_neighbor_iter_ms	mean_full_bfs_neighbor_iter_ms	dominant_hotspot
+round43_artifact	comb_dense	8192	13210	13201	0	0.05	0.015	7.272	bfs_neighbor_iter
+round43_artifact	comb_rect_dense	8192	7646	7642	0	0.026	0.008	7.618	bfs_neighbor_iter
+round43_artifact	caterpillar_rect_dense	8192	7455	7452	0	0.045	0.013	7.694	bfs_neighbor_iter

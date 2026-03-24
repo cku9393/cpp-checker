@@ -1,0 +1,154 @@
+{
+  "status": "partial authoritative",
+  "base_source": "/mnt/data/boj28350_literature_progress32_slot_owner_update_owner_index_touch.cpp",
+  "output_source": "/mnt/data/boj28350_literature_progress33_slot_owner_patch_apply_commit.cpp",
+  "support_artifacts": {
+    "runner": "/mnt/data/run_progress33_case_supervised.py",
+    "finalizer": "/mnt/data/progress33_finalize_case.py",
+    "merge_script": "/mnt/data/merge_progress33_results.py",
+    "journal": "/mnt/data/progress33_case_journal.jsonl",
+    "resume": "/mnt/data/progress33_resume_remaining.sh"
+  },
+  "completed_runs": {
+    "smoke_conn_dense_256_sampled": {
+      "case_name": "smoke_conn_dense_256_sampled",
+      "mode": "comb_rect_dense",
+      "n": 256,
+      "delta_mode": "connector_only",
+      "profile_mode": "PROFILE_SAMPLED",
+      "validator_ok": true,
+      "elapsed_sec": 8.176,
+      "summary_kv_subset": {
+        "local_active_mismatch": "0",
+        "local_active_partition_mismatch": "0",
+        "debug_touched_missing_classes": "0",
+        "piece_materialize_fallback_calls": "0",
+        "support_rebuild_fallback_calls": "0",
+        "unanimous_baseline_path_calls": "0",
+        "time_opatch_same_owner_noop_guard_ns": "18",
+        "time_opatch_slot_field_patch_ns": "55",
+        "time_opatch_slot_field_pack_norm_ns": "56",
+        "time_opatch_owner_index_search_ns": "36",
+        "time_opatch_owner_index_writeback_ns": "18",
+        "time_opatch_owner_commit_finalize_ns": "21",
+        "time_opatch_connector_hotpath_owner_patch_ns": "4"
+      }
+    },
+    "gate_conn_dense_256": {
+      "case_name": "gate_conn_dense_256",
+      "mode": "comb_rect_dense",
+      "n": 256,
+      "delta_mode": "connector_only",
+      "profile_mode": "PROFILE_NONE",
+      "validator_ok": true,
+      "elapsed_sec": 8.997,
+      "summary_kv_subset": {
+        "local_active_mismatch": "0",
+        "local_active_partition_mismatch": "0",
+        "debug_touched_missing_classes": "0",
+        "piece_materialize_fallback_calls": "0",
+        "support_rebuild_fallback_calls": "0",
+        "unanimous_baseline_path_calls": "0",
+        "time_opatch_same_owner_noop_guard_ns": "0",
+        "time_opatch_slot_field_patch_ns": "0",
+        "time_opatch_slot_field_pack_norm_ns": "0",
+        "time_opatch_owner_index_search_ns": "0",
+        "time_opatch_owner_index_writeback_ns": "0",
+        "time_opatch_owner_commit_finalize_ns": "0",
+        "time_opatch_connector_hotpath_owner_patch_ns": "0"
+      }
+    },
+    "gate_both_dense_256": {
+      "case_name": "gate_both_dense_256",
+      "mode": "comb_rect_dense",
+      "n": 256,
+      "delta_mode": "both_on",
+      "profile_mode": "PROFILE_NONE",
+      "validator_ok": true,
+      "elapsed_sec": 9.043,
+      "summary_kv_subset": {
+        "local_active_mismatch": "0",
+        "local_active_partition_mismatch": "0",
+        "debug_touched_missing_classes": "0",
+        "piece_materialize_fallback_calls": "0",
+        "support_rebuild_fallback_calls": "0",
+        "unanimous_baseline_path_calls": "0",
+        "time_opatch_same_owner_noop_guard_ns": "0",
+        "time_opatch_slot_field_patch_ns": "0",
+        "time_opatch_slot_field_pack_norm_ns": "0",
+        "time_opatch_owner_index_search_ns": "0",
+        "time_opatch_owner_index_writeback_ns": "0",
+        "time_opatch_owner_commit_finalize_ns": "0",
+        "time_opatch_connector_hotpath_owner_patch_ns": "0"
+      }
+    },
+    "direct_both_dense_256_sampled_after": {
+      "case_name": "direct_both_dense_256_sampled_after",
+      "mode": "comb_rect_dense",
+      "n": 256,
+      "delta_mode": "both_on",
+      "profile_mode": "PROFILE_SAMPLED",
+      "validator_ok": true,
+      "elapsed_sec": null,
+      "summary_kv_subset": {
+        "local_active_mismatch": "0",
+        "local_active_partition_mismatch": "0",
+        "debug_touched_missing_classes": "0",
+        "piece_materialize_fallback_calls": "0",
+        "support_rebuild_fallback_calls": "0",
+        "unanimous_baseline_path_calls": "0",
+        "time_opatch_same_owner_noop_guard_ns": "50199",
+        "time_opatch_slot_field_patch_ns": "164163",
+        "time_opatch_slot_field_pack_norm_ns": "167420",
+        "time_opatch_owner_index_search_ns": "105298",
+        "time_opatch_owner_index_writeback_ns": "50694",
+        "time_opatch_owner_commit_finalize_ns": "65607",
+        "time_opatch_connector_hotpath_owner_patch_ns": "4"
+      }
+    }
+  },
+  "partial_direct_after_sampled_aggregate_ns": {
+    "same-owner patch suppression and no-op skip": 50217,
+    "slot-owner field patch apply core": 331694,
+    "owner-side index writeback and commit": 221674,
+    "connector hotpath owner patch fastpath": 8
+  },
+  "partial_direct_after_sampled_aggregate_ms": {
+    "same-owner patch suppression and no-op skip": 0.050217,
+    "slot-owner field patch apply core": 0.331694,
+    "owner-side index writeback and commit": 0.221674,
+    "connector hotpath owner patch fastpath": 8e-06
+  },
+  "partial_direct_after_sampled_share_pct": {
+    "same-owner patch suppression and no-op skip": 8.3197,
+    "slot-owner field patch apply core": 54.9533,
+    "owner-side index writeback and commit": 36.7257,
+    "connector hotpath owner patch fastpath": 0.0013
+  },
+  "current_safe_conclusion": "next pivot after slot-owner-patch round: slot-owner field patch apply core",
+  "missing_runs": [
+    "progress32 authoritative close rows still missing",
+    "before_connector_only_dense_512_base",
+    "before_both_on_dense_512_base",
+    "before_connector_only_dense_512_sampled",
+    "before_both_on_dense_512_sampled",
+    "before_both_on_multi_512_sampled",
+    "after_connector_only_dense_512_base",
+    "after_both_on_dense_512_base",
+    "after_connector_only_dense_512_sampled",
+    "after_both_on_dense_512_sampled",
+    "after_both_on_multi_512_sampled",
+    "both_on_dense_1024_release",
+    "both_on_dense_1024_release_repeat",
+    "both_on_multi_1024_release",
+    "both_on_dense_4096_release",
+    "both_on_multi_4096_release"
+  ],
+  "notes": [
+    "progress33 source patch, support runner copy, smoke and partial gate rerun completed",
+    "opatch direct decomposition is wired into current hot loop around slot-owner patch apply and owner-side commit",
+    "current aggregate is based on partial direct sampled evidence: smoke_conn_dense_256_sampled and direct_both_dense_256_sampled_after",
+    "gate_both_multi_512 via current execution path did not produce a reliable terminal row in this session",
+    "progress32 authoritative close and progress33 full 512 matrix and release rows are still pending"
+  ]
+}

@@ -1,0 +1,75 @@
+FAIL_CLASS=planner_oracle_mismatch
+FAIL_STAGE=replay
+FAIL_PRIMITIVE=none
+FAIL_PLANNER_PHASE=split
+FAIL_TARGET_OCC=0
+FAIL_MISMATCH=final_state
+FAIL_STATE_HASH=b8a05a1f31516a97
+FAIL_ORACLE_HASH=12d3085aab913b85
+FAIL_TRACE_HASH=47fe0d7eaf8e51e3
+FAIL_HASH=e69306719ef5ed12
+raw_engine_tests error: split_choice_oracle_mismatch
+selected_pair=4,6
+mismatch_pair=2,6
+result=
+selected_pair=4,6
+admissible_pair_count=6
+compared_pair_count=6
+fully_equivalent_count=1
+same_stop_different_final_state_count=2
+semantic_mismatch_count=3
+selected_equivalence_class_size=1
+max_equivalence_class_size=1
+selected_pair_representative=1
+pair=2,6 selected=0 grade=same_stop_different_final_state stop=1 final=b8a05a1f31516a97 target_prepare=37543305ad5ce98e trace=47fe0d7eaf8e51e3
+pair=2,8 selected=0 grade=same_stop_different_final_state stop=1 final=211621c9c3893e89 target_prepare=37543305ad5ce98e trace=47fe0d7eaf8e51e3
+pair=4,6 selected=1 grade=fully_equivalent stop=1 final=12d3085aab913b85 target_prepare=37543305ad5ce98e trace=47fe0d7eaf8e51e3
+pair=4,8 selected=0 grade=semantic_mismatch stop=1 final=5e52396b7e83a279 target_prepare=37543305ad5ce98e trace=47fe0d7eaf8e51e3
+pair=4,3001 selected=0 grade=semantic_mismatch stop=1 final=a9fb3d033d3fb127 target_prepare=37543305ad5ce98e trace=47fe0d7eaf8e51e3
+pair=6,3001 selected=0 grade=semantic_mismatch stop=1 final=dfc0f94ab8de6971 target_prepare=37543305ad5ce98e trace=47fe0d7eaf8e51e3
+
+Usage: raw_engine_tests [options]
+  --case <name>
+  --seed <u32>
+  --iters <int>
+  --repro-file <path>
+  --state-file <path>
+  --primitive isolate|split|join|integrate
+  --target-occ <id>
+  --keep-occ <csv>
+  --artifact-dir <path>
+  --save-corpus <dir>
+  --load-corpus <dir>
+  --corpus-policy best|append|replace
+  --campaign-config <json|txt>
+  --max-real <N>
+  --max-occ <N>
+  --max-edges <N>
+  --max-components <N>
+  --max-hosted-occ <N>
+  --max-states <N>
+  --collision-spot-checks <N>
+  --max-split-pair-candidates <N>
+  --dedupe-canonical
+  --family split_ready|join_ready|integrate_ready|mixed|split_tie_ready|split_tie_structural|planner_tie_mixed|all
+  --stats
+  --stats-file <path>
+  --fuzz-mode random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed
+  --weight-profile random|weighted_split_heavy|weighted_join_heavy|weighted_integrate_heavy|artifact_heavy|multiedge_heavy
+  --precondition-bias-profile default|balanced|split_heavy|join_heavy|integrate_heavy|artifact_heavy|structural
+  --bias-split <0..8>
+  --bias-join <0..8>
+  --bias-integrate <0..8>
+  --scenario-family random|split_ready|split_with_boundary_artifact|split_with_keepOcc_sibling|split_with_join_and_integrate|planner_mixed_targeted|join_ready|integrate_ready|planner_mixed_structural|split_tie_ready|split_tie_structural|planner_tie_mixed
+  --max-artifacts <N>
+  --keep-only-failures
+  --trace-level none|summary|full
+  --compress-artifacts
+  --step-budget <size_t>
+  --repeat <int>
+  --dump-on-fail
+  --oracle [primitive|planner|all]
+  --dump-trace
+  --reduce
+  --verbose
+  --help

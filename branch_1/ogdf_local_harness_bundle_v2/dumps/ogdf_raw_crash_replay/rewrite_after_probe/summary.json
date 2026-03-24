@@ -1,0 +1,21 @@
+{
+  "mode": "ogdf-raw-crash-replay",
+  "manifestPath": "regressions/rewrite_seq_cases.json",
+  "caseName": "xshared_loopshared_proxy_loop_real_tc56_step1",
+  "outputDumpDir": "dumps/ogdf_raw_crash_replay/rewrite_after_probe",
+  "bundlePath": "dumps/ogdf_raw_crash_replay/rewrite_after_probe/ogdf_raw_REWRITE_INFER_SINGLE_ZERO_ARC_TYPE_seed1_tc56_step1_xshared_loopshared_proxy_loop_real_tc56_step1.txt",
+  "topLevelOk": false,
+  "requestedSource": "REWRITE",
+  "sourceSide": "REWRITE",
+  "callSiteTag": "INFER_SINGLE_ZERO_ARC_TYPE",
+  "phaseTag": "BEFORE_BUILDRAW",
+  "stepIndex": -1,
+  "chosenR": -1,
+  "chosenX": -1,
+  "compactGraphDumpPath": "dumps/ogdf_raw_crash_replay/rewrite_after_probe/compact_REWRITE_INFER_SINGLE_ZERO_ARC_TYPE_seed1_tc56_step1_xshared_loopshared_proxy_loop_real_tc56_step1.txt",
+  "childExitCode": 0,
+  "childSignal": -1,
+  "crashed": false,
+  "crashWhy": "single-node zero-arc type inference: mini is not single-node zero-arc (aliveNodeCount=4, aliveArcCount=3)",
+  "notes": "probe-ok:INFER_SINGLE_ZERO_ARC_TYPE"
+}

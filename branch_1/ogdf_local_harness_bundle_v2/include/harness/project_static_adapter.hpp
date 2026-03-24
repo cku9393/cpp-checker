@@ -271,6 +271,22 @@ enum class SelfLoopRemainderOtherNBSubtype : uint8_t {
 inline constexpr size_t kSelfLoopRemainderOtherNBSubtypeCount =
     static_cast<size_t>(SelfLoopRemainderOtherNBSubtype::COUNT);
 
+enum class CompactDispatchKind : uint8_t {
+    CDK_DIRECT_SPQR_READY,
+    CDK_TINY_ONE_EDGE,
+    CDK_TINY_TWO_PATH,
+    CDK_NB_SINGLE_CUT_TWO_BLOCKS,
+    CDK_NB_PATH_OF_BLOCKS,
+    CDK_SELFLOOP_SPQR_READY,
+    CDK_SELFLOOP_ONE_EDGE,
+    CDK_WHOLE_CORE_FALLBACK,
+    CDK_UNHANDLED,
+    COUNT
+};
+
+inline constexpr size_t kCompactDispatchKindCount =
+    static_cast<size_t>(CompactDispatchKind::COUNT);
+
 enum class XIncidentVirtualSubtype : uint8_t {
     XIV_ZERO_PAYLOAD,
     XIV_ONE_POS_PROXY,
@@ -400,6 +416,32 @@ struct RewriteRStats {
     uint64_t compactRejectedFallbackCount = 0;
     uint64_t backendBuildRawDirectCount = 0;
     uint64_t backendBuildRawFallbackCount = 0;
+    uint64_t compareDirectRawCallCount = 0;
+    uint64_t compareDirectRawBlockedCount = 0;
+    uint64_t compareSharedDispatchFallbackCount = 0;
+    uint64_t rawSingleRSplitCanonAttemptCount = 0;
+    uint64_t rawSingleRSplitCanonAppliedCount = 0;
+    uint64_t rawSingleRSplitCanonRejectedCount = 0;
+    uint64_t rawSingleRSplitCanonRollbackCount = 0;
+    bool firstRawSingleRSplitCanonDumped = false;
+    std::string firstRawSingleRSplitCanonDumpPath;
+    uint64_t solverShadowResyncAttemptCount = 0;
+    uint64_t solverShadowResyncAppliedCount = 0;
+    uint64_t solverShadowResyncNoopCount = 0;
+    uint64_t solverShadowResyncNoTargetToHasTargetCount = 0;
+    uint64_t solverShadowResyncAliveRSetDifferCount = 0;
+    uint64_t solverResyncBeforeTerminateAttemptCount = 0;
+    uint64_t solverResyncBeforeTerminateAppliedCount = 0;
+    uint64_t solverResyncBeforeTerminateNoopCount = 0;
+    uint64_t solverResyncBeforeTerminateNoTargetToHasTargetCount = 0;
+    uint64_t solverResyncBeforeTerminateAliveRSetDifferCount = 0;
+    uint64_t solverHandoffResyncAttemptCount = 0;
+    uint64_t solverHandoffResyncAppliedCount = 0;
+    uint64_t solverHandoffResyncNoopCount = 0;
+    uint64_t solverHandoffResyncBuildFailCount = 0;
+    uint64_t solverHandoffResyncAliveRSetDifferCount = 0;
+    uint64_t solverHandoffResyncHasTargetDifferCount = 0;
+    uint64_t solverHandoffResyncCandidateSetDifferCount = 0;
     uint64_t compactSingleCutTwoBlocksHandled = 0;
     uint64_t compactPathOfBlocksHandled = 0;
     uint64_t compactTooSmallHandledCount = 0;
@@ -587,6 +629,7 @@ struct RewriteRStats {
         seqProxyRepairNoCandidateAtStepCounts{};
     std::array<std::string, kProxyArcNoCandidateSubtypeCount>
         firstProxyRepairNoCandidateDumpPaths{};
+    std::array<uint64_t, kCompactDispatchKindCount> compareSharedDispatchCounts{};
     std::array<uint64_t, kRewritePathTakenCount> rewritePathTakenCounts{};
     std::array<uint64_t, kRewriteSeqLengthHistogramSize> sequenceLengthHistogram{};
 };
@@ -597,6 +640,23 @@ struct RewriteSeqStats {
     bool hadSequenceFallback = false;
     bool maxStepReached = false;
     int completedSteps = 0;
+    uint64_t solverShadowResyncAttemptCount = 0;
+    uint64_t solverShadowResyncAppliedCount = 0;
+    uint64_t solverShadowResyncNoopCount = 0;
+    uint64_t solverShadowResyncNoTargetToHasTargetCount = 0;
+    uint64_t solverShadowResyncAliveRSetDifferCount = 0;
+    uint64_t solverResyncBeforeTerminateAttemptCount = 0;
+    uint64_t solverResyncBeforeTerminateAppliedCount = 0;
+    uint64_t solverResyncBeforeTerminateNoopCount = 0;
+    uint64_t solverResyncBeforeTerminateNoTargetToHasTargetCount = 0;
+    uint64_t solverResyncBeforeTerminateAliveRSetDifferCount = 0;
+    uint64_t solverHandoffResyncAttemptCount = 0;
+    uint64_t solverHandoffResyncAppliedCount = 0;
+    uint64_t solverHandoffResyncNoopCount = 0;
+    uint64_t solverHandoffResyncBuildFailCount = 0;
+    uint64_t solverHandoffResyncAliveRSetDifferCount = 0;
+    uint64_t solverHandoffResyncHasTargetDifferCount = 0;
+    uint64_t solverHandoffResyncCandidateSetDifferCount = 0;
     std::optional<int> failureStepIndex;
     std::optional<int> sequenceLengthSoFar;
     HarnessStage failureStage = HarnessStage::SEQ_MAX_STEPS_REACHED;
@@ -622,6 +682,7 @@ const char *rewriteFallbackTriggerName(RewriteFallbackTrigger trigger);
 const char *compactBuildFailSubtypeName(CompactBuildFailSubtype subtype);
 const char *selfLoopBuildFailSubtypeName(SelfLoopBuildFailSubtype subtype);
 const char *selfLoopRemainderOtherNBSubtypeName(SelfLoopRemainderOtherNBSubtype subtype);
+const char *compactDispatchKindName(CompactDispatchKind kind);
 const char *xIncidentVirtualSubtypeName(XIncidentVirtualSubtype subtype);
 const char *xSharedResidualSubtypeName(XSharedResidualSubtype subtype);
 const char *xSharedLoopSharedInputSubtypeName(XSharedLoopSharedInputSubtype subtype);
@@ -930,6 +991,15 @@ bool buildExplicitAfterDeletingVertex(const ReducedSPQRCore &core,
                                       ExplicitBlockGraph &out,
                                       std::string &why);
 
+enum class ExplicitOracleInputSubtype : uint8_t {
+    EOI_EMPTY,
+    EOI_NONEMPTY
+};
+
+ExplicitOracleInputSubtype classifyExplicitOracleInput(const ExplicitBlockGraph &G);
+
+bool buildCanonicalEmptyOracleCore(ReducedSPQRCore &out, std::string &why);
+
 bool buildWholeCoreForTesting(const ExplicitBlockGraph &G,
                               ReducedSPQRCore &core,
                               std::string &why);
@@ -943,6 +1013,468 @@ SequenceChooseStatus chooseDeterministicSequenceRewriteTarget(
 bool runRewriteSequenceToFixpoint(ReducedSPQRCore &core,
                                   RewriteSeqStats &stats,
                                   std::string &why);
+
+bool runSolverBaselineReplay(const ExplicitBlockGraph &input,
+                             SolverBaselineReplayBundle &bundle,
+                             std::string &why);
+
+bool replayOracleFixpointOneStep(const ExplicitBlockGraph &input,
+                                 int stepIndex,
+                                 SemanticStepTrace &out,
+                                 std::string &why);
+
+bool replayOracleFixpointOneStep(const ExplicitBlockGraph &input,
+                                 OracleHandoffPolicy policy,
+                                 int stepIndex,
+                                 SemanticStepTrace &out,
+                                 std::string &why);
+
+bool replayRewriteSeqOneStep(const ExplicitBlockGraph &input,
+                             int stepIndex,
+                             SemanticStepTrace &out,
+                             std::string &why);
+
+CanonicalExplicitGraph canonicalizeExplicitForCompare(const ExplicitBlockGraph &G);
+
+bool areCanonicalExplicitEqual(const ExplicitBlockGraph &A,
+                               const ExplicitBlockGraph &B,
+                               std::string &why);
+
+SemanticDivergenceKind classifySemanticDivergence(
+    const SemanticStepTrace &oracleStep,
+    const SemanticStepTrace &rewriteStep,
+    std::string &why);
+
+CanonicalDivergenceKind classifyCanonicalSemanticDivergence(
+    const SemanticStepTrace &oracleStep,
+    const SemanticStepTrace &rewriteStep,
+    std::string &why);
+
+bool runSolverSemanticReplay(const ExplicitBlockGraph &input,
+                             SemanticReplayStopPolicy stopPolicy,
+                             SolverSemanticReplayBundle &bundle,
+                             std::string &why);
+
+bool collectSemanticTargetSnapshot(const ReducedSPQRCore &core,
+                                   int stepIndex,
+                                   const std::string &side,
+                                   SemanticTargetSnapshot &out,
+                                   std::string &why);
+
+SemanticTargetSeamKind classifySemanticTargetSeam(
+    const SemanticTargetSnapshot &oracleSnap,
+    const SemanticTargetSnapshot &rewriteSnap,
+    const SemanticTargetSnapshot &shadowSnap,
+    std::string &why);
+
+bool runSolverSemanticTargetReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                                const std::string &manifestPath,
+                                                const std::string &caseName,
+                                                uint64_t seed,
+                                                int tc,
+                                                std::optional<int> targetStep,
+                                                SolverSemanticTargetReplayBundle &bundle,
+                                                std::string &why);
+
+bool extractSharedCanonicalExplicitAtStep(const ExplicitBlockGraph &input,
+                                          int sourceStep,
+                                          ExplicitBlockGraph &out,
+                                          std::string &why);
+
+bool replayOracleSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                              int sourceStep,
+                                              TransitionReplaySnapshot &out,
+                                              std::string &why);
+
+bool replayRewriteSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                               int sourceStep,
+                                               TransitionReplaySnapshot &out,
+                                               std::string &why);
+
+bool buildShadowDeleteExplicitFromSharedInput(const ExplicitBlockGraph &inputExplicit,
+                                              int chosenR,
+                                              int chosenX,
+                                              CanonicalExplicitGraph &out,
+                                              std::string &why);
+
+TransitionSeamKind classifyTransitionSeam(const TransitionReplaySnapshot &oracleSnap,
+                                          const TransitionReplaySnapshot &rewriteSnap,
+                                          const CanonicalExplicitGraph &shadowDelete,
+                                          std::string &why);
+
+bool runSolverSemanticTransitionReplayCaseDumpAware(
+    const ExplicitBlockGraph &input,
+    const std::string &manifestPath,
+    const std::string &caseName,
+    uint64_t seed,
+    int tc,
+    std::optional<int> targetStep,
+    int sourceStep,
+    SolverSemanticTransitionReplayBundle &bundle,
+    std::string &why);
+
+bool replayOracleStepWithHandoff(const ExplicitBlockGraph &inputExplicit,
+                                 StepHandoffSnapshot &out,
+                                 std::string &why);
+
+bool replayOracleStepWithHandoff(const ExplicitBlockGraph &inputExplicit,
+                                 OracleHandoffPolicy policy,
+                                 StepHandoffSnapshot &out,
+                                 std::string &why);
+
+bool replayRewriteStepWithHandoff(const ExplicitBlockGraph &inputExplicit,
+                                  StepHandoffSnapshot &out,
+                                  std::string &why);
+
+HandoffSeamKind classifyHandoffSeam(const StepHandoffSnapshot &oracleSnap,
+                                    const StepHandoffSnapshot &rewriteSnap,
+                                    std::string &why);
+
+bool runSolverHandoffReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                         const std::string &manifestPath,
+                                         const std::string &caseName,
+                                         uint64_t seed,
+                                         int tc,
+                                         std::optional<int> targetStep,
+                                         SolverHandoffReplayBundle &bundle,
+                                         std::string &why);
+
+bool runSolverHandoffPolicyReplayCaseDumpAware(
+    const ExplicitBlockGraph &input,
+    const std::string &manifestPath,
+    const std::string &caseName,
+    uint64_t seed,
+    int tc,
+    std::optional<int> targetStep,
+    OracleHandoffPolicy oracleHandoffPolicy,
+    SolverHandoffPolicyReplayBundle &bundle,
+    std::string &why);
+
+bool replaySolverSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                              StepTransitionSnapshot &out,
+                                              std::string &why);
+
+bool replayRewriteSingleTransitionFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                               StepTransitionSnapshot &out,
+                                               std::string &why);
+
+bool buildLiveCoreAndTargetSnapshotFromExplicit(const ExplicitBlockGraph &inputExplicit,
+                                                const std::string &side,
+                                                StepTransitionSnapshot &out,
+                                                std::string &why);
+
+bool extractSharedHandoffExplicitFromTransition(const ExplicitBlockGraph &input,
+                                                const std::string &caseName,
+                                                int sourceStep,
+                                                ExplicitBlockGraph &out,
+                                                StepTransitionSnapshot &solverStep,
+                                                StepTransitionSnapshot &rewriteStep,
+                                                std::string &why);
+
+bool extractSharedHandoffExplicitForTc54(const ExplicitBlockGraph &input,
+                                         const std::string &caseName,
+                                         ExplicitBlockGraph &out,
+                                         CoreShapeSnapshot &sourceLiveCore,
+                                         std::string &why);
+
+StepTransitionSeamKind classifyStepTransitionSeam(
+    const StepTransitionSnapshot &solverStep1,
+    const StepTransitionSnapshot &rewriteStep1,
+    const StepTransitionSnapshot *shadowStep2,
+    std::string &why);
+
+bool runSolverStepTransitionReplayCaseDumpAware(
+    const ExplicitBlockGraph &input,
+    const std::string &manifestPath,
+    const std::string &caseName,
+    uint64_t seed,
+    int tc,
+    std::optional<int> targetStep,
+    SolverStepTransitionReplayBundle &bundle,
+    std::string &why);
+
+bool runOracleSemanticReplayToEnd(const ExplicitBlockGraph &input,
+                                  SemanticReplayResult &out,
+                                  std::string &why);
+
+bool runRewriteSemanticReplayToEnd(const ExplicitBlockGraph &input,
+                                   SemanticReplayResult &out,
+                                   std::string &why);
+
+CanonicalExplicitGraph canonicalizeSolverOutput(const SolverOutput &out);
+
+CompareAssemblySeamKind classifyCompareAssemblySeam(
+    const SolverOutput &oracleSolverOut,
+    const SolverOutput &rewriteSolverOut,
+    const SemanticReplayResult &oracleReplay,
+    const SemanticReplayResult &rewriteReplay,
+    std::string &why);
+
+bool runSolverCompareReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                         const std::string &manifestPath,
+                                         const std::string &caseName,
+                                         uint64_t seed,
+                                         int tc,
+                                         std::optional<int> targetStep,
+                                         SolverCompareReplayBundle &bundle,
+                                         std::string &why);
+
+bool buildRewriteSeqTerminalOutputFromCore(const ReducedSPQRCore &core,
+                                           SolverOutput &out,
+                                           std::string &why);
+
+bool validateRewriteSeqTerminalOutputAgainstCore(const ReducedSPQRCore &core,
+                                                 const SolverOutput &out,
+                                                 std::string &why);
+
+bool runRewriteSeqEngineToFinalCoreDebug(const ExplicitBlockGraph &input,
+                                         ReducedSPQRCore &finalCore,
+                                         std::vector<FinalCoreStepTrace> &trace,
+                                         std::vector<RewriteTargetSnapshot> &postStepTargetSnapshots,
+                                         RewriteSeqStats &stats,
+                                         std::string &why);
+
+bool runRewriteSeqReplayToFinalCoreDebug(const ExplicitBlockGraph &input,
+                                         ReducedSPQRCore &finalCore,
+                                         std::vector<FinalCoreStepTrace> &trace,
+                                         std::vector<RewriteTargetSnapshot> &postStepTargetSnapshots,
+                                         std::string &why);
+
+bool buildFinalCoreSignature(const ReducedSPQRCore &core,
+                             FinalCoreSignature &sig,
+                             std::string &why);
+
+bool collectRewriteTargetSnapshot(const ReducedSPQRCore &core,
+                                  int stepIndex,
+                                  RewriteTargetSnapshot &out,
+                                  std::string &why);
+
+bool buildShadowCoreFromCurrentExplicit(const ReducedSPQRCore &liveCore,
+                                        ReducedSPQRCore &shadow,
+                                        std::string &why);
+
+bool attemptSolverShadowResyncAfterHandoff(ReducedSPQRCore &liveCore,
+                                           const ExplicitBlockGraph &nextInputExplicit,
+                                           int stepIndex,
+                                           RewriteSeqStats &stats,
+                                           std::string &why);
+
+bool attemptSolverShadowResyncBeforeTerminate(ReducedSPQRCore &liveCore,
+                                              int stepIndex,
+                                              RewriteSeqStats &stats,
+                                              std::string &why);
+
+bool maybeResyncSolverCoreFromShadow(ReducedSPQRCore &liveCore,
+                                     RewriteSeqStats &stats,
+                                     int stepIndex,
+                                     std::string &why);
+
+bool buildShadowCoreFromExplicit(const ExplicitBlockGraph &input,
+                                 ReducedSPQRCore &core,
+                                 std::string &why);
+
+bool buildRawStageSnapshot(const CompactGraph &H,
+                           BuilderStageSnapshot &out,
+                           std::string &why);
+
+bool buildMiniStageSnapshots(const CompactGraph &H,
+                             BuilderStageSnapshot &beforeNormalize,
+                             BuilderStageSnapshot &afterNormalize,
+                             StaticMiniCore *normalizedMiniOut,
+                             std::string &why);
+
+bool buildCoreStageSnapshotsFromMini(const CompactGraph &H,
+                                     const StaticMiniCore &mini,
+                                     BuilderStageSnapshot &afterMaterialize,
+                                     BuilderStageSnapshot &afterNormalize,
+                                     std::string &why);
+
+bool buildCoreShapeSnapshot(const ReducedSPQRCore &core,
+                            int stepIndex,
+                            const std::string &side,
+                            CoreShapeSnapshot &out,
+                            std::string &why);
+
+bool dumpCompactGraphForCrashReplay(const CompactGraph &H,
+                                    const std::string &path,
+                                    std::string &why);
+
+bool buildCompactGraphFromExplicitForReplay(const ExplicitBlockGraph &inputExplicit,
+                                            CompactGraph &H,
+                                            std::string &why);
+
+bool canonicalizeRawSingleRSplitIfSafe(const CompactGraph &H,
+                                       RawSpqrDecomp &raw,
+                                       std::string &why);
+
+bool buildCompactPrecheckSummary(const CompactGraph &H,
+                                 CompactPrecheckSummary &out,
+                                 std::string &why);
+
+bool runOgdfBuildRawInChild(const CompactGraph &H,
+                            ChildRunResult &out,
+                            std::string &why);
+
+bool classifyCompactDispatchKind(const CompactGraph &H,
+                                 CompactDispatchKind &kind,
+                                 std::string &why);
+
+bool runOgdfRawCrashReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                        const std::string &manifestPath,
+                                        const std::string &caseName,
+                                        uint64_t seed,
+                                        int tc,
+                                        std::optional<int> targetStep,
+                                        const std::string &source,
+                                        bool stopBeforeOgdf,
+                                        bool runChild,
+                                        const std::string &dumpDir,
+                                        OgdfRawCrashReplayBundle &bundle,
+                                        std::string &why);
+
+BuilderPipelineSeamKind classifyBuilderPipelineSeam(
+    const CoreShapeSnapshot &sourceLiveCore,
+    const BuilderStageSnapshot &rawSnap,
+    const BuilderStageSnapshot &miniBefore,
+    const BuilderStageSnapshot &miniAfter,
+    const BuilderStageSnapshot &coreAfterMat,
+    const BuilderStageSnapshot &coreAfterNorm,
+    std::string &why);
+
+BuilderPipelineSeamKind classifySharedInputBuilderSeam(
+    const CoreShapeSnapshot &solverLive,
+    const CoreShapeSnapshot &replayLive,
+    const BuilderStageSnapshot &rawSnap,
+    const BuilderStageSnapshot &miniBefore,
+    const BuilderStageSnapshot &miniAfter,
+    const BuilderStageSnapshot &coreAfterMat,
+    const BuilderStageSnapshot &coreAfterNorm,
+    std::string &why);
+
+bool buildRawReplaySnapshot(const ExplicitBlockGraph &inputExplicit,
+                            RawReplaySnapshot &out,
+                            std::string &why);
+
+RawReplaySeamKind classifyRawReplaySeam(const CoreShapeSnapshot &sourceLiveCore,
+                                        const RawReplaySnapshot &rawSnap,
+                                        std::string &why);
+
+bool inferSingleNodeZeroArcCoreTypeFromMini(const CompactGraph &H,
+                                            SPQRType &outType,
+                                            std::string &why);
+
+bool preserveSingleNodeZeroArcCoreTypeFromMini(const CompactGraph &H,
+                                               ReducedSPQRCore &core,
+                                               std::string &why);
+
+bool buildMaterializeCoreSubphaseSnapshots(
+    const CompactGraph &H,
+    const StaticMiniCore &miniAfter,
+    MaterializeCoreSubphaseSnapshot &allocateSnapshot,
+    MaterializeCoreSubphaseSnapshot &installSlotsSnapshot,
+    MaterializeCoreSubphaseSnapshot &connectArcsSnapshot,
+    MaterializeCoreSubphaseSnapshot &postMetadataSnapshot,
+    MaterializeCoreSubphaseSnapshot &finalNormalizeSnapshot,
+    std::string &why);
+
+CoreMaterializeSubphaseSeamKind classifyMaterializeSubphaseSeam(
+    const BuilderStageSnapshot &miniAfter,
+    const MaterializeCoreSubphaseSnapshot &alloc,
+    const MaterializeCoreSubphaseSnapshot &slots,
+    const MaterializeCoreSubphaseSnapshot &arcs,
+    const MaterializeCoreSubphaseSnapshot &postMeta,
+    const MaterializeCoreSubphaseSnapshot &finalNorm,
+    std::string &why);
+
+CoreShapeSeamKind classifyCoreShapeSeam(const CoreShapeSnapshot &solverSnap,
+                                        const CoreShapeSnapshot &replaySnap,
+                                        const CoreShapeSnapshot &shadowSnap,
+                                        std::string &why);
+
+TargetSearchSeamKind classifyTargetSearchSeam(
+    const RewriteTargetSnapshot &solverSnap,
+    const RewriteTargetSnapshot &replaySnap,
+    std::string &why);
+
+FinalCoreSeamKind classifyFinalCoreSeam(
+    const std::vector<FinalCoreStepTrace> &solverTrace,
+    const std::vector<FinalCoreStepTrace> &replayTrace,
+    const FinalCoreSignature &solverSig,
+    const FinalCoreSignature &replaySig,
+    int &firstDivergenceStep,
+    std::string &why);
+
+bool runSolverFinalCoreReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                           const std::string &manifestPath,
+                                           const std::string &caseName,
+                                           uint64_t seed,
+                                           int tc,
+                                           std::optional<int> targetStep,
+                                           SolverFinalCoreReplayBundle &bundle,
+                                           std::string &why);
+
+bool runSolverShapeReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                       const std::string &manifestPath,
+                                       const std::string &caseName,
+                                       uint64_t seed,
+                                       int tc,
+                                       std::optional<int> targetStep,
+                                       SolverShapeReplayBundle &bundle,
+                                       std::string &why);
+
+bool runExplicitCoreBuilderReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                               const std::string &manifestPath,
+                                               const std::string &caseName,
+                                               uint64_t seed,
+                                               int tc,
+                                               std::optional<int> targetStep,
+                                               int sourceStep,
+                                               const std::string &sourceKind,
+                                               const std::string &sourceSide,
+                                               ExplicitCoreBuilderReplayBundle &bundle,
+                                               std::string &why);
+
+bool runMaterializeCoreReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                           const std::string &manifestPath,
+                                           const std::string &caseName,
+                                           uint64_t seed,
+                                           int tc,
+                                           std::optional<int> targetStep,
+                                           int sourceStep,
+                                           const std::string &sourceSide,
+                                           MaterializeCoreReplayBundle &bundle,
+                                           std::string &why);
+
+bool runHandoffRawReplayCaseDumpAware(const ExplicitBlockGraph &input,
+                                      const std::string &manifestPath,
+                                      const std::string &caseName,
+                                      uint64_t seed,
+                                      int tc,
+                                      std::optional<int> targetStep,
+                                      int sourceStep,
+                                      HandoffRawReplayBundle &bundle,
+                                      std::string &why);
+
+bool solveWithBaselineRewriteSolver(const ExplicitBlockGraph &input,
+                                    SolverOutput &out,
+                                    std::string &why);
+
+bool solveWithOracleFixpointBaseline(const ExplicitBlockGraph &input,
+                                     SolverOutput &out,
+                                     std::string &why);
+
+bool solveWithOracleFixpointBaseline(const ExplicitBlockGraph &input,
+                                     OracleHandoffPolicy policy,
+                                     SolverOutput &out,
+                                     std::string &why);
+
+bool solveWithRewriteSeqEngine(const ExplicitBlockGraph &input,
+                               SolverOutput &out,
+                               std::string &why);
+
+bool solveWithConfiguredRewriteSolver(const ExplicitBlockGraph &input,
+                                      SolverOutput &out,
+                                      std::string &why);
 
 bool rebuildWholeCoreFromExplicit(const ExplicitBlockGraph &G,
                                   ReducedSPQRCore &out,

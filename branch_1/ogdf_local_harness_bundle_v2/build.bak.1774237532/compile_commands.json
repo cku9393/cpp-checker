@@ -1,0 +1,50 @@
+[
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness_core.dir/src/ogdf_wrapper.cpp.o -c /tmp/cppchecker_short/harness/src/ogdf_wrapper.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/ogdf_wrapper.cpp",
+  "output": "CMakeFiles/rewrite_r_harness_core.dir/src/ogdf_wrapper.cpp.o"
+},
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness_core.dir/src/dump.cpp.o -c /tmp/cppchecker_short/harness/src/dump.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/dump.cpp",
+  "output": "CMakeFiles/rewrite_r_harness_core.dir/src/dump.cpp.o"
+},
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness_core.dir/src/runners.cpp.o -c /tmp/cppchecker_short/harness/src/runners.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/runners.cpp",
+  "output": "CMakeFiles/rewrite_r_harness_core.dir/src/runners.cpp.o"
+},
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness_core.dir/src/project_hooks_stub.cpp.o -c /tmp/cppchecker_short/harness/src/project_hooks_stub.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/project_hooks_stub.cpp",
+  "output": "CMakeFiles/rewrite_r_harness_core.dir/src/project_hooks_stub.cpp.o"
+},
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness_core.dir/src/project_hooks_real.cpp.o -c /tmp/cppchecker_short/harness/src/project_hooks_real.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/project_hooks_real.cpp",
+  "output": "CMakeFiles/rewrite_r_harness_core.dir/src/project_hooks_real.cpp.o"
+},
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness_core.dir/src/project_static_adapter.cpp.o -c /tmp/cppchecker_short/harness/src/project_static_adapter.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/project_static_adapter.cpp",
+  "output": "CMakeFiles/rewrite_r_harness_core.dir/src/project_static_adapter.cpp.o"
+},
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness_core.dir/src/project_hook_shims.cpp.o -c /tmp/cppchecker_short/harness/src/project_hook_shims.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/project_hook_shims.cpp",
+  "output": "CMakeFiles/rewrite_r_harness_core.dir/src/project_hook_shims.cpp.o"
+},
+{
+  "directory": "/tmp/cppchecker_short/harness/build",
+  "command": "/usr/bin/c++ -DHARNESS_PROJECT_USE_FREE_FUNCTIONS -DUSE_OGDF -DUSE_REWRITE_SEQ_ENGINE -I/tmp/cppchecker_short/harness/include -I/tmp/cppchecker_short/harness/build/generated -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include -I/tmp/cppchecker_short/harness/.deps/ogdf-install/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../ogdf-build/include/ogdf-release -I/tmp/cppchecker_short/harness/.deps/ogdf-install/../OGDF/include -std=c++17 -arch arm64 -o CMakeFiles/rewrite_r_harness.dir/src/rewrite_r_harness_main.cpp.o -c /tmp/cppchecker_short/harness/src/rewrite_r_harness_main.cpp",
+  "file": "/tmp/cppchecker_short/harness/src/rewrite_r_harness_main.cpp",
+  "output": "CMakeFiles/rewrite_r_harness.dir/src/rewrite_r_harness_main.cpp.o"
+}
+]

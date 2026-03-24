@@ -1,0 +1,15 @@
+raw_engine_policy_refresh_stale_hash_smoke 7 0.00766379
+raw_engine_policy_refresh_compare_engine_hash_smoke 7 0.00668788
+raw_engine_policy_refresh_generator_hash_smoke 7 0.00824011
+raw_engine_policy_reclassify_non_applicable_smoke 7 0.00919013
+raw_engine_policy_reject_diagnostic_promotion_smoke 7 0.00803176
+raw_engine_evidence_bundle_idempotent_smoke 7 0.0758206
+raw_engine_evidence_bundle_policy_summary_smoke 7 0.0281136
+raw_engine_policy_rerun_plan_mode_selection_smoke 4 0.013168
+raw_engine_policy_selective_rerun_execute_smoke 7 0.000945631
+raw_engine_policy_selective_rerun_noop_smoke 7 0.000830952
+raw_engine_policy_baseline_history_smoke 6 0.00688969
+raw_engine_policy_baseline_archive_roundtrip_smoke 5 0.00836052
+raw_engine_policy_ci_check_smoke 7 0.00860661
+raw_engine_policy_nightly_refresh_smoke 7 0.0129661
+---

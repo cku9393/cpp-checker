@@ -1,0 +1,3 @@
+policy_runtime_budget_summary budget_verdict=BUDGET_WARN warn_count=1 fail_count=0 entry_count=2
+entry=policy_quick status=OK current_seconds=8.000 baseline_seconds=7.500 delta_percent=6.667 rationale=runtime remained within budget
+entry=policy_nightly status=WARN current_seconds=140.000 baseline_seconds=100.000 delta_percent=40.000 rationale=runtime exceeded soft budget

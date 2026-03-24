@@ -1,0 +1,7 @@
+manifest_version=policy_runtime_manifest_v1
+phase=phase22
+mode=quick
+artifact_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase22/tests/artifacts/pipeline_exit_code_warn_smoke
+overall_budget_verdict=NO_BASELINE
+total_wall_seconds=0.043
+runtime_stage=stage=policy_ci_check wall_seconds=0.043 baseline_wall_seconds=None delta_percent=None budget_verdict=NO_BASELINE

@@ -1,0 +1,4 @@
+PHASE25 policy pipeline operator report
+timestamp_utc=2026-03-22T13:37:04Z
+mode=nightly
+recommended_next_action=runtime baseline is informational only on this host/toolchain; strict comparison is disabled

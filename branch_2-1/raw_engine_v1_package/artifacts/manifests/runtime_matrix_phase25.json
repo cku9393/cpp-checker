@@ -1,0 +1,43 @@
+{
+  "entries": [
+    {
+      "name": "exact_current",
+      "runtime_current_manifest": "artifacts/manifests/policy_runtime_current_phase25.json",
+      "runtime_refresh_manifest": "artifacts/manifests/policy_runtime_refresh_phase25.json",
+      "runtime_rerun_plan": "artifacts/manifests/policy_runtime_rerun_phase25.json",
+      "runtime_proposal": "artifacts/manifests/runtime_rebaseline_proposal_phase25.json",
+      "expected_comparability": "NOT_COMPARABLE",
+      "expected_action": "NOT_COMPARABLE"
+    },
+    {
+      "name": "same_host_compiler_bump",
+      "fixture_name": "same_host_compiler_bump",
+      "expected_comparability": "NOT_COMPARABLE",
+      "expected_action": "NOT_COMPARABLE"
+    },
+    {
+      "name": "sanitizer_change",
+      "fixture_name": "sanitizer_change",
+      "expected_comparability": "NOT_COMPARABLE",
+      "expected_action": "NOT_COMPARABLE"
+    },
+    {
+      "name": "runner_tag_change",
+      "fixture_name": "runner_tag_change",
+      "expected_comparability": "NOT_COMPARABLE",
+      "expected_action": "NOT_COMPARABLE"
+    },
+    {
+      "name": "cross_host",
+      "fixture_name": "cross_host",
+      "expected_comparability": "REBASELINE_REQUIRED",
+      "expected_action": "REBASELINE_REQUIRED"
+    },
+    {
+      "name": "retired_only",
+      "fixture_name": "retired_only",
+      "expected_comparability": "REBASELINE_REQUIRED",
+      "expected_action": "REBASELINE_REQUIRED"
+    }
+  ]
+}

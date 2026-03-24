@@ -1,0 +1,338 @@
+{
+  "provenance": {
+    "source_file": "/mnt/data/boj28350_literature_progress16_contiguous_run_block_copy_compaction.cpp",
+    "results_dir": "/mnt/data/progress16_runs",
+    "report_generated_from_actual_result_jsons": true,
+    "note": "progress16 uses clean progress16 before/after baselines and actual release/representative result.json files."
+  },
+  "run_labels": {
+    "gate_connector_only_dense_256_after": "connector_only, comb_rect_dense 256 LOCAL, PROFILE_NONE, all opts on",
+    "gate_both_on_dense_256_after": "both_on, comb_rect_dense 256 LOCAL, PROFILE_NONE, all opts on",
+    "gate_both_on_multi_512_after": "both_on, multi_comb_rect 512 LOCAL, PROFILE_SAMPLED, all opts on",
+    "before_connector_only_dense_512_base": "connector_only, comb_rect_dense 512 LOCAL, PROFILE_BASE, BLOCK_COPY_OPT=0",
+    "before_both_on_dense_512_base": "both_on, comb_rect_dense 512 LOCAL, PROFILE_BASE, BLOCK_COPY_OPT=0",
+    "before_connector_only_dense_512_sampled": "connector_only, comb_rect_dense 512 LOCAL, PROFILE_SAMPLED, BLOCK_COPY_OPT=0",
+    "before_both_on_dense_512_sampled": "both_on, comb_rect_dense 512 LOCAL, PROFILE_SAMPLED, BLOCK_COPY_OPT=0",
+    "before_both_on_multi_512_sampled": "both_on, multi_comb_rect 512 LOCAL, PROFILE_SAMPLED, BLOCK_COPY_OPT=0",
+    "after_connector_only_dense_512_base": "connector_only, comb_rect_dense 512 LOCAL, PROFILE_BASE, BLOCK_COPY_OPT=1",
+    "after_both_on_dense_512_base": "both_on, comb_rect_dense 512 LOCAL, PROFILE_BASE, BLOCK_COPY_OPT=1",
+    "after_connector_only_dense_512_sampled": "connector_only, comb_rect_dense 512 LOCAL, PROFILE_SAMPLED, BLOCK_COPY_OPT=1",
+    "after_both_on_dense_512_sampled": "both_on, comb_rect_dense 512 LOCAL, PROFILE_SAMPLED, BLOCK_COPY_OPT=1",
+    "after_both_on_multi_512_sampled": "both_on, multi_comb_rect 512 LOCAL, PROFILE_SAMPLED, BLOCK_COPY_OPT=1",
+    "after_both_on_dense_1024_release": "both_on, comb_rect_dense 1024 RELEASE, BLOCK_COPY_OPT=1",
+    "after_both_on_dense_1024_release_repeat": "both_on, comb_rect_dense 1024 RELEASE repeat, BLOCK_COPY_OPT=1",
+    "after_both_on_multi_1024_release": "both_on, multi_comb_rect 1024 RELEASE, BLOCK_COPY_OPT=1",
+    "after_both_on_dense_4096_release": "both_on, comb_rect_dense 4096 RELEASE, BLOCK_COPY_OPT=1",
+    "after_both_on_multi_4096_release": "both_on, multi_comb_rect 4096 RELEASE, BLOCK_COPY_OPT=1"
+  },
+  "correctness_gate": [
+    {
+      "run_tag": "gate_connector_only_dense_256_after",
+      "label": "connector_only, comb_rect_dense 256 LOCAL, PROFILE_NONE, all opts on",
+      "elapsed_solver_s": 6.853648837999799,
+      "validator_ok": true,
+      "local_active_mismatch": 0,
+      "local_active_partition_mismatch": 0,
+      "debug_touched_missing_classes": 0,
+      "piece_materialize_fallback_calls": 0,
+      "support_rebuild_fallback_calls": 0,
+      "unanimous_baseline_path_calls": 0
+    },
+    {
+      "run_tag": "gate_both_on_dense_256_after",
+      "label": "both_on, comb_rect_dense 256 LOCAL, PROFILE_NONE, all opts on",
+      "elapsed_solver_s": 6.833065171000044,
+      "validator_ok": true,
+      "local_active_mismatch": 0,
+      "local_active_partition_mismatch": 0,
+      "debug_touched_missing_classes": 0,
+      "piece_materialize_fallback_calls": 0,
+      "support_rebuild_fallback_calls": 0,
+      "unanimous_baseline_path_calls": 0
+    },
+    {
+      "run_tag": "gate_both_on_multi_512_after",
+      "label": "both_on, multi_comb_rect 512 LOCAL, PROFILE_SAMPLED, all opts on",
+      "elapsed_solver_s": 9.129339657000173,
+      "validator_ok": true,
+      "local_active_mismatch": 0,
+      "local_active_partition_mismatch": 0,
+      "debug_touched_missing_classes": 0,
+      "piece_materialize_fallback_calls": 0,
+      "support_rebuild_fallback_calls": 0,
+      "unanimous_baseline_path_calls": 0
+    }
+  ],
+  "main_before_after": {
+    "connector_only, comb_rect_dense 512 LOCAL": {
+      "before_elapsed_s": 40.13720846900014,
+      "after_elapsed_s": 40.052077048,
+      "before": {
+        "run discovery coalescing": 0.67976,
+        "single middle-run direct shift": 0.066506,
+        "multi-run block copy core": 0.599651,
+        "elementwise fallback and overlap-safe staging": 0.223572,
+        "total": 1.5694890000000001
+      },
+      "after": {
+        "run discovery coalescing": 0.866135,
+        "single middle-run direct shift": 0.07163,
+        "multi-run block copy core": 0.700115,
+        "elementwise fallback and overlap-safe staging": 0.103809,
+        "total": 1.741689
+      }
+    },
+    "both_on, comb_rect_dense 512 LOCAL": {
+      "before_elapsed_s": 41.30368793299999,
+      "after_elapsed_s": 46.63956245400004,
+      "before": {
+        "run discovery coalescing": 0.688222,
+        "single middle-run direct shift": 0.024742,
+        "multi-run block copy core": 0.654162,
+        "elementwise fallback and overlap-safe staging": 0.214006,
+        "total": 1.581132
+      },
+      "after": {
+        "run discovery coalescing": 0.942441,
+        "single middle-run direct shift": 0.023117,
+        "multi-run block copy core": 0.69741,
+        "elementwise fallback and overlap-safe staging": 0.107872,
+        "total": 1.77084
+      }
+    },
+    "both_on, multi_comb_rect 512 LOCAL": {
+      "before_elapsed_s": 9.742799861999856,
+      "after_elapsed_s": 9.833701840000003,
+      "before": {
+        "run discovery coalescing": 0.165744,
+        "single middle-run direct shift": 0.017113,
+        "multi-run block copy core": 0.16215,
+        "elementwise fallback and overlap-safe staging": 0.036267,
+        "total": 0.381274
+      },
+      "after": {
+        "run discovery coalescing": 0.24456,
+        "single middle-run direct shift": 0.012116,
+        "multi-run block copy core": 0.185246,
+        "elementwise fallback and overlap-safe staging": 0.027985,
+        "total": 0.469907
+      }
+    }
+  },
+  "block_copy_grouped_aggregate_before_ms": {
+    "run discovery coalescing": 1.5337260000000001,
+    "single middle-run direct shift": 0.108361,
+    "multi-run block copy core": 1.415963,
+    "elementwise fallback and overlap-safe staging": 0.473845,
+    "total": 3.531895
+  },
+  "block_copy_grouped_aggregate_after_ms": {
+    "run discovery coalescing": 2.053136,
+    "single middle-run direct shift": 0.106863,
+    "multi-run block copy core": 1.582771,
+    "elementwise fallback and overlap-safe staging": 0.23966600000000002,
+    "total": 3.982436
+  },
+  "block_copy_grouped_aggregate_after_share_pct": {
+    "run discovery coalescing": 51.554777025920814,
+    "single middle-run direct shift": 2.6833576233240155,
+    "multi-run block copy core": 39.743789981810124,
+    "elementwise fallback and overlap-safe staging": 6.018075368945039
+  },
+  "volume_after": {
+    "connector_only, comb_rect_dense 512 LOCAL": {
+      "bcopy_single_middle_run_calls": 20,
+      "bcopy_suffix_only_calls": 92,
+      "bcopy_removed_run_count_sum": 85297,
+      "bcopy_kept_run_count_sum": 97782,
+      "bcopy_copy_plan_entries": 167,
+      "bcopy_coalesced_run_merges": 0,
+      "bcopy_direct_memmove_calls": 10,
+      "bcopy_direct_memmoved_handles": 482,
+      "bcopy_runwise_block_copy_calls": 62797,
+      "bcopy_runwise_block_copied_handles": 2141922,
+      "bcopy_elementwise_fallback_calls": 13376,
+      "bcopy_elementwise_fallback_handles": 15,
+      "bcopy_overlap_staging_calls": 0,
+      "bcopy_overlap_staged_handles": 0,
+      "bcopy_prefix_skipped_handles": 2826293,
+      "bcopy_suffix_skipped_handles": 1138,
+      "bcopy_contiguous_middle_memmove_calls": 3073,
+      "bcopy_contiguous_middle_memmove_handles": 340216,
+      "bcopy_adjacent_run_coalesce_hits": 0,
+      "bcopy_scratchless_overlap_safe_calls": 3073
+    },
+    "both_on, comb_rect_dense 512 LOCAL": {
+      "bcopy_single_middle_run_calls": 0,
+      "bcopy_suffix_only_calls": 64,
+      "bcopy_removed_run_count_sum": 81869,
+      "bcopy_kept_run_count_sum": 93331,
+      "bcopy_copy_plan_entries": 276,
+      "bcopy_coalesced_run_merges": 0,
+      "bcopy_direct_memmove_calls": 0,
+      "bcopy_direct_memmoved_handles": 0,
+      "bcopy_runwise_block_copy_calls": 59714,
+      "bcopy_runwise_block_copied_handles": 1977080,
+      "bcopy_elementwise_fallback_calls": 12669,
+      "bcopy_elementwise_fallback_handles": 32,
+      "bcopy_overlap_staging_calls": 0,
+      "bcopy_overlap_staged_handles": 0,
+      "bcopy_prefix_skipped_handles": 2685635,
+      "bcopy_suffix_skipped_handles": 1532,
+      "bcopy_contiguous_middle_memmove_calls": 2540,
+      "bcopy_contiguous_middle_memmove_handles": 180409,
+      "bcopy_adjacent_run_coalesce_hits": 0,
+      "bcopy_scratchless_overlap_safe_calls": 2540
+    },
+    "both_on, multi_comb_rect 512 LOCAL": {
+      "bcopy_single_middle_run_calls": 148,
+      "bcopy_suffix_only_calls": 38,
+      "bcopy_removed_run_count_sum": 20114,
+      "bcopy_kept_run_count_sum": 23815,
+      "bcopy_copy_plan_entries": 70,
+      "bcopy_coalesced_run_merges": 0,
+      "bcopy_direct_memmove_calls": 74,
+      "bcopy_direct_memmoved_handles": 5647,
+      "bcopy_runwise_block_copy_calls": 14809,
+      "bcopy_runwise_block_copied_handles": 424913,
+      "bcopy_elementwise_fallback_calls": 2443,
+      "bcopy_elementwise_fallback_handles": 0,
+      "bcopy_overlap_staging_calls": 0,
+      "bcopy_overlap_staged_handles": 0,
+      "bcopy_prefix_skipped_handles": 699524,
+      "bcopy_suffix_skipped_handles": 217,
+      "bcopy_contiguous_middle_memmove_calls": 714,
+      "bcopy_contiguous_middle_memmove_handles": 31331,
+      "bcopy_adjacent_run_coalesce_hits": 0,
+      "bcopy_scratchless_overlap_safe_calls": 714
+    }
+  },
+  "stable_compaction_umbrella_after": {
+    "connector_only, comb_rect_dense 512 LOCAL": {
+      "stable_compaction_bucket_ms": 2.563726,
+      "block_copy_bucket_ms": 1.741689,
+      "watch_churn_ms": 1064.760489,
+      "time_bcopy_route_connector_skeleton_ms": 1.741689,
+      "time_bcopy_route_delta_preserved_then_skeleton_ms": 0.0,
+      "bcopy_route_connector_skeleton_calls": 21609,
+      "bcopy_route_delta_preserved_then_skeleton_calls": 0
+    },
+    "both_on, comb_rect_dense 512 LOCAL": {
+      "stable_compaction_bucket_ms": 2.574634,
+      "block_copy_bucket_ms": 1.77084,
+      "watch_churn_ms": 1072.562242,
+      "time_bcopy_route_connector_skeleton_ms": 1.693975,
+      "time_bcopy_route_delta_preserved_then_skeleton_ms": 0.076865,
+      "bcopy_route_connector_skeleton_calls": 20051,
+      "bcopy_route_delta_preserved_then_skeleton_calls": 897
+    },
+    "both_on, multi_comb_rect 512 LOCAL": {
+      "stable_compaction_bucket_ms": 0.766434,
+      "block_copy_bucket_ms": 0.469907,
+      "watch_churn_ms": 272.991142,
+      "time_bcopy_route_connector_skeleton_ms": 0.437815,
+      "time_bcopy_route_delta_preserved_then_skeleton_ms": 0.032092,
+      "bcopy_route_connector_skeleton_calls": 6099,
+      "bcopy_route_delta_preserved_then_skeleton_calls": 465
+    }
+  },
+  "topk_qualitative_summary": {
+    "after_connector_only_dense_512_sampled": {
+      "rows": 10,
+      "avg_bcopy_removed_run_count": 251.6,
+      "avg_bcopy_kept_run_count": 331.3,
+      "avg_bcopy_copy_plan_entries": 196.2,
+      "avg_bcopy_direct_memmove_calls": 30.9,
+      "avg_bcopy_direct_memmoved_handles": 3248,
+      "avg_bcopy_block_copied_handles": 8070.1,
+      "avg_bcopy_elementwise_fallback_handles": 27,
+      "avg_total_ns": 314007024.8,
+      "note": "bcopy_total_ns remained zero in slow rows; use bcopy counters qualitatively rather than as per-deletion timed subtotal."
+    },
+    "after_both_on_dense_512_sampled": {
+      "rows": 10,
+      "avg_bcopy_removed_run_count": 225.5,
+      "avg_bcopy_kept_run_count": 283.2,
+      "avg_bcopy_copy_plan_entries": 169.7,
+      "avg_bcopy_direct_memmove_calls": 21.1,
+      "avg_bcopy_direct_memmoved_handles": 1809.5,
+      "avg_bcopy_block_copied_handles": 6820.7,
+      "avg_bcopy_elementwise_fallback_handles": 20.2,
+      "avg_total_ns": 431213499.6,
+      "note": "bcopy_total_ns remained zero in slow rows; use bcopy counters qualitatively rather than as per-deletion timed subtotal."
+    },
+    "after_both_on_multi_512_sampled": {
+      "rows": 10,
+      "avg_bcopy_removed_run_count": 232.6,
+      "avg_bcopy_kept_run_count": 279.5,
+      "avg_bcopy_copy_plan_entries": 186.5,
+      "avg_bcopy_direct_memmove_calls": 9.9,
+      "avg_bcopy_direct_memmoved_handles": 815.5,
+      "avg_bcopy_block_copied_handles": 7608.9,
+      "avg_bcopy_elementwise_fallback_handles": 17.9,
+      "avg_total_ns": 73966937.7,
+      "note": "bcopy_total_ns remained zero in slow rows; use bcopy counters qualitatively rather than as per-deletion timed subtotal."
+    }
+  },
+  "release_and_representative": {
+    "after_both_on_dense_1024_release": {
+      "label": "both_on, comb_rect_dense 1024 RELEASE, BLOCK_COPY_OPT=1",
+      "elapsed_solver_s": 373.38363838299983,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    "after_both_on_dense_1024_release_repeat": {
+      "label": "both_on, comb_rect_dense 1024 RELEASE repeat, BLOCK_COPY_OPT=1",
+      "elapsed_solver_s": 382.79641856499984,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    "after_both_on_multi_1024_release": {
+      "label": "both_on, multi_comb_rect 1024 RELEASE, BLOCK_COPY_OPT=1",
+      "elapsed_solver_s": 27.67453118399999,
+      "rc": 0,
+      "timed_out": false,
+      "validator_ok": true
+    },
+    "after_both_on_dense_4096_release": {
+      "label": "both_on, comb_rect_dense 4096 RELEASE, BLOCK_COPY_OPT=1",
+      "elapsed_solver_s": 248.67809803399996,
+      "rc": -9,
+      "timed_out": true,
+      "validator_ok": false
+    },
+    "after_both_on_multi_4096_release": {
+      "label": "both_on, multi_comb_rect 4096 RELEASE, BLOCK_COPY_OPT=1",
+      "elapsed_solver_s": 240.16970408700035,
+      "rc": -9,
+      "timed_out": true,
+      "validator_ok": false
+    }
+  },
+  "dense_1024_repeat_stability": {
+    "run1_elapsed_s": 373.38363838299983,
+    "run2_elapsed_s": 382.79641856499984,
+    "difference_pct": 2.489560547256616,
+    "stable_recovery": true,
+    "timing_stability_good": true
+  },
+  "final_decision": {
+    "grouped_after_sampled_aggregate_ms": {
+      "run discovery coalescing": 2.053136,
+      "single middle-run direct shift": 0.106863,
+      "multi-run block copy core": 1.582771,
+      "elementwise fallback and overlap-safe staging": 0.23966600000000002
+    },
+    "grouped_after_sampled_aggregate_share_pct": {
+      "run discovery coalescing": 51.554777025920814,
+      "single middle-run direct shift": 2.6833576233240155,
+      "multi-run block copy core": 39.743789981810124,
+      "elementwise fallback and overlap-safe staging": 6.018075368945039
+    },
+    "broader_residual_note": "broader measured residual still leaves watch churn larger, but this round fixes the pivot inside the stable-compaction bucket.",
+    "strict_dominant_inside_block_copy_bucket": true,
+    "next_pivot_after_block_copy_round": "run coalescing and copy-plan build"
+  }
+}

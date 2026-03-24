@@ -1,0 +1,47 @@
+caseName=xshared_loopshared_proxy_loop_real_tc56_step1
+manifestPath=regressions/rewrite_seq_cases.json
+seed=1
+tcIndex=56
+targetStep=1
+topLevelOk=0
+requestedSource=ORACLE
+stopBeforeOgdf=0
+runChild=1
+sourceSide=ORACLE
+callSiteTag=INFER_SINGLE_ZERO_ARC_TYPE
+phaseTag=BEFORE_BUILDRAW
+stepIndex=-1
+chosenR=-1
+chosenX=-1
+compactGraphCanonicalSummary=vertices=6 edges=9 selfLoops=0 multiplicity=[REAL:(1,2)x1;REAL:(1,5)x1;REAL:(1,6)x1;REAL:(2,3)x1;REAL:(3,4)x1;REAL:(3,5)x1;REAL:(3,6)x1;REAL:(4,5)x1;REAL:(5,6)x1]
+compactGraphDumpPath=dumps/ogdf_raw_crash_replay/oracle_after_probe/compact_ORACLE_INFER_SINGLE_ZERO_ARC_TYPE_seed1_tc56_step1_xshared_loopshared_proxy_loop_real_tc56_step1.txt
+childExitCode=0
+childSignal=-1
+crashed=0
+crashWhy=oracle baseline: build core failed at step 0: single-node zero-arc type inference: mini is not single-node zero-arc (aliveNodeCount=4, aliveArcCount=3)
+lldbBacktracePath=
+notes=probe-ok:INFER_SINGLE_ZERO_ARC_TYPE
+precheckSummary:
+  edgeCount=9
+  vertexCount=6
+  selfLoopCount=0
+  connectedComponentCount=1
+  connected=1
+  biconnected=1
+  spqrReady=1
+  spqrReadyWhy=
+  tooSmallSubtype=TS_OTHER
+  notBiconnectedSubtype=NB_OTHER
+  selfLoopSubtype=SL_OTHER
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=-1
+origOfCv: [0->1] [1->2] [2->3] [3->4] [4->5] [5->6]
+edge#0 kind=REAL cv=(0,1) orig=(1,2) realEdge=0
+edge#1 kind=REAL cv=(1,2) orig=(2,3) realEdge=1
+edge#2 kind=REAL cv=(2,3) orig=(3,4) realEdge=2
+edge#3 kind=REAL cv=(3,4) orig=(4,5) realEdge=3
+edge#4 kind=REAL cv=(4,5) orig=(5,6) realEdge=4
+edge#5 kind=REAL cv=(0,5) orig=(1,6) realEdge=5
+edge#6 kind=REAL cv=(0,4) orig=(1,5) realEdge=6
+edge#7 kind=REAL cv=(2,4) orig=(3,5) realEdge=7
+edge#8 kind=REAL cv=(2,5) orig=(3,6) realEdge=8

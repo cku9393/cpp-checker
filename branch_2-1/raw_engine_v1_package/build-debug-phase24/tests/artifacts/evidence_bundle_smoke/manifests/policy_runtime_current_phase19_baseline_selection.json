@@ -1,0 +1,39 @@
+{
+  "selection_version": "runtime_baseline_selection_v1",
+  "generated_at_utc": "2026-03-22T11:10:40Z",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/evidence_bundle_smoke/manifests/policy_runtime_current_phase19.json",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/evidence_bundle_smoke/manifests/runtime_baseline_registry_v1.json",
+  "candidate_count": 1,
+  "exact_match_count": 1,
+  "compatible_match_count": 0,
+  "retired_match_count": 0,
+  "current_host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "bundle-smoke",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "d70f8d6cffd368768a47f0875b87eadd51ec53e81a80a0aad5627e8d05b9432d"
+  },
+  "current_toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "current_execution_classes": [
+    "asan_full",
+    "debug_full",
+    "policy_nightly",
+    "release_full"
+  ],
+  "current_fingerprint_key": "379b857fc10e68d9e4b3d2b1e2731d77d10c4cc4ffa2f3c27a16358872c5174a",
+  "comparability_verdict": "COMPARABLE",
+  "comparability_reason": "active exact runtime fingerprint match",
+  "selected_baseline_id": "phase19-runtime-approved-d70f8d6c-20260322_111040",
+  "selected_baseline_tag": "phase19-runtime-approved",
+  "selected_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-debug-phase24/tests/artifacts/evidence_bundle_smoke/manifests/policy_runtime_baseline_phase19_approved.json",
+  "selected_entry_status": "active",
+  "selection_hash": "023b60dbbfa42c1d8ed774ab51f4ecd09b0d63f27791e42b2348e7697f3c525b"
+}

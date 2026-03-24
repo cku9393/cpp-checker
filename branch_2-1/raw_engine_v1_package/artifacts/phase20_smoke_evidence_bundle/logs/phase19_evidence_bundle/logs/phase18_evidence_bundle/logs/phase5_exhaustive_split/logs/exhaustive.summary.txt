@@ -1,0 +1,3 @@
+generated_state_count=12
+canonical_unique_state_count=12
+family=split_ready generated=12 unique=12 dedupe_ratio=0 validator_checks=12 primitive_checks=12 planner_checks=12
