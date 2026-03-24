@@ -1,0 +1,59 @@
+seed=2
+tc=1243
+stepIndex=0
+sequenceLengthSoFar=1
+chosenR=0
+chosenX=1
+tag=attempt
+why=raw single-r canonicalize: attempt
+validationOk=0
+validationWhy=
+
+=== InputExplicit ===
+vertices: 2 3 4 5 6
+edges:
+  id=1 (2,3)
+  id=2 (3,4)
+  id=3 (4,5)
+  id=4 (5,6)
+  id=8 (2,4)
+  id=9 (2,6)
+  id=10 (3,5)
+
+=== CompactGraph ===
+=== CompactGraph ===
+block=0 ownerR=0 deletedX=-1
+origOfCv: [0->2] [1->3] [2->4] [3->5] [4->6]
+edge#0 kind=REAL cv=(0,1) orig=(2,3) realEdge=1
+edge#1 kind=REAL cv=(1,2) orig=(3,4) realEdge=2
+edge#2 kind=REAL cv=(2,3) orig=(4,5) realEdge=3
+edge#3 kind=REAL cv=(3,4) orig=(5,6) realEdge=4
+edge#4 kind=REAL cv=(0,2) orig=(2,4) realEdge=8
+edge#5 kind=REAL cv=(0,4) orig=(2,6) realEdge=9
+edge#6 kind=REAL cv=(1,3) orig=(3,5) realEdge=10
+
+=== RawBeforeCounts ===
+aliveNodeCount=2
+aliveTreeEdgeCount=1
+rNodeCount=1
+sNodeCount=1
+pNodeCount=0
+
+=== RawBefore ===
+=== RawSpqrDecomp ===
+valid=1 error=0
+node 0 type=S
+  slot 0 kind=INPUT poles=(5,6) input=3
+  slot 1 kind=INPUT poles=(2,6) input=5
+  slot 2 kind=TREE poles=(2,5) tree=0
+  cycleSlots: 0 1 2
+node 1 type=R
+  slot 0 kind=INPUT poles=(2,3) input=0
+  slot 1 kind=INPUT poles=(3,4) input=1
+  slot 2 kind=INPUT poles=(2,4) input=4
+  slot 3 kind=INPUT poles=(4,5) input=2
+  slot 4 kind=INPUT poles=(3,5) input=6
+  slot 5 kind=TREE poles=(2,5) tree=0
+  rShape skelVertices: 2 3 4 5
+treeEdge 0 (1:5) <-> (0:2) poles=(2,5)
+
