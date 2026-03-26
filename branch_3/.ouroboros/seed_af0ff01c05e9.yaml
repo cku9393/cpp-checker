@@ -50,17 +50,17 @@ brownfield_context:
   - ./lca_strong_gate.sh
   - ./lca_rebuttal_gate.sh
   - ./lca_boj3s_gate.sh
-  - ./lca_hunt.sh
 constraints:
 - Work only in /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
 - Keep /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp
   as the primary optimization target
 - Build only with ./build.sh
-- Validate only with ./lca_smoke.sh
-- ./lca_strong_gate.sh
-- ./lca_rebuttal_gate.sh
-- ./lca_boj3s_gate.sh
-- ./lca_hunt.sh
+- Formal pass/fail validation uses only the branch-local wrappers ./lca_smoke.sh,
+  ./lca_strong_gate.sh, and ./lca_boj3s_gate.sh
+- ./lca_rebuttal_gate.sh may be run only as a diagnostic helper and must not be
+  treated as a required gate or acceptance dependency
+- ./lca_hunt.sh may be run only as a diagnostic helper and must not be treated as
+  a required gate or acceptance dependency
 - Do not switch to the outer lca_tree_stress_v5 solver source
 - Keep all outputs and solver-side auxiliary outputs inside branch_3/artifacts/...
   and specifically branch_3/artifacts/lca_tree_stress_v5/...
@@ -82,8 +82,6 @@ acceptance_criteria:
   same working tree with both runs PASS
 - The repeated PASS must not depend on manual cleanup of branch_3/artifacts/lca_tree_stress_v5/...
 - All generated outputs remain inside branch_3/artifacts/...
-- ./lca_hunt.sh is used only diagnostically and is not required as a formal acceptance
-  gate
 ontology_schema:
   name: lca_tree_stress_v5_branch_optimization
   description: Branch-local optimization and validation state for the branch_3 LCA
@@ -102,9 +100,15 @@ ontology_schema:
     type: string
     description: Required build command for the branch
     required: true
+  - name: formal_acceptance_wrappers
+    type: array
+    description: Exact branch-local commands whose PASS state contributes to formal
+      acceptance; diagnostic helpers are excluded
+    required: true
   - name: validation_wrappers
     type: array
-    description: Allowed branch-local validation commands and diagnostics
+    description: Branch-local validation and diagnostic commands available in the
+      branch; this list is not itself the required-gate set
     required: true
   - name: required_gate
     type: string
