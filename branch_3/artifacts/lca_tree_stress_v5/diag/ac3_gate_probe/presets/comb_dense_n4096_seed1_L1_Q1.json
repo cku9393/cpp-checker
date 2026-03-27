@@ -1,0 +1,28 @@
+{
+  "name": "ac3_comb_dense_probe",
+  "description": "Single-row hard_scaling probe for comb_dense n4096 seed1 L1 Q1",
+  "stages": [
+    {
+      "name": "hard_scaling_probe",
+      "modes": [
+        "comb_dense"
+      ],
+      "sizes": [
+        4096
+      ],
+      "seeds": [
+        1
+      ],
+      "shuffle_labels": [
+        1
+      ],
+      "shuffle_queries": [
+        1
+      ],
+      "timeout": 12.0,
+      "must_pass": true,
+      "alpha_max": 1.45,
+      "ratio_max": 2.9
+    }
+  ]
+}

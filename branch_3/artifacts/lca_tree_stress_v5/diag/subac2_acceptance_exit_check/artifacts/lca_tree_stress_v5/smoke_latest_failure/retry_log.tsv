@@ -1,0 +1,2 @@
+case_index	case_tag	attempt	exit_code	helpper_exit_code	failure_kind	failure_origin	retryable	timeout_s	summary
+1	case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5	1	1	0	solver_acceptance_failure	solver	0	0.5	query #1 mismatch: lca(2, 3)=1, expected 2

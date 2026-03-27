@@ -1,0 +1,12 @@
+{
+  "category": "solver",
+  "exit_code": 125,
+  "message": "solver exited with code 1 (normalized exit 125)",
+  "rss_kb": 2384,
+  "sec": 0.8793299589999999,
+  "solver_exit_code": 1,
+  "solver_signal": null,
+  "status": "solver_runtime_failure",
+  "timed_out": false,
+  "validator_ok": false
+}

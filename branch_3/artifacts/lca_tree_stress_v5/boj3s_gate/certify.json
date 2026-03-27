@@ -1,0 +1,53 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "boj_3s_large_mix: 3 failing cases"
+  ],
+  "preset": "boj_3s_hard_gate",
+  "stages": [
+    {
+      "name": "correctness_smoke",
+      "status": "PASS",
+      "cases": 288,
+      "timeouts": 0,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    },
+    {
+      "name": "hard_scaling_strict",
+      "status": "PASS",
+      "cases": 108,
+      "timeouts": 0,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": 2.7,
+      "scale_fail": []
+    },
+    {
+      "name": "boj_3s_large_adversarial",
+      "status": "PASS",
+      "cases": 30,
+      "timeouts": 0,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": 2.55,
+      "case_sec_max": 2.7,
+      "scale_fail": []
+    },
+    {
+      "name": "boj_3s_large_mix",
+      "status": "FAIL",
+      "cases": 18,
+      "timeouts": 3,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": 2.7,
+      "scale_fail": []
+    }
+  ]
+}

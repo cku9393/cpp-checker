@@ -1,0 +1,19 @@
+case_tag=case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5
+stage=smoke
+mode=fake_mode
+n=8
+seed=42
+shuffle_labels=1
+shuffle_queries=0
+timeout_s=0.5
+helper_result_json=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/artifacts/lca_tree_stress_v5/smoke_latest_failure/case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5/run_case_result.json
+recorded_status=solver_acceptance_failure
+recorded_category=solver
+recorded_exit_code=1
+recorded_validator_ok=0
+checker_result=fail
+message=query #1 mismatch: lca(2, 3)=1, expected 2
+checker_command=python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/branch_validator.py /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/artifacts/lca_tree_stress_v5/smoke_latest_failure/case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5/in.txt /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/artifacts/lca_tree_stress_v5/smoke_latest_failure/case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5/out.txt
+checker_script=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/artifacts/lca_tree_stress_v5/smoke_latest_failure/recheck_preserved_output.sh
+input_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/artifacts/lca_tree_stress_v5/smoke_latest_failure/case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5/in.txt
+output_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/artifacts/lca_tree_stress_v5/smoke_latest_failure/case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5/out.txt

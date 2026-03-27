@@ -1,0 +1,13 @@
+{
+  "mode": "balanced_dense",
+  "shape": "balanced_binary",
+  "n": 64,
+  "m": 1624,
+  "seed": 2,
+  "max_depth": 6,
+  "leaves": 32,
+  "internal": 32,
+  "multi_child": 31,
+  "deepest_node": 64,
+  "subtree_root_deepest": 64
+}

@@ -1,0 +1,15 @@
+status=PASS
+requested_runs=3
+completed_runs=3
+baseline_run=run01
+latest_run=runs/run03
+baseline_outcome=PASS:0
+latest_outcome=PASS:0
+outcome_consistency=matching
+baseline_snapshot=runs/run01/smoke_snapshot
+latest_snapshot=runs/run03/smoke_snapshot
+ignored_files=time.txt
+normalized_files=run_case.stdout.txt
+normalized_run_case_stdout_lines=[run_case] mode=... time=... mem=... ; [run_case] artifacts: ...
+live_smoke_output=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke
+live_smoke_failure_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_failure

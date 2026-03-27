@@ -1,0 +1,69 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "correctness_smoke: 72 failing cases",
+    "hard_scaling_strict: 90 failing cases",
+    "hard_scaling_strict: comb_core: alpha=2.029 > 1.350",
+    "hard_scaling_strict: comb_core: ratio=4.082 > 2.600",
+    "hard_scaling_strict: comb_plus_unary: alpha=2.051 > 1.350",
+    "hard_scaling_strict: comb_plus_unary: ratio=4.145 > 2.600",
+    "hard_scaling_strict: multi_comb_core: alpha=2.024 > 1.350",
+    "hard_scaling_strict: multi_comb_core: ratio=4.067 > 2.600",
+    "boj_3s_large_adversarial: 30 failing cases",
+    "boj_3s_large_mix: 15 failing cases"
+  ],
+  "preset": "boj_3s_hard_gate",
+  "stages": [
+    {
+      "name": "correctness_smoke",
+      "status": "FAIL",
+      "cases": 288,
+      "timeouts": 72,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    },
+    {
+      "name": "hard_scaling_strict",
+      "status": "FAIL",
+      "cases": 108,
+      "timeouts": 90,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": 2.7,
+      "scale_fail": [
+        "comb_core: alpha=2.029 > 1.350",
+        "comb_core: ratio=4.082 > 2.600",
+        "comb_plus_unary: alpha=2.051 > 1.350",
+        "comb_plus_unary: ratio=4.145 > 2.600",
+        "multi_comb_core: alpha=2.024 > 1.350",
+        "multi_comb_core: ratio=4.067 > 2.600"
+      ]
+    },
+    {
+      "name": "boj_3s_large_adversarial",
+      "status": "FAIL",
+      "cases": 30,
+      "timeouts": 30,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": 2.55,
+      "case_sec_max": 2.7,
+      "scale_fail": []
+    },
+    {
+      "name": "boj_3s_large_mix",
+      "status": "FAIL",
+      "cases": 18,
+      "timeouts": 15,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": 2.7,
+      "scale_fail": []
+    }
+  ]
+}

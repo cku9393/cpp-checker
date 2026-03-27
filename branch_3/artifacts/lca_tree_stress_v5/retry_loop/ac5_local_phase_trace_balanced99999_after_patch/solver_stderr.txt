@@ -1,0 +1,1 @@
+[progress] phase=case_start run_tag= delta_mode=both_on profile_mode=PROFILE_NONE sampled=no sample_stride=0 sample_warmup=0 progress_stride=64 deletion=0/99999 x=-1 touched=-1 detailed_sampled=0 elapsed_ms=0

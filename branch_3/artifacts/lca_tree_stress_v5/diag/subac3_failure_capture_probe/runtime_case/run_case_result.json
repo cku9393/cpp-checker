@@ -1,0 +1,12 @@
+{
+  "status": "solver_acceptance_failure",
+  "category": "solver",
+  "exit_code": 1,
+  "message": "query #1 mismatch: lca(2, 3)=1, expected 2",
+  "solver_exit_code": 0,
+  "solver_signal": null,
+  "timed_out": false,
+  "validator_ok": false,
+  "sec": 0.01,
+  "rss_kb": 1024
+}

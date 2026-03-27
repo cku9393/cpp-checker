@@ -1,0 +1,179 @@
+goal: Analyze the latest failed branch_3 retry attempt before any new solver retry and
+  refresh the branch-local failure-analysis tooling or helper analysis notes so the
+  next solver session starts from a narrower diagnosis.
+task_type: code
+brownfield_context:
+  project_type: brownfield
+  context_references:
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+    role: primary
+    summary: Branch root where the retry loop and failure-analysis helpers live
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+    role: primary
+    summary: Latest failed solver-attempt report that must be read first
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+    role: primary
+    summary: Latest failed solver-attempt breakdown with phase and structural hotspots
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/failure_history.json
+    role: reference
+    summary: Cross-attempt history used to find recurring hotspots and repeated failure signatures
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md
+    role: reference
+    summary: Summary from the previous mandatory analysis mini-session that should be refined rather than ignored
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_next_probe_result.md
+    role: reference
+    summary: Latest automatically executed axis-focused probe result that should be incorporated into the next narrowing step
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_attempt_guard.md
+    role: reference
+    summary: Latest post-attempt guard report that may invalidate a nominal PASS lacking credible gate evidence
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_git_repo_health.md
+    role: reference
+    summary: Latest git repository health report used to separate solver issues from local git-pack corruption
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/current_state_summary.md
+    role: reference
+    summary: Authoritative progress40 summary naming the current residual and next pivot that should guide axis selection
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp
+    role: reference
+    summary: Bundled progress40 source snapshot defining the performance-axis vocabulary
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md
+    role: reference
+    summary: Bundled progress40 profiling report showing the known residual axes
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_results_merged.json
+    role: reference
+    summary: Bundled merged results artifact for the authoritative progress40 baseline
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/capture_failure_context.py
+    role: primary
+    summary: Main failure-capture script that may be improved when the latest breakdown is still too coarse
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_playbook.md
+    role: primary
+    summary: Auxiliary playbook that should accumulate sharper refinement rules across repeated analysis sessions
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+    role: primary
+    summary: Analysis ledger that must be refreshed on every post-failure mini-session before solver retries resume
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+    role: primary
+    summary: Persistent state carrying pinned ACs, paths, and symbols that should become narrower over repeated analysis sessions
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/verify_analysis_refresh.py
+    role: reference
+    summary: Verification helper that gates solver retries on a real post-failure analysis refresh
+  existing_patterns:
+  - Read latest_failure_report.md and latest_failure_breakdown.md before changing analysis helpers
+  - Compare the latest failure against failure_history.json and prior breakdowns
+  - Read latest_analysis_session.md, failure_analysis_iteration.md, failure_analysis_state.json, and failure_analysis_playbook.md before deciding what to refine next
+  - Read latest_next_probe_result.md, latest_attempt_guard.md, and latest_git_repo_health.md when present before deciding whether the last solver outcome is trustworthy and which axis to refine next
+  - Read current_state_summary.md and the bundled progress40 report/results before picking a primary or secondary axis
+  - Tighten diagnosis from file-level to symbol, line-range, snippet, or wrapper-section evidence when possible
+  - Refresh at least one analysis asset every time, even if the main capture script itself does not need a code edit
+constraints:
+- Work only in /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+- Do not edit the solver, wrappers, or validation harness during this analysis mini-session
+- Allowed edit scope for this mini-session is restricted to branch_3/.ouroboros/capture_failure_context.py,
+  branch_3/.ouroboros/failure_analysis_playbook.md, branch_3/.ouroboros/failure_analysis_iteration.md,
+  branch_3/.ouroboros/failure_analysis_state.json, branch_3/.ouroboros/verify_analysis_refresh.py,
+  and other branch-local helper analysis files under branch_3/.ouroboros/ if needed
+- Read latest_failure_report.md and latest_failure_breakdown.md first
+- Read the previous latest_analysis_session.md, failure_analysis_iteration.md, failure_analysis_state.json, and failure_analysis_playbook.md before deciding what the next refinement should be
+- Read latest_next_probe_result.md, latest_attempt_guard.md, and latest_git_repo_health.md before deciding whether the previous attempt failed due to a solver issue, a suspicious nominal PASS, or a git health problem
+- Read current_state_summary.md and the bundled progress40 report/results before deciding which progress40 axis should be primary next
+- Refresh failure_analysis_iteration.md on every run with what was learned from the most recent failure
+- Refresh failure_analysis_state.json on every run with the most important pinned ACs, paths, symbols, primary_axis, secondary_axis, next_probe_command, and why_this_axis for the next solver retry and the next analysis mini-session
+- Choose exactly one primary progress40 axis and at most one secondary axis unless the evidence is genuinely ambiguous
+- If the current breakdown is still too coarse, improve the analysis tooling itself before the next solver retry
+- Leave a narrower next-step diagnosis than the previous attempt had
+acceptance_criteria:
+- The latest failure report and failure breakdown are read before analysis edits
+- At least one branch-local analysis asset is refreshed before the next solver retry is allowed to start
+- The refreshed analysis leaves clearer localization than before, such as narrower symbols, ranges, wrapper sections, or code excerpts
+- failure_analysis_iteration.md records the new analysis outcome and the next narrowing target
+- failure_analysis_state.json is refreshed with non-empty pinned_primary_axis and next_probe_command plus narrower pinned ACs, paths, or symbols than before when repeated failures allow that narrowing
+- The refreshed analysis explains why the chosen primary axis is more defensible than broadening immediately to unrelated progress40 axes
+ontology_schema:
+  name: branch_3_failure_analysis_refresh
+  description: Branch-local post-failure analysis state for branch_3, including
+    the latest failed attempt, narrowed progress40 axes, pinned code hotspots,
+    refreshed analysis assets, and the next probe command required before the
+    next solver retry.
+  fields:
+  - name: failed_attempt_id
+    type: string
+    description: Identifier of the failed solver attempt being analyzed
+    required: true
+  - name: failed_session_id
+    type: string
+    description: Ouroboros session ID of the failed solver attempt
+    required: false
+  - name: pinned_primary_axis
+    type: string
+    description: Single most defensible progress40 axis for the next retry
+    required: true
+  - name: pinned_secondary_axis
+    type: string
+    description: Optional backup axis when the primary axis alone is insufficient
+    required: false
+  - name: pinned_acs
+    type: array
+    description: Acceptance criteria indices or names still implicated by the failure
+    required: true
+  - name: pinned_paths
+    type: array
+    description: Narrowed file paths or wrapper sections implicated by the failure
+    required: true
+  - name: pinned_symbols
+    type: array
+    description: Narrowed function or symbol targets implicated by the failure
+    required: true
+  - name: failure_families
+    type: array
+    description: Normalized failure families inferred from the most recent failed attempt
+    required: true
+  - name: analysis_tooling_delta
+    type: array
+    description: Analysis helper or playbook refinements made during this mini-session
+    required: true
+  - name: refreshed_assets
+    type: array
+    description: Analysis files refreshed before the next solver retry is allowed
+    required: true
+  - name: next_probe_command
+    type: string
+    description: Concrete command that the next solver retry should prioritize
+    required: true
+  - name: why_this_axis
+    type: string
+    description: Short justification for preferring the pinned primary axis now
+    required: true
+  - name: next_narrowing_target
+    type: string
+    description: Next structural narrowing target if another failure occurs
+    required: true
+evaluation_principles:
+- name: axis_specificity
+  description: The analysis should reduce the next retry to one primary progress40
+    axis and at most one secondary axis.
+  weight: 0.3
+- name: evidence_quality
+  description: Axis choice and code-local focus should be backed by failure logs,
+    reports, breakdowns, and current summary context.
+  weight: 0.3
+- name: refresh_completeness
+  description: Required analysis assets must be refreshed before the next solver retry.
+  weight: 0.25
+- name: branch_scope_discipline
+  description: The analysis mini-session must stay within branch-local helper analysis scope.
+  weight: 0.15
+exit_conditions:
+- name: analysis_refresh_verified
+  description: Stop when mandatory analysis assets and pinned axis guidance have
+    been refreshed for the next solver retry.
+  criteria: latest_analysis_session.md, failure_analysis_iteration.md, and
+    failure_analysis_state.json are refreshed and failure_analysis_state.json
+    contains non-empty pinned_primary_axis, next_probe_command, and why_this_axis.
+- name: blocked_by_analysis_scope
+  description: Stop only if the analysis mini-session cannot make progress without
+    violating the restricted helper-analysis edit scope.
+  criteria: No narrower diagnosis or analysis-helper refinement is possible without
+    editing the solver or validation wrappers directly.
+metadata:
+  seed_id: seed_branch3_failure_analysis
+  version: 1.0.0
+  created_at: '2026-03-25T07:40:00+09:00'

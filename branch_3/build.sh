@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd "$(dirname "$0")"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+cd "$SCRIPT_DIR"
 export PYTHONDONTWRITEBYTECODE=1
-exec python3 boj28350_resume.py build "$@"
+source ./solver_release_env.sh
+python3 boj28350_resume.py build "$@"

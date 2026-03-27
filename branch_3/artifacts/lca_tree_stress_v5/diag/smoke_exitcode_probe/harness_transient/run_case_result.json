@@ -1,0 +1,12 @@
+{
+  "category": "harness",
+  "exit_code": 70,
+  "message": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/smoke_exitcode_probe/does_not_exist",
+  "rss_kb": null,
+  "sec": null,
+  "solver_exit_code": null,
+  "solver_signal": null,
+  "status": "harness_transient_failure",
+  "timed_out": false,
+  "validator_ok": null
+}

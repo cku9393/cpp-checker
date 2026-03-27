@@ -10,6 +10,17 @@
 `boj28350_progress40_layout_signature_reuse_gate_report.md`
 `boj28350_progress40_results_merged.json`
 
+## pre-rewrite review checkpoint
+
+`2026-03-26` 기준, 다음 major solver rewrite 또는 pivot decision을 열기 전에 아래 두 source set review completion이 모두 확인됐다.
+
+1. source set A: `branch_3` working set review 완료
+   `boj28350_resume/README.md`, `boj28350_resume/current_state_summary.md`, `boj28350_resume/next_session_briefing.md`, `boj28350_complete_master_document_partA_raw.md`, `boj28350_integrated_technical_history.md`, `boj28350_literature_progress7_bcdecomp_report.md`, `literature_grade_proof_package.md`, `boj28350_resume/boj28350_branch_3_solver.cpp`
+2. source set B: bundled `progress40` authoritative materials review 완료
+   `boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`, `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`, `boj28350_bundle_archive/boj28350_progress40_results_merged.json`
+
+세부 evidence는 `boj28350_resume/next_session_briefing.md`의 6.1, 6.2, 6.2.1, 6.2.2에 남겼고, 다음 rewrite/pivot은 이 두 source set review completion이 선행 확인된 상태에서만 진행한다.
+
 ## 현재 authoritative 상태
 
 현재 확보된 범위는 아래와 같다.

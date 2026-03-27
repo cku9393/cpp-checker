@@ -1,0 +1,2 @@
+stage	mode	n	seed	shuffle_labels	shuffle_queries	timeout_s
+smoke	comb_core	3	7	1	1	2

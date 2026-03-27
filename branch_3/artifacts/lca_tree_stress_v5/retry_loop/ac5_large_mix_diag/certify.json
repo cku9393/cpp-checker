@@ -1,0 +1,20 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "boj_3s_large_mix: 18 failing cases"
+  ],
+  "preset": "boj_3s_hard_gate",
+  "stages": [
+    {
+      "name": "boj_3s_large_mix",
+      "status": "FAIL",
+      "cases": 18,
+      "timeouts": 18,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": 2.7,
+      "scale_fail": []
+    }
+  ]
+}

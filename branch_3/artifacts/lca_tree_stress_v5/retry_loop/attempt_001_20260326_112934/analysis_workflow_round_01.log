@@ -1,0 +1,89 @@
+[2026-03-26 12:17:51 KST] attempt 1 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2m2026-03-26T03:17:52.313716Z[0m [[32m[1minfo     [0m] [1mcodex_cli_runtime.initialized [0m [36mcli_path[0m=[35m/opt/homebrew/bin/codex[0m [36mcwd[0m=[35m'/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'[0m [36mfilename[0m=[35mcodex_cli_runtime.py[0m [36mlineno[0m=[35m106[0m [36mmodel[0m=[35mNone[0m [36mpermission_mode[0m=[35macceptEdits[0m [36mskills_dir[0m=[35mpackaged://ouroboros.codex/skills[0m
+╭──────────────────────── [1mInfo[0m ────────────────────────╮
+│ Parallel mode: independent ACs will run concurrently │
+╰──────────────────────────────────────────────────────╯
+[2m2026-03-26T03:17:52.318696Z[0m [[32m[1minfo     [0m] [1morchestrator.session.created  [0m [36mexecution_id[0m=[35mexec_f262d1c700cc[0m [36mfilename[0m=[35msession.py[0m [36mlineno[0m=[35m455[0m [36msession_id[0m=[35morch_0168e954cf99[0m
+
+Analyzing AC dependencies...
+Execution plan: [1m1[0m stages, parallelizable: [3mTrue[0m
+  Stage [1m1[0m: ACs [1m[[0m[1m1[0m, [1m2[0m, [1m3[0m, [1m4[0m, [1m5[0m, [1m6[0m[1m][0m
+
+Level [1m1[0m/[1m1[0m: Executing ACs [1m[[0m[1m1[0m, [1m2[0m, [1m3[0m, [1m4[0m, [1m5[0m, [1m6[0m[1m][0m in parallel
+  [2mAC [0m[1;2m1[0m[2m: Analyzing complexity[0m[2m...[0m
+  [2mAC [0m[1;2m2[0m[2m: Analyzing complexity[0m[2m...[0m
+  [2mAC [0m[1;2m3[0m[2m: Analyzing complexity[0m[2m...[0m
+  [2mAC [0m[1;2m4[0m[2m: Analyzing complexity[0m[2m...[0m
+  [2mAC [0m[1;2m5[0m[2m: Analyzing complexity[0m[2m...[0m
+  [2mAC [0m[1;2m6[0m[2m: Analyzing complexity[0m[2m...[0m
+Level [1m1[0m complete: [1m0[0m succeeded, [1m6[0m failed
+╭────────────────────────────── Partial Success ───────────────────────────────╮
+│ Parallel Execution Complete                                                  │
+│ Success: 0/6                                                                 │
+│ Failed: 6                                                                    │
+│                                                                              │
+│ ## Stage Results                                                             │
+│ - Stage 1: failed (success=0, failed=6)                                      │
+│                                                                              │
+│ ## AC Results                                                                │
+│                                                                              │
+│ ### AC 1: [FAIL] The latest failure report and failure breakdown are read    │
+│ before analysis edits                                                        │
+│ You've hit your usage limit. Upgrade to Pro                                  │
+│ (https://chatgpt.com/explore/pro), visit                                     │
+│ https://chatgpt.com/codex/settings/usage to purchase more credits or try     │
+│ again at 4:20 PM.                                                            │
+│                                                                              │
+│ ### AC 2: [FAIL] At least one branch-local analysis asset is refreshed       │
+│ before the next solver retry is allowed to start                             │
+│ You've hit your usage limit. Upgrade to Pro                                  │
+│ (https://chatgpt.com/explore/pro), visit                                     │
+│ https://chatgpt.com/codex/settings/usage to purchase more credits or try     │
+│ again at 4:20 PM.                                                            │
+│                                                                              │
+│ ### AC 3: [FAIL] The refreshed analysis leaves clearer localization than     │
+│ before, such as narrower symbols, ranges, wrapper sections, or code excerpts │
+│ You've hit your usage limit. Upgrade to Pro                                  │
+│ (https://chatgpt.com/explore/pro), visit                                     │
+│ https://chatgpt.com/codex/settings/usage to purchase more credits or try     │
+│ again at 4:20 PM.                                                            │
+│                                                                              │
+│ ### AC 4: [FAIL] failure_analysis_iteration.md records the new analysis      │
+│ outcome and the next narrowing target                                        │
+│ You've hit your usage limit. Upgrade to Pro                                  │
+│ (https://chatgpt.com/explore/pro), visit                                     │
+│ https://chatgpt.com/codex/settings/usage to purchase more credits or try     │
+│ again at 4:20 PM.                                                            │
+│                                                                              │
+│ ### AC 5: [FAIL] failure_analysis_state.json is refreshed with non-empty     │
+│ pinned_primary_axis and next_probe_command plus narrower pinned ACs, paths,  │
+│ or symbols than before when repeated failures allow that narrowing           │
+│ You've hit your usage limit. Upgrade to Pro                                  │
+│ (https://chatgpt.com/explore/pro), visit                                     │
+│ https://chatgpt.com/codex/settings/usage to purchase more credits or try     │
+│ again at 4:20 PM.                                                            │
+│                                                                              │
+│ ### AC 6: [FAIL] The refreshed analysis explains why the chosen primary axis │
+│ is more defensible than broadening immediately to unrelated progress40 axes  │
+│ You've hit your usage limit. Upgrade to Pro                                  │
+│ (https://chatgpt.com/explore/pro), visit                                     │
+│ https://chatgpt.com/codex/settings/usage to purchase more credits or try     │
+│ again at 4:20 PM.                                                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭───── [1mError[0m ──────╮
+│ Execution failed │
+╰──────────────────╯
+╭──────────── [1mInfo[0m ─────────────╮
+│ Session ID: orch_0168e954cf99 │
+╰───────────────────────────────╯
+[2mError: Parallel Execution Complete[0m
+[2mSuccess: [0m[1;2m0[0m[2m/[0m[1;2m6[0m
+[2mFailed: [0m[1;2m6[0m
+
+[2m## Stage Results[0m
+[2m- Stage [0m[1;2m1[0m[2m: failed [0m[1;2m([0m[2msuccess[0m[2m=[0m[1;2m0[0m[2m, [0m[2mfailed[0m[2m=[0m[1;2m6[0m[1;2m)[0m
+
+[2m## AC Results[0m
+
+[2m### AC [0m[1;2m1[0m[2m: [0m[1;2m[[0m[2mFAIL[0m[1;2m][0m[2m The latest failure report and failure breakdown are read b[0m
+[2026-03-26 12:19:06 KST] attempt 1 analysis round 1 did not produce a verified analysis refresh; retrying analysis in 10 seconds

@@ -1,0 +1,13 @@
+{
+  "mode": "chain_unary",
+  "shape": "chain",
+  "n": 128,
+  "m": 8128,
+  "seed": 1,
+  "max_depth": 127,
+  "leaves": 1,
+  "internal": 127,
+  "multi_child": 0,
+  "deepest_node": 128,
+  "subtree_root_deepest": 128
+}

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-03-26 14:50:09 KST",
+  "status": "ok",
+  "artifacts_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5",
+  "removed_paths": [],
+  "preserved_paths": [
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/case_cache"
+  ],
+  "active_locks": []
+}

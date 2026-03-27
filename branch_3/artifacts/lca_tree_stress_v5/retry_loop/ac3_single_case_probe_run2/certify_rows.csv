@@ -1,0 +1,2 @@
+stage,mode,n,seed,shuffle_labels,shuffle_queries,gen_ok,solver_rc,timed_out,val_ok,sec,rss_kb,case_dir
+correctness_fuzz,comb_rect_dense,64,1,0,0,1,0,0,1,0.221474,4080,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/ac3_single_case_probe_report2/runs/correctness_fuzz/comb_rect_dense/n64/seed1_L0_Q0

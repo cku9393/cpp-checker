@@ -1,0 +1,10 @@
+{
+  "command": "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh",
+  "primary_axis": "zero_span_fastpath",
+  "secondary_axis": "state_materialization",
+  "why_this_axis": "Selected `zero_span_fastpath` as the primary progress40 axis because the latest `strong_gate_unspecified` failure stayed in the `correctness-proof` lane and the bundled summary still names `zero-span eligibility and fastpath commit` as the safest next pivot; `state_materialization` remains a secondary cross-check axis only because the newer evidence narrows work inside the same pivot instead of proving an unrelated axis shift. Do not broaden into other progress40 axes unless later solver/runtime/profile evidence contradicts this baseline.",
+  "timeout_seconds": 180,
+  "elapsed_seconds": 180.093,
+  "exit_code": 124,
+  "timed_out": true
+}

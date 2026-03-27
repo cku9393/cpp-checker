@@ -1,0 +1,2 @@
+case_index	case_tag	attempt	exit_code	helper_exit_code	failure_kind	failure_origin	retryable	timeout_s	summary
+1	case01_smoke_comb_core_n3_s7_L1_Q1_t2	1	1	1	solver_acceptance_failure	solver	0	2	validator rejected the solver output for the preserved case

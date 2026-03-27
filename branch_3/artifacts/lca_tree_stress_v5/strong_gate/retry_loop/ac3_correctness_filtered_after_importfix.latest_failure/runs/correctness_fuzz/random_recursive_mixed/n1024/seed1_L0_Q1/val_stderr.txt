@@ -1,0 +1,1 @@
+query #6885 mismatch: lca(530, 985)=176, expected 530

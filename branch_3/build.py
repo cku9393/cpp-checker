@@ -6,10 +6,18 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import List
 
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+sys.dont_write_bytecode = True
+
+from artifact_paths import configure_branch_process_env, default_output_path, resolve_output_path
 from suite_utils import IS_WINDOWS, default_solver_path
+
+
+configure_branch_process_env()
 
 
 ROOT = Path(__file__).resolve().parent
@@ -52,11 +60,13 @@ def _build_commands(
 ) -> List[List[str]]:
     base = Path(compiler).name.lower()
     if base in {"cl", "cl.exe"}:
+        undef_args = ["/ULOCAL"]
         define_args = [f"/D{define}" for define in defines]
-        return [[compiler, "/O2", "/std:c++17", "/EHsc", "/nologo", *define_args, f"/Fe{output}", str(source)]]
+        return [[compiler, "/O2", "/std:c++17", "/EHsc", "/nologo", *undef_args, *define_args, f"/Fe{output}", str(source)]]
 
+    undef_args = ["-ULOCAL"]
     define_args = [f"-D{define}" for define in defines]
-    common = [compiler, "-Ofast", "-DNDEBUG", "-std=c++17", *define_args]
+    common = [compiler, "-Ofast", "-DNDEBUG", "-std=c++17", *undef_args, *define_args]
     if not IS_WINDOWS:
         common.append("-pipe")
 
@@ -83,9 +93,11 @@ def _build_commands(
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Portable build wrapper for solve.cpp.")
+    ap = argparse.ArgumentParser(
+        description="Portable build wrapper for boj28350_branch_3_solver.cpp."
+    )
     ap.add_argument("--compiler", default=None, help="compiler executable to use")
-    ap.add_argument("--source", default="solve.cpp")
+    ap.add_argument("--source", default="boj28350_resume/boj28350_branch_3_solver.cpp")
     ap.add_argument("--out", default=None, help="output binary path")
     ap.add_argument(
         "--define",
@@ -106,7 +118,14 @@ def main() -> int:
         print(f"[build] missing source: {source}", file=sys.stderr)
         return 2
 
-    output = Path(args.out).resolve() if args.out else default_solver_path(ROOT)
+    try:
+        if args.out:
+            output = resolve_output_path(args.out, default_key="boj28350_build")
+        else:
+            output = default_output_path("boj28350_build") / default_solver_path(ROOT).name
+    except ValueError as exc:
+        print(f"[build] {exc}", file=sys.stderr)
+        return 2
     output.parent.mkdir(parents=True, exist_ok=True)
 
     tried: List[str] = []
@@ -115,17 +134,35 @@ def main() -> int:
         compiler = _compiler_path(candidate)
         if not compiler:
             continue
-        for cmd in _build_commands(compiler, source, output, args.static, args.define):
-            tried.append(" ".join(cmd))
-            last = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
-            if last.returncode == 0:
-                print(f"[build] compiler={compiler}")
-                print(f"[build] output={output}")
-                if args.define:
-                    print(f"[build] defines={','.join(args.define)}")
-                return 0
+        temp_path: Path | None = None
+        try:
+            fd, raw_temp_path = tempfile.mkstemp(
+                prefix=f".{output.name}.",
+                suffix=".tmp",
+                dir=output.parent,
+            )
+            os.close(fd)
+            temp_path = Path(raw_temp_path)
+            temp_path.unlink(missing_ok=True)
+            for cmd in _build_commands(compiler, source, temp_path, args.static, args.define):
+                display_cmd = [str(output) if part == str(temp_path) else part for part in cmd]
+                tried.append(" ".join(display_cmd))
+                last = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+                if last.returncode == 0:
+                    os.replace(temp_path, output)
+                    if not IS_WINDOWS:
+                        output.chmod(output.stat().st_mode | 0o111)
+                    print(f"[build] compiler={compiler}")
+                    print(f"[build] output={output}")
+                    if args.define:
+                        print(f"[build] defines={','.join(args.define)}")
+                    return 0
+                temp_path.unlink(missing_ok=True)
+        finally:
+            if temp_path is not None:
+                temp_path.unlink(missing_ok=True)
 
-    print("[build] failed to compile solve.cpp", file=sys.stderr)
+    print("[build] failed to compile boj28350_branch_3_solver.cpp", file=sys.stderr)
     if tried:
         print("[build] attempted commands:", file=sys.stderr)
         for cmd in tried:

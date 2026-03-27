@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/gen_case.py", line 293, in <module>
+    raise SystemExit(main())
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/gen_case.py", line 280, in main
+    with open(args.meta, "w", encoding="utf-8") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.NaokT2/smoke_comb_dense_1024_s1/meta.json'
+Traceback (most recent call last):
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.py", line 119, in <module>
+    raise SystemExit(main())
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.py", line 89, in main
+    subprocess.run(gen_cmd, check=True, stdout=fout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 528, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/Library/Developer/CommandLineTools/usr/bin/python3', '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/gen_case.py', '--mode', 'comb_dense', '--n', '1024', '--seed', '1', '--meta', '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.NaokT2/smoke_comb_dense_1024_s1/meta.json', '--parent-out', '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.NaokT2/smoke_comb_dense_1024_s1/hidden_parent.txt', '--shuffle-labels', '--shuffle-queries']' returned non-zero exit status 1.

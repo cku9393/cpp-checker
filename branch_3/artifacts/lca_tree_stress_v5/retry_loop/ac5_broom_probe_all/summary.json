@@ -1,0 +1,29 @@
+[
+  {
+    "seed": 1,
+    "rc": 0,
+    "timed_out": false,
+    "sec": 1.375544791,
+    "rss_kb": 2976,
+    "validator_ok": true,
+    "validator_msg": "OK"
+  },
+  {
+    "seed": 2,
+    "rc": 0,
+    "timed_out": false,
+    "sec": 1.2631382919999998,
+    "rss_kb": 2976,
+    "validator_ok": true,
+    "validator_msg": "OK"
+  },
+  {
+    "seed": 3,
+    "rc": 0,
+    "timed_out": false,
+    "sec": 1.1325702080000006,
+    "rss_kb": 2976,
+    "validator_ok": true,
+    "validator_msg": "OK"
+  }
+]

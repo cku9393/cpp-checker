@@ -1,0 +1,2 @@
+[2026-03-26 11:22:43 KST] attempt 1 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-03-26 11:22:43 KST] attempt 1 stale-state preflight failed; aborting retry loop before workflow start

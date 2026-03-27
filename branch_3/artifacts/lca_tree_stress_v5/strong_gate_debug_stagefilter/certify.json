@@ -1,0 +1,53 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "correctness_fuzz: 141 failing cases",
+    "hard_scaling: 86 failing cases",
+    "hard_scaling: comb_core: alpha=1.753 > 1.450",
+    "hard_scaling: comb_core: ratio=3.654 > 2.900",
+    "hard_scaling: comb_plus_unary: alpha=1.831 > 1.450",
+    "hard_scaling: comb_plus_unary: ratio=3.558 > 2.900",
+    "max_n_mix: 28 failing cases"
+  ],
+  "preset": "strong_gate",
+  "stages": [
+    {
+      "name": "correctness_fuzz",
+      "status": "FAIL",
+      "cases": 900,
+      "timeouts": 141,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    },
+    {
+      "name": "hard_scaling",
+      "status": "FAIL",
+      "cases": 108,
+      "timeouts": 86,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": [
+        "comb_core: alpha=1.753 > 1.450",
+        "comb_core: ratio=3.654 > 2.900",
+        "comb_plus_unary: alpha=1.831 > 1.450",
+        "comb_plus_unary: ratio=3.558 > 2.900"
+      ]
+    },
+    {
+      "name": "max_n_mix",
+      "status": "FAIL",
+      "cases": 28,
+      "timeouts": 28,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+[branch3_profile] fast_dag_calls=1 fast_dag_sec=0.003643 process_task_calls=1 process_task_sec=4.755726 process_task_setup_sec=1.740458 process_task_forced_root_calls=681 process_task_forced_root_success=681 process_task_forced_root_sec=1.472406 process_task_articulation_calls=0 process_task_articulation_sec=0.000000 process_task_no_branch=0 unary_block_calls=0 unary_block_sec=0.000000 exact_small_block_calls=0 exact_small_block_sec=0.000000 exact_small_range_calls=0 exact_small_range_sec=0.000000
+real 4.78
+user 3.78
+sys 0.06

@@ -1,0 +1,120 @@
+[build] failed to compile boj28350_branch_3_solver.cpp
+[build] attempted commands:
+  /usr/bin/g++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/g++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/clang++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/clang++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/c++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/c++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+clang++: warning: argument '-Ofast' is deprecated; use '-O3 -ffast-math' for the same behavior, or '-O3' to enable only conforming optimizations [-Wdeprecated-ofast]
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:3650:45: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 3650 |             if(!cc.empty()) comps.push_back(move(cc));
+      |                                             ^
+      |                                             std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:3659:45: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 3659 |             if(!cc.empty()) comps.push_back(move(cc));
+      |                                             ^
+      |                                             std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:3936:233: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 3936 |                 if(disc[v]==-1){ st.push_back(eid); dfs(v,eid); low[u]=min(low[u],low[v]); if(low[v]>=disc[u]){ vector<int> comp; while(true){ int x=st.back(); st.pop_back(); comp.push_back(x); if(x==eid) break; } blocksE.push_back(move(comp)); } }
+      |                                                                                                                                                                                                                                         ^
+      |                                                                                                                                                                                                                                         std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:3948:205: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 3948 |             if(hasb){ unordered_set<int> allowed={old.owner}; for(int i:blockVerts[bi]) allowed.insert(verts[i]); auto cand=buildExactRestricted(core, old.owner, old.a, old.b, allowed); auto rr=wrap(old, move(cand)); if(rr.has && (!bestR.has || (rr.strict>bestR.strict)||(rr.strict==bestR.strict && mass(rr.h)<mass(bestR.h)))) bestR=rr; }
+      |                                                                                                                                                                                                             ^
+      |                                                                                                                                                                                                             std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4012:43: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 4012 |                         blocksE.push_back(move(comp));
+      |                                           ^
+      |                                           std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4419:13: error: use of undeclared identifier 'assignComponentMembers'
+ 4419 |             assignComponentMembers(h, std::move(comp));
+      |             ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4539:17: error: use of undeclared identifier 'compMemberPos_'; did you mean 'compMembers_'?
+ 4539 |                 compMemberPos_[v] = i;
+      |                 ^~~~~~~~~~~~~~
+      |                 compMembers_
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4231:25: note: 'compMembers_' declared here
+ 4231 |     vector<vector<int>> compMembers_;
+      |                         ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4539:35: error: no viable overloaded '='
+ 4539 |                 compMemberPos_[v] = i;
+      |                 ~~~~~~~~~~~~~~~~~ ^ ~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:270:63: note: candidate function not viable: no known conversion from 'int' to 'const vector<int>' for 1st argument
+  270 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(const vector& __x);
+      |                                                               ^         ~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:283:63: note: candidate function not viable: no known conversion from 'int' to 'initializer_list<value_type>' (aka 'initializer_list<int>') for 1st argument
+  283 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(initializer_list<value_type> __il) {
+      |                                                               ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:298:63: note: candidate function not viable: no known conversion from 'int' to 'vector<int>' for 1st argument
+  298 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(vector&& __x)
+      |                                                               ^         ~~~~~~~~~~~~
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5408:48: error: use of undeclared identifier 'compMemberPos_'; did you mean 'compMembers_'?
+ 5408 |             int oldPos = (1 <= x && x <= n_) ? compMemberPos_[x] : -1;
+      |                                                ^~~~~~~~~~~~~~
+      |                                                compMembers_
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4231:25: note: 'compMembers_' declared here
+ 4231 |     vector<vector<int>> compMembers_;
+      |                         ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5408:46: error: incompatible operand types ('value_type' (aka 'std::vector<int>') and 'int')
+ 5408 |             int oldPos = (1 <= x && x <= n_) ? compMemberPos_[x] : -1;
+      |                                              ^ ~~~~~~~~~~~~~~~~~   ~~
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5410:13: error: use of undeclared identifier 'compMemberPos_'; did you mean 'compMembers_'?
+ 5410 |             compMemberPos_[x] = -1;
+      |             ^~~~~~~~~~~~~~
+      |             compMembers_
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4231:25: note: 'compMembers_' declared here
+ 4231 |     vector<vector<int>> compMembers_;
+      |                         ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5410:31: error: no viable overloaded '='
+ 5410 |             compMemberPos_[x] = -1;
+      |             ~~~~~~~~~~~~~~~~~ ^ ~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:270:63: note: candidate function not viable: no known conversion from 'int' to 'const vector<int>' for 1st argument
+  270 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(const vector& __x);
+      |                                                               ^         ~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:283:63: note: candidate function not viable: no known conversion from 'int' to 'initializer_list<value_type>' (aka 'initializer_list<int>') for 1st argument
+  283 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(initializer_list<value_type> __il) {
+      |                                                               ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:298:63: note: candidate function not viable: no known conversion from 'int' to 'vector<int>' for 1st argument
+  298 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(vector&& __x)
+      |                                                               ^         ~~~~~~~~~~~~
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5429:63: error: use of undeclared identifier 'compMemberPos_'; did you mean 'compMembers_'?
+ 5429 |                     if (last != x && 1 <= last && last <= n_) compMemberPos_[last] = pos;
+      |                                                               ^~~~~~~~~~~~~~
+      |                                                               compMembers_
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4231:25: note: 'compMembers_' declared here
+ 4231 |     vector<vector<int>> compMembers_;
+      |                         ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5429:84: error: no viable overloaded '='
+ 5429 |                     if (last != x && 1 <= last && last <= n_) compMemberPos_[last] = pos;
+      |                                                               ~~~~~~~~~~~~~~~~~~~~ ^ ~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:270:63: note: candidate function not viable: no known conversion from 'int' to 'const vector<int>' for 1st argument
+  270 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(const vector& __x);
+      |                                                               ^         ~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:283:63: note: candidate function not viable: no known conversion from 'int' to 'initializer_list<value_type>' (aka 'initializer_list<int>') for 1st argument
+  283 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(initializer_list<value_type> __il) {
+      |                                                               ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:298:63: note: candidate function not viable: no known conversion from 'int' to 'vector<int>' for 1st argument
+  298 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(vector&& __x)
+      |                                                               ^         ~~~~~~~~~~~~
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5446:17: error: use of undeclared identifier 'compMemberPos_'; did you mean 'compMembers_'?
+ 5446 |                 compMemberPos_[v] = -1;
+      |                 ^~~~~~~~~~~~~~
+      |                 compMembers_
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4231:25: note: 'compMembers_' declared here
+ 4231 |     vector<vector<int>> compMembers_;
+      |                         ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:5446:35: error: no viable overloaded '='
+ 5446 |                 compMemberPos_[v] = -1;
+      |                 ~~~~~~~~~~~~~~~~~ ^ ~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:270:63: note: candidate function not viable: no known conversion from 'int' to 'const vector<int>' for 1st argument
+  270 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(const vector& __x);
+      |                                                               ^         ~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:283:63: note: candidate function not viable: no known conversion from 'int' to 'initializer_list<value_type>' (aka 'initializer_list<int>') for 1st argument
+  283 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(initializer_list<value_type> __il) {
+      |                                                               ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/vector.h:298:63: note: candidate function not viable: no known conversion from 'int' to 'vector<int>' for 1st argument
+  298 |   _LIBCPP_CONSTEXPR_SINCE_CXX20 _LIBCPP_HIDE_FROM_ABI vector& operator=(vector&& __x)
+      |                                                               ^         ~~~~~~~~~~~~
+5 warnings and 11 errors generated.
+

@@ -1,0 +1,5 @@
++ set -euo pipefail
++ LCA_SMOKE_CLEAN_ENV_FLAG=LCA_SMOKE_CLEAN_ENV_READY
++ LCA_SMOKE_CLEAN_PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
++ [[ 0 != \1 ]]
++ exec /usr/bin/env -i HOME=/Users/free_1 PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin TERM=screen LCA_SMOKE_CLEAN_ENV_READY=1 /usr/bin/env bash outer_suite_wrappers/lca_smoke.sh

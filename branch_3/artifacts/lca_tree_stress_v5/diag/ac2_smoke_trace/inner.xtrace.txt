@@ -1,0 +1,951 @@
++ set -euo pipefail
++ LCA_SMOKE_CLEAN_ENV_FLAG=LCA_SMOKE_CLEAN_ENV_READY
++ LCA_SMOKE_CLEAN_PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
++ [[ 1 != \1 ]]
++++ dirname -- outer_suite_wrappers/lca_smoke.sh
+++ cd -- outer_suite_wrappers
+++ pwd -P
++ SCRIPT_DIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers'
+++ cd '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/..'
+++ pwd -P
++ BRANCH_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
++ cd '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
+++ cd '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/..'
+++ pwd -P
++ SUITE_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker'
++ export PYTHONDONTWRITEBYTECODE=1
++ PYTHONDONTWRITEBYTECODE=1
++ SOLVER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
++ SOURCE='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp'
++ ARTIFACT_RESOLVER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py'
++ BUILD_WRAPPER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh'
++ RELEASE_ENV='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
++ RUN_CASE_HELPER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py'
++ SMOKE_CASES='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/smoke_cases.tsv'
++ ARTIFACTS_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ TMP_PARENT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ RUN_STAGE_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ FAILURE_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_failure'
++ LEGACY_TMP_GLOB='lca_smoke.*'
++ LEGACY_OUT_GLOB='.lca_smoke_in_progress.*'
++ RUN_WORK_GLOB='run.*'
++ RUN_WORK_TEMPLATE=run.XXXXXX
++ LOCK_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks'
++ LOCKDIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ LOCK_PID_FILE='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke/pid'
++ OUTROOT=
++ OUTPARENT=
++ BACKUP_ROOT=
++ WORKDIR=
++ LOCK_HELD=0
++ CURRENT_CASE_STAGE=
++ CURRENT_CASE_MODE=
++ CURRENT_CASE_N=
++ CURRENT_CASE_SEED=
++ CURRENT_CASE_SHUFFLE_LABELS=
++ CURRENT_CASE_SHUFFLE_QUERIES=
++ CURRENT_CASE_TIMEOUT=
++ CURRENT_CASE_TAG=
++ CURRENT_CASE_MANIFEST_ROW=
++ CURRENT_CASE_STDOUT=
++ CURRENT_CASE_STDERR=
++ CURRENT_CASE_EXEC_COMMAND=
++ CURRENT_CASE_REPRO_COMMAND=
++ CURRENT_CASE_PRESERVED_INPUT_COMMAND=
++ CURRENT_CASE_REPRO_DIR=
++ CURRENT_CASE_PRESERVED_INPUT_REPLAY_DIR=
++ CURRENT_CASE_SOLVER_SNAPSHOT=
++ CURRENT_FAILURE_RC=0
++ trap 'cleanup "$?"' EXIT
++ trap 'handle_signal 129' HUP
++ trap 'handle_signal 130' INT
++ trap 'handle_signal 143' TERM
++ main
++ ((  0 != 0  ))
++ require_command python3
++ command -v python3
++ require_command mktemp
++ command -v mktemp
++ require_command dirname
++ command -v dirname
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp' 'solver source'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp'
++ local 'label=solver source'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp ]]
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py' 'artifact resolver'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py'
++ local 'label=artifact resolver'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py ]]
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh' 'release env wrapper'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
++ local 'label=release env wrapper'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh ]]
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' 'branch-local case helper'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py'
++ local 'label=branch-local case helper'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py ]]
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/smoke_cases.tsv' 'smoke case manifest'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/smoke_cases.tsv'
++ local 'label=smoke case manifest'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/smoke_cases.tsv ]]
++ require_executable '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh' 'build wrapper'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh'
++ local 'label=build wrapper'
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh ]]
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh ]]
++ [[ ! -x /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh ]]
++ run_main
++ local smoke_rc=0
++ sanitize_shell_state
++ unset CDPATH BASH_ENV ENV GLOBIGNORE
++ unalias -a
++ set +f
++ shopt -u dotglob extglob failglob nocaseglob nullglob
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ resolve_output_roots
+++ python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py' lca_smoke
++ OUTROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke ]]
+++ dirname '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ OUTPARENT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ BACKUP_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ case "$path" in
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ case "$path" in
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ case "$path" in
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_failure'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_failure'
++ case "$path" in
++ configure_runtime_environment
++ umask 022
++ export LC_ALL=C
++ LC_ALL=C
++ export LANG=C
++ LANG=C
++ export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
++ PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
++ export PYTHONIOENCODING=UTF-8
++ PYTHONIOENCODING=UTF-8
++ export PYTHONUTF8=1
++ PYTHONUTF8=1
++ export PYTHONNOUSERSITE=1
++ PYTHONNOUSERSITE=1
++ export PYTHONHASHSEED=0
++ PYTHONHASHSEED=0
++ export TZ=UTC
++ TZ=UTC
++ export BRANCH_ROOT
++ export SUITE_ROOT
++ export 'BRANCH_ARTIFACT_TMP_ROOT=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ BRANCH_ARTIFACT_TMP_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ export 'TMPDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ TMPDIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ export 'TMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ TMP='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ export 'TEMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ TEMP='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ export 'LCA_SMOKE_ARTIFACT_ROOT=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ LCA_SMOKE_ARTIFACT_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ export 'LCA_SMOKE_OUTROOT=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ LCA_SMOKE_OUTROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ export 'LCA_SMOKE_STAGE_ROOT=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ LCA_SMOKE_STAGE_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ case "$path" in
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ case "$path" in
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ case "$path" in
++ acquire_lock
++ local holder=
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks'
++ true
++ mkdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ printf '%s\n' 43675
++ LOCK_HELD=1
++ return
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke ]]
++ [[ ! -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke ]]
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ assert_runtime_environment
++ local env_name=
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3 != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3 ]]
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\s\m\o\k\e ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\s\t\a\g\i\n\g\/\l\c\a\_\s\m\o\k\e\_\w\o\r\k ]]
++ clear_stale_state
++ local stale
++ restore_previous_output
++ [[ -n /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ shopt -s nullglob
++ shopt -u nullglob
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5 ]]
++ shopt -s nullglob
++ shopt -u nullglob
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work ]]
++ remove_path_retry '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ local 'target=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ local attempt
++ for attempt in 1 2 3 4 5
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work ]]
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work ]]
++ [[ ! -L /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work ]]
++ rm -rf '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ python3 - '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work ]]
++ return 0
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
+++ mktemp -d '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.XXXXXX'
++ WORKDIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ'
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ'
++ case "$path" in
++ set +e
++ build_solver_if_needed
++ local build_rc=0
++ local prior_errexit=1
++ enter_function_errexit prior_errexit
++ local __state_var=prior_errexit
++ [[ huxB == *e* ]]
++ printf -v prior_errexit 0
++ set -e
++ [[ ! -x /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -nt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ]]
++ '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh'
++ :
++ require_executable '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' 'solver binary'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
++ local 'label=solver binary'
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ]]
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ]]
++ [[ ! -x /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ]]
++ restore_function_errexit 0
++ local prior_state=0
++ [[ 0 == \0 ]]
++ set +e
++ smoke_rc=0
++ set -e
++ ((  smoke_rc != 0  ))
++ load_release_environment
++ source '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
+++++ dirname '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
++++ cd '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
++++ pwd
+++ __solver_release_env_dir='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
+++ __solver_release_env_tmp_override='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++++ python3 - '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ __solver_release_env_tmp='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ export 'BRANCH_ARTIFACT_TMP_ROOT=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ BRANCH_ARTIFACT_TMP_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ export 'TMPDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ TMPDIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ export 'TMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ TMP='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ export 'TEMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ TEMP='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ unset __solver_release_env_dir
+++ unset __solver_release_env_tmp_override
+++ unset __solver_release_env_tmp
+++ export PROFILE_MODE=PROFILE_NONE
+++ PROFILE_MODE=PROFILE_NONE
+++ export LOCAL_SKIP_SELF_TEST=1
+++ LOCAL_SKIP_SELF_TEST=1
+++ export PROFILE_PROGRESS_STRIDE=1024
+++ PROFILE_PROGRESS_STRIDE=1024
+++ export ENABLE_REUSE_APPLY_OPT=1
+++ ENABLE_REUSE_APPLY_OPT=1
+++ export ENABLE_PRESERVED_SPLIT_OPT=1
+++ ENABLE_PRESERVED_SPLIT_OPT=1
+++ export ENABLE_WATCH_SCAN_OPT=1
+++ ENABLE_WATCH_SCAN_OPT=1
+++ export ENABLE_RETAIN_COMPACTION_OPT=1
+++ ENABLE_RETAIN_COMPACTION_OPT=1
+++ export ENABLE_KEPT_VECTOR_OPT=1
+++ ENABLE_KEPT_VECTOR_OPT=1
+++ export ENABLE_STABLE_COMPACTION_OPT=1
+++ ENABLE_STABLE_COMPACTION_OPT=1
+++ export ENABLE_BLOCK_COPY_COMPACTION_OPT=1
+++ ENABLE_BLOCK_COPY_COMPACTION_OPT=1
+++ export ENABLE_COPY_PLAN_BUILD_OPT=1
+++ ENABLE_COPY_PLAN_BUILD_OPT=1
+++ export ENABLE_RUN_DISCOVERY_FUSION_OPT=1
+++ ENABLE_RUN_DISCOVERY_FUSION_OPT=1
+++ export ENABLE_FUSED_DISCOVERY_CLASSIFY_OPT=1
+++ ENABLE_FUSED_DISCOVERY_CLASSIFY_OPT=1
+++ export ENABLE_TSCAN_CORE_OPT=1
+++ ENABLE_TSCAN_CORE_OPT=1
+++ export ENABLE_TSCAN_BRANCH_STATE_OPT=1
+++ ENABLE_TSCAN_BRANCH_STATE_OPT=1
+++ export ENABLE_STATE_LOAD_MATERIALIZATION_OPT=1
+++ ENABLE_STATE_LOAD_MATERIALIZATION_OPT=1
+++ export ENABLE_PREV_STATE_CARRY_REUSE_OPT=1
+++ ENABLE_PREV_STATE_CARRY_REUSE_OPT=1
+++ export ENABLE_CARRY_REUSE_FASTPATH_OPT=1
+++ ENABLE_CARRY_REUSE_FASTPATH_OPT=1
+++ export ENABLE_CARRY_HIT_APPLY_OPT=1
+++ ENABLE_CARRY_HIT_APPLY_OPT=1
+++ export ENABLE_PREV_STATE_WRITEBACK_OPT=0
+++ ENABLE_PREV_STATE_WRITEBACK_OPT=0
+++ export ENABLE_POINTER_REBIND_OPT=0
+++ ENABLE_POINTER_REBIND_OPT=0
+++ export ENABLE_TARGET_RESOLVE_PINNING_OPT=0
+++ ENABLE_TARGET_RESOLVE_PINNING_OPT=0
+++ export ENABLE_DIRECT_PREBIND_OPT=0
+++ ENABLE_DIRECT_PREBIND_OPT=0
+++ export ENABLE_REBIND_COMMIT_OPT=0
+++ ENABLE_REBIND_COMMIT_OPT=0
+++ export ENABLE_METADATA_PATCH_SLOT_OWNER_OPT=0
+++ ENABLE_METADATA_PATCH_SLOT_OWNER_OPT=0
+++ export ENABLE_SLOT_OWNER_UPDATE_OPT=0
+++ ENABLE_SLOT_OWNER_UPDATE_OPT=0
+++ export ENABLE_SLOT_OWNER_PATCH_COMMIT_OPT=0
+++ ENABLE_SLOT_OWNER_PATCH_COMMIT_OPT=0
+++ export ENABLE_SLOT_OWNER_FIELD_PATCH_OPT=0
+++ ENABLE_SLOT_OWNER_FIELD_PATCH_OPT=0
+++ export ENABLE_COMPACT_FIELD_PACK_OPT=0
+++ ENABLE_COMPACT_FIELD_PACK_OPT=0
+++ export ENABLE_PACK_ENCODE_NORMALIZE_OPT=0
+++ ENABLE_PACK_ENCODE_NORMALIZE_OPT=0
+++ export ENABLE_PACK_ENCODE_NORMALIZE_CORE_OPT=0
+++ ENABLE_PACK_ENCODE_NORMALIZE_CORE_OPT=0
+++ export ENABLE_CANONICAL_NORMALIZE_OPT=0
+++ ENABLE_CANONICAL_NORMALIZE_OPT=0
+++ export ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT=0
+++ ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT=0
+++ export ENABLE_LAYOUT_SIGNATURE_GATE_OPT=0
+++ ENABLE_LAYOUT_SIGNATURE_GATE_OPT=0
+++ export ENABLE_DELTA_PRESERVED_HIT=1
+++ ENABLE_DELTA_PRESERVED_HIT=1
+++ export ENABLE_DELTA_CONNECTOR_HIT=1
+++ ENABLE_DELTA_CONNECTOR_HIT=1
++ assert_runtime_environment
++ local env_name=
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3 != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3 ]]
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP
++ [[ -z /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\.\t\m\p ]]
++ ensure_under_artifacts '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ case "$path" in
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\s\m\o\k\e ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work != \/\U\s\e\r\s\/\f\r\e\e\_\1\/\L\i\b\r\a\r\y\/\M\o\b\i\l\e\ \D\o\c\u\m\e\n\t\s\/\i\C\l\o\u\d\~\m\d\~\o\b\s\i\d\i\a\n\/\D\o\c\u\m\e\n\t\s\/\c\p\p\-\c\h\e\c\k\e\r\/\b\r\a\n\c\h\_\3\/\a\r\t\i\f\a\c\t\s\/\l\c\a\_\t\r\e\e\_\s\t\r\e\s\s\_\v\5\/\s\t\a\g\i\n\g\/\l\c\a\_\s\m\o\k\e\_\w\o\r\k ]]
++ set +e
++ run_smoke_suite
++ local stage=
++ local mode=
++ local n=
++ local seed=
++ local shuffle_labels=
++ local shuffle_queries=
++ local timeout_s=
++ local rc=0
++ local prior_errexit=1
++ enter_function_errexit prior_errexit
++ local __state_var=prior_errexit
++ [[ huxB == *e* ]]
++ printf -v prior_errexit 0
++ set -e
++ IFS='	'
++ read -r stage mode n seed shuffle_labels shuffle_queries timeout_s
++ [[ -z stage ]]
++ [[ stage == \s\t\a\g\e ]]
++ continue
++ IFS='	'
++ read -r stage mode n seed shuffle_labels shuffle_queries timeout_s
++ [[ -z smoke ]]
++ [[ smoke == \s\t\a\g\e ]]
++ set +e
++ run_smoke_case smoke comb_core 64 1 1 1 smoke_comb_core_64_s1 2
++ local stage=smoke
++ local mode=comb_core
++ local n=64
++ local seed=1
++ local shuffle_labels=1
++ local shuffle_queries=1
++ local case_tag=smoke_comb_core_64_s1
++ local timeout_s=2
++ local 'case_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1'
++ local rc=0
++ local prior_errexit=1
++ local -a cmd
++ enter_function_errexit prior_errexit
++ local __state_var=prior_errexit
++ [[ huxB == *e* ]]
++ printf -v prior_errexit 0
++ set -e
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1'
++ CURRENT_CASE_STAGE=smoke
++ CURRENT_CASE_MODE=comb_core
++ CURRENT_CASE_N=64
++ CURRENT_CASE_SEED=1
++ CURRENT_CASE_SHUFFLE_LABELS=1
++ CURRENT_CASE_SHUFFLE_QUERIES=1
++ CURRENT_CASE_TIMEOUT=2
++ CURRENT_CASE_TAG=smoke_comb_core_64_s1
+++ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s' smoke comb_core 64 1 1 1 2
++ CURRENT_CASE_MANIFEST_ROW='smoke	comb_core	64	1	1	1	2'
++ CURRENT_CASE_STDOUT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1/run_case.stdout.txt'
++ CURRENT_CASE_STDERR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1/run_case.stderr.txt'
++ CURRENT_CASE_REPRO_COMMAND=
++ cmd=(python3 "$RUN_CASE_HELPER" "$mode" "$n" "$seed" "$shuffle_labels" "$shuffle_queries" "$SOLVER" "$case_dir" --timeout "$timeout_s" --env "DENSE_SHADOW_CASE_MODE=$mode" --env "DENSE_SHADOW_CASE_N=$n" --env "DENSE_SHADOW_CASE_SEED=$seed" --env "DENSE_PROFILE_OUTDIR=$case_dir" --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1)
+++ quote_command python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' comb_core 64 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1' --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ local quoted=
+++ local word=
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' '' python3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py ' comb_core
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core ' 64
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 ' --timeout
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout ' 2
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env ' DENSE_SHADOW_CASE_MODE=comb_core
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env ' DENSE_SHADOW_CASE_N=64
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env ' DENSE_SHADOW_CASE_SEED=1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 --env ' 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --env ' DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ printf '%s\n' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ CURRENT_CASE_EXEC_COMMAND='python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' comb_core 64 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1' --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_comb_core_64_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
++ restore_function_errexit 0
++ local prior_state=0
++ [[ 0 == \0 ]]
++ set +e
++ return 0
++ rc=0
++ set -e
++ ((  rc == 0  ))
++ continue
++ IFS='	'
++ read -r stage mode n seed shuffle_labels shuffle_queries timeout_s
++ [[ -z smoke ]]
++ [[ smoke == \s\t\a\g\e ]]
++ set +e
++ run_smoke_case smoke multi_comb_rect 128 1 1 1 smoke_multi_comb_rect_128_s1 3
++ local stage=smoke
++ local mode=multi_comb_rect
++ local n=128
++ local seed=1
++ local shuffle_labels=1
++ local shuffle_queries=1
++ local case_tag=smoke_multi_comb_rect_128_s1
++ local timeout_s=3
++ local 'case_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1'
++ local rc=0
++ local prior_errexit=1
++ local -a cmd
++ enter_function_errexit prior_errexit
++ local __state_var=prior_errexit
++ [[ huxB == *e* ]]
++ printf -v prior_errexit 0
++ set -e
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1'
++ CURRENT_CASE_STAGE=smoke
++ CURRENT_CASE_MODE=multi_comb_rect
++ CURRENT_CASE_N=128
++ CURRENT_CASE_SEED=1
++ CURRENT_CASE_SHUFFLE_LABELS=1
++ CURRENT_CASE_SHUFFLE_QUERIES=1
++ CURRENT_CASE_TIMEOUT=3
++ CURRENT_CASE_TAG=smoke_multi_comb_rect_128_s1
+++ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s' smoke multi_comb_rect 128 1 1 1 3
++ CURRENT_CASE_MANIFEST_ROW='smoke	multi_comb_rect	128	1	1	1	3'
++ CURRENT_CASE_STDOUT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1/run_case.stdout.txt'
++ CURRENT_CASE_STDERR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1/run_case.stderr.txt'
++ CURRENT_CASE_REPRO_COMMAND=
++ cmd=(python3 "$RUN_CASE_HELPER" "$mode" "$n" "$seed" "$shuffle_labels" "$shuffle_queries" "$SOLVER" "$case_dir" --timeout "$timeout_s" --env "DENSE_SHADOW_CASE_MODE=$mode" --env "DENSE_SHADOW_CASE_N=$n" --env "DENSE_SHADOW_CASE_SEED=$seed" --env "DENSE_PROFILE_OUTDIR=$case_dir" --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1)
+++ quote_command python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' multi_comb_rect 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ local quoted=
+++ local word=
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' '' python3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py ' multi_comb_rect
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect ' 128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 ' --timeout
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout ' 3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env ' DENSE_SHADOW_CASE_MODE=multi_comb_rect
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env ' DENSE_SHADOW_CASE_N=128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env ' DENSE_SHADOW_CASE_SEED=1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env ' 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --env ' DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ printf '%s\n' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ CURRENT_CASE_EXEC_COMMAND='python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py multi_comb_rect 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' multi_comb_rect 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=multi_comb_rect --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_multi_comb_rect_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
++ restore_function_errexit 0
++ local prior_state=0
++ [[ 0 == \0 ]]
++ set +e
++ return 0
++ rc=0
++ set -e
++ ((  rc == 0  ))
++ continue
++ IFS='	'
++ read -r stage mode n seed shuffle_labels shuffle_queries timeout_s
++ [[ -z smoke ]]
++ [[ smoke == \s\t\a\g\e ]]
++ set +e
++ run_smoke_case smoke balanced_dense 128 1 1 1 smoke_balanced_dense_128_s1 3
++ local stage=smoke
++ local mode=balanced_dense
++ local n=128
++ local seed=1
++ local shuffle_labels=1
++ local shuffle_queries=1
++ local case_tag=smoke_balanced_dense_128_s1
++ local timeout_s=3
++ local 'case_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1'
++ local rc=0
++ local prior_errexit=1
++ local -a cmd
++ enter_function_errexit prior_errexit
++ local __state_var=prior_errexit
++ [[ huxB == *e* ]]
++ printf -v prior_errexit 0
++ set -e
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1'
++ CURRENT_CASE_STAGE=smoke
++ CURRENT_CASE_MODE=balanced_dense
++ CURRENT_CASE_N=128
++ CURRENT_CASE_SEED=1
++ CURRENT_CASE_SHUFFLE_LABELS=1
++ CURRENT_CASE_SHUFFLE_QUERIES=1
++ CURRENT_CASE_TIMEOUT=3
++ CURRENT_CASE_TAG=smoke_balanced_dense_128_s1
+++ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s' smoke balanced_dense 128 1 1 1 3
++ CURRENT_CASE_MANIFEST_ROW='smoke	balanced_dense	128	1	1	1	3'
++ CURRENT_CASE_STDOUT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1/run_case.stdout.txt'
++ CURRENT_CASE_STDERR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1/run_case.stderr.txt'
++ CURRENT_CASE_REPRO_COMMAND=
++ cmd=(python3 "$RUN_CASE_HELPER" "$mode" "$n" "$seed" "$shuffle_labels" "$shuffle_queries" "$SOLVER" "$case_dir" --timeout "$timeout_s" --env "DENSE_SHADOW_CASE_MODE=$mode" --env "DENSE_SHADOW_CASE_N=$n" --env "DENSE_SHADOW_CASE_SEED=$seed" --env "DENSE_PROFILE_OUTDIR=$case_dir" --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1)
+++ quote_command python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' balanced_dense 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ local quoted=
+++ local word=
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' '' python3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py ' balanced_dense
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense ' 128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 ' --timeout
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout ' 3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env ' DENSE_SHADOW_CASE_MODE=balanced_dense
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env ' DENSE_SHADOW_CASE_N=128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env ' DENSE_SHADOW_CASE_SEED=1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env ' 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --env ' DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ printf '%s\n' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ CURRENT_CASE_EXEC_COMMAND='python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py balanced_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' balanced_dense 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=balanced_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_balanced_dense_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
++ restore_function_errexit 0
++ local prior_state=0
++ [[ 0 == \0 ]]
++ set +e
++ return 0
++ rc=0
++ set -e
++ ((  rc == 0  ))
++ continue
++ IFS='	'
++ read -r stage mode n seed shuffle_labels shuffle_queries timeout_s
++ [[ -z smoke ]]
++ [[ smoke == \s\t\a\g\e ]]
++ set +e
++ run_smoke_case smoke caterpillar_rect_dense 128 1 1 1 smoke_caterpillar_rect_dense_128_s1 3
++ local stage=smoke
++ local mode=caterpillar_rect_dense
++ local n=128
++ local seed=1
++ local shuffle_labels=1
++ local shuffle_queries=1
++ local case_tag=smoke_caterpillar_rect_dense_128_s1
++ local timeout_s=3
++ local 'case_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1'
++ local rc=0
++ local prior_errexit=1
++ local -a cmd
++ enter_function_errexit prior_errexit
++ local __state_var=prior_errexit
++ [[ huxB == *e* ]]
++ printf -v prior_errexit 0
++ set -e
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1'
++ CURRENT_CASE_STAGE=smoke
++ CURRENT_CASE_MODE=caterpillar_rect_dense
++ CURRENT_CASE_N=128
++ CURRENT_CASE_SEED=1
++ CURRENT_CASE_SHUFFLE_LABELS=1
++ CURRENT_CASE_SHUFFLE_QUERIES=1
++ CURRENT_CASE_TIMEOUT=3
++ CURRENT_CASE_TAG=smoke_caterpillar_rect_dense_128_s1
+++ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s' smoke caterpillar_rect_dense 128 1 1 1 3
++ CURRENT_CASE_MANIFEST_ROW='smoke	caterpillar_rect_dense	128	1	1	1	3'
++ CURRENT_CASE_STDOUT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1/run_case.stdout.txt'
++ CURRENT_CASE_STDERR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1/run_case.stderr.txt'
++ CURRENT_CASE_REPRO_COMMAND=
++ cmd=(python3 "$RUN_CASE_HELPER" "$mode" "$n" "$seed" "$shuffle_labels" "$shuffle_queries" "$SOLVER" "$case_dir" --timeout "$timeout_s" --env "DENSE_SHADOW_CASE_MODE=$mode" --env "DENSE_SHADOW_CASE_N=$n" --env "DENSE_SHADOW_CASE_SEED=$seed" --env "DENSE_PROFILE_OUTDIR=$case_dir" --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1)
+++ quote_command python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' caterpillar_rect_dense 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ local quoted=
+++ local word=
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' '' python3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py ' caterpillar_rect_dense
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense ' 128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 ' --timeout
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout ' 3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env ' DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env ' DENSE_SHADOW_CASE_N=128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env ' DENSE_SHADOW_CASE_SEED=1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env ' 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --env ' DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ printf '%s\n' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ CURRENT_CASE_EXEC_COMMAND='python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py caterpillar_rect_dense 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' caterpillar_rect_dense 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=caterpillar_rect_dense --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_caterpillar_rect_dense_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
++ restore_function_errexit 0
++ local prior_state=0
++ [[ 0 == \0 ]]
++ set +e
++ return 0
++ rc=0
++ set -e
++ ((  rc == 0  ))
++ continue
++ IFS='	'
++ read -r stage mode n seed shuffle_labels shuffle_queries timeout_s
++ [[ -z smoke ]]
++ [[ smoke == \s\t\a\g\e ]]
++ set +e
++ run_smoke_case smoke random_recursive_mixed 128 1 1 1 smoke_random_recursive_mixed_128_s1 3
++ local stage=smoke
++ local mode=random_recursive_mixed
++ local n=128
++ local seed=1
++ local shuffle_labels=1
++ local shuffle_queries=1
++ local case_tag=smoke_random_recursive_mixed_128_s1
++ local timeout_s=3
++ local 'case_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1'
++ local rc=0
++ local prior_errexit=1
++ local -a cmd
++ enter_function_errexit prior_errexit
++ local __state_var=prior_errexit
++ [[ huxB == *e* ]]
++ printf -v prior_errexit 0
++ set -e
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1'
++ CURRENT_CASE_STAGE=smoke
++ CURRENT_CASE_MODE=random_recursive_mixed
++ CURRENT_CASE_N=128
++ CURRENT_CASE_SEED=1
++ CURRENT_CASE_SHUFFLE_LABELS=1
++ CURRENT_CASE_SHUFFLE_QUERIES=1
++ CURRENT_CASE_TIMEOUT=3
++ CURRENT_CASE_TAG=smoke_random_recursive_mixed_128_s1
+++ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s' smoke random_recursive_mixed 128 1 1 1 3
++ CURRENT_CASE_MANIFEST_ROW='smoke	random_recursive_mixed	128	1	1	1	3'
++ CURRENT_CASE_STDOUT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1/run_case.stdout.txt'
++ CURRENT_CASE_STDERR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1/run_case.stderr.txt'
++ CURRENT_CASE_REPRO_COMMAND=
++ cmd=(python3 "$RUN_CASE_HELPER" "$mode" "$n" "$seed" "$shuffle_labels" "$shuffle_queries" "$SOLVER" "$case_dir" --timeout "$timeout_s" --env "DENSE_SHADOW_CASE_MODE=$mode" --env "DENSE_SHADOW_CASE_N=$n" --env "DENSE_SHADOW_CASE_SEED=$seed" --env "DENSE_PROFILE_OUTDIR=$case_dir" --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1)
+++ quote_command python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' random_recursive_mixed 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ local quoted=
+++ local word=
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' '' python3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py ' random_recursive_mixed
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed ' 128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 ' 1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 ' --timeout
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout ' 3
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env ' DENSE_SHADOW_CASE_MODE=random_recursive_mixed
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env ' DENSE_SHADOW_CASE_N=128
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env ' DENSE_SHADOW_CASE_SEED=1
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env ' 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1'
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 ' --env
+++ for word in '"$@"'
+++ printf -v quoted '%s%q ' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --env ' DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+++ printf '%s\n' 'python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ CURRENT_CASE_EXEC_COMMAND='python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py random_recursive_mixed 128 1 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1'
++ python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py' random_recursive_mixed 128 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1' --timeout 3 --env DENSE_SHADOW_CASE_MODE=random_recursive_mixed --env DENSE_SHADOW_CASE_N=128 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ/smoke_random_recursive_mixed_128_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
++ restore_function_errexit 0
++ local prior_state=0
++ [[ 0 == \0 ]]
++ set +e
++ return 0
++ rc=0
++ set -e
++ ((  rc == 0  ))
++ continue
++ IFS='	'
++ read -r stage mode n seed shuffle_labels shuffle_queries timeout_s
++ restore_function_errexit 0
++ local prior_state=0
++ [[ 0 == \0 ]]
++ set +e
++ smoke_rc=0
++ set -e
++ ((  smoke_rc != 0  ))
++ publish_output
++ local outleaf=smoke
++ [[ ! -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ ]]
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke ]]
++ remove_path_retry '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ local 'target=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ local attempt
++ for attempt in 1 2 3 4 5
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ return 0
++ mv '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ mv '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work/run.p5iDeQ' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ WORKDIR=
++ remove_path_retry '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ local 'target=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ local attempt
++ for attempt in 1 2 3 4 5
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ [[ ! -L /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ rm -rf '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ python3 - '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ return 0
++ clear_stale_failure_state
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_failure ]]
++ cleanup 0
++ local rc=0
++ trap - EXIT
++ set +e
++ [[ -n '' ]]
++ ((  rc != 0  ))
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ release_lock
++ ((  LOCK_HELD  ))
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke ]]
++ remove_path_retry '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ local 'target=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ local attempt
++ for attempt in 1 2 3 4 5
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke ]]
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke ]]
++ [[ ! -L /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke ]]
++ rm -rf '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ python3 - '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ [[ ! -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke ]]
++ return 0
++ LOCK_HELD=0
++ rmdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks'
++ true
++ remove_path_retry '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
+++ dirname '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging/lca_smoke_work'
++ rmdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/staging'
++ rmdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ true
++ exit 0

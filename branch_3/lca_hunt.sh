@@ -1,24 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BRANCH="$(cd "$(dirname "$0")" && pwd)"
-ROOT="$(cd "$BRANCH/.." && pwd)"
-export PYTHONDONTWRITEBYTECODE=1
-SOLVER="$BRANCH/boj28350_resume/solve"
-SOURCE="$BRANCH/boj28350_resume/boj28350_branch_3_solver.cpp"
-OUTDIR="$(python3 "$BRANCH/artifact_paths.py" lca_hunt "${1:-}")"
-SIZES="${2:-12000,24000,48000,99999}"
-SEEDS="${3:-1,2,3}"
-TIMEOUT="${4:-8.0}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-source "$BRANCH/solver_release_env.sh"
+usage() {
+  cat >&2 <<'EOF'
+usage: ./lca_hunt.sh [label] [sizes_csv] [seeds_csv] [timeout_sec]
+[lca_hunt] optional diagnostic helper for hardest-case search/reporting
+[lca_hunt] not part of formal acceptance; required gates are ./lca_strong_gate.sh and ./lca_boj3s_gate.sh
+[lca_hunt] forwards to ./outer_suite_wrappers/lca_hunt.sh
+EOF
+}
 
-if [[ ! -x "$SOLVER" || "$SOURCE" -nt "$SOLVER" ]]; then
-  "$BRANCH/build.sh"
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
 fi
 
-# Keep the upstream hardest-case search intact, but make the branch contract
-# explicit: this wrapper is for diagnosis, not for formal acceptance.
-echo "[lca_hunt] diagnostic-only run; required acceptance gates are ./lca_strong_gate.sh and ./lca_boj3s_gate.sh" >&2
-
-exec "$ROOT/hunt.sh" "$SOLVER" "$OUTDIR" "$SIZES" "$SEEDS" "$TIMEOUT"
+exec "$SCRIPT_DIR/outer_suite_wrappers/lca_hunt.sh" "$@"

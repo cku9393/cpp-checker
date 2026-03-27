@@ -1,0 +1,28 @@
+[ac3_progress] phase=erase vertex=1 processed=1 queue=0
+[ac3_progress] phase=erase_done vertex=1 processed=1 new_components=2 changes=101
+[ac3_progress] phase=erase vertex=2 processed=2 queue=2 comp=1 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=2 processed=2 new_components=2 changes=104 queue=2
+[ac3_progress] phase=erase vertex=513 processed=3 queue=2 comp=2 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=513 processed=3 new_components=0 changes=0 queue=2
+[ac3_progress] phase=erase vertex=514 processed=4 queue=1 comp=4 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=514 processed=4 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=3 processed=5 queue=1 comp=3 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=3 processed=5 new_components=2 changes=111 queue=1
+[ac3_progress] phase=erase vertex=515 processed=6 queue=1 comp=6 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=515 processed=6 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=4 processed=7 queue=1 comp=5 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=4 processed=7 new_components=2 changes=114 queue=1
+[ac3_progress] phase=erase vertex=516 processed=8 queue=1 comp=8 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=516 processed=8 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=528 processed=32 queue=1 comp=32 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=528 processed=32 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=33 processed=64 queue=2 comp=63 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=33 processed=64 new_components=2 changes=108 queue=2
+[ac3_progress] phase=erase vertex=559 processed=96 queue=1 comp=96 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=559 processed=96 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=575 processed=128 queue=3 comp=126 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=575 processed=128 new_components=0 changes=0 queue=3
+[ac3_progress] phase=erase vertex=81 processed=160 queue=3 comp=159 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=81 processed=160 new_components=2 changes=91 queue=3
+[ac3_progress] phase=erase vertex=607 processed=192 queue=4 comp=190 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=607 processed=192 new_components=0 changes=0 queue=4

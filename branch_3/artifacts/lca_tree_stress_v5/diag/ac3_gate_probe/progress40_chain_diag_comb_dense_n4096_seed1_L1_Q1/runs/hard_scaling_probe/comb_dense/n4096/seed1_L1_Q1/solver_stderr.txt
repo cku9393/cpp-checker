@@ -1,0 +1,22 @@
+[ac3_progress] phase=erase vertex=1 processed=1 queue=0
+[ac3_progress] phase=erase_done vertex=1 processed=1 new_components=2 changes=38
+[ac3_progress] phase=erase vertex=2509 processed=2 queue=1 comp=2 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=2509 processed=2 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=3287 processed=3 queue=1 comp=1 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=3287 processed=3 new_components=2 changes=27 queue=1
+[ac3_progress] phase=erase vertex=2625 processed=4 queue=1 comp=4 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=2625 processed=4 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=2780 processed=5 queue=1 comp=3 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=2780 processed=5 new_components=2 changes=37 queue=1
+[ac3_progress] phase=erase vertex=3589 processed=6 queue=1 comp=6 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=3589 processed=6 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=2188 processed=7 queue=1 comp=5 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=2188 processed=7 new_components=2 changes=38 queue=1
+[ac3_progress] phase=erase vertex=648 processed=8 queue=1 comp=8 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=648 processed=8 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=690 processed=16 queue=3 comp=15 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=690 processed=16 new_components=2 changes=20 queue=3
+[ac3_progress] phase=erase vertex=2954 processed=32 queue=1 comp=32 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=2954 processed=32 new_components=0 changes=0 queue=1
+[ac3_progress] phase=erase vertex=385 processed=48 queue=1 comp=48 indeg=0 bad=0
+[ac3_progress] phase=erase_done vertex=385 processed=48 new_components=0 changes=0 queue=1

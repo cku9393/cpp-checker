@@ -1,0 +1,12 @@
+[release_diag] phase=case_start run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=0 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=preprocess_done run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=102 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=topo_artifact_done run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=1570 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=topo_init_done run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=1573 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=owner_index_done run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=1688 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=active_scan_done run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=1689 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=support_build_done run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=1707 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=init_done run_tag=ac5_release_balanced99999_after_light_split deletion=0/99999 x=-1 elapsed_ms=1707 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=deletion_checkpoint run_tag=ac5_release_balanced99999_after_light_split deletion=1/99999 x=1 elapsed_ms=2586 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=deletion_checkpoint run_tag=ac5_release_balanced99999_after_light_split deletion=64/99999 x=271 elapsed_ms=4736 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=deletion_checkpoint run_tag=ac5_release_balanced99999_after_light_split deletion=128/99999 x=507 elapsed_ms=6994 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=deletion_checkpoint run_tag=ac5_release_balanced99999_after_light_split deletion=192/99999 x=771 elapsed_ms=9110 psplit_calls=0 psplit_vertices=0 psplit_ns=0

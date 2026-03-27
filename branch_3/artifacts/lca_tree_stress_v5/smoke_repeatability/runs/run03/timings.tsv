@@ -1,0 +1,5 @@
+case01_smoke_comb_core_n64_s1_L1_Q1_t2/time.txt	0.739174 1952
+case02_smoke_multi_comb_rect_n128_s1_L1_Q1_t3/time.txt	0.075837 5728
+case03_smoke_balanced_dense_n128_s1_L1_Q1_t3/time.txt	0.064665 3696
+case04_smoke_caterpillar_rect_dense_n128_s1_L1_Q1_t3/time.txt	0.206910 11632
+case05_smoke_random_recursive_mixed_n128_s1_L1_Q1_t3/time.txt	0.066400 3568

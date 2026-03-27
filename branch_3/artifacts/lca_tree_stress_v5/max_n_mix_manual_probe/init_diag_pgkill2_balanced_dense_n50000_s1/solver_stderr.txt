@@ -1,0 +1,1 @@
+[ac3_init] phase=init_enter owner=-1 active_owners=0 rebuilt_classes=0 total_queries=85367 active_queries=0

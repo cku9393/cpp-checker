@@ -1,0 +1,11 @@
+[2026-03-26 11:29:34 KST] attempt 1 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+failure report written: artifacts/lca_tree_stress_v5/retry_loop/attempt_001_20260326_112934/failure_report.md
+failure breakdown written: artifacts/lca_tree_stress_v5/retry_loop/attempt_001_20260326_112934/failure_breakdown.md
+latest failure report updated: artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-03-26 12:17:51 KST] attempt 1 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-03-26 12:19:06 KST] attempt 1 analysis round 1 did not produce a verified analysis refresh; retrying analysis in 10 seconds
+[2026-03-26 12:19:16 KST] attempt 1 analysis round 2 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-03-26 12:20:20 KST] attempt 1 analysis round 2 did not produce a verified analysis refresh; retrying analysis in 10 seconds
+[2026-03-26 12:20:30 KST] attempt 1 analysis round 3 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-03-26 12:21:35 KST] attempt 1 analysis round 3 failed to refresh mandatory analysis assets; aborting retry loop instead of starting a blind solver retry

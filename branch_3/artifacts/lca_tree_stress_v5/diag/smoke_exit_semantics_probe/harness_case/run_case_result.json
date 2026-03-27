@@ -1,0 +1,13 @@
+{
+  "category": "harness",
+  "exit_code": 70,
+  "message": "unexpected ValueError: unknown mode: not_a_real_mode",
+  "rss_kb": null,
+  "sec": null,
+  "solver_exit_code": null,
+  "solver_signal": null,
+  "status": "harness_transient_failure",
+  "timed_out": false,
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py\", line 219, in main\n    in_path, meta_path = generate_case(\n  File \"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py\", line 142, in generate_case\n    parent, queries, summary = branch_gen_case.build_mode(mode, n, m_cap, seed)\n  File \"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_gen_case.py\", line 295, in build_mode\n    return _build_default_mode(mode, n, cap, seed)\n  File \"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_gen_case.py\", line 288, in _build_default_mode\n    raise ValueError(f\"unknown mode: {mode}\")\nValueError: unknown mode: not_a_real_mode\n",
+  "validator_ok": null
+}

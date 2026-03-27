@@ -3,13 +3,24 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
+import os
+import random
 import subprocess
 import sys
 from pathlib import Path
 from typing import Iterable
 
-from artifact_paths import resolve_output_path
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+sys.dont_write_bytecode = True
+
+import branch_gen_case
+from artifact_paths import configure_branch_process_env, resolve_output_path
+from branch_validator import validate_case
 from suite_utils import ensure_executable, resolve_solver_path, run_solver_with_time
+
+
+configure_branch_process_env()
 
 
 ROOT = Path(__file__).resolve().parent
@@ -17,11 +28,6 @@ RESUME_DIR = ROOT / "boj28350_resume"
 SOURCE = RESUME_DIR / "boj28350_branch_3_solver.cpp"
 DEFAULT_SOLVER = RESUME_DIR / "solve"
 DEFAULT_CASES = RESUME_DIR / "smoke_cases.tsv"
-STRESS_DIR = ROOT / "lca_tree_stress_v5"
-if not STRESS_DIR.exists():
-    STRESS_DIR = ROOT.parent / "lca_tree_stress_v5"
-GEN = STRESS_DIR / "gen_case.py"
-VAL = STRESS_DIR / "validator.py"
 
 
 def parse_cases(tsv_path: Path) -> list[dict[str, str]]:
@@ -43,18 +49,25 @@ def resolve_branch_solver(value: str) -> Path:
     return resolve_solver_path(value, root=ROOT.parent)
 
 
-def build_solver(compiler: str | None, static_mode: str, defines: list[str]) -> int:
-    out_path = RESUME_DIR / "solve"
+def build_solver(
+    compiler: str | None,
+    static_mode: str,
+    defines: list[str],
+    source: str | None,
+    out: str | None,
+) -> int:
     cmd = [
         sys.executable,
         str(ROOT / "build.py"),
-        "--source",
-        str(SOURCE.relative_to(ROOT)),
-        "--out",
-        str(out_path),
         "--static",
         static_mode,
     ]
+    if source:
+        cmd.extend(["--source", str(resolve_branch_path(source).relative_to(ROOT))])
+    else:
+        cmd.extend(["--source", str(SOURCE.relative_to(ROOT))])
+    if out:
+        cmd.extend(["--out", str(resolve_output_path(out, default_key="boj28350_build"))])
     if compiler:
         cmd.extend(["--compiler", compiler])
     for define in defines:
@@ -81,27 +94,24 @@ def run_case(row: dict[str, str], solver: Path, base_out: Path, default_timeout_
     time_path = case_dir / "time.txt"
     stderr_path = case_dir / "solver_stderr.txt"
 
-    gen_cmd = [
-        sys.executable,
-        str(GEN),
-        "--mode",
-        mode,
-        "--n",
-        str(n),
-        "--seed",
-        str(seed),
-        "--meta",
-        str(meta_path),
-        "--parent-out",
-        str(hidden_parent_path),
-    ]
+    parent, queries, summary = branch_gen_case.build_mode(mode, n, 100000, seed)
     if shuffle_labels:
-        gen_cmd.append("--shuffle-labels")
+        parent, queries = branch_gen_case.permute_preserving_root(
+            parent, queries, seed ^ 0x9E3779B1
+        )
     if shuffle_queries:
-        gen_cmd.append("--shuffle-queries")
+        rng = random.Random(seed ^ 0x85EBCA77)
+        rng.shuffle(queries)
 
-    with in_path.open("wb") as fout:
-        subprocess.run(gen_cmd, check=True, stdout=fout, cwd=ROOT)
+    meta_path.write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    branch_gen_case.write_parent_file(str(hidden_parent_path), parent)
+    with in_path.open("w", encoding="utf-8") as fout:
+        fout.write(f"{n} {len(queries)}\n")
+        for u, v, w in queries:
+            fout.write(f"{u} {v} {w}\n")
 
     rc, timed_out, sec, rss_kb = run_solver_with_time(
         solver,
@@ -110,6 +120,13 @@ def run_case(row: dict[str, str], solver: Path, base_out: Path, default_timeout_
         time_path,
         stderr_path,
         timeout=timeout_s,
+        env={
+            **os.environ,
+            "DENSE_PROFILE_OUTDIR": str(case_dir),
+            "DENSE_SHADOW_CASE_MODE": mode,
+            "DENSE_SHADOW_CASE_N": str(n),
+            "DENSE_SHADOW_CASE_SEED": str(seed),
+        },
         cwd=case_dir,
     )
 
@@ -120,15 +137,10 @@ def run_case(row: dict[str, str], solver: Path, base_out: Path, default_timeout_
     elif rc != 0:
         validator_status = f"RC{rc}"
     else:
-        res = subprocess.run(
-            [sys.executable, str(VAL), str(in_path), str(out_path), "--quiet"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-        )
-        validator_msg = (res.stdout + res.stderr).strip().replace("\n", " | ")
-        validator_status = "OK" if res.returncode == 0 else "FAIL"
-        (case_dir / "validator.txt").write_text(res.stdout + res.stderr, encoding="utf-8")
+        ok, message = validate_case(in_path, out_path)
+        validator_msg = message
+        validator_status = "OK" if ok else "FAIL"
+        (case_dir / "validator.txt").write_text(message + "\n", encoding="utf-8")
 
     return {
         "stage": stage,
@@ -181,6 +193,8 @@ def main() -> int:
     build_ap.add_argument("--compiler", default=None)
     build_ap.add_argument("--static", choices=("auto", "always", "never"), default="auto")
     build_ap.add_argument("--define", action="append", default=[])
+    build_ap.add_argument("--source", default=None)
+    build_ap.add_argument("--out", default=None)
 
     smoke_ap = sub.add_parser("smoke", help="Run branch-local BOJ 28350 smoke cases.")
     smoke_ap.add_argument("--solver", default=str(DEFAULT_SOLVER))
@@ -191,7 +205,7 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.cmd == "build":
-        return build_solver(args.compiler, args.static, list(args.define))
+        return build_solver(args.compiler, args.static, list(args.define), args.source, args.out)
 
     solver = resolve_branch_solver(args.solver)
     ensure_executable(solver)

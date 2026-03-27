@@ -1,0 +1,20 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "correctness_fuzz: 1 failing cases"
+  ],
+  "preset": "ac3_single_case_probe",
+  "stages": [
+    {
+      "name": "correctness_fuzz",
+      "status": "FAIL",
+      "cases": 1,
+      "timeouts": 0,
+      "re_wa": 1,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    }
+  ]
+}

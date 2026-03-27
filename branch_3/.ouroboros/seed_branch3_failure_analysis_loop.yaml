@@ -1,0 +1,60 @@
+goal: After a failed branch_3 solver workflow attempt, run a mandatory analysis-only
+  mini-session before any new solver retry. Narrow the failure localization, update
+  the branch-local failure-analysis tooling or helper state when needed, regenerate
+  the latest failure breakdown with the updated tooling, and record a concise analysis
+  handoff for the next solver session.
+task_type: code
+brownfield_context:
+  project_type: brownfield
+  context_references:
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+    role: primary
+    summary: Branch root where the failure-analysis mini-session runs
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/capture_failure_context.py
+    role: primary
+    summary: Main branch-local failure-analysis capture script that may be refined when current localization is still too coarse
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+    role: primary
+    summary: Helper state that must be updated on every analysis mini-session so the next retry has narrower targets
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+    role: primary
+    summary: Latest failed solver-attempt report to analyze before editing the analysis tooling
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+    role: primary
+    summary: Latest structured breakdown to refine, compare against, and tighten for the next retry
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/failure_history.json
+    role: primary
+    summary: Failure history used to identify recurring ACs, hotspots, symbols, and line ranges
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_workflow.log
+    role: reference
+    summary: Latest retry-loop workflow log corresponding to the most recent failed solver attempt
+  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md
+    role: reference
+    summary: Previous analysis-session handoff, if present, to refine rather than restart analysis from scratch
+  existing_patterns:
+  - Work only from the branch_3 root
+  - Do not modify solver or wrapper files in this analysis-only mini-session
+  - Update failure-analysis helper state every analysis run
+  - Tighten localization from file-level to symbol, line-range, wrapper-section, and snippet evidence when possible
+  - Rerun capture_failure_context.py after analysis-tool changes so the refreshed latest_failure_breakdown reflects the improved tooling
+constraints:
+- Work only in /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+- This is analysis-only: do not edit boj28350_resume/boj28350_branch_3_solver.cpp or validation wrapper scripts
+- Primary editable files are .ouroboros/capture_failure_context.py and .ouroboros/failure_analysis_state.json
+- Additional helper analysis files may be added only under branch_3/.ouroboros/
+- Read latest_failure_report.md, latest_failure_breakdown.md, failure_history.json, and latest_workflow.log before major edits
+- Update .ouroboros/failure_analysis_state.json on every run with a higher revision or otherwise newer narrowed targets
+- Write a concise handoff to branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md
+- If the current analysis is still too coarse, refine the capture logic itself so the next regenerated breakdown narrows the failure further
+- After analysis-tool or helper-state changes, rerun capture_failure_context.py against the most recent failed workflow log to refresh latest_failure_report.md and latest_failure_breakdown.md
+- Keep all outputs inside branch_3/artifacts/...
+acceptance_criteria:
+- The latest failed solver attempt is identified and its failure report breakdown history and workflow log are read
+- failure_analysis_state.json is updated with narrower pinned ACs paths symbols or notes for the next retry
+- latest_analysis_session.md is written with what was learned what tooling changed and what the next solver retry should inspect first
+- If the failure-localization logic was too coarse, capture_failure_context.py or a helper analysis file is updated to narrow future captures
+- capture_failure_context.py is rerun against the latest failed workflow log after the analysis update so latest_failure_breakdown.md reflects the new analysis state
+metadata:
+  seed_id: seed_branch3_failure_analysis_loop
+  version: 1.0.0
+  created_at: '2026-03-25T07:50:00+09:00'

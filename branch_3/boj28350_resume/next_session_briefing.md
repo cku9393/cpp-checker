@@ -421,6 +421,111 @@ connector delta를 더 복잡하게 고치기보다, connector state를 `현재 
    `residual_cost_attribution_results.csv`  
    `residual_cost_topk.csv`
 
+## 6. branch_3 pre-rewrite checkpoint (2026-03-25)
+
+다음 solver rewrite 또는 pivot 전에, 이번 branch_3 재개 세션에서 아래 두 source set을 다시 읽고 기준을 잠갔다. 이 항목을 branch_3의 pre-rewrite checkpoint 기록이자, 실제 solver-side major rewrite/pivot 시작 여부를 결정하는 decision checkpoint로 사용한다.
+
+### 6.0 decision gate before any major solver rewrite or pivot begins
+
+다음 major solver rewrite 또는 pivot은 아래 두 review completion이 모두 명시적으로 확인되기 전에는 시작하지 않는다.
+
+1. `reviewed source set A`로 정의한 branch_3 notes / working set review 완료
+2. `reviewed source set B`로 정의한 bundled progress40 authoritative materials review 완료
+3. solver rewrite planning note 또는 retry note에 위 두 review completion이 모두 확인됐다는 문장을 남긴 뒤에만 solver-side rewrite/pivot을 연다
+
+둘 중 하나라도 미완료거나 기록이 빠져 있으면, 다음 solver rewrite/pivot은 보류하고 먼저 review state를 갱신한다.
+
+### 6.1 reviewed source set A: branch_3 working set
+
+검토한 파일은 아래다.
+
+`boj28350_resume/README.md`  
+`boj28350_resume/current_state_summary.md`  
+`boj28350_resume/next_session_briefing.md`  
+`boj28350_complete_master_document_partA_raw.md`  
+`boj28350_integrated_technical_history.md`  
+`boj28350_literature_progress7_bcdecomp_report.md`  
+`literature_grade_proof_package.md`  
+`boj28350_resume/boj28350_branch_3_solver.cpp`
+
+여기서 다시 잠근 핵심은 세 가지다.
+
+1. `progress7` 검증 리포트, 통합 히스토리, proof package는 branch_3가 원래 어떤 literature-grade invariant 위에서 발전했는지를 다시 고정한다. 핵심은 BC-tree flavored decomposition, explicit child lattice, minimal closed subtree handle, release-path exact rebuild 제거 라인이다.
+2. branch-local resume note는 active solver가 progress40 snapshot에서 복사된 파일이라고 적고 있다. 하지만 현재 `boj28350_branch_3_solver.cpp` 머리 주석과 실제 구현은 `static separator decomposition` 기반 branch-local rewrite로 바뀌어 있고, progress40 계열의 layout-signature, zero-span, fastpath instrumentation line과 직접 이어지지 않는다.
+3. 따라서 branch_3 active solver는 지금 시점에서 progress40-derived line에서 drift가 발생한 상태로 봐야 한다. 다음 rewrite는 현재 drift 상태를 더 밀어붙이는 것이 아니라, 위 문헌/증명 anchor를 보존한 채 progress40 bundle 기준으로 다시 맞춰서 진행해야 한다.
+
+### 6.2 reviewed source set B: bundled progress40 authoritative set
+
+검토한 파일은 아래다.
+
+`boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`  
+`boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`  
+`boj28350_bundle_archive/boj28350_progress40_results_merged.json`
+
+이 source set에서 다음을 다시 확인했다.
+
+1. progress40의 핵심 방향은 layout-signature reuse gate를 넣은 뒤, authoritative sampled aggregate로 남은 residual을 분해하는 것이다.
+2. 현재 가장 안전한 다음 pivot은 여전히 `zero-span eligibility and fastpath commit`이다.
+3. `layout signature compare and reuse gate core` 자체는 이미 한 차례 줄인 뒤라, 다음 rewrite가 여기서 완전히 다른 알고리즘 family로 튀는 근거가 되지 않는다.
+4. 남아 있는 미완료 범위는 dense 1024 release/repeat, 4096 representative, long-run terminal row persistence close다. 따라서 solver-side 최적화와 별개로 branch-local reproducibility hygiene도 계속 보존해야 한다.
+
+### 6.2.1 explicit review completion evidence before the next rewrite opens
+
+이 항목이 6.0의 3번 조건을 만족시키는 branch_3 research-trail evidence다.
+
+`2026-03-26` 기준, 다음 major solver rewrite 또는 pivot이 열리기 전에 아래 두 review completion이 모두 끝났음을 명시적으로 기록한다.
+
+1. `reviewed source set A`인 branch_3 notes / working set review는 6.1에 적은 파일 재검토와 핵심 잠금으로 완료됐다.
+2. `reviewed source set B`인 bundled progress40 authoritative materials review는 6.2에 적은 파일 재검토와 pivot/residual 재확인으로 완료됐다.
+3. 따라서 다음 solver-side rewrite/pivot은 이 completion evidence가 남겨진 이후에만 열 수 있고, 이후 retry/rewrite note는 6.1, 6.2, 6.2.1을 precondition record로 인용해야 한다.
+
+### 6.2.2 dated checkpoint refresh for branch_3 research log
+
+`2026-03-26` pre-rewrite checkpoint:
+branch_3 notes / working-set review와 bundled progress40 authoritative materials review가 모두 완료됐음을 다시 기록한다.
+따라서 다음 major solver rewrite 또는 pivot은 이 두 review completion이 research log에 남은 상태에서만 시작한다.
+
+`2026-03-26` explicit source-set confirmation for Sub-AC 3:
+1. source set A로 잠근 `branch_3` working set review는 `boj28350_resume/README.md`, `boj28350_resume/current_state_summary.md`, `boj28350_resume/next_session_briefing.md`, `boj28350_complete_master_document_partA_raw.md`, `boj28350_integrated_technical_history.md`, `boj28350_literature_progress7_bcdecomp_report.md`, `literature_grade_proof_package.md`, `boj28350_resume/boj28350_branch_3_solver.cpp` 재검토로 완료됐다.
+2. source set B로 잠근 bundled `progress40` authoritative review는 `boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`, `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`, `boj28350_bundle_archive/boj28350_progress40_results_merged.json` 재검토로 완료됐다.
+3. 이 두 source set review completion이 planning note에 다시 확인된 이후에만 다음 solver rewrite 또는 pivot을 연다.
+
+### 6.3 rewrite rule that governs the next move
+
+다음 rewrite 또는 pivot은 아래 규칙을 따른다.
+
+1. active solver를 현재 separator decomposition line에서 더 밀어붙이지 않는다. 이 라인은 progress40 research direction과 맞지 않는다.
+2. 다음 solver-side 작업은 progress40 source line으로 다시 anchor를 맞춘 뒤 진행한다. 필요하면 bundled progress40 source를 기준으로 branch_3 active solver를 되돌려 놓고, 그 위에서 최적화를 이어간다.
+3. solver-side 첫 타깃은 progress40 report가 지목한 `zero-span eligibility and fastpath commit` 잔여 비용이어야 한다.
+4. gate failure가 algorithm보다 execution-layer close 문제로 보이면 wrapper, artifact path, finalize 흐름을 branch-local 범위에서 보강하되 gate 의미 자체는 건드리지 않는다.
+5. 다음 rewrite의 성공 기준은 “progress40-derived line 유지 + branch-local reproducibility 유지 + lca_tree_stress_v5 gate signal 개선”이다.
+
+### 6.4 rewrite-planning note: solver constraints, prior hypotheses, known failure modes
+
+다음 solver rewrite planning에서 바로 참조할 branch-local 요약은 아래다.
+
+#### solver constraints
+
+1. active solver의 기준 anchor는 여전히 bundled `progress40` line이다. `boj28350_resume/README.md`는 active solver가 progress40 snapshot에서 복사됐다고 적고 있고, 6.1/6.2 재검토 결과도 다음 rewrite를 progress40 source line으로 다시 맞추라고 요구한다.
+2. solver-side 구조 제약은 literature-grade invariant를 보존하는 것이다. `progress7` report, integrated history, proof package가 다시 잠그는 핵심은 `BC-tree flavored explicit child lattice`, `buildClosedHandleFromWitness(...)`에 의한 minimal closed subtree handle, `owner exact rebuild 제거`, `strict-child relocation`의 explicit child-only path다.
+3. branch_3에서 허용되는 다음 최적화는 progress40 residual 축 안에서의 축소여야 한다. 다른 알고리즘 family로 튀는 separator-decomposition branch-local rewrite나 heuristic-only line은 progress40-derived research direction을 깨므로 금지 축으로 본다.
+4. solver 최적화와 별개로 branch-local reproducibility hygiene를 유지해야 한다. progress40 report와 current state summary 모두 dense 1024/repeat, 4096 representative, long-run terminal row persistence close가 아직 미완료라고 적고 있으므로 wrapper/finalize/artifact hygiene는 계속 solver planning에 포함된다.
+
+#### prior hypotheses carried into the rewrite
+
+1. authoritative한 현재 1차 pivot은 `zero-span eligibility and fastpath commit`이다. `current_state_summary.md`와 bundled progress40 report가 둘 다 가장 안전한 다음 축으로 이를 지목한다.
+2. `state materialization`과 `layout gate`는 보조 residual 축이다. progress40 direct aggregate에서 `signature source load and materialize`, `layout signature compare and reuse gate core`가 각각 약 25퍼센트 share로 남아 있어 zero-span 최적화 이후에도 재점검 대상이다.
+3. strong gate failure는 먼저 correctness/proof-preservation lane으로 읽어야 하고, boj3s gate failure는 먼저 performance/profile lane으로 읽어야 한다. latest failure breakdown도 AC 4를 `correctness-proof`, AC 5를 `performance-profile`로 분류하고 fallback progress40 axis를 이 기준으로 붙였다.
+4. 현재 retry-loop analysis state는 `pinned_primary_axis`와 `pinned_secondary_axis`가 비어 있다. 따라서 다음 rewrite planning에서는 stale한 broad rewrite 대신 current summary 기반 fallback axis(`zero_span_fastpath`, `state_materialization`, `layout_gate`)를 임시 기준으로 삼고, analysis asset refresh가 회복되면 그때 다시 pinning을 갱신해야 한다.
+
+#### known failure modes to plan against
+
+1. branch drift가 이미 확인됐다. 현재 `boj28350_branch_3_solver.cpp`는 progress40 snapshot이라고 적힌 resume note와 달리 separator decomposition 기반 branch-local rewrite로 drift해 있으므로, 현 solver를 그냥 미세 튜닝하는 접근은 연구 방향 자체를 더 흐릴 위험이 있다.
+2. execution-layer close failure가 아직 남아 있다. progress40 report와 current state summary는 short case/512 sampled one-off는 닫혔지만 dense 1024 release/repeat, 4096 representative, long-run terminal persistence는 authoritative close가 아니라고 적는다.
+3. latest formal gate evidence는 strong gate reproducibility와 boj3s final gate 모두 미달이다. latest failure report 기준 `./lca_boj3s_gate.sh`는 correctness smoke 64 fail, hard scaling strict 99 fail, large adversarial 30 fail, large mix 18 fail로 남아 있고, repeated strong gate PASS는 stall/no-activity 때문에 formal closure가 성립하지 않았다.
+4. nominal strong-gate PASS도 그대로 신뢰하면 안 된다. latest attempt guard는 기존 AC 3 PASS를 `suspicious_strong_gate_pass`로 표시했고, 최신 analysis session은 mandatory analysis asset refresh 실패 때문에 다음 retry를 막았다.
+5. repo-health signal도 약하다. latest git repo health에서 `git status`와 `git fsck`가 timeout이라, 다음 rewrite planning과 retry logging은 git cleanliness보다 branch-local artifact evidence를 우선 근거로 남겨야 한다.
+
 ## 마지막 한 줄
 
-현재 가장 타당한 next move는 **watch diff update를 기준선으로 유지한 채, 512 LOCAL과 1024 release를 끝까지 회수할 수 있는 profiling 체계를 먼저 만들고, 그 위에서 residual dominant cost를 확정하는 것**이다.
+현재 가장 타당한 next move는 **branch_3 active solver를 progress40-derived line으로 다시 anchor한 뒤, `zero-span eligibility and fastpath commit` 잔여 비용과 long-run close reproducibility를 함께 줄이는 쪽으로 rewrite를 이어가는 것**이다.

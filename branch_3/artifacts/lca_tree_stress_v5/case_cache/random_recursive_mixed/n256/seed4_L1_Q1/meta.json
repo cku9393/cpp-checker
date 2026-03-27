@@ -1,0 +1,13 @@
+{
+  "mode": "random_recursive_mixed",
+  "shape": "random_recursive",
+  "n": 256,
+  "m": 6125,
+  "seed": 4,
+  "max_depth": 9,
+  "leaves": 126,
+  "internal": 130,
+  "multi_child": 62,
+  "deepest_node": 193,
+  "subtree_root_deepest": 255
+}

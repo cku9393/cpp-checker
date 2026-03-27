@@ -1,0 +1,8 @@
+[2026-03-25 13:40:40 KST] attempt 1 analysis round 3 start: .ouroboros/seed_branch3_failure_analysis.yaml
+╭─────────────────────────────────── [1mError[0m ────────────────────────────────────╮
+│ Invalid seed format: 1 validation error for Seed                             │
+│ ontology_schema                                                              │
+│   Field required                                                             │
+│     For further information visit https://errors.pydantic.dev/2.12/v/missing │
+╰──────────────────────────────────────────────────────────────────────────────╯
+[2026-03-25 13:40:41 KST] attempt 1 analysis round 3 failed to refresh mandatory analysis assets; aborting retry loop instead of starting a blind solver retry

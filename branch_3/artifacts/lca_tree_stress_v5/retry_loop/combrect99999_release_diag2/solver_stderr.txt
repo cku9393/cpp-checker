@@ -1,0 +1,8 @@
+[release_diag] phase=case_start run_tag=combrect99999_release_diag2 deletion=0/99999 x=-1 elapsed_ms=0 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=preprocess_done run_tag=combrect99999_release_diag2 deletion=0/99999 x=-1 elapsed_ms=106 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=topo_init_done run_tag=combrect99999_release_diag2 deletion=0/99999 x=-1 elapsed_ms=4091 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=owner_index_done run_tag=combrect99999_release_diag2 deletion=0/99999 x=-1 elapsed_ms=4221 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=active_scan_done run_tag=combrect99999_release_diag2 deletion=0/99999 x=-1 elapsed_ms=4225 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=support_build_done run_tag=combrect99999_release_diag2 deletion=0/99999 x=-1 elapsed_ms=4286 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=init_done run_tag=combrect99999_release_diag2 deletion=0/99999 x=-1 elapsed_ms=4286 psplit_calls=0 psplit_vertices=0 psplit_ns=0
+[release_diag] phase=deletion_checkpoint run_tag=combrect99999_release_diag2 deletion=1/99999 x=1 elapsed_ms=4453 psplit_calls=0 psplit_vertices=0 psplit_ns=0

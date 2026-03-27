@@ -1,0 +1,3 @@
+[2026-03-26 14:46:59 KST] attempt 1 cleared a stale soft stop request from a prior quota pause before starting the new workflow
+[2026-03-26 14:46:59 KST] attempt 1 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-03-26 14:47:33 KST] attempt 1 soft stop requested; terminating workflow pid 91949 for solver_attempt

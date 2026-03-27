@@ -1,0 +1,25 @@
+{
+  "name": "ac3_single_case_probe",
+  "stages": [
+    {
+      "name": "correctness_fuzz",
+      "modes": [
+        "comb_rect_dense"
+      ],
+      "sizes": [
+        64
+      ],
+      "seeds": [
+        1
+      ],
+      "shuffle_labels": [
+        0
+      ],
+      "shuffle_queries": [
+        0
+      ],
+      "timeout": 2.0,
+      "must_pass": true
+    }
+  ]
+}

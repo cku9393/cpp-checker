@@ -1,0 +1,324 @@
+[
+  {
+    "attempt": 1,
+    "timestamp": "2026-03-25 04:21:32 KST",
+    "session_id": "orch_a42540080067",
+    "execution_id": "exec_748391698424",
+    "failed_acs": [
+      "3"
+    ],
+    "failure_types": [
+      "stall/no-activity"
+    ],
+    "top_phases": [
+      "timing-timeout",
+      "certify"
+    ],
+    "top_hotspots": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_certify_suite.py",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh"
+    ]
+  },
+  {
+    "attempt": 2,
+    "timestamp": "2026-03-25 04:59:45 KST",
+    "session_id": "orch_6daa47899608",
+    "execution_id": "exec_5d72b3e236a4",
+    "failed_acs": [
+      "4",
+      "5"
+    ],
+    "failure_types": [
+      "stall/no-activity",
+      "stall/no-activity"
+    ],
+    "top_phases": [
+      "artifact-paths",
+      "certify",
+      "timing-timeout",
+      "build"
+    ],
+    "top_hotspots": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_repeatability.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py"
+    ]
+  },
+  {
+    "attempt": 3,
+    "timestamp": "2026-03-25 05:29:31 KST",
+    "session_id": "orch_995c9bafc6f3",
+    "execution_id": "exec_aa655406f6cd",
+    "failed_acs": [
+      "3"
+    ],
+    "failure_types": [
+      "stall/no-activity"
+    ],
+    "top_phases": [
+      "solver-runtime",
+      "build"
+    ],
+    "top_hotspots": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh"
+    ]
+  },
+  {
+    "attempt": 1,
+    "timestamp": "2026-03-25 13:40:19 KST",
+    "session_id": "orch_c38530e8db7b",
+    "execution_id": "exec_5ecf9ca58b68",
+    "failed_acs": [
+      "4",
+      "5"
+    ],
+    "failure_types": [
+      "stall/no-activity",
+      "stall/no-activity"
+    ],
+    "failure_families": [
+      "strong_gate_unspecified",
+      "boj3s_gate_unspecified"
+    ],
+    "top_axes": [
+      "zero_span_fastpath",
+      "state_materialization",
+      "zero_span_fastpath",
+      "layout_gate"
+    ],
+    "profile_modes": [],
+    "release_diag_phases": [],
+    "progress_checkpoint_phases": [],
+    "next_probe_commands": [
+      "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh",
+      "PROFILE_MODE=PROFILE_SAMPLED ./lca_boj3s_gate.sh"
+    ],
+    "top_phases": [
+      "timing-timeout",
+      "wrapper",
+      "timing-timeout",
+      "build"
+    ],
+    "top_hotspots": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py"
+    ],
+    "top_symbols": [
+      "function parse_int_list_csv [19-23]",
+      "function parse_str_list_csv [26-30]",
+      "function default_solver_name [33-34]",
+      "function parse_int_list_csv [19-23]",
+      "function parse_str_list_csv [26-30]",
+      "function default_solver_name [33-34]"
+    ],
+    "top_focus_ranges": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-240",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py:1-320",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py:260-360",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-240",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py:1-320",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py:260-360"
+    ]
+  },
+  {
+    "attempt": 1,
+    "timestamp": "2026-03-25 20:28:28 KST",
+    "session_id": "orch_635d8afd7474",
+    "execution_id": "exec_c7ad8cd4b7c1",
+    "failed_acs": [
+      "3"
+    ],
+    "failure_types": [
+      "stall/no-activity"
+    ],
+    "failure_families": [
+      "strong_gate_unspecified"
+    ],
+    "top_axes": [
+      "zero_span_fastpath",
+      "watch_diff"
+    ],
+    "profile_modes": [
+      "PROFILE_SAMPLED"
+    ],
+    "release_diag_phases": [],
+    "progress_checkpoint_phases": [],
+    "next_probe_commands": [
+      "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh"
+    ],
+    "top_phases": [
+      "timing-timeout",
+      "build"
+    ],
+    "top_hotspots": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_validator.py",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh"
+    ],
+    "top_symbols": [
+      "function _read_tokens [9-18]",
+      "function _parse_input [21-39]",
+      "function _parse_output [42-49]",
+      "function __solver_release_env_keep_or_set [41-107]"
+    ],
+    "top_focus_ranges": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-120",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-260"
+    ]
+  },
+  {
+    "attempt": 1,
+    "timestamp": "2026-03-26 05:46:51 KST",
+    "session_id": "orch_1736140fd0df",
+    "execution_id": "exec_19e8677de11e",
+    "failed_acs": [
+      "4",
+      "6"
+    ],
+    "failure_types": [
+      "stall/no-activity",
+      "stall/no-activity"
+    ],
+    "failure_families": [
+      "strong_gate_unspecified",
+      "boj3s_gate_unspecified"
+    ],
+    "top_axes": [
+      "zero_span_fastpath",
+      "state_materialization",
+      "zero_span_fastpath",
+      "state_materialization"
+    ],
+    "profile_modes": [
+      "PROFILE_SAMPLED",
+      "PROFILE_SAMPLED"
+    ],
+    "release_diag_phases": [],
+    "progress_checkpoint_phases": [],
+    "next_probe_commands": [
+      "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh",
+      "PROFILE_MODE=PROFILE_SAMPLED ./lca_boj3s_gate.sh"
+    ],
+    "top_phases": [
+      "timing-timeout",
+      "artifact-paths",
+      "timing-timeout",
+      "certify"
+    ],
+    "top_hotspots": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_target.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_validator.py"
+    ],
+    "top_symbols": [
+      "function artifacts_root [34-35]",
+      "function ensure_under_artifacts [38-39]",
+      "function branch_tmp_root [42-43]",
+      "function __solver_release_env_keep_or_set [41-112]",
+      "function __solver_release_env_keep_or_set [41-112]",
+      "function _read_tokens [9-18]",
+      "function _parse_input [21-39]",
+      "function _parse_output [42-49]"
+    ],
+    "top_focus_ranges": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py:1-180",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py:1-240"
+    ]
+  },
+  {
+    "attempt": 1,
+    "timestamp": "2026-03-26 11:26:08 KST",
+    "session_id": "orch_d7a962429eed",
+    "execution_id": "exec_fcc14e7b961b",
+    "failed_acs": [],
+    "failure_types": [],
+    "failure_families": [],
+    "top_axes": [],
+    "profile_modes": [],
+    "release_diag_phases": [],
+    "progress_checkpoint_phases": [],
+    "next_probe_commands": [],
+    "top_phases": [],
+    "top_hotspots": [],
+    "top_symbols": [],
+    "top_focus_ranges": []
+  },
+  {
+    "attempt": 1,
+    "timestamp": "2026-03-26 12:17:51 KST",
+    "session_id": "orch_ae68f314523a",
+    "execution_id": "exec_e8423b1891a7",
+    "failed_acs": [
+      "3"
+    ],
+    "failure_types": [
+      "failure"
+    ],
+    "failure_families": [
+      "strong_gate_unspecified"
+    ],
+    "top_axes": [
+      "zero_span_fastpath",
+      "state_materialization"
+    ],
+    "profile_modes": [],
+    "release_diag_phases": [],
+    "progress_checkpoint_phases": [],
+    "next_probe_commands": [
+      "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh"
+    ],
+    "top_phases": [
+      "case-runner",
+      "timing-timeout"
+    ],
+    "top_hotspots": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/lca_strong_gate.sh"
+    ],
+    "top_symbols": [
+      "function parse_env_assignments [47-54]",
+      "function apply_solver_env_overrides [57-61]",
+      "function build_case_solver_env [64-70]",
+      "function __solver_release_env_keep_or_set [41-113]",
+      "function lock_age_seconds [251-263]",
+      "function run_certify_suite [264-293]",
+      "function strip_internal_state [294-297]"
+    ],
+    "top_focus_ranges": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py:1-320",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py:1-360",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-220",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-240",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh:1-260",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/lca_strong_gate.sh:260-430"
+    ]
+  }
+]

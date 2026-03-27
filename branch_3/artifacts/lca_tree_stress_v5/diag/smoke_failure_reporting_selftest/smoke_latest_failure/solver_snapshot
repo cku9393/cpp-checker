@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+BRANCH_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
+BUILD_WRAPPER="$BRANCH_ROOT/build.sh"
+RELEASE_ENV="$BRANCH_ROOT/solver_release_env.sh"
+SOURCE="$SCRIPT_DIR/boj28350_branch_3_solver.cpp"
+BINARY="$BRANCH_ROOT/artifacts/boj28350_resume/build/solve"
+
+if [[ -f "$RELEASE_ENV" ]]; then
+  # Direct solver runs should inherit the same branch-local artifact routing.
+  source "$RELEASE_ENV"
+fi
+
+if [[ ! -x "$BINARY" || "$SOURCE" -nt "$BINARY" ]]; then
+  "$BUILD_WRAPPER" >&2
+fi
+
+if [[ ! -x "$BINARY" ]]; then
+  echo "[branch_3/solve] missing built solver at $BINARY" >&2
+  exit 2
+fi
+
+exec "$BINARY" "$@"

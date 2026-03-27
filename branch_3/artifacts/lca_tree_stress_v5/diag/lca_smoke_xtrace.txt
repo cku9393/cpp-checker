@@ -1,0 +1,198 @@
++ set -euo pipefail
++++ dirname -- ./lca_smoke.sh
+++ cd -- .
+++ pwd -P
++ SCRIPT_DIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
++ cd '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
++ BRANCH_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
+++ cd '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/..'
+++ pwd -P
++ SUITE_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker'
++ export PYTHONDONTWRITEBYTECODE=1
++ PYTHONDONTWRITEBYTECODE=1
++ SOLVER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve'
++ SOURCE='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp'
++ ARTIFACT_RESOLVER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py'
++ BUILD_WRAPPER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh'
++ RELEASE_ENV='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
++ RUN_CASE_WRAPPER='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.sh'
++ ARTIFACTS_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ TMP_PARENT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ RUN_WORK_GLOB='.lca_smoke_in_progress.*'
++ RUN_WORK_TEMPLATE=.lca_smoke_in_progress.XXXXXX
++ LOCK_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks'
++ LOCKDIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ LOCK_PID_FILE='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke/pid'
++ OUTROOT=
++ OUTPARENT=
++ BACKUP_ROOT=
++ WORKDIR=
++ LOCK_HELD=0
++ trap 'cleanup "$?"' EXIT
++ ((  0 != 0  ))
++ require_command python3
++ command -v python3
++ require_command mktemp
++ command -v mktemp
++ require_command dirname
++ command -v dirname
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp' 'solver source'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp'
++ local 'label=solver source'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp ]]
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py' 'artifact resolver'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py'
++ local 'label=artifact resolver'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py ]]
++ require_file '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh' 'release env wrapper'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
++ local 'label=release env wrapper'
++ [[ ! -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh ]]
++ require_executable '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh' 'build wrapper'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh'
++ local 'label=build wrapper'
++ [[ ! -x /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh ]]
++ require_executable '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.sh' 'suite case runner'
++ local 'path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.sh'
++ local 'label=suite case runner'
++ [[ ! -x /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.sh ]]
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ acquire_lock
++ local holder=
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks'
++ mkdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ [[ -f /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke/pid ]]
++ read -r holder
++ [[ -n 67977 ]]
++ kill -0 67977
++ rm -rf '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ mkdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke'
++ printf '%s\n' 68013
++ LOCK_HELD=1
+++ python3 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py' lca_smoke
++ OUTROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
+++ dirname '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ OUTPARENT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ BACKUP_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke ]]
++ [[ ! -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke ]]
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ clear_stale_state
++ local stale
++ restore_previous_output
++ [[ -n /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp ]]
++ shopt -s nullglob
++ shopt -u nullglob
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5 ]]
++ shopt -s nullglob
++ for stale in '"$OUTPARENT"/$RUN_WORK_GLOB'
++ rm -rf '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.tYhUMG'
++ shopt -u nullglob
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
+++ mktemp -d '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XXXXXX'
++ WORKDIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd'
++ [[ ! -x /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ]]
++ [[ /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -nt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve ]]
++ source '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
+++++ dirname '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh'
++++ cd '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
++++ pwd
+++ __solver_release_env_dir='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'
+++ export 'BRANCH_ARTIFACT_TMP_ROOT=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ BRANCH_ARTIFACT_TMP_ROOT='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ export 'TMPDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ TMPDIR='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ export 'TMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ TMP='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ export 'TEMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ TEMP='/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
+++ unset __solver_release_env_dir
+++ export ENABLE_REUSE_APPLY_OPT=1
+++ ENABLE_REUSE_APPLY_OPT=1
+++ export ENABLE_PRESERVED_SPLIT_OPT=1
+++ ENABLE_PRESERVED_SPLIT_OPT=1
+++ export ENABLE_WATCH_SCAN_OPT=1
+++ ENABLE_WATCH_SCAN_OPT=1
+++ export ENABLE_RETAIN_COMPACTION_OPT=1
+++ ENABLE_RETAIN_COMPACTION_OPT=1
+++ export ENABLE_KEPT_VECTOR_OPT=1
+++ ENABLE_KEPT_VECTOR_OPT=1
+++ export ENABLE_STABLE_COMPACTION_OPT=1
+++ ENABLE_STABLE_COMPACTION_OPT=1
+++ export ENABLE_BLOCK_COPY_COMPACTION_OPT=1
+++ ENABLE_BLOCK_COPY_COMPACTION_OPT=1
+++ export ENABLE_COPY_PLAN_BUILD_OPT=1
+++ ENABLE_COPY_PLAN_BUILD_OPT=1
+++ export ENABLE_RUN_DISCOVERY_FUSION_OPT=1
+++ ENABLE_RUN_DISCOVERY_FUSION_OPT=1
+++ export ENABLE_FUSED_DISCOVERY_CLASSIFY_OPT=1
+++ ENABLE_FUSED_DISCOVERY_CLASSIFY_OPT=1
+++ export ENABLE_TSCAN_CORE_OPT=1
+++ ENABLE_TSCAN_CORE_OPT=1
+++ export ENABLE_TSCAN_BRANCH_STATE_OPT=1
+++ ENABLE_TSCAN_BRANCH_STATE_OPT=1
+++ export ENABLE_STATE_LOAD_MATERIALIZATION_OPT=1
+++ ENABLE_STATE_LOAD_MATERIALIZATION_OPT=1
+++ export ENABLE_PREV_STATE_CARRY_REUSE_OPT=1
+++ ENABLE_PREV_STATE_CARRY_REUSE_OPT=1
+++ export ENABLE_CARRY_REUSE_FASTPATH_OPT=1
+++ ENABLE_CARRY_REUSE_FASTPATH_OPT=1
+++ export ENABLE_CARRY_HIT_APPLY_OPT=1
+++ ENABLE_CARRY_HIT_APPLY_OPT=1
++ run_smoke_suite
++ run_smoke_case comb_dense 256 1 1 1 smoke_comb_dense_256_s1
++ local mode=comb_dense
++ local n=256
++ local seed=1
++ local shuffle_labels=1
++ local shuffle_queries=1
++ local case_tag=smoke_comb_dense_256_s1
++ local 'case_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_256_s1'
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_256_s1'
++ '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.sh' comb_dense 256 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_256_s1' --env DENSE_SHADOW_CASE_MODE=comb_dense --env DENSE_SHADOW_CASE_N=256 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_256_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+[validator] OK: N=256, M=11898
+[run_case] mode=comb_dense n=256 seed=1 time=0.052487s mem=5616KB
+[run_case] artifacts: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_256_s1/in.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_256_s1/out.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_256_s1/meta.json
++ run_smoke_case comb_dense 1024 1 1 1 smoke_comb_dense_1024_s1
++ local mode=comb_dense
++ local n=1024
++ local seed=1
++ local shuffle_labels=1
++ local shuffle_queries=1
++ local case_tag=smoke_comb_dense_1024_s1
++ local 'case_dir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_1024_s1'
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_1024_s1'
++ '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/run_case.sh' comb_dense 1024 1 1 1 '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_1024_s1' --env DENSE_SHADOW_CASE_MODE=comb_dense --env DENSE_SHADOW_CASE_N=1024 --env DENSE_SHADOW_CASE_SEED=1 --env 'DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_1024_s1' --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
+[validator] OK: N=1024, M=59896
+[run_case] mode=comb_dense n=1024 seed=1 time=0.045150s mem=6144KB
+[run_case] artifacts: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_1024_s1/in.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_1024_s1/out.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd/smoke_comb_dense_1024_s1/meta.json
++ publish_output
++ local outleaf=smoke
++ [[ ! -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd ]]
++ mkdir -p '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5'
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke ]]
++ rm -rf '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ mv '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ mv '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.XAB3wd' '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke'
++ WORKDIR=
++ rm -rf '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous'
++ cleanup 0
++ local rc=0
++ trap - EXIT
++ set +e
++ [[ -n '' ]]
++ ((  rc != 0  ))
++ [[ -e /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke.previous ]]
++ release_lock
++ ((  LOCK_HELD  ))
++ [[ -d /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke ]]
++ LOCK_HELD=0
++ rmdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks'
++ true
++ rmdir '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp'
++ true
++ exit 0

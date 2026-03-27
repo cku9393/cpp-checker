@@ -1,0 +1,12 @@
+{
+  "category": "harness",
+  "exit_code": 2,
+  "message": "--env BRANCH_ARTIFACT_TMP_ROOT cannot override branch-local artifact routing",
+  "rss_kb": null,
+  "sec": null,
+  "solver_exit_code": null,
+  "solver_signal": null,
+  "status": "harness_usage_failure",
+  "timed_out": false,
+  "validator_ok": null
+}

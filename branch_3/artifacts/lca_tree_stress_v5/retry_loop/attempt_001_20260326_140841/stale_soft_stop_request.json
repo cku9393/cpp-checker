@@ -1,0 +1,14 @@
+{
+  "requested_at": "2026-03-26 14:03:21 KST",
+  "trigger": "quota_threshold",
+  "reason": "codex_quota_remaining_at_or_below_threshold",
+  "triggered_limits": [
+    "primary_5h"
+  ],
+  "primary_remaining_percent": 0.0,
+  "secondary_remaining_percent": 70.0,
+  "primary_threshold_percent": 1.0,
+  "secondary_threshold_percent": 1.0,
+  "session_log": "/Users/free_1/.codex/sessions/2026/03/26/rollout-2026-03-26T14-03-07-019d2886-5e56-76a1-bb65-5eb04967e594.jsonl",
+  "event_timestamp": "2026-03-26T05:03:18.271Z"
+}

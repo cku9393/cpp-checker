@@ -95,6 +95,11 @@ def _kill_process(proc: subprocess.Popen) -> None:
         return
     try:
         os.killpg(proc.pid, signal.SIGKILL)
+    except PermissionError:
+        try:
+            proc.kill()
+        except ProcessLookupError:
+            pass
     except ProcessLookupError:
         pass
 
@@ -173,11 +178,9 @@ def _run_solver_posix(
                 return int(proc.returncode), False, elapsed, rss_kb
             if timeout is not None and time.perf_counter() - t0 > timeout:
                 _kill_process(proc)
-                pid, status, rusage = os.wait4(proc.pid, 0)
                 elapsed = time.perf_counter() - t0
-                proc.returncode = _waitstatus_to_exitcode(status)
-                rss_kb = _normalize_posix_rss_kb(rusage.ru_maxrss)
-                return int(proc.returncode), True, elapsed, rss_kb
+                proc.wait()
+                return int(proc.returncode), True, elapsed, None
             time.sleep(0.01)
     finally:
         stdin_f.close()

@@ -1,0 +1,75 @@
+{
+  "analysis_revision": 12,
+  "last_updated": "2026-03-26 06:35:38 KST",
+  "last_failed_attempt": "attempt_001",
+  "last_failed_session_id": "orch_1736140fd0df",
+  "current_for_latest_failure": true,
+  "current_failure_attempt": "attempt_001",
+  "current_failure_session_id": "orch_1736140fd0df",
+  "current_failure_execution_id": "exec_19e8677de11e",
+  "current_failure_timestamp": "2026-03-26 05:46:51 KST",
+  "current_failure_failed_acs": [
+    "4",
+    "6"
+  ],
+  "current_failure_signature": "attempt_001|orch_1736140fd0df|2026-03-26 05:46:51 KST|4,6",
+  "current_failure": {
+    "attempt_label": "attempt_001",
+    "session_id": "orch_1736140fd0df",
+    "execution_id": "exec_19e8677de11e",
+    "timestamp": "2026-03-26 05:46:51 KST",
+    "failed_acs": [
+      "4",
+      "6"
+    ],
+    "failure_signature": "attempt_001|orch_1736140fd0df|2026-03-26 05:46:51 KST|4,6"
+  },
+  "pinned_acs": [
+    "4"
+  ],
+  "pinned_primary_axis": "zero_span_fastpath",
+  "pinned_secondary_axis": "state_materialization",
+  "pinned_paths": [
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_target.sh",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh"
+  ],
+  "pinned_symbols": [
+    "function artifacts_root [34-35]",
+    "function ensure_under_artifacts [38-39]",
+    "function branch_tmp_root [42-43]",
+    "function configure_branch_process_env [46-71]",
+    "function __solver_release_env_keep_or_set [41-112]",
+    "function _read_tokens [9-18]"
+  ],
+  "recent_axes": [
+    "zero_span_fastpath",
+    "state_materialization"
+  ],
+  "recent_failure_families": [
+    "strong_gate_unspecified",
+    "boj3s_gate_unspecified",
+    "large_adversarial_comb_no_touch_topology"
+  ],
+  "recent_profile_modes": [
+    "PROFILE_SAMPLED"
+  ],
+  "next_probe_command": "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh",
+  "why_this_axis": "Selected `zero_span_fastpath` as the primary progress40 axis because the latest `strong_gate_unspecified` failure stayed in the `correctness-proof` lane and the bundled summary still names `zero-span eligibility and fastpath commit` as the safest next pivot; `state_materialization` remains a secondary cross-check axis only because the newer evidence narrows work inside the same pivot instead of proving an unrelated axis shift. Do not broaden into other progress40 axes unless later solver/runtime/profile evidence contradicts this baseline.",
+  "failure_families": [
+    "strong_gate_unspecified"
+  ],
+  "next_narrowing_target": "function artifacts_root [34-35], function ensure_under_artifacts [38-39]",
+  "notes": [
+    "This file is updated by the mandatory analysis-only mini-session between failed solver attempts.",
+    "Use pinned paths and symbols to force narrower structural focus on repeated failures.",
+    "Use the pinned primary axis to keep solver retries aligned with the current progress40 pivot; leave the secondary axis empty unless new solver/runtime evidence genuinely supports one.",
+    "Treat the current git-health report as degraded inspection context, not as the primary root cause, unless a future gate or probe fails directly on git commands.",
+    "When a closure trace only preserves truncated `outer_suite_wrappers/lca_...` sed lines, recover the exact wrapper from the failed AC and pin both the observed wrapper-tail range and the matching `acquire_lock` symbol.",
+    "Treat `outer_suite_wrappers/lca_strong_gate.sh::acquire_lock [144-179]` and `outer_suite_wrappers/lca_boj3s_gate.sh::acquire_lock [107-142]` as the first wrapper-side checkpoints for any repeat closure stall, but keep the pinned retry probe solver-facing on the exact `comb_dense / n99999 / seed1 / L1 / Q1` row unless the next failure stalls before solver work starts.",
+    "When AC6 justification is required, explicitly compare the active primary axis against `layout_gate`, `state_materialization`, and any stale `watch_diff` carry-over. In the current failure set those alternatives are weaker because the authoritative pivot still names `zero-span eligibility and fastpath commit`, while the latest probe died before runtime/profile evidence for other axes appeared.",
+    "The latest failed workflow stalled at closure ACs 4 and 6, but the next solver retry should attack AC5-local performance work first because the repeatability gate cannot close until the no-touch comb-family blocker is reduced.",
+    "Retry preflight must reject stale analysis unless current_failure_signature matches the latest captured failure report and breakdown."
+  ]
+}

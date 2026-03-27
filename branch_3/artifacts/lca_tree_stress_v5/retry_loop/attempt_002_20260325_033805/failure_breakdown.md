@@ -1,0 +1,333 @@
+# Failure Breakdown: Attempt 2
+
+- Timestamp: `2026-03-25 04:59:45 KST`
+- Session ID: `orch_6daa47899608`
+- Execution ID: `exec_5d72b3e236a4`
+
+## Failure Decomposition
+
+### AC 4: Formal closure requires running ./lca_strong_gate.sh twice  │
+
+- Failure type: `stall/no-activity`
+- Trace lines captured: `80`
+
+#### Phase Breakdown
+
+- `artifact-paths` x10 | sample: `Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "sed -n '1,240p' artifact_paths.py"`
+- `certify` x3 | sample: `branch_certify_suite.py"`
+- `timing-timeout` x2 | sample: `Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "sed -n '1,260p' suite_utils.py"`
+- `case-runner` x1 | sample: `Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "sed -n '1,260p' branch_run_case.py"`
+- `wrapper` x1 | sample: `│ ### AC 4: [FAIL] Formal closure requires running ./lca_strong_gate.sh twice  │`
+
+#### Code-Structure Hotspots
+
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_repeatability.sh`
+  Observed mentions: `10`
+  Focus ranges: 1-220, 1-240, 1-260, 261-420, 261-520
+  Enclosing symbols: function fail [25-29], function usage [30-38], function require_command [39-44], function require_file [45-52], function compare_snapshot_manifests [229-288], function write_summary [289-387]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 04:06:10 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py`
+  Observed mentions: `9`
+  Focus ranges: 1-120, 1-220, 1-240, 1-260
+  Enclosing symbols: function artifacts_root [29-30], function branch_tmp_root [33-34], function configure_branch_process_env [37-44], function default_output_path [47-52]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:50:22 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh`
+  Observed mentions: `4`
+  Focus ranges: 1-220, 1-240, 1-260, 221-420, 261-520
+  Enclosing symbols: function fail [37-41], function usage [42-47], function require_command [48-53], function require_file [54-61], function cleanup [210-302]
+  Note: observed in failed-AC trace, mapped from failed AC semantics
+  Mtime: `2026-03-25 03:53:27 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_certify_suite.py`
+  Observed mentions: `3`
+  Focus ranges: 1-240, 1-260, 1-320, 260-420, 260-520
+  Enclosing symbols: function _normalize_artifact_out_dir [42-43], function _normalize_cli_out_arg [46-59], function _generation_ready [62-64], function _cache_root [67-68], function _ensure_generated_case [199-260], function _clear_case_outputs [263-267]
+  Note: observed in failed-AC trace, mapped from failed AC semantics
+  Mtime: `2026-03-25 03:50:46 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh`
+  Observed mentions: `2`
+  Focus ranges: 1-80, 1-120, 1-220, 220-390, 221-420, 221-520
+  Enclosing symbols: function fail [47-51], function usage [52-57], function require_command [58-63], function require_file [64-71], function cleanup [217-236], function quote_command [237-245]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 04:00:14 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh`
+  Observed mentions: `1`
+  Focus ranges: 1-220
+  Enclosing symbols: no symbols inferred
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:52:04 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_boj3s_gate.sh`
+  Observed mentions: `1`
+  Focus ranges: 1-240, 1-260
+  Enclosing symbols: function fail [32-36], function usage [37-41], function require_command [42-47], function require_file [48-55]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:52:23 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py`
+  Observed mentions: `1`
+  Focus ranges: 1-170, 1-220, 1-240, 1-260
+  Enclosing symbols: function parse_env_assignments [39-46], function apply_solver_env_overrides [49-53], function build_case_solver_env [56-62], function resolve_case_outdir [65-66]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:50:41 KST`
+
+#### Focused Artifact Snapshots
+
+- `strong_gate` latest: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/strong_gate/certify.json`
+  mtime: `2026-03-25 00:32:23 KST`
+  summary: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/strong_gate/certify.json`
+- `tmp` latest: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/case_runs/seed2_L1_Q1.run.sl050ugv/solver_stderr.txt`
+  mtime: `2026-03-25 04:58:51 KST`
+
+#### Failed-AC Trace Excerpt
+
+```text
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "sed -n '1,260p' suite_utils.py"
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc 'SMOKE_REPEAT=$(python3 
+artifact_paths.py lc...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc 'git status --short'
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "sed -n '1,260p' lca_strong_gate.sh"
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "sed -n '1,260p' lca_boj3s_gate.sh"
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "rg -n 
+\"run_case.stdout|time=|artifacts:\" ...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "if [ -f 
+artifacts/lca_tree_stress_v5/retry_...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "nl -ba lca_smoke_repeatability.sh | 
+sed -n ...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "nl -ba README.md | sed -n '60,100p'"
+    Sub-AC 4 of AC 2 → Edit: /Users/free_1/Library/Mobile 
+Documents/iCloud~md~obsidian...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc 'git diff -- 
+lca_smoke_repeatability.sh READ...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc './lca_smoke_repeatability.sh 2'
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc 'SMOKE_REPEAT=$(python3 
+artifact_paths.py lc...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc './lca_smoke_repeatability.sh 3'
+    Sub-AC 4 of AC 2 → Edit: /Users/free_1/Library/Mobile 
+Documents/iCloud~md~obsidian...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "git diff -- 
+lca_smoke_repeatability.sh READ...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc './lca_smoke_repeatability.sh 3'
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc 'SMOKE_REPEAT=$(python3 
+artifact_paths.py lc...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc 'SMOKE_REPEAT=$(python3 
+artifact_paths.py lc...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc 'git status --short -- 
+lca_smoke_repeatabili...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "nl -ba lca_smoke_repeatability.sh | 
+sed -n ...
+    Sub-AC 4 of AC 2 → Bash: /bin/zsh -lc "nl -ba README.md | sed -n '66,78p'"
+    Sub-ACs completed: 4/4 succeeded
+Level 1 complete: 5 succeeded, 0 failed
+  AC 4: Analyzing complexity...
+  AC 5: Analyzing complexity...
+  AC 4 → Bash: /bin/zsh -lc 'rg --files .'
+  AC 4 → Bash: /bin/zsh -lc "if [ -f artifacts/lca_tree_stress_v5/retry_...
+  AC 4 → Bash: /bin/zsh -lc "sed -n '1,220p' lca_strong_gate.sh"
+  AC 4 → Bash: /bin/zsh -lc "sed -n '1,220p' solver_release_env.sh"
+  AC 4 → Bash: /bin/zsh -lc 'git status --short'
+  AC 4 → Bash: /bin/zsh -lc "ps -o pid,ppid,etime,pcpu,pmem,command -ax ...
+  AC 4 → Bash: /bin/zsh -lc "find artifacts/lca_tree_stress_v5 -maxdepth...
+  AC 4 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.locks -m...
+  AC 4 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp -max...
+  AC 4 → Bash: /bin/zsh -lc "if [ -f artifacts/lca_tree_stress_v5/.tmp/l...
+  AC 4 → Bash: /bin/zsh -lc "if [ -f artifacts/lca_tree_stress_v5/.tmp/l...
+  AC 4 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 4 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 4 → Bash: /bin/zsh -lc "find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 4 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 4 → Bash: /bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+r...
+  AC 4 → Bash: /bin/zsh -lc "if [ -f artifacts/lca_tree_stress_v5/.tmp/l...
+  AC 4 → Bash: /bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+r...
+  AC 4 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/case...
+  AC 4 → Bash: /bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+r...
+  AC 4 → Bash: /bin/zsh -lc 'cat artifacts/lca_tree_stress_v5/.locks/lca...
+  AC 4 → Bash: /bin/zsh -lc "find artifacts/lca_tree_stress_v5/.tmp -max...
+  AC 4 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 4 → Bash: /bin/zsh -lc 'for d in artifacts/lca_tree_stress_v5/.tmp/...
+  AC 4 → Bash: /bin/zsh -lc 'ls -ld artifacts/lca_tree_stress_v5/.tmp/lc...
+  AC 4 → Bash: /bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+f...
+  AC 4 → Bash: /bin/zsh -lc "sed -n '221,420p' lca_strong_gate.sh"
+  AC 4 → Bash: /bin/zsh -lc "sed -n '1,260p' branch_certify_suite.py"
+  AC 4 → Bash: /bin/zsh -lc "rg -n \"BRANCH_CERTIFY_REPORT_OUTDIR|mktemp...
+  AC 4 → Bash: /bin/zsh -lc "sed -n '260,520p' branch_certify_suite.py"
+│ ### AC 4: [FAIL] Formal closure requires running ./lca_strong_gate.sh twice  │
+│ in a row on the same working tree with both runs PASS                        │
+│ Error: Stalled (no activity for 300s)                                        │
+```
+
+### AC 5: ./lca_boj3s_gate.sh passes as a required final acceptance   │
+
+- Failure type: `stall/no-activity`
+- Trace lines captured: `80`
+
+#### Phase Breakdown
+
+- `timing-timeout` x16 | sample: `AC 5 → Bash: /bin/zsh -lc "sed -n '1,220p' solver_release_env.sh"`
+- `build` x4 | sample: `AC 5 → Bash: /bin/zsh -lc ./build.sh`
+- `case-runner` x2 | sample: `AC 5 → Bash: /bin/zsh -lc "sed -n '1,260p' branch_run_case.py"`
+- `solver-source` x2 | sample: `AC 5 → Bash: /bin/zsh -lc "diff -u --label bundled_progress40 --label ...`
+- `wrapper` x2 | sample: `AC 5 → Bash: /bin/zsh -lc ./lca_smoke.sh`
+- `certify` x1 | sample: `AC 5 → Bash: /bin/zsh -lc "sed -n '1,260p' branch_certify_suite.py"`
+
+#### Code-Structure Hotspots
+
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh`
+  Observed mentions: `13`
+  Focus ranges: 1-220
+  Enclosing symbols: no symbols inferred
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:52:04 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh`
+  Observed mentions: `4`
+  Focus ranges: 1-220, 1-240, 1-260
+  Enclosing symbols: no symbols inferred
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-24 19:47:31 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py`
+  Observed mentions: `2`
+  Focus ranges: 1-260, 1-280, 260-325
+  Enclosing symbols: function parse_int_list_csv [19-23], function parse_str_list_csv [26-30], function default_solver_name [33-34], function default_solver_path [37-38], function _run_solver_windows [233-268], function _write_time_artifact [271-273]
+  Note: observed in failed-AC trace, mapped from failed AC semantics
+  Mtime: `2026-03-24 23:13:12 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_boj3s_gate.sh`
+  Observed mentions: `2`
+  Focus ranges: 1-240, 1-260
+  Enclosing symbols: function fail [32-36], function usage [37-41], function require_command [42-47], function require_file [48-55]
+  Note: observed in failed-AC trace, mapped from failed AC semantics
+  Mtime: `2026-03-25 03:52:23 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh`
+  Observed mentions: `1`
+  Focus ranges: 1-220, 1-240, 1-260, 221-420, 261-520
+  Enclosing symbols: function fail [37-41], function usage [42-47], function require_command [48-53], function require_file [54-61], function cleanup [210-302]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:53:27 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh`
+  Observed mentions: `1`
+  Focus ranges: 1-80, 1-120, 1-220, 220-390, 221-420, 221-520
+  Enclosing symbols: function fail [47-51], function usage [52-57], function require_command [58-63], function require_file [64-71], function cleanup [217-236], function quote_command [237-245]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 04:00:14 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py`
+  Observed mentions: `1`
+  Focus ranges: 1-170, 1-220, 1-240, 1-260
+  Enclosing symbols: function parse_env_assignments [39-46], function apply_solver_env_overrides [49-53], function build_case_solver_env [56-62], function resolve_case_outdir [65-66]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:50:41 KST`
+- File: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_gen_case.py`
+  Observed mentions: `1`
+  Focus ranges: 1-40, 1-260
+  Enclosing symbols: function _desc_targets_lazy [38-40], function _pattern_multi_comb_rectangular_fast [43-66], function _pattern_caterpillar_rectangular_fast [69-90], function build_mode [93-144]
+  Note: observed in failed-AC trace
+  Mtime: `2026-03-25 03:50:29 KST`
+
+#### Focused Artifact Snapshots
+
+- `boj3s_gate` latest: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/boj3s_gate/ac4_probe_fresh/certify.json`
+  mtime: `2026-03-25 04:21:23 KST`
+  summary: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/boj3s_gate/ac4_probe_fresh/certify.json`
+- `tmp` latest: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/case_runs/seed2_L1_Q1.run.r3xpip3m/solver_stderr.txt`
+  mtime: `2026-03-25 04:58:57 KST`
+
+#### Failed-AC Trace Excerpt
+
+```text
+  AC 5 → Bash: /bin/zsh -lc "sed -n '10920,10952p' boj28350_resume/boj28...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '10645,10725p' boj28350_resume/boj28...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '6808,6835p' boj28350_resume/boj2835...
+  AC 5 → Bash: /bin/zsh -lc "rg -n \"supportMetaValid = false|clearMater...
+  AC 5 → Edit: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.locks -m...
+  AC 5 → Bash: /bin/zsh -lc "git diff -- boj28350_resume/boj28350_branch...
+  AC 5 → Bash: /bin/zsh -lc 'for name in lca_strong_gate lca_boj3s_gate;...
+  AC 5 → Bash: /bin/zsh -lc ./build.sh
+  AC 5 → Bash: /bin/zsh -lc 'source ./solver_release_env.sh && python3 b...
+  AC 5 → Bash: /bin/zsh -lc 'source ./solver_release_env.sh && python3 b...
+  AC 5 → Bash: /bin/zsh -lc 'source ./solver_release_env.sh && python3 b...
+  AC 5 → Bash: /bin/zsh -lc ./lca_smoke.sh
+  AC 5 → Bash: /bin/zsh -lc "find artifacts/lca_tree_stress_v5/.tmp -max...
+  AC 5 → Bash: /bin/zsh -lc 'for name in lca_strong_gate lca_boj3s_gate;...
+  AC 5 → Bash: /bin/zsh -lc "find artifacts/lca_tree_stress_v5 -maxdepth...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'ls -lt artifacts/lca_tree_stress_v5/.tmp/ca...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/case...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/case...
+  AC 5 → Bash: /bin/zsh -lc 'ls -lt artifacts/lca_tree_stress_v5/.tmp/ca...
+  AC 5 → Bash: /bin/zsh -lc 'ls -lt artifacts/lca_tree_stress_v5/.tmp/ca...
+  AC 5 → Bash: /bin/zsh -lc 'd=$(ls -1t artifacts/lca_tree_stress_v5/.tm...
+  AC 5 → Bash: /bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+f...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc "find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+r...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc "find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc "python3 - <<'PY'
+from pathlib import Path
+r...
+  AC 5 → Bash: /bin/zsh -lc "pkill -f 'lca_strong_gate.sh' || true"
+  AC 5 → Bash: /bin/zsh -lc 'for name in lca_strong_gate lca_boj3s_gate;...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '6818,6848p' boj28350_resume/boj2835...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '10924,10940p' boj28350_resume/boj28...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '10658,10718p' boj28350_resume/boj28...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '6034,6075p' boj28350_resume/boj2835...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '10940,10948p' boj28350_resume/boj28...
+  AC 5 → Edit: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian...
+  AC 5 → Edit: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian...
+  AC 5 → Edit: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian...
+  AC 5 → Edit: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '12162,12235p' boj28350_resume/boj28...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '12235,12295p' boj28350_resume/boj28...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '12096,12132p' boj28350_resume/boj28...
+  AC 5 → Bash: /bin/zsh -lc "sed -n '12132,12160p' boj28350_resume/boj28...
+  AC 5 → Edit: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian...
+  AC 5 → Bash: /bin/zsh -lc ./build.sh
+  AC 5 → Bash: /bin/zsh -lc 'source ./solver_release_env.sh && python3 b...
+  AC 5 → Bash: /bin/zsh -lc 'source ./solver_release_env.sh && python3 b...
+  AC 5 → Bash: /bin/zsh -lc 'source ./solver_release_env.sh && python3 b...
+  AC 5 → Bash: /bin/zsh -lc 'killall solve || true'
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...
+  AC 5 → mcp_tool
+  AC 5 → Bash: /bin/zsh -lc "sed -n '1,240p' /Users/free_1/.codex/skills...
+  AC 5 → Bash: /bin/zsh -lc 'd=$(ls -1t artifacts/lca_tree_stress_v5/.tm...
+  AC 5 → Bash: /bin/zsh -lc 'd=$(ls -1t artifacts/lca_tree_stress_v5/.tm...
+  AC 5 → Bash: /bin/zsh -lc "lsof +D artifacts/lca_tree_stress_v5/.tmp/c...
+  AC 5 → Bash: /bin/zsh -lc "sleep 60; lsof +D artifacts/lca_tree_stress...
+  AC 5 → Bash: /bin/zsh -lc "lsof -p 21879 | sed -n '1,60p'"
+  AC 5 → Bash: /bin/zsh -lc "sleep 120; lsof +D artifacts/lca_tree_stres...
+Level 2 complete: 0 succeeded, 2 failed
+╭────────────────────────────── Partial Success ───────────────────────────────╮
+│ ### AC 5: [FAIL] ./lca_boj3s_gate.sh passes as a required final acceptance   │
+│ gate                                                                         │
+│ Error: Stalled (no activity for 300s)                                        │
+```
+
+## Refinement Versus Previous Failure
+
+- The failed AC set changed relative to the previous captured failure.
+- Recurring code-structure hotspots: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_certify_suite.py, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh.
+- New hotspots to fold into the next retry analysis: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_gen_case.py, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_boj3s_gate.sh, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_repeatability.sh.
+- Refine the next retry around these dominant phases: artifact-paths, certify, timing-timeout, build.
+
+## Next-Retry Analysis Rule
+
+- Before the next session edits code, read this breakdown, start from the repeated failed AC if one exists, and inspect the listed phase and code-structure hotspots before running the heavy gate again.

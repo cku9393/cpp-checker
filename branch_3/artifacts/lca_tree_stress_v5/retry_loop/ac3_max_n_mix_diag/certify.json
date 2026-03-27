@@ -1,0 +1,20 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "max_n_mix: 28 failing cases"
+  ],
+  "preset": "strong_gate",
+  "stages": [
+    {
+      "name": "max_n_mix",
+      "status": "FAIL",
+      "cases": 28,
+      "timeouts": 28,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    }
+  ]
+}

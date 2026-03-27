@@ -1,0 +1,3 @@
+case_index	case_tag	attempt	exit_code	helpper_exit_code	failure_kind	failure_origin	retryable	timeout_s	summary
+1	case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5	1	70	0	harness_transient_failure	harness	1	0.5	helper did not leave a readable run_case_result.json for the preserved case
+1	case01_smoke_fake_mode_n8_s42_L1_Q0_t0p5	2	70	0	harness_transient_failure	harness	1	0.5	helper did not leave a readable run_case_result.json for the preserved case

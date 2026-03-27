@@ -1,0 +1,473 @@
+{
+  "attempt": 1,
+  "timestamp": "2026-03-25 13:40:19 KST",
+  "seed_file": ".ouroboros/seed_branch3_progress40_research_loop.yaml",
+  "exit_code": 1,
+  "session_id": "orch_c38530e8db7b",
+  "execution_id": "exec_5ecf9ca58b68",
+  "failed_ac_breakdowns": [
+    {
+      "ac_index": "4",
+      "ac_text": "Formal closure requires running ./lca_strong_gate.sh twice  \u2502",
+      "failure_type": "stall/no-activity",
+      "failure_family": "strong_gate_unspecified",
+      "primary_axis": "zero_span_fastpath",
+      "secondary_axis": "state_materialization",
+      "axis_evidence": {},
+      "profile_mode": null,
+      "enabled_flags": [
+        "ENABLE_COMPACT_RELEASE_DIAG",
+        "ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT",
+        "ENABLE_LAYOUT_SIGNATURE_GATE_OPT"
+      ],
+      "last_release_diag_phase": null,
+      "last_progress_checkpoint_phase": null,
+      "current_summary_pivot": "zero-span eligibility and fastpath commit",
+      "current_summary_residual_axes": [
+        "state_materialization",
+        "layout_gate",
+        "zero_span_fastpath"
+      ],
+      "next_probe_command": "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh",
+      "interpretation_lane": "correctness-proof",
+      "trace_excerpt": [
+        "  AC 4: Analyzing complexity...",
+        "  AC 5: Analyzing complexity...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' lca_strong_gate.sh\"",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"find artifacts -maxdepth 3 \\\\( -path '*/ret...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc 'rg --files .'",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' artifacts/lca_tree_stress_v...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' outer_suite_wrappers/lca_st...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' solver_release_env.sh\"",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '261,520p' outer_suite_wrappers/lca_...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"find artifacts/lca_tree_stress_v5/.tmp/lca_...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/.tmp/lca_...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc 'for f in $(find artifacts/lca_tree_stress_v...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' suite_presets/strong_gate.j...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc 'for d in $(find artifacts/lca_tree_stress_v...",
+        "  AC 4 \u2192 Bash: /bin/zsh -lc \"find artifacts/lca_tree_stress_v5/.tmp/lca_...",
+        "Level 2 complete: 0 succeeded, 2 failed",
+        "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Partial Success \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e",
+        "\u2502 ### AC 4: [FAIL] Formal closure requires running ./lca_strong_gate.sh twice  \u2502",
+        "\u2502 in a row on the same working tree with both runs PASS                        \u2502",
+        "\u2502 Error: Stalled (no activity for 300s)                                        \u2502"
+      ],
+      "phase_summaries": [
+        {
+          "phase": "timing-timeout",
+          "count": 1,
+          "sample": "AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' solver_release_env.sh\""
+        },
+        {
+          "phase": "wrapper",
+          "count": 1,
+          "sample": "\u2502 ### AC 4: [FAIL] Formal closure requires running ./lca_strong_gate.sh twice  \u2502"
+        }
+      ],
+      "structural_focus": [
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh",
+          "observed_mentions": 2,
+          "focus_ranges": [
+            "1-220",
+            "1-260"
+          ],
+          "enclosing_symbols": [],
+          "evidence_lines": [
+            "AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' lca_strong_gate.sh\"",
+            "\u2502 ### AC 4: [FAIL] Formal closure requires running ./lca_strong_gate.sh twice  \u2502"
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env bash\n    2: set -euo pipefail\n    3: \n    4: SCRIPT_DIR=\"$(cd -- \"$(dirname -- \"${BASH_SOURCE[0]}\")\" && pwd -P)\"\n    5: exec \"$SCRIPT_DIR/outer_suite_wrappers/lca_strong_gate.sh\" \"$@\"",
+          "note": "observed in failed-AC trace, mapped from failed AC semantics",
+          "mtime": "2026-03-25 11:32:56 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+          "observed_mentions": 1,
+          "focus_ranges": [
+            "1-220",
+            "1-240",
+            "1-260"
+          ],
+          "enclosing_symbols": [],
+          "evidence_lines": [
+            "AC 4 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' solver_release_env.sh\""
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env bash\n    2: \n    3: # Branch-local release subset mirrored from the archived release runner.\n    4: # This enables the early performance pivots without forcing the later\n    5: # experimental pointer/patch/normalize branches that regressed the gate probe.\n    6: \n    7: # Keep transient tool output under branch-local artifacts instead of system temp.\n    8: __solver_release_env_dir=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n    9: __solver_release_env_tmp_override=\"${BRANCH_ARTIFACT_TMP_ROOT:-}\"\n   10: if ! __solver_release_env_tmp=\"$(\n   11:   python3 - \"$__solver_release_env_dir\" \"$__solver_release_env_tmp_override\" <<'PY'\n   12: from __future__ import annotations\n   13: \n   14: import sys\n   15: from pathlib import Path\n   16: \n   17: branch_root = Path(sys.argv[1]).resolve()\n   18: override = sys.argv[2] if len(sys.argv) > 2 else \"\"\n   19: sys.path.insert(0, str(branch_root))\n   20: \n   21: from artifact_paths import resolve_tmp_path\n   22: \n   23: try:\n   24:     print(resolve_tmp_path(override or None))\n   25: except ValueError as exc:\n   26:     print(f\"[solver_release_env] {exc}\", file=sys.stderr)\n   27:     raise SystemExit(2)\n   28: PY",
+          "note": "observed in failed-AC trace",
+          "mtime": "2026-03-25 12:58:47 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py",
+          "observed_mentions": 0,
+          "focus_ranges": [
+            "1-260",
+            "1-320",
+            "260-360"
+          ],
+          "enclosing_symbols": [
+            "function parse_int_list_csv [19-23]",
+            "function parse_str_list_csv [26-30]",
+            "function default_solver_name [33-34]",
+            "function default_solver_path [37-38]",
+            "function _run_solver_windows [233-268]",
+            "function _write_time_artifact [271-273]"
+          ],
+          "evidence_lines": [],
+          "code_excerpt": "    1: #!/usr/bin/env python3\n    2: from __future__ import annotations\n    3: \n    4: import math\n    5: import os\n    6: import signal\n    7: import statistics\n    8: import subprocess\n    9: import sys\n   10: import time\n   11: from pathlib import Path\n   12: from typing import List, Mapping, Optional, Sequence, Tuple\n   13: \n   14: \n   15: IS_WINDOWS = os.name == \"nt\"\n   16: IS_DARWIN = sys.platform == \"darwin\"\n   17: \n   18: \n   19: def parse_int_list_csv(s: str) -> List[int]:\n   20:     s = s.strip()\n   21:     if not s:\n   22:         return []\n   23:     return [int(x) for x in s.split(\",\") if x.strip()]\n   24: \n   25: \n   26: def parse_str_list_csv(s: str) -> List[str]:\n   27:     s = s.strip()\n   28:     if not s:",
+          "note": "mapped from failed AC semantics",
+          "mtime": "2026-03-24 23:13:12 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_certify_suite.py",
+          "observed_mentions": 0,
+          "focus_ranges": [
+            "1-260",
+            "260-520"
+          ],
+          "enclosing_symbols": [
+            "function _normalize_artifact_out_dir [43-44]",
+            "function _normalize_cli_out_arg [47-60]",
+            "function _generation_ready [63-65]",
+            "function _cache_root [68-69]",
+            "function _ensure_generated_case [200-261]",
+            "function _clear_case_outputs [264-268]"
+          ],
+          "evidence_lines": [],
+          "code_excerpt": "    1: #!/usr/bin/env python3\n    2: from __future__ import annotations\n    3: \n    4: import os\n    5: import shutil\n    6: import sys\n    7: import tempfile\n    8: import time\n    9: import importlib.util\n   10: from contextlib import contextmanager\n   11: from pathlib import Path\n   12: \n   13: from artifact_paths import configure_branch_process_env, resolve_output_path\n   14: \n   15: \n   16: configure_branch_process_env()\n   17: \n   18: \n   19: BRANCH_ROOT = Path(__file__).resolve().parent\n   20: OUTER_ROOT = BRANCH_ROOT.parent\n   21: TOOLING_ROOT = OUTER_ROOT / \"lca_tree_stress_v5\" / \"tooling\"\n   22: \n   23: _branch_suite_utils_spec = importlib.util.spec_from_file_location(\n   24:     \"branch_suite_utils\", BRANCH_ROOT / \"suite_utils.py\"\n   25: )\n   26: assert _branch_suite_utils_spec is not None and _branch_suite_utils_spec.loader is not None\n   27: branch_suite_utils = importlib.util.module_from_spec(_branch_suite_utils_spec)\n   28: _branch_suite_utils_spec.loader.exec_module(branch_suite_utils)",
+          "note": "mapped from failed AC semantics",
+          "mtime": "2026-03-25 09:41:11 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp",
+          "observed_mentions": 0,
+          "focus_ranges": [],
+          "enclosing_symbols": [
+            "class Entry [52-53]",
+            "class Iterator [54-65]",
+            "class TreeEdge [66-76]",
+            "class Entry [77-104]"
+          ],
+          "evidence_lines": [],
+          "code_excerpt": "   50: namespace dgraph {\n   51: \n   52: class Entry;\n   53: \n   54: class Iterator {\n   55: public:",
+          "note": "mapped from failed AC semantics",
+          "mtime": "2026-03-25 13:22:33 KST"
+        }
+      ],
+      "artifact_snapshots": [
+        {
+          "label": "strong_gate",
+          "latest_file": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/strong_gate/certify.json",
+          "latest_mtime": "2026-03-25 00:32:23 KST",
+          "summary_file": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/strong_gate/certify.json",
+          "summary_excerpt": "{\n  \"verdict\": \"PASS\",\n  \"reasons\": [],\n  \"preset\": \"strong_gate\",\n  \"stages\": [\n    {\n      \"name\": \"correctness_fuzz\",\n      \"status\": \"PASS\",\n      \"cases\": 900,\n      \"timeouts\": 0,\n      \"re_wa\": 0,\n      \"limit_scale\": 1.0,\n      \"sec_max\": null,\n      \"case_sec_max\": null,\n      \"scale_fail\": []\n    },\n    {\n      \"name\": \"hard_scaling\",\n      \"status\": \"PASS\",\n      \"cases\": 108,\n      \"timeouts\": 0,\n      \"re_wa\": 0,\n      \"limit_scale\": 1.0,\n      \"sec_max\": null,\n      \"case_sec_max\": null,\n      \"scale_fail\": []\n    },\n    {\n      \"name\": \"max_n_mix\",\n      \"status\": \"PASS\",\n      \"cases\": 28,\n      \"timeouts\": 0,\n      \"re_wa\": 0,\n      \"limit_scale\": 1.0,\n      \"sec_max\": null,\n      \"case_sec_max\": null,\n      \"scale_fail\": []\n    }\n  ]\n}"
+        },
+        {
+          "label": "tmp",
+          "latest_file": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/case_runs/seed3_L1_Q1.run.mk55sxjf/solver_stderr.txt",
+          "latest_mtime": "2026-03-25 13:39:55 KST",
+          "summary_file": null,
+          "summary_excerpt": null
+        }
+      ]
+    },
+    {
+      "ac_index": "5",
+      "ac_text": "./lca_boj3s_gate.sh passes as a required final acceptance   \u2502",
+      "failure_type": "stall/no-activity",
+      "failure_family": "boj3s_gate_unspecified",
+      "primary_axis": "zero_span_fastpath",
+      "secondary_axis": "layout_gate",
+      "axis_evidence": {
+        "layout_gate": [
+          "AC 5 \u2192 Bash: /bin/zsh -lc 'rg -n \"zero-span|fastpath|layout signature|..."
+        ],
+        "zero_span_fastpath": [
+          "AC 5 \u2192 Bash: /bin/zsh -lc 'rg -n \"zero-span|fastpath|layout signature|..."
+        ]
+      },
+      "profile_mode": null,
+      "enabled_flags": [
+        "ENABLE_COMPACT_RELEASE_DIAG",
+        "ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT",
+        "ENABLE_LAYOUT_SIGNATURE_GATE_OPT"
+      ],
+      "last_release_diag_phase": null,
+      "last_progress_checkpoint_phase": null,
+      "current_summary_pivot": "zero-span eligibility and fastpath commit",
+      "current_summary_residual_axes": [
+        "state_materialization",
+        "layout_gate",
+        "zero_span_fastpath"
+      ],
+      "next_probe_command": "PROFILE_MODE=PROFILE_SAMPLED ./lca_boj3s_gate.sh",
+      "interpretation_lane": "performance-profile",
+      "trace_excerpt": [
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,240p' boj28350_complete_master_do...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' boj28350_integrated_technic...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' boj28350_literature_progres...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' literature_grade_proof_pack...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' .ouroboros/failure_analysis...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' .ouroboros/failure_analysis...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' .ouroboros/failure_analysis...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"rg --files artifacts/lca_tree_stress_v5/ret...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,320p' artifacts/lca_tree_stress_v...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' artifacts/lca_tree_stress_v...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc 'rg -n \"zero-span|fastpath|layout signature|...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"python3 - <<'PY'",
+        "import json, pathlib",
+        "p=pat...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' outer_suite_wrappers/lca_bo...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' lca_boj3s_gate.sh\"",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"python3 - <<'PY'",
+        "from pathlib import Path",
+        "f...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc 'rg -n \"balanced_dense|seed1_L1_Q1|neighbor_...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,240p' artifacts/lca_tree_stress_v...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '5220,5485p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '14490,14680p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,120p' artifacts/lca_tree_stress_v...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,80p' artifacts/lca_tree_stress_v5...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '5000,5235p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '14680,15180p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' build.sh\"",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,240p' solver_release_env.sh\"",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' branch_run_case.py\"",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc 'find artifacts/lca_tree_stress_v5/retry_loo...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '4200,5005p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '13420,14510p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,80p' artifacts/lca_tree_stress_v5...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"rg -n \\\"buildGlobalDeleteArtifact|syncCompo...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '6410,6495p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '10880,11080p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '11920,12160p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '13880,14080p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,200p' artifacts/lca_tree_stress_v...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' build.py\"",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc 'rg -n \"PROFILE_|ENABLE_COMPACT_RELEASE_DIAG...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc ./build.sh",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"source ./solver_release_env.sh && python3 -...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,80p' artifacts/lca_tree_stress_v5...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"python3 - <<'PY'",
+        "from pathlib import Path",
+        "f...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"python3 - <<'PY'",
+        "from pathlib import Path",
+        "i...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' suite_utils.py\"",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc 'ls -l artifacts/lca_tree_stress_v5/retry_lo...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc 'rg -n \"def run_solver_with_time|TimeoutExpi...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '3440,3565p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1040,1125p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc 'file artifacts/boj28350_resume/build/solve ...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"rg -n \\\"compact_release_diag_case_start|com...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"rg -n \\\"progress_case_start\\\\(|progress_ini...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"rg -n \\\"main\\\\(|solveWithOracle\\\\(|OuterSol...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '17120,17320p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '15420,15470p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"rg -n \\\"compId_|syncComponents\\\\(|comp\\\\(|c...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '6000,6465p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '14140,14285p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '920,980p' boj28350_resume/boj28350_...",
+        "  AC 5 \u2192 Edit: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '6450,6488p' boj28350_resume/boj2835...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '14190,14220p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '14580,14595p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '14595,14610p' boj28350_resume/boj28...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc ./build.sh",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"source ./solver_release_env.sh && python3 -...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"source ./solver_release_env.sh && python3 -...",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '260,360p' suite_utils.py\"",
+        "  AC 5 \u2192 Bash: /bin/zsh -lc ./lca_smoke.sh",
+        "  AC 5 \u2192 Bash: /bin/zsh -c 'git status --short'",
+        "\u2502 ### AC 5: [FAIL] ./lca_boj3s_gate.sh passes as a required final acceptance   \u2502",
+        "\u2502 gate                                                                         \u2502",
+        "\u2502 Error: Stalled (no activity for 300s)                                        \u2502"
+      ],
+      "phase_summaries": [
+        {
+          "phase": "timing-timeout",
+          "count": 6,
+          "sample": "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,240p' solver_release_env.sh\""
+        },
+        {
+          "phase": "build",
+          "count": 3,
+          "sample": "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' build.py\""
+        },
+        {
+          "phase": "wrapper",
+          "count": 2,
+          "sample": "AC 5 \u2192 Bash: /bin/zsh -lc ./lca_smoke.sh"
+        },
+        {
+          "phase": "case-runner",
+          "count": 1,
+          "sample": "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' branch_run_case.py\""
+        }
+      ],
+      "structural_focus": [
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+          "observed_mentions": 4,
+          "focus_ranges": [
+            "1-220",
+            "1-240",
+            "1-260"
+          ],
+          "enclosing_symbols": [],
+          "evidence_lines": [
+            "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,240p' solver_release_env.sh\"",
+            "AC 5 \u2192 Bash: /bin/zsh -lc \"source ./solver_release_env.sh && python3 -..."
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env bash\n    2: \n    3: # Branch-local release subset mirrored from the archived release runner.\n    4: # This enables the early performance pivots without forcing the later\n    5: # experimental pointer/patch/normalize branches that regressed the gate probe.\n    6: \n    7: # Keep transient tool output under branch-local artifacts instead of system temp.\n    8: __solver_release_env_dir=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n    9: __solver_release_env_tmp_override=\"${BRANCH_ARTIFACT_TMP_ROOT:-}\"\n   10: if ! __solver_release_env_tmp=\"$(\n   11:   python3 - \"$__solver_release_env_dir\" \"$__solver_release_env_tmp_override\" <<'PY'\n   12: from __future__ import annotations\n   13: \n   14: import sys\n   15: from pathlib import Path\n   16: \n   17: branch_root = Path(sys.argv[1]).resolve()\n   18: override = sys.argv[2] if len(sys.argv) > 2 else \"\"\n   19: sys.path.insert(0, str(branch_root))\n   20: \n   21: from artifact_paths import resolve_tmp_path\n   22: \n   23: try:\n   24:     print(resolve_tmp_path(override or None))\n   25: except ValueError as exc:\n   26:     print(f\"[solver_release_env] {exc}\", file=sys.stderr)\n   27:     raise SystemExit(2)\n   28: PY",
+          "note": "observed in failed-AC trace",
+          "mtime": "2026-03-25 12:58:47 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh",
+          "observed_mentions": 3,
+          "focus_ranges": [
+            "1-220",
+            "1-260"
+          ],
+          "enclosing_symbols": [],
+          "evidence_lines": [
+            "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' build.sh\"",
+            "AC 5 \u2192 Bash: /bin/zsh -lc ./build.sh"
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env bash\n    2: set -euo pipefail\n    3: cd \"$(dirname \"$0\")\"\n    4: export PYTHONDONTWRITEBYTECODE=1\n    5: source ./solver_release_env.sh\n    6: python3 boj28350_resume.py build \"$@\"\n    7: chmod +x ./boj28350_resume/solve",
+          "note": "observed in failed-AC trace",
+          "mtime": "2026-03-25 05:11:08 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_utils.py",
+          "observed_mentions": 2,
+          "focus_ranges": [
+            "1-260",
+            "1-320",
+            "260-360"
+          ],
+          "enclosing_symbols": [
+            "function parse_int_list_csv [19-23]",
+            "function parse_str_list_csv [26-30]",
+            "function default_solver_name [33-34]",
+            "function default_solver_path [37-38]",
+            "function _run_solver_windows [233-268]",
+            "function _write_time_artifact [271-273]"
+          ],
+          "evidence_lines": [
+            "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' suite_utils.py\"",
+            "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '260,360p' suite_utils.py\""
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env python3\n    2: from __future__ import annotations\n    3: \n    4: import math\n    5: import os\n    6: import signal\n    7: import statistics\n    8: import subprocess\n    9: import sys\n   10: import time\n   11: from pathlib import Path\n   12: from typing import List, Mapping, Optional, Sequence, Tuple\n   13: \n   14: \n   15: IS_WINDOWS = os.name == \"nt\"\n   16: IS_DARWIN = sys.platform == \"darwin\"\n   17: \n   18: \n   19: def parse_int_list_csv(s: str) -> List[int]:\n   20:     s = s.strip()\n   21:     if not s:\n   22:         return []\n   23:     return [int(x) for x in s.split(\",\") if x.strip()]\n   24: \n   25: \n   26: def parse_str_list_csv(s: str) -> List[str]:\n   27:     s = s.strip()\n   28:     if not s:",
+          "note": "observed in failed-AC trace, mapped from failed AC semantics",
+          "mtime": "2026-03-24 23:13:12 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh",
+          "observed_mentions": 1,
+          "focus_ranges": [
+            "1-220",
+            "1-260"
+          ],
+          "enclosing_symbols": [],
+          "evidence_lines": [
+            "AC 5 \u2192 Bash: /bin/zsh -lc ./lca_smoke.sh"
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env bash\n    2: set -euo pipefail\n    3: \n    4: SCRIPT_DIR=\"$(cd -- \"$(dirname -- \"${BASH_SOURCE[0]}\")\" && pwd -P)\"\n    5: exec \"$SCRIPT_DIR/outer_suite_wrappers/lca_smoke.sh\" \"$@\"",
+          "note": "observed in failed-AC trace",
+          "mtime": "2026-03-25 10:56:12 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py",
+          "observed_mentions": 1,
+          "focus_ranges": [
+            "1-220",
+            "1-260",
+            "1-320"
+          ],
+          "enclosing_symbols": [
+            "function parse_env_assignments [37-44]",
+            "function apply_solver_env_overrides [47-51]",
+            "function build_case_solver_env [54-60]",
+            "function resolve_case_outdir [63-64]"
+          ],
+          "evidence_lines": [
+            "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,220p' branch_run_case.py\""
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env python3\n    2: from __future__ import annotations\n    3: \n    4: import argparse\n    5: import json\n    6: import os\n    7: import random\n    8: import sys\n    9: from pathlib import Path\n   10: \n   11: from artifact_paths import configure_branch_process_env, resolve_output_path\n   12: from branch_validator import validate_case\n   13: \n   14: \n   15: configure_branch_process_env()\n   16: \n   17: import branch_gen_case\n   18: from suite_utils import default_solver_path, ensure_executable, resolve_solver_path, run_solver_with_time\n   19: \n   20: \n   21: ROOT = Path(__file__).resolve().parent\n   22: RESERVED_SOLVER_ENV_KEYS = frozenset(\n   23:     {\n   24:         \"BRANCH_ARTIFACT_TMP_ROOT\",\n   25:         \"TMPDIR\",\n   26:         \"TMP\",\n   27:         \"TEMP\",\n   28:         \"PYTHONDONTWRITEBYTECODE\",",
+          "note": "observed in failed-AC trace",
+          "mtime": "2026-03-25 05:40:50 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.py",
+          "observed_mentions": 1,
+          "focus_ranges": [
+            "1-240",
+            "1-260",
+            "1-360"
+          ],
+          "enclosing_symbols": [
+            "function _compiler_candidates [22-40]",
+            "function add [26-30]",
+            "function _compiler_path [43-47]",
+            "function _build_commands [50-88]"
+          ],
+          "evidence_lines": [
+            "AC 5 \u2192 Bash: /bin/zsh -lc \"sed -n '1,260p' build.py\""
+          ],
+          "code_excerpt": "    1: #!/usr/bin/env python3\n    2: from __future__ import annotations\n    3: \n    4: import argparse\n    5: import os\n    6: import shutil\n    7: import subprocess\n    8: import sys\n    9: from pathlib import Path\n   10: from typing import List\n   11: \n   12: from artifact_paths import configure_branch_process_env, default_output_path, resolve_output_path\n   13: from suite_utils import IS_WINDOWS, default_solver_path\n   14: \n   15: \n   16: configure_branch_process_env()\n   17: \n   18: \n   19: ROOT = Path(__file__).resolve().parent\n   20: \n   21: \n   22: def _compiler_candidates(preferred: str | None) -> List[str]:\n   23:     out: List[str] = []\n   24:     seen = set()\n   25: \n   26:     def add(name: str | None) -> None:\n   27:         if not name or name in seen:\n   28:             return",
+          "note": "observed in failed-AC trace, mapped from failed AC semantics",
+          "mtime": "2026-03-25 09:55:11 KST"
+        },
+        {
+          "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_certify_suite.py",
+          "observed_mentions": 0,
+          "focus_ranges": [
+            "1-260",
+            "260-520"
+          ],
+          "enclosing_symbols": [
+            "function _normalize_artifact_out_dir [43-44]",
+            "function _normalize_cli_out_arg [47-60]",
+            "function _generation_ready [63-65]",
+            "function _cache_root [68-69]",
+            "function _ensure_generated_case [200-261]",
+            "function _clear_case_outputs [264-268]"
+          ],
+          "evidence_lines": [],
+          "code_excerpt": "    1: #!/usr/bin/env python3\n    2: from __future__ import annotations\n    3: \n    4: import os\n    5: import shutil\n    6: import sys\n    7: import tempfile\n    8: import time\n    9: import importlib.util\n   10: from contextlib import contextmanager\n   11: from pathlib import Path\n   12: \n   13: from artifact_paths import configure_branch_process_env, resolve_output_path\n   14: \n   15: \n   16: configure_branch_process_env()\n   17: \n   18: \n   19: BRANCH_ROOT = Path(__file__).resolve().parent\n   20: OUTER_ROOT = BRANCH_ROOT.parent\n   21: TOOLING_ROOT = OUTER_ROOT / \"lca_tree_stress_v5\" / \"tooling\"\n   22: \n   23: _branch_suite_utils_spec = importlib.util.spec_from_file_location(\n   24:     \"branch_suite_utils\", BRANCH_ROOT / \"suite_utils.py\"\n   25: )\n   26: assert _branch_suite_utils_spec is not None and _branch_suite_utils_spec.loader is not None\n   27: branch_suite_utils = importlib.util.module_from_spec(_branch_suite_utils_spec)\n   28: _branch_suite_utils_spec.loader.exec_module(branch_suite_utils)",
+          "note": "mapped from failed AC semantics",
+          "mtime": "2026-03-25 09:41:11 KST"
+        }
+      ],
+      "artifact_snapshots": [
+        {
+          "label": "boj3s_gate",
+          "latest_file": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/boj3s_gate/retry_loop/ac5_formal_attempt_current.latest_failure/certify.json",
+          "latest_mtime": "2026-03-25 07:18:29 KST",
+          "summary_file": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/boj3s_gate/retry_loop/ac5_formal_attempt_current.latest_failure/certify.json",
+          "summary_excerpt": "{\n  \"verdict\": \"FAIL\",\n  \"reasons\": [\n    \"correctness_smoke: 64 failing cases\",\n    \"hard_scaling_strict: 99 failing cases\",\n    \"boj_3s_large_adversarial: 30 failing cases\",\n    \"boj_3s_large_mix: 18 failing cases\"\n  ],\n  \"preset\": \"boj_3s_hard_gate\",\n  \"stages\": [\n    {\n      \"name\": \"correctness_smoke\",\n      \"status\": \"FAIL\",\n      \"cases\": 288,\n      \"timeouts\": 24,\n      \"re_wa\": 40,\n      \"limit_scale\": 1.0,\n      \"sec_max\": null,\n      \"case_sec_max\": null,\n      \"scale_fail\": []\n    },\n    {\n      \"name\": \"hard_scaling_strict\",\n      \"status\": \"FAIL\",\n      \"cases\": 108,\n      \"timeouts\": 99,\n      \"re_wa\": 0,\n      \"limit_scale\": 1.0,\n      \"sec_max\": null,\n      \"case_sec_max\": 2.7,\n      \"scale_fail\": []\n    },\n    {\n      \"name\": \"boj_3s_large_adversarial\",\n      \"status\": \"FAIL\",\n      \"cases\": 30,\n      \"timeouts\": 30,\n      \"re_wa\": 0,\n      \"limit_scale\": 1.0,\n      \"sec_max\": 2.55,\n      \"case_sec_max\": 2.7,\n      \"scale_fail\": []\n    },\n    {\n      \"name\": \"boj_3s_large_mix\",\n      \"status\": \"FAIL\",\n      \"cases\": 18,\n      \"timeouts\": 15,\n      \"re_wa\": 3,\n      \"limit_scale\": 1.0,\n      \"sec_max\": null,\n      \"case_sec_max\": 2.7,\n      \"scale_fail\": []\n    }\n  ]\n}"
+        },
+        {
+          "label": "tmp",
+          "latest_file": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/case_runs/seed3_L1_Q1.run.mk55sxjf/solver_stderr.txt",
+          "latest_mtime": "2026-03-25 13:39:55 KST",
+          "summary_file": null,
+          "summary_excerpt": null
+        }
+      ]
+    }
+  ],
+  "refinement_notes": [
+    "The failed AC set changed relative to the previous captured failure.",
+    "Recurring code-structure hotspots: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.py, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_strong_gate.sh, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh.",
+    "New hotspots to fold into the next retry analysis: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_certify_suite.py.",
+    "Recurring enclosing symbols: function _compiler_candidates [22-40], function _compiler_path [43-47], function add [26-30], function default_solver_name [33-34], function default_solver_path [37-38], function parse_int_list_csv [19-23].",
+    "Recurring line-range hotspots: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py:1-260, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.py:1-240, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.py:1-260, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh:1-220, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh:1-220, /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh:1-260.",
+    "Refine the next retry around these dominant phases: timing-timeout, wrapper, build."
+  ]
+}

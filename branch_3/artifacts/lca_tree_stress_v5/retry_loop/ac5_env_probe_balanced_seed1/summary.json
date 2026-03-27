@@ -1,0 +1,29 @@
+[
+  {
+    "name": "baseline",
+    "rc": -9,
+    "timed_out": true,
+    "sec": null,
+    "rss_kb": null,
+    "validator_ok": false,
+    "validator_msg": ""
+  },
+  {
+    "name": "both_on",
+    "rc": -9,
+    "timed_out": true,
+    "sec": null,
+    "rss_kb": null,
+    "validator_ok": false,
+    "validator_msg": ""
+  },
+  {
+    "name": "lgate_chain",
+    "rc": -9,
+    "timed_out": true,
+    "sec": null,
+    "rss_kb": null,
+    "validator_ok": false,
+    "validator_msg": ""
+  }
+]

@@ -1,0 +1,82 @@
+{
+  "name": "boj_3s_hard_gate",
+  "description": "Stricter BOJ-oriented gate: adversarial families plus per-case sub-3s caps on large inputs.",
+  "stages": [
+    {
+      "name": "correctness_smoke",
+      "modes": [
+        "comb_rect_dense",
+        "multi_comb_rect",
+        "multi_comb_cap",
+        "balanced_dense",
+        "caterpillar_rect_dense",
+        "random_recursive_mixed"
+      ],
+      "sizes": [128, 256, 512, 1024],
+      "seeds": [1, 2, 3],
+      "shuffle_labels": [0, 1],
+      "shuffle_queries": [0, 1],
+      "timeout": 1.5,
+      "must_pass": true
+    },
+    {
+      "name": "hard_scaling_strict",
+      "modes": [
+        "comb_core",
+        "comb_plus_unary",
+        "comb_dense",
+        "comb_rect_dense",
+        "multi_comb_core",
+        "multi_comb_rect",
+        "multi_comb_cap",
+        "caterpillar_mixed",
+        "caterpillar_rect_dense"
+      ],
+      "sizes": [4096, 8192, 16384, 32768],
+      "seeds": [1, 2, 3],
+      "shuffle_labels": [1],
+      "shuffle_queries": [1],
+      "timeout": 3.0,
+      "must_pass": true,
+      "alpha_max": 1.35,
+      "ratio_max": 2.60,
+      "case_sec_max": 2.70
+    },
+    {
+      "name": "boj_3s_large_adversarial",
+      "modes": [
+        "comb_dense",
+        "comb_rect_dense",
+        "multi_comb_rect",
+        "multi_comb_cap",
+        "caterpillar_rect_dense"
+      ],
+      "sizes": [50000, 75000, 99999],
+      "seeds": [1, 2],
+      "shuffle_labels": [1],
+      "shuffle_queries": [1],
+      "timeout": 3.0,
+      "must_pass": true,
+      "case_sec_max": 2.70,
+      "sec_max": 2.55
+    },
+    {
+      "name": "boj_3s_large_mix",
+      "modes": [
+        "balanced_dense",
+        "random_recursive_mixed",
+        "broom_mixed",
+        "comb_rect_dense",
+        "multi_comb_cap",
+        "caterpillar_rect_dense"
+      ],
+      "sizes": [99999],
+      "seeds": [1, 2, 3],
+      "shuffle_labels": [1],
+      "shuffle_queries": [1],
+      "timeout": 3.0,
+      "must_pass": true,
+      "case_sec_max": 2.70
+    }
+  ]
+}

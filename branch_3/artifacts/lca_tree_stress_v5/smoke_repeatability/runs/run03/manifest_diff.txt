@@ -1,0 +1,7 @@
+baseline_run=runs/run01
+current_run=runs/run03
+baseline_snapshot=runs/run01/smoke_snapshot
+current_snapshot=runs/run03/smoke_snapshot
+ignored_files=time.txt
+normalized_files=run_case.stdout.txt
+normalized_run_case_stdout_lines=[run_case] mode=... time=... mem=... ; [run_case] artifacts: ...

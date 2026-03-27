@@ -7,8 +7,13 @@
   - 최신 archive 기준 `progress40` 스냅샷을 복사해 왔다.
 - `current_state_summary.md`
   - 번들 기준 현재 상태 요약.
+- `progress40_derived_reference.md`
+  - bundled progress40 source/report/results에서 재사용할 기법, 기각된 접근, benchmark expectation만 추린 branch-local 참조 메모.
 - `next_session_briefing.md`
   - 다음 세션 작업 맥락 메모.
+  - section 6의 pre-rewrite decision checkpoint를 먼저 통과해야 major solver rewrite/pivot을 시작한다.
+  - 조건은 `branch_3` notes review 완료 + bundled `progress40` materials review 완료다.
+  - section 6.2.1이 두 review completion이 rewrite/pivot 시작 전에 실제로 기록됐다는 explicit evidence entry다.
 - `smoke_cases.tsv`
   - branch-local stress smoke 기본 케이스 목록.
 

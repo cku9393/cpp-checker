@@ -1,0 +1,120 @@
+ENABLE_TSCAN_CORE_OPT=1
+RUST_LOG=warn
+CODEX_SANDBOX_NETWORK_DISABLED=1
+ENABLE_SLOT_OWNER_UPDATE_OPT=1
+ENABLE_DIRECT_PREBIND_OPT=1
+VSCODE_CRASH_REPORTER_PROCESS_TYPE=extensionHost
+ENABLE_DELTA_CONNECTOR_HIT=1
+TERM=screen
+SHELL=/bin/zsh
+ENABLE_REUSE_APPLY_OPT=1
+ENABLE_COPY_PLAN_BUILD_OPT=1
+TMPDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp
+HOMEBREW_REPOSITORY=/opt/homebrew
+ENABLE_METADATA_PATCH_SLOT_OWNER_OPT=1
+CONDA_SHLVL=1
+ENABLE_PREV_STATE_WRITEBACK_OPT=0
+CONDA_PROMPT_MODIFIER=(base) 
+ENABLE_CANONICAL_NORMALIZE_OPT=1
+OLDPWD=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+MallocNanoZone=0
+NO_COLOR=1
+ENABLE_TARGET_RESOLVE_PINNING_OPT=1
+LC_ALL=C.UTF-8
+USER=free_1
+ENABLE_TSCAN_BRANCH_STATE_OPT=1
+TEMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp
+PYTHONPYCACHEPREFIX=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/pycache
+COMMAND_MODE=unix2003
+ENABLE_COMPACT_FIELD_PACK_OPT=1
+CONDA_EXE=/Users/free_1/anaconda3/bin/conda
+ENABLE_WATCH_SCAN_OPT=1
+ENABLE_POINTER_REBIND_OPT=1
+TERMCAP=SC|screen|VT 100/ANSI X3.64 virtual terminal:\
+	:DO=\E[%dB:LE=\E[%dD:RI=\E[%dC:UP=\E[%dA:bs:bt=\E[Z:\
+	:cd=\E[J:ce=\E[K:cl=\E[H\E[J:cm=\E[%i%d;%dH:ct=\E[3g:\
+	:do=^J:nd=\E[C:pt:rc=\E8:rs=\Ec:sc=\E7:st=\EH:up=\EM:\
+	:le=^H:bl=^G:cr=^M:it#8:ho=\E[H:nw=\EE:ta=^I:is=\E)0:\
+	:li#24:co#80:am:xn:xv:LP:sr=\EM:al=\E[L:AL=\E[%dL:\
+	:cs=\E[%i%d;%dr:dl=\E[M:DL=\E[%dM:dc=\E[P:DC=\E[%dP:\
+	:im=\E[4h:ei=\E[4l:mi:IC=\E[%d@:ks=\E[?1h\E=:\
+	:ke=\E[?1l\E>:vi=\E[?25l:ve=\E[34h\E[?25h:vs=\E[34l:\
+	:ti=\E[?1049h:te=\E[?1049l:k0=\E[10~:k1=\EOP:k2=\EOQ:\
+	:k3=\EOR:k4=\EOS:k5=\E[15~:k6=\E[17~:k7=\E[18~:\
+	:k8=\E[19~:k9=\E[20~:k;=\E[21~:F1=\E[23~:F2=\E[24~:\
+	:kh=\E[1~:@1=\E[1~:kH=\E[4~:@7=\E[4~:kN=\E[6~:kP=\E[5~:\
+	:kI=\E[2~:kD=\E[3~:ku=\EOA:kd=\EOB:kr=\EOC:kl=\EOD:
+SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.tSk7sBdvov/Listeners
+DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/direct_solver_aux
+PROFILE_MODE=PROFILE_NONE
+__CF_USER_TEXT_ENCODING=0x1F6:0x3:0x33
+ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT=1
+PAGER=cat
+ENABLE_PACK_ENCODE_NORMALIZE_OPT=1
+ELECTRON_RUN_AS_NODE=1
+ENABLE_LAYOUT_SIGNATURE_GATE_OPT=1
+_CE_CONDA=
+ENABLE_BLOCK_COPY_COMPACTION_OPT=1
+PROFILE_PROGRESS_STRIDE=1024
+PATH=/Users/free_1/.codex/tmp/arg0/codex-arg00p39CK:/opt/homebrew/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/path:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin:/Users/free_1/.codex/tmp/arg0/codex-arg0CYvBGq:/Users/free_1/.local/bin:/Users/free_1/.antigravity/antigravity/bin:/Users/free_1/anaconda3/bin:/Users/free_1/anaconda3/condabin:/Users/free_1/.spicetify:/Users/free_1/.antigravity/extensions/openai.chatgpt-26.304.20706-darwin-arm64/bin/macos-aarch64
+CODEX_SANDBOX=seatbelt
+STY=62934.branch3_retry_20260326_112620
+LaunchInstanceID=FC17EB15-DBCA-4C46-9CA5-F6B1396A3888
+__CFBundleIdentifier=com.google.antigravity
+CONDA_PREFIX=/Users/free_1/anaconda3
+CODEX_THREAD_ID=019d1dc8-5866-7e40-95a0-a3854af3bb2a
+PWD=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/direct_solver_aux
+VSCODE_HANDLES_UNCAUGHT_ERRORS=true
+VSCODE_ESM_ENTRYPOINT=vs/workbench/api/node/extensionHostProcess
+ENABLE_KEPT_VECTOR_OPT=1
+LANG=C.UTF-8
+ENABLE_FUSED_DISCOVERY_CLASSIFY_OPT=1
+XDG_STATE_HOME=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/xdg_state
+XPC_FLAGS=0x0
+CODEX_MANAGED_BY_NPM=1
+CODEX_CI=1
+PYTHONDONTWRITEBYTECODE=1
+ENABLE_PRESERVED_SPLIT_OPT=1
+_CE_M=
+XPC_SERVICE_NAME=0
+ENABLE_STATE_LOAD_MATERIALIZATION_OPT=0
+SHLVL=1
+HOME=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/home
+XDG_CONFIG_HOME=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/xdg_config
+VSCODE_NLS_CONFIG={"userLocale":"ko","osLocale":"ko-kr","resolvedLanguage":"ko","defaultMessagesFile":"/Applications/Antigravity.app/Contents/Resources/app/out/nls.messages.json","languagePack":{"translationsConfigFile":"/Users/free_1/Library/Application Support/Antigravity/clp/28dc8d0d0a95009aa3f469b3066758a0.ko/tcf.json","messagesFile":"/Users/free_1/Library/Application Support/Antigravity/clp/28dc8d0d0a95009aa3f469b3066758a0.ko/135ccf460c67c4b900dc10aa71c978f27d78601c/nls.messages.json","corruptMarkerFile":"/Users/free_1/Library/Application Support/Antigravity/clp/28dc8d0d0a95009aa3f469b3066758a0.ko/corrupted.info"},"locale":"ko","availableLanguages":{"*":"ko"},"_languagePackId":"28dc8d0d0a95009aa3f469b3066758a0.ko","_languagePackSupport":true,"_translationsConfigFile":"/Users/free_1/Library/Application Support/Antigravity/clp/28dc8d0d0a95009aa3f469b3066758a0.ko/tcf.json","_cacheRoot":"/Users/free_1/Library/Application Support/Antigravity/clp/28dc8d0d0a95009aa3f469b3066758a0.ko","_resolvedLanguagePackCoreLocation":"/Users/free_1/Library/Application Support/Antigravity/clp/28dc8d0d0a95009aa3f469b3066758a0.ko/135ccf460c67c4b900dc10aa71c978f27d78601c","_corruptedFile":"/Users/free_1/Library/Application Support/Antigravity/clp/28dc8d0d0a95009aa3f469b3066758a0.ko/corrupted.info"}
+HOMEBREW_PREFIX=/opt/homebrew
+ENABLE_STABLE_COMPACTION_OPT=1
+GH_PAGER=cat
+ENABLE_PREV_STATE_CARRY_REUSE_OPT=1
+XDG_CACHE_HOME=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/xdg_cache
+ENABLE_RETAIN_COMPACTION_OPT=1
+TMP=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp
+LOGNAME=free_1
+CONDA_PYTHON_EXE=/Users/free_1/anaconda3/bin/python
+ENABLE_PACK_ENCODE_NORMALIZE_CORE_OPT=1
+WINDOW=0
+ENABLE_RUN_DISCOVERY_FUSION_OPT=1
+LOCAL_SKIP_SELF_TEST=1
+VSCODE_IPC_HOOK=/Users/free_1/Library/Application Support/Antigravity/1.10-main.sock
+VSCODE_CODE_CACHE_PATH=/Users/free_1/Library/Application Support/Antigravity/CachedData/135ccf460c67c4b900dc10aa71c978f27d78601c
+LC_CTYPE=C.UTF-8
+BRANCH_ARTIFACT_TMP_ROOT=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp
+CONDA_DEFAULT_ENV=base
+ENABLE_SLOT_OWNER_FIELD_PATCH_OPT=1
+ENABLE_REBIND_COMMIT_OPT=1
+ENABLE_CARRY_HIT_APPLY_OPT=1
+VSCODE_PID=473
+ENABLE_DELTA_PRESERVED_HIT=1
+INFOPATH=/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:/opt/homebrew/share/info:
+HOMEBREW_CELLAR=/opt/homebrew/Cellar
+ENABLE_SLOT_OWNER_PATCH_COMMIT_OPT=1
+OSLogRateLimit=64
+GIT_PAGER=cat
+VSCODE_L10N_BUNDLE_LOCATION=file:///Users/free_1/.antigravity/extensions/ms-ceintl.vscode-language-pack-ko-1.108.2026021109/translations/extensions/vscode.markdown-language-features.i18n.json
+VSCODE_CWD=/
+SECURITYSESSIONID=186a2
+DEBUG=release
+ENABLE_CARRY_REUSE_FASTPATH_OPT=1
+BRANCH3_SOLVER=/usr/bin/env
+COLORTERM=
+CODEX_INTERNAL_ORIGINATOR_OVERRIDE=codex_vscode

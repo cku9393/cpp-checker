@@ -1,0 +1,12 @@
+{
+  "category": "solver",
+  "exit_code": 1,
+  "message": "query #1 mismatch: lca(442, 504)=10, expected 442",
+  "rss_kb": 30992,
+  "sec": 1.776652291,
+  "solver_exit_code": null,
+  "solver_signal": null,
+  "status": "solver_acceptance_failure",
+  "timed_out": false,
+  "validator_ok": false
+}
