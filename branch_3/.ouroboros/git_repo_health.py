@@ -3,8 +3,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
+import sys
 from pathlib import Path
+
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
+sys.dont_write_bytecode = True
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from retry_artifact_io import prepare_output_dir, write_text_output
 
 
 CHECKS = (
@@ -30,6 +41,19 @@ def normalize_output(value: str | bytes | None) -> str:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace").strip()
     return value.strip()
+
+
+def _load_artifact_guard(branch_root: Path):
+    sys.path.insert(0, str(branch_root))
+    from artifact_paths import ensure_under_artifacts  # type: ignore
+
+    return ensure_under_artifacts
+
+
+def _resolve_artifact_path(branch_root: Path, ensure_under_artifacts, value: str) -> Path:
+    path = Path(value).expanduser()
+    resolved = path if path.is_absolute() else (branch_root / path).resolve()
+    return ensure_under_artifacts(resolved)
 
 
 def run_check(branch_root: Path, name: str, cmd: list[str], timeout: int) -> dict:
@@ -72,11 +96,12 @@ def run_check(branch_root: Path, name: str, cmd: list[str], timeout: int) -> dic
 
 def main() -> int:
     args = parse_args()
-    branch_root = Path(args.branch_root)
-    attempt_dir = Path(args.attempt_dir)
-    report_root = Path(args.report_root)
-    attempt_dir.mkdir(parents=True, exist_ok=True)
-    report_root.mkdir(parents=True, exist_ok=True)
+    branch_root = Path(args.branch_root).resolve()
+    ensure_under_artifacts = _load_artifact_guard(branch_root)
+    attempt_dir = _resolve_artifact_path(branch_root, ensure_under_artifacts, args.attempt_dir)
+    report_root = _resolve_artifact_path(branch_root, ensure_under_artifacts, args.report_root)
+    prepare_output_dir(attempt_dir)
+    prepare_output_dir(report_root)
 
     checks = [run_check(branch_root, name, cmd, timeout) for name, cmd, timeout in CHECKS]
     healthy = all(item["exit_code"] == 0 for item in checks)
@@ -86,7 +111,7 @@ def main() -> int:
     report_md = attempt_dir / f"git_repo_health_{args.phase}.md"
     latest_json = report_root / "latest_git_repo_health.json"
     latest_md = report_root / "latest_git_repo_health.md"
-    report_json.write_text(json.dumps(payload, indent=2) + "\n")
+    write_text_output(report_json, json.dumps(payload, indent=2) + "\n")
 
     lines = [
         "# Git Repo Health",
@@ -105,9 +130,9 @@ def main() -> int:
         if item["stderr"]:
             lines.append(f"- Stderr: `{item['stderr'][:400]}`")
         lines.append("")
-    report_md.write_text("\n".join(lines))
-    latest_json.write_text(report_json.read_text())
-    latest_md.write_text(report_md.read_text())
+    write_text_output(report_md, "\n".join(lines))
+    write_text_output(latest_json, report_json.read_text())
+    write_text_output(latest_md, report_md.read_text())
 
     print(report_md)
     return 0

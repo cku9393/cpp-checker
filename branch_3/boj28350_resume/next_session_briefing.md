@@ -490,6 +490,26 @@ branch_3 notes / working-set review와 bundled progress40 authoritative material
 2. source set B로 잠근 bundled `progress40` authoritative review는 `boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`, `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`, `boj28350_bundle_archive/boj28350_progress40_results_merged.json` 재검토로 완료됐다.
 3. 이 두 source set review completion이 planning note에 다시 확인된 이후에만 다음 solver rewrite 또는 pivot을 연다.
 
+`2026-03-28` pre-rewrite checkpoint refresh:
+1. `reviewed source set A`인 `branch_3` working set은 다시 읽고 completion을 재확인했다. 기준 파일은 `boj28350_resume/README.md`, `boj28350_resume/current_state_summary.md`, `boj28350_resume/next_session_briefing.md`, `boj28350_complete_master_document_partA_raw.md`, `boj28350_integrated_technical_history.md`, `boj28350_literature_progress7_bcdecomp_report.md`, `literature_grade_proof_package.md`, `boj28350_resume/boj28350_branch_3_solver.cpp`다.
+2. `reviewed source set B`인 bundled `progress40` authoritative set도 다시 읽고 completion을 재확인했다. 기준 파일은 `boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`, `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`, `boj28350_bundle_archive/boj28350_progress40_results_merged.json`다.
+3. 다음 solver change는 separator-decomposition drift를 더 밀어붙이는 rewrite가 아니라, literature-grade invariant를 보존하면서 bundled `progress40` line으로 다시 anchor를 맞추는 rewrite여야 한다.
+4. 다음 성능 축은 `zero-span eligibility and fastpath commit`을 1차로 두고, `signature source load and materialize`, `layout signature compare and reuse gate core`를 2차 축으로 둔다.
+5. branch-local reproducibility hygiene도 solver planning에 계속 포함한다. dense 1024 release/repeat, 4096 representative, long-run terminal row persistence close는 아직 미완료 authoritative 범위다.
+
+`2026-03-28` explicit planning-note checkpoint refresh for Sub-AC 3:
+1. 이번 planning refresh에서도 두 source set review completion을 함께 다시 확인했다. source set A는 `branch_3` working set과 proof/history package, source set B는 bundled `progress40` authoritative source/report/results set이다.
+2. source set A review가 잠근 다음 rewrite 제약은 그대로 유지한다. 즉 BC-tree flavored explicit child lattice, `buildClosedHandleFromWitness(...)` 기반 minimal closed-subtree handle, `closeByBCPath(...)` closure semantics, release-path exact rebuild fallback 배제라는 literature-grade invariant를 깨는 pivot은 허용하지 않는다.
+3. source set B review가 잠근 다음 rewrite 방향도 그대로 유지한다. 즉 active solver는 bundled `progress40` layout-signature reuse line으로 다시 anchor를 맞춰야 하고, 첫 solver-side 공격 축은 `zero-span eligibility and fastpath commit`이며 그다음에만 `signature source load and materialize`, `layout signature compare and reuse gate core`로 widen한다.
+4. 따라서 다음 solver rewrite 또는 pivot은 두 source set review가 planning note에 명시적으로 기록된 현재 상태를 전제로, progress40-derived residual 축 안에서만 진행한다. dense `1024` repeat, `4096` representative, long-run terminal-row persistence 같은 branch-local reproducibility 미완료 범위도 같은 rewrite contract 안에 둔다.
+
+`2026-04-02` pre-rewrite research-log refresh:
+1. active `branch_3` research log도 standalone checkpoint와 같은 최신 refresh를 명시적으로 따라간다. 즉 다음 major solver rewrite 또는 pivot을 열기 전에 branch-local notes / working-set review와 bundled `progress40` authoritative materials review가 둘 다 다시 완료됐음을 이 research log에 남긴다.
+2. `reviewed source set A`는 `boj28350_resume/README.md`, `boj28350_resume/current_state_summary.md`, `boj28350_resume/next_session_briefing.md`, `boj28350_complete_master_document_partA_raw.md`, `boj28350_integrated_technical_history.md`, `boj28350_literature_progress7_bcdecomp_report.md`, `literature_grade_proof_package.md`, `boj28350_resume/progress40_derived_reference.md`, `boj28350_resume/pre_rewrite_checkpoint.md`, `boj28350_resume/pre_rewrite_synthesis_note.md`, `boj28350_resume/boj28350_branch_3_solver.cpp` 재검토를 기준으로 COMPLETE 상태를 유지한다.
+3. `reviewed source set B`는 `boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`, `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`, `boj28350_bundle_archive/boj28350_progress40_results_merged.json` 재검토를 기준으로 COMPLETE 상태를 유지한다.
+4. 따라서 active research log 기준으로도, 다음 major solver rewrite 또는 pivot은 “branch_3 notes review 완료 + bundled progress40 materials review 완료”가 함께 기록된 현재 상태에서만 시작한다.
+5. 이후 planning note나 retry note가 실제 rewrite/pivot을 열 때는 `boj28350_resume/pre_rewrite_checkpoint.md`의 `2026-04-02` refresh와 이 research-log refresh를 같이 인용해 두 source set review completion이 선행됐음을 다시 확인한다.
+
 ### 6.3 rewrite rule that governs the next move
 
 다음 rewrite 또는 pivot은 아래 규칙을 따른다.

@@ -1,0 +1,107 @@
+PHASE30 stabilization report
+timestamp_utc=2026-03-31T02:14:26Z
+workspace=raw_engine_v1_package
+
+1. modified_or_added_files
+- README.md
+- tests/CMakeLists.txt
+- tests/raw_engine_cases.cpp
+- tests/tools/runtime_gate_lib.py
+- tests/tools/runtime_watch_ops.py
+- tests/tools/run_policy_pipeline.py
+- tests/tools/build_evidence_bundle.py
+
+2. runtime_evidence_ingest_merge_design
+- Added `runtime_registry_import_current` / `import-current` workflow so external runner manifests can be merged into runtime registry, history, and watch layers without touching correctness lifecycle.
+- Imported runtime evidence now carries `evidence_source`, `runner_id`, `host_label`, and `import_timestamp`.
+- Same-fingerprint imports append to existing history/watch lineage; new fingerprints create new lineage entries instead of mutating correctness baselines.
+- Runtime watch registry aggregation was hardened so imported contributions are keyed by `runtime_fingerprint_key + execution_class` and merged into snapshot summaries.
+
+3. evidence_confidence_model
+- Added machine-readable source counts: `real`, `fixture`, `replay`.
+- Added lineage metrics: `active_lineage_count`, `real_lineage_count`, `latest_real_sample_timestamp`, `latest_fixture_sample_timestamp`.
+- Added confidence verdicts `LOW / MEDIUM / HIGH`.
+- Current phase30 result:
+  current_env_watch_confidence=MEDIUM
+  reason=real evidence exists, but repeated same-fingerprint coverage is still limited
+  new_env_watch_confidence=MEDIUM
+  reason=real current-env evidence exists, but cross-env coverage still depends heavily on fixtures
+
+4. history_compaction_retention
+- Added `runtime_history_compact` workflow that retains active transitions, recent real samples, recent fixture samples, and watch-relevant anchors while pruning long raw history.
+- Compacted history summary remains bundle-safe and trend-safe; bundle generation now prefers compacted history when available.
+- Phase30 compacted history summary:
+  fingerprint_count=1
+  trend_counts={stable:1, noisy:2, regressing:2, improved:1, insufficient_history:0}
+
+5. unified_operator_summary_result
+- Correctness remained green:
+  split_tie_organic_symmetric=PASS/FRESH
+  automorphism_probe_large=PASS/FRESH
+  planner_tie_mixed_organic=NON_APPLICABLE/FRESH
+  planner_tie_mixed_organic_compare_ready=DIAGNOSTIC_ONLY/FRESH
+- Phase30 current environment moved from prior watch-only state to real drift state after live runtime remeasurement.
+- Current env final operator view:
+  severity=ACTION_REQUIRED
+  recommendation=PROPOSE_REBASELINE
+  correctness_status=PASS/FRESH
+  runtime_status=COMPARABLE / REQUIRES_RERUN / BUDGET_WARN
+  watch_status=WATCH_STABLE
+- New environment view:
+  severity=ACTION_REQUIRED
+  recommendation=REBASELINE_REQUIRED
+- Overall summary:
+  exact_shadow_policy_status=healthy
+  runtime_baseline_registry_health=attention_required
+  stale_family_count=0
+  stale_runtime_lineage_count=5
+
+6. light_ops_bundle_design
+- Added a third artifact tier in addition to full and curated bundles: light ops bundle.
+- Light ops bundle contains only the operator-facing set:
+  report
+  correctness current/baseline/refresh/rerun
+  runtime current/baseline/refresh/rerun
+  runtime registry snapshot
+  runtime watch current/refresh
+  unified ops summary
+  latest runtime proposal
+  compacted runtime history summary
+- This is intended for routine ops review when full historical logs are not needed.
+
+7. isolated_asan_full_rerun
+- Build: Debug + `RAW_ENGINE_ENABLE_ASAN=ON` + `RAW_ENGINE_ENABLE_UBSAN=ON`
+- Result: 250/250 PASS
+- Total real time: 2303.02 sec
+
+8. semantic_counterexample
+- No new semantic counterexample.
+- No new mismatch dump/reducer/regression chain was required in phase30.
+
+9. new_regressions
+- None.
+- Release and Debug full CTest exposed transient single-test failures during parallel reruns, but both offending tests passed immediately in isolated reproduction and final clean verification completed green.
+
+10. exact_shadow_final_verdict
+- exact_shadow remains the production split-choice policy.
+- No primitive or planner semantics changes were made in phase30.
+
+11. remaining_risks
+- Current environment runtime now has real measured drift relative to `phase25-runtime-approved`; the dominant operator action is `PROPOSE_REBASELINE`.
+- Cross-environment matrix still requires explicit rebaseline for foreign fingerprints and remains partly fixture-driven.
+- Bundle generation on large artifact trees is I/O-heavy; overlapping bundle jobs should be avoided.
+- Runtime evidence is stronger than phase29, but real multi-runner ingestion breadth is still narrower than the synthetic matrix breadth.
+
+12. verification_summary
+- Release full CTest: 250/250 PASS, 458.96 sec
+- Debug full CTest: 250/250 PASS, 573.38 sec
+- ASan/UBSan isolated full CTest: 250/250 PASS, 2303.02 sec
+- Explicit phase30 checks passed:
+  runtime_registry_import_current_smoke
+  runtime_watch_import_same_fingerprint_smoke
+  runtime_watch_confidence_smoke
+  runtime_history_compact_smoke
+  policy_ops_summary_unified_smoke
+  evidence_bundle_light_ops_smoke
+  corpus_replay_smoke
+

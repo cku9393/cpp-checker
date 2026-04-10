@@ -6,9 +6,10 @@ BRANCH_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 cd "$BRANCH_ROOT"
 ARTIFACT_RESOLVER="$BRANCH_ROOT/artifact_paths.py"
 RELEASE_ENV="$BRANCH_ROOT/solver_release_env.sh"
-SMOKE_WRAPPER="$SCRIPT_DIR/lca_smoke.sh"
+SMOKE_WRAPPER="$BRANCH_ROOT/lca_smoke.sh"
 ARTIFACTS_ROOT="$BRANCH_ROOT/artifacts/lca_tree_stress_v5"
 SMOKE_FAILURE_ROOT="$ARTIFACTS_ROOT/smoke_latest_failure"
+SMOKE_STATUS_ROOT="$ARTIFACTS_ROOT/smoke_latest_status"
 TMP_PARENT="$ARTIFACTS_ROOT/.tmp"
 STAGE_PARENT="$ARTIFACTS_ROOT/.repeatability_stage"
 RUN_WORK_TEMPLATE="lca_smoke_repeatability.XXXXXX"
@@ -176,8 +177,9 @@ cleanup() {
         echo "failure_reason=${FAILURE_REASON:-interrupted before summary generation}"
         echo "failure_hint=${FAILURE_HINT:-inspect run logs under runs/}"
         echo "ignored_files=time.txt"
-        echo "normalized_files=run_case.stdout.txt"
+        echo "normalized_files=run_case.stdout.txt,solver_env_snapshot.json"
         echo "normalized_run_case_stdout_lines=[run_case] mode=... time=... mem=... ; [run_case] artifacts: ..."
+        echo "normalized_solver_env_snapshot_fields=solver.mtime_ns,solver.sha256,solver.path,tracked_env.DENSE_PROFILE_OUTDIR"
       } > "$WORKDIR/summary.txt"
     fi
     publish_output
@@ -197,6 +199,148 @@ validate_run_count() {
   if (( RUN_COUNT < 2 )); then
     fail "repeat-count must be at least 2 (got: $RUN_COUNT)"
   fi
+}
+
+write_smoke_bundle_freshness_probe() {
+  local bundle_root="$1"
+  local freshness_marker="$2"
+  shift 2
+
+  python3 - "$bundle_root" "$freshness_marker" "$@" <<'PY'
+from __future__ import annotations
+
+import json
+import pathlib
+import sys
+
+bundle_root = pathlib.Path(sys.argv[1])
+marker_path = pathlib.Path(sys.argv[2])
+artifact_names = sys.argv[3:]
+
+
+def describe(path: pathlib.Path) -> dict[str, int | str] | None:
+    if not path.exists():
+        return None
+    stat = path.stat()
+    return {
+        "path": str(path),
+        "device": stat.st_dev,
+        "inode": stat.st_ino,
+        "size": stat.st_size,
+    }
+
+
+probe = {name: describe(bundle_root / name) for name in artifact_names}
+marker_path.write_text(json.dumps(probe, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+PY
+}
+
+verify_smoke_bundle_freshness() {
+  local bundle_label="$1"
+  local freshness_marker="$2"
+  local bundle_root="$3"
+  local report_path="$4"
+  shift 4
+
+  python3 - "$bundle_label" "$freshness_marker" "$bundle_root" "$report_path" "$@" <<'PY'
+from __future__ import annotations
+
+import json
+import pathlib
+import sys
+
+bundle_label = sys.argv[1]
+marker_path = pathlib.Path(sys.argv[2])
+bundle_root = pathlib.Path(sys.argv[3])
+report_path = pathlib.Path(sys.argv[4])
+artifact_names = sys.argv[5:]
+
+
+def describe(path: pathlib.Path) -> dict[str, int | str] | None:
+    if not path.exists():
+        return None
+    stat = path.stat()
+    return {
+        "path": str(path),
+        "device": stat.st_dev,
+        "inode": stat.st_ino,
+        "size": stat.st_size,
+    }
+
+
+def same_identity(left: dict[str, int | str] | None, right: dict[str, int | str] | None) -> bool:
+    if left is None or right is None:
+        return False
+    return (
+        left.get("device") == right.get("device")
+        and left.get("inode") == right.get("inode")
+        and left.get("size") == right.get("size")
+    )
+
+
+before = None
+status = "fresh"
+artifact_issue = "none"
+reason = "ok"
+after_artifacts: dict[str, dict[str, int | str] | None] = {}
+issues: list[str] = []
+required_artifacts = tuple((name, bundle_root / name) for name in artifact_names)
+
+if not marker_path.exists() or not marker_path.is_file():
+    issues.append("missing_freshness_probe")
+else:
+    before = json.loads(marker_path.read_text(encoding="utf-8"))
+
+if not issues and not bundle_root.exists():
+    issues.append("missing_output_root")
+elif not issues and not bundle_root.is_dir():
+    issues.append("non_directory_output_root")
+elif not issues:
+    for name, path in required_artifacts:
+        after_artifacts[name] = describe(path)
+        if after_artifacts[name] is None:
+            issues.append(f"missing_required={name}")
+    for name, _path in required_artifacts:
+        if after_artifacts.get(name) is None:
+            continue
+        if same_identity((before or {}).get(name), after_artifacts.get(name)):
+            issues.append(f"stale_required={name}")
+
+if issues:
+    status = "stale_or_missing_current_run_artifacts"
+    artifact_issue = issues[0]
+    if artifact_issue == "missing_freshness_probe":
+        reason = "repeatability wrapper did not preserve the pre-run freshness probe"
+    elif artifact_issue == "missing_output_root":
+        reason = f"{bundle_label} disappeared after lca_smoke.sh returned"
+    elif artifact_issue == "non_directory_output_root":
+        reason = f"{bundle_label} is not a directory after lca_smoke.sh returned"
+    elif artifact_issue.startswith("missing_required="):
+        name = artifact_issue.split("=", 1)[1]
+        reason = f"{bundle_label} was missing {name} after lca_smoke.sh returned"
+    elif artifact_issue.startswith("stale_required="):
+        name = artifact_issue.split("=", 1)[1]
+        reason = f"{bundle_label} reused {name} instead of regenerating current-run evidence"
+    else:
+        reason = f"{bundle_label} freshness check found missing or stale artifacts"
+
+lines = [
+    f"bundle={bundle_label}",
+    f"status={status}",
+    f"artifact_issue={artifact_issue}",
+    f"issue_count={len(issues)}",
+    f"reason={reason}",
+    f"freshness_probe={marker_path}",
+    f"live_output_root={bundle_root}",
+]
+for issue in issues:
+    lines.append("issue=" + issue)
+for name, _path in required_artifacts:
+    lines.append("before_" + name + "=" + json.dumps((before or {}).get(name), sort_keys=True))
+    lines.append("after_" + name + "=" + json.dumps(after_artifacts.get(name), sort_keys=True))
+report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+raise SystemExit(0 if status == "fresh" else 1)
+PY
 }
 
 run_smoke_once() {
@@ -262,6 +406,19 @@ def canonical_bytes(file_path: pathlib.Path) -> bytes:
                 continue
             stable_lines.append(line)
         return ("\n".join(stable_lines) + "\n").encode("utf-8")
+
+    if file_path.name == "solver_env_snapshot.json":
+        payload = json.loads(raw.decode("utf-8"))
+        solver = payload.get("solver")
+        if isinstance(solver, dict):
+            solver.pop("mtime_ns", None)
+            solver.pop("sha256", None)
+            if "path" in solver:
+                solver["path"] = "<normalized>"
+        tracked_env = payload.get("tracked_env")
+        if isinstance(tracked_env, dict) and "DENSE_PROFILE_OUTDIR" in tracked_env:
+            tracked_env["DENSE_PROFILE_OUTDIR"] = "<normalized>"
+        return (json.dumps(payload, sort_keys=True, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
 
     if file_path.name != "run_case.stdout.txt":
         return raw
@@ -358,6 +515,66 @@ signature_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 PY
 }
 
+snapshot_smoke_status() {
+  local run_dir="$1"
+  local snapshot_root="$run_dir/status_snapshot"
+  local signature_path="$run_dir/status_signature.txt"
+
+  if [[ ! -d "$SMOKE_STATUS_ROOT" ]]; then
+    fail "expected published smoke status root after run: $SMOKE_STATUS_ROOT"
+  fi
+
+  mkdir -p "$snapshot_root"
+  cp -R "$SMOKE_STATUS_ROOT"/. "$snapshot_root"
+
+  python3 - "$snapshot_root/summary.txt" "$signature_path" <<'PY'
+from __future__ import annotations
+
+from pathlib import Path
+import sys
+
+summary_path = Path(sys.argv[1])
+signature_path = Path(sys.argv[2])
+required_keys = [
+    "public_status",
+    "result_family",
+    "normalized_exit_code",
+    "raw_exit_code",
+    "normalized_outcome",
+]
+optional_keys = [
+    "outcome_source",
+    "source_failure_kind",
+    "source_failure_origin",
+    "source_failure_retryable",
+    "triage_stage_scope",
+    "triage_stage",
+]
+
+if not summary_path.is_file():
+    raise SystemExit(f"missing smoke status summary: {summary_path}")
+
+entries: dict[str, str] = {}
+for line in summary_path.read_text(encoding="utf-8").splitlines():
+    if "=" not in line:
+        continue
+    key, value = line.split("=", 1)
+    entries[key] = value
+
+missing = [key for key in required_keys if key not in entries]
+if missing:
+    raise SystemExit(
+        "smoke status summary is missing required keys: " + ",".join(missing)
+    )
+
+lines = [f"{key}={entries[key]}" for key in required_keys]
+for key in optional_keys:
+    if key in entries:
+        lines.append(f"{key}={entries[key]}")
+signature_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+PY
+}
+
 compare_snapshot_manifests() {
   local baseline_run_dir="$1"
   local current_run_dir="$2"
@@ -398,8 +615,9 @@ lines = [
     f"baseline_snapshot={baseline_rel}/smoke_snapshot",
     f"current_snapshot={current_rel}/smoke_snapshot",
     "ignored_files=time.txt",
-    "normalized_files=run_case.stdout.txt",
+    "normalized_files=run_case.stdout.txt,solver_env_snapshot.json",
     "normalized_run_case_stdout_lines=[run_case] mode=... time=... mem=... ; [run_case] artifacts: ...",
+    "normalized_solver_env_snapshot_fields=solver.mtime_ns,solver.sha256,solver.path,tracked_env.DENSE_PROFILE_OUTDIR",
 ]
 if missing:
     lines.append("missing_files:")
@@ -470,6 +688,81 @@ if changed:
 PY
 }
 
+compare_status_signatures() {
+  local baseline_run_dir="$1"
+  local current_run_dir="$2"
+  local report_path="$current_run_dir/status_signature_diff.txt"
+  local baseline_rel="${baseline_run_dir#$WORKDIR/}"
+  local current_rel="${current_run_dir#$WORKDIR/}"
+
+  python3 - "$baseline_run_dir/status_signature.txt" "$current_run_dir/status_signature.txt" "$report_path" "$baseline_rel" "$current_rel" <<'PY'
+from __future__ import annotations
+
+import pathlib
+import sys
+
+baseline_path = pathlib.Path(sys.argv[1])
+current_path = pathlib.Path(sys.argv[2])
+report_path = pathlib.Path(sys.argv[3])
+baseline_rel = sys.argv[4]
+current_rel = sys.argv[5]
+
+
+def load_signature(path: pathlib.Path) -> dict[str, str]:
+    rows: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        rows[key] = value
+    return rows
+
+
+baseline = load_signature(baseline_path)
+current = load_signature(current_path)
+keys = sorted(set(baseline) | set(current))
+changed = [key for key in keys if baseline.get(key) != current.get(key)]
+
+lines = [
+    f"baseline_run={baseline_rel}",
+    f"current_run={current_rel}",
+    f"baseline_status_signature={baseline_rel}/status_signature.txt",
+    f"current_status_signature={current_rel}/status_signature.txt",
+]
+for key in changed:
+    lines.append(
+        f"{key}\tbaseline={baseline.get(key, '<missing>')}\tcurrent={current.get(key, '<missing>')}"
+    )
+
+report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+if changed:
+    sys.exit(1)
+PY
+}
+
+read_signature_field() {
+  local signature_path="$1"
+  local key="$2"
+
+  python3 - "$signature_path" "$key" <<'PY'
+from __future__ import annotations
+
+from pathlib import Path
+import sys
+
+signature_path = Path(sys.argv[1])
+key = sys.argv[2]
+
+for line in signature_path.read_text(encoding="utf-8").splitlines():
+    if "=" not in line:
+        continue
+    current_key, value = line.split("=", 1)
+    if current_key == key:
+        print(value)
+        break
+PY
+}
+
 format_outcome_label() {
   local rc="$1"
   if [[ "$rc" == "0" ]]; then
@@ -486,20 +779,43 @@ write_summary() {
   local latest_run_dir="$4"
   local baseline_outcome="$5"
   local latest_outcome="$6"
+  local outcome_consistency="$7"
+  local baseline_result_family="$8"
+  local latest_result_family="$9"
+  local supports_solver_iteration="0"
+  local solver_iteration_basis="unstable_or_non_solver_signal"
+
+  if [[ "$status" == "PASS" ]]; then
+    supports_solver_iteration="1"
+    solver_iteration_basis="stable_green_smoke"
+  elif [[ "$status" == "CONSISTENT_FAIL" && "$baseline_result_family" == "solver" ]]; then
+    supports_solver_iteration="1"
+    solver_iteration_basis="stable_solver_failure_signal"
+  elif [[ "$outcome_consistency" != "matching" ]]; then
+    solver_iteration_basis="diverged_back_to_back_runs"
+  elif [[ "$baseline_result_family" != "solver" ]]; then
+    solver_iteration_basis="stable_non_solver_failure"
+  fi
 
   {
     echo "status=$status"
     echo "requested_runs=$RUN_COUNT"
     echo "completed_runs=$COMPLETED_RUNS"
+    echo "check_target=./lca_smoke.sh"
+    echo "reproducibility_scope=consecutive_same_worktree_runs"
+    echo "supports_solver_iteration=$supports_solver_iteration"
+    echo "solver_iteration_basis=$solver_iteration_basis"
     echo "baseline_run=$baseline_label"
     echo "latest_run=${latest_run_dir#$WORKDIR/}"
     echo "baseline_outcome=$baseline_outcome"
     echo "latest_outcome=$latest_outcome"
-    if [[ "$status" == "FAIL" ]]; then
-      echo "outcome_consistency=diverged"
-    else
-      echo "outcome_consistency=matching"
-    fi
+    echo "outcome_consistency=$outcome_consistency"
+    echo "baseline_result_family=$baseline_result_family"
+    echo "latest_result_family=$latest_result_family"
+    echo "baseline_status_snapshot=${baseline_run_dir#$WORKDIR/}/status_snapshot"
+    echo "latest_status_snapshot=${latest_run_dir#$WORKDIR/}/status_snapshot"
+    echo "baseline_status_signature=${baseline_run_dir#$WORKDIR/}/status_signature.txt"
+    echo "latest_status_signature=${latest_run_dir#$WORKDIR/}/status_signature.txt"
     if [[ "$baseline_outcome" == PASS:* ]]; then
       echo "baseline_snapshot=${baseline_run_dir#$WORKDIR/}/smoke_snapshot"
     else
@@ -519,8 +835,9 @@ write_summary() {
       echo "failure_hint=$FAILURE_HINT"
     fi
     echo "ignored_files=time.txt"
-    echo "normalized_files=run_case.stdout.txt"
+    echo "normalized_files=run_case.stdout.txt,solver_env_snapshot.json"
     echo "normalized_run_case_stdout_lines=[run_case] mode=... time=... mem=... ; [run_case] artifacts: ..."
+    echo "normalized_solver_env_snapshot_fields=solver.mtime_ns,solver.sha256,solver.path,tracked_env.DENSE_PROFILE_OUTDIR"
     echo "live_smoke_output=$SMOKE_OUTROOT"
     echo "live_smoke_failure_root=$SMOKE_FAILURE_ROOT"
   } > "$WORKDIR/summary.txt"
@@ -541,7 +858,7 @@ require_command cp
 require_command dirname
 require_file "$ARTIFACT_RESOLVER" "artifact resolver"
 require_file "$RELEASE_ENV" "release env wrapper"
-require_executable "$SMOKE_WRAPPER" "smoke wrapper"
+require_executable "$SMOKE_WRAPPER" "branch-local smoke entrypoint"
 validate_run_count
 
 source "$RELEASE_ENV"
@@ -557,6 +874,7 @@ OUTROOT="$(python3 "$ARTIFACT_RESOLVER" lca_smoke_repeatability)"
 OUTPARENT="$(dirname "$OUTROOT")"
 BACKUP_ROOT="${OUTROOT}.previous"
 ensure_under_artifacts "$SMOKE_OUTROOT"
+ensure_under_artifacts "$SMOKE_STATUS_ROOT"
 ensure_under_artifacts "$OUTROOT"
 ensure_under_artifacts "$OUTPARENT"
 ensure_under_artifacts "$BACKUP_ROOT"
@@ -579,6 +897,8 @@ baseline_label=""
 latest_run_dir=""
 baseline_outcome=""
 latest_outcome=""
+baseline_result_family=""
+latest_result_family=""
 run_exit_code=""
 
 for (( run_index = 1; run_index <= RUN_COUNT; ++run_index )); do
@@ -591,7 +911,7 @@ for (( run_index = 1; run_index <= RUN_COUNT; ++run_index )); do
   else
     run_exit_code="$(
       if [[ -f "$run_dir/exit_code.txt" ]]; then
-        <"$run_dir/exit_code.txt"
+        printf '%s' "$(<"$run_dir/exit_code.txt")"
       else
         printf 'missing'
       fi
@@ -606,19 +926,29 @@ for (( run_index = 1; run_index <= RUN_COUNT; ++run_index )); do
   else
     snapshot_smoke_failure "$run_dir"
   fi
+  snapshot_smoke_status "$run_dir"
+  latest_result_family="$(read_signature_field "$run_dir/status_signature.txt" "result_family")"
   COMPLETED_RUNS="$run_index"
 
   if [[ -z "$baseline_run_dir" ]]; then
     baseline_run_dir="$run_dir"
     baseline_label="$run_label"
     baseline_outcome="$latest_outcome"
+    baseline_result_family="$latest_result_family"
     continue
   fi
 
   if [[ "$baseline_outcome" != "$latest_outcome" ]]; then
     FAILURE_REASON="smoke outcome divergence between $baseline_label ($baseline_outcome) and $run_label ($latest_outcome)"
     FAILURE_HINT="inspect ${baseline_run_dir#$WORKDIR/}/outcome.txt, ${run_dir#$WORKDIR/}/outcome.txt, and the run-local logs"
-    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome"
+    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
+    fail "$FAILURE_REASON; $FAILURE_HINT"
+  fi
+
+  if ! compare_status_signatures "$baseline_run_dir" "$run_dir"; then
+    FAILURE_REASON="smoke status divergence between $baseline_label and $run_label"
+    FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/status_signature_diff.txt and the two status_snapshot trees"
+    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
     fail "$FAILURE_REASON; $FAILURE_HINT"
   fi
 
@@ -628,28 +958,34 @@ for (( run_index = 1; run_index <= RUN_COUNT; ++run_index )); do
     fi
     FAILURE_REASON="smoke divergence between $baseline_label and $run_label"
     FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/manifest_diff.txt and the two smoke_snapshot trees"
-    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome"
+    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
     fail "$FAILURE_REASON; $FAILURE_HINT"
   fi
 
   if ! compare_failure_signatures "$baseline_run_dir" "$run_dir"; then
     FAILURE_REASON="smoke failure signature divergence between $baseline_label and $run_label"
     FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/failure_signature_diff.txt and the two failure_snapshot trees"
-    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome"
+    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
     fail "$FAILURE_REASON; $FAILURE_HINT"
   fi
 done
 
 if [[ "$baseline_outcome" != PASS:* ]]; then
+  if [[ "$baseline_result_family" != "solver" ]]; then
+    FAILURE_REASON="smoke repeated a non-solver failure across $RUN_COUNT runs ($baseline_outcome)"
+    FAILURE_HINT="inspect ${baseline_run_dir#$WORKDIR/}/status_signature.txt and ${baseline_run_dir#$WORKDIR/}/status_snapshot/summary.txt before continuing solver iteration"
+    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$latest_run_dir" "$baseline_outcome" "$latest_outcome" "matching" "$baseline_result_family" "$latest_result_family"
+    fail "$FAILURE_REASON; $FAILURE_HINT"
+  fi
   FAILURE_REASON="smoke failed consistently across $RUN_COUNT runs ($baseline_outcome)"
   FAILURE_HINT="inspect ${baseline_run_dir#$WORKDIR/}/failure_signature.txt and ${baseline_run_dir#$WORKDIR/}/failure_snapshot for the stable failure bundle"
-  write_summary CONSISTENT_FAIL "$baseline_label" "$baseline_run_dir" "$latest_run_dir" "$baseline_outcome" "$latest_outcome"
+  write_summary CONSISTENT_FAIL "$baseline_label" "$baseline_run_dir" "$latest_run_dir" "$baseline_outcome" "$latest_outcome" "matching" "$baseline_result_family" "$latest_result_family"
   fail "$FAILURE_REASON; $FAILURE_HINT"
 fi
 
 FAILURE_REASON=""
 FAILURE_HINT=""
-write_summary PASS "$baseline_label" "$baseline_run_dir" "$latest_run_dir" "$baseline_outcome" "$latest_outcome"
+write_summary PASS "$baseline_label" "$baseline_run_dir" "$latest_run_dir" "$baseline_outcome" "$latest_outcome" "matching" "$baseline_result_family" "$latest_result_family"
 publish_output
 release_lock || fail "failed to release repeatability lock after successful publish"
 rmdir "$STAGE_PARENT" 2>/dev/null || true

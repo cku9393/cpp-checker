@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import random
+import shutil
 import sys
 import traceback
 from pathlib import Path
@@ -12,30 +14,56 @@ from pathlib import Path
 os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
 sys.dont_write_bytecode = True
 
-from artifact_paths import configure_branch_process_env, resolve_output_path
-from branch_validator import validate_case
+from artifact_paths import configure_branch_process_env, ensure_under_artifacts, resolve_output_path
 
 
 configure_branch_process_env()
 
-import branch_gen_case
+try:
+    import branch_gen_case_local as branch_gen_case
+except ModuleNotFoundError:
+    import branch_gen_case
+
+try:
+    from branch_validator_local import validate_case
+except ModuleNotFoundError:
+    from branch_validator import validate_case
+
 from suite_utils import ensure_executable, resolve_solver_path, run_solver_with_time
 
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_BRANCH_SOLVER = ROOT / "boj28350_resume" / "solve"
 RUN_CASE_RESULT_NAME = "run_case_result.json"
+SOLVER_ENV_SNAPSHOT_NAME = "solver_env_snapshot.json"
+# Some wrappers stream helper stdout/stderr directly into the case directory
+# while this helper is still running. Preserve only those caller-owned sidecars
+# and fully replace every other solver artifact on rerun.
+PRESERVED_CASE_SIDE_FILES = frozenset(
+    {
+        "run_case.stdout.txt",
+        "run_case.stderr.txt",
+        "run_command.txt",
+    }
+)
 RESERVED_SOLVER_ENV_KEYS = frozenset(
     {
         "BRANCH_ARTIFACT_TMP_ROOT",
         "TMPDIR",
         "TMP",
         "TEMP",
+        "HOME",
+        "XDG_CONFIG_HOME",
+        "XDG_CACHE_HOME",
+        "XDG_STATE_HOME",
+        "PYTHONPYCACHEPREFIX",
         "PYTHONDONTWRITEBYTECODE",
         "DENSE_PROFILE_OUTDIR",
         "DENSE_SHADOW_CASE_MODE",
         "DENSE_SHADOW_CASE_N",
         "DENSE_SHADOW_CASE_SEED",
+        "DENSE_SHADOW_CASE_SHUFFLE_LABELS",
+        "DENSE_SHADOW_CASE_SHUFFLE_QUERIES",
     }
 )
 EXIT_USAGE_ERROR = 2
@@ -62,17 +90,34 @@ def apply_solver_env_overrides(base_env: dict[str, str], overrides: dict[str, st
         base_env[key] = value
 
 
-def build_case_solver_env(outdir: Path, mode: str, n: int, seed: int) -> dict[str, str]:
+def build_case_solver_env(
+    outdir: Path,
+    mode: str,
+    n: int,
+    seed: int,
+    shuffle_labels: int,
+    shuffle_queries: int,
+) -> dict[str, str]:
+    outdir = ensure_case_outdir(outdir)
     env = os.environ.copy()
     env["DENSE_PROFILE_OUTDIR"] = str(outdir)
     env["DENSE_SHADOW_CASE_MODE"] = mode
     env["DENSE_SHADOW_CASE_N"] = str(n)
     env["DENSE_SHADOW_CASE_SEED"] = str(seed)
+    env["DENSE_SHADOW_CASE_SHUFFLE_LABELS"] = str(shuffle_labels)
+    env["DENSE_SHADOW_CASE_SHUFFLE_QUERIES"] = str(shuffle_queries)
     return env
 
 
 def resolve_case_outdir(path_like: str | Path | None) -> Path:
     return resolve_output_path(path_like, default_key="branch_run_case")
+
+
+def ensure_case_outdir(path_like: str | Path) -> Path:
+    raw = Path(path_like)
+    if raw.is_absolute():
+        return ensure_under_artifacts(raw.resolve())
+    return resolve_case_outdir(raw)
 
 
 def default_branch_solver() -> Path:
@@ -82,7 +127,35 @@ def default_branch_solver() -> Path:
 
 
 def result_path(outdir: Path) -> Path:
-    return outdir / RUN_CASE_RESULT_NAME
+    return ensure_case_outdir(outdir) / RUN_CASE_RESULT_NAME
+
+
+def remove_case_path(path: Path) -> None:
+    try:
+        if path.is_dir() and not path.is_symlink():
+            shutil.rmtree(path, ignore_errors=True)
+        else:
+            path.unlink()
+    except FileNotFoundError:
+        return
+
+
+def should_preserve_case_side_file(path: Path) -> bool:
+    if path.name not in PRESERVED_CASE_SIDE_FILES:
+        return False
+    try:
+        return path.is_file() and not path.is_symlink()
+    except OSError:
+        return False
+
+
+def reset_case_artifacts(outdir: Path) -> None:
+    outdir = ensure_case_outdir(outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    for child in outdir.iterdir():
+        if should_preserve_case_side_file(child):
+            continue
+        remove_case_path(child)
 
 
 def normalize_solver_exit_code(rc: int) -> tuple[int, int | None]:
@@ -95,8 +168,53 @@ def normalize_solver_exit_code(rc: int) -> tuple[int, int | None]:
 
 
 def write_case_result(path: Path, payload: dict[str, object]) -> None:
+    path = ensure_under_artifacts(Path(path).resolve())
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def solver_env_snapshot_path(outdir: Path) -> Path:
+    return ensure_case_outdir(outdir) / SOLVER_ENV_SNAPSHOT_NAME
+
+
+def _solver_file_fingerprint(solver: Path) -> dict[str, object]:
+    try:
+        data = solver.read_bytes()
+    except OSError:
+        return {
+            "path": str(solver),
+            "exists": False,
+        }
+    stat = solver.stat()
+    return {
+        "path": str(solver),
+        "exists": True,
+        "size_bytes": stat.st_size,
+        "mtime_ns": stat.st_mtime_ns,
+        "sha256": hashlib.sha256(data).hexdigest(),
+    }
+
+
+def build_solver_env_snapshot(solver: Path, env: dict[str, str]) -> dict[str, object]:
+    tracked = {}
+    for key in sorted(env):
+        if key.startswith("ENABLE_") or key.startswith("PROFILE_") or key.startswith("DENSE_") or key == "RUN_TAG":
+            tracked[key] = env[key]
+    return {
+        "schema": "branch_run_case_solver_env_snapshot_v1",
+        "solver": _solver_file_fingerprint(solver),
+        "tracked_env": tracked,
+    }
+
+
+def write_solver_env_snapshot(outdir: Path, solver: Path, env: dict[str, str]) -> None:
+    snapshot_path = solver_env_snapshot_path(outdir)
+    snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+    snapshot_path.write_text(
+        json.dumps(build_solver_env_snapshot(solver, env), ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
 
@@ -144,6 +262,7 @@ def generate_case(
     shuffle_queries: int,
     m_cap: int = 100000,
 ) -> tuple[Path, Path]:
+    outdir = ensure_case_outdir(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     in_path = outdir / "in.txt"
     meta_path = outdir / "meta.json"
@@ -223,6 +342,7 @@ def main() -> int:
 
     try:
         outdir.mkdir(parents=True, exist_ok=True)
+        reset_case_artifacts(outdir)
         solver = resolve_solver_path(args.solver, root=ROOT)
         ensure_executable(solver)
 
@@ -238,7 +358,14 @@ def main() -> int:
         time_path = outdir / "time.txt"
         sol_stderr = outdir / "solver_stderr.txt"
 
-        solver_env = build_case_solver_env(outdir, args.mode, args.n, args.seed)
+        solver_env = build_case_solver_env(
+            outdir,
+            args.mode,
+            args.n,
+            args.seed,
+            args.shuffle_labels,
+            args.shuffle_queries,
+        )
         try:
             apply_solver_env_overrides(solver_env, parse_env_assignments(args.env))
         except ValueError as exc:
@@ -249,6 +376,7 @@ def main() -> int:
                 exit_code=EXIT_USAGE_ERROR,
                 message=str(exc),
             )
+        write_solver_env_snapshot(outdir, solver, solver_env)
 
         rc_sol, timed_out, sec, rss_kb = run_solver_with_time(
             solver,

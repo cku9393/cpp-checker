@@ -954,7 +954,12 @@ namespace dgraph {
 }
 
 struct RawQuery { int u, v, w; };
-struct BranchQuery { int owner, a, b, multiplicity; };
+struct BranchQuery {
+    int owner, a, b, multiplicity;
+    int ownerLevel = 0;
+    int ownerMass = 0;
+    int ownerOutdeg = 0;
+};
 struct WitnessChange { int qid, newHandle; bool resolved; };
 struct OwnerSplitArtifact {
     int removedX = -1;
@@ -980,14 +985,53 @@ static bool ac3_stage_diag_enabled() {
     static bool enabled = runtime_env_enabled("ENABLE_AC3_STAGE_DIAG", false);
     return enabled;
 }
+static int ac3_stage_diag_delete_interval() {
+    const char* v = getenv("AC3_STAGE_DIAG_DELETE_INTERVAL");
+    if (!v || !*v) return 512;
+    int parsed = atoi(v);
+    return parsed > 0 ? parsed : 512;
+}
+static bool should_emit_ac3_stage_diag_delete_progress(int delete_index) {
+    if (!ac3_stage_diag_enabled()) return false;
+    if (delete_index < 32) return true;
+    int interval = ac3_stage_diag_delete_interval();
+    return interval > 0 && (delete_index % interval) == 0;
+}
+static int connector_watch_reuse_diag_limit() {
+    const char* v = getenv("CONNECTOR_WATCH_REUSE_DIAG_LIMIT");
+    if (!v || !*v) return 0;
+    int parsed = atoi(v);
+    return parsed < 0 ? 0 : parsed;
+}
 static int ac3_support_reuse_max_touched() {
     const char* v = getenv("AC3_SUPPORT_REUSE_MAX_TOUCHED");
-    if (!v || !*v) return 0;
+    // The dense BOJ rows need bounded support reuse enabled by default;
+    // leaving this at 0 disables the progress40-aligned unanimous reuse path
+    // and forces full support rematerialization on every moderate touched burst.
+    // The direct comb-rect 1024 probe consistently runs better with the window
+    // widened beyond 512, so keep the branch-local default aligned to that row.
+    if (!v || !*v) return 1024;
     int parsed = atoi(v);
     return parsed < 0 ? 0 : parsed;
 }
 static bool ac3_allow_single_positive_reuse() {
     const char* v = getenv("AC3_ALLOW_SINGLE_POSITIVE_REUSE");
+    if (!v || !*v) return true;
+    if (strcmp(v, "0") == 0) return false;
+    if (strcmp(v, "false") == 0) return false;
+    if (strcmp(v, "FALSE") == 0) return false;
+    return true;
+}
+static bool ac3_seed_initial_piece_state_enabled() {
+    const char* v = getenv("AC3_SEED_INITIAL_PIECE_STATE");
+    if (!v || !*v) return true;
+    if (strcmp(v, "0") == 0) return false;
+    if (strcmp(v, "false") == 0) return false;
+    if (strcmp(v, "FALSE") == 0) return false;
+    return true;
+}
+static bool ac3_old_connector_overlap_fixup_enabled() {
+    const char* v = getenv("AC3_OLD_CONNECTOR_OVERLAP_FIXUP");
     if (!v || !*v) return true;
     if (strcmp(v, "0") == 0) return false;
     if (strcmp(v, "false") == 0) return false;
@@ -1199,6 +1243,9 @@ struct StrictChildDebugStats {
     long long cert_size_after_sum = 0;
     long long region_stats_count = 0;
     long long cert_untouched_fast_keep = 0;
+    long long topo_path_component_reorders = 0;
+    long long topo_path_component_reorder_vertices = 0;
+    long long topo_path_fastpath_hits = 0;
 };
 static StrictChildDebugStats g_strict_child_dbg;
 struct TopologyDebugStats {
@@ -4280,6 +4327,9 @@ class DecrementalNBTopology {
     vector<char> compAlive_;
     vector<vector<int>> compMembers_;
     vector<int> compMemberPos_;
+    vector<int> compMemberLo_;
+    vector<int> compMemberHi_;
+    vector<char> compPathOrdered_;
     int nextComp_ = 0;
 
     vector<vector<int>> ownerEndpoints_;
@@ -4471,11 +4521,20 @@ class DecrementalNBTopology {
     void rebuildAllComponents() {
         compId_.assign(n_ + 1, -1);
         compMemberPos_.assign(n_ + 1, -1);
-        compAlive_.clear(); compMembers_.clear(); nextComp_ = 0;
+        compAlive_.clear();
+        compMembers_.clear();
+        compMemberLo_.clear();
+        compMemberHi_.clear();
+        compPathOrdered_.clear();
+        nextComp_ = 0;
         auto comps = core_.enumerateAllComponents();
         for (auto &cc : comps) {
             int h = nextComp_++;
-            compAlive_.push_back(true); compMembers_.push_back(cc);
+            compAlive_.push_back(true);
+            compMembers_.push_back(cc);
+            compMemberLo_.push_back(0);
+            compMemberHi_.push_back((int)cc.size());
+            compPathOrdered_.push_back(false);
             for (int i = 0; i < (int)cc.size(); ++i) {
                 int v = cc[i];
                 compId_[v] = h;
@@ -4487,13 +4546,106 @@ class DecrementalNBTopology {
         if (h >= (int)compAlive_.size()) {
             compAlive_.resize(h + 1, false);
             compMembers_.resize(h + 1);
+            compMemberLo_.resize(h + 1, 0);
+            compMemberHi_.resize(h + 1, 0);
+            compPathOrdered_.resize(h + 1, false);
         }
     }
 
-    void assignComponentMembers(int h, vector<int>&& members) {
+    int componentSliceLo(int h) const {
+        if (!(0 <= h && h < (int)compMembers_.size())) return 0;
+        return max(0, min(compMemberLo_[h], (int)compMembers_[h].size()));
+    }
+
+    int componentSliceHi(int h) const {
+        if (!(0 <= h && h < (int)compMembers_.size())) return 0;
+        return max(componentSliceLo(h), min(compMemberHi_[h], (int)compMembers_[h].size()));
+    }
+
+    int componentActiveSize(int h) const {
+        return componentSliceHi(h) - componentSliceLo(h);
+    }
+
+    vector<int> copyActiveComponentMembers(int h) const {
+        vector<int> out;
+        if (!(0 <= h && h < (int)compMembers_.size())) return out;
+        int lo = componentSliceLo(h);
+        int hi = componentSliceHi(h);
+        out.reserve(max(0, hi - lo));
+        const auto& members = compMembers_[h];
+        for (int i = lo; i < hi; ++i) {
+            int v = members[i];
+            if (!(1 <= v && v <= n_) || !alive_[v]) continue;
+            if (compId_[v] != h) continue;
+            out.push_back(v);
+        }
+        return out;
+    }
+
+    bool buildPathOrderedMembers(const vector<int>& members, vector<int>& ordered) const {
+        ordered.clear();
+        if (members.empty()) return false;
+        int stamp = nextSupportCollectStamp();
+        for (int v : members) {
+            if (1 <= v && v <= n_ && alive_[v]) supportCollectStamp_[v] = stamp;
+        }
+        vector<int> endpoints;
+        endpoints.reserve(2);
+        int liveCount = 0;
+        for (int v : members) {
+            if (!(1 <= v && v <= n_) || !alive_[v] || supportCollectStamp_[v] != stamp) continue;
+            ++liveCount;
+            int deg = 0;
+            for (int eid : core_.incidentEdges(v)) {
+                if (!core_.edgeAlive(eid)) continue;
+                int u = core_.other(eid, v);
+                if (!(1 <= u && u <= n_) || !alive_[u]) continue;
+                if (supportCollectStamp_[u] != stamp) continue;
+                ++deg;
+            }
+            if (deg > 2) return false;
+            if (deg <= 1) endpoints.push_back(v);
+        }
+        if (liveCount <= 1) {
+            for (int v : members) {
+                if (1 <= v && v <= n_ && alive_[v] && supportCollectStamp_[v] == stamp) {
+                    ordered.push_back(v);
+                    return true;
+                }
+            }
+            return false;
+        }
+        if ((int)endpoints.size() != 2) return false;
+        ordered.reserve(liveCount);
+        int prev = -1;
+        int cur = endpoints[0];
+        while (true) {
+            ordered.push_back(cur);
+            if ((int)ordered.size() == liveCount) break;
+            int next = -1;
+            for (int eid : core_.incidentEdges(cur)) {
+                if (!core_.edgeAlive(eid)) continue;
+                int u = core_.other(eid, cur);
+                if (u == prev) continue;
+                if (!(1 <= u && u <= n_) || !alive_[u]) continue;
+                if (supportCollectStamp_[u] != stamp) continue;
+                next = u;
+                break;
+            }
+            if (next == -1) return false;
+            prev = cur;
+            cur = next;
+        }
+        return (int)ordered.size() == liveCount;
+    }
+
+    void assignComponentMembers(int h, vector<int>&& members, bool pathOrdered = false) {
         ensureCompCapacity(h);
         compAlive_[h] = true;
         compMembers_[h] = std::move(members);
+        compMemberLo_[h] = 0;
+        compMemberHi_[h] = (int)compMembers_[h].size();
+        compPathOrdered_[h] = pathOrdered ? 1 : 0;
         for (int i = 0; i < (int)compMembers_[h].size(); ++i) {
             int v = compMembers_[h][i];
             if (!(1 <= v && v <= n_)) continue;
@@ -4505,10 +4657,12 @@ class DecrementalNBTopology {
     void removeVertexFromComponentHandle(int h, int x) {
         if (!(0 <= h && h < (int)compMembers_.size()) || !(1 <= x && x <= n_)) return;
         auto& members = compMembers_[h];
+        int lo = componentSliceLo(h);
+        int hi = componentSliceHi(h);
         int pos = compMemberPos_[x];
-        if (!(0 <= pos && pos < (int)members.size()) || members[pos] != x) {
+        if (!(lo <= pos && pos < hi) || members[pos] != x) {
             pos = -1;
-            for (int i = 0; i < (int)members.size(); ++i) {
+            for (int i = lo; i < hi; ++i) {
                 if (members[i] == x) {
                     pos = i;
                     break;
@@ -4520,12 +4674,145 @@ class DecrementalNBTopology {
                 return;
             }
         }
-        int moved = members.back();
-        members[pos] = moved;
-        members.pop_back();
-        if (moved != x && 1 <= moved && moved <= n_) compMemberPos_[moved] = pos;
+        if (compPathOrdered_[h]) {
+            if (pos == lo) {
+                compMemberLo_[h] = lo + 1;
+            } else if (pos + 1 == hi) {
+                compMemberHi_[h] = hi - 1;
+            } else {
+                int moved = members[hi - 1];
+                members[pos] = moved;
+                compMemberHi_[h] = hi - 1;
+                if (moved != x && 1 <= moved && moved <= n_) compMemberPos_[moved] = pos;
+                compPathOrdered_[h] = 0;
+            }
+        } else {
+            int moved = members[hi - 1];
+            members[pos] = moved;
+            compMemberHi_[h] = hi - 1;
+            if (moved != x && 1 <= moved && moved <= n_) compMemberPos_[moved] = pos;
+        }
         compId_[x] = -1;
         compMemberPos_[x] = -1;
+    }
+
+    bool branchWithoutDeletedVertexIsSingleton(int x, int neighbor) const {
+        if (!(1 <= x && x <= n_ && 1 <= neighbor && neighbor <= n_)) return false;
+        if (!alive_[neighbor]) return false;
+        for (int eid : core_.incidentEdges(neighbor)) {
+            if (!core_.edgeAlive(eid)) continue;
+            int u = core_.other(eid, neighbor);
+            if (u == x) continue;
+            if (!(1 <= u && u <= n_) || !alive_[u]) continue;
+            return false;
+        }
+        return true;
+    }
+
+    bool tryDeleteUntouchedLeafySplit(int x, int oldComp, const vector<int>& liveNeighbors,
+                                      vector<int>& newComponents) {
+        if (!(0 <= oldComp && oldComp < (int)compMembers_.size())) return false;
+        if (!compAlive_[oldComp] || liveNeighbors.size() <= 1) return false;
+
+        vector<int> singletonNeighbors;
+        singletonNeighbors.reserve(liveNeighbors.size());
+        int heavyNeighbor = -1;
+        for (int v : liveNeighbors) {
+            if (!(1 <= v && v <= n_) || !alive_[v]) return false;
+            if (branchWithoutDeletedVertexIsSingleton(x, v)) {
+                singletonNeighbors.push_back(v);
+                continue;
+            }
+            if (heavyNeighbor != -1) return false;
+            heavyNeighbor = v;
+        }
+        if (singletonNeighbors.empty()) return false;
+
+        core_.deleteVertexBatch(x);
+        alive_[x] = false;
+        lastDeleteArtifactReady_ = false;
+        removeVertexFromComponentHandle(oldComp, x);
+        for (int v : singletonNeighbors) removeVertexFromComponentHandle(oldComp, v);
+
+        if (heavyNeighbor != -1) {
+            compAlive_[oldComp] = (componentActiveSize(oldComp) > 0);
+            if (compAlive_[oldComp]) newComponents.push_back(oldComp);
+        } else {
+            compAlive_[oldComp] = false;
+        }
+
+        for (int v : singletonNeighbors) {
+            vector<int> singleton = {v};
+            int h = nextComp_++;
+            assignComponentMembers(h, std::move(singleton), true);
+            newComponents.push_back(h);
+        }
+#ifdef LOCAL
+        g_strict_child_dbg.cert_untouched_fast_keep++;
+#endif
+        return true;
+    }
+
+    bool tryDeleteUntouchedPathOrderedComponent(int x, int oldComp, vector<int>& newComponents) {
+        if (!(0 <= oldComp && oldComp < (int)compMembers_.size())) return false;
+        if (!compAlive_[oldComp] || !compPathOrdered_[oldComp]) return false;
+        int lo = componentSliceLo(oldComp);
+        int hi = componentSliceHi(oldComp);
+        auto& members = compMembers_[oldComp];
+        int pos = compMemberPos_[x];
+        if (!(lo <= pos && pos < hi) || members[pos] != x) return false;
+
+        core_.deleteVertexBatch(x);
+        alive_[x] = false;
+        lastDeleteArtifactReady_ = false;
+        compId_[x] = -1;
+        compMemberPos_[x] = -1;
+#ifdef LOCAL
+        g_strict_child_dbg.cert_untouched_fast_keep++;
+#endif
+
+        int leftSize = pos - lo;
+        int rightSize = hi - pos - 1;
+        if (leftSize == 0 && rightSize == 0) {
+            compAlive_[oldComp] = false;
+            compMemberLo_[oldComp] = compMemberHi_[oldComp] = pos;
+            return true;
+        }
+        if (leftSize == 0) {
+            compMemberLo_[oldComp] = pos + 1;
+            compMemberHi_[oldComp] = hi;
+            compPathOrdered_[oldComp] = 1;
+            newComponents.push_back(oldComp);
+            return true;
+        }
+        if (rightSize == 0) {
+            compMemberLo_[oldComp] = lo;
+            compMemberHi_[oldComp] = pos;
+            compPathOrdered_[oldComp] = 1;
+            newComponents.push_back(oldComp);
+            return true;
+        }
+
+        const bool keepLeft = (leftSize >= rightSize);
+        vector<int> movedMembers;
+        if (keepLeft) {
+            movedMembers.assign(members.begin() + pos + 1, members.begin() + hi);
+            compMemberLo_[oldComp] = lo;
+            compMemberHi_[oldComp] = pos;
+        } else {
+            movedMembers.assign(members.begin() + lo, members.begin() + pos);
+            compMemberLo_[oldComp] = pos + 1;
+            compMemberHi_[oldComp] = hi;
+        }
+        int newH = nextComp_++;
+        assignComponentMembers(newH, std::move(movedMembers), true);
+        compPathOrdered_[oldComp] = 1;
+#ifdef LOCAL
+        g_strict_child_dbg.topo_path_fastpath_hits++;
+#endif
+        newComponents.push_back(oldComp);
+        newComponents.push_back(newH);
+        return true;
     }
 
     vector<int> collectLiveNeighborsForNoSplitProbe(int x, int cap) const {
@@ -4617,6 +4904,157 @@ class DecrementalNBTopology {
 
     void markOldComponent(const vector<int>& oldVerts, int removedX, int oldStamp) const {
         for (int v : oldVerts) if (1 <= v && v <= n_ && v != removedX && alive_[v]) oldCompStamp_[v] = oldStamp;
+    }
+
+    bool prepareDeleteSplitFromCurrentArtifact(int removedX,
+                                               vector<pair<int,int>>& childIntervals,
+                                               bool& ownerIsRoot) const {
+        childIntervals.clear();
+        ownerIsRoot = false;
+        if (!lastDeleteArtifactReady_) return false;
+        if (!(1 <= removedX && removedX <= n_)) return false;
+        if (dfsSeenStamp_[removedX] != dfsCurStamp_) return false;
+        ownerIsRoot = (dfsParent_[removedX] == removedX);
+        const int compRoot = dfsRoot_[removedX];
+        if (!(1 <= compRoot && compRoot <= n_)) return false;
+        childIntervals.reserve(core_.incidentEdges(removedX).size());
+        for (int eid : core_.incidentEdges(removedX)) {
+            if (!core_.edgeAlive(eid)) continue;
+            int v = core_.other(eid, removedX);
+            if (!(1 <= v && v <= n_) || !alive_[v]) continue;
+            if (dfsSeenStamp_[v] != dfsCurStamp_ || dfsRoot_[v] != compRoot) return false;
+            if (dfsParent_[v] == removedX) childIntervals.push_back({dfsTin_[v], v});
+        }
+        sort(childIntervals.begin(), childIntervals.end(), byIntervalTin);
+        return true;
+    }
+
+    bool buildGlobalDeleteArtifactFromCurrentArtifact(int removedX,
+                                                      const vector<int>& oldVerts,
+                                                      const vector<pair<int,int>>& childIntervals,
+                                                      bool ownerIsRoot,
+                                                      vector<int>& newComponents,
+                                                      OwnerSplitArtifact* artifact) {
+        if (!lastDeleteArtifactReady_) return false;
+        if (!(1 <= removedX && removedX <= n_)) return false;
+        if (dfsSeenStamp_[removedX] != dfsCurStamp_) return false;
+        const int compRoot = dfsRoot_[removedX];
+        if (!(ownerIsRoot || (1 <= compRoot && compRoot <= n_))) return false;
+
+        vector<int> visitedOrder;
+        visitedOrder.reserve(oldVerts.size());
+        vector<int> bucketKeys;
+        bucketKeys.reserve(max<int>(1, (int)childIntervals.size() + (ownerIsRoot ? 0 : 1)));
+        vector<vector<int>> localComponents;
+        localComponents.reserve(bucketKeys.capacity());
+        unordered_map<int,int> bucketIndex;
+        bucketIndex.reserve(max<int>(1, (int)childIntervals.size() * 2 + 1));
+
+        for (int v : oldVerts) {
+            if (!(1 <= v && v <= n_) || !alive_[v] || v == removedX) continue;
+            if (dfsSeenStamp_[v] != dfsCurStamp_) return false;
+            int bucket = classifyEndpointBucket(removedX, v, childIntervals, ownerIsRoot);
+            if (bucket < 0) return false;
+            auto it = bucketIndex.find(bucket);
+            int idx = -1;
+            if (it == bucketIndex.end()) {
+                idx = (int)localComponents.size();
+                bucketIndex.emplace(bucket, idx);
+                bucketKeys.push_back(bucket);
+                localComponents.push_back({});
+            } else {
+                idx = it->second;
+            }
+            localComponents[idx].push_back(v);
+            visitedOrder.push_back(v);
+        }
+
+#ifdef LOCAL
+        g_topo_dbg.global_delete_dfs_calls++;
+        g_topo_dbg.global_delete_dfs_vertices += (long long)visitedOrder.size();
+        g_topo_dbg.global_delete_component_count += (long long)localComponents.size();
+#endif
+
+        lastDeleteArtifactReady_ = true;
+        newComponents.reserve(newComponents.size() + localComponents.size());
+        for (int i = 0; i < (int)localComponents.size(); ++i) {
+            auto& members = localComponents[i];
+            if (members.empty()) continue;
+            const int bucket = bucketKeys[i];
+            const int rootV = (bucket == 0) ? compRoot : bucket;
+            if (!(1 <= rootV && rootV <= n_)) return false;
+            for (int v : members) {
+                dfsRoot_[v] = rootV;
+                dfsCompLocal_[v] = i;
+                if (v == rootV) {
+                    dfsParent_[v] = rootV;
+                } else if (dfsParent_[v] == removedX) {
+                    return false;
+                }
+            }
+            int h = nextComp_++;
+            assignComponentMembers(h, std::move(members), false);
+            newComponents.push_back(h);
+        }
+
+        dfsSeenStamp_[removedX] = 0;
+        dfsTin_[removedX] = 0;
+        dfsTout_[removedX] = 0;
+        dfsLow_[removedX] = 0;
+        dfsParent_[removedX] = -1;
+        dfsRoot_[removedX] = -1;
+        dfsDepth_[removedX] = 0;
+        dfsCompLocal_[removedX] = -1;
+        dfsChildCount_[removedX] = 0;
+        dfsLowWitnessDesc_[removedX] = -1;
+        dfsLowWitnessAnc_[removedX] = -1;
+
+        if (artifact) {
+            artifact->removedX = removedX;
+            artifact->visitedVerts = visitedOrder;
+            artifact->parentVals.reserve(visitedOrder.size());
+            artifact->rootVals.reserve(visitedOrder.size());
+            artifact->depthVals.reserve(visitedOrder.size());
+            artifact->tinVals.reserve(visitedOrder.size());
+            artifact->toutVals.reserve(visitedOrder.size());
+            artifact->lowVals.reserve(visitedOrder.size());
+            artifact->compVals.reserve(visitedOrder.size());
+            for (int v : visitedOrder) {
+                artifact->parentVals.push_back(dfsParent_[v]);
+                artifact->rootVals.push_back(dfsRoot_[v]);
+                artifact->depthVals.push_back(dfsDepth_[v]);
+                artifact->tinVals.push_back(dfsTin_[v]);
+                artifact->toutVals.push_back(dfsTout_[v]);
+                artifact->lowVals.push_back(dfsLow_[v]);
+                artifact->compVals.push_back(compId_[v]);
+            }
+            artifact->valid = !visitedOrder.empty();
+        }
+        return true;
+    }
+
+    bool canRetainCurrentArtifactAfterConnectedDelete(int removedX,
+                                                      const vector<int>& liveNeighbors) const {
+        if (!lastDeleteArtifactReady_) return false;
+        if (!(1 <= removedX && removedX <= n_)) return false;
+        if (dfsSeenStamp_[removedX] != dfsCurStamp_) return false;
+        if (!liveNeighbors.empty() && dfsParent_[removedX] == removedX) return false;
+        return true;
+    }
+
+    void retainCurrentArtifactAfterConnectedDelete(int removedX) const {
+        if (!(1 <= removedX && removedX <= n_)) return;
+        dfsSeenStamp_[removedX] = 0;
+        dfsTin_[removedX] = 0;
+        dfsTout_[removedX] = 0;
+        dfsLow_[removedX] = 0;
+        dfsParent_[removedX] = -1;
+        dfsRoot_[removedX] = -1;
+        dfsDepth_[removedX] = 0;
+        dfsCompLocal_[removedX] = -1;
+        dfsChildCount_[removedX] = 0;
+        dfsLowWitnessDesc_[removedX] = -1;
+        dfsLowWitnessAnc_[removedX] = -1;
     }
 
     void buildGlobalDeleteArtifact(int removedX,
@@ -4727,7 +5165,7 @@ class DecrementalNBTopology {
         for (auto& restricted : localComponents) {
             if (restricted.empty()) continue;
             int h = nextComp_++;
-            assignComponentMembers(h, std::move(restricted));
+            assignComponentMembers(h, std::move(restricted), false);
             newComponents.push_back(h);
         }
 
@@ -5578,66 +6016,49 @@ public:
         if (artifact) *artifact = OwnerSplitArtifact();
         if (!aliveVertex(x)) return;
         int oldComp = compId_[x];
+        constexpr int kNoSplitFastpathDegreeCap = 32;
         const bool noTouchFastpathCandidate =
             touchedOwners.empty() && oldComp >= 0 && oldComp < (int)compMembers_.size();
         vector<int> liveNeighbors;
         if (noTouchFastpathCandidate) {
-            liveNeighbors.reserve(core_.incidentEdges(x).size());
-            for (int eid : core_.incidentEdges(x)) {
-                if (!core_.edgeAlive(eid)) continue;
-                int v = core_.other(eid, x);
-                if (!(1 <= v && v <= n_) || !alive_[v]) continue;
-                liveNeighbors.push_back(v);
-            }
-            sort(liveNeighbors.begin(), liveNeighbors.end());
-            liveNeighbors.erase(unique(liveNeighbors.begin(), liveNeighbors.end()), liveNeighbors.end());
+            liveNeighbors = collectLiveNeighborsForNoSplitProbe(x, kNoSplitFastpathDegreeCap);
         }
-        if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || (x % 2048) == 0)) {
-            emit_ac3_stage_diag("topo_fastpath_comp", x,
-                                (oldComp >= 0 && oldComp < (int)compMembers_.size()) ? (long long)compMembers_[oldComp].size() : -1);
-            emit_ac3_stage_diag("topo_fastpath_probe", x, (long long)liveNeighbors.size());
-        }
-        core_.deleteVertexBatch(x);
-        alive_[x] = false;
-        if (noTouchFastpathCandidate) {
-            if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || (x % 2048) == 0)) {
-                emit_ac3_stage_diag("topo_fastpath_hit", x, (long long)liveNeighbors.size());
-            }
-            lastDeleteArtifactReady_ = false;
-            compId_[x] = -1;
-            compMemberPos_[x] = -1;
-            if (oldComp >= 0 && oldComp < (int)compAlive_.size()) {
-                compAlive_[oldComp] = false;
-                compMembers_[oldComp].clear();
-            }
-            if (liveNeighbors.empty()) return;
-            if (++oldCompCurStamp_ == INT_MAX) {
-                fill(oldCompStamp_.begin(), oldCompStamp_.end(), 0);
-                oldCompCurStamp_ = 1;
-            }
-            const int seenStamp = oldCompCurStamp_;
-            vector<vector<int>> pieces;
-            pieces.reserve(liveNeighbors.size());
-            for (int s : liveNeighbors) {
-                if (!(1 <= s && s <= n_) || !alive_[s]) continue;
-                if (oldCompStamp_[s] == seenStamp) continue;
-                auto comp = core_.enumerateComponentFast(s);
-                for (int v : comp) if (1 <= v && v <= n_) oldCompStamp_[v] = seenStamp;
-                if (!comp.empty()) pieces.push_back(std::move(comp));
-            }
-            if (pieces.empty()) return;
-            assignComponentMembers(oldComp, std::move(pieces[0]));
-            newComponents.push_back(oldComp);
-            for (int i = 1; i < (int)pieces.size(); ++i) {
-                int h = nextComp_++;
-                assignComponentMembers(h, std::move(pieces[i]));
-                newComponents.push_back(h);
-            }
+        if (touchedOwners.empty() &&
+            tryDeleteUntouchedPathOrderedComponent(x, oldComp, newComponents)) {
             return;
         }
-
+        if (noTouchFastpathCandidate &&
+            (int)liveNeighbors.size() <= kNoSplitFastpathDegreeCap &&
+            tryDeleteUntouchedLeafySplit(x, oldComp, liveNeighbors, newComponents)) {
+            return;
+        }
         vector<int> oldVerts;
-        if (oldComp >= 0 && oldComp < (int)compMembers_.size()) oldVerts = compMembers_[oldComp];
+        if (oldComp >= 0 && oldComp < (int)compMembers_.size()) oldVerts = copyActiveComponentMembers(oldComp);
+        vector<pair<int,int>> deleteChildIntervals;
+        bool deleteOwnerIsRoot = false;
+        const bool canReuseCurrentArtifact =
+            noTouchFastpathCandidate &&
+            prepareDeleteSplitFromCurrentArtifact(x, deleteChildIntervals, deleteOwnerIsRoot);
+        core_.deleteVertexBatch(x);
+        alive_[x] = false;
+        if (noTouchFastpathCandidate &&
+            (int)liveNeighbors.size() <= kNoSplitFastpathDegreeCap &&
+            deletionKeepsComponentConnected(liveNeighbors)) {
+            if (canRetainCurrentArtifactAfterConnectedDelete(x, liveNeighbors)) {
+                retainCurrentArtifactAfterConnectedDelete(x);
+            } else {
+                lastDeleteArtifactReady_ = false;
+            }
+            removeVertexFromComponentHandle(oldComp, x);
+            if (oldComp >= 0 && oldComp < (int)compAlive_.size()) {
+                compAlive_[oldComp] = (componentActiveSize(oldComp) > 0);
+                if (compAlive_[oldComp]) newComponents.push_back(oldComp);
+            }
+#ifdef LOCAL
+            g_strict_child_dbg.cert_untouched_fast_keep++;
+#endif
+            return;
+        }
         if (oldComp >= 0 && oldComp < (int)compAlive_.size()) {
             compAlive_[oldComp] = false;
             for (int v : oldVerts) if (1 <= v && v <= n_) {
@@ -5652,10 +6073,18 @@ public:
         {
             ScopedNsAcc __timer(ptr_if(local_profile_coarse_enabled(), &g_batch_dbg.time_global_delete_dfs_ns),
                                ptr_if(local_profile_coarse_enabled(), &g_batch_dbg.time_global_delete_dfs_calls));
-            buildGlobalDeleteArtifact(x, oldVerts, newComponents, artifact, oldStamp, dfsStamp);
+            if (!canReuseCurrentArtifact ||
+                !buildGlobalDeleteArtifactFromCurrentArtifact(x, oldVerts, deleteChildIntervals,
+                                                              deleteOwnerIsRoot, newComponents, artifact)) {
+                buildGlobalDeleteArtifact(x, oldVerts, newComponents, artifact, oldStamp, dfsStamp);
+            }
         }
 #else
-        buildGlobalDeleteArtifact(x, oldVerts, newComponents, artifact, oldStamp, dfsStamp);
+        if (!canReuseCurrentArtifact ||
+            !buildGlobalDeleteArtifactFromCurrentArtifact(x, oldVerts, deleteChildIntervals,
+                                                          deleteOwnerIsRoot, newComponents, artifact)) {
+            buildGlobalDeleteArtifact(x, oldVerts, newComponents, artifact, oldStamp, dfsStamp);
+        }
 #endif
     }
 };
@@ -6342,6 +6771,8 @@ class LiteraturePotentialOracle final : public NBOracle {
         vector<int> supportPreorder;
         vector<int> activeEndpointIdxsSortedBySupportTin;
         vector<int> activeEndpointTinsSorted;
+        vector<int> activeEndpointVertexPrefixMin;
+        vector<int> activeEndpointVertexSuffixMin;
 
         int materializedTreeId = -1;
         bool pieceModeActive = false;
@@ -6493,6 +6924,9 @@ class LiteraturePotentialOracle final : public NBOracle {
 
     int n_ = 0;
     vector<BranchQuery> bq_;
+    vector<int> ownerLevel_;
+    vector<int> ownerMass_;
+    vector<int> ownerOutdeg_;
     vector<char> alive_;
     vector<int> compId_;
     vector<char> failing_;
@@ -6507,6 +6941,13 @@ class LiteraturePotentialOracle final : public NBOracle {
     vector<int> querySeenStamp_;
     int querySeenCur_ = 1;
     long long currentSupportWatch_ = 0;
+
+    bool ownerPriorityLess(int lhs, int rhs) const {
+        if (ownerLevel_[lhs] != ownerLevel_[rhs]) return ownerLevel_[lhs] < ownerLevel_[rhs];
+        if (ownerMass_[lhs] != ownerMass_[rhs]) return ownerMass_[lhs] > ownerMass_[rhs];
+        if (ownerOutdeg_[lhs] != ownerOutdeg_[rhs]) return ownerOutdeg_[lhs] > ownerOutdeg_[rhs];
+        return lhs < rhs;
+    }
     int activeQueryTotal_ = 0;
     int currentDeleteX_ = -1;
     int currentDeleteStep_ = 0;
@@ -6863,6 +7304,19 @@ class LiteraturePotentialOracle final : public NBOracle {
         }
         return out;
     }
+    vector<int> remapRetainedHandleIndicesSparse(const vector<int>& oldIdxs, const vector<char>& keepMask, vector<int> removedIdxs) {
+        sort(removedIdxs.begin(), removedIdxs.end());
+        removedIdxs.erase(unique(removedIdxs.begin(), removedIdxs.end()), removedIdxs.end());
+        vector<int> out;
+        out.reserve(oldIdxs.size());
+        for (int oldIdx : oldIdxs) {
+            if (!(0 <= oldIdx && oldIdx < (int)keepMask.size())) continue;
+            auto it = lower_bound(removedIdxs.begin(), removedIdxs.end(), oldIdx);
+            if (it != removedIdxs.end() && *it == oldIdx) continue;
+            out.push_back(oldIdx - (int)(it - removedIdxs.begin()));
+        }
+        return out;
+    }
 #ifdef LOCAL
     void noteReuseWatchFullScan(const ClassState& st) {
         if (!local_profile_coarse_enabled()) return;
@@ -7069,23 +7523,9 @@ class LiteraturePotentialOracle final : public NBOracle {
         st.connectorSkeletonVertices.clear();
         st.connectorVertexToPos.clear();
         st.connectorSkeletonWatchHandleByVertex.clear();
-        if (st.connectorTreeId > 0) {
-            const auto* tree = getSupportTreeObject(st.connectorTreeId);
-            if (tree) {
-                st.connectorSkeletonVertices = tree->vertexByPos;
-                for (int pos = 0; pos < (int)tree->vertexByPos.size(); ++pos) {
-                    int v = tree->vertexByPos[pos];
-                    if (1 <= v && v <= n_) st.connectorVertexToPos[v] = pos;
-                }
-            }
-        }
-        for (int hi : st.connectorWatchEntryIds) {
-            if (!(0 <= hi && hi < (int)st.watchHandles.size())) continue;
-            const auto& h = st.watchHandles[hi];
-            if (h.originKind != SupportOriginKind::ConnectorTree) continue;
-            if (!(1 <= h.vertex && h.vertex <= n_)) continue;
-            st.connectorSkeletonWatchHandleByVertex[h.vertex] = hi;
-        }
+        // This branch no longer reads the connector canonical caches after
+        // publish-time rebuilds. Reconstructing the full tree snapshot and the
+        // per-vertex maps here only burns dense-route time and memory.
     }
 
     void clearMaterializedMetadataOnly(ClassState& st) {
@@ -7104,6 +7544,8 @@ class LiteraturePotentialOracle final : public NBOracle {
         st.supportPreorder.clear();
         st.activeEndpointIdxsSortedBySupportTin.clear();
         st.activeEndpointTinsSorted.clear();
+        st.activeEndpointVertexPrefixMin.clear();
+        st.activeEndpointVertexSuffixMin.clear();
         st.materializedTreeId = -1;
     }
 
@@ -8139,7 +8581,10 @@ class LiteraturePotentialOracle final : public NBOracle {
         }
 #endif
         std::unordered_map<unsigned long long, ClassState*> movedStateCache;
-        if (retain_compaction_opt_enabled() && removedCnt > 0) movedStateCache.reserve((size_t)removedCnt * 2 + 1);
+        if (retain_compaction_opt_enabled() && removedCnt > 0) {
+            const size_t reserveTarget = min<size_t>((size_t)removedCnt * 2 + 1, 4096);
+            movedStateCache.reserve(reserveTarget);
+        }
         auto __lookup_cache_key = [](int own, int cls) -> unsigned long long {
             return (unsigned long long)(uint32_t)own << 32 | (uint32_t)cls;
         };
@@ -10396,19 +10841,19 @@ class LiteraturePotentialOracle final : public NBOracle {
         classState(owner, cid).endpointPool.push_back(idx);
     }
 
-#ifdef LOCAL
     bool deltaPreservedHitEnabled() const {
-        static bool v = local_env_enabled("ENABLE_DELTA_PRESERVED_HIT", true);
+        static bool v = runtime_env_enabled("ENABLE_DELTA_PRESERVED_HIT", true);
         return v;
     }
     bool deltaConnectorHitEnabled() const {
-        static bool v = local_env_enabled("ENABLE_DELTA_CONNECTOR_HIT", true);
+        static bool v = runtime_env_enabled("ENABLE_DELTA_CONNECTOR_HIT", true);
         return v;
     }
     bool connectorSkeletonForceEnabled() const {
-        static bool v = local_env_enabled("DEBUG_FORCE_CONNECTOR_SKELETON_ON_UNANIMOUS", false);
+        static bool v = runtime_env_enabled("DEBUG_FORCE_CONNECTOR_SKELETON_ON_UNANIMOUS", false);
         return v;
     }
+#ifdef LOCAL
     enum class DeltaToggleMode {
         BothOff,
         PreservedOnly,
@@ -10976,6 +11421,24 @@ class LiteraturePotentialOracle final : public NBOracle {
                 st.activeEndpointIdxsSortedBySupportTin.push_back(idx);
             }
         }
+        st.activeEndpointVertexPrefixMin.resize(st.activeEndpointIdxsSortedBySupportTin.size(), -1);
+        st.activeEndpointVertexSuffixMin.resize(st.activeEndpointIdxsSortedBySupportTin.size(), -1);
+        for (int i = 0; i < (int)st.activeEndpointIdxsSortedBySupportTin.size(); ++i) {
+            int idx = st.activeEndpointIdxsSortedBySupportTin[i];
+            int ep = (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+            if (i == 0) st.activeEndpointVertexPrefixMin[i] = ep;
+            else if (ep == -1) st.activeEndpointVertexPrefixMin[i] = st.activeEndpointVertexPrefixMin[i - 1];
+            else if (st.activeEndpointVertexPrefixMin[i - 1] == -1) st.activeEndpointVertexPrefixMin[i] = ep;
+            else st.activeEndpointVertexPrefixMin[i] = min(st.activeEndpointVertexPrefixMin[i - 1], ep);
+        }
+        for (int i = (int)st.activeEndpointIdxsSortedBySupportTin.size() - 1; i >= 0; --i) {
+            int idx = st.activeEndpointIdxsSortedBySupportTin[i];
+            int ep = (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+            if (i + 1 == (int)st.activeEndpointIdxsSortedBySupportTin.size()) st.activeEndpointVertexSuffixMin[i] = ep;
+            else if (ep == -1) st.activeEndpointVertexSuffixMin[i] = st.activeEndpointVertexSuffixMin[i + 1];
+            else if (st.activeEndpointVertexSuffixMin[i + 1] == -1) st.activeEndpointVertexSuffixMin[i] = ep;
+            else st.activeEndpointVertexSuffixMin[i] = min(st.activeEndpointVertexSuffixMin[i + 1], ep);
+        }
 
         for (int i = (int)prod.preorder.size() - 1; i >= 0; --i) {
             int u = prod.preorder[i];
@@ -10988,7 +11451,8 @@ class LiteraturePotentialOracle final : public NBOracle {
             }
             for (int c = st.supportChildFirst[u]; c != -1; c = st.supportNextSibling[c]) {
                 cnt += st.supportSubtreeEndpointCount[c];
-                if (rep == -1 && st.supportSubtreeRepresentativeEndpoint[c] != -1) rep = st.supportSubtreeRepresentativeEndpoint[c];
+                int childRep = st.supportSubtreeRepresentativeEndpoint[c];
+                if (childRep != -1 && (rep == -1 || childRep < rep)) rep = childRep;
             }
             st.supportSubtreeEndpointCount[u] = cnt;
             st.supportSubtreeRepresentativeEndpoint[u] = rep;
@@ -10996,7 +11460,10 @@ class LiteraturePotentialOracle final : public NBOracle {
 
         st.supportMetaValid = true;
         clearPieceStateOnly(st);
-        st.materializedTreeId = storeSupportTreeObjectFromClassState(st);
+        // The dense strong-gate corridor mostly consumes local support positions.
+        // Defer whole-tree publication until a later reuse branch explicitly asks
+        // for a materialized tree id through ensureMaterializedTreeId().
+        st.materializedTreeId = -1;
         annotateMaterializedHandles(st);
 #ifdef LOCAL
         g_batch_dbg.support_meta_build_ok++;
@@ -11024,7 +11491,7 @@ class LiteraturePotentialOracle final : public NBOracle {
             if (prod.nodeEndpointIdx[pos] < 0) {
                 prod.nodeEndpointIdx[pos] = idx;
                 ++endpointCount;
-                if (repEndpoint == -1) repEndpoint = ep;
+                if (repEndpoint == -1 || ep < repEndpoint) repEndpoint = ep;
             }
         }
 
@@ -11142,6 +11609,8 @@ class LiteraturePotentialOracle final : public NBOracle {
         if (!(1 <= owner && owner <= n_)) return;
         auto& od = ownerData_[owner];
         auto& st = classState(owner, cid);
+        const bool ac3InitDiag = ac3_stage_diag_enabled() && currentDeleteStep_ == 0;
+        const auto ac3InitDiagStart = ac3InitDiag ? std::chrono::steady_clock::now() : std::chrono::steady_clock::time_point();
         unregisterClassWatch(owner, cid, st);
         if (++st.epoch == INT_MAX) st.epoch = 1;
         if (!topo_.aliveVertex(owner) || st.activeQueryCount <= 0) {
@@ -11160,6 +11629,9 @@ class LiteraturePotentialOracle final : public NBOracle {
         vector<int> relevantVerts;
         relevantVerts.reserve(relevantIdxs.size());
         for (int idx : relevantIdxs) relevantVerts.push_back(od.endpoints[idx]);
+        if (ac3InitDiag) {
+            emit_ac3_stage_diag("rebuild_support_init_relevant", owner, (long long)relevantVerts.size());
+        }
 
         long long visV = 0, visE = 0, chainSteps = 0;
         int fallbackSeenStamp = 0;
@@ -11235,6 +11707,15 @@ class LiteraturePotentialOracle final : public NBOracle {
             st.endpointPool.clear();
             return;
         }
+        if (ac3InitDiag) {
+            long long elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - ac3InitDiagStart
+            ).count();
+            emit_ac3_stage_diag("rebuild_support_init_done", owner, elapsed_ms);
+            emit_ac3_stage_diag("rebuild_support_init_shape",
+                                usedArtifact ? visV : visE,
+                                usedArtifact ? chainSteps : (long long)prod.watchVerts.size());
+        }
 
 #ifdef LOCAL
         g_batch_dbg.owner_support_relevant_endpoints_sum += (long long)relevantVerts.size();
@@ -11246,7 +11727,11 @@ class LiteraturePotentialOracle final : public NBOracle {
         registerClassWatch(owner, cid, st, prod.watchVerts);
         if (currentDeleteStep_ == 0) {
             st.endpointPool = relevantIdxs;
-            if (!seedInitialPieceStateFromCollector(owner, st, relevantIdxs, prod)) {
+            if (ac3_seed_initial_piece_state_enabled() &&
+                !seedInitialPieceStateFromCollector(owner, st, relevantIdxs, prod)) {
+                clearMaterializedMetadataOnly(st);
+                clearPieceStateOnly(st);
+            } else if (!ac3_seed_initial_piece_state_enabled()) {
                 clearMaterializedMetadataOnly(st);
                 clearPieceStateOnly(st);
             }
@@ -11294,6 +11779,55 @@ class LiteraturePotentialOracle final : public NBOracle {
             st.endpointPool.clear();
         }
         od.activeQueryCount = 0;
+    }
+
+    bool touchedClassQueriesDieImmediatelyOnDelete(int x, const TouchedClassInfo& info,
+                                                   vector<int>& terminalQids) const {
+        if (!(1 <= info.owner && info.owner <= n_)) return true;
+        const auto& od = ownerData_[info.owner];
+        auto itState = od.classStates.find(info.oldCid);
+        if (itState == od.classStates.end() || itState->second.activeQueryCount <= 0) return true;
+        int matchedActive = 0;
+        for (int qid : od.qids) {
+            if (!(0 <= qid && qid < (int)qstate_.size())) continue;
+            const auto& qs = qstate_[qid];
+            if (!qs.active || qs.cid != info.oldCid) continue;
+            ++matchedActive;
+            if (!(0 <= qs.aIdx && qs.aIdx < (int)od.endpoints.size())) return false;
+            if (!(0 <= qs.bIdx && qs.bIdx < (int)od.endpoints.size())) return false;
+            int a = od.endpoints[qs.aIdx];
+            int b = od.endpoints[qs.bIdx];
+            if (qs.owner != x && a != x && b != x) return false;
+            terminalQids.push_back(qid);
+        }
+        return matchedActive == itState->second.activeQueryCount;
+    }
+
+    bool collectImmediateFailureTouchedQueries(int x, const vector<TouchedClassInfo>& touchedInfos,
+                                               vector<int>& terminalQids) const {
+        terminalQids.clear();
+        for (const auto& info : touchedInfos) {
+            if (!touchedClassQueriesDieImmediatelyOnDelete(x, info, terminalQids)) {
+                terminalQids.clear();
+                return false;
+            }
+        }
+        sort(terminalQids.begin(), terminalQids.end());
+        terminalQids.erase(unique(terminalQids.begin(), terminalQids.end()), terminalQids.end());
+        return true;
+    }
+
+    void cleanupResolvedTouchedClasses(const vector<TouchedClassInfo>& touchedInfos) {
+        for (const auto& info : touchedInfos) {
+            if (!(1 <= info.owner && info.owner <= n_)) continue;
+            auto it = ownerData_[info.owner].classStates.find(info.oldCid);
+            if (it == ownerData_[info.owner].classStates.end()) continue;
+            auto& st = it->second;
+            if (st.activeQueryCount > 0) continue;
+            unregisterClassWatch(info.owner, info.oldCid, st);
+            if (++st.epoch == INT_MAX) st.epoch = 1;
+            st.endpointPool.clear();
+        }
     }
 
     enum class SupportReuseKind {
@@ -11408,8 +11942,8 @@ class LiteraturePotentialOracle final : public NBOracle {
         if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || rawRefs >= 100000)) {
             emit_ac3_stage_diag("gather_after_loop", x, rawRefs);
         }
-        sort(infos.begin(), infos.end(), [](const TouchedClassInfo& a, const TouchedClassInfo& b){
-            if (a.owner != b.owner) return a.owner < b.owner;
+        sort(infos.begin(), infos.end(), [&](const TouchedClassInfo& a, const TouchedClassInfo& b){
+            if (a.owner != b.owner) return ownerPriorityLess(a.owner, b.owner);
             return a.oldCid < b.oldCid;
         });
         if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || rawRefs >= 100000)) {
@@ -11454,20 +11988,19 @@ class LiteraturePotentialOracle final : public NBOracle {
     }
 
     int pickRepresentativeOutsideSubtreeVertex(int owner, const ClassState& st, int subTin, int subTout) const {
-        const auto& od = ownerData_[owner];
         auto itL = lower_bound(st.activeEndpointTinsSorted.begin(), st.activeEndpointTinsSorted.end(), subTin);
         int L = (int)(itL - st.activeEndpointTinsSorted.begin());
+        int best = -1;
         if (L > 0) {
-            int idx = st.activeEndpointIdxsSortedBySupportTin[0];
-            return (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+            best = st.activeEndpointVertexPrefixMin[L - 1];
         }
         auto itR = upper_bound(st.activeEndpointTinsSorted.begin(), st.activeEndpointTinsSorted.end(), subTout);
         int R = (int)(itR - st.activeEndpointTinsSorted.begin());
-        if (R < (int)st.activeEndpointIdxsSortedBySupportTin.size()) {
-            int idx = st.activeEndpointIdxsSortedBySupportTin[R];
-            return (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+        if (R < (int)st.activeEndpointVertexSuffixMin.size()) {
+            int cand = st.activeEndpointVertexSuffixMin[R];
+            if (best == -1 || (cand != -1 && cand < best)) best = cand;
         }
-        return -1;
+        return best;
     }
 
     bool finalizeSupportBuildProduct(SupportBuildProduct& prod) {
@@ -11599,12 +12132,19 @@ class LiteraturePotentialOracle final : public NBOracle {
         auto itL = lower_bound(activeEndpointPosSorted.begin(), activeEndpointPosSorted.end(), subTin,
             [&](int pos, int val){ return tree.tin[pos] < val; });
         int L = (int)(itL - activeEndpointPosSorted.begin());
-        if (L > 0) return activeEndpointPosSorted[0];
+        int bestPos = -1;
+        for (int i = 0; i < L; ++i) {
+            int pos = activeEndpointPosSorted[i];
+            if (bestPos == -1 || tree.vertexByPos[pos] < tree.vertexByPos[bestPos]) bestPos = pos;
+        }
         auto itR = upper_bound(activeEndpointPosSorted.begin(), activeEndpointPosSorted.end(), subTout,
             [&](int val, int pos){ return val < tree.tin[pos]; });
         int R = (int)(itR - activeEndpointPosSorted.begin());
-        if (R < (int)activeEndpointPosSorted.size()) return activeEndpointPosSorted[R];
-        return -1;
+        for (int i = R; i < (int)activeEndpointPosSorted.size(); ++i) {
+            int pos = activeEndpointPosSorted[i];
+            if (bestPos == -1 || tree.vertexByPos[pos] < tree.vertexByPos[bestPos]) bestPos = pos;
+        }
+        return bestPos;
     }
 
     struct PieceTreeComponentDesc {
@@ -11656,7 +12196,9 @@ class LiteraturePotentialOracle final : public NBOracle {
             if (idx >= 0) { cnt = 1; repPos = u; }
             for (int c = childFirst[u]; c != -1; c = nextSibling[c]) {
                 cnt += subtreeCount[c];
-                if (repPos == -1 && subtreeRepPos[c] != -1) repPos = subtreeRepPos[c];
+                int childRepPos = subtreeRepPos[c];
+                if (childRepPos == -1) continue;
+                if (repPos == -1 || tree.vertexByPos[childRepPos] < tree.vertexByPos[repPos]) repPos = childRepPos;
             }
             subtreeCount[u] = cnt;
             subtreeRepPos[u] = repPos;
@@ -11740,17 +12282,16 @@ class LiteraturePotentialOracle final : public NBOracle {
 
     bool buildConnectorForRepresentatives(int owner, const vector<int>& repVertices,
                                           int& connectorTreeId,
-                                          vector<int>& connectorOnlyVerts) {
+                                          vector<int>& connectorOnlyVerts,
+                                          const SupportTreeObject* reuseTree = nullptr,
+                                          int reuseTreeId = -1) {
         connectorTreeId = -1;
         connectorOnlyVerts.clear();
-        vector<int> reps = repVertices;
+        vector<int> reps = sortAndDedupeVertices(repVertices);
 #ifdef LOCAL
         const bool __detail = local_profile_detailed_enabled();
         long long __t0 = __detail ? dbg_now_ns() : 0;
         g_batch_dbg.connector_skeleton_terminal_collection_calls++;
-#endif
-        sort(reps.begin(), reps.end());
-#ifdef LOCAL
         if (__detail) {
             long long __dt0 = dbg_now_ns() - __t0;
             g_batch_dbg.time_connector_skeleton_terminal_collection_ns += __dt0;
@@ -11760,7 +12301,6 @@ class LiteraturePotentialOracle final : public NBOracle {
         long long __t1 = __detail ? dbg_now_ns() : 0;
         g_batch_dbg.connector_skeleton_terminal_dedupe_calls++;
 #endif
-        reps.erase(unique(reps.begin(), reps.end()), reps.end());
 #ifdef LOCAL
         if (__detail) {
             long long __dt1 = dbg_now_ns() - __t1;
@@ -11790,7 +12330,13 @@ class LiteraturePotentialOracle final : public NBOracle {
         if (__detail) g_batch_dbg.time_connector_skeleton_core_build_calls++;
         long long __store_start_ns = __detail ? dbg_now_ns() : 0;
 #endif
-        connectorTreeId = storeSupportTreeObjectFromProduct(connector, &connector.nodeEndpointIdx);
+        if (reuseTree && reuseTreeId > 0 &&
+            reuseTree->vertexByPos == connector.watchVerts &&
+            reuseTree->parentPos == connector.parentPos) {
+            connectorTreeId = reuseTreeId;
+        } else {
+            connectorTreeId = storeSupportTreeObjectFromProduct(connector, &connector.nodeEndpointIdx);
+        }
 #ifdef LOCAL
         if (__detail) {
             g_batch_dbg.time_connector_skeleton_core_build_ns += dbg_now_ns() - __store_start_ns;
@@ -11836,15 +12382,13 @@ class LiteraturePotentialOracle final : public NBOracle {
         if (terminalVertices.empty()) return -1;
         int stamp = 0;
         buildTreeVertexPosMap(tree, stamp);
-        int bestPos = INT_MAX;
         int bestV = -1;
         for (int v : terminalVertices) {
             if (!(1 <= v && v <= n_)) continue;
             if (supportScratch_.supportPosStamp[v] != stamp) continue;
             int pos = supportScratch_.supportPosVal[v];
             if (!pieceContainsPos(tree, piece, pos)) continue;
-            int t = tree.tin[pos];
-            if (t < bestPos) { bestPos = t; bestV = v; }
+            if (bestV == -1 || v < bestV) bestV = v;
         }
         return bestV;
     }
@@ -11912,19 +12456,36 @@ class LiteraturePotentialOracle final : public NBOracle {
         int rep = piece.pieceRepresentativeEndpoint;
         int repPos = (1 <= rep && rep <= n_) ? findPosOfEndpointVertexInTree(tree, rep) : -1;
         if (0 <= repPos && pieceContainsPos(tree, piece, repPos)) return rep;
-        int bestPos = INT_MAX;
         int bestV = -1;
         for (int pos : tree.endpointPosSorted) {
             if (!pieceContainsPos(tree, piece, pos)) continue;
-            int t = tree.tin[pos];
-            if (t < bestPos) { bestPos = t; bestV = tree.vertexByPos[pos]; }
+            int v = tree.vertexByPos[pos];
+            if (bestV == -1 || v < bestV) bestV = v;
         }
         if (bestV != -1) return bestV;
         forEachPiecePos(tree, piece, [&](int pos){
-            int t = tree.tin[pos];
-            if (t < bestPos) { bestPos = t; bestV = tree.vertexByPos[pos]; }
+            int v = tree.vertexByPos[pos];
+            if (bestV == -1 || v < bestV) bestV = v;
         });
         return bestV;
+    }
+
+    vector<int> dedupeVerticesPreserveOrder(const vector<int>& verts) const {
+        vector<int> out;
+        out.reserve(verts.size());
+        unordered_set<int> seen;
+        seen.reserve(verts.size() * 2 + 1);
+        for (int v : verts) {
+            if (seen.insert(v).second) out.push_back(v);
+        }
+        return out;
+    }
+
+    vector<int> sortAndDedupeVertices(const vector<int>& verts) const {
+        vector<int> out = verts;
+        sort(out.begin(), out.end());
+        out.erase(unique(out.begin(), out.end()), out.end());
+        return out;
     }
 
     bool buildPatchTreeForVertices(int owner, int cid, const vector<int>& patchVertices, ClassState& st,
@@ -11932,9 +12493,7 @@ class LiteraturePotentialOracle final : public NBOracle {
         patchTreeId = -1;
         connectorOnlyVerts.clear();
         if (outNewHandleIdxs) outNewHandleIdxs->clear();
-        vector<int> reps = patchVertices;
-        sort(reps.begin(), reps.end());
-        reps.erase(unique(reps.begin(), reps.end()), reps.end());
+        vector<int> reps = sortAndDedupeVertices(patchVertices);
         if (reps.size() <= 1) return true;
         long long visV = 0, chainSteps = 0;
         SupportBuildProduct connector = buildSupportProductFromLastDeleteArtifact(owner, reps, &visV, &chainSteps);
@@ -11996,7 +12555,9 @@ class LiteraturePotentialOracle final : public NBOracle {
             int repPos = isTerminal[u] ? u : -1;
             for (int c = childFirst[u]; c != -1; c = nextSibling[c]) {
                 cnt += subtreeCount[c];
-                if (repPos == -1 && subtreeRepPos[c] != -1) repPos = subtreeRepPos[c];
+                int childRepPos = subtreeRepPos[c];
+                if (childRepPos == -1) continue;
+                if (repPos == -1 || tree.vertexByPos[childRepPos] < tree.vertexByPos[repPos]) repPos = childRepPos;
             }
             subtreeCount[u] = cnt;
             subtreeRepPos[u] = repPos;
@@ -12017,7 +12578,8 @@ class LiteraturePotentialOracle final : public NBOracle {
             int repPos = -1;
             for (int pos : terminalPosByTin) {
                 int t = tree.tin[pos];
-                if (!(tree.tin[xPos] <= t && t <= tree.tout[xPos])) { repPos = pos; break; }
+                if (tree.tin[xPos] <= t && t <= tree.tout[xPos]) continue;
+                if (repPos == -1 || tree.vertexByPos[pos] < tree.vertexByPos[repPos]) repPos = pos;
             }
             if (repPos >= 0) {
                 ConnectorPieceCompDesc d;
@@ -12842,9 +13404,7 @@ class LiteraturePotentialOracle final : public NBOracle {
         int newConnectorTreeId = -1;
         vector<int> newConnectorHandleIdxs;
         if (refineRes.reuseKind == SupportReuseKind::RepUnanimous) {
-            vector<int> reps = refineRes.connectorRepVertices;
-            sort(reps.begin(), reps.end());
-            reps.erase(unique(reps.begin(), reps.end()), reps.end());
+            vector<int> reps = sortAndDedupeVertices(refineRes.connectorRepVertices);
             if (reps.size() > 1) {
                 long long visV = 0, chainSteps = 0;
 #ifdef LOCAL
@@ -13121,6 +13681,7 @@ class LiteraturePotentialOracle final : public NBOracle {
             oldAttachmentByPiece[st.preservedPieces[i].pieceId] = st.attachmentVerticesByPiece[i];
         }
 #endif
+        vector<int> oldNormalizedAttachmentVertices = normalizedAliveAttachmentVertices(st.attachmentVerticesByPiece);
 #ifdef LOCAL
         long long __piece_split_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
 #endif
@@ -13128,6 +13689,34 @@ class LiteraturePotentialOracle final : public NBOracle {
         vector<int> newAttachmentVertices;
         vector<unsigned char> newAttachmentNeedsFixup;
         unordered_set<int> splitOldPieceIds;
+        vector<int> preservedDirectKeptVertices;
+        bool preservedDirectReuse = info.pieceHits.empty();
+        if (preservedDirectReuse && st.attachmentVerticesByPiece.empty()) syncAttachmentVerticesByPiece(st);
+        if (preservedDirectReuse && st.attachmentVerticesByPiece.size() != st.preservedPieces.size()) preservedDirectReuse = false;
+        if (preservedDirectReuse) {
+            for (int att : st.attachmentVerticesByPiece) {
+                if (att == currentDeleteX_) {
+                    preservedDirectReuse = false;
+                    break;
+                }
+                if (1 <= att && att <= n_ && !topo_.aliveVertex(att)) {
+                    preservedDirectReuse = false;
+                    break;
+                }
+            }
+        }
+        if (preservedDirectReuse) {
+            preservedDirectKeptVertices.reserve(st.watchHandles.size());
+            for (const auto& h : st.watchHandles) {
+                if (h.originKind != SupportOriginKind::PreservedPiece) continue;
+                if (h.vertex == currentDeleteX_) {
+                    preservedDirectReuse = false;
+                    preservedDirectKeptVertices.clear();
+                    break;
+                }
+                if (1 <= h.vertex && h.vertex <= n_) preservedDirectKeptVertices.push_back(h.vertex);
+            }
+        }
         unordered_map<int,int> cachedTreePosStamp;
         unordered_set<int> seenTreePosStampBuilds;
         auto ensureTreePosStamp = [&](int treeId, const SupportTreeObject*& tree) -> int {
@@ -13184,9 +13773,15 @@ class LiteraturePotentialOracle final : public NBOracle {
             if (!tree || stamp == 0 || supportScratch_.supportPosStamp[currentDeleteX_] != stamp) return -1;
             return supportScratch_.supportPosVal[currentDeleteX_];
         };
+        unordered_map<long long, int> hitPieceLocalPos;
+        hitPieceLocalPos.reserve(info.pieceHits.size() * 2 + 1);
+        for (const auto& ph : info.pieceHits) {
+            hitPieceLocalPos[watchKey(ph.treeId, ph.pieceId)] = ph.localPos;
+        }
         newPreserved.reserve(st.preservedPieces.size() + refineRes.replacementPieces.size() + 4);
         newAttachmentVertices.reserve(st.preservedPieces.size() + refineRes.replacementPieces.size() + 4);
         newAttachmentNeedsFixup.reserve(st.preservedPieces.size() + refineRes.replacementPieces.size() + 4);
+        unordered_map<int, tuple<int, int, int>> replacementPieceVertexToMeta;
         for (const auto& p : st.preservedPieces) {
 #ifdef LOCAL
             ScopedNsAcc __old_piece_scan_timer(ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_psplit_old_piece_scan_ns),
@@ -13197,15 +13792,31 @@ class LiteraturePotentialOracle final : public NBOracle {
             auto itOldAtt = oldAttachmentByPiece.find(p.pieceId);
             int oldAtt = (itOldAtt != oldAttachmentByPiece.end()) ? itOldAtt->second : -1;
             bool containsX = false;
+            int xLocalPos = -1;
+            auto itHitLocalPos = hitPieceLocalPos.find(watchKey(p.treeId, p.pieceId));
+            if (itHitLocalPos != hitPieceLocalPos.end()) {
+                containsX = true;
+                xLocalPos = itHitLocalPos->second;
+            }
 #ifdef LOCAL
-            {
+            if (!containsX) {
                 ScopedNsAcc __contains_timer(ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_psplit_contains_x_check_ns),
                                              ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_psplit_contains_x_check_calls));
                 g_batch_dbg.psplit_contains_x_checks++;
-                containsX = (1 <= currentDeleteX_ && currentDeleteX_ <= n_ && pieceContainsVertex(p, currentDeleteX_));
+                if (1 <= currentDeleteX_ && currentDeleteX_ <= n_) {
+                    const SupportTreeObject* tree = nullptr;
+                    int stamp = ensureTreePosStamp(p.treeId, tree);
+                    containsX = (tree && stamp != 0 && supportScratch_.supportPosStamp[currentDeleteX_] == stamp &&
+                                 pieceContainsPos(*tree, p, supportScratch_.supportPosVal[currentDeleteX_]));
+                }
             }
 #else
-            containsX = (1 <= currentDeleteX_ && currentDeleteX_ <= n_ && pieceContainsVertex(p, currentDeleteX_));
+            if (!containsX && 1 <= currentDeleteX_ && currentDeleteX_ <= n_) {
+                const SupportTreeObject* tree = nullptr;
+                int stamp = ensureTreePosStamp(p.treeId, tree);
+                containsX = (tree && stamp != 0 && supportScratch_.supportPosStamp[currentDeleteX_] == stamp &&
+                             pieceContainsPos(*tree, p, supportScratch_.supportPosVal[currentDeleteX_]));
+            }
 #endif
             if (!containsX) {
                 newPreserved.push_back(p);
@@ -13221,7 +13832,7 @@ class LiteraturePotentialOracle final : public NBOracle {
             g_batch_dbg.debug_forced_preserved_split_due_x_in_piece++;
 #endif
             splitOldPieceIds.insert(p.pieceId);
-            int xLocalPos = findXLocalPosForPiece(p);
+            if (xLocalPos < 0) xLocalPos = findXLocalPosForPiece(p);
             vector<SupportPieceRef> replacements;
             int removedPieceVertices = 0, boundaryOps = 0, deadIdx = -1;
             bool splitOk = false;
@@ -13296,6 +13907,12 @@ class LiteraturePotentialOracle final : public NBOracle {
                 newAttachmentVertices.push_back(att);
                 newAttachmentNeedsFixup.push_back(psplitOpt ? 0 : 1);
 #endif
+                if (tree) {
+                    forEachPiecePos(*tree, rp, [&](int pos) {
+                        int v = tree->vertexByPos[pos];
+                        replacementPieceVertexToMeta[v] = make_tuple(rp.treeId, rp.pieceId, pos);
+                    });
+                }
             }
         }
 #ifdef LOCAL
@@ -13305,6 +13922,46 @@ class LiteraturePotentialOracle final : public NBOracle {
             g_release_diag_preserved_piece_split_ns = g_batch_dbg.time_reuse_piece_split_apply_ns;
         }
 #endif
+        int oldConnectorTreeIdForFixup = st.connectorTreeId;
+        const SupportTreeObject* oldConnectorTreeForFixup =
+            (oldConnectorTreeIdForFixup > 0) ? getSupportTreeObject(oldConnectorTreeIdForFixup) : nullptr;
+        int oldConnectorCollectStamp = 0;
+        if (oldConnectorTreeForFixup) {
+            supportScratch_.ensure(n_);
+            oldConnectorCollectStamp = supportScratch_.nextCollect();
+            for (int v : oldConnectorTreeForFixup->vertexByPos) {
+                if (1 <= v && v <= n_) supportScratch_.collectStamp[v] = oldConnectorCollectStamp;
+            }
+        }
+        auto pickOldConnectorOverlapAttachment =
+            [&](const SupportTreeObject& tree, const SupportPieceRef& piece, int currentAtt) -> int {
+            if (oldConnectorCollectStamp == 0) return -1;
+            if (1 <= currentAtt && currentAtt <= n_ &&
+                topo_.aliveVertex(currentAtt) &&
+                currentAtt != currentDeleteX_ &&
+                supportScratch_.collectStamp[currentAtt] == oldConnectorCollectStamp) {
+                const SupportTreeObject* treePtr = &tree;
+                int stamp = ensureTreePosStamp(piece.treeId, treePtr);
+                if (stamp != 0 && supportScratch_.supportPosStamp[currentAtt] == stamp) {
+                    int pos = supportScratch_.supportPosVal[currentAtt];
+                    if (pieceContainsPos(tree, piece, pos)) return currentAtt;
+                }
+            }
+            int bestTin = INT_MAX;
+            int bestVertex = -1;
+            forEachPiecePos(tree, piece, [&](int pos) {
+                int v = tree.vertexByPos[pos];
+                if (!(1 <= v && v <= n_)) return;
+                if (!topo_.aliveVertex(v) || v == currentDeleteX_) return;
+                if (supportScratch_.collectStamp[v] != oldConnectorCollectStamp) return;
+                int tin = tree.tin[pos];
+                if (tin < bestTin) {
+                    bestTin = tin;
+                    bestVertex = v;
+                }
+            });
+            return bestVertex;
+        };
         long long retargets = 0;
 #ifdef LOCAL
         long long __attachment_fixup_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
@@ -13330,6 +13987,23 @@ class LiteraturePotentialOracle final : public NBOracle {
 #endif
                 }
             }
+            if (ac3_old_connector_overlap_fixup_enabled() &&
+                tree &&
+                oldConnectorCollectStamp != 0 &&
+                splitOldPieceIds.count(newPreserved[i].pieceId)) {
+                bool attOnOldConnector =
+                    (1 <= att && att <= n_ &&
+                     topo_.aliveVertex(att) &&
+                     att != currentDeleteX_ &&
+                     supportScratch_.collectStamp[att] == oldConnectorCollectStamp);
+                if (!attOnOldConnector) {
+                    int overlapAtt = pickOldConnectorOverlapAttachment(*tree, newPreserved[i], att);
+                    if (1 <= overlapAtt && overlapAtt <= n_ && overlapAtt != att) {
+                        att = overlapAtt;
+                        ok = true;
+                    }
+                }
+            }
             if (!ok && tree) {
 #ifdef LOCAL
                 ScopedNsAcc __fixup_retarget_timer(ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_psplit_attachment_fixup_retarget_ns),
@@ -13342,14 +14016,15 @@ class LiteraturePotentialOracle final : public NBOracle {
                     g_batch_dbg.psplit_attachment_fixup_changes++;
 #endif
                 }
-                newAttachmentVertices[i] = newAtt;
+                att = newAtt;
             }
-            if (i < newAttachmentVertices.size() && newAttachmentVertices[i] == currentDeleteX_) {
+            if (att == currentDeleteX_) {
 #ifdef LOCAL
                 g_batch_dbg.debug_attachment_retarget_due_x++;
 #endif
-                newAttachmentVertices[i] = -1;
+                att = -1;
             }
+            if (i < newAttachmentVertices.size()) newAttachmentVertices[i] = att;
         }
 #ifdef LOCAL
         if (local_profile_detailed_enabled()) {
@@ -13359,6 +14034,7 @@ class LiteraturePotentialOracle final : public NBOracle {
         g_batch_dbg.reuse_attachment_retargets += retargets;
         accountConnectorSkeletonShadow(st, newPreserved, newAttachmentVertices, owner);
 #endif
+#ifdef LOCAL
         vector<int> oldConnectorFullVerts;
         if (st.connectorTreeId > 0) {
             if (const auto* oldTree = getSupportTreeObject(st.connectorTreeId)) oldConnectorFullVerts = oldTree->vertexByPos;
@@ -13371,6 +14047,7 @@ class LiteraturePotentialOracle final : public NBOracle {
             if (h.originKind != SupportOriginKind::ConnectorTree) continue;
             if (1 <= h.vertex && h.vertex <= n_) oldConnectorWatchVerts.push_back(h.vertex);
         }
+#endif
 
         vector<int> validOldConnectorHandleIdxs;
         validOldConnectorHandleIdxs.reserve(st.connectorWatchEntryIds.size());
@@ -13378,6 +14055,11 @@ class LiteraturePotentialOracle final : public NBOracle {
             if (!(0 <= hi && hi < (int)st.watchHandles.size())) continue;
             if (st.watchHandles[hi].originKind != SupportOriginKind::ConnectorTree) continue;
             validOldConnectorHandleIdxs.push_back(hi);
+        }
+        vector<int> validPreservedHandleIdxs;
+        validPreservedHandleIdxs.reserve(max<int>(0, (int)st.watchHandles.size() - (int)validOldConnectorHandleIdxs.size()));
+        for (int i = 0; i < (int)st.watchHandles.size(); ++i) {
+            if (st.watchHandles[i].originKind == SupportOriginKind::PreservedPiece) validPreservedHandleIdxs.push_back(i);
         }
 
         vector<char> keepMask(st.watchHandles.size(), 1);
@@ -13393,10 +14075,9 @@ class LiteraturePotentialOracle final : public NBOracle {
                 g_batch_dbg.wscan_handles_scanned_preserved_keepmask += (long long)st.watchHandles.size();
                 long long __preserved_keepmask_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
 #endif
-                keptPreservedVertices.reserve(st.watchHandles.size());
-                for (int i = 0; i < (int)st.watchHandles.size(); ++i) {
+                keptPreservedVertices.reserve(validPreservedHandleIdxs.size());
+                for (int i : validPreservedHandleIdxs) {
                     const auto& h = st.watchHandles[i];
-                    if (h.originKind != SupportOriginKind::PreservedPiece) continue;
                     if (1 <= h.vertex && h.vertex <= n_) keptPreservedVertices.push_back(h.vertex);
                 }
 #ifdef LOCAL
@@ -13407,32 +14088,25 @@ class LiteraturePotentialOracle final : public NBOracle {
                 }
 #endif
             }
+        } else if (preservedDirectReuse) {
+            if (wscanOpt) {
+#ifdef LOCAL
+                noteReuseWatchFullScan(st);
+                g_batch_dbg.wscan_used_preservedHandleIdxs_fastpath_calls++;
+                g_batch_dbg.wscan_preserved_keepmask_scans++;
+                g_batch_dbg.wscan_handles_scanned_preserved_keepmask += (long long)st.watchHandles.size();
+                long long __preserved_keepmask_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
+#endif
+                keptPreservedVertices = preservedDirectKeptVertices;
+#ifdef LOCAL
+                if (local_profile_detailed_enabled()) {
+                    acc_wscan_keepmask_ns(dbg_now_ns() - __preserved_keepmask_start_ns,
+                                          &g_batch_dbg.time_wscan_preserved_keepmask_decision_ns,
+                                          &g_batch_dbg.time_wscan_preserved_keepmask_decision_calls);
+                }
+#endif
+            }
         } else {
-            supportScratch_.ensure(n_);
-            int keepStamp = supportScratch_.nextCollect();
-#ifdef LOCAL
-            long long __keepstamp_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
-#endif
-            for (const auto& p : newPreserved) {
-                const auto* tree = getSupportTreeObject(p.treeId);
-                if (!tree) continue;
-                forEachPiecePos(*tree, p, [&](int pos){
-                    int v = tree->vertexByPos[pos];
-                    if (1 <= v && v <= n_) {
-                        supportScratch_.collectStamp[v] = keepStamp;
-#ifdef LOCAL
-                        g_batch_dbg.wscan_preserved_keepstamp_vertices_marked++;
-#endif
-                    }
-                });
-            }
-#ifdef LOCAL
-            if (local_profile_detailed_enabled()) {
-                acc_wscan_keepmask_ns(dbg_now_ns() - __keepstamp_start_ns,
-                                      &g_batch_dbg.time_wscan_preserved_keepstamp_build_ns,
-                                      &g_batch_dbg.time_wscan_preserved_keepstamp_build_calls);
-            }
-#endif
             bool anyRefresh = false;
             long long removedByRefresh = 0;
             if (wscanOpt) {
@@ -13443,14 +14117,14 @@ class LiteraturePotentialOracle final : public NBOracle {
                 g_batch_dbg.wscan_handles_scanned_preserved_keepmask += (long long)st.watchHandles.size();
                 long long __preserved_keepmask_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
 #endif
-                keptPreservedVertices.reserve(st.watchHandles.size());
-                for (int i = 0; i < (int)st.watchHandles.size(); ++i) {
+                keptPreservedVertices.reserve(validPreservedHandleIdxs.size());
+                for (int i : validPreservedHandleIdxs) {
                     const auto& h = st.watchHandles[i];
-                    if (h.originKind != SupportOriginKind::PreservedPiece) continue;
                     bool shouldRemove = false;
                     if (splitOldPieceIds.count(h.pieceId)) {
                         shouldRemove = true;
-                        if (1 <= h.vertex && h.vertex <= n_ && topo_.aliveVertex(h.vertex) && h.vertex != currentDeleteX_ && supportScratch_.collectStamp[h.vertex] == keepStamp) {
+                        if (1 <= h.vertex && h.vertex <= n_ && topo_.aliveVertex(h.vertex) && h.vertex != currentDeleteX_ &&
+                            replacementPieceVertexToMeta.find(h.vertex) != replacementPieceVertexToMeta.end()) {
                             shouldRemove = false;
                         }
                     }
@@ -13482,13 +14156,13 @@ class LiteraturePotentialOracle final : public NBOracle {
                 g_batch_dbg.wscan_handles_scanned_preserved_keepmask += (long long)st.watchHandles.size();
                 long long __preserved_keepmask_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
 #endif
-                for (int i = 0; i < (int)st.watchHandles.size(); ++i) {
+                for (int i : validPreservedHandleIdxs) {
                     const auto& h = st.watchHandles[i];
-                    if (h.originKind != SupportOriginKind::PreservedPiece) continue;
                     bool shouldRemove = false;
                     if (splitOldPieceIds.count(h.pieceId)) {
                         shouldRemove = true;
-                        if (1 <= h.vertex && h.vertex <= n_ && topo_.aliveVertex(h.vertex) && h.vertex != currentDeleteX_ && supportScratch_.collectStamp[h.vertex] == keepStamp) {
+                        if (1 <= h.vertex && h.vertex <= n_ && topo_.aliveVertex(h.vertex) && h.vertex != currentDeleteX_ &&
+                            replacementPieceVertexToMeta.find(h.vertex) != replacementPieceVertexToMeta.end()) {
                             shouldRemove = false;
                         }
                     }
@@ -13520,15 +14194,76 @@ class LiteraturePotentialOracle final : public NBOracle {
 #endif
         }
         vector<int> remappedOldConnectorHandleIdxs;
-        if (wscanOpt) remappedOldConnectorHandleIdxs = remapRetainedHandleIndices(validOldConnectorHandleIdxs, keepMask);
+        vector<int> remappedPreservedHandleIdxs;
+        if (preservedDirectReuse) {
+            remappedOldConnectorHandleIdxs = validOldConnectorHandleIdxs;
+            remappedPreservedHandleIdxs = validPreservedHandleIdxs;
+        } else {
+            if (retainOpt && !preservedSparseRemovedIdxs.empty()) {
+                remappedOldConnectorHandleIdxs =
+                    remapRetainedHandleIndicesSparse(validOldConnectorHandleIdxs, keepMask, preservedSparseRemovedIdxs);
+                remappedPreservedHandleIdxs =
+                    remapRetainedHandleIndicesSparse(validPreservedHandleIdxs, keepMask, preservedSparseRemovedIdxs);
+            } else {
+                remappedOldConnectorHandleIdxs = remapRetainedHandleIndices(validOldConnectorHandleIdxs, keepMask);
+                remappedPreservedHandleIdxs = remapRetainedHandleIndices(validPreservedHandleIdxs, keepMask);
+            }
 #ifdef LOCAL
-        {
-            ScopedIntInc __wscan_ctx(&g_wscan_retain_ctx);
-            retainClassWatchByKeepMask(owner, cid, st, keepMask, retainOpt ? &preservedSparseRemovedIdxs : nullptr);
-        }
+            {
+                ScopedIntInc __wscan_ctx(&g_wscan_retain_ctx);
+                retainClassWatchByKeepMask(owner, cid, st, keepMask, retainOpt ? &preservedSparseRemovedIdxs : nullptr);
+            }
 #else
-        retainClassWatchByKeepMask(owner, cid, st, keepMask, retainOpt ? &preservedSparseRemovedIdxs : nullptr);
+            retainClassWatchByKeepMask(owner, cid, st, keepMask, retainOpt ? &preservedSparseRemovedIdxs : nullptr);
 #endif
+        }
+        int oldConnectorTreeId = st.connectorTreeId;
+        const SupportTreeObject* reusableConnectorTree =
+            (oldConnectorTreeId > 0) ? getSupportTreeObject(oldConnectorTreeId) : nullptr;
+        vector<int> newNormalizedAttachmentVertices = normalizedAliveAttachmentVertices(newAttachmentVertices);
+        bool reuseOldConnectorSkeleton = false;
+        if (oldConnectorTreeId > 0 &&
+            reusableConnectorTree &&
+            oldNormalizedAttachmentVertices == newNormalizedAttachmentVertices) {
+            int oldConnectorPosStamp = 0;
+            buildTreeVertexPosMap(*reusableConnectorTree, oldConnectorPosStamp);
+            bool oldConnectorTouchesChangedPreserved = false;
+            if (!splitOldPieceIds.empty()) {
+                for (const auto& kv : replacementPieceVertexToMeta) {
+                    int v = kv.first;
+                    if (!(1 <= v && v <= n_)) continue;
+                    if (supportScratch_.supportPosStamp[v] == oldConnectorPosStamp) {
+                        oldConnectorTouchesChangedPreserved = true;
+                        break;
+                    }
+                }
+            }
+            reuseOldConnectorSkeleton =
+                !(1 <= currentDeleteX_ &&
+                  currentDeleteX_ <= n_ &&
+                  supportScratch_.supportPosStamp[currentDeleteX_] == oldConnectorPosStamp) &&
+                !oldConnectorTouchesChangedPreserved;
+        }
+        if (reuseOldConnectorSkeleton) {
+            clearMaterializedMetadataOnly(st);
+            st.pieceModeActive = true;
+            st.preservedPieces = newPreserved;
+            st.attachmentVerticesByPiece = newAttachmentVertices;
+#ifdef LOCAL
+            ScopedNsAcc __state_publish_timer(ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_state_publish_ns),
+                                              ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_state_publish_calls));
+            ScopedNsAcc __reuse_publish_timer(ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_reuse_final_publish_commit_ns),
+                                              ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_reuse_final_publish_commit_calls));
+            g_batch_dbg.reuse_final_publish_calls++;
+#endif
+            StatePublishContext __publish_ctx;
+            ScopedStatePublishContext __publish_scope(this, &__publish_ctx);
+            st.connectorWatchEntryIds = std::move(remappedOldConnectorHandleIdxs);
+            dispatchPublishRebuildCanonicalState(st);
+            debugCheckNoDeletedVertexInCanonicalState(owner, cid, st);
+            saveDeleteWatchSnapshotNew(owner, cid, st);
+            return true;
+        }
         clearMaterializedMetadataOnly(st);
         st.pieceModeActive = true;
         st.preservedPieces = newPreserved;
@@ -13540,12 +14275,6 @@ class LiteraturePotentialOracle final : public NBOracle {
         st.connectorSkeletonVertices.clear();
         st.connectorVertexToPos.clear();
         st.connectorSkeletonWatchHandleByVertex.clear();
-        if (!reuse_apply_opt_enabled()) {
-#ifdef LOCAL
-            g_batch_dbg.reuse_duplicate_preserved_annotate_passes++;
-#endif
-            reusePrepublishAnnotatePreserved(st, st.preservedPieces);
-        }
         vector<int> terminals;
 #ifdef LOCAL
         {
@@ -13566,7 +14295,8 @@ class LiteraturePotentialOracle final : public NBOracle {
             g_batch_dbg.reuse_patch_tree_build_calls++;
             ScopedNsAcc __reuse_patch_timer(ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_reuse_patch_tree_build_ns),
                                             ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_reuse_patch_tree_build_calls));
-            if (!buildConnectorForRepresentatives(owner, terminals, newConnectorTreeId, newConnectorFullVerts)) {
+            if (!buildConnectorForRepresentatives(owner, terminals, newConnectorTreeId, newConnectorFullVerts,
+                                                 reusableConnectorTree, oldConnectorTreeId)) {
                 g_batch_dbg.piece_materialize_fallback_calls++;
                 g_batch_dbg.piece_materialize_fallback_vertices += (long long)terminals.size();
                 return false;
@@ -13576,7 +14306,8 @@ class LiteraturePotentialOracle final : public NBOracle {
                 g_batch_dbg.time_connector_skeleton_build_calls++;
             }
 #else
-            if (!buildConnectorForRepresentatives(owner, terminals, newConnectorTreeId, newConnectorFullVerts)) {
+            if (!buildConnectorForRepresentatives(owner, terminals, newConnectorTreeId, newConnectorFullVerts,
+                                                 reusableConnectorTree, oldConnectorTreeId)) {
                 return false;
             }
 #endif
@@ -13585,6 +14316,12 @@ class LiteraturePotentialOracle final : public NBOracle {
 #endif
             newConnectorTree = getSupportTreeObject(newConnectorTreeId);
             if (!newConnectorTree) return false;
+        }
+        SupportPieceRef newConnectorWholePiece;
+        int newConnectorPieceId = -1;
+        if (newConnectorTreeId > 0) {
+            newConnectorWholePiece = makeWholeTreePieceRef(newConnectorTreeId, -1, -1, 0);
+            newConnectorPieceId = newConnectorWholePiece.pieceId;
         }
 
         supportScratch_.ensure(n_);
@@ -13615,8 +14352,9 @@ class LiteraturePotentialOracle final : public NBOracle {
             g_batch_dbg.wscan_handles_scanned_preserved_stamp_mark += (long long)st.watchHandles.size();
             long long __preserved_stamp_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
 #endif
-            for (const auto& h : st.watchHandles) {
-                if (h.originKind != SupportOriginKind::PreservedPiece) continue;
+            for (int hi : remappedPreservedHandleIdxs) {
+                if (!(0 <= hi && hi < (int)st.watchHandles.size())) continue;
+                const auto& h = st.watchHandles[hi];
                 if (!(1 <= h.vertex && h.vertex <= n_)) continue;
                 supportScratch_.collectStamp[h.vertex] = preservedStamp;
 #ifdef LOCAL
@@ -13641,9 +14379,10 @@ class LiteraturePotentialOracle final : public NBOracle {
             if (supportScratch_.collectStamp[v] == preservedStamp) continue;
             desiredConnectorWatchVerts.push_back(v);
         }
-        unordered_set<int> desiredConnectorSet;
-        desiredConnectorSet.reserve(desiredConnectorWatchVerts.size() * 2 + 1);
-        for (int v : desiredConnectorWatchVerts) desiredConnectorSet.insert(v);
+        int desiredConnectorStamp = supportScratch_.nextCollect();
+        for (int v : desiredConnectorWatchVerts) {
+            if (1 <= v && v <= n_) supportScratch_.collectStamp[v] = desiredConnectorStamp;
+        }
 #ifdef LOCAL
         g_batch_dbg.wscan_desired_connector_vertices += (long long)desiredConnectorWatchVerts.size();
         if (local_profile_detailed_enabled()) {
@@ -13674,6 +14413,12 @@ class LiteraturePotentialOracle final : public NBOracle {
         long long reusedConnectorVertices = 0;
         vector<int> keptConnectorVertices;
 #ifdef LOCAL
+        long long debugPotentialDesiredConnectorReuse = 0;
+        long long debugPotentialTreeMappedConnectorReuse = 0;
+        long long debugPotentialSameTreeConnectorReuse = 0;
+        long long debugConnectorHandleKindHits = 0;
+#endif
+#ifdef LOCAL
         if (wscanOpt && !remappedOldConnectorHandleIdxs.empty()) g_batch_dbg.wscan_used_connectorWatchEntryIds_fastpath_calls++;
         g_batch_dbg.wscan_connector_keepmask_scans++;
         long long __connector_keepmask_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
@@ -13689,10 +14434,27 @@ class LiteraturePotentialOracle final : public NBOracle {
                 if (!(0 <= hi && hi < (int)st.watchHandles.size())) continue;
                 auto& h = st.watchHandles[hi];
                 if (h.originKind != SupportOriginKind::ConnectorTree) continue;
-                bool keep = (1 <= h.vertex && h.vertex <= n_ && desiredConnectorSet.count(h.vertex));
+#ifdef LOCAL
+                ++debugConnectorHandleKindHits;
+#endif
+                bool keep = (1 <= h.vertex && h.vertex <= n_ && supportScratch_.collectStamp[h.vertex] == desiredConnectorStamp);
+#ifdef LOCAL
+                if (keep) {
+                    ++debugPotentialDesiredConnectorReuse;
+                    if (newConnectorTree && supportScratch_.supportPosStamp[h.vertex] == newTreePosStamp) {
+                        ++debugPotentialTreeMappedConnectorReuse;
+                    }
+                    if (newConnectorTreeId > 0 && h.treeId == newConnectorTreeId &&
+                        0 <= h.localPos && newConnectorTree &&
+                        h.localPos < (int)newConnectorTree->vertexByPos.size() &&
+                        newConnectorTree->vertexByPos[h.localPos] == h.vertex) {
+                        ++debugPotentialSameTreeConnectorReuse;
+                    }
+                }
+#endif
                 if (keep && newConnectorTree && supportScratch_.supportPosStamp[h.vertex] == newTreePosStamp) {
                     int pos = supportScratch_.supportPosVal[h.vertex];
-                    annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, -1, pos);
+                    annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, newConnectorPieceId, pos);
                     ++reusedConnectorVertices;
                     keptConnectorVertices.push_back(h.vertex);
 #ifdef LOCAL
@@ -13716,10 +14478,27 @@ class LiteraturePotentialOracle final : public NBOracle {
             for (int i = 0; i < (int)st.watchHandles.size(); ++i) {
                 auto& h = st.watchHandles[i];
                 if (h.originKind != SupportOriginKind::ConnectorTree) continue;
-                bool keep = (1 <= h.vertex && h.vertex <= n_ && desiredConnectorSet.count(h.vertex));
+#ifdef LOCAL
+                ++debugConnectorHandleKindHits;
+#endif
+                bool keep = (1 <= h.vertex && h.vertex <= n_ && supportScratch_.collectStamp[h.vertex] == desiredConnectorStamp);
+#ifdef LOCAL
+                if (keep) {
+                    ++debugPotentialDesiredConnectorReuse;
+                    if (newConnectorTree && supportScratch_.supportPosStamp[h.vertex] == newTreePosStamp) {
+                        ++debugPotentialTreeMappedConnectorReuse;
+                    }
+                    if (newConnectorTreeId > 0 && h.treeId == newConnectorTreeId &&
+                        0 <= h.localPos && newConnectorTree &&
+                        h.localPos < (int)newConnectorTree->vertexByPos.size() &&
+                        newConnectorTree->vertexByPos[h.localPos] == h.vertex) {
+                        ++debugPotentialSameTreeConnectorReuse;
+                    }
+                }
+#endif
                 if (keep && newConnectorTree && supportScratch_.supportPosStamp[h.vertex] == newTreePosStamp) {
                     int pos = supportScratch_.supportPosVal[h.vertex];
-                    annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, -1, pos);
+                    annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, newConnectorPieceId, pos);
                     ++reusedConnectorVertices;
                     keptConnectorVertices.push_back(h.vertex);
 #ifdef LOCAL
@@ -13742,29 +14521,110 @@ class LiteraturePotentialOracle final : public NBOracle {
                                   &g_batch_dbg.time_wscan_connector_keepmask_decision_ns,
                                   &g_batch_dbg.time_wscan_connector_keepmask_decision_calls);
         }
-        {
-            ScopedIntInc __ctxA(&g_connector_skeleton_unregister_ctx);
-            ScopedIntInc __ctxB(&g_wscan_retain_ctx);
-            retainClassWatchByKeepMask(owner, cid, st, keepConnectorMask, retainOpt ? &connectorSparseRemovedIdxs : nullptr);
+        if (local_profile_detailed_enabled() &&
+            (debugConnectorHandleKindHits != (long long)remappedOldConnectorHandleIdxs.size() ||
+             (reusedConnectorVertices == 0 && debugPotentialDesiredConnectorReuse > 0))) {
+            static int debugConnectorReuseMissLogs = 0;
+            if (debugConnectorReuseMissLogs < 12) {
+                ++debugConnectorReuseMissLogs;
+                cerr << "[connector_reuse_miss]"
+                     << " owner=" << owner
+                     << " cid=" << cid
+                     << " delete=" << currentDeleteStep_
+                     << " old_tree=" << oldConnectorTreeId
+                     << " new_tree=" << newConnectorTreeId
+                     << " old_handles=" << remappedOldConnectorHandleIdxs.size()
+                     << " connector_handles_seen=" << debugConnectorHandleKindHits
+                     << " desired_hits=" << debugPotentialDesiredConnectorReuse
+                     << " tree_hits=" << debugPotentialTreeMappedConnectorReuse
+                     << " same_tree_hits=" << debugPotentialSameTreeConnectorReuse
+                     << "\n";
+            }
         }
-#else
-        retainClassWatchByKeepMask(owner, cid, st, keepConnectorMask, retainOpt ? &connectorSparseRemovedIdxs : nullptr);
 #endif
+#ifdef LOCAL
+        if (local_profile_detailed_enabled() &&
+            !desiredConnectorWatchVerts.empty() &&
+            connector_watch_reuse_diag_limit() > 0) {
+            static int debugConnectorReuseSummaryLogs = 0;
+            if (debugConnectorReuseSummaryLogs < connector_watch_reuse_diag_limit()) {
+                ++debugConnectorReuseSummaryLogs;
+                int desiredHits = 0;
+                int preservedHits = 0;
+                int treeHits = 0;
+                int sameTreeHits = 0;
+                int scannedConnectorHandles = 0;
+                auto noteHandle = [&](const WatchHandle& h) {
+                    if (h.originKind != SupportOriginKind::ConnectorTree) return;
+                    ++scannedConnectorHandles;
+                    if (!(1 <= h.vertex && h.vertex <= n_)) return;
+                    if (supportScratch_.collectStamp[h.vertex] == preservedStamp) ++preservedHits;
+                    if (supportScratch_.collectStamp[h.vertex] != desiredConnectorStamp) return;
+                    ++desiredHits;
+                    if (newConnectorTree && supportScratch_.supportPosStamp[h.vertex] == newTreePosStamp) ++treeHits;
+                    if (newConnectorTreeId > 0 && h.treeId == newConnectorTreeId &&
+                        0 <= h.localPos && newConnectorTree &&
+                        h.localPos < (int)newConnectorTree->vertexByPos.size() &&
+                        newConnectorTree->vertexByPos[h.localPos] == h.vertex) {
+                        ++sameTreeHits;
+                    }
+                };
+                if (wscanOpt) {
+                    for (int hi : remappedOldConnectorHandleIdxs) {
+                        if (!(0 <= hi && hi < (int)st.watchHandles.size())) continue;
+                        noteHandle(st.watchHandles[hi]);
+                    }
+                } else {
+                    for (const auto& h : st.watchHandles) noteHandle(h);
+                }
+                cerr << "[connector_reuse_summary]"
+                     << " owner=" << owner
+                     << " cid=" << cid
+                     << " delete=" << currentDeleteStep_
+                     << " scanned=" << scannedConnectorHandles
+                     << " preserved_hits=" << preservedHits
+                     << " desired_hits=" << desiredHits
+                     << " tree_hits=" << treeHits
+                     << " same_tree_hits=" << sameTreeHits
+                     << " desired_size=" << desiredConnectorWatchVerts.size()
+                     << " new_tree=" << newConnectorTreeId
+                     << "\n";
+            }
+        }
+#endif
+        vector<int> retainedConnectorHandleIdxs;
+        if (removedOldConnectorVertices == 0) {
+            retainedConnectorHandleIdxs = remappedOldConnectorHandleIdxs;
+        } else {
+            if (retainOpt && !connectorSparseRemovedIdxs.empty()) {
+                retainedConnectorHandleIdxs =
+                    remapRetainedHandleIndicesSparse(remappedOldConnectorHandleIdxs, keepConnectorMask, connectorSparseRemovedIdxs);
+            } else {
+                retainedConnectorHandleIdxs = remapRetainedHandleIndices(remappedOldConnectorHandleIdxs, keepConnectorMask);
+            }
+#ifdef LOCAL
+            {
+                ScopedIntInc __ctxA(&g_connector_skeleton_unregister_ctx);
+                ScopedIntInc __ctxB(&g_wscan_retain_ctx);
+                retainClassWatchByKeepMask(owner, cid, st, keepConnectorMask, retainOpt ? &connectorSparseRemovedIdxs : nullptr);
+            }
+#else
+            retainClassWatchByKeepMask(owner, cid, st, keepConnectorMask, retainOpt ? &connectorSparseRemovedIdxs : nullptr);
+#endif
+        }
 
-        unordered_set<int> existingConnectorVertexSet;
+        int existingConnectorStamp = supportScratch_.nextCollect();
 #ifdef LOCAL
         long long __existing_set_start_ns = local_profile_detailed_enabled() ? dbg_now_ns() : 0;
 #endif
         if (wscanOpt) {
-            existingConnectorVertexSet.reserve(keptConnectorVertices.size() * 2 + 1);
 #ifdef LOCAL
             g_batch_dbg.wscan_handles_scanned_existing_connector_set += (long long)keptConnectorVertices.size();
 #endif
             for (int v : keptConnectorVertices) {
-                if (1 <= v && v <= n_) existingConnectorVertexSet.insert(v);
+                if (1 <= v && v <= n_) supportScratch_.collectStamp[v] = existingConnectorStamp;
             }
         } else {
-            existingConnectorVertexSet.reserve(st.watchHandles.size() * 2 + 1);
 #ifdef LOCAL
             noteReuseWatchFullScan(st);
             g_batch_dbg.wscan_handles_scanned_existing_connector_set += (long long)st.watchHandles.size();
@@ -13772,11 +14632,11 @@ class LiteraturePotentialOracle final : public NBOracle {
             for (int i = 0; i < (int)st.watchHandles.size(); ++i) {
                 const auto& h = st.watchHandles[i];
                 if (h.originKind != SupportOriginKind::ConnectorTree) continue;
-                if (1 <= h.vertex && h.vertex <= n_) existingConnectorVertexSet.insert(h.vertex);
+                if (1 <= h.vertex && h.vertex <= n_) supportScratch_.collectStamp[h.vertex] = existingConnectorStamp;
             }
         }
 #ifdef LOCAL
-        g_batch_dbg.wscan_existing_connector_vertices += (long long)existingConnectorVertexSet.size();
+        g_batch_dbg.wscan_existing_connector_vertices += (long long)keptConnectorVertices.size();
         if (local_profile_detailed_enabled()) {
             acc_wscan_keepmask_ns(dbg_now_ns() - __existing_set_start_ns,
                                   &g_batch_dbg.time_wscan_connector_existing_set_build_ns,
@@ -13790,7 +14650,7 @@ class LiteraturePotentialOracle final : public NBOracle {
         g_batch_dbg.wscan_addverts_candidates += (long long)desiredConnectorWatchVerts.size();
 #endif
         for (int v : desiredConnectorWatchVerts) {
-            if (!existingConnectorVertexSet.count(v)) addVerts.push_back(v);
+            if (!(1 <= v && v <= n_) || supportScratch_.collectStamp[v] != existingConnectorStamp) addVerts.push_back(v);
         }
 #ifdef LOCAL
         g_batch_dbg.wscan_addverts_selected += (long long)addVerts.size();
@@ -13822,11 +14682,30 @@ class LiteraturePotentialOracle final : public NBOracle {
                     auto& h = st.watchHandles[hi];
                     int pos = -1;
                     if (1 <= h.vertex && h.vertex <= n_ && supportScratch_.supportPosStamp[h.vertex] == newTreePosStamp) pos = supportScratch_.supportPosVal[h.vertex];
-                    annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, -1, pos);
+                    annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, newConnectorPieceId, pos);
 #ifdef LOCAL
                     g_batch_dbg.reuse_connector_direct_retag_handles++;
 #endif
                 }
+            }
+        }
+        if (!preservedDirectReuse && !replacementPieceVertexToMeta.empty()) {
+#ifdef LOCAL
+            ScopedNsAcc __retag_timer(ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_reuse_preserved_direct_retag_ns),
+                                      ptr_if(local_profile_detailed_enabled(), &g_batch_dbg.time_reuse_preserved_direct_retag_calls));
+#endif
+            for (int hi : remappedPreservedHandleIdxs) {
+                if (!(0 <= hi && hi < (int)st.watchHandles.size())) continue;
+                auto& h = st.watchHandles[hi];
+                if (h.originKind != SupportOriginKind::PreservedPiece) continue;
+                if (!splitOldPieceIds.count(h.pieceId)) continue;
+                auto it = replacementPieceVertexToMeta.find(h.vertex);
+                if (it == replacementPieceVertexToMeta.end()) continue;
+                annotateHandleMetadata(h, SupportOriginKind::PreservedPiece,
+                                       get<0>(it->second), get<1>(it->second), get<2>(it->second));
+#ifdef LOCAL
+                g_batch_dbg.reuse_preserved_direct_retag_handles++;
+#endif
             }
         }
 
@@ -13841,12 +14720,11 @@ class LiteraturePotentialOracle final : public NBOracle {
         ScopedStatePublishContext __publish_scope(this, &__publish_ctx);
         st.connectorTreeId = newConnectorTreeId;
         if (newConnectorTreeId > 0) {
-            st.connectorPieces.push_back(makeWholeTreePieceRef(newConnectorTreeId, -1, -1, 0));
+            st.connectorPieces.push_back(newConnectorWholePiece);
             st.patchTreeIds.push_back(newConnectorTreeId);
         }
-        if (reuse_apply_opt_enabled()) dispatchPublishAnnotatePreserved(st, st.preservedPieces);
-        dispatchPublishRebuildConnectorWatchEntryIds(st);
-        dispatchPublishAnnotateConnectorPieces(st, st.connectorPieces);
+        st.connectorWatchEntryIds = std::move(retainedConnectorHandleIdxs);
+        st.connectorWatchEntryIds.insert(st.connectorWatchEntryIds.end(), connectorHandleIdxs.begin(), connectorHandleIdxs.end());
         dispatchPublishRebuildCanonicalState(st);
         debugCheckNoDeletedVertexInCanonicalState(owner, cid, st);
 #ifdef LOCAL
@@ -13906,13 +14784,18 @@ class LiteraturePotentialOracle final : public NBOracle {
         bool repUnanimousCandidate = (refineRes.reuseKind == SupportReuseKind::RepUnanimous && st.pieceModeActive && !st.supportMetaValid && refineRes.pieceNativePlanned);
         bool canDeltaPreserved = (refineRes.reuseKind == SupportReuseKind::RepUnanimous && info.connectorHits.empty() && info.pieceHits.size() == 1);
         bool canConnectorSkeleton = (repUnanimousCandidate && (!info.connectorHits.empty() || !info.pieceHits.empty()));
-#ifdef LOCAL
-        bool forceSkeleton = connectorSkeletonForceEnabled();
+        // Keep release behavior aligned with the branch-local wrapper mix.
+        // The final gate runner pins these delta routes through env defaults,
+        // and the release binary must honor the same selector contract.
+        const bool forceSkeleton = connectorSkeletonForceEnabled();
         if (canDeltaPreserved && !deltaPreservedHitEnabled()) canDeltaPreserved = false;
         if (canConnectorSkeleton && !deltaConnectorHitEnabled() && !forceSkeleton) canConnectorSkeleton = false;
-#else
-        const bool forceSkeleton = false;
-#endif
+        if (canDeltaPreserved && canConnectorSkeleton) {
+            // The connector-skeleton path already handles preserved-piece hits.
+            // Skipping the baseline-then-skeleton normalization avoids a second
+            // unanimous-state publish and a second watch compaction pass.
+            canDeltaPreserved = false;
+        }
 #ifdef LOCAL
         if (refineRes.reuseKind == SupportReuseKind::RepUnanimous) {
             g_batch_dbg.connector_skeleton_candidate_classes++;
@@ -14200,18 +15083,66 @@ class LiteraturePotentialOracle final : public NBOracle {
 
             vector<int> liveTerminals = normalizedAliveAttachmentVertices(newAttachmentVertices);
             vector<int> connectorReps;
-            vector<int> connectorPieceRepByIdx;
-            connectorPieceRepByIdx.reserve(newConnectorPieces.size());
+            unordered_map<int, int> connectorTreePosStampCache;
+            connectorTreePosStampCache.reserve(newConnectorPieces.size());
+            unordered_map<int, bool> connectorCoverageCache;
+            connectorCoverageCache.reserve(newAttachmentVertices.size() * 2 + 1);
+            auto representativeTerminalInConnectorPieceFromNormalizedTerminals = [&](const SupportPieceRef& piece) -> int {
+                const auto* tree = getSupportTreeObject(piece.treeId);
+                if (!tree || liveTerminals.empty()) return -1;
+                int stamp = 0;
+                auto itStamp = connectorTreePosStampCache.find(piece.treeId);
+                if (itStamp == connectorTreePosStampCache.end()) {
+                    buildTreeVertexPosMap(*tree, stamp);
+                    connectorTreePosStampCache.emplace(piece.treeId, stamp);
+                } else {
+                    stamp = itStamp->second;
+                }
+                int bestV = -1;
+                for (int v : liveTerminals) {
+                    if (!(1 <= v && v <= n_)) continue;
+                    if (supportScratch_.supportPosStamp[v] != stamp) continue;
+                    int pos = supportScratch_.supportPosVal[v];
+                    if (!pieceContainsPos(*tree, piece, pos)) continue;
+                    if (bestV == -1 || v < bestV) bestV = v;
+                }
+                return bestV;
+            };
+            auto connectorPiecesCoverAliveVertex = [&](int v) -> bool {
+                auto itCover = connectorCoverageCache.find(v);
+                if (itCover != connectorCoverageCache.end()) return itCover->second;
+                bool covered = false;
+                for (const auto& cp : newConnectorPieces) {
+                    const auto* tree = getSupportTreeObject(cp.treeId);
+                    if (!tree) continue;
+                    int stamp = 0;
+                    auto itStamp = connectorTreePosStampCache.find(cp.treeId);
+                    if (itStamp == connectorTreePosStampCache.end()) {
+                        buildTreeVertexPosMap(*tree, stamp);
+                        connectorTreePosStampCache.emplace(cp.treeId, stamp);
+                    } else {
+                        stamp = itStamp->second;
+                    }
+                    if (supportScratch_.supportPosStamp[v] != stamp) continue;
+                    int pos = supportScratch_.supportPosVal[v];
+                    if (pieceContainsPos(*tree, cp, pos)) {
+                        covered = true;
+                        break;
+                    }
+                }
+                connectorCoverageCache.emplace(v, covered);
+                return covered;
+            };
             for (const auto& cp : newConnectorPieces) {
-                int rep = representativeTerminalInConnectorPieceFromAttachments(cp, liveTerminals);
+                int rep = representativeTerminalInConnectorPieceFromNormalizedTerminals(cp);
                 if (rep != -1) {
                     connectorReps.push_back(rep);
-                    connectorPieceRepByIdx.push_back(rep);
+#ifdef LOCAL
                     reusedConnectorVertices += countConnectorWatchHandlesInPiece(st, cp);
+#endif
                 }
             }
-            sort(connectorReps.begin(), connectorReps.end());
-            connectorReps.erase(unique(connectorReps.begin(), connectorReps.end()), connectorReps.end());
+            connectorReps = sortAndDedupeVertices(connectorReps);
 
             vector<int> patchVertices = connectorReps;
             if (info.connectorHits.empty()) {
@@ -14219,8 +15150,7 @@ class LiteraturePotentialOracle final : public NBOracle {
                 for (size_t i = 0; i < newPreserved.size(); ++i) {
                     int att = (i < newAttachmentVertices.size() ? newAttachmentVertices[i] : -1);
                     if (!(1 <= att && att <= n_ && topo_.aliveVertex(att))) continue;
-                    bool covered = false;
-                    for (const auto& cp : newConnectorPieces) if (pieceContainsVertex(cp, att)) { covered = true; break; }
+                    bool covered = connectorPiecesCoverAliveVertex(att);
                     if (!covered) {
                         if (anchor != -1) patchVertices.push_back(anchor);
                         patchVertices.push_back(att);
@@ -14230,13 +15160,11 @@ class LiteraturePotentialOracle final : public NBOracle {
                 for (size_t i = 0; i < newPreserved.size(); ++i) {
                     int att = (i < newAttachmentVertices.size() ? newAttachmentVertices[i] : -1);
                     if (!(1 <= att && att <= n_ && topo_.aliveVertex(att))) continue;
-                    bool covered = false;
-                    for (const auto& cp : newConnectorPieces) if (pieceContainsVertex(cp, att)) { covered = true; break; }
+                    bool covered = connectorPiecesCoverAliveVertex(att);
                     if (!covered) patchVertices.push_back(att);
                 }
             }
-            sort(patchVertices.begin(), patchVertices.end());
-            patchVertices.erase(unique(patchVertices.begin(), patchVertices.end()), patchVertices.end());
+            patchVertices = sortAndDedupeVertices(patchVertices);
             if (patchVertices.size() <= 1) noPatchNeeded = true;
             int patchTreeId = -1;
             vector<int> patchOnlyVerts, patchHandleIdxs;
@@ -14250,7 +15178,7 @@ class LiteraturePotentialOracle final : public NBOracle {
                 int att = (i < (int)newAttachmentVertices.size() ? newAttachmentVertices[i] : -1);
                 bool covered = false;
                 if (1 <= att && att <= n_ && topo_.aliveVertex(att)) {
-                    for (const auto& cp : newConnectorPieces) if (pieceContainsVertex(cp, att)) { covered = true; break; }
+                    covered = connectorPiecesCoverAliveVertex(att);
                 }
                 if (!covered) {
                     int newAtt = newPreserved[i].pieceRepresentativeEndpoint;
@@ -14628,6 +15556,14 @@ public:
         emit_ac3_stage_diag("oracle_init_enter", n, (long long)branchQueries.size());
         n_ = n;
         bq_ = branchQueries;
+        ownerLevel_.assign(n_ + 1, 0);
+        ownerMass_.assign(n_ + 1, 0);
+        ownerOutdeg_.assign(n_ + 1, 0);
+        for (const auto& q : bq_) {
+            ownerLevel_[q.owner] = q.ownerLevel;
+            ownerMass_[q.owner] = q.ownerMass;
+            ownerOutdeg_[q.owner] = q.ownerOutdeg;
+        }
         topo_.init(n_, undirectedEdges, branchQueries);
         emit_ac3_stage_diag("oracle_init_topo_ready", n_, (long long)undirectedEdges.size());
         alive_.assign(n_ + 1, true);
@@ -14642,6 +15578,8 @@ public:
         querySeenCur_ = 1;
         currentSupportWatch_ = 0;
         activeQueryTotal_ = 0;
+        vector<vector<int>> initActiveEndpointIdxs(n_ + 1);
+        vector<vector<int>> initActiveCids(n_ + 1);
 #ifdef LOCAL
         g_batch_dbg = BatchPivotDebugStats();
         reset_slow_deletion_profiles();
@@ -14673,9 +15611,18 @@ public:
             failing_[qid] = true;
             od.activeQueryCount++;
             activeQueryTotal_++;
-            if (qstate_[qid].aIdx >= 0) od.endpointActiveCount[qstate_[qid].aIdx]++;
-            if (qstate_[qid].bIdx != qstate_[qid].aIdx) od.endpointActiveCount[qstate_[qid].bIdx]++;
-            classState(q.owner, cid).activeQueryCount++;
+            if (qstate_[qid].aIdx >= 0 &&
+                od.endpointActiveCount[qstate_[qid].aIdx]++ == 0) {
+                initActiveEndpointIdxs[q.owner].push_back(qstate_[qid].aIdx);
+            }
+            if (qstate_[qid].bIdx != qstate_[qid].aIdx &&
+                od.endpointActiveCount[qstate_[qid].bIdx]++ == 0) {
+                initActiveEndpointIdxs[q.owner].push_back(qstate_[qid].bIdx);
+            }
+            auto& initClassState = classState(q.owner, cid);
+            if (initClassState.activeQueryCount++ == 0) {
+                initActiveCids[q.owner].push_back(cid);
+            }
         }
         bumpActiveQueryPeak();
         emit_ac3_stage_diag("oracle_init_active_scan_ready", activeQueryTotal_, -1);
@@ -14686,23 +15633,24 @@ public:
                 emit_ac3_stage_diag("oracle_init_owner_loop", owner, rebuiltSupportClasses);
             }
             auto& od = ownerData_[owner];
+            if (od.activeQueryCount <= 0) continue;
+            const auto& activeIdxs = initActiveEndpointIdxs[owner];
+            if (activeIdxs.empty()) continue;
             vector<int> activeEndpoints;
-            activeEndpoints.reserve(od.endpoints.size());
-            for (int idx = 0; idx < (int)od.endpoints.size(); ++idx) if (od.endpointActiveCount[idx] > 0) {
-                activeEndpoints.push_back(od.endpoints[idx]);
-            }
+            activeEndpoints.reserve(activeIdxs.size());
+            for (int idx : activeIdxs) activeEndpoints.push_back(od.endpoints[idx]);
             topo_.restrictOwnerToActiveEndpoints(owner, activeEndpoints);
-            for (int idx = 0; idx < (int)od.endpoints.size(); ++idx) if (od.endpointActiveCount[idx] > 0) {
+            for (int idx : activeIdxs) {
                 int ep = od.endpoints[idx];
                 int cid = topo_.incidentClass(owner, ep);
                 if (cid >= 0) classState(owner, cid).endpointPool.push_back(idx);
             }
-            vector<int> cids;
-            cids.reserve(od.classStates.size());
-            for (const auto& kv : od.classStates) if (kv.second.activeQueryCount > 0) cids.push_back(kv.first);
+            vector<int> cids = initActiveCids[owner];
             sort(cids.begin(), cids.end());
             cids.erase(unique(cids.begin(), cids.end()), cids.end());
             for (int cid : cids) {
+                auto it = od.classStates.find(cid);
+                if (it == od.classStates.end() || it->second.activeQueryCount <= 0) continue;
                 rebuildSupport(owner, cid);
                 ++rebuiltSupportClasses;
             }
@@ -15027,12 +15975,18 @@ public:
             touchedOwners.push_back(info.owner);
         }
         if (1 <= x && x <= n_ && ownerData_[x].activeQueryCount > 0) touchedOwners.push_back(x);
-        sort(touchedOwners.begin(), touchedOwners.end());
+        sort(touchedOwners.begin(), touchedOwners.end(), [&](int a, int b){ return ownerPriorityLess(a, b); });
         touchedOwners.erase(unique(touchedOwners.begin(), touchedOwners.end()), touchedOwners.end());
+        vector<int> terminalTouchedQids;
+        const bool skipTouchedTopologyWork =
+            !touchedInfos.empty() &&
+            collectImmediateFailureTouchedQueries(x, touchedInfos, terminalTouchedQids);
 
         OwnerSplitArtifact deleteArtifact;
-        topo_.deleteVertexAndSplit(x, touchedOwners, newComponents, &deleteArtifact);
-        if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || (x % 2048) == 0)) {
+        if (skipTouchedTopologyWork) topo_.deleteVertexAndSplit(x, {}, newComponents, &deleteArtifact);
+        else topo_.deleteVertexAndSplit(x, touchedOwners, newComponents, &deleteArtifact);
+        if (ac3_stage_diag_enabled() &&
+            (x == 1 || x == 2 || should_emit_ac3_stage_diag_delete_progress(currentDeleteStep_))) {
             emit_ac3_stage_diag("erase_after_topo_split", x, (long long)newComponents.size());
         }
         int artifactStamp = deleteArtifact.valid ? loadArtifactIntoScratch(deleteArtifact) : 0;
@@ -15042,6 +15996,14 @@ public:
             auto qids = ownerData_[x].qids;
             for (int qid : qids) if (qstate_[qid].active) resolveQuery(qid, true, changes);
             deactivateAllOwnerWatches(x);
+        }
+        if (skipTouchedTopologyWork) {
+            for (int qid : terminalTouchedQids) {
+                if (0 <= qid && qid < (int)qstate_.size() && qstate_[qid].active) {
+                    resolveQuery(qid, true, changes);
+                }
+            }
+            cleanupResolvedTouchedClasses(touchedInfos);
         }
 
         nextQuerySeenStamp();
@@ -15056,7 +16018,7 @@ public:
         long long ac3_queryscan_loop_ns = 0;
         long long ac3_reuse_loop_ns = 0;
         long long ac3_touched_processed = 0;
-        for (const auto& info : touchedInfos) {
+        if (!skipTouchedTopologyWork) for (const auto& info : touchedInfos) {
             int owner = info.owner;
             if (!topo_.aliveVertex(owner)) {
 #ifdef LOCAL
@@ -15175,7 +16137,9 @@ public:
                 rebuildKeys.push_back({owner, cid});
             }
             ++ac3_touched_processed;
-            if (ac3_stage_diag_enabled() && x == 1 && (ac3_touched_processed % 2048LL) == 0) {
+            if (ac3_stage_diag_enabled() &&
+                should_emit_ac3_stage_diag_delete_progress(currentDeleteStep_) &&
+                (ac3_touched_processed % 2048LL) == 0) {
                 emit_ac3_stage_diag("erase_loop_progress", ac3_touched_processed, (long long)rebuildKeys.size());
                 emit_ac3_stage_diag("erase_loop_refine_query_ms",
                                     ac3_refine_loop_ns / 1000000LL,
@@ -15188,7 +16152,8 @@ public:
 
         sort(rebuildKeys.begin(), rebuildKeys.end());
         rebuildKeys.erase(unique(rebuildKeys.begin(), rebuildKeys.end()), rebuildKeys.end());
-        if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || (x % 2048) == 0)) {
+        if (ac3_stage_diag_enabled() &&
+            (x == 1 || x == 2 || should_emit_ac3_stage_diag_delete_progress(currentDeleteStep_))) {
             emit_ac3_stage_diag("erase_loop_refine_query_ms",
                                 ac3_refine_loop_ns / 1000000LL,
                                 ac3_queryscan_loop_ns / 1000000LL);
@@ -15196,13 +16161,15 @@ public:
                                 ac3_reuse_loop_ns / 1000000LL,
                                 (long long)touchedInfos.size());
         }
-        if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || (x % 2048) == 0)) {
+        if (ac3_stage_diag_enabled() &&
+            (x == 1 || x == 2 || should_emit_ac3_stage_diag_delete_progress(currentDeleteStep_))) {
             emit_ac3_stage_diag("erase_before_rebuild", x, (long long)rebuildKeys.size());
         }
         for (auto [owner, cid] : rebuildKeys) {
             rebuildSupport(owner, cid, &deleteArtifact, artifactStamp);
         }
-        if (ac3_stage_diag_enabled() && (x == 1 || x == 2 || (x % 2048) == 0)) {
+        if (ac3_stage_diag_enabled() &&
+            (x == 1 || x == 2 || should_emit_ac3_stage_diag_delete_progress(currentDeleteStep_))) {
             emit_ac3_stage_diag("erase_after_rebuild", x, (long long)rebuildKeys.size());
         }
 
@@ -15550,6 +16517,15 @@ public:
     vector<int> indeg, bad, parent;
     vector<char> alive;
     vector<int> compParent;
+    vector<int> readyDirectLevel;
+    vector<int> ownerBranchMass;
+
+    bool ownerPriorityLess(int lhs, int rhs) const {
+        if (readyDirectLevel[lhs] != readyDirectLevel[rhs]) return readyDirectLevel[lhs] < readyDirectLevel[rhs];
+        if (ownerBranchMass[lhs] != ownerBranchMass[rhs]) return ownerBranchMass[lhs] < ownerBranchMass[rhs];
+        if ((int)ownedDirect[lhs].size() != (int)ownedDirect[rhs].size()) return (int)ownedDirect[lhs].size() < (int)ownedDirect[rhs].size();
+        return lhs < rhs;
+    }
 
     void preprocess(int N, const vector<RawQuery>& queries) {
         n = N; raw = queries;
@@ -15568,11 +16544,32 @@ public:
         for (int i=0;i<(int)rawBranch.size();) {
             int j=i+1; while (j<(int)rawBranch.size() && rawBranch[j]==rawBranch[i]) ++j;
             auto [owner,a,b]=rawBranch[i];
-            branchQueries.push_back({owner,a,b,j-i});
+            branchQueries.push_back({owner,a,b,j-i,0,0,0});
             i=j;
         }
         ownedDirect.assign(n+1,{}); indeg.assign(n+1,0); bad.assign(n+1,0); parent.assign(n+1,-1); alive.assign(n+1,1); compParent.clear();
         for (auto [owner,to] : directPairs) { ownedDirect[owner].push_back(to); indeg[to]++; }
+        readyDirectLevel.assign(n+1, 0);
+        ownerBranchMass.assign(n+1, 0);
+        for (const auto& q : branchQueries) ownerBranchMass[q.owner] += q.multiplicity;
+        vector<int> indegWork = indeg;
+        queue<int> topo;
+        for (int v = 1; v <= n; ++v) {
+            if (indegWork[v] == 0) topo.push(v);
+        }
+        while (!topo.empty()) {
+            int u = topo.front();
+            topo.pop();
+            for (int to : ownedDirect[u]) {
+                readyDirectLevel[to] = max(readyDirectLevel[to], readyDirectLevel[u] + 1);
+                if (--indegWork[to] == 0) topo.push(to);
+            }
+        }
+        for (auto& q : branchQueries) {
+            q.ownerLevel = readyDirectLevel[q.owner];
+            q.ownerMass = ownerBranchMass[q.owner];
+            q.ownerOutdeg = (int)ownedDirect[q.owner].size();
+        }
     }
     void ensureCompParent(int h) { if (h >= (int)compParent.size()) compParent.resize(h+1,-1); }
     vector<int> solveWithOracle(NBOracle& oracle) {
@@ -15584,8 +16581,17 @@ public:
 #endif
         for (int qid=0; qid<(int)branchQueries.size(); ++qid)
             if (oracle.isFailing(qid)) bad[branchQueries[qid].owner] += branchQueries[qid].multiplicity;
-        auto tryPush = [&](int v, queue<int>& qu){ if (1<=v && v<=n && alive[v] && indeg[v]==0 && bad[v]==0) qu.push(v); };
-        queue<int> qu;
+        using ReadyKey = array<int,4>;
+        auto tryPush = [&](int v, priority_queue<ReadyKey, vector<ReadyKey>, greater<ReadyKey>>& qu){
+            if (1<=v && v<=n && alive[v] && indeg[v]==0 && bad[v]==0) {
+                // Keep the ready queue anchored to structural progress rather than
+                // raw label order. Within the same direct-ready level, process the
+                // heavier owners first so shuffled-label cases do not drift into a
+                // light-first schedule that inflates watch churn and reuse state.
+                qu.push({readyDirectLevel[v], -ownerBranchMass[v], -(int)ownedDirect[v].size(), v});
+            }
+        };
+        priority_queue<ReadyKey, vector<ReadyKey>, greater<ReadyKey>> qu;
         parent[1]=0; alive[1]=0;
         for (int to : ownedDirect[1]) indeg[to]--;
         vector<int> newComponents; vector<WitnessChange> changes;
@@ -15600,7 +16606,8 @@ public:
         }
         int ac3_logged_deletes = 0;
         while (!qu.empty()) {
-            int v = qu.front(); qu.pop();
+            int v = qu.top()[3];
+            qu.pop();
             if (!alive[v] || indeg[v]!=0 || bad[v]!=0) continue;
             int c = oracle.comp(v); if (c<0) continue;
             ensureCompParent(c); parent[v] = compParent[c]; alive[v]=0;
@@ -15624,7 +16631,6 @@ public:
     }
 };
 
-#ifdef LOCAL
 static int lca_naive(int u, int v, const vector<int>& parent) {
     int n = (int)parent.size() - 1;
     vector<int> depth(n + 1, -1);
@@ -15655,6 +16661,87 @@ static bool verify_solution(int n,const vector<int>& parent,const vector<RawQuer
     for(const auto& q:queries) if(lca_naive(q.u,q.v,parent)!=q.w) return false;
     return true;
 }
+struct CanonicalRelabeling {
+    vector<int> canonByOrig;
+    vector<int> origByCanon;
+    vector<RawQuery> canonicalQueries;
+};
+static CanonicalRelabeling build_canonical_relabeling(int n, const vector<RawQuery>& queries){
+    CanonicalRelabeling relabel;
+    relabel.canonByOrig.assign(n + 1, 0);
+    relabel.origByCanon.assign(n + 1, 0);
+    if (n <= 0) return relabel;
+    vector<pair<int,int>> rawDirect;
+    vector<tuple<int,int,int>> rawBranch;
+    rawDirect.reserve(2 * queries.size());
+    rawBranch.reserve(queries.size());
+    vector<int> outDeg(n + 1, 0), ownerBranchMass(n + 1, 0), endpointBranchMass(n + 1, 0);
+    for (const auto& q : queries) {
+        if (q.u != q.w) rawDirect.push_back({q.w, q.u});
+        if (q.v != q.w) rawDirect.push_back({q.w, q.v});
+        if (q.u != q.w && q.v != q.w) {
+            int a = min(q.u, q.v), b = max(q.u, q.v);
+            rawBranch.push_back({q.w, a, b});
+            endpointBranchMass[a]++;
+            endpointBranchMass[b]++;
+        }
+    }
+    sort(rawDirect.begin(), rawDirect.end());
+    rawDirect.erase(unique(rawDirect.begin(), rawDirect.end()), rawDirect.end());
+    sort(rawBranch.begin(), rawBranch.end());
+    vector<vector<int>> ownedDirect(n + 1);
+    vector<int> indeg(n + 1, 0), directLevel(n + 1, 0);
+    for (auto [owner, to] : rawDirect) {
+        ownedDirect[owner].push_back(to);
+        outDeg[owner]++;
+        indeg[to]++;
+    }
+    for (int i = 0; i < (int)rawBranch.size();) {
+        int j = i + 1;
+        while (j < (int)rawBranch.size() && rawBranch[j] == rawBranch[i]) ++j;
+        auto [owner, a, b] = rawBranch[i];
+        ownerBranchMass[owner] += j - i;
+        i = j;
+    }
+    queue<int> topo;
+    for (int v = 1; v <= n; ++v) if (indeg[v] == 0) topo.push(v);
+    while (!topo.empty()) {
+        int u = topo.front();
+        topo.pop();
+        for (int to : ownedDirect[u]) {
+            directLevel[to] = max(directLevel[to], directLevel[u] + 1);
+            if (--indeg[to] == 0) topo.push(to);
+        }
+    }
+    vector<int> verts;
+    verts.reserve(max(0, n - 1));
+    for (int v = 2; v <= n; ++v) verts.push_back(v);
+    sort(verts.begin(), verts.end(), [&](int a, int b) {
+        if (directLevel[a] != directLevel[b]) return directLevel[a] < directLevel[b];
+        if (ownerBranchMass[a] != ownerBranchMass[b]) return ownerBranchMass[a] > ownerBranchMass[b];
+        if (outDeg[a] != outDeg[b]) return outDeg[a] > outDeg[b];
+        if (endpointBranchMass[a] != endpointBranchMass[b]) return endpointBranchMass[a] > endpointBranchMass[b];
+        return a < b;
+    });
+    relabel.canonByOrig[1] = 1;
+    relabel.origByCanon[1] = 1;
+    for (int i = 0; i < (int)verts.size(); ++i) {
+        int orig = verts[i];
+        int canon = i + 2;
+        relabel.canonByOrig[orig] = canon;
+        relabel.origByCanon[canon] = orig;
+    }
+    relabel.canonicalQueries.reserve(queries.size());
+    for (const auto& q : queries) {
+        relabel.canonicalQueries.push_back({
+            relabel.canonByOrig[q.u],
+            relabel.canonByOrig[q.v],
+            relabel.canonByOrig[q.w],
+        });
+    }
+    return relabel;
+}
+#ifdef LOCAL
 static vector<RawQuery> random_queries_from_tree(mt19937& rng,int n,const vector<int>& parent){
     vector<int> depth(n+1,0); for(int i=2;i<=n;++i) depth[i]=depth[parent[i]]+1;
     auto lca=[&](int u,int v){ int a=u,b=v; while(depth[a]>depth[b]) a=parent[a]; while(depth[b]>depth[a]) b=parent[b]; while(a!=b){a=parent[a]; b=parent[b];} return a; };
@@ -15669,9 +16756,16 @@ static void self_test(){
             vector<int> parent(n+1,0);
             for(int v=2;v<=n;++v){ uniform_int_distribution<int> pick(1,v-1); parent[v]=pick(rng); }
             auto queries=random_queries_from_tree(rng,n,parent);
-            OuterSolver solver; solver.preprocess(n,queries);
+            auto relabel = build_canonical_relabeling(n, queries);
+            OuterSolver solver; solver.preprocess(n, relabel.canonicalQueries);
             LiteraturePotentialOracle oracle;
-            auto out=solver.solveWithOracle(oracle);
+            auto outCanon = solver.solveWithOracle(oracle);
+            vector<int> out(n + 1, 0);
+            for (int orig = 1; orig <= n; ++orig) {
+                int canon = relabel.canonByOrig[orig];
+                int parentCanonV = outCanon[canon];
+                out[orig] = (parentCanonV <= 0 ? 0 : relabel.origByCanon[parentCanonV]);
+            }
             if(!verify_solution(n,out,queries)){
                 cerr<<"LITERATURE PROGRESS SELF TEST FAILED\n";
                 cerr<<"n="<<n<<"\n";
@@ -15943,6 +17037,8 @@ static void self_test(){
 }
 #endif
 
+static vector<int> solve_queries_with_canonical_relabel(int n, const vector<RawQuery>& queries);
+
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -15959,9 +17055,16 @@ int main(){
 #ifdef LOCAL
     progress_case_start(N, M);
 #endif
-    OuterSolver solver; solver.preprocess(N,queries);
+    auto relabel = build_canonical_relabeling(N, queries);
+    OuterSolver solver; solver.preprocess(N, relabel.canonicalQueries);
     LiteraturePotentialOracle oracle;
-    auto parent = solver.solveWithOracle(oracle);
+    auto parentCanon = solver.solveWithOracle(oracle);
+    vector<int> parent(N + 1, 0);
+    for (int orig = 1; orig <= N; ++orig) {
+        int canon = relabel.canonByOrig[orig];
+        int parentCanonV = parentCanon[canon];
+        parent[orig] = (parentCanonV <= 0 ? 0 : relabel.origByCanon[parentCanonV]);
+    }
 #ifdef LOCAL
     emit_progress_checkpoint("summary", g_batch_dbg.debug_profile_total_deletions, -1, -1);
 #endif
@@ -16002,6 +17105,9 @@ int main(){
          << " strict_child_rebuild_used=" << g_strict_child_dbg.strict_child_rebuild_used
          << " strict_child_global_fallback_used=" << g_strict_child_dbg.strict_child_global_fallback_used
          << " cert_untouched_fast_keep=" << g_strict_child_dbg.cert_untouched_fast_keep
+         << " topo_path_component_reorders=" << g_strict_child_dbg.topo_path_component_reorders
+         << " topo_path_component_reorder_vertices=" << g_strict_child_dbg.topo_path_component_reorder_vertices
+         << " topo_path_fastpath_hits=" << g_strict_child_dbg.topo_path_fastpath_hits
          << "\n";
     cerr << "buildExactRestricted_calls=" << g_strict_child_dbg.build_exact_restricted_calls
          << " buildExactRestricted_V=" << g_strict_child_dbg.build_exact_restricted_vertices

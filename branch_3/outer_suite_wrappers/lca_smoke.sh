@@ -22,11 +22,25 @@ if [[ "${!LCA_SMOKE_CLEAN_ENV_FLAG:-0}" != "1" ]]; then
     /usr/bin/env -i
     "HOME=${HOME:-}"
     "PATH=$LCA_SMOKE_CLEAN_PATH"
-    "TERM=${TERM:-dumb}"
+    "TERM=dumb"
+    "LC_ALL=C"
+    "LANG=C"
+    "TZ=UTC"
+    "TMPDIR=/tmp"
+    "TMP=/tmp"
+    "TEMP=/tmp"
+    "PYTHONDONTWRITEBYTECODE=1"
+    "PYTHONIOENCODING=UTF-8"
+    "PYTHONUTF8=1"
+    "PYTHONNOUSERSITE=1"
+    "PYTHONHASHSEED=0"
     "$LCA_SMOKE_CLEAN_ENV_FLAG=1"
   )
   if [[ -n "${LCA_SMOKE_EXPORT_SNAPSHOT_ROOT:-}" ]]; then
     clean_env_args+=("LCA_SMOKE_EXPORT_SNAPSHOT_ROOT=$LCA_SMOKE_EXPORT_SNAPSHOT_ROOT")
+  fi
+  if [[ -n "${LCA_SMOKE_DEBUG_MANIFEST:-}" ]]; then
+    clean_env_args+=("LCA_SMOKE_DEBUG_MANIFEST=$LCA_SMOKE_DEBUG_MANIFEST")
   fi
   exec "${clean_env_args[@]}" /usr/bin/env bash "$SELF_PATH" "$@"
 fi
@@ -35,24 +49,40 @@ SCRIPT_DIR="$SELF_DIR"
 BRANCH_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 cd "$BRANCH_ROOT"
 SUITE_ROOT="$(cd "$BRANCH_ROOT/.." && pwd -P)"
+RESUME_WORKSPACE_DIR="$BRANCH_ROOT/boj28350_resume"
 BRANCH_ARTIFACTS_ROOT="$BRANCH_ROOT/artifacts"
 export PYTHONDONTWRITEBYTECODE=1
 SOURCE="$BRANCH_ROOT/boj28350_resume/boj28350_branch_3_solver.cpp"
 ARTIFACT_RESOLVER="$BRANCH_ROOT/artifact_paths.py"
 BUILD_WRAPPER="$BRANCH_ROOT/build.sh"
+BUILD_HELPER="$BRANCH_ROOT/build.py"
 RELEASE_ENV="$BRANCH_ROOT/solver_release_env.sh"
 RUN_CASE_HELPER="$BRANCH_ROOT/branch_run_case.py"
 CHECKER_HELPER="$BRANCH_ROOT/branch_validator.py"
+CHECKER_HELPER_LOCAL="$BRANCH_ROOT/branch_validator_local.py"
+RESUME_HELPER="$BRANCH_ROOT/boj28350_resume.py"
 SMOKE_TARGET_WRAPPER="$BRANCH_ROOT/lca_smoke_target.sh"
 RUN_CASE_RESULT_NAME="run_case_result.json"
-SMOKE_CASES_SOURCE="$BRANCH_ROOT/boj28350_resume/smoke_cases.tsv"
+SMOKE_CASES_SOURCE_DEFAULT="$BRANCH_ROOT/boj28350_resume/smoke_cases.tsv"
+SMOKE_CASES_SOURCE="${LCA_SMOKE_DEBUG_MANIFEST:-$SMOKE_CASES_SOURCE_DEFAULT}"
+SMOKE_MANIFEST_INPUT_POLICY="branch_local_smoke_manifest"
+if [[ -n "${LCA_SMOKE_DEBUG_MANIFEST:-}" ]]; then
+  SMOKE_MANIFEST_INPUT_POLICY="debug_manifest_override"
+fi
+if [[ -f "$CHECKER_HELPER_LOCAL" && -r "$CHECKER_HELPER_LOCAL" ]]; then
+  CHECKER_HELPER="$CHECKER_HELPER_LOCAL"
+fi
 ARTIFACTS_ROOT="$BRANCH_ARTIFACTS_ROOT/lca_tree_stress_v5"
 TMP_PARENT="$ARTIFACTS_ROOT/.tmp"
 RUN_STAGE_ROOT="$TMP_PARENT"
+LAUNCHER_TMPDIR_PROTECTED="$TMP_PARENT/lca_smoke.launcher.tmp"
 FAILURE_ROOT="$ARTIFACTS_ROOT/smoke_latest_failure"
 SETUP_ROOT="$ARTIFACTS_ROOT/smoke_setup"
 BUILD_ROOT="$SETUP_ROOT/build"
 BINARY="$BUILD_ROOT/solve"
+BRANCH_BUILD_CACHE_ROOT="$BRANCH_ARTIFACTS_ROOT/boj28350_resume/build"
+BRANCH_BUILD_CACHE_BINARY="$BRANCH_BUILD_CACHE_ROOT/solve"
+BRANCH_BUILD_CACHE_METADATA="${BRANCH_BUILD_CACHE_BINARY}.build_meta.json"
 BUILD_OUTPUT_TMP_GLOB=".${BINARY##*/}.*.tmp"
 SOLVER="$BINARY"
 SMOKE_CASES_SNAPSHOT="$SETUP_ROOT/smoke_cases.snapshot.tsv"
@@ -94,15 +124,19 @@ SMOKE_EXIT_SOLVER_TIMEOUT=124
 SMOKE_EXIT_SOLVER_RUNTIME_FAILURE=125
 SMOKE_EXIT_HARNESS_FAILURE=70
 SMOKE_BOUNDED_COMMAND_TIMEOUT_RC=246
-SMOKE_CASE_RETRY_LIMIT=0
-SMOKE_RETRY_SLEEP_S="0"
-SMOKE_BUILD_TIMEOUT_S="180"
+SMOKE_BUILD_RETRY_LIMIT=1
+SMOKE_BUILD_RETRY_SLEEP_S="0.05"
+SMOKE_CASE_RETRY_LIMIT=1
+SMOKE_RETRY_SLEEP_S="0.05"
+SMOKE_BUILD_TIMEOUT_S="300"
 SMOKE_CASE_WALLCLOCK_GRACE_S="5"
 SMOKE_ITERATION_POLICY="manifest_row_order"
 SMOKE_SEED_POLICY="manifest_seed"
 SMOKE_TIMEOUT_POLICY="manifest_fixed"
-SMOKE_RETRY_POLICY="single_attempt_fixed"
+SMOKE_RETRY_POLICY="harness_transient_only"
+SMOKE_BUILD_RETRY_POLICY="timeout_or_unexpected_exit_once"
 SMOKE_WRAPPER_TIMEOUT_POLICY="build_fixed_case_plus_grace"
+SMOKE_MANIFEST_SHA256=""
 SMOKE_PLAN_COUNT=0
 SMOKE_PLAN_STAGE=()
 SMOKE_PLAN_MODE=()
@@ -149,6 +183,8 @@ CURRENT_FAILURE_SIGNAL=""
 LAST_BOUNDED_COMMAND_TIMED_OUT=0
 LAST_BOUNDED_COMMAND_LABEL=""
 LAST_BOUNDED_COMMAND_LIMIT=""
+SHARED_SUCCESS_STATE_CLEANED=0
+SMOKE_CLEANUP_ACTIVE=0
 
 sanitize_shell_state() {
   unset CDPATH BASH_ENV ENV GLOBIGNORE
@@ -172,6 +208,20 @@ usage() {
 require_command() {
   if ! command -v "$1" >/dev/null 2>&1; then
     fail "missing required tool: $1"
+  fi
+}
+
+require_directory() {
+  local path="$1"
+  local label="$2"
+  if [[ ! -e "$path" ]]; then
+    fail "missing ${label}: $path"
+  fi
+  if [[ ! -d "$path" ]]; then
+    fail "${label} is not a directory: $path"
+  fi
+  if [[ ! -r "$path" ]]; then
+    fail "${label} is not readable: $path"
   fi
 }
 
@@ -204,6 +254,73 @@ require_executable() {
   if [[ ! -x "$path" ]]; then
     fail "missing executable ${label}: $path"
   fi
+}
+
+require_python_entrypoint() {
+  local path="$1"
+  local label="$2"
+  if ! python3 - "$path" <<'PY' >/dev/null 2>&1
+from __future__ import annotations
+
+import runpy
+import sys
+
+runpy.run_path(sys.argv[1], run_name="__lca_smoke_preflight__")
+PY
+  then
+    fail "broken ${label}: $path"
+  fi
+}
+
+require_build_compiler() {
+  local candidate=""
+  for candidate in g++ clang++ c++; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+      return 0
+    fi
+  done
+  fail "missing required C++ compiler: expected one of g++, clang++, c++"
+}
+
+normalize_artifact_path() {
+  local raw="$1"
+  local label="$2"
+  local normalized=""
+
+  if ! normalized="$(
+    python3 - "$raw" "$BRANCH_ROOT" "$BRANCH_ARTIFACTS_ROOT" <<'PY' 2>/dev/null
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+raw = Path(sys.argv[1]).expanduser()
+branch_root = Path(sys.argv[2])
+artifacts_root = Path(sys.argv[3])
+
+if raw.is_absolute():
+    candidate = raw
+else:
+    parts = [part for part in raw.parts if part not in ("", ".")]
+    artifact_rooted = False
+    if len(parts) >= 2 and parts[0] == branch_root.name and parts[1] == artifacts_root.name:
+        artifact_rooted = True
+        parts = parts[1:]
+    while parts and parts[0] == artifacts_root.name:
+        artifact_rooted = True
+        parts = parts[1:]
+    candidate = artifacts_root.joinpath(*parts) if artifact_rooted else branch_root.joinpath(*parts)
+
+print(candidate.resolve())
+PY
+  )"; then
+    fail "failed to normalize ${label} under branch-local artifacts: $raw"
+  fi
+  if [[ -z "$normalized" ]]; then
+    fail "artifact resolver returned an empty normalized ${label}: $raw"
+  fi
+  ensure_under_branch_artifacts "$normalized"
+  printf '%s\n' "$normalized"
 }
 
 parse_nonnegative_integer_setting() {
@@ -331,19 +448,45 @@ configure_deterministic_smoke_controls() {
       "${LCA_SMOKE_RETRY_SLEEP_S:-$SMOKE_RETRY_SLEEP_S}" \
       "LCA_SMOKE_RETRY_SLEEP_S"
   )"
-  if (( SMOKE_CASE_RETRY_LIMIT != 0 )); then
-    fail "LCA_SMOKE_CASE_RETRY_LIMIT must stay fixed at 0 for deterministic smoke control flow"
+  SMOKE_BUILD_RETRY_LIMIT="$(
+    parse_nonnegative_integer_setting \
+      "${LCA_SMOKE_BUILD_RETRY_LIMIT:-$SMOKE_BUILD_RETRY_LIMIT}" \
+      "LCA_SMOKE_BUILD_RETRY_LIMIT"
+  )"
+  SMOKE_BUILD_RETRY_SLEEP_S="$(
+    parse_nonnegative_decimal_setting \
+      "${LCA_SMOKE_BUILD_RETRY_SLEEP_S:-$SMOKE_BUILD_RETRY_SLEEP_S}" \
+      "LCA_SMOKE_BUILD_RETRY_SLEEP_S"
+  )"
+  SMOKE_BUILD_TIMEOUT_S="$(
+    parse_nonnegative_decimal_setting \
+      "${LCA_SMOKE_BUILD_TIMEOUT_S:-$SMOKE_BUILD_TIMEOUT_S}" \
+      "LCA_SMOKE_BUILD_TIMEOUT_S"
+  )"
+  if (( SMOKE_CASE_RETRY_LIMIT != 1 )); then
+    fail "LCA_SMOKE_CASE_RETRY_LIMIT must stay fixed at 1 for deterministic smoke control flow"
   fi
   case "$SMOKE_RETRY_SLEEP_S" in
-    0|0.0|0.00|0.000)
+    0.05|0.050|0.0500|0.05000)
       ;;
     *)
-      fail "LCA_SMOKE_RETRY_SLEEP_S must stay fixed at 0 for deterministic smoke control flow"
+      fail "LCA_SMOKE_RETRY_SLEEP_S must stay fixed at 0.05 for deterministic smoke control flow"
+      ;;
+  esac
+  if (( SMOKE_BUILD_RETRY_LIMIT != 1 )); then
+    fail "LCA_SMOKE_BUILD_RETRY_LIMIT must stay fixed at 1 for deterministic smoke control flow"
+  fi
+  case "$SMOKE_BUILD_RETRY_SLEEP_S" in
+    0.05|0.050|0.0500|0.05000)
+      ;;
+    *)
+      fail "LCA_SMOKE_BUILD_RETRY_SLEEP_S must stay fixed at 0.05 for deterministic smoke control flow"
       ;;
   esac
   validate_positive_timeout_setting "$SMOKE_BUILD_TIMEOUT_S" "SMOKE_BUILD_TIMEOUT_S"
   validate_positive_timeout_setting "$SMOKE_CASE_WALLCLOCK_GRACE_S" "SMOKE_CASE_WALLCLOCK_GRACE_S"
-  SMOKE_RETRY_POLICY="single_attempt_fixed"
+  SMOKE_RETRY_POLICY="harness_transient_only"
+  SMOKE_BUILD_RETRY_POLICY="timeout_or_unexpected_exit_once"
 }
 
 reset_smoke_plan() {
@@ -469,16 +612,30 @@ load_smoke_plan() {
 
 write_smoke_suite_metadata() {
   local index=0
+
+  if [[ -z "${WORKDIR:-}" ]]; then
+    fail "smoke staging directory is unset before writing suite metadata"
+  fi
+  mkdir -p "$WORKDIR"
+  if [[ ! -d "$WORKDIR" ]]; then
+    fail "smoke staging directory disappeared before writing suite metadata: $WORKDIR"
+  fi
+
   {
     echo "manifest_source_path=$SMOKE_CASES_SOURCE"
     echo "manifest_active_path=$SMOKE_CASES_ACTIVE"
+    echo "manifest_input_policy=$SMOKE_MANIFEST_INPUT_POLICY"
     echo "case_count=$SMOKE_PLAN_COUNT"
     echo "iteration_policy=$SMOKE_ITERATION_POLICY"
     echo "seed_policy=$SMOKE_SEED_POLICY"
     echo "timeout_policy=$SMOKE_TIMEOUT_POLICY"
+    echo "manifest_sha256=$SMOKE_MANIFEST_SHA256"
     echo "retry_policy=$SMOKE_RETRY_POLICY"
+    echo "build_retry_policy=$SMOKE_BUILD_RETRY_POLICY"
     echo "wrapper_timeout_policy=$SMOKE_WRAPPER_TIMEOUT_POLICY"
     echo "build_timeout_s=$SMOKE_BUILD_TIMEOUT_S"
+    echo "build_retry_limit=$SMOKE_BUILD_RETRY_LIMIT"
+    echo "build_retry_sleep_s=$SMOKE_BUILD_RETRY_SLEEP_S"
     echo "case_wallclock_grace_s=$SMOKE_CASE_WALLCLOCK_GRACE_S"
     echo "case_retry_limit=$SMOKE_CASE_RETRY_LIMIT"
     echo "retry_sleep_s=$SMOKE_RETRY_SLEEP_S"
@@ -532,10 +689,16 @@ write_environment_validation_bundle() {
     echo "setup_root=$SETUP_ROOT"
     echo "setup_tmpdir=$SETUP_TMPDIR"
     echo "tmp_parent=$TMP_PARENT"
+    echo "protected_launcher_tmpdir=$LAUNCHER_TMPDIR_PROTECTED"
     echo "runtime_stage_root=$RUN_STAGE_ROOT"
     echo "runtime_tmpdir_policy=mktemp_under:${RUN_STAGE_ROOT}/${RUN_TMP_TEMPLATE}"
     echo "session_state_root=$SESSION_STATE_ROOT"
+    echo "branch_artifact_tmp_root=${BRANCH_ARTIFACT_TMP_ROOT:-}"
+    echo "tmpdir=${TMPDIR:-}"
+    echo "tmp=${TMP:-}"
+    echo "temp=${TEMP:-}"
     echo "home=$HOME"
+    echo "term=${TERM:-}"
     echo "xdg_config_home=$XDG_CONFIG_HOME"
     echo "xdg_cache_home=$XDG_CACHE_HOME"
     echo "xdg_state_home=$XDG_STATE_HOME"
@@ -555,35 +718,49 @@ write_environment_validation_bundle() {
     echo "build_command_snapshot=environment_validation/build.command.txt"
     echo "smoke_manifest_source=$SMOKE_CASES_SOURCE"
     echo "smoke_manifest_active=$SMOKE_CASES_ACTIVE"
+    echo "smoke_manifest_input_policy=$SMOKE_MANIFEST_INPUT_POLICY"
     echo "smoke_manifest_snapshot=environment_validation/smoke_cases.snapshot.tsv"
+    echo "smoke_manifest_sha256=$SMOKE_MANIFEST_SHA256"
   } > "$report_path"
 }
 
 prepare_retry_log() {
-  SMOKE_RETRY_LOG="$RUN_TMPDIR/lca_smoke_retry_log.tsv"
-  printf 'case_index\tcase_tag\tattempt\texit_code\thelpper_exit_code\tfailure_kind\tfailure_origin\tretryable\ttimeout_s\tsummary\n' > "$SMOKE_RETRY_LOG"
+  SMOKE_RETRY_LOG="$SETUP_ROOT/retry_log.tsv"
+  printf 'case_index\tcase_tag\tattempt\tstage\tmode\tn\tseed\tshuffle_labels\tshuffle_queries\ttimeout_s\thelper_timeout_bound_s\tmanifest_sha256\texit_code\thelpper_exit_code\tfailure_kind\tfailure_origin\tretryable\tsummary\n' > "$SMOKE_RETRY_LOG"
 }
 
 record_retry_attempt() {
+  local retry_parent=""
   if [[ -z "$SMOKE_RETRY_LOG" ]]; then
     return
   fi
+  retry_parent="$(dirname "$SMOKE_RETRY_LOG")"
+  mkdir -p "$retry_parent"
   printf \
-    '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
     "$CURRENT_CASE_INDEX" \
     "$CURRENT_CASE_TAG" \
     "$CURRENT_CASE_ATTEMPT" \
+    "$CURRENT_CASE_STAGE" \
+    "$CURRENT_CASE_MODE" \
+    "$CURRENT_CASE_N" \
+    "$CURRENT_CASE_SEED" \
+    "$CURRENT_CASE_SHUFFLE_LABELS" \
+    "$CURRENT_CASE_SHUFFLE_QUERIES" \
+    "$CURRENT_CASE_TIMEOUT" \
+    "$CURRENT_CASE_HELPER_TIMEOUT_BOUND" \
+    "$SMOKE_MANIFEST_SHA256" \
     "$CURRENT_FAILURE_RC" \
     "$CURRENT_FAILURE_HELPER_RC" \
     "$CURRENT_FAILURE_KIND" \
     "$CURRENT_FAILURE_ORIGIN" \
     "$CURRENT_FAILURE_RETRYABLE" \
-    "$CURRENT_CASE_TIMEOUT" \
     "$CURRENT_FAILURE_SUMMARY" \
     >> "$SMOKE_RETRY_LOG"
 }
 
 copy_retry_log_to_failure_root() {
+  mkdir -p "$FAILURE_ROOT"
   if [[ -n "$SMOKE_RETRY_LOG" && -f "$SMOKE_RETRY_LOG" ]]; then
     cp "$SMOKE_RETRY_LOG" "$FAILURE_ROOT/retry_log.tsv"
   fi
@@ -671,6 +848,11 @@ ensure_under_branch_artifacts() {
       fail "path escaped branch-local artifacts root: $path"
       ;;
   esac
+}
+
+is_protected_tmp_cleanup_path() {
+  local path="$1"
+  [[ -n "${LAUNCHER_TMPDIR_PROTECTED:-}" && "$path" == "$LAUNCHER_TMPDIR_PROTECTED" ]]
 }
 
 enter_function_errexit() {
@@ -768,29 +950,155 @@ PY
   return "$rc"
 }
 
+sleep_for_retry_interval() {
+  local interval_s="$1"
+
+  case "$interval_s" in
+    0|0.0|0.00|0.000)
+      return 0
+      ;;
+  esac
+  sleep "$interval_s"
+}
+
+run_build_command_with_retry() {
+  local build_context="$1"
+  local success_path="$2"
+  local success_label="$3"
+  shift 3
+
+  local attempt_index=0
+  local max_attempts=$(( SMOKE_BUILD_RETRY_LIMIT + 1 ))
+  local build_rc=0
+  local summary_phase="build"
+  local summary_message=""
+
+  for (( attempt_index = 1; attempt_index <= max_attempts; ++attempt_index )); do
+    : > "$SETUP_BUILD_STDOUT"
+    : > "$SETUP_BUILD_STDERR"
+    set +e
+    run_bounded_command "$SMOKE_BUILD_TIMEOUT_S" "$SETUP_BUILD_STDOUT" "$SETUP_BUILD_STDERR" build "$@"
+    build_rc=$?
+    set -e
+    if (( build_rc == 0 )); then
+      if [[ -f "$success_path" && -r "$success_path" && -x "$success_path" ]]; then
+        return 0
+      fi
+      summary_phase="build_missing_output"
+      summary_message="build wrapper returned success while ${build_context} but did not leave an executable ${success_label} at ${success_path}"
+      echo "[lca_smoke] $summary_message" >&2
+      write_setup_failure_summary "$summary_phase" "$SMOKE_EXIT_HARNESS_FAILURE" "$summary_message"
+      report_setup_failure_context "$summary_phase" "$SMOKE_EXIT_HARNESS_FAILURE" "$summary_message"
+      return "$SMOKE_EXIT_HARNESS_FAILURE"
+    fi
+
+    if (( LAST_BOUNDED_COMMAND_TIMED_OUT != 0 )); then
+      summary_phase="build_timeout"
+      summary_message="${build_context} exceeded wall-clock timeout after ${SMOKE_BUILD_TIMEOUT_S}s before smoke cases started"
+      if (( attempt_index < max_attempts )); then
+        echo "[lca_smoke] retrying transient build timeout: attempt=$(( attempt_index + 1 ))/$max_attempts timeout_s=$SMOKE_BUILD_TIMEOUT_S context=$build_context" >&2
+        sleep_for_retry_interval "$SMOKE_BUILD_RETRY_SLEEP_S"
+        continue
+      fi
+      echo "[lca_smoke] $summary_message" >&2
+      write_setup_failure_summary "$summary_phase" "$SMOKE_EXIT_SOLVER_TIMEOUT" "$summary_message"
+      report_setup_failure_context "$summary_phase" "$SMOKE_EXIT_SOLVER_TIMEOUT" "$summary_message"
+      return "$SMOKE_EXIT_HARNESS_FAILURE"
+    fi
+
+    case "$build_rc" in
+      "$SMOKE_EXIT_SOLVER_FAILURE")
+        summary_phase="build"
+        summary_message="build wrapper failed while ${build_context}"
+        ;;
+      "$SMOKE_EXIT_USAGE")
+        summary_phase="build_usage_failure"
+        summary_message="build wrapper rejected the branch-local invocation while ${build_context}"
+        ;;
+      *)
+        summary_phase="build_harness_transient_failure"
+        summary_message="build wrapper exited unexpectedly with code $build_rc while ${build_context}"
+        if (( attempt_index < max_attempts )); then
+          echo "[lca_smoke] retrying transient build failure: attempt=$(( attempt_index + 1 ))/$max_attempts exit_code=$build_rc context=$build_context" >&2
+          sleep_for_retry_interval "$SMOKE_BUILD_RETRY_SLEEP_S"
+          continue
+        fi
+        ;;
+    esac
+
+    echo "[lca_smoke] $summary_message" >&2
+    write_setup_failure_summary "$summary_phase" "$build_rc" "$summary_message"
+    report_setup_failure_context "$summary_phase" "$build_rc" "$summary_message"
+    return "$SMOKE_EXIT_HARNESS_FAILURE"
+  done
+
+  fail "build retry loop exhausted without classifying the final failure"
+}
+
 clear_stale_build_output_temps() {
+  local build_root=""
   local stale=""
-  ensure_under_branch_artifacts "$BUILD_ROOT"
-  if [[ -d "$BUILD_ROOT" ]]; then
-    shopt -s nullglob
-    for stale in "$BUILD_ROOT"/$BUILD_OUTPUT_TMP_GLOB; do
-      remove_path_retry "$stale" || return 1
-    done
-    shopt -u nullglob
-  fi
+  for build_root in "$BUILD_ROOT" "$BRANCH_BUILD_CACHE_ROOT"; do
+    ensure_under_branch_artifacts "$build_root"
+    if [[ -d "$build_root" ]]; then
+      shopt -s nullglob
+      for stale in "$build_root"/$BUILD_OUTPUT_TMP_GLOB; do
+        remove_path_retry "$stale" || return 1
+      done
+      shopt -u nullglob
+    fi
+  done
 }
 
 resolve_output_roots() {
-  OUTROOT="$(python3 "$ARTIFACT_RESOLVER" lca_smoke)"
-  if [[ -z "$OUTROOT" ]]; then
+  local resolved_outroot=""
+
+  if ! resolved_outroot="$(python3 "$ARTIFACT_RESOLVER" lca_smoke)"; then
+    fail "artifact resolver failed to resolve smoke output path"
+  fi
+  if [[ -z "$resolved_outroot" ]]; then
     fail "artifact resolver returned an empty smoke output path"
   fi
-  OUTPARENT="$(dirname "$OUTROOT")"
-  BACKUP_ROOT="${OUTROOT}.previous"
+
+  OUTROOT="$(normalize_artifact_path "$resolved_outroot" "smoke output root")"
+  OUTPARENT="$(normalize_artifact_path "$(dirname "$OUTROOT")" "smoke output parent")"
+  BACKUP_ROOT="$(normalize_artifact_path "${OUTROOT}.previous" "smoke backup root")"
+  TMP_PARENT="$(normalize_artifact_path "$ARTIFACTS_ROOT/.tmp" "smoke tmp parent")"
+  RUN_STAGE_ROOT="$TMP_PARENT"
+  LAUNCHER_TMPDIR_PROTECTED="$(normalize_artifact_path "$TMP_PARENT/lca_smoke.launcher.tmp" "protected launcher tmpdir")"
+  FAILURE_ROOT="$(normalize_artifact_path "$ARTIFACTS_ROOT/smoke_latest_failure" "smoke failure root")"
+  SETUP_ROOT="$(normalize_artifact_path "$ARTIFACTS_ROOT/smoke_setup" "smoke setup root")"
+  BUILD_ROOT="$(normalize_artifact_path "$SETUP_ROOT/build" "smoke build root")"
+  BINARY="$(normalize_artifact_path "$BUILD_ROOT/solve" "smoke build binary")"
+  BRANCH_BUILD_CACHE_ROOT="$(normalize_artifact_path "$BRANCH_ARTIFACTS_ROOT/boj28350_resume/build" "branch build cache root")"
+  BRANCH_BUILD_CACHE_BINARY="$(normalize_artifact_path "$BRANCH_BUILD_CACHE_ROOT/solve" "branch build cache binary")"
+  BRANCH_BUILD_CACHE_METADATA="$(normalize_artifact_path "${BRANCH_BUILD_CACHE_BINARY}.build_meta.json" "branch build cache metadata")"
+  SMOKE_CASES_SNAPSHOT="$(normalize_artifact_path "$SETUP_ROOT/smoke_cases.snapshot.tsv" "smoke manifest snapshot")"
+  SETUP_TMPDIR="$(normalize_artifact_path "$TMP_PARENT/lca_smoke.setup.tmp" "smoke setup tmpdir")"
+  SETUP_MANIFEST="$(normalize_artifact_path "$SETUP_ROOT/preflight_manifest.tsv" "smoke setup manifest")"
+  SETUP_ENV_SNAPSHOT="$(normalize_artifact_path "$SETUP_ROOT/setup_env.txt" "smoke setup env snapshot")"
+  SETUP_BUILD_STDOUT="$(normalize_artifact_path "$SETUP_ROOT/build.stdout.txt" "smoke build stdout")"
+  SETUP_BUILD_STDERR="$(normalize_artifact_path "$SETUP_ROOT/build.stderr.txt" "smoke build stderr")"
+  SETUP_BUILD_COMMAND="$(normalize_artifact_path "$SETUP_ROOT/build.command.txt" "smoke build command")"
+  SESSION_STATE_ROOT="$(normalize_artifact_path "$TMP_PARENT/lca_smoke.session" "smoke session state root")"
+  SESSION_HOME="$(normalize_artifact_path "$SESSION_STATE_ROOT/home" "smoke session home")"
+  SESSION_XDG_CONFIG_HOME="$(normalize_artifact_path "$SESSION_STATE_ROOT/xdg_config" "smoke session xdg config root")"
+  SESSION_XDG_CACHE_HOME="$(normalize_artifact_path "$SESSION_STATE_ROOT/xdg_cache" "smoke session xdg cache root")"
+  SESSION_XDG_STATE_HOME="$(normalize_artifact_path "$SESSION_STATE_ROOT/xdg_state" "smoke session xdg state root")"
+  SESSION_PYCACHE_ROOT="$(normalize_artifact_path "$SESSION_STATE_ROOT/pycache" "smoke session pycache root")"
+  LOCK_ROOT="$(normalize_artifact_path "$ARTIFACTS_ROOT/.locks" "smoke lock root")"
+  LOCKDIR="$(normalize_artifact_path "$LOCK_ROOT/lca_smoke" "smoke lock directory")"
+  LOCK_PID_FILE="$(normalize_artifact_path "$LOCKDIR/pid" "smoke lock pid file")"
+  if [[ -n "$EXTERNAL_SNAPSHOT_ROOT" ]]; then
+    EXTERNAL_SNAPSHOT_ROOT="$(normalize_artifact_path "$EXTERNAL_SNAPSHOT_ROOT" "external smoke snapshot root")"
+    ensure_under_artifacts "$EXTERNAL_SNAPSHOT_ROOT"
+    export LCA_SMOKE_EXPORT_SNAPSHOT_ROOT="$EXTERNAL_SNAPSHOT_ROOT"
+  fi
 
   ensure_under_artifacts "$OUTROOT"
   ensure_under_artifacts "$OUTPARENT"
   ensure_under_artifacts "$BACKUP_ROOT"
+  ensure_under_artifacts "$LAUNCHER_TMPDIR_PROTECTED"
   ensure_under_branch_artifacts "$BUILD_ROOT"
   ensure_under_artifacts "$FAILURE_ROOT"
   ensure_under_artifacts "$SETUP_ROOT"
@@ -805,6 +1113,7 @@ resolve_output_roots() {
 
 configure_runtime_environment() {
   umask 022
+  export TERM=dumb
   export LC_ALL=C
   export LANG=C
   export PATH="$LCA_SMOKE_CLEAN_PATH"
@@ -888,6 +1197,48 @@ assert_session_environment() {
   fi
 }
 
+assert_deterministic_setup_build_contract() {
+  local expected_build_root="$SETUP_ROOT/build"
+  local expected_binary="$expected_build_root/solve"
+  local expected_setup_tmpdir="$TMP_PARENT/lca_smoke.setup.tmp"
+  local expected_manifest_snapshot="$SETUP_ROOT/smoke_cases.snapshot.tsv"
+  local expected_build_command="$SETUP_ROOT/build.command.txt"
+  local expected_branch_build_cache_root="$BRANCH_ARTIFACTS_ROOT/boj28350_resume/build"
+  local expected_branch_build_cache_binary="$expected_branch_build_cache_root/solve"
+  local expected_branch_build_cache_metadata="${expected_branch_build_cache_binary}.build_meta.json"
+
+  if [[ "$BUILD_ROOT" != "$expected_build_root" ]]; then
+    fail "BUILD_ROOT drifted from deterministic smoke build root"
+  fi
+  if [[ "$BINARY" != "$expected_binary" ]]; then
+    fail "BINARY drifted from deterministic smoke solver path"
+  fi
+  if [[ "$SETUP_TMPDIR" != "$expected_setup_tmpdir" ]]; then
+    fail "SETUP_TMPDIR drifted from deterministic smoke setup tmpdir"
+  fi
+  if [[ "$SMOKE_CASES_SNAPSHOT" != "$expected_manifest_snapshot" ]]; then
+    fail "SMOKE_CASES_SNAPSHOT drifted from deterministic smoke manifest snapshot path"
+  fi
+  if [[ "$SETUP_BUILD_COMMAND" != "$expected_build_command" ]]; then
+    fail "SETUP_BUILD_COMMAND drifted from deterministic smoke build command path"
+  fi
+  if [[ "$BRANCH_BUILD_CACHE_ROOT" != "$expected_branch_build_cache_root" ]]; then
+    fail "BRANCH_BUILD_CACHE_ROOT drifted from deterministic branch build cache root"
+  fi
+  if [[ "$BRANCH_BUILD_CACHE_BINARY" != "$expected_branch_build_cache_binary" ]]; then
+    fail "BRANCH_BUILD_CACHE_BINARY drifted from deterministic branch build cache binary path"
+  fi
+  if [[ "$BRANCH_BUILD_CACHE_METADATA" != "$expected_branch_build_cache_metadata" ]]; then
+    fail "BRANCH_BUILD_CACHE_METADATA drifted from deterministic branch build cache metadata path"
+  fi
+  if [[ "$BUILD_OUTPUT_TMP_GLOB" != ".solve.*.tmp" ]]; then
+    fail "BUILD_OUTPUT_TMP_GLOB drifted from deterministic smoke build temp cleanup"
+  fi
+  if [[ "$SMOKE_SEED_POLICY" != "manifest_seed" ]]; then
+    fail "SMOKE_SEED_POLICY drifted from manifest_seed"
+  fi
+}
+
 configure_setup_tmpdir() {
   if [[ -e "$SETUP_TMPDIR" ]]; then
     remove_path_retry "$SETUP_TMPDIR" || fail "failed to clear stale setup tmpdir: $SETUP_TMPDIR"
@@ -918,10 +1269,13 @@ assert_branch_tmpdir_environment() {
   if [[ "$PWD" != "$BRANCH_ROOT" ]]; then
     fail "runtime cwd drifted outside branch root: $PWD"
   fi
-  if [[ -z "$expected_tmpdir" || ! -d "$expected_tmpdir" ]]; then
-    fail "$phase_label tmpdir is missing: ${expected_tmpdir:-<unset>}"
+  if [[ -z "$expected_tmpdir" ]]; then
+    fail "$phase_label tmpdir is missing: <unset>"
   fi
   ensure_under_artifacts "$expected_tmpdir"
+  if [[ ! -d "$expected_tmpdir" ]]; then
+    mkdir -p "$expected_tmpdir" || fail "$phase_label tmpdir is missing: $expected_tmpdir"
+  fi
   for env_name in BRANCH_ARTIFACT_TMP_ROOT TMPDIR TMP TEMP; do
     if [[ -z "${!env_name:-}" ]]; then
       fail "required $phase_label variable is unset: $env_name"
@@ -934,6 +1288,7 @@ assert_branch_tmpdir_environment() {
 }
 
 assert_setup_environment() {
+  assert_deterministic_setup_build_contract
   assert_branch_tmpdir_environment "$SETUP_TMPDIR" "setup/build"
   assert_session_environment
   if [[ "${LCA_SMOKE_SETUP_ROOT:-}" != "$SETUP_ROOT" ]]; then
@@ -942,6 +1297,9 @@ assert_setup_environment() {
 }
 
 assert_runtime_environment() {
+  if [[ -z "${RUN_TMPDIR:-}" || ! -d "$RUN_TMPDIR" ]]; then
+    configure_runtime_tmpdir
+  fi
   assert_branch_tmpdir_environment "$RUN_TMPDIR" "runtime"
   assert_session_environment
   if [[ "${LCA_SMOKE_OUTROOT:-}" != "$OUTROOT" ]]; then
@@ -965,6 +1323,9 @@ clear_stale_state() {
   if [[ -d "$TMP_PARENT" ]]; then
     shopt -s nullglob
     for stale in "$TMP_PARENT"/$LEGACY_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_TMP_GLOB; do
+      if is_protected_tmp_cleanup_path "$stale"; then
+        continue
+      fi
       remove_path_retry "$stale" || fail "failed to clear stale temp path: $stale"
     done
     for stale in "$TMP_PARENT"/$PROBE_TMP_GLOB; do
@@ -1003,6 +1364,36 @@ prepare_setup_root() {
   mkdir -p "$SETUP_ROOT"
   printf 'kind\tname\tstatus\n' > "$SETUP_MANIFEST"
   SMOKE_CASES_ACTIVE="$SMOKE_CASES_SOURCE"
+  SMOKE_MANIFEST_SHA256=""
+}
+
+sha256_file() {
+  local path="$1"
+
+  python3 - "$path" <<'PY'
+from __future__ import annotations
+
+import hashlib
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+digest = hashlib.sha256()
+with path.open("rb") as handle:
+    for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+        digest.update(chunk)
+print(digest.hexdigest())
+PY
+}
+
+refresh_smoke_manifest_sha256() {
+  local source_path="${1:-$SMOKE_CASES_ACTIVE}"
+
+  require_file "$source_path" "smoke manifest fingerprint source"
+  SMOKE_MANIFEST_SHA256="$(sha256_file "$source_path")"
+  if [[ -z "$SMOKE_MANIFEST_SHA256" ]]; then
+    fail "failed to compute smoke manifest sha256: $source_path"
+  fi
 }
 
 freeze_smoke_manifest() {
@@ -1011,11 +1402,12 @@ freeze_smoke_manifest() {
   cp "$SMOKE_CASES_SOURCE" "$SMOKE_CASES_SNAPSHOT"
   ensure_under_artifacts "$SMOKE_CASES_SNAPSHOT"
   SMOKE_CASES_ACTIVE="$SMOKE_CASES_SNAPSHOT"
+  refresh_smoke_manifest_sha256 "$SMOKE_CASES_ACTIVE"
 }
 
 release_lock() {
   local rc=0
-  if (( LOCK_HELD )) && [[ -d "$LOCKDIR" ]]; then
+  if (( LOCK_HELD )) && [[ -e "$LOCKDIR" ]]; then
     if ! remove_path_retry "$LOCKDIR"; then
       echo "[lca_smoke] warning: failed to release smoke lock: $LOCKDIR" >&2
       rc=1
@@ -1028,7 +1420,10 @@ release_lock() {
 
 acquire_lock() {
   local holder=""
-  mkdir -p "$LOCK_ROOT"
+  if [[ -e "$LOCK_ROOT" && ! -d "$LOCK_ROOT" ]]; then
+    remove_path_retry "$LOCK_ROOT" || fail "failed to clear invalid smoke lock root: $LOCK_ROOT"
+  fi
+  mkdir -p "$LOCK_ROOT" || fail "failed to prepare smoke lock root: $LOCK_ROOT"
   while true; do
     if mkdir "$LOCKDIR" 2>/dev/null; then
       printf '%s\n' "$$" > "$LOCK_PID_FILE"
@@ -1065,9 +1460,19 @@ acquire_lock() {
 cleanup() {
   local rc="${1:-$?}"
   local stale=""
+  local skip_success_teardown=0
   trap - EXIT
   set +e
-  if (( rc == 0 )); then
+  if (( SMOKE_CLEANUP_ACTIVE == 0 )); then
+    if (( LOCK_HELD != 0 )); then
+      release_lock || true
+    fi
+    exit "$rc"
+  fi
+  if (( rc == 0 )) && (( SHARED_SUCCESS_STATE_CLEANED == 1 )); then
+    skip_success_teardown=1
+  fi
+  if (( skip_success_teardown == 0 )) && (( rc == 0 )) && (( SHARED_SUCCESS_STATE_CLEANED == 0 )); then
     if [[ -e "$SETUP_ROOT" ]]; then
       remove_path_retry "$SETUP_ROOT" || true
     fi
@@ -1075,28 +1480,33 @@ cleanup() {
       remove_path_retry "$SESSION_STATE_ROOT" || true
     fi
   fi
-  if [[ -n "${WORKDIR:-}" && -e "$WORKDIR" ]]; then
-    remove_path_retry "$WORKDIR" || true
-  fi
-  if [[ -n "${RUN_TMPDIR:-}" && -e "$RUN_TMPDIR" ]]; then
-    remove_path_retry "$RUN_TMPDIR" || true
-  fi
-  if [[ -n "${SETUP_TMPDIR:-}" && -e "$SETUP_TMPDIR" ]]; then
-    remove_path_retry "$SETUP_TMPDIR" || true
-  fi
-  clear_stale_build_output_temps || true
-  if [[ -d "$TMP_PARENT" ]]; then
-    shopt -s nullglob
-    for stale in "$TMP_PARENT"/$LEGACY_TMP_GLOB "$TMP_PARENT"/$PROBE_TMP_GLOB "$TMP_PARENT"/$RUN_WORK_GLOB "$TMP_PARENT"/$RUN_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_TMP_GLOB; do
-      remove_path_retry "$stale" || true
-    done
-    shopt -u nullglob
-  fi
-  if (( rc != 0 )); then
-    restore_previous_output
-  fi
-  if [[ -e "$BACKUP_ROOT" && -e "$OUTROOT" ]]; then
-    remove_path_retry "$BACKUP_ROOT" || true
+  if (( skip_success_teardown == 0 )); then
+    if [[ -n "${WORKDIR:-}" && -e "$WORKDIR" ]]; then
+      remove_path_retry "$WORKDIR" || true
+    fi
+    if [[ -n "${RUN_TMPDIR:-}" && -e "$RUN_TMPDIR" ]]; then
+      remove_path_retry "$RUN_TMPDIR" || true
+    fi
+    if [[ -n "${SETUP_TMPDIR:-}" && -e "$SETUP_TMPDIR" ]]; then
+      remove_path_retry "$SETUP_TMPDIR" || true
+    fi
+    clear_stale_build_output_temps || true
+    if [[ -d "$TMP_PARENT" ]]; then
+      shopt -s nullglob
+      for stale in "$TMP_PARENT"/$LEGACY_TMP_GLOB "$TMP_PARENT"/$PROBE_TMP_GLOB "$TMP_PARENT"/$RUN_WORK_GLOB "$TMP_PARENT"/$RUN_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_TMP_GLOB; do
+        if is_protected_tmp_cleanup_path "$stale"; then
+          continue
+        fi
+        remove_path_retry "$stale" || true
+      done
+      shopt -u nullglob
+    fi
+    if (( rc != 0 )); then
+      restore_previous_output
+    fi
+    if [[ -e "$BACKUP_ROOT" && -e "$OUTROOT" ]]; then
+      remove_path_retry "$BACKUP_ROOT" || true
+    fi
   fi
   release_lock || true
   rmdir "$TMP_PARENT" 2>/dev/null || true
@@ -1125,10 +1535,14 @@ cleanup_success_state() {
   if [[ -d "$TMP_PARENT" ]]; then
     shopt -s nullglob
     for stale in "$TMP_PARENT"/$LEGACY_TMP_GLOB "$TMP_PARENT"/$PROBE_TMP_GLOB "$TMP_PARENT"/$RUN_WORK_GLOB "$TMP_PARENT"/$RUN_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_GLOB "$TMP_PARENT"/$BUILD_TMP_TMP_GLOB; do
+      if is_protected_tmp_cleanup_path "$stale"; then
+        continue
+      fi
       remove_path_retry "$stale" || fail "failed to clear smoke transient path after successful publish: $stale"
     done
     shopt -u nullglob
   fi
+  SHARED_SUCCESS_STATE_CLEANED=1
 }
 
 quote_command() {
@@ -1172,14 +1586,28 @@ record_setup_environment_snapshot() {
     echo "pwd=$PWD"
     echo "branch_root=$BRANCH_ROOT"
     echo "suite_root=$SUITE_ROOT"
+    echo "branch_artifacts_root=$BRANCH_ARTIFACTS_ROOT"
     echo "artifacts_root=$ARTIFACTS_ROOT"
     echo "output_root=$OUTROOT"
     echo "failure_root=$FAILURE_ROOT"
     echo "setup_root=$SETUP_ROOT"
     echo "setup_tmpdir=$SETUP_TMPDIR"
+    echo "protected_launcher_tmpdir=$LAUNCHER_TMPDIR_PROTECTED"
     echo "build_root=$BUILD_ROOT"
+    echo "build_binary=$BINARY"
+    echo "build_output_metadata=${BINARY}.build_meta.json"
+    echo "build_command_path=$SETUP_BUILD_COMMAND"
+    echo "build_output_tmp_glob=$BUILD_OUTPUT_TMP_GLOB"
+    echo "branch_build_cache_root=$BRANCH_BUILD_CACHE_ROOT"
+    echo "branch_build_cache_binary=$BRANCH_BUILD_CACHE_BINARY"
+    echo "branch_build_cache_metadata=$BRANCH_BUILD_CACHE_METADATA"
     echo "session_state_root=$SESSION_STATE_ROOT"
+    echo "branch_artifact_tmp_root=${BRANCH_ARTIFACT_TMP_ROOT:-}"
+    echo "tmpdir=${TMPDIR:-}"
+    echo "tmp=${TMP:-}"
+    echo "temp=${TEMP:-}"
     echo "home=$HOME"
+    echo "term=${TERM:-}"
     echo "xdg_config_home=$XDG_CONFIG_HOME"
     echo "xdg_cache_home=$XDG_CACHE_HOME"
     echo "xdg_state_home=$XDG_STATE_HOME"
@@ -1187,8 +1615,26 @@ record_setup_environment_snapshot() {
     echo "solver_source=$SOURCE"
     echo "build_wrapper=$BUILD_WRAPPER"
     echo "build_output=$BINARY"
+    echo "smoke_manifest_source=$SMOKE_CASES_SOURCE"
+    echo "smoke_manifest_input_policy=$SMOKE_MANIFEST_INPUT_POLICY"
+    echo "smoke_manifest_snapshot=$SMOKE_CASES_SNAPSHOT"
+    echo "smoke_manifest_sha256=$SMOKE_MANIFEST_SHA256"
+    echo "seed_policy=$SMOKE_SEED_POLICY"
+    echo "build_retry_policy=$SMOKE_BUILD_RETRY_POLICY"
+    echo "cleanup_targets=$TMP_PARENT;$SETUP_ROOT;$SESSION_STATE_ROOT;$FAILURE_ROOT;$BACKUP_ROOT;$BUILD_ROOT;$BRANCH_BUILD_CACHE_ROOT"
+    echo "cleanup_globs=$LEGACY_TMP_GLOB;$PROBE_TMP_GLOB;$RUN_WORK_GLOB;$RUN_TMP_GLOB;$BUILD_OUTPUT_TMP_GLOB;$BUILD_TMP_GLOB;$BUILD_TMP_TMP_GLOB;$LEGACY_OUT_GLOB"
     echo "path=$PATH"
   } > "$SETUP_ENV_SNAPSHOT"
+}
+
+path_is_under_artifacts() {
+  local path="$1"
+  case "$path" in
+    "$ARTIFACTS_ROOT"|"$ARTIFACTS_ROOT"/*)
+      return 0
+      ;;
+  esac
+  return 1
 }
 
 check_required_command_recorded() {
@@ -1268,12 +1714,134 @@ check_build_compiler_recorded() {
   local resolved=""
   for candidate in g++ clang++ c++; do
     if resolved="$(command -v "$candidate" 2>/dev/null)"; then
-      record_setup_check "compiler" "$candidate" "$resolved"
+  record_setup_check "compiler" "$candidate" "$resolved"
       return 0
     fi
   done
   record_setup_check "missing_compiler" "g++|clang++|c++" "-"
   return 1
+}
+
+check_required_directory_recorded() {
+  local path="$1"
+  local label="$2"
+  if [[ ! -e "$path" ]]; then
+    record_setup_check "missing_directory" "$label" "$path"
+    return 1
+  fi
+  if [[ ! -d "$path" ]]; then
+    record_setup_check "non_directory" "$label" "$path"
+    return 1
+  fi
+  if [[ ! -r "$path" ]]; then
+    record_setup_check "unreadable_directory" "$label" "$path"
+    return 1
+  fi
+  record_setup_check "directory" "$label" "$path"
+  return 0
+}
+
+check_artifact_path_recorded() {
+  local path="$1"
+  local label="$2"
+  local resolved=""
+  if [[ -z "$path" ]]; then
+    record_setup_check "missing_artifact_path" "$label" "-"
+    return 1
+  fi
+  if resolved="$(python3 "$ARTIFACT_RESOLVER" --ensure "$path" 2>/dev/null)"; then
+    record_setup_check "artifact_path" "$label" "$resolved"
+    return 0
+  fi
+  record_setup_check "escaped_artifact_path" "$label" "$path"
+  return 1
+}
+
+check_working_directory_recorded() {
+  local expected="$1"
+  local label="$2"
+  local actual="${PWD:-}"
+  if [[ -z "$actual" ]]; then
+    record_setup_check "missing_working_directory" "$label" "$expected"
+    return 1
+  fi
+  if [[ "$actual" != "$expected" ]]; then
+    record_setup_check "working_directory_mismatch" "$label" "$actual expected=$expected"
+    return 1
+  fi
+  if [[ ! -d "$actual" ]]; then
+    record_setup_check "non_directory_working_directory" "$label" "$actual"
+    return 1
+  fi
+  record_setup_check "working_directory" "$label" "$actual"
+  return 0
+}
+
+check_env_path_recorded() {
+  local env_name="$1"
+  local expected="$2"
+  local label="$3"
+  local actual="${!env_name:-}"
+  if [[ -z "$actual" ]]; then
+    record_setup_check "missing_env" "$label" "$env_name"
+    return 1
+  fi
+  if ! path_is_under_artifacts "$actual"; then
+    record_setup_check "escaped_env" "$label" "$env_name=$actual"
+    return 1
+  fi
+  if [[ "$actual" != "$expected" ]]; then
+    record_setup_check "env_mismatch" "$label" "$env_name=$actual expected=$expected"
+    return 1
+  fi
+  record_setup_check "env" "$label" "$actual"
+  return 0
+}
+
+check_value_equals_recorded() {
+  local kind="$1"
+  local label="$2"
+  local actual="$3"
+  local expected="$4"
+  if [[ -z "$actual" ]]; then
+    record_setup_check "missing_${kind}" "$label" "$expected"
+    return 1
+  fi
+  if [[ "$actual" != "$expected" ]]; then
+    record_setup_check "${kind}_mismatch" "$label" "$actual expected=$expected"
+    return 1
+  fi
+  record_setup_check "$kind" "$label" "$actual"
+  return 0
+}
+
+check_setup_environment_recorded() {
+  local rc=0
+
+  check_working_directory_recorded "$BRANCH_ROOT" "branch_root_cwd" || rc=1
+  check_value_equals_recorded "path_contract" "build_root" "$BUILD_ROOT" "$SETUP_ROOT/build" || rc=1
+  check_value_equals_recorded "path_contract" "build_binary" "$BINARY" "$SETUP_ROOT/build/solve" || rc=1
+  check_value_equals_recorded "path_contract" "setup_tmpdir" "$SETUP_TMPDIR" "$TMP_PARENT/lca_smoke.setup.tmp" || rc=1
+  check_value_equals_recorded "path_contract" "smoke_manifest_snapshot" "$SMOKE_CASES_SNAPSHOT" "$SETUP_ROOT/smoke_cases.snapshot.tsv" || rc=1
+  check_value_equals_recorded "path_contract" "build_command_path" "$SETUP_BUILD_COMMAND" "$SETUP_ROOT/build.command.txt" || rc=1
+  check_value_equals_recorded "path_contract" "branch_build_cache_root" "$BRANCH_BUILD_CACHE_ROOT" "$BRANCH_ARTIFACTS_ROOT/boj28350_resume/build" || rc=1
+  check_value_equals_recorded "path_contract" "branch_build_cache_binary" "$BRANCH_BUILD_CACHE_BINARY" "$BRANCH_ARTIFACTS_ROOT/boj28350_resume/build/solve" || rc=1
+  check_value_equals_recorded "path_contract" "branch_build_cache_metadata" "$BRANCH_BUILD_CACHE_METADATA" "$BRANCH_ARTIFACTS_ROOT/boj28350_resume/build/solve.build_meta.json" || rc=1
+  check_value_equals_recorded "contract" "build_output_tmp_glob" "$BUILD_OUTPUT_TMP_GLOB" ".solve.*.tmp" || rc=1
+  check_value_equals_recorded "policy" "seed_policy_contract" "$SMOKE_SEED_POLICY" "manifest_seed" || rc=1
+
+  check_env_path_recorded "BRANCH_ARTIFACT_TMP_ROOT" "$SETUP_TMPDIR" "branch_artifact_tmp_root" || rc=1
+  check_env_path_recorded "TMPDIR" "$SETUP_TMPDIR" "tmpdir" || rc=1
+  check_env_path_recorded "TMP" "$SETUP_TMPDIR" "tmp" || rc=1
+  check_env_path_recorded "TEMP" "$SETUP_TMPDIR" "temp" || rc=1
+  check_env_path_recorded "HOME" "$SESSION_HOME" "home" || rc=1
+  check_env_path_recorded "XDG_CONFIG_HOME" "$SESSION_XDG_CONFIG_HOME" "xdg_config_home" || rc=1
+  check_env_path_recorded "XDG_CACHE_HOME" "$SESSION_XDG_CACHE_HOME" "xdg_cache_home" || rc=1
+  check_env_path_recorded "XDG_STATE_HOME" "$SESSION_XDG_STATE_HOME" "xdg_state_home" || rc=1
+  check_env_path_recorded "PYTHONPYCACHEPREFIX" "$SESSION_PYCACHE_ROOT" "python_pycachedir" || rc=1
+  check_env_path_recorded "LCA_SMOKE_SETUP_ROOT" "$SETUP_ROOT" "setup_root_env" || rc=1
+
+  return "$rc"
 }
 
 write_setup_failure_summary() {
@@ -1305,6 +1873,14 @@ write_setup_failure_summary() {
 
   {
     echo "script=./outer_suite_wrappers/lca_smoke.sh"
+    echo "failure_summary=$message"
+    echo "failure_kind=$phase"
+    echo "failure_origin=harness"
+    echo "failure_retryable=0"
+    echo "failure_reporting_status=complete"
+    echo "failure_reporting_warning="
+    echo "failed_stage=$phase"
+    echo "failed_stage_scope=inner_wrapper_setup"
     echo "failure_stage=$phase"
     echo "exit_code=$exit_code"
     echo "message=$message"
@@ -1314,11 +1890,20 @@ write_setup_failure_summary() {
     echo "failure_root=$FAILURE_ROOT"
     echo "build_wrapper=$BUILD_WRAPPER"
     echo "build_output=$BINARY"
+    echo "smoke_manifest_source=$SMOKE_CASES_SOURCE"
+    echo "smoke_manifest_input_policy=$SMOKE_MANIFEST_INPUT_POLICY"
+    echo "smoke_manifest_snapshot=$SMOKE_CASES_SNAPSHOT"
+    echo "smoke_manifest_sha256=$SMOKE_MANIFEST_SHA256"
     echo "preflight_manifest=$setup_bundle/preflight_manifest.tsv"
+    echo "preflight_manifest_path=$setup_bundle/preflight_manifest.tsv"
     echo "setup_env=$setup_bundle/setup_env.txt"
+    echo "setup_env_path=$setup_bundle/setup_env.txt"
     echo "build_command=$setup_bundle/build.command.txt"
+    echo "build_command_path=$setup_bundle/build.command.txt"
     echo "build_stdout=$setup_bundle/build.stdout.txt"
+    echo "build_stdout_path=$setup_bundle/build.stdout.txt"
     echo "build_stderr=$setup_bundle/build.stderr.txt"
+    echo "build_stderr_path=$setup_bundle/build.stderr.txt"
   } > "$failure_summary"
 
   {
@@ -1333,6 +1918,9 @@ write_setup_failure_summary() {
     echo "- Failure root: \`$FAILURE_ROOT\`"
     echo "- Build wrapper: \`$BUILD_WRAPPER\`"
     echo "- Build output: \`$BINARY\`"
+    echo "- Smoke manifest source: \`$SMOKE_CASES_SOURCE\`"
+    echo "- Smoke manifest snapshot: \`$SMOKE_CASES_SNAPSHOT\`"
+    echo "- Smoke manifest sha256: \`$SMOKE_MANIFEST_SHA256\`"
     echo
     echo "## Recorded Artifacts"
     echo
@@ -1361,6 +1949,7 @@ report_setup_failure_context() {
   echo "[lca_smoke] setup root: $SETUP_ROOT" >&2
   echo "[lca_smoke] setup tmpdir: $SETUP_TMPDIR" >&2
   echo "[lca_smoke] preflight manifest: $SETUP_MANIFEST" >&2
+  echo "[lca_smoke] build command: $SETUP_BUILD_COMMAND" >&2
   echo "[lca_smoke] build stdout: $SETUP_BUILD_STDOUT" >&2
   echo "[lca_smoke] build stderr: $SETUP_BUILD_STDERR" >&2
   echo "[lca_smoke] failure summary: $FAILURE_ROOT/failure_summary.txt" >&2
@@ -1369,9 +1958,9 @@ report_setup_failure_context() {
 
 run_setup_preflight() {
   local preflight_rc=0
+  local preflight_message="required setup/build dependency is missing"
 
   record_setup_environment_snapshot
-  assert_setup_environment
   record_setup_check "path" "script_dir" "$SCRIPT_DIR"
   record_setup_check "path" "branch_root" "$BRANCH_ROOT"
   record_setup_check "path" "artifacts_root" "$ARTIFACTS_ROOT"
@@ -1381,20 +1970,59 @@ run_setup_preflight() {
   record_setup_check "path" "setup_tmpdir" "$SETUP_TMPDIR"
   record_setup_check "path" "session_state_root" "$SESSION_STATE_ROOT"
   record_setup_check "path" "build_root" "$BUILD_ROOT"
+  record_setup_check "path" "build_binary" "$BINARY"
+  record_setup_check "path" "build_command_path" "$SETUP_BUILD_COMMAND"
+  record_setup_check "path" "branch_build_cache_root" "$BRANCH_BUILD_CACHE_ROOT"
+  record_setup_check "path" "branch_build_cache_binary" "$BRANCH_BUILD_CACHE_BINARY"
   record_setup_check "path" "smoke_manifest_source" "$SMOKE_CASES_SOURCE"
   record_setup_check "path" "smoke_manifest_snapshot" "$SMOKE_CASES_SNAPSHOT"
+  record_setup_check "policy" "smoke_manifest_input_policy" "$SMOKE_MANIFEST_INPUT_POLICY"
+  record_setup_check "policy" "seed_policy" "$SMOKE_SEED_POLICY"
+  record_setup_check "policy" "build_retry_policy" "$SMOKE_BUILD_RETRY_POLICY"
+  record_setup_check "policy" "cleanup_globs" "$LEGACY_TMP_GLOB;$PROBE_TMP_GLOB;$RUN_WORK_GLOB;$RUN_TMP_GLOB;$BUILD_OUTPUT_TMP_GLOB;$BUILD_TMP_GLOB;$BUILD_TMP_TMP_GLOB;$LEGACY_OUT_GLOB"
+
+  check_required_directory_recorded "$SCRIPT_DIR" "script_dir" || preflight_rc=2
+  check_required_directory_recorded "$BRANCH_ROOT" "branch_root" || preflight_rc=2
+  check_required_directory_recorded "$BRANCH_ARTIFACTS_ROOT" "branch_artifacts_root" || preflight_rc=2
+  check_required_directory_recorded "$ARTIFACTS_ROOT" "artifacts_root" || preflight_rc=2
+  check_required_directory_recorded "$TMP_PARENT" "tmp_parent" || preflight_rc=2
+  check_required_directory_recorded "$OUTPARENT" "smoke_output_parent" || preflight_rc=2
+  check_required_directory_recorded "$SETUP_ROOT" "setup_root" || preflight_rc=2
+  check_required_directory_recorded "$SETUP_TMPDIR" "setup_tmpdir" || preflight_rc=2
+  check_required_directory_recorded "$SESSION_STATE_ROOT" "session_state_root" || preflight_rc=2
+
+  check_artifact_path_recorded "$OUTROOT" "smoke_output_root" || preflight_rc=2
+  check_artifact_path_recorded "$OUTPARENT" "smoke_output_parent" || preflight_rc=2
+  check_artifact_path_recorded "$FAILURE_ROOT" "failure_root" || preflight_rc=2
+  check_artifact_path_recorded "$SETUP_ROOT" "setup_root" || preflight_rc=2
+  check_artifact_path_recorded "$SETUP_TMPDIR" "setup_tmpdir" || preflight_rc=2
+  check_artifact_path_recorded "$SESSION_STATE_ROOT" "session_state_root" || preflight_rc=2
+  check_artifact_path_recorded "$BUILD_ROOT" "build_root" || preflight_rc=2
+  check_artifact_path_recorded "$BINARY" "build_binary" || preflight_rc=2
+  check_artifact_path_recorded "$BRANCH_BUILD_CACHE_ROOT" "branch_build_cache_root" || preflight_rc=2
+  check_artifact_path_recorded "$BRANCH_BUILD_CACHE_BINARY" "branch_build_cache_binary" || preflight_rc=2
+  check_artifact_path_recorded "$BRANCH_BUILD_CACHE_METADATA" "branch_build_cache_metadata" || preflight_rc=2
+  check_artifact_path_recorded "$SMOKE_CASES_SNAPSHOT" "smoke_manifest_snapshot" || preflight_rc=2
+  check_artifact_path_recorded "$SETUP_MANIFEST" "setup_manifest" || preflight_rc=2
+  check_artifact_path_recorded "$SETUP_ENV_SNAPSHOT" "setup_env_snapshot" || preflight_rc=2
+  check_artifact_path_recorded "$SETUP_BUILD_COMMAND" "build_command_path" || preflight_rc=2
+  check_artifact_path_recorded "$SETUP_BUILD_STDOUT" "build_stdout_path" || preflight_rc=2
+  check_artifact_path_recorded "$SETUP_BUILD_STDERR" "build_stderr_path" || preflight_rc=2
 
   check_required_command_recorded bash || preflight_rc=2
   check_required_command_recorded python3 || preflight_rc=2
+  check_required_command_recorded mkdir || preflight_rc=2
   check_required_command_recorded mktemp || preflight_rc=2
   check_required_command_recorded dirname || preflight_rc=2
   check_required_command_recorded chmod || preflight_rc=2
   check_required_command_recorded cp || preflight_rc=2
   check_required_command_recorded mv || preflight_rc=2
   check_required_command_recorded rm || preflight_rc=2
+  check_required_command_recorded rmdir || preflight_rc=2
   check_required_command_recorded tail || preflight_rc=2
   check_required_command_recorded sleep || preflight_rc=2
   check_required_command_recorded grep || preflight_rc=2
+  check_required_command_recorded kill || preflight_rc=2
   check_build_compiler_recorded || preflight_rc=2
 
   check_required_file_recorded "$SOURCE" "solver source" || preflight_rc=2
@@ -1403,30 +2031,35 @@ run_setup_preflight() {
   check_required_file_recorded "$RUN_CASE_HELPER" "branch-local case helper" || preflight_rc=2
   check_required_file_recorded "$CHECKER_HELPER" "branch-local validator" || preflight_rc=2
   check_required_file_recorded "$SMOKE_CASES_SOURCE" "smoke case manifest" || preflight_rc=2
-  check_required_file_recorded "$BRANCH_ROOT/build.py" "build helper" || preflight_rc=2
-  check_required_file_recorded "$BRANCH_ROOT/boj28350_resume.py" "resume helper" || preflight_rc=2
+  check_required_file_recorded "$BUILD_HELPER" "build helper" || preflight_rc=2
+  check_required_file_recorded "$RESUME_HELPER" "resume helper" || preflight_rc=2
   check_required_executable_recorded "$BUILD_WRAPPER" "build wrapper" || preflight_rc=2
   check_required_executable_recorded "$SMOKE_TARGET_WRAPPER" "smoke target wrapper" || preflight_rc=2
-  check_python_entrypoint_recorded "$BRANCH_ROOT/build.py" "build helper imports" || preflight_rc=2
+  check_python_entrypoint_recorded "$ARTIFACT_RESOLVER" "artifact resolver imports" || preflight_rc=2
+  check_python_entrypoint_recorded "$BUILD_HELPER" "build helper imports" || preflight_rc=2
   check_python_entrypoint_recorded "$RUN_CASE_HELPER" "run case helper imports" || preflight_rc=2
   check_python_entrypoint_recorded "$CHECKER_HELPER" "validator helper imports" || preflight_rc=2
+  check_python_entrypoint_recorded "$RESUME_HELPER" "resume helper imports" || preflight_rc=2
+
+  if ! check_setup_environment_recorded; then
+    preflight_rc="$SMOKE_EXIT_HARNESS_FAILURE"
+    preflight_message="setup/build environment or working-directory validation failed"
+  fi
 
   if (( preflight_rc == 0 )); then
     if ! freeze_smoke_manifest; then
       preflight_rc="$SMOKE_EXIT_HARNESS_FAILURE"
+      preflight_message="failed to freeze a branch-local smoke manifest snapshot"
     else
+      record_setup_environment_snapshot
       record_setup_check "file" "smoke manifest active" "$SMOKE_CASES_ACTIVE"
+      record_setup_check "fingerprint" "smoke_manifest_sha256" "$SMOKE_MANIFEST_SHA256"
     fi
   fi
 
   if (( preflight_rc != 0 )); then
-    if (( preflight_rc == SMOKE_EXIT_HARNESS_FAILURE )); then
-      write_setup_failure_summary "preflight" "$preflight_rc" "failed to freeze a branch-local smoke manifest snapshot"
-      report_setup_failure_context "preflight" "$preflight_rc" "failed to freeze a branch-local smoke manifest snapshot"
-    else
-      write_setup_failure_summary "preflight" "$preflight_rc" "required setup/build dependency is missing"
-      report_setup_failure_context "preflight" "$preflight_rc" "required setup/build dependency is missing"
-    fi
+    write_setup_failure_summary "preflight" "$preflight_rc" "$preflight_message"
+    report_setup_failure_context "preflight" "$preflight_rc" "$preflight_message"
   fi
   return "$preflight_rc"
 }
@@ -1501,6 +2134,35 @@ set_failure_classification() {
   CURRENT_FAILURE_ORIGIN="$2"
   CURRENT_FAILURE_RETRYABLE="$3"
   CURRENT_FAILURE_SUMMARY="$4"
+}
+
+classify_missing_case_result() {
+  local rc="$1"
+  local missing_message=""
+
+  case "$rc" in
+    "$SMOKE_EXIT_USAGE")
+      CURRENT_FAILURE_RC="$SMOKE_EXIT_USAGE"
+      set_failure_classification \
+        "harness_usage_failure" \
+        "harness" \
+        0 \
+        "case helper rejected the branch-local invocation before writing ${RUN_CASE_RESULT_NAME}"
+      return
+      ;;
+  esac
+
+  CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+  if (( rc >= 128 )); then
+    missing_message="case helper terminated by signal $(( rc - 128 )) before writing ${RUN_CASE_RESULT_NAME}"
+  else
+    missing_message="case helper exited with code $rc before writing ${RUN_CASE_RESULT_NAME}"
+  fi
+  set_failure_classification \
+    "harness_transient_failure" \
+    "harness" \
+    1 \
+    "$missing_message"
 }
 
 load_case_failure_result() {
@@ -1628,7 +2290,7 @@ classify_case_failure() {
   CURRENT_FAILURE_HELPER_RC="$rc"
   CURRENT_FAILURE_RC="$rc"
 
-  if [[ -n "$CURRENT_CASE_RESULT_JSON" ]]; then
+  if [[ -f "$CURRENT_CASE_RESULT_JSON" ]]; then
     if load_case_failure_result "$CURRENT_CASE_RESULT_JSON"; then
       return
     fi
@@ -1638,6 +2300,10 @@ classify_case_failure() {
       "harness" \
       1 \
       "helper did not leave a readable ${RUN_CASE_RESULT_NAME} for the preserved case"
+    return
+  fi
+  if [[ -n "$CURRENT_CASE_RESULT_JSON" ]]; then
+    classify_missing_case_result "$rc"
     return
   fi
 
@@ -1724,14 +2390,18 @@ entries = [
     ("runtime_env", failure_root / "runtime_env.txt"),
     ("runtime_env_exports", failure_root / "runtime_env_exports.sh"),
     ("commands", failure_root / "commands.txt"),
+    ("invoked_command", failure_root / "invoked_command.txt"),
     ("exact_seed", failure_root / "seed.txt"),
     ("exact_input", failure_root / "input.txt"),
     ("exact_output", failure_root / "solver_output.txt"),
+    ("actual_output", failure_root / "solver_output.txt"),
+    ("expected_output", failure_root / "expected_output.txt"),
     ("checker_result", failure_root / "checker_result.txt"),
     ("checker_replay_stdout", failure_root / "checker_replay.stdout.txt"),
     ("checker_replay_stderr", failure_root / "checker_replay.stderr.txt"),
     ("mismatch_summary", failure_root / "mismatch_summary.txt"),
     ("rerun_command", failure_root / "rerun_command.txt"),
+    ("failure_context_json", failure_root / "failure_context.json"),
     ("checker_replay_script", failure_root / "recheck_preserved_output.sh"),
     ("seed_repro_script", failure_root / "repro_from_seed.sh"),
     ("preserved_input_replay_script", failure_root / "replay_preserved_input.sh"),
@@ -1768,6 +2438,234 @@ for label, path in entries:
     )
 
 manifest_path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+PY
+}
+
+write_failure_structured_context() {
+  local failure_case_dir="$1"
+  local context_path="$FAILURE_ROOT/failure_context.json"
+  python3 - "$context_path" "$FAILURE_ROOT" "$failure_case_dir" \
+    "$CURRENT_FAILURE_RC" "$CURRENT_FAILURE_HELPER_RC" \
+    "$CURRENT_FAILURE_KIND" "$CURRENT_FAILURE_ORIGIN" "$CURRENT_FAILURE_RETRYABLE" \
+    "$CURRENT_FAILURE_SUMMARY" "${CURRENT_FAILURE_SOLVER_EXIT:-}" "${CURRENT_FAILURE_SIGNAL:-}" \
+    "$CURRENT_CASE_INDEX" "$CURRENT_CASE_ATTEMPT" "$CURRENT_CASE_STAGE" "$CURRENT_CASE_MODE" \
+    "$CURRENT_CASE_N" "$CURRENT_CASE_SEED" "$CURRENT_CASE_SHUFFLE_LABELS" \
+    "$CURRENT_CASE_SHUFFLE_QUERIES" "$CURRENT_CASE_TIMEOUT" "$CURRENT_CASE_HELPER_TIMEOUT_BOUND" \
+    "$CURRENT_CASE_TAG" "$CURRENT_CASE_MANIFEST_ROW" "$SMOKE_MANIFEST_SHA256" \
+    "$CURRENT_CASE_EXEC_COMMAND" "$CURRENT_CASE_REPRO_COMMAND" \
+    "$CURRENT_CASE_PRESERVED_INPUT_COMMAND" "$CURRENT_CASE_ACTIVE_REPLAY_COMMAND" \
+    "$CURRENT_CASE_CHECKER_COMMAND" "$CURRENT_CASE_SOLVER_SNAPSHOT" \
+    "$CURRENT_CASE_REPRO_DIR" "$CURRENT_CASE_PRESERVED_INPUT_REPLAY_DIR" \
+    "$CURRENT_CASE_ACTIVE_REPLAY_ARTIFACT_SUBPATH" "$CURRENT_CASE_ACTIVE_REPLAY_OUTROOT" \
+    "$CURRENT_CASE_STDOUT" "$CURRENT_CASE_STDERR" "$CURRENT_CASE_RESULT_JSON" \
+    "$OUTROOT" "$SMOKE_CASES_SOURCE" "$SMOKE_CASES_ACTIVE" <<'PY'
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+(
+    context_path,
+    failure_root,
+    failure_case_dir,
+    failure_rc,
+    helper_rc,
+    failure_kind,
+    failure_origin,
+    failure_retryable,
+    failure_summary,
+    solver_exit_code,
+    solver_signal,
+    case_index,
+    case_attempt,
+    case_stage,
+    case_mode,
+    case_n,
+    case_seed,
+    shuffle_labels,
+    shuffle_queries,
+    timeout_s,
+    helper_timeout_bound_s,
+    case_tag,
+    manifest_row,
+    manifest_sha256,
+    executed_command,
+    repro_command,
+    preserved_input_command,
+    active_solver_replay_command,
+    checker_command,
+    solver_snapshot,
+    seed_repro_dir,
+    preserved_input_replay_dir,
+    active_solver_replay_artifact_subpath,
+    active_solver_replay_outroot,
+    helper_stdout,
+    helper_stderr,
+    helper_result_json,
+    smoke_output_root,
+    smoke_manifest_source,
+    smoke_manifest_active,
+) = sys.argv[1:]
+
+failure_root = Path(failure_root)
+failure_case_dir = Path(failure_case_dir)
+context_path = Path(context_path)
+
+def optional_int(raw: str) -> int | None:
+    return int(raw) if raw else None
+
+def optional_bool(raw: str) -> bool | None:
+    if raw == "":
+        return None
+    return raw not in {"0", "false", "False"}
+
+def read_json(path_text: str) -> dict[str, object] | None:
+    if not path_text:
+        return None
+    path = Path(path_text)
+    if not path.is_file():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+def read_kv(path: Path) -> dict[str, str]:
+    if not path.is_file():
+        return {}
+    result: dict[str, str] = {}
+    try:
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+            if "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            result[key.strip()] = value.strip()
+    except OSError:
+        return {}
+    return result
+
+def artifact_entry(path_text: str) -> dict[str, object]:
+    if not path_text:
+        return {"path": "", "exists": False}
+    path = Path(path_text)
+    entry: dict[str, object] = {"path": str(path), "exists": path.exists()}
+    if path.exists() and path.is_file():
+        try:
+            entry["bytes"] = path.stat().st_size
+        except OSError:
+            pass
+    return entry
+
+helper_result = read_json(helper_result_json)
+checker_result = read_kv(failure_root / "checker_result.txt")
+mismatch_summary = read_kv(failure_root / "mismatch_summary.txt")
+
+mismatch_message = (
+    mismatch_summary.get("mismatch_message")
+    or checker_result.get("rechecked_message")
+    or (str(helper_result.get("message")) if helper_result and helper_result.get("message") is not None else "")
+    or failure_summary
+)
+query_mismatch = None
+match = re.match(
+    r"^query #(?P<query_index>\d+) mismatch: lca\((?P<u>\d+), (?P<v>\d+)\)=(?P<got>\d+), expected (?P<expected>\d+)$",
+    mismatch_message,
+)
+if match is not None:
+    query_mismatch = {
+        "query_index": int(match.group("query_index")),
+        "u": int(match.group("u")),
+        "v": int(match.group("v")),
+        "got_lca": int(match.group("got")),
+        "expected_lca": int(match.group("expected")),
+    }
+elif mismatch_summary.get("mismatch_kind") == "query_lca_mismatch":
+    query_mismatch = {
+        "query_index": int(mismatch_summary["query_index"]),
+        "u": int(mismatch_summary["query_u"]),
+        "v": int(mismatch_summary["query_v"]),
+        "got_lca": int(mismatch_summary["got_lca"]),
+        "expected_lca": int(mismatch_summary["expected_lca"]),
+    }
+
+payload = {
+    "schema": "lca_smoke_failure_context_v1",
+    "failure": {
+        "normalized_exit_code": optional_int(failure_rc),
+        "helper_exit_code": optional_int(helper_rc),
+        "kind": failure_kind,
+        "origin": failure_origin,
+        "retryable": optional_bool(failure_retryable),
+        "summary": failure_summary,
+        "solver_exit_code": optional_int(solver_exit_code),
+        "solver_signal": optional_int(solver_signal),
+    },
+    "case": {
+        "index": optional_int(case_index),
+        "attempt": optional_int(case_attempt),
+        "stage": case_stage,
+        "mode": case_mode,
+        "n": optional_int(case_n),
+        "seed": optional_int(case_seed),
+        "shuffle_labels": optional_int(shuffle_labels),
+        "shuffle_queries": optional_int(shuffle_queries),
+        "timeout_s": optional_int(timeout_s),
+        "helper_timeout_bound_s": optional_int(helper_timeout_bound_s),
+        "tag": case_tag,
+        "manifest_row": manifest_row,
+        "manifest_sha256": manifest_sha256,
+    },
+    "commands": {
+        "executed": executed_command,
+        "seed_repro": repro_command,
+        "preserved_input_replay": preserved_input_command,
+        "active_solver_replay": active_solver_replay_command,
+        "checker_replay": checker_command,
+    },
+    "replay": {
+        "solver_snapshot": solver_snapshot,
+        "seed_repro_dir": seed_repro_dir,
+        "preserved_input_replay_dir": preserved_input_replay_dir,
+        "active_solver_replay_artifact_subpath": active_solver_replay_artifact_subpath,
+        "active_solver_replay_outroot": active_solver_replay_outroot,
+    },
+    "smoke": {
+        "output_root": smoke_output_root,
+        "manifest_source": smoke_manifest_source,
+        "manifest_active": smoke_manifest_active,
+    },
+    "helper_result": helper_result,
+    "checker_result": checker_result,
+    "mismatch_summary": mismatch_summary,
+    "query_mismatch": query_mismatch,
+    "artifacts": {
+        "failure_root": artifact_entry(str(failure_root)),
+        "failure_case_dir": artifact_entry(str(failure_case_dir)),
+        "commands": artifact_entry(str(failure_root / "commands.txt")),
+        "artifact_manifest": artifact_entry(str(failure_root / "artifact_manifest.tsv")),
+        "retry_log": artifact_entry(str(failure_root / "retry_log.tsv")),
+        "failed_case_row": artifact_entry(str(failure_root / "failed_case_row.tsv")),
+        "manifest_snapshot": artifact_entry(str(failure_root / "smoke_cases_manifest.tsv")),
+        "exact_seed": artifact_entry(str(failure_root / "seed.txt")),
+        "input": artifact_entry(str(failure_root / "input.txt")),
+        "actual_output": artifact_entry(str(failure_root / "solver_output.txt")),
+        "expected_output": artifact_entry(str(failure_root / "expected_output.txt")),
+        "checker_result": artifact_entry(str(failure_root / "checker_result.txt")),
+        "mismatch_summary": artifact_entry(str(failure_root / "mismatch_summary.txt")),
+        "rerun_command": artifact_entry(str(failure_root / "rerun_command.txt")),
+        "runtime_env": artifact_entry(str(failure_root / "runtime_env.txt")),
+        "runtime_env_exports": artifact_entry(str(failure_root / "runtime_env_exports.sh")),
+        "helper_stdout": artifact_entry(helper_stdout),
+        "helper_stderr": artifact_entry(helper_stderr),
+        "helper_result_json": artifact_entry(helper_result_json),
+        "solver_snapshot": artifact_entry(solver_snapshot),
+    },
+}
+
+context_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 PY
 }
 
@@ -2008,6 +2906,8 @@ write_failure_repro_exports() {
   local seed_txt="$FAILURE_ROOT/seed.txt"
   local input_txt="$FAILURE_ROOT/input.txt"
   local output_txt="$FAILURE_ROOT/solver_output.txt"
+  local expected_output_txt="$FAILURE_ROOT/expected_output.txt"
+  local invoked_command_txt="$FAILURE_ROOT/invoked_command.txt"
   local rerun_command_txt="$FAILURE_ROOT/rerun_command.txt"
 
   printf '%s\n' "$CURRENT_CASE_SEED" > "$seed_txt"
@@ -2034,6 +2934,27 @@ write_failure_repro_exports() {
     } > "$output_txt"
   fi
 
+  if [[ -f "$failure_case_dir/hidden_parent.txt" ]]; then
+    cp "$failure_case_dir/hidden_parent.txt" "$expected_output_txt"
+  else
+    {
+      echo "# preserved expected output missing"
+      echo "source_path=$failure_case_dir/hidden_parent.txt"
+      echo "seed=$CURRENT_CASE_SEED"
+      echo "case_tag=$CURRENT_CASE_TAG"
+    } > "$expected_output_txt"
+  fi
+
+  if [[ -n "$CURRENT_CASE_EXEC_COMMAND" ]]; then
+    printf '%s\n' "$CURRENT_CASE_EXEC_COMMAND" > "$invoked_command_txt"
+  else
+    {
+      echo "# executed command missing"
+      echo "case_tag=$CURRENT_CASE_TAG"
+      echo "seed=$CURRENT_CASE_SEED"
+    } > "$invoked_command_txt"
+  fi
+
   {
     echo "preferred_active_solver_replay=bash $(quote_word "$FAILURE_ROOT/replay_active_manifest_case.sh")"
     echo "preferred_preserved_input_replay=bash $(quote_word "$FAILURE_ROOT/replay_preserved_input.sh")"
@@ -2050,9 +2971,11 @@ write_failure_repro_exports() {
 write_failure_debug_bundle() {
   local failure_case_dir="$1"
   local commands_txt="$FAILURE_ROOT/commands.txt"
+  local invoked_command_txt="$FAILURE_ROOT/invoked_command.txt"
   local seed_txt="$FAILURE_ROOT/seed.txt"
   local input_txt="$FAILURE_ROOT/input.txt"
   local output_txt="$FAILURE_ROOT/solver_output.txt"
+  local expected_output_txt="$FAILURE_ROOT/expected_output.txt"
   local checker_result_txt="$FAILURE_ROOT/checker_result.txt"
   local checker_replay_stdout="$FAILURE_ROOT/checker_replay.stdout.txt"
   local checker_replay_stderr="$FAILURE_ROOT/checker_replay.stderr.txt"
@@ -2064,8 +2987,13 @@ write_failure_debug_bundle() {
   local active_replay_script="$FAILURE_ROOT/replay_active_manifest_case.sh"
   local env_exports_path="$FAILURE_ROOT/runtime_env_exports.sh"
 
+  mkdir -p "$FAILURE_ROOT"
   printf '%s\n' "$CURRENT_CASE_MANIFEST_ROW" > "$FAILURE_ROOT/failed_case_row.tsv"
-  cp "$SMOKE_CASES_ACTIVE" "$FAILURE_ROOT/smoke_cases_manifest.tsv"
+  if [[ -f "$SMOKE_CASES_ACTIVE" ]]; then
+    cp "$SMOKE_CASES_ACTIVE" "$FAILURE_ROOT/smoke_cases_manifest.tsv"
+  elif [[ -f "$SMOKE_CASES_SOURCE" ]]; then
+    cp "$SMOKE_CASES_SOURCE" "$FAILURE_ROOT/smoke_cases_manifest.tsv"
+  fi
   write_failure_runtime_env
   write_failure_checker_bundle "$failure_case_dir"
   write_failure_repro_exports "$failure_case_dir"
@@ -2073,10 +3001,12 @@ write_failure_debug_bundle() {
 
   {
     echo "executed_command=$CURRENT_CASE_EXEC_COMMAND"
+    echo "invoked_command=$invoked_command_txt"
     echo "checker_command=$CURRENT_CASE_CHECKER_COMMAND"
     echo "exact_seed=$seed_txt"
     echo "exact_input=$input_txt"
     echo "exact_output=$output_txt"
+    echo "expected_output=$expected_output_txt"
     echo "checker_result=$checker_result_txt"
     echo "checker_replay_stdout=$checker_replay_stdout"
     echo "checker_replay_stderr=$checker_replay_stderr"
@@ -2139,11 +3069,217 @@ EOF
 set -euo pipefail
 SCRIPT_DIR="\$(cd -- "\$(dirname -- "\${BASH_SOURCE[0]}")" && pwd -P)"
 source "\$SCRIPT_DIR/runtime_env_exports.sh"
+export LCA_SMOKE_TARGET_MANIFEST="\$SCRIPT_DIR/smoke_cases_manifest.tsv"
 exec $(quote_word "$SMOKE_TARGET_WRAPPER") $(quote_word "$CURRENT_CASE_TAG") $(quote_word "$CURRENT_CASE_ACTIVE_REPLAY_ARTIFACT_SUBPATH")
 EOF
   chmod +x "$active_replay_script"
 
+  write_failure_structured_context "$failure_case_dir"
   write_failure_artifact_manifest "$failure_case_dir"
+}
+
+write_failure_reporting_fallback_commands() {
+  local failure_case_dir="$1"
+  local reporting_warning="$2"
+  local commands_txt="$FAILURE_ROOT/commands.txt"
+
+  {
+    echo "executed_command=$CURRENT_CASE_EXEC_COMMAND"
+    echo "invoked_command=$FAILURE_ROOT/invoked_command.txt"
+    echo "checker_command=$CURRENT_CASE_CHECKER_COMMAND"
+    echo "seed_repro_command=$CURRENT_CASE_REPRO_COMMAND"
+    echo "preserved_input_command=$CURRENT_CASE_PRESERVED_INPUT_COMMAND"
+    echo "active_solver_replay_command=$CURRENT_CASE_ACTIVE_REPLAY_COMMAND"
+    echo "solver_snapshot=$CURRENT_CASE_SOLVER_SNAPSHOT"
+    echo "helper_result_json=$CURRENT_CASE_RESULT_JSON"
+    echo "helper_stdout=$CURRENT_CASE_STDOUT"
+    echo "helper_stderr=$CURRENT_CASE_STDERR"
+    echo "failure_case_dir=$failure_case_dir"
+    echo "exact_seed=$FAILURE_ROOT/seed.txt"
+    echo "exact_input=$FAILURE_ROOT/input.txt"
+    echo "exact_output=$FAILURE_ROOT/solver_output.txt"
+    echo "expected_output=$FAILURE_ROOT/expected_output.txt"
+    echo "rerun_command=$FAILURE_ROOT/rerun_command.txt"
+    echo "retry_log=$FAILURE_ROOT/retry_log.tsv"
+    echo "failure_reporting_status=degraded"
+    echo "failure_reporting_warning=$reporting_warning"
+  } > "$commands_txt"
+}
+
+write_failure_reporting_fallback_artifact_manifest() {
+  local failure_case_dir="$1"
+  local manifest_path="$FAILURE_ROOT/artifact_manifest.tsv"
+
+  python3 - "$manifest_path" \
+    "failure_summary=$FAILURE_ROOT/failure_summary.txt" \
+    "failure_report=$FAILURE_ROOT/latest_failure_report.md" \
+    "commands=$FAILURE_ROOT/commands.txt" \
+    "retry_log=$FAILURE_ROOT/retry_log.tsv" \
+    "failure_context_json=$FAILURE_ROOT/failure_context.json" \
+    "runtime_env=$FAILURE_ROOT/runtime_env.txt" \
+    "runtime_env_exports=$FAILURE_ROOT/runtime_env_exports.sh" \
+    "invoked_command=$FAILURE_ROOT/invoked_command.txt" \
+    "failed_case_row=$FAILURE_ROOT/failed_case_row.tsv" \
+    "smoke_manifest_snapshot=$FAILURE_ROOT/smoke_cases_manifest.tsv" \
+    "exact_seed=$FAILURE_ROOT/seed.txt" \
+    "exact_input=$FAILURE_ROOT/input.txt" \
+    "exact_output=$FAILURE_ROOT/solver_output.txt" \
+    "expected_output=$FAILURE_ROOT/expected_output.txt" \
+    "rerun_command=$FAILURE_ROOT/rerun_command.txt" \
+    "helper_result_json=${CURRENT_CASE_RESULT_JSON:--}" \
+    "helper_stdout=${CURRENT_CASE_STDOUT:--}" \
+    "helper_stderr=${CURRENT_CASE_STDERR:--}" \
+    "solver_snapshot=${CURRENT_CASE_SOLVER_SNAPSHOT:--}" \
+    "case_input=$failure_case_dir/in.txt" \
+    "case_meta=$failure_case_dir/meta.json" \
+    "case_hidden_parent=$failure_case_dir/hidden_parent.txt" \
+    "case_output=$failure_case_dir/out.txt" \
+    "case_time=$failure_case_dir/time.txt" \
+    "case_solver_stderr=$failure_case_dir/solver_stderr.txt" <<'PY'
+from __future__ import annotations
+
+import hashlib
+import sys
+from pathlib import Path
+
+manifest_path = Path(sys.argv[1])
+rows = ["label\tpath\texists\tbytes\tsha256"]
+
+for spec in sys.argv[2:]:
+    label, path_text = spec.split("=", 1)
+    if path_text in ("", "-"):
+        rows.append("\t".join((label, "-", "0", "-1", "-")))
+        continue
+
+    path = Path(path_text)
+    exists = path.exists()
+    size = path.stat().st_size if exists and path.is_file() else -1
+    digest = "-"
+    if exists and path.is_file():
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    rows.append(
+        "\t".join(
+            (
+                label,
+                str(path),
+                "1" if exists else "0",
+                str(size),
+                digest,
+            )
+        )
+    )
+
+manifest_path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+PY
+}
+
+write_failure_reporting_fallback() {
+  local failure_case_dir="$1"
+  local reporting_warning="$2"
+  local failure_summary="$FAILURE_ROOT/failure_summary.txt"
+  local failure_report="$FAILURE_ROOT/latest_failure_report.md"
+  local commands_txt="$FAILURE_ROOT/commands.txt"
+  local artifact_manifest="$FAILURE_ROOT/artifact_manifest.tsv"
+  local retry_log="$FAILURE_ROOT/retry_log.tsv"
+
+  mkdir -p "$FAILURE_ROOT" || return 1
+  write_failure_repro_exports "$failure_case_dir" || return 1
+  write_failure_reporting_fallback_commands "$failure_case_dir" "$reporting_warning" || return 1
+  write_failure_structured_context "$failure_case_dir" || return 1
+
+  {
+    echo "script=./outer_suite_wrappers/lca_smoke.sh"
+    echo "exit_code=$CURRENT_FAILURE_RC"
+    echo "helper_exit_code=$CURRENT_FAILURE_HELPER_RC"
+    echo "failure_kind=$CURRENT_FAILURE_KIND"
+    echo "failure_origin=$CURRENT_FAILURE_ORIGIN"
+    echo "failure_retryable=$CURRENT_FAILURE_RETRYABLE"
+    echo "failure_summary=$CURRENT_FAILURE_SUMMARY"
+    echo "failure_reporting_status=degraded"
+    echo "failure_reporting_warning=$reporting_warning"
+    echo "failed_stage=$CURRENT_CASE_STAGE"
+    echo "failed_case_index=$CURRENT_CASE_INDEX"
+    echo "failed_attempt=$CURRENT_CASE_ATTEMPT"
+    echo "failed_case_tag=$CURRENT_CASE_TAG"
+    echo "manifest_row=$CURRENT_CASE_MANIFEST_ROW"
+    echo "manifest_sha256=$SMOKE_MANIFEST_SHA256"
+    echo "failure_root=$FAILURE_ROOT"
+    echo "failure_case_dir=$failure_case_dir"
+    echo "commands_path=$commands_txt"
+    echo "invoked_command_path=$FAILURE_ROOT/invoked_command.txt"
+    echo "artifact_manifest_path=$artifact_manifest"
+    echo "structured_context_path=$FAILURE_ROOT/failure_context.json"
+    echo "exact_seed_path=$FAILURE_ROOT/seed.txt"
+    echo "exact_input_path=$FAILURE_ROOT/input.txt"
+    echo "exact_output_path=$FAILURE_ROOT/solver_output.txt"
+    echo "expected_output_path=$FAILURE_ROOT/expected_output.txt"
+    echo "rerun_command_path=$FAILURE_ROOT/rerun_command.txt"
+    echo "retry_log_path=$retry_log"
+    echo "helper_stdout=$CURRENT_CASE_STDOUT"
+    echo "helper_stderr=$CURRENT_CASE_STDERR"
+    echo "helper_result_json=$CURRENT_CASE_RESULT_JSON"
+    echo "solver_snapshot=$CURRENT_CASE_SOLVER_SNAPSHOT"
+    echo "smoke_output_root=$OUTROOT"
+    echo "smoke_manifest_source=$SMOKE_CASES_SOURCE"
+    echo "smoke_manifest_active=$SMOKE_CASES_ACTIVE"
+  } > "$failure_summary"
+
+  {
+    echo "# lca_smoke Failure Report"
+    echo
+    echo "- Exit code: \`$CURRENT_FAILURE_RC\`"
+    echo "- Helper exit code: \`$CURRENT_FAILURE_HELPER_RC\`"
+    echo "- Failure kind: \`$CURRENT_FAILURE_KIND\`"
+    echo "- Failure origin: \`$CURRENT_FAILURE_ORIGIN\`"
+    echo "- Retryable harness issue: \`$CURRENT_FAILURE_RETRYABLE\`"
+    echo "- Failure summary: \`$CURRENT_FAILURE_SUMMARY\`"
+    echo "- Failure reporting status: \`degraded\`"
+    echo "- Failure reporting warning: \`$reporting_warning\`"
+    echo "- Failure root: \`$FAILURE_ROOT\`"
+    echo "- Failure case dir: \`$failure_case_dir\`"
+    echo "- Smoke output root: \`$OUTROOT\`"
+    echo "- Smoke manifest source: \`$SMOKE_CASES_SOURCE\`"
+    echo "- Smoke manifest active: \`$SMOKE_CASES_ACTIVE\`"
+    echo "- Smoke manifest sha256: \`$SMOKE_MANIFEST_SHA256\`"
+    echo "- Commands snapshot: \`$commands_txt\`"
+    echo "- Invoked command snapshot: \`$FAILURE_ROOT/invoked_command.txt\`"
+    echo "- Artifact manifest: \`$artifact_manifest\`"
+    echo "- Structured context json: \`$FAILURE_ROOT/failure_context.json\`"
+    echo "- Exact seed snapshot: \`$FAILURE_ROOT/seed.txt\`"
+    echo "- Exact input snapshot: \`$FAILURE_ROOT/input.txt\`"
+    echo "- Exact actual output snapshot: \`$FAILURE_ROOT/solver_output.txt\`"
+    echo "- Exact expected output snapshot: \`$FAILURE_ROOT/expected_output.txt\`"
+    echo "- Rerun command snapshot: \`$FAILURE_ROOT/rerun_command.txt\`"
+    echo "- Retry log: \`$retry_log\`"
+    echo "- Helper stdout: \`$CURRENT_CASE_STDOUT\`"
+    echo "- Helper stderr: \`$CURRENT_CASE_STDERR\`"
+    echo "- Helper result json: \`$CURRENT_CASE_RESULT_JSON\`"
+    echo "- Solver snapshot: \`$CURRENT_CASE_SOLVER_SNAPSHOT\`"
+    echo
+    echo "## Next Iteration"
+    echo
+    echo "- Start with \`$FAILURE_ROOT/failure_context.json\`, \`$commands_txt\`, and \`$artifact_manifest\` to see the preserved case identity, replay commands, and surviving paths without re-scraping the markdown bundle."
+    echo "- If preserved case files are present, rerun the recorded active-manifest or preserved-input command from \`$commands_txt\`."
+    echo "- If preserved case files are missing, inspect \`$CURRENT_CASE_STDERR\` and \`$CURRENT_CASE_STDOUT\` first to recover the last actionable harness context."
+    if [[ -s "$CURRENT_CASE_STDERR" ]]; then
+      echo
+      echo "## Helper stderr tail"
+      echo
+      echo "\`\`\`text"
+      tail -n 20 "$CURRENT_CASE_STDERR"
+      echo "\`\`\`"
+    fi
+    if [[ -s "$CURRENT_CASE_STDOUT" ]]; then
+      echo
+      echo "## Helper stdout tail"
+      echo
+      echo "\`\`\`text"
+      tail -n 20 "$CURRENT_CASE_STDOUT"
+      echo "\`\`\`"
+    fi
+  } > "$failure_report"
+
+  write_failure_reporting_fallback_artifact_manifest "$failure_case_dir"
 }
 
 write_failure_summary() {
@@ -2152,9 +3288,11 @@ write_failure_summary() {
   local failure_report="$FAILURE_ROOT/latest_failure_report.md"
   local commands_txt="$FAILURE_ROOT/commands.txt"
   local artifact_manifest="$FAILURE_ROOT/artifact_manifest.tsv"
+  local invoked_command_txt="$FAILURE_ROOT/invoked_command.txt"
   local exact_seed_txt="$FAILURE_ROOT/seed.txt"
   local exact_input_txt="$FAILURE_ROOT/input.txt"
   local exact_output_txt="$FAILURE_ROOT/solver_output.txt"
+  local expected_output_txt="$FAILURE_ROOT/expected_output.txt"
   local checker_result_txt="$FAILURE_ROOT/checker_result.txt"
   local checker_replay_stdout="$FAILURE_ROOT/checker_replay.stdout.txt"
   local checker_replay_stderr="$FAILURE_ROOT/checker_replay.stderr.txt"
@@ -2179,6 +3317,8 @@ write_failure_summary() {
     echo "failure_origin=$CURRENT_FAILURE_ORIGIN"
     echo "failure_retryable=$CURRENT_FAILURE_RETRYABLE"
     echo "failure_summary=$CURRENT_FAILURE_SUMMARY"
+    echo "failure_reporting_status=complete"
+    echo "failure_reporting_warning="
     echo "solver_exit_code=${CURRENT_FAILURE_SOLVER_EXIT:-}"
     echo "solver_signal=${CURRENT_FAILURE_SIGNAL:-}"
     echo "failed_stage=$CURRENT_CASE_STAGE"
@@ -2193,7 +3333,9 @@ write_failure_summary() {
     echo "failed_helper_timeout_bound_s=$CURRENT_CASE_HELPER_TIMEOUT_BOUND"
     echo "failed_case_tag=$CURRENT_CASE_TAG"
     echo "manifest_row=$CURRENT_CASE_MANIFEST_ROW"
+    echo "manifest_sha256=$SMOKE_MANIFEST_SHA256"
     echo "executed_command=$CURRENT_CASE_EXEC_COMMAND"
+    echo "invoked_command_path=$invoked_command_txt"
     echo "repro_command=$CURRENT_CASE_REPRO_COMMAND"
     echo "preserved_input_command=$CURRENT_CASE_PRESERVED_INPUT_COMMAND"
     echo "active_solver_replay_command=$CURRENT_CASE_ACTIVE_REPLAY_COMMAND"
@@ -2206,6 +3348,7 @@ write_failure_summary() {
     echo "exact_seed_path=$exact_seed_txt"
     echo "exact_input_path=$exact_input_txt"
     echo "exact_output_path=$exact_output_txt"
+    echo "expected_output_path=$expected_output_txt"
     echo "checker_result_path=$checker_result_txt"
     echo "checker_replay_stdout_path=$checker_replay_stdout"
     echo "checker_replay_stderr_path=$checker_replay_stderr"
@@ -2223,6 +3366,7 @@ write_failure_summary() {
     echo "runtime_env_path=$env_snapshot"
     echo "runtime_env_exports_path=$env_exports"
     echo "artifact_manifest_path=$artifact_manifest"
+    echo "structured_context_path=$FAILURE_ROOT/failure_context.json"
     echo "retry_log_path=$retry_log"
     echo "suite_config_path=$FAILURE_ROOT/suite_config.txt"
     echo "suite_plan_path=$FAILURE_ROOT/suite_plan.tsv"
@@ -2249,6 +3393,7 @@ write_failure_summary() {
     echo "- Failure origin: \`$CURRENT_FAILURE_ORIGIN\`"
     echo "- Retryable harness issue: \`$CURRENT_FAILURE_RETRYABLE\`"
     echo "- Failure summary: \`$CURRENT_FAILURE_SUMMARY\`"
+    echo "- Failure reporting status: \`complete\`"
     if [[ -n "$CURRENT_FAILURE_SOLVER_EXIT" ]]; then
       echo "- Solver exit code: \`$CURRENT_FAILURE_SOLVER_EXIT\`"
     fi
@@ -2267,6 +3412,7 @@ write_failure_summary() {
     echo "- Timeout (s): \`$CURRENT_CASE_TIMEOUT\`"
     echo "- Helper wall-clock bound (s): \`$CURRENT_CASE_HELPER_TIMEOUT_BOUND\`"
     echo "- Manifest row: \`$CURRENT_CASE_MANIFEST_ROW\`"
+    echo "- Manifest sha256: \`$SMOKE_MANIFEST_SHA256\`"
     echo "- Failure root: \`$FAILURE_ROOT\`"
     echo "- Failure case dir: \`$failure_case_dir\`"
     echo "- Smoke output root: \`$OUTROOT\`"
@@ -2276,9 +3422,11 @@ write_failure_summary() {
     echo "- Helper stderr: \`$CURRENT_CASE_STDERR\`"
     echo "- Helper result json: \`$CURRENT_CASE_RESULT_JSON\`"
     echo "- Commands snapshot: \`$commands_txt\`"
+    echo "- Invoked command snapshot: \`$invoked_command_txt\`"
     echo "- Exact seed snapshot: \`$exact_seed_txt\`"
     echo "- Exact input snapshot: \`$exact_input_txt\`"
-    echo "- Exact solver output snapshot: \`$exact_output_txt\`"
+    echo "- Exact actual solver output snapshot: \`$exact_output_txt\`"
+    echo "- Exact expected output snapshot: \`$expected_output_txt\`"
     echo "- Checker result: \`$checker_result_txt\`"
     echo "- Checker replay stdout: \`$checker_replay_stdout\`"
     echo "- Checker replay stderr: \`$checker_replay_stderr\`"
@@ -2292,6 +3440,7 @@ write_failure_summary() {
     echo "- Runtime env exports: \`$env_exports\`"
     echo "- Active-solver replay output root: \`$CURRENT_CASE_ACTIVE_REPLAY_OUTROOT\`"
     echo "- Artifact manifest: \`$artifact_manifest\`"
+    echo "- Structured context json: \`$FAILURE_ROOT/failure_context.json\`"
     echo "- Retry log: \`$retry_log\`"
     echo "- Suite config: \`$FAILURE_ROOT/suite_config.txt\`"
     echo "- Suite plan: \`$FAILURE_ROOT/suite_plan.tsv\`"
@@ -2305,6 +3454,12 @@ write_failure_summary() {
     echo
     echo "\`\`\`bash"
     echo "$CURRENT_CASE_EXEC_COMMAND"
+    echo "\`\`\`"
+    echo
+    echo "Invoked command snapshot path:"
+    echo
+    echo "\`\`\`text"
+    echo "$invoked_command_txt"
     echo "\`\`\`"
     echo
     echo "Preferred active-solver replay invocation for the next solver iteration:"
@@ -2372,13 +3527,18 @@ write_failure_summary() {
     echo "- helper stdout: \`$CURRENT_CASE_STDOUT\`"
     echo "- helper stderr: \`$CURRENT_CASE_STDERR\`"
     echo "- artifact manifest: \`$artifact_manifest\`"
+    echo "- invoked command: \`$invoked_command_txt\`"
+    echo "- expected output: \`$expected_output_txt\`"
     echo
     echo "## Preserved Debug Bundle"
     echo
+    echo "- \`failure_context.json\` is the stable machine-readable handoff for the next retry. It records failure classification, case identity, replay commands, parsed checker or mismatch details, and the main preserved artifact paths in one place."
     echo "- \`solver_snapshot\` freezes the exact failing binary."
     echo "- \`runtime_env_exports.sh\` restores the branch-local release env that the failure used."
     echo "- \`commands.txt\` preserves the exact failing helper command plus the derived replay commands for the next iteration."
-    echo "- \`seed.txt\`, \`input.txt\`, and \`solver_output.txt\` expose the exact preserved seed/input/output without digging into the case subdirectory."
+    echo "- \`invoked_command.txt\` preserves the exact helper invocation in a single-file snapshot."
+    echo "- \`seed.txt\`, \`input.txt\`, and \`solver_output.txt\` expose the exact preserved seed/input/actual-output without digging into the case subdirectory."
+    echo "- \`expected_output.txt\` snapshots the preserved \`hidden_parent.txt\` tree that generated the failing case."
     echo "- \`checker_result.txt\` preserves the helper-recorded checker outcome and the exact preserved-output validator command."
     echo "- \`checker_replay.stdout.txt\` and \`checker_replay.stderr.txt\` persist the direct recheck of the preserved \`in.txt\` and \`out.txt\`."
     echo "- \`mismatch_summary.txt\` extracts the concrete validator mismatch, including parsed query/expected/got fields when available."
@@ -2455,6 +3615,8 @@ populate_failure_repro_commands() {
   CURRENT_CASE_ACTIVE_REPLAY_ARTIFACT_SUBPATH="from_smoke_failure/$CURRENT_CASE_TAG"
   CURRENT_CASE_ACTIVE_REPLAY_COMMAND="$(
     quote_command \
+      env \
+      "LCA_SMOKE_TARGET_MANIFEST=$FAILURE_ROOT/smoke_cases_manifest.tsv" \
       "$SMOKE_TARGET_WRAPPER" \
       "$CURRENT_CASE_TAG" \
       "$CURRENT_CASE_ACTIVE_REPLAY_ARTIFACT_SUBPATH"
@@ -2474,14 +3636,6 @@ populate_failure_repro_commands() {
     "$CURRENT_CASE_REPRO_DIR"
     --timeout
     "$CURRENT_CASE_TIMEOUT"
-    --env
-    "DENSE_SHADOW_CASE_MODE=$CURRENT_CASE_MODE"
-    --env
-    "DENSE_SHADOW_CASE_N=$CURRENT_CASE_N"
-    --env
-    "DENSE_SHADOW_CASE_SEED=$CURRENT_CASE_SEED"
-    --env
-    "DENSE_PROFILE_OUTDIR=$CURRENT_CASE_REPRO_DIR"
     --env
     DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
   )
@@ -2506,6 +3660,8 @@ populate_failure_repro_commands() {
 preserve_failure_artifacts() {
   local solver_for_repro="$SOLVER"
   local failure_case_dir=""
+  local failure_parent=""
+  local staging_promoted=0
 
   if [[ -z "${WORKDIR:-}" || ! -d "$WORKDIR" ]]; then
     return 1
@@ -2513,14 +3669,30 @@ preserve_failure_artifacts() {
   if ! remove_path_retry "$FAILURE_ROOT"; then
     return 1
   fi
-  if ! mkdir -p "$(dirname "$FAILURE_ROOT")"; then
+  failure_parent="$(dirname "$FAILURE_ROOT")"
+  if ! mkdir -p "$failure_parent"; then
     return 1
   fi
   if ! move_path_retry "$WORKDIR" "$FAILURE_ROOT"; then
+    if ! mkdir -p "$FAILURE_ROOT"; then
+      return 1
+    fi
+    if ! cp -R "$WORKDIR"/. "$FAILURE_ROOT"/; then
+      remove_path_retry "$FAILURE_ROOT" || true
+      return 1
+    fi
+  else
+    staging_promoted=1
+  fi
+  # A copy fallback leaves the original staging tree live under WORKDIR.
+  # Keep that handle intact so EXIT cleanup can reclaim it after reporting.
+  if (( staging_promoted != 0 )); then
+    WORKDIR=""
+  fi
+  failure_case_dir="$FAILURE_ROOT/$CURRENT_CASE_TAG"
+  if [[ ! -d "$failure_case_dir" ]]; then
     return 1
   fi
-  WORKDIR=""
-  failure_case_dir="$FAILURE_ROOT/$CURRENT_CASE_TAG"
   CURRENT_CASE_RESULT_JSON="$FAILURE_ROOT/$CURRENT_CASE_TAG/$RUN_CASE_RESULT_NAME"
   CURRENT_CASE_STDOUT="$FAILURE_ROOT/$CURRENT_CASE_TAG/run_case.stdout.txt"
   CURRENT_CASE_STDERR="$FAILURE_ROOT/$CURRENT_CASE_TAG/run_case.stderr.txt"
@@ -2535,7 +3707,8 @@ preserve_failure_artifacts() {
   else
     CURRENT_CASE_SOLVER_SNAPSHOT="$SOLVER"
   fi
-  populate_failure_repro_commands "$failure_case_dir" "$solver_for_repro"
+  populate_failure_repro_commands "$failure_case_dir" "$solver_for_repro" || true
+  return 0
 }
 
 report_failure_context() {
@@ -2554,6 +3727,7 @@ report_failure_context() {
   echo "[lca_smoke] manifest row: $CURRENT_CASE_MANIFEST_ROW" >&2
   echo "[lca_smoke] executed command: $CURRENT_CASE_EXEC_COMMAND" >&2
   echo "[lca_smoke] commands snapshot: $FAILURE_ROOT/commands.txt" >&2
+  echo "[lca_smoke] invoked command snapshot: $FAILURE_ROOT/invoked_command.txt" >&2
   echo "[lca_smoke] active-solver replay command: $CURRENT_CASE_ACTIVE_REPLAY_COMMAND" >&2
   echo "[lca_smoke] active-solver replay output root: $CURRENT_CASE_ACTIVE_REPLAY_OUTROOT" >&2
   echo "[lca_smoke] repro command: $CURRENT_CASE_REPRO_COMMAND" >&2
@@ -2565,7 +3739,8 @@ report_failure_context() {
   echo "[lca_smoke] helper result json: $CURRENT_CASE_RESULT_JSON" >&2
   echo "[lca_smoke] exact seed snapshot: $FAILURE_ROOT/seed.txt" >&2
   echo "[lca_smoke] exact input snapshot: $FAILURE_ROOT/input.txt" >&2
-  echo "[lca_smoke] exact output snapshot: $FAILURE_ROOT/solver_output.txt" >&2
+  echo "[lca_smoke] exact actual output snapshot: $FAILURE_ROOT/solver_output.txt" >&2
+  echo "[lca_smoke] exact expected output snapshot: $FAILURE_ROOT/expected_output.txt" >&2
   echo "[lca_smoke] checker result: $FAILURE_ROOT/checker_result.txt" >&2
   echo "[lca_smoke] checker replay stdout: $FAILURE_ROOT/checker_replay.stdout.txt" >&2
   echo "[lca_smoke] checker replay stderr: $FAILURE_ROOT/checker_replay.stderr.txt" >&2
@@ -2575,6 +3750,7 @@ report_failure_context() {
   echo "[lca_smoke] checker replay script: $FAILURE_ROOT/recheck_preserved_output.sh" >&2
   echo "[lca_smoke] solver snapshot: $CURRENT_CASE_SOLVER_SNAPSHOT" >&2
   echo "[lca_smoke] artifact manifest: $FAILURE_ROOT/artifact_manifest.tsv" >&2
+  echo "[lca_smoke] structured context: $FAILURE_ROOT/failure_context.json" >&2
   echo "[lca_smoke] seed repro script: $FAILURE_ROOT/repro_from_seed.sh" >&2
   echo "[lca_smoke] preserved-input replay script: $FAILURE_ROOT/replay_preserved_input.sh" >&2
   echo "[lca_smoke] active-solver replay script: $FAILURE_ROOT/replay_active_manifest_case.sh" >&2
@@ -2605,6 +3781,120 @@ handle_signal() {
   exit "$rc"
 }
 
+branch_build_cache_is_fresh() {
+  local candidate="$BRANCH_BUILD_CACHE_BINARY"
+  local dep=""
+
+  if [[ ! -f "$candidate" || ! -x "$candidate" || ! -f "$BRANCH_BUILD_CACHE_METADATA" ]]; then
+    return 1
+  fi
+
+  if ! python3 - "$BRANCH_BUILD_CACHE_METADATA" "$SOURCE" <<'PY' >/dev/null 2>&1
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+metadata_path = Path(sys.argv[1])
+source_path = Path(sys.argv[2]).resolve()
+
+try:
+    data = json.loads(metadata_path.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError):
+    raise SystemExit(1)
+
+try:
+    expected_source = source_path.relative_to(metadata_path.resolve().parents[3]).as_posix()
+except ValueError:
+    expected_source = str(source_path)
+
+if data.get("schema") != "boj28350_build_metadata_v1":
+    raise SystemExit(1)
+if data.get("source") != expected_source:
+    raise SystemExit(1)
+if data.get("requested_compiler") not in ("", None):
+    raise SystemExit(1)
+if data.get("cxx_env") not in ("", None):
+    raise SystemExit(1)
+if data.get("static_mode") != "auto":
+    raise SystemExit(1)
+if data.get("defines") != []:
+    raise SystemExit(1)
+PY
+  then
+    return 1
+  fi
+
+  for dep in \
+    "$SOURCE" \
+    "$BUILD_WRAPPER" \
+    "$BRANCH_ROOT/boj28350_resume.py" \
+    "$BRANCH_ROOT/build.py" \
+    "$RELEASE_ENV" \
+    "$ARTIFACT_RESOLVER"; do
+    if [[ "$dep" -nt "$candidate" ]]; then
+      return 1
+    fi
+  done
+  return 0
+}
+
+populate_smoke_binary_from_branch_cache() {
+  local reason="$1"
+
+  if ! branch_build_cache_is_fresh; then
+    return 1
+  fi
+
+  mkdir -p "$BUILD_ROOT"
+  if ! cp "$BRANCH_BUILD_CACHE_BINARY" "$BINARY"; then
+    echo "[lca_smoke] warning: failed to copy branch build cache into smoke build root: $BRANCH_BUILD_CACHE_BINARY" >&2
+    return 1
+  fi
+  if ! cp "$BRANCH_BUILD_CACHE_METADATA" "${BINARY}.build_meta.json"; then
+    echo "[lca_smoke] warning: failed to copy branch build cache metadata into smoke build root: $BRANCH_BUILD_CACHE_METADATA" >&2
+    return 1
+  fi
+  chmod +x "$BINARY" 2>/dev/null || true
+  : > "$SETUP_BUILD_STDERR"
+  printf '[lca_smoke] reused up-to-date branch build cache (%s): %s\n' "$reason" "$BRANCH_BUILD_CACHE_BINARY" > "$SETUP_BUILD_STDOUT"
+  echo "[lca_smoke] reusing up-to-date branch build cache ($reason): $BRANCH_BUILD_CACHE_BINARY" >&2
+  return 0
+}
+
+ensure_branch_build_cache_current() {
+  local build_rc=0
+  local prior_errexit=1
+  local -a build_cmd
+
+  enter_function_errexit prior_errexit
+  mkdir -p "$BRANCH_BUILD_CACHE_ROOT"
+  build_cmd=("$BUILD_WRAPPER" "--out" "$BRANCH_BUILD_CACHE_BINARY")
+  printf '%s\n' "$(quote_command "${build_cmd[@]}")" > "$SETUP_BUILD_COMMAND"
+
+  if branch_build_cache_is_fresh; then
+    restore_function_errexit "$prior_errexit"
+    return 0
+  fi
+
+  set +e
+  run_build_command_with_retry \
+    "refreshing the branch-local build cache" \
+    "$BRANCH_BUILD_CACHE_BINARY" \
+    "branch build cache binary" \
+    "${build_cmd[@]}"
+  build_rc=$?
+  set -e
+  if (( build_rc == 0 )); then
+    restore_function_errexit "$prior_errexit"
+    return 0
+  fi
+
+  restore_function_errexit "$prior_errexit"
+  return "$build_rc"
+}
+
 build_solver_if_needed() {
   local build_rc=0
   local prior_errexit=1
@@ -2617,6 +3907,9 @@ build_solver_if_needed() {
   # artifact path so repeated invocations start from a known solver state.
   if [[ -e "$BINARY" ]]; then
     remove_path_retry "$BINARY" || fail "failed to clear stale smoke build binary: $BINARY"
+  fi
+  if [[ -e "${BINARY}.build_meta.json" ]]; then
+    remove_path_retry "${BINARY}.build_meta.json" || fail "failed to clear stale smoke build metadata: ${BINARY}.build_meta.json"
   fi
 
   if [[ ! -d "$SETUP_ROOT" || ! -f "$SETUP_MANIFEST" || ! -f "$SETUP_ENV_SNAPSHOT" ]]; then
@@ -2634,35 +3927,102 @@ build_solver_if_needed() {
     fi
   fi
 
+  # Always build directly into the smoke-owned output root so repeated smoke
+  # runs do not depend on the freshness of the shared branch build cache.
   build_cmd=("$BUILD_WRAPPER" "--out" "$BINARY")
   printf '%s\n' "$(quote_command "${build_cmd[@]}")" > "$SETUP_BUILD_COMMAND"
-  : > "$SETUP_BUILD_STDOUT"
-  : > "$SETUP_BUILD_STDERR"
-
-  if run_bounded_command "$SMOKE_BUILD_TIMEOUT_S" "$SETUP_BUILD_STDOUT" "$SETUP_BUILD_STDERR" build "${build_cmd[@]}"; then
-    :
-  else
-    build_rc=$?
-    if (( LAST_BOUNDED_COMMAND_TIMED_OUT != 0 )); then
-      echo "[lca_smoke] build wrapper exceeded wall-clock timeout after ${SMOKE_BUILD_TIMEOUT_S}s" >&2
-      write_setup_failure_summary "build_timeout" "$SMOKE_EXIT_SOLVER_TIMEOUT" "build wrapper exceeded wall-clock timeout after ${SMOKE_BUILD_TIMEOUT_S}s"
-      report_setup_failure_context "build_timeout" "$SMOKE_EXIT_SOLVER_TIMEOUT" "build wrapper exceeded wall-clock timeout after ${SMOKE_BUILD_TIMEOUT_S}s"
-      restore_function_errexit "$prior_errexit"
-      return "$SMOKE_EXIT_SOLVER_TIMEOUT"
-    fi
-    echo "[lca_smoke] build wrapper failed with exit code $build_rc" >&2
-    write_setup_failure_summary "build" "$build_rc" "build wrapper failed before smoke cases started"
-    report_setup_failure_context "build" "$build_rc" "build wrapper failed before smoke cases started"
+  set +e
+  run_build_command_with_retry \
+    "producing the isolated smoke solver" \
+    "$BINARY" \
+    "solver binary" \
+    "${build_cmd[@]}"
+  build_rc=$?
+  set -e
+  if (( build_rc == 0 )); then
     restore_function_errexit "$prior_errexit"
-    return "$SMOKE_EXIT_HARNESS_FAILURE"
+    return 0
   fi
-  require_executable "$BINARY" "solver binary"
+
   restore_function_errexit "$prior_errexit"
+  return "$build_rc"
 }
 
 load_release_environment() {
+  if [[ -z "${RUN_TMPDIR:-}" ]]; then
+    fail "runtime tmpdir is unset before loading the release environment"
+  fi
+  mkdir -p "$RUN_TMPDIR"
+  export BRANCH_ARTIFACT_TMP_ROOT="$RUN_TMPDIR"
+  export TMPDIR="$RUN_TMPDIR"
+  export TMP="$RUN_TMPDIR"
+  export TEMP="$RUN_TMPDIR"
   source "$RELEASE_ENV"
+  mkdir -p "$RUN_TMPDIR"
+  export BRANCH_ARTIFACT_TMP_ROOT="$RUN_TMPDIR"
+  export TMPDIR="$RUN_TMPDIR"
+  export TMP="$RUN_TMPDIR"
+  export TEMP="$RUN_TMPDIR"
   assert_runtime_environment
+}
+
+refresh_setup_tracking_if_needed() {
+  local refresh_rc=0
+  local prior_errexit=1
+
+  enter_function_errexit prior_errexit
+  if [[ -d "$SETUP_ROOT" && -f "$SETUP_MANIFEST" && -f "$SETUP_ENV_SNAPSHOT" && -f "$SETUP_BUILD_COMMAND" ]]; then
+    restore_function_errexit "$prior_errexit"
+    return 0
+  fi
+
+  echo "[lca_smoke] warning: setup tracking disappeared before runtime validation; rebuilding $SETUP_ROOT" >&2
+  prepare_setup_root
+  prepare_session_environment_state
+  configure_setup_tmpdir
+  set +e
+  run_setup_preflight
+  refresh_rc=$?
+  set -e
+  if (( refresh_rc != 0 )); then
+    restore_function_errexit "$prior_errexit"
+    return "$refresh_rc"
+  fi
+  set +e
+  build_solver_if_needed
+  refresh_rc=$?
+  set -e
+  restore_function_errexit "$prior_errexit"
+  return "$refresh_rc"
+}
+
+ensure_solver_ready_for_case_execution() {
+  local case_tag="$1"
+  local recover_rc=0
+  local prior_errexit=1
+
+  enter_function_errexit prior_errexit
+  if [[ -f "$SOLVER" && -x "$SOLVER" ]]; then
+    restore_function_errexit "$prior_errexit"
+    return 0
+  fi
+
+  echo "[lca_smoke] warning: smoke solver disappeared before case execution; rebuilding isolated smoke solver for case=$case_tag solver=$SOLVER" >&2
+  set +e
+  build_solver_if_needed
+  recover_rc=$?
+  set -e
+  if (( recover_rc != 0 )); then
+    restore_function_errexit "$prior_errexit"
+    return "$recover_rc"
+  fi
+  if [[ ! -f "$SOLVER" || ! -x "$SOLVER" ]]; then
+    echo "[lca_smoke] rebuilding the missing smoke solver returned without leaving an executable solver: $SOLVER" >&2
+    restore_function_errexit "$prior_errexit"
+    return "$SMOKE_EXIT_HARNESS_FAILURE"
+  fi
+  restore_function_errexit "$prior_errexit"
+  return 0
 }
 
 run_smoke_case_once() {
@@ -2709,9 +4069,44 @@ run_smoke_case_once() {
   CURRENT_CASE_ACTIVE_REPLAY_COMMAND=""
   CURRENT_CASE_ACTIVE_REPLAY_ARTIFACT_SUBPATH=""
   CURRENT_CASE_ACTIVE_REPLAY_OUTROOT=""
-  CURRENT_CASE_SOLVER_SNAPSHOT="$SOLVER"
   CURRENT_CASE_CHECKER_COMMAND=""
   reset_failure_classification
+  set +e
+  ensure_solver_ready_for_case_execution "$case_tag"
+  rc=$?
+  set -e
+  if (( rc != 0 )); then
+    CURRENT_FAILURE_HELPER_RC="$rc"
+    CURRENT_FAILURE_RC="$rc"
+    if [[ ! -f "$SOLVER" || ! -x "$SOLVER" ]]; then
+      set_failure_classification \
+        "harness_transient_failure" \
+        "harness" \
+        1 \
+        "rebuilding the missing smoke solver returned without leaving an executable solver at $SOLVER before case execution"
+      restore_function_errexit "$prior_errexit"
+      return "$CURRENT_FAILURE_RC"
+    fi
+    case "$rc" in
+      "$SMOKE_EXIT_USAGE")
+        set_failure_classification \
+          "harness_usage_failure" \
+          "harness" \
+          0 \
+          "rebuilding the missing smoke solver failed due to a harness usage error before case execution"
+        ;;
+      *)
+        set_failure_classification \
+          "harness_transient_failure" \
+          "harness" \
+          1 \
+          "rebuilding the missing smoke solver failed before case execution"
+        ;;
+    esac
+    restore_function_errexit "$prior_errexit"
+    return "$CURRENT_FAILURE_RC"
+  fi
+  CURRENT_CASE_SOLVER_SNAPSHOT="$SOLVER"
   cmd=(
     python3
     "$RUN_CASE_HELPER"
@@ -2738,20 +4133,29 @@ run_smoke_case_once() {
   CURRENT_CASE_EXEC_COMMAND="$(quote_command "${cmd[@]}")"
   helper_timeout_s="$CURRENT_CASE_HELPER_TIMEOUT_BOUND"
 
-  if run_bounded_command "$helper_timeout_s" "$CURRENT_CASE_STDOUT" "$CURRENT_CASE_STDERR" case_helper "${cmd[@]}"; then
+  set +e
+  run_bounded_command "$helper_timeout_s" "$CURRENT_CASE_STDOUT" "$CURRENT_CASE_STDERR" case_helper "${cmd[@]}"
+  rc=$?
+  set -e
+  if (( rc == 0 )); then
+    classify_case_failure 0
+    if (( CURRENT_FAILURE_RC != 0 )); then
+      populate_failure_repro_commands "$case_dir" "$SOLVER"
+      restore_function_errexit "$prior_errexit"
+      return "$CURRENT_FAILURE_RC"
+    fi
     restore_function_errexit "$prior_errexit"
     return 0
   fi
 
-  rc=$?
   if (( LAST_BOUNDED_COMMAND_TIMED_OUT != 0 )) && [[ ! -f "$CURRENT_CASE_RESULT_JSON" ]]; then
     CURRENT_FAILURE_HELPER_RC="$SMOKE_EXIT_SOLVER_TIMEOUT"
-    CURRENT_FAILURE_RC="$SMOKE_EXIT_SOLVER_TIMEOUT"
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
     set_failure_classification \
-      "wrapper_timeout" \
+      "harness_transient_failure" \
       "harness" \
-      0 \
-      "case helper exceeded wall-clock timeout after ${helper_timeout_s}s"
+      1 \
+      "case helper exceeded wall-clock timeout after ${helper_timeout_s}s before writing ${RUN_CASE_RESULT_NAME}"
     populate_failure_repro_commands "$case_dir" "$SOLVER"
     restore_function_errexit "$prior_errexit"
     return "$CURRENT_FAILURE_RC"
@@ -2806,18 +4210,20 @@ run_smoke_case_with_retry() {
       if preserve_failure_artifacts; then
         failure_case_dir="$FAILURE_ROOT/$case_tag"
       else
-        echo "[lca_smoke] warning: failed to promote preserved failure bundle; keeping staging tree at $case_dir" >&2
-        WORKDIR=""
+        echo "[lca_smoke] warning: failed to promote preserved failure bundle; exporting summary from live case dir $case_dir and leaving staging cleanup to EXIT teardown" >&2
       fi
       if ! write_failure_summary "$failure_case_dir"; then
         echo "[lca_smoke] warning: failed to write failure summary/report; classified case exit remains $CURRENT_FAILURE_RC" >&2
+        if ! write_failure_reporting_fallback "$failure_case_dir" "write_failure_summary did not complete; fallback summary/report synthesized from preserved paths"; then
+          echo "[lca_smoke] warning: failed to synthesize fallback failure summary/report; downstream iteration guidance may be incomplete" >&2
+        fi
       fi
       report_failure_context "$failure_case_dir"
       restore_function_errexit "$prior_errexit"
       return "$CURRENT_FAILURE_RC"
     fi
 
-    echo "[lca_smoke] retrying harness-transient failure: case=$case_tag index=$case_index attempt=$(( attempt_index + 1 ))/$max_attempts seed=$seed timeout_s=$timeout_s" >&2
+    echo "[lca_smoke] retrying harness-transient failure: case=$case_tag index=$case_index attempt=$(( attempt_index + 1 ))/$max_attempts seed=$seed timeout_s=$timeout_s helper_exit_code=$CURRENT_FAILURE_HELPER_RC normalized_exit_code=$CURRENT_FAILURE_RC kind=$CURRENT_FAILURE_KIND" >&2
     if [[ "$SMOKE_RETRY_SLEEP_S" != "0" && "$SMOKE_RETRY_SLEEP_S" != "0.0" && "$SMOKE_RETRY_SLEEP_S" != "0.00" ]]; then
       sleep "$SMOKE_RETRY_SLEEP_S"
     fi
@@ -2898,6 +4304,7 @@ trap 'handle_signal 143' TERM
 run_main() {
   local smoke_rc=0
 
+  SMOKE_CLEANUP_ACTIVE=1
   sanitize_shell_state
   mkdir -p "$ARTIFACTS_ROOT"
   resolve_output_roots
@@ -2945,6 +4352,7 @@ run_main() {
   load_smoke_plan
   write_smoke_suite_metadata
   load_release_environment
+  refresh_setup_tracking_if_needed
   write_environment_validation_bundle
 
   set +e
@@ -2969,23 +4377,35 @@ main() {
 
   require_command bash
   require_command python3
+  require_command mkdir
   require_command mktemp
   require_command dirname
   require_command chmod
   require_command cp
   require_command mv
   require_command rm
+  require_command rmdir
   require_command tail
   require_command sleep
   require_command grep
+  require_command kill
+  require_build_compiler
+  require_directory "$SCRIPT_DIR" "outer smoke wrapper directory"
+  require_directory "$BRANCH_ROOT" "branch root directory"
+  require_directory "$RESUME_WORKSPACE_DIR" "resume workspace directory"
   require_file "$SOURCE" "solver source"
   require_file "$ARTIFACT_RESOLVER" "artifact resolver"
+  require_file "$BUILD_HELPER" "build helper"
   require_file "$RELEASE_ENV" "release env wrapper"
   require_file "$RUN_CASE_HELPER" "branch-local case helper"
   require_file "$CHECKER_HELPER" "branch-local validator"
+  require_file "$RESUME_HELPER" "resume helper"
   require_file "$SMOKE_CASES_SOURCE" "smoke case manifest"
   require_executable "$BUILD_WRAPPER" "build wrapper"
   require_executable "$SMOKE_TARGET_WRAPPER" "smoke target wrapper"
+  require_python_entrypoint "$BUILD_HELPER" "build helper imports"
+  require_python_entrypoint "$RUN_CASE_HELPER" "run case helper imports"
+  require_python_entrypoint "$CHECKER_HELPER" "validator helper imports"
 
   run_main
 }

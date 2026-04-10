@@ -3,18 +3,23 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
+import sys
 from pathlib import Path
+
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
+sys.dont_write_bytecode = True
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Summarize or execute resume commands from quota_pause_state.json."
+        description="Summarize or execute resume commands from the retry-loop pause snapshot."
     )
     parser.add_argument("--branch-root", required=True)
     parser.add_argument(
         "--pause-state-file",
-        default=".ouroboros/quota_pause_state.json",
+        default="artifacts/lca_tree_stress_v5/retry_loop/quota_pause_state.json",
         help="Path relative to branch root or absolute path.",
     )
     parser.add_argument(
@@ -30,10 +35,26 @@ def resolve_path(branch_root: Path, value: str) -> Path:
     return path if path.is_absolute() else (branch_root / path).resolve()
 
 
+def _load_artifact_guard(branch_root: Path):
+    sys.path.insert(0, str(branch_root))
+    from artifact_paths import ensure_under_artifacts  # type: ignore
+
+    return ensure_under_artifacts
+
+
+def resolve_artifact_path(branch_root: Path, ensure_under_artifacts, value: str) -> Path:
+    return ensure_under_artifacts(resolve_path(branch_root, value))
+
+
 def main() -> int:
     args = parse_args()
     branch_root = Path(args.branch_root).resolve()
-    pause_state_file = resolve_path(branch_root, args.pause_state_file)
+    ensure_under_artifacts = _load_artifact_guard(branch_root)
+    pause_state_file = resolve_artifact_path(
+        branch_root,
+        ensure_under_artifacts,
+        args.pause_state_file,
+    )
     if not pause_state_file.exists():
         raise SystemExit(f"pause state not found: {pause_state_file}")
 

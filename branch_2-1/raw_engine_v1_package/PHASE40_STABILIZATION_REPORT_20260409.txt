@@ -1,0 +1,174 @@
+PHASE40 STABILIZATION REPORT
+
+1. Modified / added files
+- tests/tools/runtime_watch_ops.py
+- tests/tools/materialize_staged_mirror.py
+- tests/tools/staged_verification_lib.py
+- tests/runtime_known_env_governance_phase40.json
+- PHASE40_STABILIZATION_REPORT_20260409.txt
+
+2. Approved known env lifecycle/state-machine design
+- Approved known environment governance is now driven by an explicit policy manifest:
+  artifacts/manifests/runtime_known_env_governance_phase40.json
+- Machine-readable states remain:
+  CURRENT_ACTIVE
+  APPROVED_KNOWN_FRESH
+  APPROVED_KNOWN_REVERIFY_REQUIRED
+  APPROVED_KNOWN_STALE
+  APPROVED_KNOWN_RETIRE_CANDIDATE
+  RETIRED_KNOWN_ENV
+  FOREIGN_UNAPPROVED
+- Governance policy fields include:
+  reverify_due_after_days
+  stale_after_days
+  retire_candidate_after_days
+  retire_after_days
+  due_soon_window_days
+  min_real_samples_for_reverify
+  min_watch_confidence_for_freshen
+  retain_retired_baselines_days
+  retain_retired_known_env_entries_days
+- Current env, approved known env, retired known env, and foreign env are separated explicitly in governance and operator artifacts.
+
+3. Reverify / stale / retire workflow results
+- Known env import:
+  artifacts/manifests/runtime_known_env_import_phase40.json
+  import_verdict = KNOWN_ENV_REVERIFY_APPEND
+  import_type = known_env_reverify
+  environment_state = APPROVED_KNOWN_REVERIFY_REQUIRED
+- Known env reverify gate:
+  artifacts/manifests/runtime_known_env_reverify_gate_phase40.json
+  reverify_gate_verdict = FRESHEN
+  reverify_confidence = HIGH
+  sample_count = 72
+  real_sample_count = 72
+  watch_status = CLEAR
+  watch_confidence = HIGH
+- Known env apply reverify:
+  artifacts/manifests/runtime_known_env_apply_reverify_phase40.json
+  previous_state = APPROVED_KNOWN_REVERIFY_REQUIRED
+  new_state = APPROVED_KNOWN_FRESH
+- Known env reverify plan:
+  artifacts/manifests/runtime_known_env_reverify_plan_phase40.json
+  plan_verdict = EMPTY
+  entry_count = 0
+- Synthetic age tick:
+  artifacts/manifests/runtime_known_env_age_tick_phase40.json
+  affected_known_env_count = 1
+  retire_candidate_count = 1
+  transition = APPROVED_KNOWN_FRESH -> APPROVED_KNOWN_RETIRE_CANDIDATE
+- Actual retire plan:
+  artifacts/manifests/runtime_known_env_retire_plan_phase40.json
+  plan_verdict = RETAIN
+  recommended_action = NO_ACTION
+- No live known env retirement was applied in phase40 because the approved known env was freshened successfully and the real retire plan stayed RETAIN.
+
+4. Runtime registry health v3 result
+- artifacts/manifests/runtime_registry_health_phase40.json
+- overall_status = HEALTHY
+- current_active_count = 1
+- approved_known_fresh_count = 1
+- approved_known_due_soon_count = 0
+- approved_known_reverify_required_count = 0
+- approved_known_stale_count = 0
+- retire_candidate_count = 0
+- retired_count = 0
+- healthy_known_env_count = 1
+- governance_action_required_count = 0
+- orphaned_entry_count = 0
+
+5. Unified ops summary v6 result
+- artifacts/manifests/policy_ops_summary_phase40.json
+- current environment = WATCH_RUNTIME
+- approved known environments = NO_ACTION
+- unapproved foreign environments = REBASELINE_REQUIRED
+- publication health = HEALTHY
+- verification lane = CLOSEOUT_PASS
+- Current env rerun reintroduced a stable production-critical release_full soft-budget watch:
+  runtime_budget_verdict = BUDGET_WARN
+  runtime_watch_status = WATCH_STABLE
+  runtime_watch_confidence = HIGH
+- Approved known env governance is healthy after reverify apply:
+  environment_state = APPROVED_KNOWN_FRESH
+  recommended_action_known_envs = NO_ACTION
+
+6. Evidence bundle governance timeline inclusion
+- Published bundle includes:
+  governance policy manifest
+  known env import summary
+  known env reverify gate result
+  known env reverify apply result
+  known env reverify plan
+  known env synthetic age-tick summary
+  known env retire plan
+  runtime registry health phase40
+  policy ops summary phase40
+  publication health phase40
+  staged verification inventories and manifests
+
+7. Full staged verification results
+- Source snapshot:
+  artifacts/manifests/source_snapshot_manifest_phase40.json
+- Staged mirror verify:
+  artifacts/manifests/staged_mirror_verify_phase40.json
+  manifest_match_verdict = PASS
+- Release staged full CTest:
+  artifacts/manifests/verification_phase40_release.json
+  369/369 PASS
+  fail_count = 0
+  not_run_count = 0
+  total_wall_time_seconds = 772.63
+- Debug staged full CTest:
+  artifacts/manifests/verification_phase40_debug.json
+  369/369 PASS
+  fail_count = 0
+  not_run_count = 0
+  total_wall_time_seconds = 1167.66
+- Isolated ASan full staged CTest:
+  artifacts/manifests/verification_phase40_asan.json
+  369/369 PASS
+  fail_count = 0
+  not_run_count = 0
+  total_wall_time_seconds = 3218.54
+- CTest inventories:
+  ctest_inventory_release_phase40.json discovered_test_count = 369, missing_expected = 0, extra_unexpected = 0
+  ctest_inventory_debug_phase40.json discovered_test_count = 369, missing_expected = 0, extra_unexpected = 0
+  ctest_inventory_asan_phase40.json discovered_test_count = 369, missing_expected = 0, extra_unexpected = 0
+
+8. Publication health and verification closeout
+- artifacts/manifests/publication_health_phase40.json
+  status = HEALTHY
+  missing_artifact_count = 0
+  hash_mismatch_count = 0
+  dangling_reference_count = 0
+- artifacts/manifests/phase40_verification_closeout.json
+  closeout_verdict = CLOSEOUT_PASS
+  verification_not_run_count = 0
+  rationale = staged mirror verification and publication closeout are healthy
+- artifacts/manifests/phase40_published_snapshot.json
+  source_snapshot_hash = 3a30a7b7ab5a83de121ec6d0c56bb0c4de8200feab2f9cd7b68d275ca4e29a77
+  staged_mirror_hash = 3a30a7b7ab5a83de121ec6d0c56bb0c4de8200feab2f9cd7b68d275ca4e29a77
+
+9. New semantic counterexample
+- None
+
+10. New regressions
+- None
+
+11. exact_shadow final verdict
+- production split-choice default remains exact_shadow
+- No primitive / planner semantic change was made in this phase
+- Correctness lifecycle remains stable:
+  split_tie_organic_symmetric = PASS / FRESH
+  automorphism_probe_large = PASS / FRESH
+  planner_tie_mixed_organic = NON_APPLICABLE / FRESH
+  planner_tie_mixed_organic_compare_ready = DIAGNOSTIC_ONLY / FRESH
+
+12. Remaining risks
+- Correctness is stable; no semantic mismatch or new regression appeared in phase40.
+- Current env runtime returned to WATCH_RUNTIME on April 9, 2026 because release_full showed a stable soft-budget overrun again under fresh rerun.
+- Approved known env governance is currently healthy, but future operator work still remains:
+  refresh same-fingerprint evidence when reverify due thresholds are crossed
+  convert stale approved known envs into retire candidates when age policy says so
+  apply retirement only through the explicit archive workflow
+- Unapproved foreign environments still require explicit rebaseline before strict comparison.

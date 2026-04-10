@@ -2,13 +2,19 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import subprocess
 import sys
 import zlib
 from pathlib import Path
 
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
+sys.dont_write_bytecode = True
 
-ROOT = Path("/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker")
+
+BRANCH_ROOT = Path(__file__).resolve().parents[1]
+ROOT = BRANCH_ROOT.parent
+ARTIFACT_TMP_ROOT = (BRANCH_ROOT / "artifacts" / "lca_tree_stress_v5" / ".tmp" / "git_repair").resolve()
 GIT_DIR = ROOT / ".git"
 RAW_BASE = "https://raw.githubusercontent.com/cku9393/cpp-checker/main/"
 COMMIT_MESSAGE = "chore: update ouroboros loop prompts and pause snapshot\n"
@@ -45,23 +51,32 @@ def blob_sha1(data: bytes) -> str:
     return hashlib.sha1(payload).hexdigest(), payload
 
 
+def restore_download_path(rel: str) -> Path:
+    digest = hashlib.sha1(rel.encode("utf-8")).hexdigest()[:12]
+    return ARTIFACT_TMP_ROOT / f"{Path(rel).name}.{digest}.restore"
+
+
 def ensure_loose_object(obj: str, rel: str) -> None:
     src = ROOT / rel
     data = b""
     if src.exists():
         data = src.read_bytes()
     if not data:
-        tmp = Path("/tmp") / (Path(rel).name + ".restore")
-        curl = subprocess.run(
-            ["curl", "-L", "--fail", RAW_BASE + rel, "-o", str(tmp)],
-            capture_output=True,
-            text=True,
-        )
-        if curl.returncode != 0:
-            raise RuntimeError(
-                f"failed to download raw file for {rel}: {curl.stderr.strip()}"
+        tmp = restore_download_path(rel)
+        tmp.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            curl = subprocess.run(
+                ["curl", "-L", "--fail", RAW_BASE + rel, "-o", str(tmp)],
+                capture_output=True,
+                text=True,
             )
-        data = tmp.read_bytes()
+            if curl.returncode != 0:
+                raise RuntimeError(
+                    f"failed to download raw file for {rel}: {curl.stderr.strip()}"
+                )
+            data = tmp.read_bytes()
+        finally:
+            tmp.unlink(missing_ok=True)
     actual, payload = blob_sha1(data)
     if actual != obj:
         raise RuntimeError(f"hash mismatch for {rel}: wanted {obj}, got {actual}")

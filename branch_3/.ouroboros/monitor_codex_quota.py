@@ -3,10 +3,21 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import sys
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
+sys.dont_write_bytecode = True
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from retry_artifact_io import prepare_output_dir, write_text_output
 
 
 def parse_args() -> argparse.Namespace:
@@ -18,7 +29,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--report-root", required=True)
     parser.add_argument(
         "--soft-stop-file",
-        default=".ouroboros/soft_stop_request.json",
+        default="artifacts/lca_tree_stress_v5/retry_loop/soft_stop_request.json",
         help="Path relative to branch root or absolute path.",
     )
     parser.add_argument(
@@ -41,6 +52,47 @@ def parse_args() -> argparse.Namespace:
 def resolve_path(branch_root: Path, value: str) -> Path:
     path = Path(value).expanduser()
     return path if path.is_absolute() else (branch_root / path).resolve()
+
+
+def _load_artifact_guard(branch_root: Path):
+    sys.path.insert(0, str(branch_root))
+    from artifact_paths import ensure_under_artifacts  # type: ignore
+
+    return ensure_under_artifacts
+
+
+def resolve_artifact_path(branch_root: Path, ensure_under_artifacts, value: str) -> Path:
+    return ensure_under_artifacts(resolve_path(branch_root, value))
+
+
+def canonical_retry_soft_stop_path(
+    branch_root: Path,
+    report_root: Path,
+    ensure_under_artifacts,
+    requested_value: str,
+) -> tuple[Path, str | None]:
+    canonical = ensure_under_artifacts((report_root / "soft_stop_request.json").resolve())
+    requested = resolve_path(branch_root, requested_value)
+    if requested == canonical:
+        return canonical, None
+    if requested.name != canonical.name:
+        return canonical, (
+            f"normalized soft-stop path from `{requested}` to `{canonical}` "
+            "to keep quota pause state on the retry artifact root"
+        )
+    try:
+        requested_artifact = ensure_under_artifacts(requested)
+    except ValueError:
+        return canonical, (
+            f"normalized stale soft-stop path `{requested}` to `{canonical}` "
+            "after artifact-locality validation rejected the runtime override"
+        )
+    if requested_artifact != canonical:
+        return canonical, (
+            f"normalized non-canonical soft-stop path `{requested_artifact}` to `{canonical}` "
+            "to keep the retry loop on a single shared pause marker"
+        )
+    return canonical, None
 
 
 def parse_iso8601_timestamp(value: str | None) -> float | None:
@@ -282,14 +334,60 @@ def build_status(
     }
 
 
+def build_no_data_status(
+    *,
+    auth_context: dict[str, Any] | None = None,
+    reason: str = "no_current_account_scoped_session",
+) -> dict[str, Any]:
+    return {
+        "captured_at": datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z"),
+        "selection_mode": "auth_refresh_scoped_current_account",
+        "auth_context": auth_context or {},
+        "status": "no_data",
+        "reason": reason,
+        "session_log": None,
+        "session_log_mtime": None,
+        "session_started_at": None,
+        "event_timestamp": None,
+        "plan_type": None,
+        "events_considered": 0,
+        "primary": {
+            "window_minutes": 300,
+            "used_percent": None,
+            "remaining_percent": None,
+            "previous_remaining_percent": None,
+            "last_step_percent": None,
+            "guard_band_percent": None,
+            "threshold_percent": None,
+            "resets_at": None,
+            "triggered": False,
+            "trigger_mode": "no_data",
+        },
+        "secondary": {
+            "window_minutes": 10080,
+            "used_percent": None,
+            "remaining_percent": None,
+            "previous_remaining_percent": None,
+            "last_step_percent": None,
+            "guard_band_percent": None,
+            "threshold_percent": None,
+            "resets_at": None,
+            "triggered": False,
+            "trigger_mode": "no_data",
+        },
+        "triggered_limits": [],
+    }
+
+
 def write_status(attempt_dir: Path, report_root: Path, payload: dict[str, Any]) -> None:
     report_json = attempt_dir / "quota_watch_status.json"
     report_md = attempt_dir / "quota_watch_status.md"
     latest_json = report_root / "latest_quota_watch_status.json"
     latest_md = report_root / "latest_quota_watch_status.md"
 
-    report_json.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    report_md.write_text(
+    write_text_output(report_json, json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_text_output(
+        report_md,
         "\n".join(
             [
                 "# Quota Watch Status",
@@ -298,8 +396,10 @@ def write_status(attempt_dir: Path, report_root: Path, payload: dict[str, Any]) 
                 f"- Selection mode: `{payload.get('selection_mode') or 'unknown'}`",
                 f"- Current auth account id: `{(payload.get('auth_context') or {}).get('account_id') or 'unknown'}`",
                 f"- Current auth last refresh: `{(payload.get('auth_context') or {}).get('last_refresh') or 'unknown'}`",
-                f"- Session log: `{payload['session_log']}`",
-                f"- Session log mtime: `{payload['session_log_mtime']}`",
+                f"- Status: `{payload.get('status') or 'ok'}`",
+                f"- Reason: `{payload.get('reason') or 'n/a'}`",
+                f"- Session log: `{payload.get('session_log') or 'none'}`",
+                f"- Session log mtime: `{payload.get('session_log_mtime') or 'none'}`",
                 f"- Session started at: `{payload.get('session_started_at') or 'unknown'}`",
                 f"- Event timestamp: `{payload.get('event_timestamp') or 'unknown'}`",
                 f"- Plan type: `{payload.get('plan_type') or 'unknown'}`",
@@ -331,8 +431,8 @@ def write_status(attempt_dir: Path, report_root: Path, payload: dict[str, Any]) 
         + "\n",
         encoding="utf-8",
     )
-    latest_json.write_text(report_json.read_text(encoding="utf-8"), encoding="utf-8")
-    latest_md.write_text(report_md.read_text(encoding="utf-8"), encoding="utf-8")
+    write_text_output(latest_json, report_json.read_text(encoding="utf-8"), encoding="utf-8")
+    write_text_output(latest_md, report_md.read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def write_soft_stop_request(soft_stop_file: Path, payload: dict[str, Any]) -> None:
@@ -356,21 +456,29 @@ def write_soft_stop_request(soft_stop_file: Path, payload: dict[str, Any]) -> No
         "session_log": payload["session_log"],
         "event_timestamp": payload.get("event_timestamp"),
     }
-    soft_stop_file.parent.mkdir(parents=True, exist_ok=True)
-    soft_stop_file.write_text(json.dumps(request_payload, indent=2) + "\n", encoding="utf-8")
+    prepare_output_dir(soft_stop_file.parent)
+    write_text_output(soft_stop_file, json.dumps(request_payload, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> int:
     args = parse_args()
     branch_root = Path(args.branch_root).resolve()
-    attempt_dir = Path(args.attempt_dir).resolve()
-    report_root = Path(args.report_root).resolve()
-    soft_stop_file = resolve_path(branch_root, args.soft_stop_file)
+    ensure_under_artifacts = _load_artifact_guard(branch_root)
+    attempt_dir = resolve_artifact_path(branch_root, ensure_under_artifacts, args.attempt_dir)
+    report_root = resolve_artifact_path(branch_root, ensure_under_artifacts, args.report_root)
+    soft_stop_file, soft_stop_note = canonical_retry_soft_stop_path(
+        branch_root,
+        report_root,
+        ensure_under_artifacts,
+        args.soft_stop_file,
+    )
     sessions_root = Path(args.codex_sessions_root).expanduser().resolve()
     auth_file = Path(args.auth_file).expanduser().resolve()
 
-    attempt_dir.mkdir(parents=True, exist_ok=True)
-    report_root.mkdir(parents=True, exist_ok=True)
+    prepare_output_dir(attempt_dir)
+    prepare_output_dir(report_root)
+    if soft_stop_note:
+        print(soft_stop_note)
 
     while True:
         auth_context = load_current_auth_context(auth_file)
@@ -396,6 +504,12 @@ def main() -> int:
                     f"secondary_remaining={status['secondary']['remaining_percent']})"
                 )
                 return 0
+        else:
+            write_status(
+                attempt_dir,
+                report_root,
+                build_no_data_status(auth_context=auth_context),
+            )
         if args.once:
             return 0 if events else 1
         time.sleep(max(1, args.poll_seconds))

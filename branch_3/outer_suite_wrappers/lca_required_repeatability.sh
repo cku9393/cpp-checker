@@ -19,6 +19,8 @@ OUTROOT=""
 OUTPARENT=""
 BACKUP_ROOT=""
 WORKDIR=""
+ROOT_GUARD_DIR=""
+ROOT_GUARD_MARKER=""
 LOCK_HELD=0
 RUN_COUNT="${LCA_REQUIRED_REPEAT_COUNT:-2}"
 COMPLETED_RUNS=0
@@ -30,7 +32,7 @@ REQUIRED_SEQUENCE="lca_strong_gate -> lca_boj3s_gate"
 STRONG_OUTROOT=""
 BOJ3S_OUTROOT=""
 BASELINE_RUN=""
-SIGNATURE_FIELDS="verdict,preset,reasons,stages[name,status,cases,timeouts,re_wa,limit_scale,scale_fail]"
+SIGNATURE_FIELDS="verdict,preset,reasons,stages[name,status,cases,timeouts,re_wa,limit_scale,scale_fail],gate_config[selected_preset_sha256,runtime_env[stage_filter,limit_scale,heartbeat_interval,stale_lock_seconds,profile_mode,local_skip_self_test,enable_state_load_materialization_opt,enable_prev_state_writeback_opt,enable_layout_signature_gate_opt,enable_layout_reuse_zero_elision_opt,strong_gate_release_profile,solver_env_scrub]]"
 
 export PYTHONDONTWRITEBYTECODE=1
 
@@ -78,6 +80,36 @@ require_executable() {
   local label="$2"
   if [[ ! -x "$path" ]]; then
     fail "missing executable ${label}: $path"
+  fi
+}
+
+path_has_dataless_flag() {
+  local path="$1"
+  local flags=""
+  if [[ -z "$path" || ! -e "$path" ]]; then
+    return 1
+  fi
+  if ! flags="$(stat -f '%Sf' "$path" 2>/dev/null)"; then
+    return 1
+  fi
+  [[ "$flags" == *dataless* ]]
+}
+
+require_materialized_file() {
+  local path="$1"
+  local label="$2"
+  require_file "$path" "$label"
+  if path_has_dataless_flag "$path"; then
+    fail "dataless file ${label}: $path"
+  fi
+}
+
+require_materialized_executable() {
+  local path="$1"
+  local label="$2"
+  require_executable "$path" "$label"
+  if path_has_dataless_flag "$path"; then
+    fail "dataless executable ${label}: $path"
   fi
 }
 
@@ -152,6 +184,36 @@ clear_stale_state() {
   fi
 }
 
+prepare_root_guard() {
+  ROOT_GUARD_DIR="$ARTIFACTS_ROOT/required_repeatability.root_guard"
+  ROOT_GUARD_MARKER="$ROOT_GUARD_DIR/root_guard.txt"
+  ensure_under_artifacts "$ROOT_GUARD_DIR"
+  ensure_under_artifacts "$ROOT_GUARD_MARKER"
+  mkdir -p "$ROOT_GUARD_DIR"
+  {
+    echo "created_by=./lca_required_repeatability.sh"
+    echo "pid=$$"
+    echo "artifacts_root=$ARTIFACTS_ROOT"
+  } > "$ROOT_GUARD_MARKER"
+}
+
+assert_root_guard_intact() {
+  local gate_human="$1"
+  local run_dir="$2"
+
+  if [[ ! -d "$run_dir" ]]; then
+    FAILURE_REASON="repeatability run workspace disappeared during ${gate_human} execution"
+    FAILURE_HINT="inspect shared artifact cleanup behavior and rerun with preserved wrapper logs for $run_dir"
+    return 1
+  fi
+  if [[ ! -f "$ROOT_GUARD_MARKER" ]]; then
+    FAILURE_REASON="shared artifact root was cleared during ${gate_human} execution"
+    FAILURE_HINT="inspect ${gate_human} cleanup behavior; artifacts/lca_tree_stress_v5 must survive consecutive required-gate reruns"
+    return 1
+  fi
+  return 0
+}
+
 publish_output() {
   local outleaf
 
@@ -221,6 +283,164 @@ record_result_row() {
   printf '%s\t%s\t%s\t%s\n' "$run_label" "$gate_name" "$verdict" "$signature_status" >> "$WORKDIR/results.tsv"
 }
 
+verify_gate_output_freshness() {
+  local gate_human="$1"
+  local freshness_marker="$2"
+  local gate_outroot="$3"
+  local report_path="$4"
+  python3 - "$gate_human" "$freshness_marker" "$gate_outroot" "$report_path" <<'PY'
+from __future__ import annotations
+
+import json
+import pathlib
+import sys
+
+gate_human = sys.argv[1]
+marker_path = pathlib.Path(sys.argv[2])
+gate_outroot = pathlib.Path(sys.argv[3])
+report_path = pathlib.Path(sys.argv[4])
+
+
+def describe(path: pathlib.Path) -> dict[str, int | str] | None:
+    if not path.exists():
+        return None
+    stat = path.stat()
+    return {
+        "path": str(path),
+        "device": stat.st_dev,
+        "inode": stat.st_ino,
+        "size": stat.st_size,
+    }
+
+
+def same_identity(left: dict[str, int | str] | None, right: dict[str, int | str] | None) -> bool:
+    if left is None or right is None:
+        return False
+    return (
+        left.get("device") == right.get("device")
+        and left.get("inode") == right.get("inode")
+        and left.get("size") == right.get("size")
+    )
+
+
+before = None
+status = "fresh"
+artifact_issue = "none"
+reason = "ok"
+after_artifacts: dict[str, dict[str, int | str] | None] = {}
+issues: list[str] = []
+certify_json_path = gate_outroot / "certify.json"
+certify_summary_path = gate_outroot / "certify_summary.md"
+runtime_env_path = gate_outroot / "runtime_env.txt"
+preflight_manifest_path = gate_outroot / "preflight_manifest.tsv"
+selected_preset_path = gate_outroot / "selected_preset.json"
+repeatability_manifest_path = gate_outroot / "repeatability_gate_manifest.txt"
+required_artifacts = (
+    ("certify_json", certify_json_path),
+    ("certify_summary", certify_summary_path),
+    ("runtime_env", runtime_env_path),
+    ("preflight_manifest", preflight_manifest_path),
+    ("selected_preset", selected_preset_path),
+    ("repeatability_manifest", repeatability_manifest_path),
+)
+
+if not marker_path.exists() or not marker_path.is_file():
+    issues.append("missing_freshness_probe")
+else:
+    before = json.loads(marker_path.read_text(encoding="utf-8"))
+
+if not issues and not gate_outroot.exists():
+    issues.append("missing_output_root")
+elif not issues and not gate_outroot.is_dir():
+    issues.append("non_directory_output_root")
+elif not issues:
+    for name, path in required_artifacts:
+        after_artifacts[name] = describe(path)
+        if after_artifacts[name] is None:
+            issues.append(f"missing_required={name}")
+    for name, _path in required_artifacts:
+        if after_artifacts.get(name) is None:
+            continue
+        if same_identity((before or {}).get(name), after_artifacts.get(name)):
+            issues.append(f"stale_required={name}")
+
+if issues:
+    status = "stale_or_missing_current_run_artifacts"
+    artifact_issue = issues[0]
+    if artifact_issue == "missing_freshness_probe":
+        reason = "repeatability wrapper did not preserve the pre-run freshness probe"
+    elif artifact_issue == "missing_output_root":
+        reason = "gate output root disappeared after the wrapper returned exit code 0"
+    elif artifact_issue == "non_directory_output_root":
+        reason = "gate output root is not a directory after the wrapper returned exit code 0"
+    elif artifact_issue.startswith("missing_required="):
+        name = artifact_issue.split("=", 1)[1]
+        reason = f"{name} was missing after the wrapper returned exit code 0"
+    elif artifact_issue.startswith("stale_required="):
+        name = artifact_issue.split("=", 1)[1]
+        reason = f"{name} reused a previous published artifact instead of regenerating current-run evidence"
+    else:
+        reason = "gate output freshness check found missing or stale artifacts"
+
+lines = [
+    f"gate={gate_human}",
+    f"status={status}",
+    f"artifact_issue={artifact_issue}",
+    f"issue_count={len(issues)}",
+    f"reason={reason}",
+    f"freshness_probe={marker_path}",
+    f"live_output_root={gate_outroot}",
+]
+for issue in issues:
+    lines.append("issue=" + issue)
+for name, _path in required_artifacts:
+    lines.append("before_" + name + "=" + json.dumps((before or {}).get(name), sort_keys=True))
+    lines.append("after_" + name + "=" + json.dumps(after_artifacts.get(name), sort_keys=True))
+report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+raise SystemExit(0 if status == "fresh" else 1)
+PY
+}
+
+write_gate_freshness_probe() {
+  local gate_outroot="$1"
+  local freshness_marker="$2"
+  python3 - "$gate_outroot" "$freshness_marker" <<'PY'
+from __future__ import annotations
+
+import json
+import pathlib
+import sys
+
+gate_outroot = pathlib.Path(sys.argv[1])
+marker_path = pathlib.Path(sys.argv[2])
+
+
+def describe(path: pathlib.Path) -> dict[str, int | str] | None:
+    if not path.exists():
+        return None
+    stat = path.stat()
+    return {
+        "path": str(path),
+        "device": stat.st_dev,
+        "inode": stat.st_ino,
+        "size": stat.st_size,
+    }
+
+
+payload = {
+    "gate_outroot": str(gate_outroot),
+    "gate_outroot_exists": gate_outroot.exists(),
+    "certify_json": describe(gate_outroot / "certify.json"),
+    "certify_summary": describe(gate_outroot / "certify_summary.md"),
+    "runtime_env": describe(gate_outroot / "runtime_env.txt"),
+    "preflight_manifest": describe(gate_outroot / "preflight_manifest.tsv"),
+    "selected_preset": describe(gate_outroot / "selected_preset.json"),
+    "repeatability_manifest": describe(gate_outroot / "repeatability_gate_manifest.txt"),
+}
+marker_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
+}
+
 snapshot_gate_output() {
   local gate_label="$1"
   local gate_outroot="$2"
@@ -228,6 +448,10 @@ snapshot_gate_output() {
   local snapshot_dir="$run_dir/$gate_label"
   local certify_json="$gate_outroot/certify.json"
   local certify_summary="$gate_outroot/certify_summary.md"
+  local runtime_env="$gate_outroot/runtime_env.txt"
+  local preflight_manifest="$gate_outroot/preflight_manifest.tsv"
+  local selected_preset="$gate_outroot/selected_preset.json"
+  local repeatability_manifest="$gate_outroot/repeatability_gate_manifest.txt"
 
   if [[ ! -d "$gate_outroot" ]]; then
     fail "expected published gate output after successful run: $gate_outroot"
@@ -240,25 +464,105 @@ snapshot_gate_output() {
   if [[ -f "$certify_summary" ]]; then
     cp "$certify_summary" "$snapshot_dir/certify_summary.md"
   fi
+  if [[ -f "$runtime_env" ]]; then
+    cp "$runtime_env" "$snapshot_dir/runtime_env.txt"
+  fi
+  if [[ -f "$preflight_manifest" ]]; then
+    cp "$preflight_manifest" "$snapshot_dir/preflight_manifest.tsv"
+  fi
+  if [[ -f "$selected_preset" ]]; then
+    cp "$selected_preset" "$snapshot_dir/selected_preset.json"
+  fi
+  if [[ -f "$repeatability_manifest" ]]; then
+    cp "$repeatability_manifest" "$snapshot_dir/repeatability_gate_manifest.txt"
+  fi
   printf '%s\n' "$gate_outroot" > "$snapshot_dir/live_output_root.txt"
 }
 
 extract_pass_signature() {
-  local certify_json="$1"
+  local snapshot_dir="$1"
   local signature_path="$2"
   local report_path="$3"
   local gate_human="$4"
-  python3 - "$certify_json" "$signature_path" "$report_path" "$gate_human" <<'PY'
+  python3 - "$snapshot_dir" "$signature_path" "$report_path" "$gate_human" <<'PY'
 from __future__ import annotations
 
 import json
+import hashlib
 import pathlib
 import sys
 
-certify_path = pathlib.Path(sys.argv[1])
+snapshot_dir = pathlib.Path(sys.argv[1])
 signature_path = pathlib.Path(sys.argv[2])
 report_path = pathlib.Path(sys.argv[3])
 gate_human = sys.argv[4]
+
+certify_path = snapshot_dir / "certify.json"
+selected_preset_path = snapshot_dir / "selected_preset.json"
+runtime_env_path = snapshot_dir / "runtime_env.txt"
+preflight_manifest_path = snapshot_dir / "preflight_manifest.tsv"
+repeatability_manifest_path = snapshot_dir / "repeatability_gate_manifest.txt"
+
+missing = [
+    str(path)
+    for path in (
+        certify_path,
+        selected_preset_path,
+        runtime_env_path,
+        preflight_manifest_path,
+        repeatability_manifest_path,
+    )
+    if not path.is_file()
+]
+if missing:
+    report_path.write_text(
+        "\n".join(
+            [
+                f"gate={gate_human}",
+                f"snapshot_dir={snapshot_dir}",
+                "status=missing_gate_config_artifacts",
+                "missing=" + " | ".join(missing),
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    raise SystemExit(1)
+
+
+def sha256(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_key_values(path: pathlib.Path) -> dict[str, str]:
+    rows: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        rows[key] = value
+    return rows
+
+
+runtime_entries = load_key_values(runtime_env_path)
+stable_runtime_keys = (
+    "stage_filter",
+    "limit_scale",
+    "heartbeat_interval",
+    "stale_lock_seconds",
+    "profile_mode",
+    "local_skip_self_test",
+    "enable_state_load_materialization_opt",
+    "enable_prev_state_writeback_opt",
+    "enable_layout_signature_gate_opt",
+    "enable_layout_reuse_zero_elision_opt",
+    "strong_gate_release_profile",
+    "solver_env_scrub",
+)
 
 payload = json.loads(certify_path.read_text(encoding="utf-8"))
 signature = {
@@ -277,6 +581,13 @@ signature = {
         }
         for stage in payload.get("stages", [])
     ],
+    "gate_config": {
+        "selected_preset_sha256": sha256(selected_preset_path),
+        "runtime_env": {
+            key: runtime_entries.get(key, "")
+            for key in stable_runtime_keys
+        },
+    },
 }
 bad_stages = [stage["name"] for stage in signature["stages"] if stage.get("status") != "PASS"]
 lines = [
@@ -284,6 +595,8 @@ lines = [
     f"certify_json={certify_path}",
     f"verdict={signature['verdict']}",
     f"preset={signature['preset']}",
+    f"selected_preset_sha256={signature['gate_config']['selected_preset_sha256']}",
+    "runtime_env_config=" + json.dumps(signature["gate_config"]["runtime_env"], sort_keys=True),
     f"bad_stages={','.join(bad_stages) if bad_stages else 'none'}",
 ]
 report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -325,7 +638,7 @@ lines = [
     f"gate={gate_human}",
     f"baseline_run={baseline_rel}",
     f"current_run={current_rel}",
-    "compared_signature_fields=verdict,preset,reasons,stages[name,status,cases,timeouts,re_wa,limit_scale,scale_fail]",
+    "compared_signature_fields=verdict,preset,reasons,stages[name,status,cases,timeouts,re_wa,limit_scale,scale_fail],gate_config[selected_preset_sha256,runtime_env[stage_filter,limit_scale,heartbeat_interval,stale_lock_seconds,profile_mode,local_skip_self_test,enable_state_load_materialization_opt,enable_prev_state_writeback_opt,enable_layout_signature_gate_opt,enable_layout_reuse_zero_elision_opt,strong_gate_release_profile,solver_env_scrub]]",
 ]
 if baseline != current:
     lines.append("status=DIFF")
@@ -349,9 +662,12 @@ run_gate_once() {
   local stderr_path="$run_dir/${gate_label}.stderr.txt"
   local exit_code_path="$run_dir/${gate_label}.exit_code.txt"
   local verdict_path="$run_dir/${gate_label}.verdict.txt"
+  local freshness_marker="$run_dir/${gate_label}.freshness_start.marker"
+  local freshness_report="$run_dir/${gate_label}.freshness_report.txt"
   local signature_status="baseline"
   local rc=0
 
+  write_gate_freshness_probe "$gate_outroot" "$freshness_marker"
   set +e
   "$wrapper_path" >"$stdout_path" 2>"$stderr_path"
   rc=$?
@@ -360,10 +676,19 @@ run_gate_once() {
   if (( rc != 0 )); then
     return "$rc"
   fi
+  if ! assert_root_guard_intact "$gate_human" "$run_dir"; then
+    return 97
+  fi
+
+  if ! verify_gate_output_freshness "$gate_human" "$freshness_marker" "$gate_outroot" "$freshness_report"; then
+    FAILURE_REASON="${gate_human} returned exit code 0 but reused prior gate artifacts instead of regenerating current-run pass evidence"
+    FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/${gate_label}.freshness_report.txt before trusting ${gate_outroot}"
+    return 96
+  fi
 
   snapshot_gate_output "$gate_label" "$gate_outroot" "$run_dir"
   if ! extract_pass_signature \
-    "$run_dir/$gate_label/certify.json" \
+    "$run_dir/$gate_label" \
     "$run_dir/$gate_label/pass_signature.json" \
     "$run_dir/$gate_label/pass_signature_report.txt" \
     "$gate_human"; then
@@ -394,6 +719,8 @@ write_summary() {
     echo "requested_runs=$RUN_COUNT"
     echo "completed_runs=$COMPLETED_RUNS"
     echo "required_sequence=$REQUIRED_SEQUENCE"
+    echo "artifacts_root=$ARTIFACTS_ROOT"
+    echo "artifact_root_guard=$ROOT_GUARD_MARKER"
     echo "strong_gate_output=$STRONG_OUTROOT"
     echo "boj3s_gate_output=$BOJ3S_OUTROOT"
     if [[ -n "$FAILED_RUN" ]]; then
@@ -429,10 +756,10 @@ require_command python3
 require_command mktemp
 require_command cp
 require_command dirname
-require_file "$ARTIFACT_RESOLVER" "artifact resolver"
-require_file "$RELEASE_ENV" "release env wrapper"
-require_executable "$STRONG_WRAPPER" "strong gate wrapper"
-require_executable "$BOJ3S_WRAPPER" "BOJ 3s gate wrapper"
+require_materialized_file "$ARTIFACT_RESOLVER" "artifact resolver"
+require_materialized_file "$RELEASE_ENV" "release env wrapper"
+require_materialized_executable "$STRONG_WRAPPER" "strong gate wrapper"
+require_materialized_executable "$BOJ3S_WRAPPER" "BOJ 3s gate wrapper"
 validate_run_count
 
 source "$RELEASE_ENV"
@@ -463,6 +790,7 @@ fi
 mkdir -p "$TMP_PARENT"
 mkdir -p "$STAGE_PARENT"
 clear_stale_state
+prepare_root_guard
 WORKDIR="$(mktemp -d "$STAGE_PARENT/$RUN_WORK_TEMPLATE")"
 ensure_under_artifacts "$WORKDIR"
 mkdir -p "$WORKDIR/runs"

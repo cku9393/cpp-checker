@@ -3,17 +3,35 @@ set -euo pipefail
 
 LCA_SMOKE_TARGET_CLEAN_ENV_FLAG="LCA_SMOKE_TARGET_CLEAN_ENV_READY"
 LCA_SMOKE_TARGET_CLEAN_PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+SELF_SOURCE="${BASH_SOURCE[0]}"
+SELF_SOURCE_DIR="."
+case "$SELF_SOURCE" in
+  */*)
+    SELF_SOURCE_DIR="${SELF_SOURCE%/*}"
+    ;;
+esac
+SELF_DIR="$(
+  unset CDPATH
+  cd -- "$SELF_SOURCE_DIR"
+  pwd -P
+)"
+SELF_PATH="$SELF_DIR/${SELF_SOURCE##*/}"
 
 if [[ "${!LCA_SMOKE_TARGET_CLEAN_ENV_FLAG:-0}" != "1" ]]; then
-  exec /usr/bin/env -i \
-    HOME="${HOME:-}" \
-    PATH="$LCA_SMOKE_TARGET_CLEAN_PATH" \
-    TERM="${TERM:-dumb}" \
-    "$LCA_SMOKE_TARGET_CLEAN_ENV_FLAG=1" \
-    /usr/bin/env bash "$0" "$@"
+  clean_env_args=(
+    /usr/bin/env -i
+    "HOME=${HOME:-}"
+    "PATH=$LCA_SMOKE_TARGET_CLEAN_PATH"
+    "TERM=${TERM:-dumb}"
+    "$LCA_SMOKE_TARGET_CLEAN_ENV_FLAG=1"
+  )
+  if [[ -n "${LCA_SMOKE_TARGET_MANIFEST:-}" ]]; then
+    clean_env_args+=("LCA_SMOKE_TARGET_MANIFEST=$LCA_SMOKE_TARGET_MANIFEST")
+  fi
+  exec "${clean_env_args[@]}" /usr/bin/env bash "$SELF_PATH" "$@"
 fi
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+SCRIPT_DIR="$SELF_DIR"
 BRANCH_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 cd "$BRANCH_ROOT"
 export PYTHONDONTWRITEBYTECODE=1
@@ -22,18 +40,38 @@ ARTIFACT_RESOLVER="$BRANCH_ROOT/artifact_paths.py"
 BUILD_WRAPPER="$BRANCH_ROOT/build.sh"
 RELEASE_ENV="$BRANCH_ROOT/solver_release_env.sh"
 RUN_CASE_HELPER="$BRANCH_ROOT/branch_run_case.py"
-SMOKE_CASES="$BRANCH_ROOT/boj28350_resume/smoke_cases.tsv"
+SMOKE_CASES_SOURCE="$BRANCH_ROOT/boj28350_resume/smoke_cases.tsv"
+SMOKE_CASES_FROZEN="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke/environment_validation/smoke_cases.snapshot.tsv"
+SMOKE_CASES_ACTIVE=""
 SOLVER="$BRANCH_ROOT/artifacts/boj28350_resume/build/solve"
 BRANCH_ARTIFACTS_ROOT="$BRANCH_ROOT/artifacts"
+TMP_PARENT="$BRANCH_ARTIFACTS_ROOT/lca_tree_stress_v5/.tmp"
 
 OUTROOT=""
 CASE_SELECTOR=""
 ARTIFACT_SUBPATH=""
 LIST_ONLY=0
+TARGET_ENV_ROOT=""
+TARGET_TMPDIR=""
+TARGET_HOME=""
+TARGET_XDG_CONFIG_HOME=""
+TARGET_XDG_CACHE_HOME=""
+TARGET_XDG_STATE_HOME=""
+TARGET_PYCACHE_ROOT=""
 
 fail() {
   echo "[lca_smoke_target] $*" >&2
   exit 1
+}
+
+cleanup() {
+  local rc="${1:-$?}"
+  trap - EXIT
+  set +e
+  if [[ -n "$TARGET_ENV_ROOT" && -e "$TARGET_ENV_ROOT" ]]; then
+    rm -rf "$TARGET_ENV_ROOT"
+  fi
+  exit "$rc"
 }
 
 ensure_under_artifacts() {
@@ -47,11 +85,23 @@ ensure_under_artifacts() {
   esac
 }
 
+ensure_under_branch_root() {
+  local path="$1"
+  case "$path" in
+    "$BRANCH_ROOT"|"$BRANCH_ROOT"/*)
+      ;;
+    *)
+      fail "path escaped branch root: $path"
+      ;;
+  esac
+}
+
 usage() {
   cat >&2 <<'EOF'
 usage: ./outer_suite_wrappers/lca_smoke_target.sh --list
 usage: ./outer_suite_wrappers/lca_smoke_target.sh <case-index-or-tag> [artifact_subpath]
 [lca_smoke_target] replays one manifest-defined lca_smoke case with the same branch-local run_case arguments and solver env flags used by ./lca_smoke.sh
+[lca_smoke_target] prefers the frozen smoke manifest snapshot from the latest published smoke run and accepts LCA_SMOKE_TARGET_MANIFEST for explicit replay snapshots
 [lca_smoke_target] output stays under branch-local artifacts/lca_tree_stress_v5/smoke_target/...
 EOF
   exit 2
@@ -79,6 +129,17 @@ require_executable() {
   fi
 }
 
+format_replay_command() {
+  python3 - "$@" <<'PY'
+from __future__ import annotations
+
+import shlex
+import sys
+
+print(shlex.join(sys.argv[1:]))
+PY
+}
+
 parse_args() {
   case $# in
     1)
@@ -101,8 +162,40 @@ parse_args() {
   esac
 }
 
+resolve_manifest_path() {
+  local candidate="${LCA_SMOKE_TARGET_MANIFEST:-}"
+  local resolved=""
+
+  if [[ -n "$candidate" ]]; then
+    resolved="$(python3 - "$BRANCH_ROOT" "$candidate" <<'PY'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+branch_root = Path(sys.argv[1]).resolve()
+candidate = Path(sys.argv[2])
+if not candidate.is_absolute():
+    candidate = branch_root / candidate
+print(candidate.resolve())
+PY
+)"
+    ensure_under_branch_root "$resolved"
+    require_file "$resolved" "explicit smoke target manifest"
+    SMOKE_CASES_ACTIVE="$resolved"
+    return
+  fi
+
+  if [[ -f "$SMOKE_CASES_FROZEN" ]]; then
+    SMOKE_CASES_ACTIVE="$SMOKE_CASES_FROZEN"
+    return
+  fi
+
+  SMOKE_CASES_ACTIVE="$SMOKE_CASES_SOURCE"
+}
+
 list_manifest_cases() {
-  python3 - "$SMOKE_CASES" <<'PY'
+  python3 - "$SMOKE_CASES_ACTIVE" <<'PY'
 from __future__ import annotations
 
 import csv
@@ -161,7 +254,7 @@ PY
 resolve_selected_case() {
   local parsed=""
   parsed="$(
-    python3 - "$SMOKE_CASES" "$CASE_SELECTOR" <<'PY'
+    python3 - "$SMOKE_CASES_ACTIVE" "$CASE_SELECTOR" <<'PY'
 from __future__ import annotations
 
 import csv
@@ -314,7 +407,88 @@ resolve_output_root() {
     fail "artifact resolver returned an empty smoke target output path"
   fi
   ensure_under_artifacts "$OUTROOT"
+}
+
+prepare_output_root() {
+  if [[ -e "$OUTROOT" ]]; then
+    rm -rf "$OUTROOT"
+  fi
   mkdir -p "$OUTROOT"
+}
+
+prepare_target_environment() {
+  TARGET_ENV_ROOT="$TMP_PARENT/lca_smoke_target.${CASE_TAG}.env"
+  TARGET_TMPDIR="$TARGET_ENV_ROOT/tmp"
+  TARGET_HOME="$TARGET_ENV_ROOT/home"
+  TARGET_XDG_CONFIG_HOME="$TARGET_ENV_ROOT/xdg_config"
+  TARGET_XDG_CACHE_HOME="$TARGET_ENV_ROOT/xdg_cache"
+  TARGET_XDG_STATE_HOME="$TARGET_ENV_ROOT/xdg_state"
+  TARGET_PYCACHE_ROOT="$TARGET_ENV_ROOT/pycache"
+
+  ensure_under_artifacts "$TARGET_ENV_ROOT"
+  ensure_under_artifacts "$TARGET_TMPDIR"
+  ensure_under_artifacts "$TARGET_HOME"
+  ensure_under_artifacts "$TARGET_XDG_CONFIG_HOME"
+  ensure_under_artifacts "$TARGET_XDG_CACHE_HOME"
+  ensure_under_artifacts "$TARGET_XDG_STATE_HOME"
+  ensure_under_artifacts "$TARGET_PYCACHE_ROOT"
+
+  if [[ -e "$TARGET_ENV_ROOT" ]]; then
+    rm -rf "$TARGET_ENV_ROOT"
+  fi
+
+  mkdir -p \
+    "$TARGET_TMPDIR" \
+    "$TARGET_HOME" \
+    "$TARGET_XDG_CONFIG_HOME" \
+    "$TARGET_XDG_CACHE_HOME" \
+    "$TARGET_XDG_STATE_HOME" \
+    "$TARGET_PYCACHE_ROOT"
+
+  export LC_ALL=C
+  export LANG=C
+  export TZ=UTC
+  export PYTHONUTF8=1
+  export PYTHONNOUSERSITE=1
+  export PYTHONHASHSEED=0
+  export BRANCH_ARTIFACT_TMP_ROOT="$TARGET_TMPDIR"
+  export TMPDIR="$TARGET_TMPDIR"
+  export TMP="$TARGET_TMPDIR"
+  export TEMP="$TARGET_TMPDIR"
+  export HOME="$TARGET_HOME"
+  export XDG_CONFIG_HOME="$TARGET_XDG_CONFIG_HOME"
+  export XDG_CACHE_HOME="$TARGET_XDG_CACHE_HOME"
+  export XDG_STATE_HOME="$TARGET_XDG_STATE_HOME"
+  export PYTHONPYCACHEPREFIX="$TARGET_PYCACHE_ROOT"
+}
+
+assert_target_environment() {
+  local env_name=""
+  for env_name in \
+    BRANCH_ARTIFACT_TMP_ROOT \
+    TMPDIR \
+    TMP \
+    TEMP \
+    HOME \
+    XDG_CONFIG_HOME \
+    XDG_CACHE_HOME \
+    XDG_STATE_HOME \
+    PYTHONPYCACHEPREFIX; do
+    if [[ -z "${!env_name:-}" ]]; then
+      fail "required deterministic environment variable is unset: $env_name"
+    fi
+    ensure_under_artifacts "${!env_name}"
+  done
+
+  [[ "$BRANCH_ARTIFACT_TMP_ROOT" == "$TARGET_TMPDIR" ]] || fail "BRANCH_ARTIFACT_TMP_ROOT drifted from target tmpdir"
+  [[ "$TMPDIR" == "$TARGET_TMPDIR" ]] || fail "TMPDIR drifted from target tmpdir"
+  [[ "$TMP" == "$TARGET_TMPDIR" ]] || fail "TMP drifted from target tmpdir"
+  [[ "$TEMP" == "$TARGET_TMPDIR" ]] || fail "TEMP drifted from target tmpdir"
+  [[ "$HOME" == "$TARGET_HOME" ]] || fail "HOME drifted from target session root"
+  [[ "$XDG_CONFIG_HOME" == "$TARGET_XDG_CONFIG_HOME" ]] || fail "XDG_CONFIG_HOME drifted from target session root"
+  [[ "$XDG_CACHE_HOME" == "$TARGET_XDG_CACHE_HOME" ]] || fail "XDG_CACHE_HOME drifted from target session root"
+  [[ "$XDG_STATE_HOME" == "$TARGET_XDG_STATE_HOME" ]] || fail "XDG_STATE_HOME drifted from target session root"
+  [[ "$PYTHONPYCACHEPREFIX" == "$TARGET_PYCACHE_ROOT" ]] || fail "PYTHONPYCACHEPREFIX drifted from target session root"
 }
 
 write_target_metadata() {
@@ -322,6 +496,7 @@ write_target_metadata() {
   local command_text="$2"
 
   {
+    printf 'manifest_path\t%s\n' "$SMOKE_CASES_ACTIVE"
     printf 'case_index\tcase_tag\tstage\tmode\tn\tseed\tshuffle_labels\tshuffle_queries\ttimeout_s\n'
     printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
       "$CASE_INDEX" \
@@ -348,32 +523,29 @@ main() {
   local command_text=""
 
   parse_args "$@"
+  trap 'cleanup "$?"' EXIT
 
   require_command bash
   require_command python3
   require_file "$ARTIFACT_RESOLVER" "artifact resolver"
   require_file "$RELEASE_ENV" "release env wrapper"
   require_file "$RUN_CASE_HELPER" "branch-local case helper"
-  require_file "$SMOKE_CASES" "smoke case manifest"
+  require_file "$SMOKE_CASES_SOURCE" "smoke case manifest"
   require_executable "$BUILD_WRAPPER" "build wrapper"
-  source "$RELEASE_ENV"
-  ensure_under_artifacts "$BRANCH_ARTIFACT_TMP_ROOT"
-  ensure_under_artifacts "$TMPDIR"
-  ensure_under_artifacts "$TMP"
-  ensure_under_artifacts "$TEMP"
-  ensure_under_artifacts "$HOME"
-  ensure_under_artifacts "$XDG_CONFIG_HOME"
-  ensure_under_artifacts "$XDG_CACHE_HOME"
-  ensure_under_artifacts "$XDG_STATE_HOME"
-  ensure_under_artifacts "$PYTHONPYCACHEPREFIX"
 
   if (( LIST_ONLY )); then
+    resolve_manifest_path
     list_manifest_cases
     return 0
   fi
 
+  resolve_manifest_path
   resolve_selected_case
   resolve_output_root
+  prepare_output_root
+  prepare_target_environment
+  source "$RELEASE_ENV"
+  assert_target_environment
 
   build_stdout="$OUTROOT/build.stdout.txt"
   build_stderr="$OUTROOT/build.stderr.txt"
@@ -416,8 +588,7 @@ main() {
     --env
     DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1
   )
-  printf -v command_text '%q ' "${cmd[@]}"
-  command_text="${command_text% }"
+  command_text="$(format_replay_command "${cmd[@]}")"
 
   write_target_metadata "$case_dir" "$command_text"
 

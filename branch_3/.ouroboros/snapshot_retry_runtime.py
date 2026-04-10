@@ -3,11 +3,23 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import shlex
+import sys
 from collections import deque
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
+sys.dont_write_bytecode = True
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from retry_artifact_io import prepare_output_dir, write_text_output
 
 
 SESSION_RE = re.compile(r"(?:session_id.?=.?|Session ID:\s+)([A-Za-z0-9_]+)")
@@ -35,11 +47,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--soft-stop-file", default="")
     parser.add_argument(
         "--pause-state-file",
-        default=".ouroboros/quota_pause_state.json",
+        default="artifacts/lca_tree_stress_v5/retry_loop/quota_pause_state.json",
         help="Path relative to branch root or absolute path.",
     )
     parser.add_argument("--write-pause-state", action="store_true")
     return parser.parse_args()
+
+
+def _load_artifact_guard(branch_root: Path):
+    sys.path.insert(0, str(branch_root))
+    from artifact_paths import ensure_under_artifacts  # type: ignore
+
+    return ensure_under_artifacts
 
 
 def resolve_path(branch_root: Path, value: str) -> Path | None:
@@ -47,6 +66,13 @@ def resolve_path(branch_root: Path, value: str) -> Path | None:
         return None
     path = Path(value).expanduser()
     return path if path.is_absolute() else (branch_root / path).resolve()
+
+
+def resolve_artifact_path(branch_root: Path, ensure_under_artifacts, value: str) -> Path | None:
+    resolved = resolve_path(branch_root, value)
+    if resolved is None:
+        return None
+    return ensure_under_artifacts(resolved)
 
 
 def load_tail(path: Path, limit: int = 40) -> list[str]:
@@ -134,6 +160,27 @@ def read_json(path: Path | None) -> dict[str, Any] | None:
         return None
 
 
+def select_active_seed_file(
+    *,
+    status_label: str,
+    attempt_log: Path,
+    current_log: Path,
+    seed_file: str,
+    analysis_seed_file: str | None,
+) -> str:
+    if not analysis_seed_file:
+        return seed_file
+    if status_label.startswith("analysis_round_"):
+        return analysis_seed_file
+    if current_log != attempt_log and current_log.name.startswith("analysis_workflow_round_"):
+        return analysis_seed_file
+    return seed_file
+
+
+def shell_join(parts: list[str]) -> str:
+    return " ".join(shlex.quote(part) for part in parts)
+
+
 def write_reports(
     attempt_dir: Path,
     report_root: Path,
@@ -146,8 +193,9 @@ def write_reports(
     latest_runtime_json = report_root / "latest_runtime_snapshot.json"
     latest_runtime_md = report_root / "latest_runtime_snapshot.md"
 
-    runtime_json.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    runtime_md.write_text(
+    write_text_output(runtime_json, json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    write_text_output(
+        runtime_md,
         "\n".join(
             [
                 "# Runtime Snapshot",
@@ -187,8 +235,8 @@ def write_reports(
         + "\n",
         encoding="utf-8",
     )
-    latest_runtime_json.write_text(runtime_json.read_text(encoding="utf-8"), encoding="utf-8")
-    latest_runtime_md.write_text(runtime_md.read_text(encoding="utf-8"), encoding="utf-8")
+    write_text_output(latest_runtime_json, runtime_json.read_text(encoding="utf-8"), encoding="utf-8")
+    write_text_output(latest_runtime_md, runtime_md.read_text(encoding="utf-8"), encoding="utf-8")
 
     if write_pause_state:
         quota_pause_json = report_root / "latest_quota_pause.json"
@@ -196,9 +244,10 @@ def write_reports(
         pause_payload = dict(payload)
         pause_request = pause_payload.get("pause_request") or {}
         pause_payload["pause_recorded_at"] = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
-        pause_state_path.write_text(json.dumps(pause_payload, indent=2) + "\n", encoding="utf-8")
-        quota_pause_json.write_text(json.dumps(pause_payload, indent=2) + "\n", encoding="utf-8")
-        quota_pause_md.write_text(
+        write_text_output(pause_state_path, json.dumps(pause_payload, indent=2) + "\n", encoding="utf-8")
+        write_text_output(quota_pause_json, json.dumps(pause_payload, indent=2) + "\n", encoding="utf-8")
+        write_text_output(
+            quota_pause_md,
             "\n".join(
                 [
                     "# Quota Pause Snapshot",
@@ -231,16 +280,25 @@ def write_reports(
 def main() -> int:
     args = parse_args()
     branch_root = Path(args.branch_root).resolve()
-    attempt_dir = Path(args.attempt_dir).resolve()
-    report_root = Path(args.report_root).resolve()
-    attempt_log = Path(args.attempt_log).resolve()
-    current_log = resolve_path(branch_root, args.current_log) if args.current_log else attempt_log
-    soft_stop_file = resolve_path(branch_root, args.soft_stop_file) if args.soft_stop_file else None
-    pause_state_path = resolve_path(branch_root, args.pause_state_file)
+    ensure_under_artifacts = _load_artifact_guard(branch_root)
+    attempt_dir = resolve_artifact_path(branch_root, ensure_under_artifacts, args.attempt_dir)
+    report_root = resolve_artifact_path(branch_root, ensure_under_artifacts, args.report_root)
+    attempt_log = resolve_artifact_path(branch_root, ensure_under_artifacts, args.attempt_log)
+    current_log = (
+        resolve_artifact_path(branch_root, ensure_under_artifacts, args.current_log)
+        if args.current_log
+        else attempt_log
+    )
+    soft_stop_file = (
+        resolve_artifact_path(branch_root, ensure_under_artifacts, args.soft_stop_file)
+        if args.soft_stop_file
+        else None
+    )
+    pause_state_path = resolve_artifact_path(branch_root, ensure_under_artifacts, args.pause_state_file)
 
-    attempt_dir.mkdir(parents=True, exist_ok=True)
-    report_root.mkdir(parents=True, exist_ok=True)
-    pause_state_path.parent.mkdir(parents=True, exist_ok=True)
+    prepare_output_dir(attempt_dir)
+    prepare_output_dir(report_root)
+    prepare_output_dir(pause_state_path.parent)
 
     attempt_tail = load_tail(attempt_log)
     current_tail = load_tail(current_log) if current_log else attempt_tail

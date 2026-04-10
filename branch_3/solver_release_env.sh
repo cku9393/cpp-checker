@@ -110,7 +110,11 @@ unset __solver_release_env_dir
 unset __solver_release_env_tmp_override
 unset __solver_release_env_tmp
 
-export PROFILE_MODE="${PROFILE_MODE:-PROFILE_NONE}"
+# Keep the progress40 local profiling baseline enabled in release runs. The
+# branch-local gate wrappers capture solver stderr into artifacts already, and
+# forcing PROFILE_NONE materially slows the rect-family boj3s probes compared
+# with the source's intended PROFILE_BASE default.
+export PROFILE_MODE="${PROFILE_MODE:-PROFILE_BASE}"
 # If the shared branch-local binary was compiled with LOCAL for diagnostics,
 # skip the embedded self-test and reduce checkpoint spam in gate runs.
 export LOCAL_SKIP_SELF_TEST="${LOCAL_SKIP_SELF_TEST:-1}"
@@ -128,19 +132,27 @@ export ENABLE_RUN_DISCOVERY_FUSION_OPT="${ENABLE_RUN_DISCOVERY_FUSION_OPT:-1}"
 export ENABLE_FUSED_DISCOVERY_CLASSIFY_OPT="${ENABLE_FUSED_DISCOVERY_CLASSIFY_OPT:-1}"
 export ENABLE_TSCAN_CORE_OPT="${ENABLE_TSCAN_CORE_OPT:-1}"
 export ENABLE_TSCAN_BRANCH_STATE_OPT="${ENABLE_TSCAN_BRANCH_STATE_OPT:-1}"
-# The current branch-local comb-family probes run better with state-load
-# materialization left off by default; the HDT no-touch relabel path still
-# preserves the progress40 direction while avoiding this secondary overhead.
-export ENABLE_STATE_LOAD_MATERIALIZATION_OPT="${ENABLE_STATE_LOAD_MATERIALIZATION_OPT:-0}"
+# Keep AC3 unanimous support reuse enabled on branch_3. The re-anchored March
+# 28 AC3 line still relies on this broad gate to avoid falling back to repeated
+# full support rebuilds on the dense strong-gate families.
+export AC3_SUPPORT_REUSE_MAX_TOUCHED="${AC3_SUPPORT_REUSE_MAX_TOUCHED:-100000}"
+# Fresh 2026-04-09 same-worktree probes on the rebuilt branch show that the
+# progress40 late stack only turns into a net win once the state-load
+# materialization path is re-enabled together with the pointer / pack /
+# normalize chain. With that full line active, `comb_rect_dense n=1024`
+# improved from about 1.96s to 1.81s and `comb_dense n=2048` from about 7.86s
+# to 6.53s. Keep the flag overridable, but make the branch-local default follow
+# the currently strongest reproducible progress40-aligned release mix.
+export ENABLE_STATE_LOAD_MATERIALIZATION_OPT="${ENABLE_STATE_LOAD_MATERIALIZATION_OPT:-1}"
 export ENABLE_PREV_STATE_CARRY_REUSE_OPT="${ENABLE_PREV_STATE_CARRY_REUSE_OPT:-1}"
 export ENABLE_CARRY_REUSE_FASTPATH_OPT="${ENABLE_CARRY_REUSE_FASTPATH_OPT:-1}"
 export ENABLE_CARRY_HIT_APPLY_OPT="${ENABLE_CARRY_HIT_APPLY_OPT:-1}"
-# The bundled progress39 resume scripts keep the post-carry optimizer stack on,
-# and progress40 adds layout-gate work on top of that cumulative baseline.
-# On the current branch-local source, leaving writeback off still avoids the
-# deterministic chain-family miscompare seen in the release build while the
-# later reuse/layout chain remains available for explicit probe runs.
-export ENABLE_PREV_STATE_WRITEBACK_OPT="${ENABLE_PREV_STATE_WRITEBACK_OPT:-0}"
+# The re-anchored March 28 AC3 solver keeps the carry/writeback lane correct on
+# the chain-family sentinels and needs it for the dense strong-gate corridor.
+export ENABLE_PREV_STATE_WRITEBACK_OPT="${ENABLE_PREV_STATE_WRITEBACK_OPT:-1}"
+# Re-enable the cumulative progress40 late stack by default. On the current
+# solver build, keeping these branches off leaves the stronger pack/normalize
+# line inactive and measurably slower on the representative AC5 release probes.
 export ENABLE_POINTER_REBIND_OPT="${ENABLE_POINTER_REBIND_OPT:-1}"
 export ENABLE_TARGET_RESOLVE_PINNING_OPT="${ENABLE_TARGET_RESOLVE_PINNING_OPT:-1}"
 export ENABLE_DIRECT_PREBIND_OPT="${ENABLE_DIRECT_PREBIND_OPT:-1}"
@@ -155,5 +167,14 @@ export ENABLE_PACK_ENCODE_NORMALIZE_CORE_OPT="${ENABLE_PACK_ENCODE_NORMALIZE_COR
 export ENABLE_CANONICAL_NORMALIZE_OPT="${ENABLE_CANONICAL_NORMALIZE_OPT:-1}"
 export ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT="${ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT:-1}"
 export ENABLE_LAYOUT_SIGNATURE_GATE_OPT="${ENABLE_LAYOUT_SIGNATURE_GATE_OPT:-1}"
-export ENABLE_DELTA_PRESERVED_HIT="${ENABLE_DELTA_PRESERVED_HIT:-1}"
-export ENABLE_DELTA_CONNECTOR_HIT="${ENABLE_DELTA_CONNECTOR_HIT:-1}"
+# Current branch-local AC5 probes show the dense 1024 smoke rows improve when
+# the delta preserved / connector routes stay disabled by default, while the
+# sampled hard-scaling cap row remains effectively unchanged. Keep the routes
+# overridable, but make the reproducible release baseline follow that faster
+# branch-local mix until the route-selection corridor is reworked.
+export ENABLE_DELTA_PRESERVED_HIT="${ENABLE_DELTA_PRESERVED_HIT:-0}"
+export ENABLE_DELTA_CONNECTOR_HIT="${ENABLE_DELTA_CONNECTOR_HIT:-0}"
+# The DynamicGraph component enumerator used by the untouched fastpath produces
+# wrong large-N parent trees on balanced / random max-N runs in this branch.
+# Keep the untouched split path, but fall back to the safe component walk.
+export ENABLE_NOTOUCH_FAST_COMPONENT_ENUM="${ENABLE_NOTOUCH_FAST_COMPONENT_ENUM:-0}"

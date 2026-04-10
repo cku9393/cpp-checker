@@ -1,0 +1,32 @@
+PHASE37 stabilization report
+
+Summary
+- scope: known-env governance lifecycle + verification close-out
+- split-choice policy: exact_shadow retained
+- src primitive/planner semantics: unchanged
+- semantic mismatch / new regression: none observed
+
+Governance status
+- current environment: OK / NO_ACTION
+- approved known environments: governance state machine added, reverify lifecycle machine-readable
+- unapproved foreign environments: REBASELINE_REQUIRED
+- publication health: HEALTHY / NO_ACTION
+
+Key implementation files
+- tests/raw_engine_cases.cpp
+- tests/CMakeLists.txt
+- tests/tools/runtime_watch_ops.py
+- tests/tools/build_evidence_bundle.py
+- README.md
+
+Verification close-out
+- authoritative iCloud tree remained unsuitable for reliable rebuild/full CTest
+- verification lane was completed on a non-iCloud staged clone:
+  /tmp/cpp-checker-phase37-clone/branch_2-1/raw_engine_v1_package
+- full Release CTest: 362/362 PASS, real 2165.72s
+- full Debug CTest: 362/362 PASS, real 3737.64s
+- full ASan+UBSan CTest: 362/362 PASS, real 4308.04s
+
+Close-out verdict
+- phase37 governance/operator changes are verified end-to-end on the staged clone lane
+- phase37 verification gap is closed

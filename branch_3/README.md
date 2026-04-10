@@ -25,6 +25,9 @@ Execution model:
 - `./run.sh` directly executes `branch_3/boj28350_resume/solve`
 - direct `boj28350_resume/solve` / `./run.sh` invocations default solver-side
   auxiliary/profile output to `branch_3/artifacts/boj28350_resume/direct_solver_aux`
+- the required gate wrappers build from the same artifact-rooted binary and run
+  per-gate frozen solver snapshots so each gate attempt keeps a stable
+  executable under its own artifact-owned runtime envelope
 - `./smoke.sh` runs branch-local smoke cases using the outer `lca_tree_stress_v5/`
   generator and validator
 - smoke outputs go under `branch_3/artifacts/boj28350_resume/...`
@@ -46,6 +49,7 @@ Required acceptance procedure:
 ./lca_smoke_repeatability.sh 3
 ./outer_suite_wrappers/lca_strong_gate.sh
 ./outer_suite_wrappers/lca_boj3s_gate.sh
+./lca_acceptance_repeatability.sh 2
 ```
 
 AC7 repeatability helper after the required gates are individually green:
@@ -91,19 +95,48 @@ records each run's exit outcome, snapshots either the stable smoke output tree
 or the published `smoke_latest_failure/` bundle, and fails with run-local logs
 plus a manifest/signature diff if a rerun flakes or changes content outside of
 `time.txt` and the volatile timing/staging-path lines in `run_case.stdout.txt`.
+`./lca_smoke.sh` itself now normalizes its public outcome into exactly three
+families for downstream iteration: exit `0` for PASS, exit `1` for a preserved
+reproducible solver failure, and exit `70` for launcher/harness/infrastructure
+failure. Each run also refreshes
+`artifacts/lca_tree_stress_v5/smoke_latest_status/summary.txt` plus
+`latest_status_report.md` so downstream wrappers can tell which family they saw
+without reverse-engineering the raw inner-wrapper exit code.
 Treat smoke as stable enough for further solver iteration only after this
 repeatability wrapper shows a matching repeated outcome: `status=PASS` means
 the smoke path stayed green, while `status=CONSISTENT_FAIL` means the current
 solver still fails but does so reproducibly enough to use as a stable debugging
-signal.
+signal. Repeated launcher or harness failures remain `status=FAIL` even when
+their normalized exit code is stable, because those runs are not valid solver
+iteration signal. The published
+`artifacts/lca_tree_stress_v5/smoke_repeatability/summary.txt` now records
+that decision explicitly with `supports_solver_iteration=1|0` plus a
+`solver_iteration_basis=` classification tied to the back-to-back smoke runs.
+The manifest comparison also normalizes the known volatile
+`solver_env_snapshot.json` fields
+(`solver.mtime_ns`, `solver.sha256`, `solver.path`, and
+`tracked_env.DENSE_PROFILE_OUTDIR`) so reproducibility is judged on stable
+smoke behavior rather than per-run build IDs or temporary output directories.
 `./lca_required_repeatability.sh` is the branch-local AC7 helper for the
 required gate sequence. It reruns `./lca_strong_gate.sh` followed by
 `./lca_boj3s_gate.sh` on the same working tree, stores each cycle under
 `artifacts/lca_tree_stress_v5/required_repeatability/`, snapshots each gate's
-`certify.json` and `certify_summary.md`, extracts a stable PASS signature from
-each gate's `certify.json`, and only returns PASS if every cycle's gate verdict
-is `PASS` and the extracted PASS signatures match the baseline cycle without
+`certify.json`, `certify_summary.md`, `runtime_env.txt`, and
+`preflight_manifest.tsv`, extracts a stable PASS signature from each gate's
+`certify.json`, and only returns PASS if every cycle's gate verdict is `PASS`,
+the extracted PASS signatures match the baseline cycle, fresh runtime/preflight
+artifacts were regenerated instead of reused, and the shared
+`artifacts/lca_tree_stress_v5/` root survives each consecutive cycle without
 any manual artifact cleanup between cycles.
+`./lca_acceptance_repeatability.sh` is the branch-local full-flow
+reproducibility helper for AC7 closure. It reruns the full
+`./lca_smoke.sh -> ./lca_strong_gate.sh -> ./lca_boj3s_gate.sh` path on the
+same unchanged working tree, stores each full cycle under
+`artifacts/lca_tree_stress_v5/acceptance_repeatability/`, compares the
+normalized smoke snapshot and smoke status signature against the baseline
+cycle, reuses the gate PASS-signature checks from the required-gate helper,
+and only returns PASS if every repeated cycle stays green without any manual
+artifact cleanup between runs.
 `./lca_smoke_target.sh` is a branch-local helper for rerunning one
 manifest-defined `lca_smoke` case with the same `branch_run_case.py` arguments,
 timeout, and `DENSE_*` solver env flags used by `./lca_smoke.sh`. Use

@@ -4,7 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
 
@@ -35,6 +37,19 @@ def parse_args() -> argparse.Namespace:
         "--require-current-state",
         help="JSON analysis state file that must be marked current for the latest failure",
     )
+    parser.add_argument(
+        "--require-analysis-session",
+        help="Markdown latest_analysis_session note that must match the latest failure and show a post-failure refresh",
+    )
+    parser.add_argument(
+        "--baseline-analysis-session",
+        help="Prior baseline analysis-session markdown used to verify localization narrowing",
+    )
+    parser.add_argument(
+        "--require-localization-narrowing",
+        action="store_true",
+        help="Require the refreshed state to prove at least one narrowed localization dimension",
+    )
     return parser.parse_args()
 
 
@@ -48,11 +63,141 @@ def latest_mtime(paths: list[Path]) -> float:
     return max(mtimes) if mtimes else 0.0
 
 
-def load_json_dict(path: Path) -> dict:
-    payload = json.loads(path.read_text())
-    if not isinstance(payload, dict):
-        raise ValueError("payload is not a JSON object")
-    return payload
+NON_QUALIFYING_TARGET_NAMES = {
+    "verify_analysis_refresh.py",
+}
+
+REQUIRED_REFRESH_EVIDENCE_TIMESTAMPS = (
+    "analysis_refresh_timestamp",
+    "latest_failure_report_timestamp",
+    "latest_failure_breakdown_timestamp",
+    "current_failure_timestamp",
+)
+
+REQUIRED_REFRESH_EVIDENCE_BOOLEANS = (
+    "refreshed_after_failure_report",
+    "refreshed_after_failure_breakdown",
+    "refreshed_after_current_failure_timestamp",
+)
+
+QUALIFYING_REFRESH_ASSET_KEYS = (
+    "qualifying_refreshed_assets",
+    "refreshed_assets",
+)
+REQUIRED_FRESHNESS_RECORD_KEYS = (
+    "attempt_label",
+    "session_id",
+    "failure_timestamp",
+    "failure_signature",
+    "analysis_refresh_timestamp",
+    "refreshed_asset",
+)
+
+
+def is_qualifying_target(path: Path) -> bool:
+    return path.name not in NON_QUALIFYING_TARGET_NAMES
+
+
+def branch_local_analysis_root(state_path: Path) -> Path:
+    return state_path.resolve().parent
+
+
+def resolve_branch_local_analysis_asset(state_path: Path, asset_path: Path) -> Path | None:
+    analysis_root = branch_local_analysis_root(state_path)
+    resolved_asset = asset_path.expanduser().resolve()
+    try:
+        resolved_asset.relative_to(analysis_root)
+    except ValueError:
+        return None
+    return resolved_asset
+
+
+MARKDOWN_ATTEMPT_RE = re.compile(r"^# Failure (?:Report|Breakdown): Attempt (\d+)\s*$", re.MULTILINE)
+ANALYSIS_SESSION_HEADING_RE = re.compile(r"^# Analysis Session Summary\s*$", re.MULTILINE)
+MARKDOWN_META_RE = re.compile(r"^- (?P<key>[^:]+): `(?P<value>[^`]*)`$", re.MULTILINE)
+MARKDOWN_FAILED_ACS_RE = re.compile(r"^- Failed ACs: (?P<value>.+)$", re.MULTILINE)
+MARKDOWN_FAILED_BREAKDOWN_RE = re.compile(r"^### AC (\d+):(?: \[FAIL\])?\s+", re.MULTILINE)
+PATH_RANGE_RE = re.compile(r"^(?P<path>.+):(?P<start>\d+)-(?P<end>\d+)$")
+FOCUS_RANGE_RE = re.compile(r"^(?P<start>\d+)-(?P<end>\d+)$")
+LOCALIZATION_DIMENSIONS = {
+    "line_span",
+    "symbol_scope",
+    "wrapper_section",
+    "quoted_code_excerpt",
+}
+
+
+def normalize_md_scalar(value: str | None) -> str | None:
+    if value is None:
+        return None
+    text = value.strip()
+    if not text or text.lower() in {"none", "unknown", "unknown-session", "unknown-execution"}:
+        return None
+    return text
+
+
+def normalize_string_list(values: object) -> list[str]:
+    normalized: list[str] = []
+    if not isinstance(values, list):
+        return normalized
+    for item in values:
+        text = normalize_md_scalar(str(item) if item is not None else None)
+        if text and text not in normalized:
+            normalized.append(text)
+    return normalized
+
+
+def parse_branch_timestamp(value: object) -> datetime | None:
+    text = normalize_md_scalar(str(value) if value is not None else None)
+    if not text or len(text) < 19:
+        return None
+    try:
+        return datetime.strptime(text[:19], "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return None
+
+
+def load_structured_dict(path: Path) -> dict:
+    text = path.read_text()
+    stripped = text.lstrip()
+    if stripped.startswith("{") or stripped.startswith("["):
+        payload = json.loads(text)
+        if not isinstance(payload, dict):
+            raise ValueError("payload is not a JSON object")
+        return payload
+
+    attempt_match = MARKDOWN_ATTEMPT_RE.search(text)
+    if not attempt_match:
+        raise ValueError("payload is neither JSON nor a supported failure markdown")
+
+    metadata = {match.group("key"): match.group("value") for match in MARKDOWN_META_RE.finditer(text)}
+    failed_acs = []
+    failed_line = MARKDOWN_FAILED_ACS_RE.search(text)
+    if failed_line:
+        raw_value = failed_line.group("value").strip()
+        if raw_value.lower() != "none found":
+            failed_acs = re.findall(r"\b\d+\b", raw_value)
+    if not failed_acs:
+        failed_acs = MARKDOWN_FAILED_BREAKDOWN_RE.findall(text)
+
+    return {
+        "attempt": int(attempt_match.group(1)),
+        "session_id": normalize_md_scalar(metadata.get("Session ID")),
+        "execution_id": normalize_md_scalar(metadata.get("Execution ID")),
+        "timestamp": normalize_md_scalar(metadata.get("Timestamp")),
+        "failed_acs": failed_acs,
+        "failed_ac_breakdowns": [{"ac_index": item} for item in failed_acs],
+    }
+
+
+def load_analysis_session_metadata(path: Path) -> dict[str, str]:
+    text = path.read_text()
+    if not ANALYSIS_SESSION_HEADING_RE.search(text):
+        raise ValueError(f"`{path}` is not a supported analysis-session markdown summary")
+    metadata = {match.group("key"): match.group("value") for match in MARKDOWN_META_RE.finditer(text)}
+    if not metadata:
+        raise ValueError(f"`{path}` does not expose any analysis-session metadata bullets")
+    return metadata
 
 
 def format_attempt_label(value: object) -> str | None:
@@ -65,6 +210,30 @@ def format_attempt_label(value: object) -> str | None:
     except (TypeError, ValueError):
         text = str(value).strip()
         return text or None
+
+
+def parse_repo_range(value: object) -> tuple[str, int, int] | None:
+    text = normalize_md_scalar(str(value) if value is not None else None)
+    if not text:
+        return None
+    match = PATH_RANGE_RE.match(text)
+    if not match:
+        return None
+    return (
+        match.group("path"),
+        int(match.group("start")),
+        int(match.group("end")),
+    )
+
+
+def parse_focus_range(value: object) -> tuple[int, int] | None:
+    text = normalize_md_scalar(str(value) if value is not None else None)
+    if not text:
+        return None
+    match = FOCUS_RANGE_RE.match(text)
+    if not match:
+        return None
+    return int(match.group("start")), int(match.group("end"))
 
 
 def normalize_failed_acs(values: object) -> list[str]:
@@ -115,10 +284,311 @@ def build_failure_signature(report_payload: dict, breakdown_payload: dict) -> di
     }
 
 
+def load_latest_failure_refresh_baseline(
+    report_path: Path | None,
+    breakdown_path: Path | None,
+    state_path: Path | None = None,
+) -> tuple[float | None, str | None]:
+    sources: list[tuple[float, str]] = []
+    payload_specs: list[tuple[str, Path | None, str | tuple[str, str]]] = [
+        ("latest failure report", report_path, "timestamp"),
+        ("latest failure breakdown", breakdown_path, "timestamp"),
+        ("current failure state", state_path, ("current_failure", "timestamp")),
+    ]
+    for label, path, key in payload_specs:
+        if path is None:
+            continue
+        payload = load_structured_dict(path)
+        value: object | None
+        if isinstance(key, tuple):
+            outer, inner = key
+            nested = payload.get(outer)
+            if isinstance(nested, dict):
+                value = nested.get(inner)
+            else:
+                value = payload.get(f"{outer}_{inner}")
+        else:
+            value = payload.get(key)
+        dt = parse_branch_timestamp(value)
+        if dt is None:
+            raise ValueError(f"`{path}` is missing a parseable {label} timestamp")
+        sources.append((dt.timestamp(), str(value).strip()))
+    if not sources:
+        return None, None
+    latest_epoch, latest_label = max(sources, key=lambda item: item[0])
+    return latest_epoch, latest_label
+
+
+def verify_refresh_asset_evidence(state_path: Path, refresh_evidence: dict[str, object]) -> list[str]:
+    qualifying_assets = resolve_qualifying_refresh_assets(state_path, refresh_evidence)
+    return [f"{state_path}:refresh_asset={asset}" for asset in qualifying_assets]
+
+
+def verify_analysis_session(
+    analysis_session_path: Path,
+    report_path: Path,
+    breakdown_path: Path,
+    state_path: Path | None,
+    latest_failure_epoch: float | None,
+    latest_failure_label: str | None,
+) -> list[str]:
+    metadata = load_analysis_session_metadata(analysis_session_path)
+    expected = build_failure_signature(
+        load_structured_dict(report_path),
+        load_structured_dict(breakdown_path),
+    )
+
+    verification = normalize_md_scalar(metadata.get("Verification"))
+    if verification != "refreshed analysis assets linked to latest failure":
+        raise ValueError(
+            f"`{analysis_session_path}` verification marker `{verification}` does not confirm a refreshed latest-failure analysis session"
+        )
+
+    current_flag = normalize_md_scalar(metadata.get("Current for latest failure"))
+    if current_flag is None or current_flag.lower() not in {"yes", "true"}:
+        raise ValueError(f"`{analysis_session_path}` is not marked current for latest failure")
+
+    current_attempt = format_attempt_label(metadata.get("Current failure attempt"))
+    if current_attempt != expected.get("attempt_label"):
+        raise ValueError(
+            f"`{analysis_session_path}` current failure attempt `{current_attempt}` does not match latest failure "
+            f"`{expected.get('attempt_label')}`"
+        )
+
+    current_signature = normalize_md_scalar(metadata.get("Current failure signature"))
+    if current_signature != expected.get("failure_signature"):
+        raise ValueError(
+            f"`{analysis_session_path}` current failure signature `{current_signature}` does not match latest failure "
+            f"`{expected.get('failure_signature')}`"
+        )
+
+    note_timestamp = normalize_md_scalar(metadata.get("Timestamp"))
+    dt = parse_branch_timestamp(note_timestamp)
+    if dt is None:
+        raise ValueError(f"`{analysis_session_path}` is missing a parseable analysis-session timestamp")
+    if latest_failure_epoch is not None and dt.timestamp() <= latest_failure_epoch:
+        failure_label = latest_failure_label or "unknown latest failure timestamp"
+        raise ValueError(
+            f"`{analysis_session_path}` timestamp `{note_timestamp}` is not newer than latest failed attempt timestamp "
+            f"`{failure_label}`"
+        )
+
+    if state_path is not None:
+        state_payload = load_structured_dict(state_path)
+        state_signature = normalize_md_scalar(str(state_payload.get("current_failure_signature") or ""))
+        if state_signature and current_signature != state_signature:
+            raise ValueError(
+                f"`{analysis_session_path}` current failure signature `{current_signature}` does not match "
+                f"`{state_path}` current failure signature `{state_signature}`"
+            )
+
+    return [
+        f"{analysis_session_path}:analysis_session.current_for_latest_failure=yes",
+        f"{analysis_session_path}:analysis_session.current_failure_attempt={current_attempt}",
+        f"{analysis_session_path}:analysis_session.current_failure_signature={current_signature}",
+        f"{analysis_session_path}:analysis_session.verification={verification}",
+        f"{analysis_session_path}:analysis_session.post_failure_timestamp={note_timestamp}",
+    ]
+
+
+def verify_freshness_record(
+    state_path: Path,
+    refresh_evidence: dict[str, object],
+    current_failure: dict[str, object],
+) -> list[str]:
+    refreshed_asset_resolved = resolve_freshness_record_asset(
+        state_path,
+        refresh_evidence,
+        current_failure,
+    )
+    return [f"{state_path}:freshness_record.refreshed_asset={refreshed_asset_resolved}"]
+
+
+def resolve_freshness_record_asset(
+    state_path: Path,
+    refresh_evidence: dict[str, object],
+    current_failure: dict[str, object],
+) -> Path:
+    freshness_record = refresh_evidence.get("freshness_record")
+    if not isinstance(freshness_record, dict):
+        raise ValueError(f"`{state_path}` refresh_evidence.freshness_record is missing or not a JSON object")
+
+    for key in REQUIRED_FRESHNESS_RECORD_KEYS:
+        if not normalize_md_scalar(freshness_record.get(key)):
+            raise ValueError(f"`{state_path}` refresh_evidence.freshness_record.{key} is missing or empty")
+
+    recorded_attempt = format_attempt_label(freshness_record.get("attempt_label"))
+    if recorded_attempt != current_failure.get("attempt_label"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.attempt_label `{recorded_attempt}` "
+            f"does not match latest failure `{current_failure.get('attempt_label')}`"
+        )
+    recorded_session = normalize_md_scalar(freshness_record.get("session_id"))
+    if recorded_session != current_failure.get("session_id"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.session_id `{recorded_session}` "
+            f"does not match latest failure `{current_failure.get('session_id')}`"
+        )
+    recorded_execution = normalize_md_scalar(freshness_record.get("execution_id"))
+    if current_failure.get("execution_id") and recorded_execution != current_failure.get("execution_id"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.execution_id `{recorded_execution}` "
+            f"does not match latest failure `{current_failure.get('execution_id')}`"
+        )
+    recorded_failure_timestamp = normalize_md_scalar(freshness_record.get("failure_timestamp"))
+    if recorded_failure_timestamp != current_failure.get("timestamp"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.failure_timestamp "
+            f"`{recorded_failure_timestamp}` does not match latest failure `{current_failure.get('timestamp')}`"
+        )
+    recorded_signature = normalize_md_scalar(freshness_record.get("failure_signature"))
+    if recorded_signature != current_failure.get("failure_signature"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.failure_signature `{recorded_signature}` "
+            f"does not match latest failure `{current_failure.get('failure_signature')}`"
+        )
+    recorded_refresh_timestamp = normalize_md_scalar(freshness_record.get("analysis_refresh_timestamp"))
+    refresh_timestamp = normalize_md_scalar(refresh_evidence.get("analysis_refresh_timestamp"))
+    if recorded_refresh_timestamp != refresh_timestamp:
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.analysis_refresh_timestamp "
+            f"`{recorded_refresh_timestamp}` does not match refresh_evidence.analysis_refresh_timestamp "
+            f"`{refresh_timestamp}`"
+        )
+
+    refreshed_asset_text = normalize_md_scalar(freshness_record.get("refreshed_asset"))
+    if refreshed_asset_text is None:
+        raise ValueError(f"`{state_path}` refresh_evidence.freshness_record.refreshed_asset is missing")
+    refreshed_asset = Path(refreshed_asset_text)
+    refreshed_asset_resolved = resolve_branch_local_analysis_asset(state_path, refreshed_asset)
+    if refreshed_asset_resolved is None:
+        analysis_root = branch_local_analysis_root(state_path)
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.refreshed_asset `{refreshed_asset}` "
+            f"is not a branch-local analysis asset under `{analysis_root}`"
+        )
+    if not refreshed_asset_resolved.exists():
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.refreshed_asset `{refreshed_asset}` does not exist"
+        )
+    supporting_assets = resolve_supporting_refresh_assets(state_path, refresh_evidence)
+    if not any(asset.resolve() == refreshed_asset_resolved for asset in supporting_assets):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.freshness_record.refreshed_asset `{refreshed_asset}` "
+            "is not one of the supporting refreshed analysis assets"
+        )
+
+    return refreshed_asset_resolved
+
+
+def resolve_qualifying_refresh_assets(
+    state_path: Path,
+    refresh_evidence: dict[str, object],
+) -> list[Path]:
+    recorded_assets: list[str] = []
+    for key in QUALIFYING_REFRESH_ASSET_KEYS:
+        recorded_assets.extend(normalize_string_list(refresh_evidence.get(key)))
+
+    if not recorded_assets:
+        raise ValueError(
+            f"`{state_path}` refresh_evidence must record qualifying_refreshed_assets "
+            "or refreshed_assets for the latest failure"
+        )
+
+    qualifying_assets: list[str] = []
+    non_qualifying_assets: list[str] = []
+    analysis_root = branch_local_analysis_root(state_path)
+    for asset in recorded_assets:
+        asset_path = Path(asset)
+        if resolve_branch_local_analysis_asset(state_path, asset_path) is None:
+            continue
+        if is_qualifying_target(asset_path):
+            if asset not in qualifying_assets:
+                qualifying_assets.append(asset)
+            continue
+        if asset not in non_qualifying_assets:
+            non_qualifying_assets.append(asset)
+
+    if not qualifying_assets:
+        details = ", ".join(non_qualifying_assets) or "none recorded under branch-local analysis root"
+        raise ValueError(
+            f"`{state_path}` refresh_evidence does not record any qualifying refreshed analysis asset "
+            f"under `{analysis_root}` (only non-qualifying assets: {details})"
+        )
+
+    return [Path(asset) for asset in qualifying_assets]
+
+
+def resolve_supporting_refresh_assets(
+    state_path: Path,
+    refresh_evidence: dict[str, object],
+) -> list[Path]:
+    qualifying_assets = resolve_qualifying_refresh_assets(state_path, refresh_evidence)
+    state_real_path = state_path.resolve()
+    supporting_assets = [asset for asset in qualifying_assets if asset.resolve() != state_real_path]
+
+    if supporting_assets:
+        return supporting_assets
+
+    raise ValueError(
+        f"`{state_path}` refresh_evidence must record at least one supporting refreshed branch-local "
+        "analysis helper or note besides failure_analysis_state.json"
+    )
+
+
+def verify_post_failure_refresh_asset_freshness(
+    state_path: Path,
+    refresh_evidence: dict[str, object],
+    latest_failure_epoch: float | None,
+    latest_failure_label: str | None,
+) -> list[str]:
+    state_payload = load_structured_dict(state_path)
+    current_payload = state_payload.get("current_failure")
+    if current_payload is not None and not isinstance(current_payload, dict):
+        raise ValueError(f"`current_failure` in `{state_path}` is not a JSON object")
+    current_failure = {
+        "attempt_label": state_payload.get("current_failure_attempt")
+        or (current_payload or {}).get("attempt_label")
+        or state_payload.get("last_failed_attempt"),
+        "session_id": state_payload.get("current_failure_session_id")
+        or (current_payload or {}).get("session_id")
+        or state_payload.get("last_failed_session_id"),
+        "execution_id": state_payload.get("current_failure_execution_id")
+        or (current_payload or {}).get("execution_id"),
+        "timestamp": state_payload.get("current_failure_timestamp")
+        or (current_payload or {}).get("timestamp"),
+        "failure_signature": state_payload.get("current_failure_signature")
+        or (current_payload or {}).get("failure_signature"),
+    }
+    refreshed_asset = resolve_freshness_record_asset(
+        state_path,
+        refresh_evidence,
+        current_failure,
+    )
+    if latest_failure_epoch is None:
+        return []
+
+    try:
+        mtime = refreshed_asset.stat().st_mtime
+    except OSError as exc:
+        raise ValueError(
+            f"`{state_path}` freshness_record.refreshed_asset `{refreshed_asset}` could not be stat'ed"
+        ) from exc
+    if mtime > latest_failure_epoch:
+        return [f"{state_path}:post_failure_refresh_asset={refreshed_asset}"]
+
+    failure_label = latest_failure_label or "unknown latest failure timestamp"
+    raise ValueError(
+        "no designated analysis asset is newer than latest failed attempt timestamp "
+        f"`{failure_label}` (freshness_record.refreshed_asset={refreshed_asset}; "
+        "designated asset must be branch-local)"
+    )
+
+
 def verify_current_state(state_path: Path, report_path: Path, breakdown_path: Path) -> list[str]:
-    report_payload = load_json_dict(report_path)
-    breakdown_payload = load_json_dict(breakdown_path)
-    state_payload = load_json_dict(state_path)
+    report_payload = load_structured_dict(report_path)
+    breakdown_payload = load_structured_dict(breakdown_path)
+    state_payload = load_structured_dict(state_path)
     expected = build_failure_signature(report_payload, breakdown_payload)
 
     report_attempt = format_attempt_label(report_payload.get("attempt"))
@@ -133,15 +603,12 @@ def verify_current_state(state_path: Path, report_path: Path, breakdown_path: Pa
             raise ValueError(
                 f"latest failure session mismatch between `{report_path}` and `{breakdown_path}`"
             )
-    if report_payload.get("timestamp") and breakdown_payload.get("timestamp"):
-        if report_payload["timestamp"] != breakdown_payload["timestamp"]:
-            raise ValueError(
-                f"latest failure timestamp mismatch between `{report_path}` and `{breakdown_path}`"
-            )
-
     current_payload = state_payload.get("current_failure")
     if current_payload is not None and not isinstance(current_payload, dict):
         raise ValueError(f"`current_failure` in `{state_path}` is not a JSON object")
+    refresh_evidence = state_payload.get("refresh_evidence")
+    if not isinstance(refresh_evidence, dict):
+        raise ValueError(f"`refresh_evidence` in `{state_path}` is missing or not a JSON object")
 
     actual = {
         "current_for_latest_failure": state_payload.get("current_for_latest_failure"),
@@ -180,12 +647,157 @@ def verify_current_state(state_path: Path, report_path: Path, breakdown_path: Pa
             f"`{state_path}` execution_id `{actual.get('execution_id')}` does not match latest failure "
             f"`{expected.get('execution_id')}`"
         )
+    for key in REQUIRED_REFRESH_EVIDENCE_TIMESTAMPS:
+        if not normalize_md_scalar(refresh_evidence.get(key)):
+            raise ValueError(f"`{state_path}` refresh_evidence.{key} is missing or empty")
+    if refresh_evidence.get("latest_failure_report_timestamp") != report_payload.get("timestamp"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.latest_failure_report_timestamp "
+            f"`{refresh_evidence.get('latest_failure_report_timestamp')}` does not match latest failure "
+            f"report `{report_payload.get('timestamp')}`"
+        )
+    if refresh_evidence.get("latest_failure_breakdown_timestamp") != breakdown_payload.get("timestamp"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.latest_failure_breakdown_timestamp "
+            f"`{refresh_evidence.get('latest_failure_breakdown_timestamp')}` does not match latest failure "
+            f"breakdown `{breakdown_payload.get('timestamp')}`"
+        )
+    if refresh_evidence.get("current_failure_timestamp") != actual.get("timestamp"):
+        raise ValueError(
+            f"`{state_path}` refresh_evidence.current_failure_timestamp "
+            f"`{refresh_evidence.get('current_failure_timestamp')}` does not match current failure "
+            f"`{actual.get('timestamp')}`"
+        )
+    for key in REQUIRED_REFRESH_EVIDENCE_BOOLEANS:
+        if refresh_evidence.get(key) is not True:
+            raise ValueError(f"`{state_path}` refresh_evidence.{key} is not true")
+    verified_refresh_assets = verify_refresh_asset_evidence(state_path, refresh_evidence)
+    freshness_record_markers = verify_freshness_record(state_path, refresh_evidence, actual)
 
     return [
         f"{state_path}:current_for_latest_failure",
         f"{state_path}:current_failure_attempt={expected['attempt_label']}",
         f"{state_path}:current_failure_session_id={expected['session_id']}",
         f"{state_path}:current_failure_signature={expected['failure_signature']}",
+        f"{state_path}:refresh_evidence.refreshed_after_failure_breakdown=true",
+        *verified_refresh_assets,
+        *freshness_record_markers,
+    ]
+
+
+def verify_localization_refinement(
+    state_path: Path,
+    baseline_analysis_session: Path | None,
+) -> list[str]:
+    state_payload = load_structured_dict(state_path)
+    refinement = state_payload.get("localization_refinement")
+    if not isinstance(refinement, dict):
+        raise ValueError(f"`{state_path}` is missing `localization_refinement`")
+    if refinement.get("verified_more_precise") is not True:
+        raise ValueError(f"`{state_path}` localization_refinement.verified_more_precise is not true")
+
+    baseline_reference = normalize_md_scalar(refinement.get("baseline_reference"))
+    if not baseline_reference:
+        raise ValueError(f"`{state_path}` localization_refinement.baseline_reference is missing")
+    if baseline_analysis_session is not None:
+        resolved_baseline = baseline_analysis_session.resolve()
+        if not resolved_baseline.exists():
+            raise ValueError(f"baseline analysis session `{baseline_analysis_session}` does not exist")
+        expected_refs = {
+            baseline_analysis_session.name,
+            baseline_analysis_session.as_posix(),
+            str(resolved_baseline),
+        }
+        if baseline_reference not in expected_refs and not str(resolved_baseline).endswith(baseline_reference):
+            raise ValueError(
+                f"`{state_path}` localization_refinement.baseline_reference `{baseline_reference}` "
+                f"does not match `{baseline_analysis_session}`"
+            )
+
+    narrowed_dimensions = refinement.get("narrowed_dimensions")
+    if not isinstance(narrowed_dimensions, list) or not narrowed_dimensions:
+        raise ValueError(f"`{state_path}` localization_refinement.narrowed_dimensions is missing or empty")
+
+    latest_statement_anchors = state_payload.get("latest_retry_statement_anchors")
+    if not isinstance(latest_statement_anchors, list) or not latest_statement_anchors:
+        raise ValueError(
+            f"`{state_path}` must keep `latest_retry_statement_anchors` populated for localization verification"
+        )
+
+    baseline_localization = state_payload.get("baseline_localization")
+    broad_solver_ranges: list[tuple[str, int, int]] = []
+    if isinstance(baseline_localization, dict):
+        for item in baseline_localization.get("broad_solver_ranges") or []:
+            parsed = parse_repo_range(item)
+            if parsed is not None:
+                broad_solver_ranges.append(parsed)
+
+    verified_dimensions: list[str] = []
+    for index, item in enumerate(narrowed_dimensions, start=1):
+        if not isinstance(item, dict):
+            raise ValueError(
+                f"`{state_path}` localization_refinement.narrowed_dimensions[{index}] is not an object"
+            )
+        dimension = normalize_md_scalar(item.get("dimension"))
+        baseline = normalize_md_scalar(item.get("baseline"))
+        current = normalize_md_scalar(item.get("current"))
+        why_narrower = normalize_md_scalar(item.get("why_narrower"))
+        if not dimension or not baseline or not current or not why_narrower:
+            raise ValueError(
+                f"`{state_path}` localization_refinement.narrowed_dimensions[{index}] is incomplete"
+            )
+        if baseline == current:
+            raise ValueError(
+                f"`{state_path}` localization_refinement.narrowed_dimensions[{index}] "
+                "must not reuse the same baseline and current description"
+            )
+        if dimension not in LOCALIZATION_DIMENSIONS:
+            raise ValueError(
+                f"`{state_path}` localization_refinement.narrowed_dimensions[{index}] "
+                f"has unsupported dimension `{dimension}`"
+            )
+
+        if dimension == "line_span":
+            narrowed_line_span = False
+            for anchor in latest_statement_anchors:
+                if not isinstance(anchor, dict):
+                    continue
+                anchor_path = normalize_md_scalar(anchor.get("path"))
+                focus_range = parse_focus_range(anchor.get("focus_range"))
+                if not anchor_path or focus_range is None:
+                    continue
+                for base_path, base_start, base_end in broad_solver_ranges:
+                    if anchor_path != base_path:
+                        continue
+                    if base_start <= focus_range[0] <= focus_range[1] <= base_end:
+                        if (focus_range[1] - focus_range[0]) < (base_end - base_start):
+                            narrowed_line_span = True
+                            break
+                if narrowed_line_span:
+                    break
+            if not narrowed_line_span:
+                raise ValueError(
+                    f"`{state_path}` claims line-span narrowing but no statement anchor is narrower than "
+                    "`baseline_localization.broad_solver_ranges`"
+                )
+
+        if dimension == "quoted_code_excerpt":
+            has_excerpt = any(
+                normalize_md_scalar(anchor.get("excerpt"))
+                for anchor in latest_statement_anchors
+                if isinstance(anchor, dict)
+            )
+            if not has_excerpt:
+                raise ValueError(
+                    f"`{state_path}` claims quoted-code narrowing but no statement anchor excerpt is present"
+                )
+
+        verified_dimensions.append(dimension)
+
+    return [
+        f"{state_path}:localization_refinement.verified_more_precise=true",
+        f"{state_path}:localization_refinement.baseline_reference={baseline_reference}",
+        f"{state_path}:localization_refinement.narrowed_dimensions={','.join(verified_dimensions)}",
     ]
 
 
@@ -193,8 +805,31 @@ def main() -> int:
     args = parse_args()
     targets = [Path(item) for item in args.target]
     analysis_log = Path(args.analysis_log)
+    report_path = Path(args.latest_failure_report) if args.latest_failure_report else None
+    breakdown_path = Path(args.latest_failure_breakdown) if args.latest_failure_breakdown else None
+    state_path = Path(args.require_current_state) if args.require_current_state else None
+    analysis_session_path = Path(args.require_analysis_session) if args.require_analysis_session else None
+    baseline_analysis_session = (
+        Path(args.baseline_analysis_session) if args.baseline_analysis_session else None
+    )
+    analysis_root = state_path.resolve().parent if state_path is not None else None
+
+    try:
+        latest_failure_epoch, latest_failure_label = load_latest_failure_refresh_baseline(
+            report_path,
+            breakdown_path,
+            state_path,
+        )
+    except Exception as exc:  # noqa: BLE001
+        print(f"analysis refresh verification failed: {exc}")
+        return 1
 
     refreshed_targets = []
+    refreshed_qualifying_targets = []
+    refreshed_supporting_targets = []
+    post_failure_qualifying_targets = []
+    post_failure_supporting_targets = []
+    state_real_path = state_path.resolve() if state_path is not None else None
     for path in targets:
         try:
             mtime = path.stat().st_mtime
@@ -202,14 +837,66 @@ def main() -> int:
             continue
         if mtime >= args.baseline_epoch:
             refreshed_targets.append(path)
+            if is_qualifying_target(path):
+                refreshed_qualifying_targets.append(path)
+                if (
+                    state_real_path is None
+                    or (
+                        analysis_root is not None
+                        and path.expanduser().resolve().is_relative_to(analysis_root)
+                        and path.resolve() != state_real_path
+                    )
+                ):
+                    refreshed_supporting_targets.append(path)
+        if is_qualifying_target(path) and latest_failure_epoch is not None and mtime > latest_failure_epoch:
+            post_failure_qualifying_targets.append(path)
+            if (
+                state_real_path is None
+                or (
+                    analysis_root is not None
+                    and path.expanduser().resolve().is_relative_to(analysis_root)
+                    and path.resolve() != state_real_path
+                )
+            ):
+                post_failure_supporting_targets.append(path)
 
     analysis_log_mtime = latest_mtime([analysis_log])
 
     if not refreshed_targets:
         print("analysis refresh verification failed: no target file updated after baseline")
         return 1
+    if not refreshed_qualifying_targets:
+        refreshed_target_list = ", ".join(str(path) for path in refreshed_targets)
+        print(
+            "analysis refresh verification failed: no qualifying analysis asset updated after baseline "
+            f"(only non-qualifying targets changed: {refreshed_target_list})"
+        )
+        return 1
+    if state_real_path is not None and not refreshed_supporting_targets:
+        refreshed_target_list = ", ".join(str(path) for path in refreshed_qualifying_targets) or "none"
+        print(
+            "analysis refresh verification failed: no supporting branch-local analysis helper or note updated after baseline "
+            f"(refreshed qualifying targets: {refreshed_target_list})"
+        )
+        return 1
     if analysis_log_mtime < args.baseline_epoch:
         print("analysis refresh verification failed: analysis log did not update after baseline")
+        return 1
+    if latest_failure_epoch is not None and state_real_path is None and not post_failure_qualifying_targets:
+        refreshed_target_list = ", ".join(str(path) for path in refreshed_qualifying_targets) or "none"
+        print(
+            "analysis refresh verification failed: no qualifying analysis asset shows a refresh newer "
+            f"than the latest failed attempt timestamp `{latest_failure_label}` "
+            f"(refreshed qualifying targets after baseline: {refreshed_target_list})"
+        )
+        return 1
+    if latest_failure_epoch is not None and state_real_path is not None and not post_failure_supporting_targets:
+        refreshed_target_list = ", ".join(str(path) for path in refreshed_supporting_targets) or "none"
+        print(
+            "analysis refresh verification failed: no supporting branch-local analysis helper or note shows a refresh newer "
+            f"than the latest failed attempt timestamp `{latest_failure_label}` "
+            f"(refreshed supporting targets after baseline: {refreshed_target_list})"
+        )
         return 1
 
     verified_json_keys = []
@@ -240,21 +927,80 @@ def main() -> int:
                 "--latest-failure-report and --latest-failure-breakdown"
             )
             return 1
-        state_path = Path(args.require_current_state)
-        report_path = Path(args.latest_failure_report)
-        breakdown_path = Path(args.latest_failure_breakdown)
         try:
+            assert state_path is not None
+            assert report_path is not None
+            assert breakdown_path is not None
             verified_current_state = verify_current_state(state_path, report_path, breakdown_path)
+            refresh_evidence = load_structured_dict(state_path).get("refresh_evidence")
+            if not isinstance(refresh_evidence, dict):
+                raise ValueError(f"`{state_path}` refresh_evidence is missing or not a JSON object")
+            verified_current_state.extend(
+                verify_post_failure_refresh_asset_freshness(
+                    state_path,
+                    refresh_evidence,
+                    latest_failure_epoch,
+                    latest_failure_label,
+                )
+            )
+        except Exception as exc:  # noqa: BLE001
+            print(f"analysis refresh verification failed: {exc}")
+            return 1
+
+    verified_analysis_session = []
+    if args.require_analysis_session:
+        if not args.latest_failure_report or not args.latest_failure_breakdown:
+            print(
+                "analysis refresh verification failed: require-analysis-session also needs "
+                "--latest-failure-report and --latest-failure-breakdown"
+            )
+            return 1
+        try:
+            assert analysis_session_path is not None
+            assert report_path is not None
+            assert breakdown_path is not None
+            verified_analysis_session = verify_analysis_session(
+                analysis_session_path,
+                report_path,
+                breakdown_path,
+                state_path,
+                latest_failure_epoch,
+                latest_failure_label,
+            )
+        except Exception as exc:  # noqa: BLE001
+            print(f"analysis refresh verification failed: {exc}")
+            return 1
+
+    verified_localization_refinement = []
+    if args.require_localization_narrowing:
+        if state_path is None:
+            print(
+                "analysis refresh verification failed: require-localization-narrowing also needs "
+                "--require-current-state"
+            )
+            return 1
+        try:
+            verified_localization_refinement = verify_localization_refinement(
+                state_path,
+                baseline_analysis_session,
+            )
         except Exception as exc:  # noqa: BLE001
             print(f"analysis refresh verification failed: {exc}")
             return 1
 
     print("analysis refresh verified")
-    for path in refreshed_targets:
+    for path in refreshed_qualifying_targets:
         print(path)
+    for path in refreshed_targets:
+        if path not in refreshed_qualifying_targets:
+            print(f"non_qualifying_target:{path}")
     for item in verified_json_keys:
         print(item)
     for item in verified_current_state:
+        print(item)
+    for item in verified_analysis_session:
+        print(item)
+    for item in verified_localization_refinement:
         print(item)
     return 0
 
