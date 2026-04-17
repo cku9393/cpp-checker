@@ -6,6 +6,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 
@@ -15,6 +16,45 @@ HELPER_PATH = REPO_ROOT / ".ouroboros" / "snapshot_retry_inputs.py"
 
 
 class SnapshotRetryInputsTests(unittest.TestCase):
+    def write_research_review_baseline(
+        self,
+        branch_root: Path,
+        *,
+        source_set_a_complete: bool = True,
+        source_set_b_complete: bool = True,
+    ) -> None:
+        baseline_files = {
+            Path("README.md"): "# branch workspace guide\n",
+            Path("boj28350_resume/README.md"): "resume readme\n",
+            Path("boj28350_resume/current_state_summary.md"): "current state\n",
+            Path("boj28350_resume/next_session_briefing.md"): "briefing\n",
+            Path("boj28350_resume/progress40_derived_reference.md"): "progress40 reference\n",
+            Path("boj28350_complete_master_document_partA_raw.md"): "master doc\n",
+            Path("boj28350_integrated_technical_history.md"): "integrated history\n",
+            Path("boj28350_literature_progress7_bcdecomp_report.md"): "progress7 report\n",
+            Path("literature_grade_proof_package.md"): "proof package\n",
+            Path(
+                "boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp"
+            ): "int main() { return 0; }\n",
+            Path(
+                "boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md"
+            ): "progress40 report\n",
+            Path("boj28350_bundle_archive/boj28350_progress40_results_merged.json"): "{}\n",
+        }
+        checkpoint_text = textwrap.dedent(
+            f"""
+            # Pre-rewrite checkpoint
+            reviewed source set A: {'COMPLETE' if source_set_a_complete else 'pending'}
+            reviewed source set B: {'COMPLETE' if source_set_b_complete else 'pending'}
+            """
+        ).strip() + "\n"
+        baseline_files[Path("boj28350_resume/pre_rewrite_checkpoint.md")] = checkpoint_text
+        baseline_files[Path("boj28350_resume/pre_rewrite_synthesis_note.md")] = checkpoint_text
+        for relative_path, content in baseline_files.items():
+            path = branch_root / relative_path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+
     def make_fake_branch(self, temp_root: Path) -> tuple[Path, Path]:
         branch_root = temp_root / "branch"
         artifacts_root = branch_root / "artifacts"
@@ -37,6 +77,7 @@ class SnapshotRetryInputsTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
+        self.write_research_review_baseline(branch_root)
         return branch_root, artifacts_root
 
     def run_helper(self, *args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
@@ -78,6 +119,9 @@ class SnapshotRetryInputsTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, msg=result.stderr)
             payload = json.loads((attempt_dir / "retry_inputs_snapshot.json").read_text(encoding="utf-8"))
             self.assertEqual(payload["attempt_number"], 1)
+            self.assertEqual(payload["research_review_gate"]["status"], "validated")
+            self.assertTrue(payload["research_review_gate"]["source_set_a_paths"])
+            self.assertTrue(payload["research_review_gate"]["source_set_b_paths"])
 
             solver_entry = payload["inputs"]["solver_seed"]
             analysis_entry = payload["inputs"]["analysis_seed"]
@@ -140,6 +184,32 @@ class SnapshotRetryInputsTests(unittest.TestCase):
                 "artifacts/lca_tree_stress_v5/retry_loop",
                 "--seed-file",
                 ".ouroboros/seed_branch3_progress40_research_loop.yaml",
+                cwd=temp_root,
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertTrue((attempt_dir / "retry_inputs_snapshot.json").exists())
+            self.assertTrue((report_root / "latest_retry_inputs_snapshot.json").exists())
+
+    def test_snapshot_accepts_branch_prefixed_paths_without_shared_resolver(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, artifacts_root = self.make_fake_branch(temp_root)
+            report_root = artifacts_root / "lca_tree_stress_v5" / "retry_loop"
+            attempt_dir = report_root / "attempt_003_branch_prefixed"
+            solver_seed = branch_root / ".ouroboros" / "seed_branch3_progress40_research_loop.yaml"
+            solver_seed.parent.mkdir(parents=True, exist_ok=True)
+            solver_seed.write_text("solver: 1\nseed: gamma-branch-prefixed\n", encoding="utf-8")
+
+            result = self.run_helper(
+                "--branch-root",
+                str(branch_root),
+                "--attempt-dir",
+                f"{branch_root.name}/artifacts/lca_tree_stress_v5/retry_loop/attempt_003_branch_prefixed",
+                "--report-root",
+                f"{branch_root.name}/artifacts/lca_tree_stress_v5/retry_loop",
+                "--seed-file",
+                f"{branch_root.name}/.ouroboros/seed_branch3_progress40_research_loop.yaml",
                 cwd=temp_root,
             )
 
@@ -235,6 +305,35 @@ class SnapshotRetryInputsTests(unittest.TestCase):
             self.assertTrue((report_root / "latest_analysis_seed.snapshot.yaml").exists())
             self.assertTrue((attempt_dir / "solver_seed.snapshot.yaml").exists())
             self.assertTrue((attempt_dir / "analysis_seed.snapshot.yaml").exists())
+
+    def test_snapshot_blocks_when_pre_rewrite_review_checkpoint_is_incomplete(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, artifacts_root = self.make_fake_branch(temp_root)
+            report_root = artifacts_root / "lca_tree_stress_v5" / "retry_loop"
+            attempt_dir = report_root / "attempt_006"
+            solver_seed = branch_root / ".ouroboros" / "seed_branch3_progress40_research_loop.yaml"
+            solver_seed.parent.mkdir(parents=True, exist_ok=True)
+            solver_seed.write_text("solver: 1\nseed: theta\n", encoding="utf-8")
+            self.write_research_review_baseline(branch_root, source_set_b_complete=False)
+
+            result = self.run_helper(
+                "--branch-root",
+                str(branch_root),
+                "--attempt-dir",
+                str(attempt_dir),
+                "--report-root",
+                str(report_root),
+                "--seed-file",
+                str(solver_seed),
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                "pre-rewrite research review evidence must record both",
+                result.stderr,
+            )
+            self.assertFalse((attempt_dir / "retry_inputs_snapshot.json").exists())
 
 
 if __name__ == "__main__":

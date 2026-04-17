@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import shlex
+import shutil
 import tempfile
 import subprocess
 import sys
@@ -30,6 +32,9 @@ SNAPSHOT_RUNTIME_SOURCE = (REPO_ROOT / ".ouroboros" / "snapshot_retry_runtime.py
 SNAPSHOT_INPUTS_SOURCE = (REPO_ROOT / ".ouroboros" / "snapshot_retry_inputs.py").read_text(
     encoding="utf-8"
 )
+REFRESH_ANALYSIS_STATE_SOURCE = (
+    REPO_ROOT / ".ouroboros" / "refresh_analysis_state.py"
+).read_text(encoding="utf-8")
 CAPTURE_FAILURE_CONTEXT_SOURCE = (
     REPO_ROOT / ".ouroboros" / "capture_failure_context.py"
 ).read_text(encoding="utf-8")
@@ -42,6 +47,7 @@ PREPARE_RETRY_ATTEMPT_STATE_SOURCE = (
 DIRECT_HELPER_SOURCES = {
     relative_path: (REPO_ROOT / relative_path).read_text(encoding="utf-8")
     for relative_path in (
+        ".ouroboros/auto_remediate_retry_abort.py",
         ".ouroboros/classify_retry_loop_outcome.py",
         ".ouroboros/git_repo_health.py",
         ".ouroboros/monitor_codex_quota.py",
@@ -77,6 +83,7 @@ RUN_NEXT_PROBE_SOURCE = (REPO_ROOT / ".ouroboros" / "run_next_probe.py").read_te
 CLASSIFY_RETRY_LOOP_OUTCOME_SOURCE = (
     REPO_ROOT / ".ouroboros" / "classify_retry_loop_outcome.py"
 ).read_text(encoding="utf-8")
+PYTEST_INI_SOURCE = (REPO_ROOT / "pytest.ini").read_text(encoding="utf-8")
 PROGRESS40_SEED_SOURCE = (
     REPO_ROOT / ".ouroboros" / "seed_branch3_progress40_research_loop.yaml"
 ).read_text(encoding="utf-8")
@@ -94,6 +101,15 @@ HARDCODED_BRANCH_ROOT = (
 )
 
 
+def load_auto_remediation_module():
+    module_path = REPO_ROOT / ".ouroboros" / "auto_remediate_retry_abort.py"
+    spec = importlib.util.spec_from_file_location("auto_remediate_retry_abort", module_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
 class ArtifactPathCanonicalizationTests(unittest.TestCase):
     def assert_under_artifacts(self, value: str | Path) -> None:
         path = Path(value).resolve()
@@ -108,6 +124,7 @@ class ArtifactPathCanonicalizationTests(unittest.TestCase):
             "artifacts/lca_tree_stress_v5/hunt/retry_loop/probe",
             f"{artifact_paths.BRANCH_ROOT.name}/artifacts/lca_tree_stress_v5/hunt/retry_loop/probe",
             "artifacts/artifacts/lca_tree_stress_v5/hunt/retry_loop/probe",
+            f"{artifact_paths.BRANCH_ROOT.name}/{artifact_paths.BRANCH_ROOT.name}/artifacts/lca_tree_stress_v5/hunt/retry_loop/probe",
         )
 
         for raw in prefixed_inputs:
@@ -247,6 +264,101 @@ class NonArtifactTreeVerificationTests(unittest.TestCase):
         self.assertIn("script.sh", report_text)
         self.assertIn(".ouroboros/new_helper.py", report_text)
 
+    def test_verify_treats_created_ini_files_as_warning_only(self) -> None:
+        baseline_path = self.artifacts_root / "baseline.json"
+        current_path = self.artifacts_root / "current.json"
+        report_path = self.artifacts_root / "report.txt"
+
+        artifact_paths.write_non_artifact_tree_state(
+            baseline_path,
+            branch_root=self.branch_root,
+            artifacts_root=self.artifacts_root,
+        )
+
+        (self.branch_root / "pytest.ini").write_text("[pytest]\naddopts = -q\n", encoding="utf-8")
+
+        self.assertTrue(
+            artifact_paths.verify_non_artifact_tree_state(baseline_path, current_path, report_path)
+        )
+        report_text = report_path.read_text(encoding="utf-8")
+        self.assertIn("status=modified_only_warning", report_text)
+        self.assertIn("[created_warning]", report_text)
+        self.assertIn("pytest.ini", report_text)
+
+    def test_verify_treats_created_analysis_refresh_logs_as_warning_only(self) -> None:
+        baseline_path = self.artifacts_root / "baseline.json"
+        current_path = self.artifacts_root / "current.json"
+        report_path = self.artifacts_root / "report.txt"
+        ouroboros_dir = self.branch_root / ".ouroboros"
+        ouroboros_dir.mkdir()
+
+        artifact_paths.write_non_artifact_tree_state(
+            baseline_path,
+            branch_root=self.branch_root,
+            artifacts_root=self.artifacts_root,
+        )
+
+        (
+            ouroboros_dir / "analysis_refresh_attempt_023_subac2.log"
+        ).write_text("manual analysis refresh note\n", encoding="utf-8")
+
+        self.assertTrue(
+            artifact_paths.verify_non_artifact_tree_state(baseline_path, current_path, report_path)
+        )
+        report_text = report_path.read_text(encoding="utf-8")
+        self.assertIn("status=modified_only_warning", report_text)
+        self.assertIn("[created_warning]", report_text)
+        self.assertIn(".ouroboros/analysis_refresh_attempt_023_subac2.log", report_text)
+
+    def test_verify_treats_removed_analysis_refresh_logs_as_warning_only(self) -> None:
+        baseline_path = self.artifacts_root / "baseline.json"
+        current_path = self.artifacts_root / "current.json"
+        report_path = self.artifacts_root / "report.txt"
+        ouroboros_dir = self.branch_root / ".ouroboros"
+        ouroboros_dir.mkdir()
+        refresh_log = ouroboros_dir / "analysis_refresh_attempt_023_subac2.log"
+        refresh_log.write_text("manual analysis refresh note\n", encoding="utf-8")
+
+        artifact_paths.write_non_artifact_tree_state(
+            baseline_path,
+            branch_root=self.branch_root,
+            artifacts_root=self.artifacts_root,
+        )
+
+        refresh_log.unlink()
+
+        self.assertTrue(
+            artifact_paths.verify_non_artifact_tree_state(baseline_path, current_path, report_path)
+        )
+        report_text = report_path.read_text(encoding="utf-8")
+        self.assertIn("status=modified_only_warning", report_text)
+        self.assertIn("[removed_warning]", report_text)
+        self.assertIn(".ouroboros/analysis_refresh_attempt_023_subac2.log", report_text)
+
+    def test_verify_treats_removed_transient_cache_dirs_as_warning_only(self) -> None:
+        baseline_path = self.artifacts_root / "baseline.json"
+        current_path = self.artifacts_root / "current.json"
+        report_path = self.artifacts_root / "report.txt"
+        cache_dir = self.branch_root / ".pytest_cache" / "v" / "cache"
+        cache_dir.mkdir(parents=True)
+        (cache_dir / "nodeids").write_text("[]\n", encoding="utf-8")
+
+        artifact_paths.write_non_artifact_tree_state(
+            baseline_path,
+            branch_root=self.branch_root,
+            artifacts_root=self.artifacts_root,
+        )
+
+        shutil.rmtree(self.branch_root / ".pytest_cache")
+
+        self.assertTrue(
+            artifact_paths.verify_non_artifact_tree_state(baseline_path, current_path, report_path)
+        )
+        report_text = report_path.read_text(encoding="utf-8")
+        self.assertIn("status=modified_only_warning", report_text)
+        self.assertIn("[removed_warning]", report_text)
+        self.assertIn(".pytest_cache", report_text)
+
     def test_snapshot_recreates_parent_after_collection_if_temp_root_disappears(self) -> None:
         baseline_path = self.artifacts_root / "volatile" / "baseline.json"
         original_collect = artifact_paths.collect_non_artifact_tree_state
@@ -273,6 +385,13 @@ class NonArtifactTreeVerificationTests(unittest.TestCase):
 
 
 class RetryLoopArtifactLocalityRegressionTests(unittest.TestCase):
+    def test_pytest_disables_repo_local_cacheprovider(self) -> None:
+        self.assertIn(
+            "addopts = -p no:cacheprovider",
+            PYTEST_INI_SOURCE,
+            msg="pytest must disable the repo-root cache provider so validation does not recreate .pytest_cache outside artifacts",
+        )
+
     def test_direct_retry_helpers_disable_repo_local_bytecode_outputs(self) -> None:
         for relative_path, source in DIRECT_HELPER_SOURCES.items():
             with self.subTest(path=relative_path):
@@ -403,6 +522,21 @@ class RetryLoopArtifactLocalityRegressionTests(unittest.TestCase):
             HARDCODED_BRANCH_ROOT,
             LAUNCH_RETRY_LOOP_SOURCE,
             msg="manual retry-loop launcher must not pin outputs to a user-specific checkout path",
+        )
+        self.assertIn(
+            'auto_remediation_helper="$branch_root/.ouroboros/auto_remediate_retry_abort.py"',
+            LAUNCH_RETRY_LOOP_SOURCE,
+            msg="manual retry-loop launcher must expose a structured auto-remediation helper for restartable aborts",
+        )
+        self.assertIn(
+            'python3 "$auto_remediation_helper" \\',
+            LAUNCH_RETRY_LOOP_SOURCE,
+            msg="manual retry-loop launcher must invoke the structured auto-remediation helper before giving up on a stopped loop",
+        )
+        self.assertIn(
+            "auto-remediation handled loop exit code",
+            LAUNCH_RETRY_LOOP_SOURCE,
+            msg="manual retry-loop launcher must log when a stopped loop was automatically repaired and relaunched",
         )
 
     def test_retry_restart_watcher_replaces_prior_attempt_log_state(self) -> None:
@@ -622,6 +756,108 @@ class RetryLoopArtifactLocalityRegressionTests(unittest.TestCase):
             msg="retry-loop must not start a new attempt until its fresh per-attempt runtime workspace is ready",
         )
 
+    def test_prepare_retry_attempt_state_waits_for_live_gate_locks_before_blocking(self) -> None:
+        self.assertIn(
+            "LIVE_GATE_LOCK_WAIT_SECONDS = 20.0",
+            PREPARE_RETRY_ATTEMPT_STATE_SOURCE,
+            msg="pre-attempt cleanup must give live gate locks a grace window before declaring the loop blocked",
+        )
+        self.assertIn(
+            "time.sleep(LIVE_GATE_LOCK_POLL_SECONDS)",
+            PREPARE_RETRY_ATTEMPT_STATE_SOURCE,
+            msg="pre-attempt cleanup must poll for short-lived gate locks before failing the attempt",
+        )
+        self.assertIn(
+            "_wait_for_active_locks(lock_root)",
+            PREPARE_RETRY_ATTEMPT_STATE_SOURCE,
+            msg="pre-attempt cleanup must retry active lock collection instead of immediately aborting the loop",
+        )
+
+
+class AutoRemediationGateLockTests(unittest.TestCase):
+    def test_parse_live_gate_lock_blockers_handles_spaces_in_paths(self) -> None:
+        module = load_auto_remediation_module()
+        sample = (
+            "pre-attempt cleanup blocked: live branch-local gate lock detected\n"
+            "  /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/"
+            "branch_3/artifacts/lca_tree_stress_v5/.locks/lca_smoke pid=21408 "
+            "21408 21407 00:18 /bin/bash /Users/free_1/Library/Mobile Documents/"
+            "iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/lca_smoke.sh\n"
+        )
+
+        blockers = module._parse_live_gate_lock_blockers(sample)
+
+        self.assertEqual(len(blockers), 1)
+        self.assertTrue(blockers[0]["lock_dir"].endswith(".locks/lca_smoke"))
+        self.assertEqual(blockers[0]["pid"], 21408)
+        self.assertIn("outer_suite_wrappers/lca_smoke.sh", blockers[0]["ps"])
+
+    def test_recognizes_known_branch_local_gate_holder_commands(self) -> None:
+        module = load_auto_remediation_module()
+        ps_text = (
+            f"21408 21407 00:18 /bin/bash {REPO_ROOT}/outer_suite_wrappers/lca_smoke.sh"
+        )
+        self.assertTrue(module._is_known_gate_lock_holder(REPO_ROOT, ps_text))
+        self.assertFalse(module._is_known_gate_lock_holder(REPO_ROOT, "21408 21407 00:18 sleep 60"))
+
+    def test_live_gate_lock_remediation_waits_out_short_lived_wrapper_and_rechecks_preflight(self) -> None:
+        module = load_auto_remediation_module()
+        with tempfile.TemporaryDirectory() as tempdir:
+            branch_root = Path(tempdir) / "branch_3"
+            report_root = branch_root / "artifacts" / "lca_tree_stress_v5" / "retry_loop"
+            lock_dir = branch_root / "artifacts" / "lca_tree_stress_v5" / ".locks" / "lca_smoke"
+            wrapper = branch_root / "outer_suite_wrappers" / "lca_smoke.sh"
+            report_root.mkdir(parents=True, exist_ok=True)
+            lock_dir.mkdir(parents=True, exist_ok=True)
+            wrapper.parent.mkdir(parents=True, exist_ok=True)
+            wrapper.write_text("#!/bin/bash\nsleep 0.2\n", encoding="utf-8")
+            wrapper.chmod(0o755)
+
+            proc = subprocess.Popen(["/bin/bash", str(wrapper)])
+            try:
+                (lock_dir / "pid").write_text(f"{proc.pid}\n", encoding="utf-8")
+                sample_stdout = (
+                    "pre-attempt cleanup blocked: live branch-local gate lock detected\n"
+                    f"  {lock_dir} pid={proc.pid} {proc.pid} 1 00:00 /bin/bash {wrapper}\n"
+                )
+
+                def fake_verify_preflight(_branch_root: Path, _report_root: Path):
+                    if lock_dir.exists():
+                        return subprocess.CompletedProcess(
+                            ["python3", ".ouroboros/prepare_retry_attempt_state.py"],
+                            1,
+                            stdout=sample_stdout,
+                            stderr="",
+                        )
+                    return subprocess.CompletedProcess(
+                        ["python3", ".ouroboros/prepare_retry_attempt_state.py"],
+                        0,
+                        stdout="pre-attempt cleanup ok\n",
+                        stderr="",
+                    )
+
+                with mock.patch.object(module, "_verify_preflight", side_effect=fake_verify_preflight), mock.patch.object(
+                    module, "LIVE_GATE_LOCK_WAIT_SECONDS", 1.0
+                ), mock.patch.object(module, "LIVE_GATE_LOCK_POLL_SECONDS", 0.05), mock.patch.object(
+                    module, "LIVE_GATE_LOCK_TERM_GRACE_SECONDS", 0.2
+                ), mock.patch.object(
+                    module,
+                    "_pid_alive",
+                    side_effect=lambda pid: pid == proc.pid and proc.poll() is None,
+                ):
+                    handled, details = module._remediate_live_gate_lock(
+                        branch_root,
+                        report_root,
+                        artifact_paths,
+                        sample_stdout,
+                    )
+            finally:
+                proc.wait(timeout=5)
+
+        self.assertTrue(handled)
+        self.assertIn("live gate lock auto-cleared", details["reason"])
+        self.assertIn(str(lock_dir.resolve()), details["removed_paths"])
+
     def test_retry_loop_resets_attempt_dir_before_new_attempt_logging(self) -> None:
         self.assertIn(
             "reset_attempt_dir()",
@@ -642,6 +878,7 @@ class RetryLoopArtifactLocalityRegressionTests(unittest.TestCase):
             "capture_failure_context.py": CAPTURE_FAILURE_CONTEXT_SOURCE,
             "request_soft_stop.py": REQUEST_SOFT_STOP_SOURCE,
             "monitor_codex_quota.py": MONITOR_QUOTA_SOURCE,
+            "refresh_analysis_state.py": REFRESH_ANALYSIS_STATE_SOURCE,
             "snapshot_retry_runtime.py": SNAPSHOT_RUNTIME_SOURCE,
             "snapshot_retry_inputs.py": SNAPSHOT_INPUTS_SOURCE,
             "git_repo_health.py": GIT_REPO_HEALTH_SOURCE,
@@ -655,6 +892,20 @@ class RetryLoopArtifactLocalityRegressionTests(unittest.TestCase):
                     source,
                     msg=f"{name} must enforce branch-local artifact routing before writing outputs",
                 )
+        self.assertIn(
+            '--branch-root "$PWD" \\',
+            RUN_UNTIL_PASS_SOURCE,
+            msg="retry-loop analysis refresh must pass the active branch root before resolving attempt/report outputs",
+        )
+
+    def test_capture_failure_context_defines_attempt_label_helper_before_state_reuse_check(self) -> None:
+        helper_idx = CAPTURE_FAILURE_CONTEXT_SOURCE.index("def format_attempt_label(")
+        state_match_idx = CAPTURE_FAILURE_CONTEXT_SOURCE.index("def analysis_state_attempt_matches(")
+        self.assertLess(
+            helper_idx,
+            state_match_idx,
+            msg="capture_failure_context must define format_attempt_label before analysis_state_attempt_matches reuses analysis-state attempt labels",
+        )
 
     def test_retry_seed_configs_avoid_hardcoded_user_specific_branch_paths(self) -> None:
         seed_sources = {
@@ -756,6 +1007,7 @@ class RetryLoopArtifactLocalityRegressionTests(unittest.TestCase):
             "snapshot_retry_inputs.py": (SNAPSHOT_INPUTS_SOURCE, "copy_output_file", "write_text_output"),
             "snapshot_retry_runtime.py": (SNAPSHOT_RUNTIME_SOURCE, "write_text_output", "prepare_output_dir"),
             "monitor_codex_quota.py": (MONITOR_QUOTA_SOURCE, "write_text_output", "prepare_output_dir"),
+            "refresh_analysis_state.py": (REFRESH_ANALYSIS_STATE_SOURCE, "write_text_output", "prepare_output_dir"),
             "request_soft_stop.py": (REQUEST_SOFT_STOP_SOURCE, "write_text_output", "prepare_output_dir"),
             "git_repo_health.py": (GIT_REPO_HEALTH_SOURCE, "write_text_output", "prepare_output_dir"),
             "post_attempt_guard.py": (POST_ATTEMPT_GUARD_SOURCE, "write_text_output", "prepare_output_dir"),
@@ -779,11 +1031,33 @@ class RetryLoopArtifactLocalityRegressionTests(unittest.TestCase):
 
 
 class RetryLoopArtifactGuardRuntimeTests(unittest.TestCase):
-    def make_fake_branch(self, temp_root: Path) -> tuple[Path, Path]:
+    def make_fake_branch(
+        self,
+        temp_root: Path,
+        *,
+        include_shared_resolver: bool = True,
+    ) -> tuple[Path, Path]:
         branch_root = temp_root / "branch"
         artifacts_root = branch_root / "artifacts"
         branch_root.mkdir(parents=True, exist_ok=True)
         artifacts_root.mkdir(parents=True, exist_ok=True)
+        resolver_source = (
+            "def resolve_branch_artifact_path(path_like):\n"
+            "    raw = Path(path_like).expanduser()\n"
+            "    if raw.is_absolute():\n"
+            "        candidate = raw.resolve()\n"
+            "    else:\n"
+            "        parts = [part for part in raw.parts if part not in ('', '.')]\n"
+            "        artifact_idx = next((idx for idx, part in enumerate(parts) if part == 'artifacts'), None)\n"
+            "        if artifact_idx is not None and artifact_idx > 0 and all(part == BRANCH_ROOT.name for part in parts[:artifact_idx]):\n"
+            "            parts = parts[artifact_idx:]\n"
+            "        while parts and parts[0] == 'artifacts':\n"
+            "            parts.pop(0)\n"
+            "        candidate = (ARTIFACTS_ROOT / Path(*parts)).resolve() if parts and parts[0] == 'lca_tree_stress_v5' else (BRANCH_ROOT / Path(*parts)).resolve()\n"
+            "    return ensure_under_artifacts(candidate)\n"
+            if include_shared_resolver
+            else ""
+        )
         (branch_root / "artifact_paths.py").write_text(
             (
                 "from pathlib import Path\n"
@@ -798,6 +1072,7 @@ class RetryLoopArtifactGuardRuntimeTests(unittest.TestCase):
                 "    except ValueError as exc:\n"
                 "        raise ValueError(f'output path must stay under {ARTIFACTS_ROOT}: {path}') from exc\n"
                 "    return path\n"
+                f"{resolver_source}"
             ),
             encoding="utf-8",
         )
@@ -849,6 +1124,122 @@ class RetryLoopArtifactGuardRuntimeTests(unittest.TestCase):
             self.assertTrue(soft_stop_path.is_file())
             payload = json.loads(soft_stop_path.read_text(encoding="utf-8"))
             self.assertEqual(payload["note"], "retry hygiene")
+
+    def test_request_soft_stop_accepts_branch_prefixed_artifact_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, artifacts_root = self.make_fake_branch(temp_root)
+            soft_stop_rel = (
+                f"{branch_root.name}/artifacts/lca_tree_stress_v5/retry_loop/soft_stop_request.json"
+            )
+            soft_stop_path = artifacts_root / "lca_tree_stress_v5" / "retry_loop" / "soft_stop_request.json"
+
+            result = self.run_helper(
+                "request_soft_stop.py",
+                "--branch-root",
+                str(branch_root),
+                "--soft-stop-file",
+                soft_stop_rel,
+                "--note",
+                "branch-prefixed",
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertTrue(soft_stop_path.is_file())
+            payload = json.loads(soft_stop_path.read_text(encoding="utf-8"))
+            self.assertEqual(payload["note"], "branch-prefixed")
+
+    def test_request_soft_stop_accepts_branch_prefixed_artifact_path_without_shared_resolver(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, artifacts_root = self.make_fake_branch(
+                temp_root,
+                include_shared_resolver=False,
+            )
+            soft_stop_rel = (
+                f"{branch_root.name}/artifacts/lca_tree_stress_v5/retry_loop/soft_stop_request.json"
+            )
+            soft_stop_path = artifacts_root / "lca_tree_stress_v5" / "retry_loop" / "soft_stop_request.json"
+
+            result = self.run_helper(
+                "request_soft_stop.py",
+                "--branch-root",
+                str(branch_root),
+                "--soft-stop-file",
+                soft_stop_rel,
+                "--note",
+                "fallback-branch-prefixed",
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertTrue(soft_stop_path.is_file())
+            payload = json.loads(soft_stop_path.read_text(encoding="utf-8"))
+            self.assertEqual(payload["note"], "fallback-branch-prefixed")
+
+    def test_refresh_analysis_state_rejects_non_artifact_attempt_dir_when_branch_root_is_provided(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, artifacts_root = self.make_fake_branch(temp_root)
+            report_root = artifacts_root / "lca_tree_stress_v5" / "retry_loop"
+            report_root.mkdir(parents=True, exist_ok=True)
+            escape_attempt_dir = temp_root / "escape_attempt"
+            analysis_log = report_root / "analysis.log"
+            analysis_log.write_text("analysis ok\n", encoding="utf-8")
+            ouroboros_root = branch_root / ".ouroboros"
+            ouroboros_root.mkdir(parents=True, exist_ok=True)
+            state_path = ouroboros_root / "failure_analysis_state.json"
+            iteration_path = ouroboros_root / "failure_analysis_iteration.md"
+
+            result = self.run_helper(
+                "refresh_analysis_state.py",
+                "--branch-root",
+                str(branch_root),
+                "--attempt",
+                "1",
+                "--attempt-dir",
+                str(escape_attempt_dir),
+                "--report-root",
+                str(report_root),
+                "--analysis-log",
+                str(analysis_log),
+                "--analysis-round",
+                "1",
+                "--state-file",
+                str(state_path),
+                "--iteration-file",
+                str(iteration_path),
+            )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(escape_attempt_dir.exists())
+            self.assertIn("output path must stay under", result.stderr)
+
+    def test_request_soft_stop_collapses_redundant_artifact_prefix_without_shared_resolver(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, artifacts_root = self.make_fake_branch(
+                temp_root,
+                include_shared_resolver=False,
+            )
+            soft_stop_rel = (
+                f"{branch_root.name}/artifacts/artifacts/lca_tree_stress_v5/retry_loop/soft_stop_request.json"
+            )
+            soft_stop_path = artifacts_root / "lca_tree_stress_v5" / "retry_loop" / "soft_stop_request.json"
+
+            result = self.run_helper(
+                "request_soft_stop.py",
+                "--branch-root",
+                str(branch_root),
+                "--soft-stop-file",
+                soft_stop_rel,
+                "--note",
+                "redundant-artifact-prefix",
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertTrue(soft_stop_path.is_file())
+            payload = json.loads(soft_stop_path.read_text(encoding="utf-8"))
+            self.assertEqual(payload["note"], "redundant-artifact-prefix")
 
     def test_snapshot_retry_runtime_rejects_non_artifact_report_root(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -1162,6 +1553,56 @@ class RetryLoopArtifactGuardRuntimeTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertFalse(escape_root.exists())
             self.assertIn("output path must stay under", result.stderr)
+
+    def test_capture_failure_context_accepts_prefixed_artifact_inputs_without_shared_resolver(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, artifacts_root = self.make_fake_branch(
+                temp_root,
+                include_shared_resolver=False,
+            )
+            seed_file = branch_root / ".ouroboros" / "seed_branch3_progress40_research_loop.yaml"
+            seed_file.parent.mkdir(parents=True, exist_ok=True)
+            seed_file.write_text("goal: retry locality\n", encoding="utf-8")
+
+            report_root = artifacts_root / "lca_tree_stress_v5" / "retry_loop"
+            attempt_dir = report_root / "attempt_007"
+            workflow_log = attempt_dir / "workflow.log"
+            workflow_log.parent.mkdir(parents=True, exist_ok=True)
+            workflow_log.write_text(
+                "\n".join(
+                    [
+                        "session_id=orch_test",
+                        "execution_id=exec_test",
+                        "Traceback (most recent call last):",
+                        "ValueError: invalid seed format",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            result = self.run_helper(
+                "capture_failure_context.py",
+                "--branch-root",
+                str(branch_root),
+                "--attempt",
+                "7",
+                "--seed-file",
+                str(seed_file.relative_to(branch_root)),
+                "--workflow-log",
+                f"{branch_root.name}/artifacts/artifacts/lca_tree_stress_v5/retry_loop/attempt_007/workflow.log",
+                "--report-root",
+                f"{branch_root.name}/artifacts/artifacts/lca_tree_stress_v5/retry_loop",
+                "--exit-code",
+                "1",
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            self.assertTrue((attempt_dir / "failure_report.md").is_file())
+            self.assertTrue((attempt_dir / "failure_breakdown.md").is_file())
+            self.assertTrue((report_root / "latest_failure_report.md").is_file())
+            self.assertTrue((report_root / "latest_failure_breakdown.md").is_file())
 
     def test_run_next_probe_rejects_non_artifact_report_root(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

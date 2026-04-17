@@ -262,7 +262,15 @@ def _copy_generated_case(src_dir: Path, dst_dir: Path) -> bool:
         dst_dir.mkdir(parents=True, exist_ok=True)
         for name in GEN_FILES:
             src = src_dir / name
-            shutil.copyfile(src, dst_dir / name)
+            dst = dst_dir / name
+            try:
+                if dst.exists():
+                    dst.unlink()
+                # Reuse cache payloads via hardlink when possible so long
+                # certify runs do not duplicate every generated input file.
+                os.link(src, dst)
+            except OSError:
+                shutil.copyfile(src, dst)
     except OSError:
         return False
     return True

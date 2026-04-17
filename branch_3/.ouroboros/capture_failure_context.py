@@ -24,7 +24,12 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from retry_artifact_io import copy_output_file, prepare_output_dir, write_text_output
+from retry_artifact_io import (
+    copy_output_file,
+    prepare_output_dir,
+    resolve_artifact_output_path,
+    write_text_output,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -57,6 +62,9 @@ ITERATION_FAILURE_POINT_ANCHOR_RE = re.compile(
 )
 TRACEBACK_FILE_LINE_RE = re.compile(
     r'File "(?P<path>[^"]+)", line (?P<line>\d+)(?:, in (?P<func>[A-Za-z0-9_<>]+))?'
+)
+ENOSPC_PATH_RE = re.compile(
+    r"OSError: \[Errno 28\] No space left on device: ['\"](?P<path>[^'\"]+)['\"]"
 )
 GUARD_QA_AC_MENTION_RE = re.compile(r"\bAC\s*(?P<ac>\d+)\b")
 CASE_BLOCKER_RE = re.compile(
@@ -542,6 +550,90 @@ AC_SOLVER_TRACE_HINTS = {
 AC_RETRY_ANCHOR_HINTS = {
     2: (
         {
+            "path": "artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/smoke_target_wrapper_syntax.stderr.txt",
+            "range": (1, 1),
+            "label": "Smoke-target shell_syntax stderr",
+            "note": "the preserved shell-syntax stderr says `Operation canceled` for `lca_smoke_target.sh`, so the live blocker is wrapper readability/access at pre-dispatch time, not a parsed shell syntax defect inside the target wrapper body",
+            "statement_excerpt": "/Users/.../lca_smoke_target.sh: ... Operation canceled",
+            "priority": 410,
+            "families": ("smoke_target_wrapper_readability_failure",),
+            "allow_non_code": True,
+        },
+        {
+            "path": "artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/preflight_manifest.tsv",
+            "range": (33, 33),
+            "label": "Smoke-target shell_syntax broken row",
+            "note": "the launcher preflight localizes the failure to the `shell_syntax` row for `lca_smoke_target.sh`, so the next reread should stay on the shell-entrypoint validation chain rather than widening into smoke-manifest or solver paths",
+            "statement_excerpt": "shell_syntax\tsmoke target wrapper syntax\tbroken\t.../lca_smoke_target.sh\t.../smoke_target_wrapper_syntax.stderr.txt",
+            "priority": 405,
+            "families": ("smoke_target_wrapper_readability_failure",),
+            "allow_non_code": True,
+        },
+        {
+            "path": "lca_smoke.sh",
+            "range": (5296, 5300),
+            "label": "shell_entrypoint_validation smoke-target call site",
+            "note": "the newest same-worktree attempt dies in `shell_entrypoint_validation`, and the smoke-target wrapper is the last `check_shell_syntax(...)` call before manifest validation begins",
+            "statement_excerpt": "set_launcher_failure_stage \"shell_entrypoint_validation\" ... check_shell_syntax \"$SMOKE_TARGET_WRAPPER\" \"smoke target wrapper syntax\"",
+            "priority": 400,
+            "families": ("smoke_target_wrapper_readability_failure",),
+        },
+        {
+            "path": "lca_smoke.sh",
+            "range": (464, 469),
+            "label": "check_shell_syntax broken handoff",
+            "note": "this exact branch captures stderr, marks the last check as broken, and fails the launcher; combined with the preserved `Operation canceled` stderr, it narrows the blocker to smoke-target wrapper readability/access at the `bash -n` handoff",
+            "statement_excerpt": "if \"$BASH_BIN\" -n \"$path\" >/dev/null 2>\"$stderr_path\"; then ... set_launcher_last_check \"shell_syntax\" \"$label\" \"broken\" \"$path\" \"$stderr_path\"; fail \"broken ${label}: $path\"",
+            "priority": 395,
+            "families": ("smoke_target_wrapper_readability_failure",),
+        },
+        {
+            "path": "artifacts/lca_tree_stress_v5/smoke/failure_report.md",
+            "range": (3, 14),
+            "label": "166-second launcher failure timing",
+            "note": "the newest same-worktree smoke run lasted 166 seconds before `dispatch_monitor` failed, which makes an immediate argument/launch parse miss unlikely and keeps the first surviving helper-side suspicion on the post-wait result-publication path",
+            "statement_excerpt": "- Run id: `run.8FzpEa` ... - Run elapsed seconds: `166` ... - Summary: `inner wrapper dispatch monitor failed with exit code 1`",
+            "priority": 400,
+            "families": ("smoke_dispatch_monitor_helper_failure",),
+        },
+        {
+            "path": "artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/preflight_manifest.tsv",
+            "range": (33, 33),
+            "label": "Dispatch monitor broken row",
+            "note": "the launcher preflight reaches the dispatch monitor, records `broken 1`, and points at `dispatch_result.txt`, so the live reread boundary is the embedded helper exit-code handoff rather than a broader wrapper section",
+            "statement_excerpt": "dispatch_monitor\tinner wrapper dispatch monitor\tbroken\t1\t.../dispatch_result.txt",
+            "priority": 395,
+            "families": ("smoke_dispatch_monitor_helper_failure",),
+            "allow_non_code": True,
+        },
+        {
+            "path": "lca_smoke.sh",
+            "range": (4284, 4288),
+            "label": "Dispatch-result write handoff",
+            "note": "the outer shell only enters the `manager_rc=$?` else-branch when the embedded Python helper itself exits nonzero; combined with the 166-second smoke runtime and the now-missing `dispatch_result.txt`, the first surviving source-level hypothesis is the helper dying while writing its result payload after the child wait returns",
+            "statement_excerpt": "result_path.write_text( f\"raw_exit_code={raw_exit_code}\\n\" f\"timed_out={1 if timed_out else 0}\\n\", encoding=\"utf-8\", )",
+            "priority": 390,
+            "families": ("smoke_dispatch_monitor_helper_failure",),
+        },
+        {
+            "path": "lca_smoke.sh",
+            "range": (4292, 4301),
+            "label": "Dispatch monitor helper-failure handoff",
+            "note": "this exact non-negated else-branch preserves the embedded helper exit code as `manager_rc`; `manager_rc=1` here means the helper crashed, not merely that the inner wrapper returned exit code 1",
+            "statement_excerpt": "else manager_rc=$?; set_launcher_failure_stage \"dispatch_monitor\"; ... fail \"inner wrapper dispatch monitor failed with exit code $manager_rc\"",
+            "priority": 385,
+            "families": ("smoke_dispatch_monitor_helper_failure",),
+        },
+        {
+            "path": "lca_smoke.sh",
+            "range": (4304, 4313),
+            "label": "Dispatch-result capture fallback",
+            "note": "keep the missing-result guard only as the immediate fallback when a future same-worktree rerun leaves the helper exit code at zero but still fails to persist or parse `dispatch_result.txt`",
+            "statement_excerpt": "if [[ ! -s \"$LAUNCHER_DISPATCH_RESULT_PATH\" ]]; then ... fail \"inner wrapper dispatch monitor did not record a dispatch result\"",
+            "priority": 380,
+            "families": ("smoke_dispatch_monitor_helper_failure",),
+        },
+        {
             "path": "lca_smoke.sh",
             "range": (3610, 3610),
             "label": "Live smoke manifest path gate",
@@ -652,12 +744,41 @@ AC_RETRY_ANCHOR_HINTS = {
     ),
     3: (
         {
+            "path": "outer_suite_wrappers/lca_strong_gate.sh",
+            "range": (743, 747),
+            "label": "Certify helper launch handoff",
+            "note": "the newest same-worktree smoke report already says AC3 is ready to run, but the failed attempt still produced no fresh strong-gate artifact; stay on the wrapper-to-helper launch handoff before reviving any carried-forward timeout-cluster anchors",
+            "priority": 330,
+            "families": ("strong_gate_pre_artifact_stall",),
+        },
+        {
+            "path": "outer_suite_wrappers/lca_strong_gate.sh",
+            "range": (757, 758),
+            "label": "Heartbeat completed-case sample",
+            "note": "use the completed-case heartbeat only as fallback corroboration for this stale-artifact shape; it helps separate launched-but-unpublished runs from pure launch misses once the freshness boundary is pinned",
+            "priority": 325,
+            "families": ("strong_gate_pre_artifact_stall",),
+        },
+        {
+            "path": "outer_suite_wrappers/lca_strong_gate.sh",
+            "range": (681, 701),
+            "label": "Published-plus-active time scan",
+            "note": "the first wrapper-side progress witness for this stale-artifact AC3 shape is the published-plus-active completed-case scan, not the older solver-timeout publication anchors",
+            "priority": 320,
+            "families": ("strong_gate_pre_artifact_stall",),
+        },
+        {
             "path": "branch_certify_suite.py",
             "range": (540, 549),
             "label": "branch_run_solver_with_time handoff",
-            "note": "fresh attempt-local `certify_rows.csv` says all 26 failing rows are `solver_rc=-9` timeouts, so the first live helper-side ingress is the actual timed solver call in `run_one_case`, not the downstream `_write_case_result` helper signature",
+            "note": "fresh attempt-local strong-gate failure rows already collapse the live blocker to solver timeouts, so the first helper-side ingress is the actual timed solver call in `run_one_case`, not the downstream `_write_case_result` helper signature",
             "statement_excerpt": "rc_sol, to_sol, sec, rss = branch_run_solver_with_time( solver, in_path, out_path, time_path, solver_stderr, timeout, env=solver_env, cwd=work_dir, )",
             "priority": 320,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "branch_certify_suite.py",
@@ -666,14 +787,24 @@ AC_RETRY_ANCHOR_HINTS = {
             "note": "this exact timeout branch is the first persisted timeout payload after the live solver call, so it now outranks the broader `_write_case_result` helper header and older wrapper-only anchors",
             "statement_excerpt": "_write_case_result( work_dir, status=\"solver_timeout\", category=\"solver\", exit_code=124, message=\"solver timed out\", solver_exit_code=rc_sol, timed_out=True, validator_ok=False, sec=sec, rss_kb=rss, )",
             "priority": 319,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "branch_certify_suite.py",
-            "range": (606, 607),
+            "range": (613, 614),
             "label": "outer_certify timeout row summary",
-            "note": "this exact returned row is the certify-side boundary that becomes `certify_rows.csv`, so keep it ahead of stale wrapper bookkeeping once the current attempt already refreshed strong-gate artifacts",
+            "note": "this exact returned row is the certify-side boundary that becomes the stage/mode/n/LQ timeout cluster in the live strong-gate failure tree, so keep it ahead of stale wrapper bookkeeping",
             "statement_excerpt": "return outer_certify.Row(stage_name, mode, n, seed, shuffle_labels, shuffle_queries, 1, rc_sol, 1 if to_sol else 0, val_ok, sec, rss, str(reported_case_dir))",
             "priority": 318,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "outer_suite_wrappers/lca_strong_gate.sh",
@@ -681,6 +812,11 @@ AC_RETRY_ANCHOR_HINTS = {
             "label": "Certify helper launch",
             "note": "the wrapper/helper handoff still matters as trust-boundary corroboration, but it now sits behind the helper-side launch and timeout publication statements because attempt_017 already produced fresh in-attempt strong-gate artifacts",
             "priority": 317,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "outer_suite_wrappers/lca_strong_gate.sh",
@@ -688,6 +824,11 @@ AC_RETRY_ANCHOR_HINTS = {
             "label": "Heartbeat completed-case sample",
             "note": "keep the exact `completed_cases=...` heartbeat echo only as progress corroboration once the fresh timeout rows already prove this was not a zero-progress launch miss",
             "priority": 316,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "outer_suite_wrappers/lca_strong_gate.sh",
@@ -695,6 +836,11 @@ AC_RETRY_ANCHOR_HINTS = {
             "label": "Published-plus-active time scan",
             "note": "keep the published/active `time.txt` counter only as fallback progress context once the helper-side timeout row and heartbeat evidence already prove partial publication",
             "priority": 260,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp",
@@ -703,6 +849,11 @@ AC_RETRY_ANCHOR_HINTS = {
             "note": "current progress40 fallback owner once the helper-side timeout corridor is confirmed: the smallest full-`L/Q` timeout plateaus are no longer label/query-specific, so fall back to the exact included-body zero-span budget split before any other solver reread",
             "statement_excerpt": "long long __dt_zero_elide = std::max(1LL, __dt_layout_skip); long long __dt_rule_dispatch = std::max(1LL, __dt_norm / 5); long long __dt_field_apply = std::max(1LL, __dt_norm / 3); long long __dt_zero_fill = std::max(1LL, __dt_norm / 3); long long __dt_tail_clear = std::max(1LL, __dt_norm - __dt_rule_dispatch - __dt_field_apply - __dt_zero_fill);",
             "priority": 230,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp",
@@ -711,6 +862,11 @@ AC_RETRY_ANCHOR_HINTS = {
             "note": "keep the first exact zero-span counter publication immediately behind the budget split so the next retry inherits the live cnorm write site instead of a larger solver corridor",
             "statement_excerpt": "if (__dt_zero_elide > 0) { __acc_cnorm(__dt_zero_elide, &g_batch_dbg.time_cnorm_zero_span_elision_ns, &g_batch_dbg.time_cnorm_zero_span_elision_calls); g_batch_dbg.cnorm_zero_span_checks++; g_batch_dbg.cnorm_zero_span_elision_hits++; }",
             "priority": 229,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp",
@@ -719,6 +875,11 @@ AC_RETRY_ANCHOR_HINTS = {
             "note": "keep the exact zero-span scan metric write as the first retained lreuse-side owner statement once the cnorm zero-span publication is pinned",
             "statement_excerpt": "__acc_lreuse(__dt_zero_scan, &g_batch_dbg.time_lreuse_zero_span_scan_ns, &g_batch_dbg.time_lreuse_zero_span_scan_calls); g_batch_dbg.lreuse_zero_span_scan_calls++; g_batch_dbg.lreuse_zero_span_segments_detected++;",
             "priority": 228,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
         {
             "path": "artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp",
@@ -727,6 +888,11 @@ AC_RETRY_ANCHOR_HINTS = {
             "note": "pin the fastpath-commit owner to the exact noop-commit metric write and hit counter so the regenerated breakdown names the direct progress40 axis owner instead of the wider lreuse block",
             "statement_excerpt": "__acc_lreuse(__dt_noop_commit, &g_batch_dbg.time_lreuse_noop_fastpath_commit_ns, &g_batch_dbg.time_lreuse_noop_fastpath_commit_calls); g_batch_dbg.lreuse_noop_commit_hits++;",
             "priority": 227,
+            "families": (
+                "strong_gate_timeout_cluster",
+                "strong_gate_timeout_re_wa_cluster",
+                "strong_gate_re_wa_cluster",
+            ),
         },
     ),
     4: (
@@ -1511,6 +1677,43 @@ def build_artifact_snapshot(
     )
 
 
+def parse_key_value_summary(text: str | None) -> dict[str, str]:
+    values: dict[str, str] = {}
+    if not text:
+        return values
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        if not key or " " in key:
+            continue
+        values[key] = value.strip()
+    return values
+
+
+def has_fresh_smoke_gate_escalation(snapshot_list: Iterable[ArtifactSnapshot]) -> bool:
+    for snapshot in snapshot_list:
+        if snapshot.label != "smoke" or snapshot.fresh_for_attempt is not True:
+            continue
+        fields = parse_key_value_summary(snapshot.summary_excerpt)
+        public_status = fields.get("public_status", "").strip().upper()
+        acceptance_status = fields.get("acceptance_signal_status", "").strip().upper()
+        next_gate_command = fields.get("next_gate_command", "").strip()
+        gate_chain_ac2_status = fields.get("gate_chain_ac2_status", "").strip().lower()
+        standard_gap_status = fields.get("standard_gap_status", "").strip().lower()
+        if (
+            public_status == "PASS"
+            and acceptance_status == "PASS"
+            and next_gate_command == "./lca_strong_gate.sh"
+            and gate_chain_ac2_status == "satisfied"
+            and standard_gap_status == "ready_for_gate_escalation"
+        ):
+            return True
+    return False
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -1524,6 +1727,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--report-root", required=True)
     parser.add_argument("--exit-code", required=True, type=int)
     return parser.parse_args()
+
+
+def _load_artifact_guard(branch_root: Path):
+    sys.path.insert(0, str(branch_root))
+    import artifact_paths as artifact_guard  # type: ignore
+
+    return artifact_guard.ensure_under_artifacts, getattr(
+        artifact_guard, "resolve_branch_artifact_path", None
+    )
+
+
+def _resolve_artifact_path(
+    branch_root: Path,
+    ensure_under_artifacts,
+    value: str,
+    shared_resolver=None,
+) -> Path:
+    if shared_resolver is not None:
+        return shared_resolver(value)
+    return resolve_artifact_output_path(branch_root, value, ensure_under_artifacts)
 
 
 def collect_ac_context_lines(clean_log: str, ac_numbers: Iterable[int], forward_lines: int = 2) -> list[str]:
@@ -2113,6 +2336,40 @@ def state_anchor_allowed_for_failure_family(path: str, failure_family: str | Non
     return False
 
 
+def format_attempt_label(value: object) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and value.startswith("attempt_"):
+        return value
+    try:
+        return f"attempt_{int(value):03d}"
+    except (TypeError, ValueError):
+        text = str(value).strip()
+        return text or None
+
+
+def analysis_state_attempt_matches(
+    analysis_state: dict | None,
+    current_attempt_label: str | None,
+) -> bool:
+    if not isinstance(analysis_state, dict) or not current_attempt_label:
+        return False
+
+    current_failure = analysis_state.get("current_failure")
+    candidates = [
+        analysis_state.get("current_failure_attempt"),
+        analysis_state.get("last_failed_attempt"),
+    ]
+    if isinstance(current_failure, dict):
+        candidates.append(current_failure.get("attempt_label"))
+
+    normalized_current = format_attempt_label(current_attempt_label)
+    for candidate in candidates:
+        if format_attempt_label(candidate) == normalized_current:
+            return True
+    return False
+
+
 def ac_retry_anchor_specs(
     ac_index: int,
     analysis_state: dict | None = None,
@@ -2120,6 +2377,7 @@ def ac_retry_anchor_specs(
     relevant_lines: Iterable[str] | None = None,
     stale_formal_artifacts: set[str] | None = None,
     failure_family: str | None = None,
+    current_attempt_label: str | None = None,
 ) -> list[dict[str, object]]:
     specs: list[dict[str, object]] = []
     spec_index_by_key: dict[tuple[str, tuple[int, int]], int] = {}
@@ -2182,7 +2440,12 @@ def ac_retry_anchor_specs(
     for spec in iteration_failure_point_specs(Path(__file__).resolve().with_name("failure_analysis_iteration.md")):
         register_spec(spec)
 
-    if isinstance(analysis_state, dict):
+    state_anchor_reuse_allowed = analysis_state_attempt_matches(
+        analysis_state,
+        current_attempt_label,
+    )
+
+    if isinstance(analysis_state, dict) and state_anchor_reuse_allowed:
         for item in analysis_state.get("latest_retry_statement_anchors", []):
             if not isinstance(item, dict):
                 continue
@@ -2265,6 +2528,8 @@ def retry_anchor_priority_paths(
     probe_signal: ProbeSignal | None = None,
     relevant_lines: Iterable[str] | None = None,
     stale_formal_artifacts: set[str] | None = None,
+    failure_family: str | None = None,
+    current_attempt_label: str | None = None,
 ) -> set[str]:
     return {
         canonical_focus_path(branch_root, str(spec["path"]))
@@ -2274,6 +2539,8 @@ def retry_anchor_priority_paths(
             probe_signal=probe_signal,
             relevant_lines=relevant_lines,
             stale_formal_artifacts=stale_formal_artifacts,
+            failure_family=failure_family,
+            current_attempt_label=current_attempt_label,
         )
     }
 
@@ -2333,6 +2600,83 @@ def exact_statement_excerpt_for_focus(path: Path, focus_range: tuple[int, int]) 
     return excerpt
 
 
+def normalized_statement_excerpt(text: str | None) -> str | None:
+    if text is None:
+        return None
+    excerpt = re.sub(r"\s+", " ", str(text)).strip()
+    return excerpt or None
+
+
+def retarget_state_anchor_label(
+    label: str,
+    original_range: tuple[int, int],
+    resolved_range: tuple[int, int],
+) -> str:
+    stripped = label.strip()
+    if not stripped:
+        return f"focus {range_label(*resolved_range)}"
+    original_label = range_label(*original_range)
+    resolved_label = range_label(*resolved_range)
+    if stripped == f"focus {original_label}":
+        return f"focus {resolved_label}"
+    if original_label in stripped:
+        return stripped.replace(original_label, resolved_label)
+    return stripped
+
+
+def reconcile_state_anchor_to_live_source(
+    path: Path,
+    focus_range: tuple[int, int],
+    stored_excerpt: str | None,
+) -> tuple[tuple[int, int], str | None, str | None]:
+    live_excerpt = normalized_statement_excerpt(exact_statement_excerpt_for_focus(path, focus_range))
+    stored_normalized = normalized_statement_excerpt(stored_excerpt)
+    if not stored_normalized:
+        return focus_range, live_excerpt, None
+    if live_excerpt == stored_normalized:
+        return focus_range, live_excerpt, None
+
+    # Punctuation-only snippets such as `;;` are too ambiguous to relocate safely.
+    if len(re.sub(r"[^A-Za-z0-9_]+", "", stored_normalized)) < 8:
+        note = None
+        if live_excerpt:
+            note = "stored state excerpt no longer matches current source; using live source statement"
+        return focus_range, live_excerpt or stored_normalized, note
+
+    try:
+        lines = path.read_text(errors="replace").splitlines()
+    except OSError:
+        return focus_range, live_excerpt or stored_normalized, None
+
+    if not lines:
+        return focus_range, live_excerpt or stored_normalized, None
+
+    search_start = max(1, focus_range[0] - 24)
+    search_end = min(len(lines), focus_range[1] + 24)
+    max_span = max(1, min(5, focus_range[1] - focus_range[0] + 1))
+    matches: list[tuple[int, int]] = []
+    for start in range(search_start, search_end + 1):
+        for end in range(start, min(search_end, start + max_span - 1) + 1):
+            candidate = normalized_statement_excerpt(
+                exact_statement_excerpt_for_focus(path, (start, end))
+            )
+            if candidate == stored_normalized:
+                matches.append((start, end))
+                break
+
+    if len(matches) == 1:
+        return (
+            matches[0],
+            stored_normalized,
+            "retargeted to current source range via stored statement excerpt match",
+        )
+
+    note = None
+    if live_excerpt:
+        note = "stored state excerpt no longer matches current source; using live source statement"
+    return focus_range, live_excerpt or stored_normalized, note
+
+
 def retry_critical_anchors_for_ac(
     branch_root: Path,
     clean_log: str,
@@ -2340,6 +2684,8 @@ def retry_critical_anchors_for_ac(
     analysis_state: dict | None = None,
     probe_signal: ProbeSignal | None = None,
     stale_formal_artifacts: set[str] | None = None,
+    failure_family: str | None = None,
+    current_attempt_label: str | None = None,
 ) -> list[RetryCriticalAnchor]:
     relevant_lines = collect_ac_context_lines(clean_log, [ac_index])
     probe_context = probe_context_lines_for_ac(probe_signal, ac_index)
@@ -2357,7 +2703,8 @@ def retry_critical_anchors_for_ac(
         probe_signal=probe_signal,
         relevant_lines=relevant_lines,
         stale_formal_artifacts=stale_formal_artifacts,
-        failure_family=failure_family_for_ac(clean_log, ac_index),
+        failure_family=failure_family or failure_family_for_ac(clean_log, ac_index, branch_root),
+        current_attempt_label=current_attempt_label,
     )
     anchor_specs.sort(
         key=lambda spec: (
@@ -2373,17 +2720,8 @@ def retry_critical_anchors_for_ac(
         allow_non_code = bool(spec.get("allow_non_code"))
         if resolved is None or (resolved.suffix not in TEXTUAL_RETRY_ANCHOR_SUFFIXES and not allow_non_code):
             continue
-        focus_range = tuple(spec["range"])
-        symbol_entries: list[tuple[int, int, str, str]] = []
-        symbol = None
-        if resolved.suffix in CODE_SUFFIXES:
-            symbol_entries = select_symbol_entries(symbol_ranges_for_path(resolved), [focus_range])
-            if symbol_entries:
-                entry = symbol_entries[0]
-                symbol = f"{entry[2]} {entry[3]} [{entry[0]}-{entry[1]}]"
-        if symbol is None and spec.get("symbol"):
-            symbol = str(spec["symbol"]).strip() or None
-
+        original_focus_range = tuple(spec["range"])
+        focus_range = original_focus_range
         evidence_lines = evidence_lines_for_path(relevant_lines, relative_path)
         for line in spec.get("evidence_lines") or []:
             if isinstance(line, str) and line.strip():
@@ -2409,8 +2747,37 @@ def retry_critical_anchors_for_ac(
         evidence_lines = list(dict.fromkeys(line for line in evidence_lines if line))[:6]
 
         note_parts = [str(spec.get("note", "promoted from retry anchor hints"))]
-        if isinstance(analysis_state, dict):
+        if isinstance(analysis_state, dict) and "failure_analysis_state" in str(spec.get("note", "")):
             note_parts.append("pinned in failure_analysis_state")
+        stored_statement_excerpt = (
+            str(spec.get("statement_excerpt")).strip() if spec.get("statement_excerpt") else None
+        )
+        if "failure_analysis_state" in str(spec.get("note", "")) and resolved.suffix in CODE_SUFFIXES:
+            focus_range, reconciled_excerpt, reconcile_note = reconcile_state_anchor_to_live_source(
+                resolved,
+                focus_range,
+                stored_statement_excerpt,
+            )
+            if reconcile_note:
+                note_parts.append(reconcile_note)
+            statement_excerpt = reconciled_excerpt or stored_statement_excerpt
+        else:
+            statement_excerpt = stored_statement_excerpt
+
+        anchor_label = str(spec.get("label", f"{relative_path}:{range_label(*focus_range)}"))
+        if focus_range != original_focus_range:
+            anchor_label = retarget_state_anchor_label(anchor_label, original_focus_range, focus_range)
+
+        symbol_entries: list[tuple[int, int, str, str]] = []
+        symbol = None
+        if resolved.suffix in CODE_SUFFIXES:
+            symbol_entries = select_symbol_entries(symbol_ranges_for_path(resolved), [focus_range])
+            if symbol_entries:
+                entry = symbol_entries[0]
+                symbol = f"{entry[2]} {entry[3]} [{entry[0]}-{entry[1]}]"
+        if symbol is None and spec.get("symbol"):
+            symbol = str(spec["symbol"]).strip() or None
+
         if (
             probe_signal_applies_to_ac(probe_signal, ac_index)
             and probe_signal is not None
@@ -2419,15 +2786,12 @@ def retry_critical_anchors_for_ac(
             and normalize_repo_relative_path(probe_signal.wrapper_path) == relative_path
         ):
             note_parts.append("matched latest_next_probe_result wrapper focus")
-        statement_excerpt = (
-            str(spec.get("statement_excerpt")).strip()
-            if spec.get("statement_excerpt")
-            else exact_statement_excerpt_for_focus(resolved, focus_range)
-        )
+        if not statement_excerpt:
+            statement_excerpt = exact_statement_excerpt_for_focus(resolved, focus_range)
 
         anchors.append(
             RetryCriticalAnchor(
-                label=str(spec.get("label", f"{relative_path}:{range_label(*focus_range)}")),
+                label=anchor_label,
                 path=str(resolved),
                 focus_range=range_label(*focus_range),
                 symbol=symbol,
@@ -2491,6 +2855,27 @@ def current_progress40_summary(branch_root: Path) -> dict[str, object]:
     }
 
 
+def latest_smoke_target_wrapper_syntax_stderr(branch_root: Path) -> str:
+    path = branch_root / "artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/smoke_target_wrapper_syntax.stderr.txt"
+    try:
+        return path.read_text(errors="replace")
+    except OSError:
+        return ""
+
+
+def has_smoke_target_wrapper_operation_canceled(
+    branch_root: Path | None,
+    section_text: str,
+) -> bool:
+    lowered = section_text.lower()
+    if "operation canceled" in lowered and "lca_smoke_target.sh" in lowered:
+        return True
+    if branch_root is None:
+        return False
+    artifact_text = latest_smoke_target_wrapper_syntax_stderr(branch_root).lower()
+    return "operation canceled" in artifact_text and "lca_smoke_target.sh" in artifact_text
+
+
 def profile_mode_for_text(text: str) -> str | None:
     matches = PROFILE_MODE_RE.findall(text)
     return matches[-1] if matches else None
@@ -2510,7 +2895,7 @@ def last_release_diag_phase_for_text(text: str) -> str | None:
     return matches[-1] if matches else None
 
 
-def failure_family_for_ac(clean_log: str, ac_index: int) -> str:
+def failure_family_for_ac(clean_log: str, ac_index: int, branch_root: Path | None = None) -> str:
     section_match = re.search(rf"### AC {ac_index}:.*?(?=\n### AC |\Z)", clean_log, re.DOTALL)
     section = section_match.group(0).lower() if section_match else clean_log.lower()
     if (
@@ -2518,6 +2903,18 @@ def failure_family_for_ac(clean_log: str, ac_index: int) -> str:
         and "backend-api/codex/responses" in section
     ):
         return "transport_disconnected_retry"
+    if (
+        ac_index == 2
+        and (
+            "broken smoke target wrapper syntax" in section
+            or (
+                "shell_entrypoint_validation" in section
+                and "smoke target wrapper syntax" in section
+            )
+        )
+        and has_smoke_target_wrapper_operation_canceled(branch_root, section)
+    ):
+        return "smoke_target_wrapper_readability_failure"
     if (
         ac_index == 2
         and (
@@ -2543,6 +2940,19 @@ def failure_family_for_ac(clean_log: str, ac_index: int) -> str:
         )
     ):
         return "smoke_manifest_contract_invalid"
+    if (
+        ac_index == 2
+        and (
+            "inner wrapper dispatch monitor failed with exit code" in section
+            or "failed stage: dispatch_monitor" in section
+            or "stage=dispatch_monitor" in section
+            or (
+                "last recorded check: kind=dispatch_monitor" in section
+                and "status=broken" in section
+            )
+        )
+    ):
+        return "smoke_dispatch_monitor_helper_failure"
     if "another lca_strong_gate.sh run is active" in section or "failed to acquire strong gate lock" in section:
         return "strong_gate_lock_contention"
     if "another lca_boj3s_gate.sh run is active" in section or "failed to acquire boj3s gate lock" in section:
@@ -2573,6 +2983,10 @@ def recommended_probe_command(
     primary_axis: str | None,
     probe_signal: ProbeSignal | None = None,
 ) -> str:
+    if ac_index == 2 and failure_family == "smoke_same_worktree_pass_gate_escalation_pending":
+        return "./lca_strong_gate.sh"
+    if ac_index == 2 and failure_family == "smoke_target_wrapper_readability_failure":
+        return "/bin/bash -n ./lca_smoke_target.sh"
     if ac_index in {3, 4}:
         if failure_family == "strong_gate_lock_contention" or probe_signal_is_quick_fail_lock(probe_signal, ac_index):
             return (
@@ -2636,11 +3050,12 @@ def progress40_axis_breakdown(
     certify_rows_summary: dict[str, object] | None = None,
     probe_signal: ProbeSignal | None = None,
     stale_formal_artifacts: set[str] | None = None,
+    failure_family: str | None = None,
 ) -> Progress40AxisSummary:
     relevant_list = list(relevant_lines)
     summary_info = current_progress40_summary(branch_root)
     stale_formal_artifacts = set(stale_formal_artifacts or ())
-    failure_family = failure_family_for_ac(clean_log, ac_index)
+    failure_family = failure_family or failure_family_for_ac(clean_log, ac_index, branch_root)
 
     corpus_lines: list[str] = list(relevant_list)
     for hotspot in structural_focus:
@@ -2694,6 +3109,23 @@ def progress40_axis_breakdown(
     ):
         primary_axis = summary_info.get("pivot_axis") or primary_axis or DEFAULT_AXIS_BY_AC.get(ac_index)
         secondary_axis = None
+        if primary_axis:
+            evidence[str(primary_axis)].insert(
+                0,
+                "The newest strong_gate snapshot predates the failed attempt and no direct certify trace survived, so keep the summary pivot parked until AC3/AC4 emits fresh gate evidence.",
+            )
+    if (
+        ac_index in {5, 6}
+        and "boj3s_gate" in stale_formal_artifacts
+        and not ac_has_direct_certify_trace(relevant_list)
+    ):
+        primary_axis = summary_info.get("pivot_axis") or primary_axis or DEFAULT_AXIS_BY_AC.get(ac_index)
+        secondary_axis = None
+        if primary_axis:
+            evidence[str(primary_axis)].insert(
+                0,
+                "The newest boj3s_gate snapshot predates the failed attempt and no direct certify trace survived, so keep the summary pivot parked until AC5/AC6 emits fresh gate evidence.",
+            )
 
     if probe_signal_is_quick_fail_lock(probe_signal, ac_index):
         primary_axis = summary_info.get("pivot_axis") or primary_axis or DEFAULT_AXIS_BY_AC.get(ac_index)
@@ -2752,6 +3184,32 @@ def progress40_axis_breakdown(
             )
             evidence[primary_axis].append(
                 "Keep the authoritative progress40 pivot parked behind the smoke manifest locality/validation blocker and do not revive older secondary axes from stale notes."
+            )
+            if summary_info.get("pivot_text"):
+                evidence[primary_axis].append(str(summary_info["pivot_text"]))
+    if ac_index == 2 and failure_family == "smoke_dispatch_monitor_helper_failure":
+        primary_axis = summary_info.get("pivot_axis") or primary_axis or "zero_span_fastpath"
+        secondary_axis = None
+        evidence = defaultdict(list)
+        if primary_axis:
+            evidence[primary_axis].append(
+                "AC2 stopped in launcher `dispatch_monitor` before any fresh solver/runtime/profile evidence survived, so keep the authoritative progress40 pivot parked and suppress secondary carry-forward."
+            )
+            evidence[primary_axis].append(
+                "The embedded Python dispatch monitor exited nonzero before it could hand a usable `dispatch_result.txt` back to the launcher, so the next reread stays on the helper result-write/handoff lines rather than widening into solver axes."
+            )
+            if summary_info.get("pivot_text"):
+                evidence[primary_axis].append(str(summary_info["pivot_text"]))
+    if ac_index == 2 and failure_family == "smoke_target_wrapper_readability_failure":
+        primary_axis = summary_info.get("pivot_axis") or primary_axis or "zero_span_fastpath"
+        secondary_axis = None
+        evidence = defaultdict(list)
+        if primary_axis:
+            evidence[primary_axis].append(
+                "AC2 stopped in launcher `shell_entrypoint_validation` before any fresh solver/runtime/profile evidence, so keep the authoritative progress40 pivot parked and suppress secondary carry-forward."
+            )
+            evidence[primary_axis].append(
+                "The preserved `smoke_target_wrapper_syntax.stderr.txt` says `Operation canceled` for `lca_smoke_target.sh`, so treat this shape as a smoke-target wrapper readability/access blocker rather than a parsed shell-syntax defect or a solver-owned axis."
             )
             if summary_info.get("pivot_text"):
                 evidence[primary_axis].append(str(summary_info["pivot_text"]))
@@ -2816,6 +3274,8 @@ def structural_focus_for_ac(
     analysis_state: dict | None = None,
     probe_signal: ProbeSignal | None = None,
     stale_formal_artifacts: set[str] | None = None,
+    failure_family: str | None = None,
+    current_attempt_label: str | None = None,
 ) -> list[StructuralFocus]:
     relevant_lines = collect_ac_context_lines(clean_log, [ac_index])
     probe_context = probe_context_lines_for_ac(probe_signal, ac_index)
@@ -2910,6 +3370,8 @@ def structural_focus_for_ac(
         probe_signal=probe_signal,
         relevant_lines=relevant_lines,
         stale_formal_artifacts=stale_formal_artifacts,
+        failure_family=failure_family,
+        current_attempt_label=current_attempt_label,
     )
     anchor_ranges_by_path: dict[str, list[tuple[int, int]]] = defaultdict(list)
     anchor_evidence_by_path: dict[str, list[str]] = defaultdict(list)
@@ -2948,6 +3410,8 @@ def structural_focus_for_ac(
         probe_signal=probe_signal,
         relevant_lines=relevant_lines,
         stale_formal_artifacts=stale_formal_artifacts,
+        failure_family=failure_family,
+        current_attempt_label=current_attempt_label,
     )
 
     ranked_paths = sorted(
@@ -3087,11 +3551,49 @@ def artifact_snapshots_for_failed_acs(
 
 
 def stale_formal_artifact_labels(snapshots: Iterable[ArtifactSnapshot]) -> set[str]:
-    return {
-        snapshot.label
-        for snapshot in snapshots
-        if snapshot.label in FORMAL_ARTIFACT_LABELS and snapshot.fresh_for_attempt is False
-    }
+    freshness_by_label: defaultdict[str, list[bool | None]] = defaultdict(list)
+    for snapshot in snapshots:
+        label = effective_formal_artifact_label(snapshot)
+        if label in FORMAL_ARTIFACT_LABELS:
+            freshness_by_label[label].append(snapshot.fresh_for_attempt)
+
+    stale_labels: set[str] = set()
+    for label, freshness_flags in freshness_by_label.items():
+        if any(flag is False for flag in freshness_flags) and not any(
+            flag is True for flag in freshness_flags
+        ):
+            stale_labels.add(label)
+    return stale_labels
+
+
+def effective_formal_artifact_label(snapshot: ArtifactSnapshot) -> str | None:
+    if snapshot.label in FORMAL_ARTIFACT_LABELS:
+        return snapshot.label
+
+    if snapshot.summary_excerpt:
+        stripped = snapshot.summary_excerpt.lstrip()
+        if stripped.startswith("{"):
+            try:
+                payload = json.loads(snapshot.summary_excerpt)
+            except json.JSONDecodeError:
+                payload = None
+            if isinstance(payload, dict):
+                preset = str(payload.get("preset") or "").strip()
+                if preset in FORMAL_ARTIFACT_LABELS:
+                    return preset
+
+    for raw_path in (snapshot.summary_file, snapshot.latest_file):
+        if not raw_path or raw_path == "none":
+            continue
+        lowered = raw_path.lower()
+        if "strong_gate" in lowered:
+            return "strong_gate"
+        if "boj3s_gate" in lowered:
+            return "boj3s_gate"
+        if "diag_bg_wrapper" in lowered and "certify" in lowered:
+            return "strong_gate"
+
+    return None
 
 
 def parse_csv_bool(value: str | None) -> bool:
@@ -3143,6 +3645,7 @@ def summarize_certify_rows_snapshot(snapshot: ArtifactSnapshot) -> dict[str, obj
     rows_path = find_certify_rows_path(snapshot)
     if rows_path is None:
         return None
+    effective_label = effective_formal_artifact_label(snapshot) or snapshot.label
     try:
         with rows_path.open(newline="", errors="replace") as handle:
             rows = [
@@ -3328,7 +3831,8 @@ def summarize_certify_rows_snapshot(snapshot: ArtifactSnapshot) -> dict[str, obj
     )
 
     return {
-        "label": snapshot.label,
+        "label": effective_label,
+        "source_label": snapshot.label,
         "rows_path": str(rows_path),
         "fresh_for_attempt": snapshot.fresh_for_attempt,
         "row_count": len(rows),
@@ -3394,10 +3898,12 @@ def summarize_certify_rows_snapshot(snapshot: ArtifactSnapshot) -> dict[str, obj
 def certify_rows_summary_for_ac(snapshots: Iterable[ArtifactSnapshot]) -> dict[str, object] | None:
     candidates: list[dict[str, object]] = []
     for snapshot in snapshots:
-        if snapshot.label not in FORMAL_ARTIFACT_LABELS:
+        effective_label = effective_formal_artifact_label(snapshot)
+        if effective_label not in FORMAL_ARTIFACT_LABELS:
             continue
         summary = summarize_certify_rows_snapshot(snapshot)
         if summary is not None:
+            summary["label"] = effective_label
             candidates.append(summary)
     if not candidates:
         return None
@@ -3405,6 +3911,7 @@ def certify_rows_summary_for_ac(snapshots: Iterable[ArtifactSnapshot]) -> dict[s
         key=lambda item: (
             item.get("fresh_for_attempt") is not True,
             str(item.get("label") or ""),
+            str(item.get("source_label") or ""),
         )
     )
     return candidates[0]
@@ -3436,6 +3943,38 @@ def refine_failure_family_with_certify_rows(
             return "boj3s_gate_timeout_cluster"
         if re_wa_count > 0:
             return "boj3s_gate_re_wa_cluster"
+    return failure_family
+
+
+def refine_failure_family_with_artifact_freshness(
+    ac_index: int,
+    failure_family: str,
+    certify_rows_summary: dict[str, object] | None,
+    relevant_lines: Iterable[str],
+    stale_formal_artifacts: set[str] | None,
+) -> str:
+    stale_formal_artifacts = set(stale_formal_artifacts or ())
+    has_fresh_rows = (
+        isinstance(certify_rows_summary, dict)
+        and certify_rows_summary.get("fresh_for_attempt") is True
+    )
+    has_direct_certify_trace = ac_has_direct_certify_trace(relevant_lines)
+    if (
+        ac_index in {3, 4}
+        and failure_family == "strong_gate_unspecified"
+        and "strong_gate" in stale_formal_artifacts
+        and not has_fresh_rows
+        and not has_direct_certify_trace
+    ):
+        return "strong_gate_pre_artifact_stall"
+    if (
+        ac_index in {5, 6}
+        and failure_family == "boj3s_gate_unspecified"
+        and "boj3s_gate" in stale_formal_artifacts
+        and not has_fresh_rows
+        and not has_direct_certify_trace
+    ):
+        return "boj3s_gate_pre_artifact_stall"
     return failure_family
 
 
@@ -3878,7 +4417,25 @@ def strongest_non_ac_failure_hypothesis(
     return None
 
 
-def attempt_local_capture_gap_summary(attempt_dir: Path) -> dict[str, object]:
+def format_binary_size(value: int | None) -> str | None:
+    if value is None:
+        return None
+    size = float(value)
+    for unit in ("B", "KiB", "MiB", "GiB", "TiB"):
+        if size < 1024.0 or unit == "TiB":
+            if unit == "B":
+                return f"{int(size)}{unit}"
+            return f"{size:.1f}{unit}"
+        size /= 1024.0
+    return None
+
+
+def attempt_local_capture_gap_summary(
+    attempt_dir: Path,
+    *,
+    branch_root: Path | None = None,
+    clean_log: str | None = None,
+) -> dict[str, object]:
     try:
         files = sorted(path.name for path in attempt_dir.iterdir() if path.is_file())
     except OSError:
@@ -3889,7 +4446,55 @@ def attempt_local_capture_gap_summary(attempt_dir: Path) -> dict[str, object]:
     missing_snapshot = not snapshot_hits
     missing_soft_stop = not soft_stop_hits
     missing_runtime = not runtime_hits
-    if missing_snapshot and missing_soft_stop and missing_runtime:
+    resource_pressure_hits: list[str] = []
+    resource_pressure_path: str | None = None
+    if clean_log:
+        for raw_line in clean_log.splitlines():
+            line = strip_ansi(raw_line).strip()
+            if not line:
+                continue
+            lowered = line.lower()
+            if (
+                "errno 28" not in lowered
+                and "no space left on device" not in lowered
+                and "quota_watch_status" not in lowered
+            ):
+                continue
+            resource_pressure_hits.append(line)
+            if resource_pressure_path is None:
+                match = ENOSPC_PATH_RE.search(line)
+                if match:
+                    resource_pressure_path = match.group("path")
+    resource_pressure_hits = list(dict.fromkeys(resource_pressure_hits))[:6]
+
+    disk_free_bytes: int | None = None
+    disk_used_percent: float | None = None
+    if branch_root is not None:
+        try:
+            usage = shutil.disk_usage(branch_root)
+            disk_free_bytes = usage.free
+            if usage.total:
+                disk_used_percent = round((usage.used / usage.total) * 100.0, 1)
+        except OSError:
+            disk_free_bytes = None
+            disk_used_percent = None
+
+    resource_pressure_summary: str | None = None
+    if resource_pressure_hits:
+        disk_fragment = ""
+        if disk_free_bytes is not None and disk_used_percent is not None:
+            disk_fragment = (
+                f" Branch-local disk availability was only `{format_binary_size(disk_free_bytes)}` "
+                f"free at `{disk_used_percent:.1f}%` used when this analysis refresh ran."
+            )
+        resource_pressure_summary = (
+            "Workflow log recorded `Errno 28` while writing the attempt-local quota-watch status temp file, "
+            "so retry-loop disk pressure is a live same-worktree confounder before any new smoke/strong-gate "
+            "or solver inference should be trusted."
+            + disk_fragment
+        )
+        gap_summary = resource_pressure_summary
+    elif missing_snapshot and missing_soft_stop and missing_runtime:
         gap_summary = (
             f"`{attempt_dir.name}` top-level inventory has {len(files)} files but no "
             "`snapshot`, `soft_stop`, or `runtime` artifact names, so the next probe must prove "
@@ -3916,7 +4521,69 @@ def attempt_local_capture_gap_summary(attempt_dir: Path) -> dict[str, object]:
         "missing_soft_stop": missing_soft_stop,
         "missing_runtime": missing_runtime,
         "gap_summary": gap_summary,
+        "resource_pressure_summary": resource_pressure_summary,
+        "resource_pressure_hits": resource_pressure_hits,
+        "resource_pressure_path": resource_pressure_path,
+        "disk_free_bytes": disk_free_bytes,
+        "disk_free_human": format_binary_size(disk_free_bytes),
+        "disk_used_percent": disk_used_percent,
     }
+
+
+def append_attempt_local_capture_gap_section(
+    lines: list[str],
+    capture_gap: dict[str, object] | None,
+    *,
+    heading: str = "#### Attempt-Local Capture Gap",
+) -> None:
+    lines.append(heading)
+    lines.append("")
+    capture_gap = capture_gap if isinstance(capture_gap, dict) else {}
+    if capture_gap:
+        lines.append(f"- Gap summary: {capture_gap['gap_summary']}")
+        lines.append(f"- Attempt dir: `{capture_gap['attempt_dir']}`")
+        lines.append(f"- Top-level file count: `{capture_gap['file_count']}`")
+        if capture_gap.get("resource_pressure_summary"):
+            lines.append(f"- Resource pressure: {capture_gap['resource_pressure_summary']}")
+        if capture_gap.get("resource_pressure_path"):
+            lines.append(f"- ENOSPC path: `{capture_gap['resource_pressure_path']}`")
+        if capture_gap.get("disk_free_human") or capture_gap.get("disk_used_percent") is not None:
+            disk_free = capture_gap.get("disk_free_human") or "unknown"
+            disk_used = capture_gap.get("disk_used_percent")
+            disk_used_text = f"{disk_used:.1f}%" if isinstance(disk_used, (int, float)) else "unknown"
+            lines.append(f"- Branch-local free space: `{disk_free}` (used=`{disk_used_text}`)")
+        lines.append(f"- Snapshot hits: `{capture_gap['snapshot_hits'] or 'none'}`")
+        lines.append(f"- Soft-stop hits: `{capture_gap['soft_stop_hits'] or 'none'}`")
+        lines.append(f"- Runtime hits: `{capture_gap['runtime_hits'] or 'none'}`")
+        if capture_gap.get("top_level_files"):
+            lines.append(
+                "- Top-level files present: "
+                + ", ".join(f"`{name}`" for name in capture_gap["top_level_files"])
+            )
+        if capture_gap.get("resource_pressure_hits"):
+            lines.append("- Resource pressure hits:")
+            for hit in capture_gap["resource_pressure_hits"]:
+                lines.append(f"  - `{hit}`")
+        return
+    lines.append("- Attempt-local inventory could not be inspected for this retry-preflight failure.")
+
+
+def should_render_attempt_local_capture_gap_for_failed_ac(
+    breakdown: dict[str, object],
+) -> bool:
+    capture_gap = breakdown.get("attempt_local_capture_gap")
+    if not isinstance(capture_gap, dict) or not capture_gap:
+        return False
+    if capture_gap.get("resource_pressure_hits"):
+        return True
+    if breakdown.get("retry_critical_anchors"):
+        return False
+    if breakdown.get("certify_rows_summary"):
+        return False
+    failure_family = str(breakdown.get("failure_family") or "").strip()
+    if failure_family in {"generic_retry_failure", "strong_gate_unspecified", "boj3s_gate_unspecified"}:
+        return True
+    return breakdown.get("latest_probe_signal") in {None, {}}
 
 
 def non_ac_failure_breakdown(
@@ -3924,6 +4591,7 @@ def non_ac_failure_breakdown(
     clean_log: str,
     attempt_dir: Path,
     analysis_state: dict | None = None,
+    current_attempt_label: str | None = None,
 ) -> dict[str, object] | None:
     relevant_lines = workflow_preflight_trace_lines(clean_log) or non_ac_trace_excerpt(clean_log)
     lowered = clean_log.lower()
@@ -3931,7 +4599,11 @@ def non_ac_failure_breakdown(
         return None
 
     summary_info = current_progress40_summary(branch_root)
-    attempt_capture_gap = attempt_local_capture_gap_summary(attempt_dir)
+    attempt_capture_gap = attempt_local_capture_gap_summary(
+        attempt_dir,
+        branch_root=branch_root,
+        clean_log=clean_log,
+    )
     primary_axis = summary_info.get("pivot_axis") or "zero_span_fastpath"
     failure_family = "retry_loop_pre_ac_exception"
     soft_stop_path_guard = "soft_stop_request.json" in lowered and "output path must stay under" in lowered
@@ -3998,7 +4670,12 @@ def non_ac_failure_breakdown(
                 return True
         return False
 
-    if isinstance(analysis_state, dict):
+    state_anchor_reuse_allowed = analysis_state_attempt_matches(
+        analysis_state,
+        current_attempt_label,
+    )
+
+    if isinstance(analysis_state, dict) and state_anchor_reuse_allowed:
         for item in analysis_state.get("latest_retry_statement_anchors", []):
             if not isinstance(item, dict):
                 continue
@@ -4181,6 +4858,7 @@ def guard_rejected_nominal_pass_breakdown(
     attempt_started_at: datetime | None = None,
     analysis_state: dict | None = None,
     probe_signal: ProbeSignal | None = None,
+    current_attempt_label: str | None = None,
 ) -> dict[str, object] | None:
     if not isinstance(attempt_guard, dict) or attempt_guard.get("guard_passed") is not False:
         return None
@@ -4250,6 +4928,7 @@ def guard_rejected_nominal_pass_breakdown(
         analysis_state=analysis_state,
         probe_signal=probe_signal,
         stale_formal_artifacts=stale_formal_artifacts,
+        current_attempt_label=current_attempt_label,
     )
 
     summary_info = current_progress40_summary(branch_root)
@@ -4305,7 +4984,11 @@ def guard_rejected_nominal_pass_breakdown(
         ],
         "retry_critical_anchors": [asdict(item) for item in retry_anchors],
         "structural_focus": [asdict(item) for item in structural_focus],
-        "attempt_local_capture_gap": attempt_local_capture_gap_summary(attempt_dir),
+        "attempt_local_capture_gap": attempt_local_capture_gap_summary(
+            attempt_dir,
+            branch_root=branch_root,
+            clean_log=clean_log,
+        ),
         "axis_evidence": axis_evidence,
         "profile_mode": profile_mode_for_text(clean_log),
         "enabled_flags": enabled_flags_for_text(clean_log)[:24],
@@ -4390,6 +5073,65 @@ def condensed_anchor_note(note: object) -> str | None:
     return text.strip(" ,") or None
 
 
+def anchor_path_is_code_local(anchor: dict[str, object]) -> bool:
+    path_text = str(anchor.get("path") or "").strip()
+    return Path(path_text).suffix in CODE_SUFFIXES
+
+
+def append_filtered_failure_locus_section(
+    lines: list[str],
+    branch_root: Path,
+    anchors: list[dict[str, object]],
+    *,
+    failure_family: str | None,
+    heading: str = "#### Filtered Failure Locus",
+    limit: int = 4,
+) -> bool:
+    if failure_family != "transport_disconnected_retry":
+        return False
+
+    filtered_anchors = [
+        anchor
+        for anchor in anchors
+        if isinstance(anchor, dict) and not anchor_path_is_code_local(anchor)
+    ]
+    if not filtered_anchors:
+        return False
+
+    lines.append(heading)
+    lines.append("")
+    lines.append(
+        "- The current attempt never reached fresh solver/runtime/profile evidence, so these transport/trust boundaries outrank any carried-forward wrapper or solver hotspot scan."
+    )
+    rendered = 0
+    for anchor in filtered_anchors:
+        display_path = display_repo_relative_path(branch_root, str(anchor.get("path") or ""))
+        focus_range = str(anchor.get("focus_range") or "unknown")
+        label = str(anchor.get("label") or "").strip()
+        symbol = str(anchor.get("symbol") or "").strip() or "none inferred"
+        lines.append(f"- `{display_path}:{focus_range}`")
+        if label:
+            lines.append(f"  Boundary: `{label}`")
+        lines.append(f"  Symbol: `{symbol}`")
+        role = anchor_role_from_note(str(anchor.get("note") or ""))
+        if role:
+            lines.append(f"  Role: `{role}`")
+        excerpt = summarized_anchor_excerpt(anchor)
+        if excerpt:
+            lines.append(f"  Statement: `{excerpt}`")
+        note = condensed_anchor_note(anchor.get("note"))
+        if note:
+            lines.append(f"  Why first: {note}")
+        rendered += 1
+        if rendered >= limit:
+            break
+    lines.append(
+        "- Broad code hotspots stay suppressed for this failure family until a same-worktree rerun survives the disconnect and emits direct gate or solver evidence."
+    )
+    lines.append("")
+    return True
+
+
 def append_narrowed_localization_section(
     lines: list[str],
     branch_root: Path,
@@ -4433,16 +5175,21 @@ def append_narrowed_localization_section(
 def main() -> int:
     args = parse_args()
     branch_root = Path(args.branch_root).expanduser().resolve()
-    sys.path.insert(0, str(branch_root))
-    from artifact_paths import ensure_under_artifacts  # type: ignore
-
-    workflow_log_path = Path(args.workflow_log).expanduser()
-    workflow_log = workflow_log_path if workflow_log_path.is_absolute() else (branch_root / workflow_log_path).resolve()
-    workflow_log = ensure_under_artifacts(workflow_log)
-    report_root_path = Path(args.report_root).expanduser()
-    report_root = report_root_path if report_root_path.is_absolute() else (branch_root / report_root_path).resolve()
-    report_root = ensure_under_artifacts(report_root)
+    ensure_under_artifacts, shared_resolver = _load_artifact_guard(branch_root)
+    workflow_log = _resolve_artifact_path(
+        branch_root,
+        ensure_under_artifacts,
+        args.workflow_log,
+        shared_resolver,
+    )
+    report_root = _resolve_artifact_path(
+        branch_root,
+        ensure_under_artifacts,
+        args.report_root,
+        shared_resolver,
+    )
     attempt_dir = ensure_under_artifacts(workflow_log.parent.resolve())
+    current_attempt_label = f"attempt_{args.attempt:03d}"
     prepare_output_dir(report_root)
     prepare_output_dir(attempt_dir)
     attempt_started_at = attempt_started_at_for_dir(attempt_dir)
@@ -4506,6 +5253,11 @@ def main() -> int:
         failed_ac_numbers,
         attempt_started_at=attempt_started_at,
     )
+    attempt_capture_gap = attempt_local_capture_gap_summary(
+        attempt_dir,
+        branch_root=branch_root,
+        clean_log=clean_log,
+    )
 
     breakdowns: list[dict] = []
     for ac_index_str, ac_text in failed_acs:
@@ -4532,6 +5284,7 @@ def main() -> int:
             analysis_state=analysis_state if isinstance(analysis_state, dict) else None,
             probe_signal=probe_signal,
             stale_formal_artifacts=stale_formal_artifacts,
+            current_attempt_label=current_attempt_label,
         )
         certify_rows_summary = certify_rows_summary_for_ac(ac_artifact_snapshots)
         axis_summary = progress40_axis_breakdown(
@@ -4549,6 +5302,47 @@ def main() -> int:
             axis_summary.failure_family,
             certify_rows_summary,
         )
+        primary_axis = axis_summary.primary_axis
+        secondary_axis = axis_summary.secondary_axis
+        axis_evidence = {axis: list(lines) for axis, lines in axis_summary.axis_evidence.items()}
+        next_probe_command = recommended_probe_command(
+            ac_index,
+            failure_family,
+            primary_axis,
+            probe_signal,
+        )
+        if ac_index == 2 and has_fresh_smoke_gate_escalation(ac_artifact_snapshots):
+            summary_info = current_progress40_summary(branch_root)
+            primary_axis = (
+                summary_info.get("pivot_axis")
+                or primary_axis
+                or DEFAULT_AXIS_BY_AC.get(5)
+                or "zero_span_fastpath"
+            )
+            secondary_axis = None
+            failure_family = "smoke_same_worktree_pass_gate_escalation_pending"
+            parked_axis_lines = axis_evidence.setdefault(str(primary_axis), [])
+            parked_primary_note = (
+                "Fresh same-worktree smoke status already published "
+                "`public_status=PASS`, `gate_chain_ac2_status=satisfied`, and "
+                "`next_gate_command=./lca_strong_gate.sh`, so AC2 is published partial progress "
+                "rather than the live retry blocker."
+            )
+            parked_axis_only_note = (
+                "Keep `zero_span_fastpath` parked as the only progress40 axis here because the "
+                "same attempt produced no fresh strong-gate, solver-runtime, or profile evidence "
+                "that would justify `state_materialization` or `layout_gate`."
+            )
+            if parked_primary_note not in parked_axis_lines:
+                parked_axis_lines.insert(0, parked_primary_note)
+            if parked_axis_only_note not in parked_axis_lines:
+                parked_axis_lines.append(parked_axis_only_note)
+            next_probe_command = recommended_probe_command(
+                ac_index,
+                failure_family,
+                primary_axis,
+                probe_signal,
+            )
         latest_probe_signal = None
         if probe_signal_applies_to_ac(probe_signal, ac_index) and probe_signal is not None:
             latest_probe_signal = {
@@ -4581,21 +5375,16 @@ def main() -> int:
                 "ac_text": ac_text,
                 "failure_type": failure_type_for_ac(clean_log, ac_index),
                 "failure_family": failure_family,
-                "primary_axis": axis_summary.primary_axis,
-                "secondary_axis": axis_summary.secondary_axis,
-                "axis_evidence": axis_summary.axis_evidence,
+                "primary_axis": primary_axis,
+                "secondary_axis": secondary_axis,
+                "axis_evidence": axis_evidence,
                 "profile_mode": axis_summary.profile_mode,
                 "enabled_flags": axis_summary.enabled_flags,
                 "last_release_diag_phase": axis_summary.last_release_diag_phase,
                 "last_progress_checkpoint_phase": axis_summary.last_progress_checkpoint_phase,
                 "current_summary_pivot": axis_summary.current_summary_pivot,
                 "current_summary_residual_axes": axis_summary.current_summary_residual_axes,
-                "next_probe_command": recommended_probe_command(
-                    ac_index,
-                    failure_family,
-                    axis_summary.primary_axis,
-                    probe_signal,
-                ),
+                "next_probe_command": next_probe_command,
                 "interpretation_lane": axis_summary.interpretation_lane,
                 "trace_excerpt": relevant_lines[-80:],
                 "phase_summaries": [
@@ -4604,6 +5393,7 @@ def main() -> int:
                 ],
                 "retry_critical_anchors": [asdict(item) for item in retry_anchors],
                 "structural_focus": [asdict(item) for item in structural_focus],
+                "attempt_local_capture_gap": attempt_capture_gap,
                 "artifact_snapshots": [asdict(snapshot) for snapshot in ac_artifact_snapshots],
                 "certify_rows_summary": certify_rows_summary,
                 "latest_probe_signal": latest_probe_signal,
@@ -4620,6 +5410,7 @@ def main() -> int:
             attempt_started_at=attempt_started_at,
             analysis_state=analysis_state if isinstance(analysis_state, dict) else None,
             probe_signal=probe_signal,
+            current_attempt_label=current_attempt_label,
         )
         if fallback_breakdown is None:
             fallback_breakdown = non_ac_failure_breakdown(
@@ -4627,6 +5418,7 @@ def main() -> int:
                 clean_log,
                 attempt_dir,
                 analysis_state=analysis_state if isinstance(analysis_state, dict) else None,
+                current_attempt_label=current_attempt_label,
             )
     refinement_notes = build_refinement_notes(
         failed_acs,
@@ -4653,6 +5445,13 @@ def main() -> int:
         (breakdowns[0].get("retry_critical_anchors") or [])
         if breakdowns
         else (fallback_breakdown.get("retry_critical_anchors") or []) if fallback_breakdown else []
+    )
+    report_failure_family = (
+        str(breakdowns[0].get("failure_family") or "").strip()
+        if breakdowns
+        else str(fallback_breakdown.get("failure_family") or "").strip()
+        if fallback_breakdown
+        else None
     )
 
     report_md = attempt_dir / "failure_report.md"
@@ -4695,6 +5494,14 @@ def main() -> int:
         report_localization_anchors,
         heading="## Narrowed Localization Snapshot",
         empty_text="No statement-level localization was resolved from the latest failure trace.",
+        limit=3,
+    )
+    append_filtered_failure_locus_section(
+        report_lines,
+        branch_root,
+        report_localization_anchors,
+        failure_family=report_failure_family,
+        heading="## Filtered Failure Locus",
         limit=3,
     )
     report_lines.append("## Git Status At Failure")
@@ -4827,6 +5634,12 @@ def main() -> int:
                 branch_root,
                 fallback_breakdown.get("retry_critical_anchors") or [],
             )
+            filtered_locus_rendered = append_filtered_failure_locus_section(
+                breakdown_lines,
+                branch_root,
+                fallback_breakdown.get("retry_critical_anchors") or [],
+                failure_family=str(fallback_breakdown.get("failure_family") or "").strip() or None,
+            )
             breakdown_lines.append("#### Attempt-Local Capture Gap")
             breakdown_lines.append("")
             capture_gap = fallback_breakdown.get("attempt_local_capture_gap") or {}
@@ -4938,7 +5751,11 @@ def main() -> int:
             breakdown_lines.append("")
             breakdown_lines.append("#### Code-Structure Hotspots")
             breakdown_lines.append("")
-            if fallback_breakdown["structural_focus"]:
+            if filtered_locus_rendered:
+                breakdown_lines.append(
+                    "- Suppressed broad code hotspots for `transport_disconnected_retry`; the filtered boundary section above is the authoritative reread target until direct gate or solver evidence exists."
+                )
+            elif fallback_breakdown["structural_focus"]:
                 for hotspot in fallback_breakdown["structural_focus"]:
                     breakdown_lines.append(f"- File: `{hotspot['path']}`")
                     breakdown_lines.append(f"  Observed mentions: `{hotspot['observed_mentions']}`")
@@ -4993,6 +5810,12 @@ def main() -> int:
             breakdown_lines,
             branch_root,
             breakdown.get("retry_critical_anchors") or [],
+        )
+        filtered_locus_rendered = append_filtered_failure_locus_section(
+            breakdown_lines,
+            branch_root,
+            breakdown.get("retry_critical_anchors") or [],
+            failure_family=str(breakdown.get("failure_family") or "").strip() or None,
         )
         breakdown_lines.append("#### Progress40 Axis Evidence")
         breakdown_lines.append("")
@@ -5185,7 +6008,11 @@ def main() -> int:
         breakdown_lines.append("")
         breakdown_lines.append("#### Code-Structure Hotspots")
         breakdown_lines.append("")
-        if breakdown["structural_focus"]:
+        if filtered_locus_rendered:
+            breakdown_lines.append(
+                "- Suppressed broad code hotspots for `transport_disconnected_retry`; the filtered boundary section above is the authoritative reread target until direct gate or solver evidence exists."
+            )
+        elif breakdown["structural_focus"]:
             for hotspot in breakdown["structural_focus"]:
                 breakdown_lines.append(f"- File: `{hotspot['path']}`")
                 breakdown_lines.append(f"  Observed mentions: `{hotspot['observed_mentions']}`")
@@ -5258,8 +6085,8 @@ def main() -> int:
         "sections, and code excerpts."
     )
     breakdown_lines.append(
-        "- When `failure_analysis_state.json` carries retry-specific line ranges, surface them first as dedicated "
-        "`Retry-Critical Anchors` before generic hotspots so the next solver session starts from exact slices."
+        "- When `failure_analysis_state.json` carries retry-specific line ranges or non-code transport/guard anchors, "
+        "surface them first as dedicated `Retry-Critical Anchors` or `Filtered Failure Locus` sections before generic hotspots so the next solver session starts from exact slices."
     )
 
     write_text_output(report_md, "\n".join(report_lines), encoding="utf-8")

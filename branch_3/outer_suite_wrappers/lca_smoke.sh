@@ -16,11 +16,13 @@ SELF_DIR="$(
   pwd -P
 )"
 SELF_PATH="$SELF_DIR/${SELF_SOURCE##*/}"
+BRANCH_ROOT="$(cd -- "$SELF_DIR/.." && pwd -P)"
 
 if [[ "${!LCA_SMOKE_CLEAN_ENV_FLAG:-0}" != "1" ]]; then
+  preserved_name=""
   clean_env_args=(
     /usr/bin/env -i
-    "HOME=${HOME:-}"
+    "HOME=$BRANCH_ROOT"
     "PATH=$LCA_SMOKE_CLEAN_PATH"
     "TERM=dumb"
     "LC_ALL=C"
@@ -36,17 +38,22 @@ if [[ "${!LCA_SMOKE_CLEAN_ENV_FLAG:-0}" != "1" ]]; then
     "PYTHONHASHSEED=0"
     "$LCA_SMOKE_CLEAN_ENV_FLAG=1"
   )
-  if [[ -n "${LCA_SMOKE_EXPORT_SNAPSHOT_ROOT:-}" ]]; then
-    clean_env_args+=("LCA_SMOKE_EXPORT_SNAPSHOT_ROOT=$LCA_SMOKE_EXPORT_SNAPSHOT_ROOT")
-  fi
-  if [[ -n "${LCA_SMOKE_DEBUG_MANIFEST:-}" ]]; then
-    clean_env_args+=("LCA_SMOKE_DEBUG_MANIFEST=$LCA_SMOKE_DEBUG_MANIFEST")
-  fi
+  for preserved_name in \
+    LCA_SMOKE_EXPORT_SNAPSHOT_ROOT \
+    LCA_SMOKE_DEBUG_MANIFEST \
+    LCA_SMOKE_CASE_RETRY_LIMIT \
+    LCA_SMOKE_RETRY_SLEEP_S \
+    LCA_SMOKE_BUILD_RETRY_LIMIT \
+    LCA_SMOKE_BUILD_RETRY_SLEEP_S \
+    LCA_SMOKE_BUILD_TIMEOUT_S; do
+    if [[ -n "${!preserved_name:-}" ]]; then
+      clean_env_args+=("$preserved_name=${!preserved_name}")
+    fi
+  done
   exec "${clean_env_args[@]}" /usr/bin/env bash "$SELF_PATH" "$@"
 fi
 
 SCRIPT_DIR="$SELF_DIR"
-BRANCH_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 cd "$BRANCH_ROOT"
 SUITE_ROOT="$(cd "$BRANCH_ROOT/.." && pwd -P)"
 RESUME_WORKSPACE_DIR="$BRANCH_ROOT/boj28350_resume"
@@ -124,6 +131,7 @@ SMOKE_EXIT_SOLVER_TIMEOUT=124
 SMOKE_EXIT_SOLVER_RUNTIME_FAILURE=125
 SMOKE_EXIT_HARNESS_FAILURE=70
 SMOKE_BOUNDED_COMMAND_TIMEOUT_RC=246
+SMOKE_BOUNDED_COMMAND_LAUNCH_FAILURE_RC=247
 SMOKE_BUILD_RETRY_LIMIT=1
 SMOKE_BUILD_RETRY_SLEEP_S="0.05"
 SMOKE_CASE_RETRY_LIMIT=1
@@ -181,6 +189,7 @@ CURRENT_FAILURE_SUMMARY=""
 CURRENT_FAILURE_SOLVER_EXIT=""
 CURRENT_FAILURE_SIGNAL=""
 LAST_BOUNDED_COMMAND_TIMED_OUT=0
+LAST_BOUNDED_COMMAND_LAUNCH_FAILED=0
 LAST_BOUNDED_COMMAND_LABEL=""
 LAST_BOUNDED_COMMAND_LIMIT=""
 SHARED_SUCCESS_STATE_CLEANED=0
@@ -766,6 +775,27 @@ copy_retry_log_to_failure_root() {
   fi
 }
 
+copy_setup_build_context_to_failure_root() {
+  local setup_bundle="$FAILURE_ROOT/setup_build"
+
+  mkdir -p "$setup_bundle"
+  if [[ -f "$SETUP_MANIFEST" ]]; then
+    cp "$SETUP_MANIFEST" "$setup_bundle/preflight_manifest.tsv"
+  fi
+  if [[ -f "$SETUP_ENV_SNAPSHOT" ]]; then
+    cp "$SETUP_ENV_SNAPSHOT" "$setup_bundle/setup_env.txt"
+  fi
+  if [[ -f "$SETUP_BUILD_COMMAND" ]]; then
+    cp "$SETUP_BUILD_COMMAND" "$setup_bundle/build.command.txt"
+  fi
+  if [[ -f "$SETUP_BUILD_STDOUT" ]]; then
+    cp "$SETUP_BUILD_STDOUT" "$setup_bundle/build.stdout.txt"
+  fi
+  if [[ -f "$SETUP_BUILD_STDERR" ]]; then
+    cp "$SETUP_BUILD_STDERR" "$setup_bundle/build.stderr.txt"
+  fi
+}
+
 remove_path_retry() {
   local target="$1"
   local attempt
@@ -880,6 +910,7 @@ run_bounded_command() {
   shift 4
 
   LAST_BOUNDED_COMMAND_TIMED_OUT=0
+  LAST_BOUNDED_COMMAND_LAUNCH_FAILED=0
   LAST_BOUNDED_COMMAND_LABEL="$label"
   LAST_BOUNDED_COMMAND_LIMIT="$timeout_s"
 
@@ -904,14 +935,24 @@ stdout_path.parent.mkdir(parents=True, exist_ok=True)
 stderr_path.parent.mkdir(parents=True, exist_ok=True)
 
 with stdout_path.open("wb") as stdout_handle, stderr_path.open("wb") as stderr_handle:
-    proc = subprocess.Popen(
-        cmd,
-        cwd=os.getcwd(),
-        env=os.environ.copy(),
-        stdout=stdout_handle,
-        stderr=stderr_handle,
-        preexec_fn=os.setsid,
-    )
+    try:
+        proc = subprocess.Popen(
+            cmd,
+            cwd=os.getcwd(),
+            env=os.environ.copy(),
+            stdout=stdout_handle,
+            stderr=stderr_handle,
+            preexec_fn=os.setsid,
+        )
+    except OSError as exc:
+        stderr_handle.write(
+            (
+                f"[lca_smoke] failed to start {label}: {exc}\n"
+                f"[lca_smoke] command: {' '.join(shlex.quote(part) for part in cmd)}\n"
+            ).encode("utf-8")
+        )
+        stderr_handle.flush()
+        raise SystemExit(247)
     try:
         raise SystemExit(proc.wait(timeout=timeout_s))
     except subprocess.TimeoutExpired:
@@ -946,6 +987,10 @@ PY
   if (( rc == SMOKE_BOUNDED_COMMAND_TIMEOUT_RC )); then
     LAST_BOUNDED_COMMAND_TIMED_OUT=1
     return "$SMOKE_EXIT_SOLVER_TIMEOUT"
+  fi
+  if (( rc == SMOKE_BOUNDED_COMMAND_LAUNCH_FAILURE_RC )); then
+    LAST_BOUNDED_COMMAND_LAUNCH_FAILED=1
+    return "$SMOKE_EXIT_HARNESS_FAILURE"
   fi
   return "$rc"
 }
@@ -2136,9 +2181,31 @@ set_failure_classification() {
   CURRENT_FAILURE_SUMMARY="$4"
 }
 
+classify_case_helper_wallclock_timeout() {
+  local helper_timeout_s="$1"
+  local timeout_message=""
+
+  CURRENT_FAILURE_HELPER_RC="$SMOKE_EXIT_SOLVER_TIMEOUT"
+  CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+  if [[ -f "$CURRENT_CASE_RESULT_JSON" ]]; then
+    timeout_message="case helper exceeded wall-clock timeout after ${helper_timeout_s}s after writing ${RUN_CASE_RESULT_NAME}"
+  else
+    timeout_message="case helper exceeded wall-clock timeout after ${helper_timeout_s}s before writing ${RUN_CASE_RESULT_NAME}"
+  fi
+  set_failure_classification \
+    "harness_transient_failure" \
+    "harness" \
+    1 \
+    "$timeout_message"
+}
+
 classify_missing_case_result() {
   local rc="$1"
   local missing_message=""
+
+  if classify_missing_case_result_from_stderr; then
+    return
+  fi
 
   case "$rc" in
     "$SMOKE_EXIT_USAGE")
@@ -2165,8 +2232,158 @@ classify_missing_case_result() {
     "$missing_message"
 }
 
+classify_missing_case_result_from_stderr() {
+  local stderr_path="${CURRENT_CASE_STDERR:-}"
+
+  if [[ -z "$stderr_path" || ! -f "$stderr_path" ]]; then
+    return 1
+  fi
+
+  if grep -Fq "[run_case] solver timed out after" "$stderr_path"; then
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_SOLVER_TIMEOUT"
+    set_failure_classification \
+      "solver_timeout" \
+      "solver" \
+      0 \
+      "case helper reported a solver timeout before writing ${RUN_CASE_RESULT_NAME}"
+    return 0
+  fi
+
+  if grep -Fq "[run_case] solver terminated by signal" "$stderr_path"; then
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_SOLVER_RUNTIME_FAILURE"
+    set_failure_classification \
+      "solver_signal_failure" \
+      "solver" \
+      0 \
+      "case helper reported a solver signal failure before writing ${RUN_CASE_RESULT_NAME}"
+    return 0
+  fi
+
+  if grep -Fq "[run_case] solver exited with code" "$stderr_path"; then
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_SOLVER_RUNTIME_FAILURE"
+    set_failure_classification \
+      "solver_runtime_failure" \
+      "solver" \
+      0 \
+      "case helper reported a non-zero solver exit before writing ${RUN_CASE_RESULT_NAME}"
+    return 0
+  fi
+
+  if grep -Fq "[run_case] validator failed:" "$stderr_path"; then
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_SOLVER_FAILURE"
+    set_failure_classification \
+      "solver_acceptance_failure" \
+      "solver" \
+      0 \
+      "validator rejected the solver output before the helper wrote ${RUN_CASE_RESULT_NAME}"
+    return 0
+  fi
+
+  if grep -Eq "No such file or directory|can't open file|Permission denied|not executable|Not executable" "$stderr_path"; then
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+    set_failure_classification \
+      "harness_transient_failure" \
+      "harness" \
+      1 \
+      "case helper could not start due to a missing or non-executable dependency before writing ${RUN_CASE_RESULT_NAME}"
+    return 0
+  fi
+
+  if grep -Fq "[lca_smoke] failed to start case_helper:" "$stderr_path"; then
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+    if grep -Eq "No such file or directory|can't open file|Permission denied|not executable|Not executable" "$stderr_path"; then
+      set_failure_classification \
+        "harness_transient_failure" \
+        "harness" \
+        1 \
+        "case helper could not start due to a missing or non-executable dependency before writing ${RUN_CASE_RESULT_NAME}"
+    else
+      set_failure_classification \
+        "harness_transient_failure" \
+        "harness" \
+        1 \
+        "case helper failed to start before writing ${RUN_CASE_RESULT_NAME}"
+    fi
+    return 0
+  fi
+
+  if grep -Fq "[run_case] harness failure:" "$stderr_path"; then
+    CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+    if grep -Eq "No such file or directory|Permission denied|not executable|Not executable" "$stderr_path"; then
+      set_failure_classification \
+        "harness_transient_failure" \
+        "harness" \
+        1 \
+        "case helper reported a missing or non-executable dependency before writing ${RUN_CASE_RESULT_NAME}"
+    else
+      set_failure_classification \
+        "harness_transient_failure" \
+        "harness" \
+        1 \
+        "case helper reported a harness/runtime failure before writing ${RUN_CASE_RESULT_NAME}"
+    fi
+    return 0
+  fi
+
+  return 1
+}
+
+set_case_result_contract_failure() {
+  local recorded_status="$1"
+  local detail="$2"
+
+  CURRENT_FAILURE_KIND="harness_result_contract_failure"
+  CURRENT_FAILURE_ORIGIN="harness"
+  CURRENT_FAILURE_RETRYABLE=0
+  CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+  CURRENT_FAILURE_SUMMARY="case helper recorded ${recorded_status} in ${RUN_CASE_RESULT_NAME} but ${detail}"
+}
+
+validate_recorded_case_artifacts() {
+  local recorded_status="$1"
+  local case_dir=""
+  local artifact_name=""
+  local artifact_path=""
+  local -a required_artifacts=()
+
+  if [[ -z "${CURRENT_CASE_RESULT_JSON:-}" ]]; then
+    return 0
+  fi
+  case_dir="$(dirname "$CURRENT_CASE_RESULT_JSON")"
+  if [[ ! -d "$case_dir" ]]; then
+    set_case_result_contract_failure "$recorded_status" "the case artifact directory vanished before wrapper validation"
+    return 1
+  fi
+
+  case "$recorded_status" in
+    pass|solver_acceptance_failure|solver_case_failure)
+      required_artifacts=(in.txt out.txt hidden_parent.txt)
+      ;;
+    solver_timeout|solver_runtime_failure|solver_signal_failure)
+      required_artifacts=(in.txt out.txt solver_stderr.txt)
+      ;;
+    *)
+      if [[ "$CURRENT_FAILURE_ORIGIN" == "solver" ]]; then
+        required_artifacts=(in.txt out.txt)
+      else
+        return 0
+      fi
+      ;;
+  esac
+
+  for artifact_name in "${required_artifacts[@]}"; do
+    artifact_path="$case_dir/$artifact_name"
+    if [[ ! -f "$artifact_path" ]]; then
+      set_case_result_contract_failure "$recorded_status" "did not preserve required artifact ${artifact_name}"
+      return 1
+    fi
+  done
+  return 0
+}
+
 load_case_failure_result() {
   local result_path="$1"
+  local helper_rc="${2:-0}"
   local parsed_assignments=""
   local parsed_status=""
   local parsed_category=""
@@ -2175,6 +2392,7 @@ load_case_failure_result() {
   local parsed_message=""
   local parsed_solver_exit=""
   local parsed_solver_signal=""
+  local parsed_validator_ok=""
   local raw_exit_code=""
 
   if [[ ! -f "$result_path" ]]; then
@@ -2220,6 +2438,7 @@ fields = (
     ("parsed_message", message),
     ("parsed_solver_exit", "" if solver_exit is None else solver_exit),
     ("parsed_solver_signal", "" if solver_signal is None else solver_signal),
+    ("parsed_validator_ok", "" if data.get("validator_ok") is None else int(bool(data.get("validator_ok")))),
 )
 for key, value in fields:
     print(f"{key}={shlex.quote(str(value))}")
@@ -2244,6 +2463,45 @@ PY
   CURRENT_FAILURE_SUMMARY="$parsed_message"
   CURRENT_FAILURE_SOLVER_EXIT="$parsed_solver_exit"
   CURRENT_FAILURE_SIGNAL="$parsed_solver_signal"
+
+  if [[ "$CURRENT_FAILURE_KIND" == "pass" ]]; then
+    if [[ "$helper_rc" != "0" ]]; then
+      CURRENT_FAILURE_KIND="harness_result_contract_failure"
+      CURRENT_FAILURE_ORIGIN="harness"
+      CURRENT_FAILURE_RETRYABLE=0
+      if (( helper_rc >= 128 )); then
+        CURRENT_FAILURE_SUMMARY="case helper recorded pass in ${RUN_CASE_RESULT_NAME} but terminated by signal $(( helper_rc - 128 ))"
+      else
+        CURRENT_FAILURE_SUMMARY="case helper recorded pass in ${RUN_CASE_RESULT_NAME} but exited with code ${helper_rc}"
+      fi
+      CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+      return 0
+    fi
+    if [[ "$raw_exit_code" != "0" ]]; then
+      CURRENT_FAILURE_KIND="harness_result_contract_failure"
+      CURRENT_FAILURE_ORIGIN="harness"
+      CURRENT_FAILURE_RETRYABLE=0
+      CURRENT_FAILURE_SUMMARY="case helper recorded pass in ${RUN_CASE_RESULT_NAME} with non-zero exit_code=${raw_exit_code}"
+      CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+      return 0
+    fi
+    if [[ "$parsed_category" != "pass" ]]; then
+      CURRENT_FAILURE_KIND="harness_result_contract_failure"
+      CURRENT_FAILURE_ORIGIN="harness"
+      CURRENT_FAILURE_RETRYABLE=0
+      CURRENT_FAILURE_SUMMARY="case helper recorded pass in ${RUN_CASE_RESULT_NAME} with unexpected category=${parsed_category}"
+      CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+      return 0
+    fi
+    if [[ "$parsed_validator_ok" != "1" ]]; then
+      CURRENT_FAILURE_KIND="harness_result_contract_failure"
+      CURRENT_FAILURE_ORIGIN="harness"
+      CURRENT_FAILURE_RETRYABLE=0
+      CURRENT_FAILURE_SUMMARY="case helper recorded pass in ${RUN_CASE_RESULT_NAME} without validator_ok=1"
+      CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+      return 0
+    fi
+  fi
 
   case "$CURRENT_FAILURE_KIND" in
     pass)
@@ -2280,6 +2538,7 @@ PY
       fi
       ;;
   esac
+  validate_recorded_case_artifacts "$CURRENT_FAILURE_KIND" || return 0
   return 0
 }
 
@@ -2291,7 +2550,7 @@ classify_case_failure() {
   CURRENT_FAILURE_RC="$rc"
 
   if [[ -f "$CURRENT_CASE_RESULT_JSON" ]]; then
-    if load_case_failure_result "$CURRENT_CASE_RESULT_JSON"; then
+    if load_case_failure_result "$CURRENT_CASE_RESULT_JSON" "$rc"; then
       return
     fi
     CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
@@ -2383,10 +2642,19 @@ solver_snapshot = Path(sys.argv[4])
 
 entries = [
     ("failed_case_row", failure_root / "failed_case_row.tsv"),
+    ("environment_validation_report", failure_root / "environment_validation.txt"),
+    ("environment_validation_preflight_manifest", failure_root / "environment_validation/preflight_manifest.tsv"),
+    ("environment_validation_setup_env", failure_root / "environment_validation/setup_env.txt"),
+    ("environment_validation_build_command", failure_root / "environment_validation/build.command.txt"),
     ("smoke_manifest_snapshot", failure_root / "smoke_cases_manifest.tsv"),
     ("suite_config", failure_root / "suite_config.txt"),
     ("suite_plan", failure_root / "suite_plan.tsv"),
     ("retry_log", failure_root / "retry_log.tsv"),
+    ("setup_build_preflight_manifest", failure_root / "setup_build/preflight_manifest.tsv"),
+    ("setup_build_setup_env", failure_root / "setup_build/setup_env.txt"),
+    ("setup_build_build_command", failure_root / "setup_build/build.command.txt"),
+    ("setup_build_build_stdout", failure_root / "setup_build/build.stdout.txt"),
+    ("setup_build_build_stderr", failure_root / "setup_build/build.stderr.txt"),
     ("runtime_env", failure_root / "runtime_env.txt"),
     ("runtime_env_exports", failure_root / "runtime_env_exports.sh"),
     ("commands", failure_root / "commands.txt"),
@@ -2648,7 +2916,25 @@ payload = {
         "artifact_manifest": artifact_entry(str(failure_root / "artifact_manifest.tsv")),
         "retry_log": artifact_entry(str(failure_root / "retry_log.tsv")),
         "failed_case_row": artifact_entry(str(failure_root / "failed_case_row.tsv")),
+        "environment_validation_report": artifact_entry(str(failure_root / "environment_validation.txt")),
+        "environment_validation_preflight_manifest": artifact_entry(
+            str(failure_root / "environment_validation/preflight_manifest.tsv")
+        ),
+        "environment_validation_setup_env": artifact_entry(
+            str(failure_root / "environment_validation/setup_env.txt")
+        ),
+        "environment_validation_build_command": artifact_entry(
+            str(failure_root / "environment_validation/build.command.txt")
+        ),
         "manifest_snapshot": artifact_entry(str(failure_root / "smoke_cases_manifest.tsv")),
+        "suite_config": artifact_entry(str(failure_root / "suite_config.txt")),
+        "suite_plan": artifact_entry(str(failure_root / "suite_plan.tsv")),
+        "setup_build_preflight_manifest": artifact_entry(str(failure_root / "setup_build/preflight_manifest.tsv")),
+        "setup_build_setup_env": artifact_entry(str(failure_root / "setup_build/setup_env.txt")),
+        "setup_build_build_command": artifact_entry(str(failure_root / "setup_build/build.command.txt")),
+        "setup_build_build_stdout": artifact_entry(str(failure_root / "setup_build/build.stdout.txt")),
+        "setup_build_build_stderr": artifact_entry(str(failure_root / "setup_build/build.stderr.txt")),
+        "invoked_command": artifact_entry(str(failure_root / "invoked_command.txt")),
         "exact_seed": artifact_entry(str(failure_root / "seed.txt")),
         "input": artifact_entry(str(failure_root / "input.txt")),
         "actual_output": artifact_entry(str(failure_root / "solver_output.txt")),
@@ -2662,6 +2948,7 @@ payload = {
         "helper_stderr": artifact_entry(helper_stderr),
         "helper_result_json": artifact_entry(helper_result_json),
         "solver_snapshot": artifact_entry(solver_snapshot),
+        "case_solver_stderr": artifact_entry(str(failure_case_dir / "solver_stderr.txt")),
     },
 }
 
@@ -2998,11 +3285,15 @@ write_failure_debug_bundle() {
   write_failure_checker_bundle "$failure_case_dir"
   write_failure_repro_exports "$failure_case_dir"
   copy_retry_log_to_failure_root
+  copy_setup_build_context_to_failure_root
 
   {
     echo "executed_command=$CURRENT_CASE_EXEC_COMMAND"
     echo "invoked_command=$invoked_command_txt"
     echo "checker_command=$CURRENT_CASE_CHECKER_COMMAND"
+    echo "helper_result_json=$CURRENT_CASE_RESULT_JSON"
+    echo "helper_stdout=$CURRENT_CASE_STDOUT"
+    echo "helper_stderr=$CURRENT_CASE_STDERR"
     echo "exact_seed=$seed_txt"
     echo "exact_input=$input_txt"
     echo "exact_output=$output_txt"
@@ -3026,8 +3317,19 @@ write_failure_debug_bundle() {
     echo "active_solver_replay_artifact_subpath=$CURRENT_CASE_ACTIVE_REPLAY_ARTIFACT_SUBPATH"
     echo "active_solver_replay_outroot=$CURRENT_CASE_ACTIVE_REPLAY_OUTROOT"
     echo "retry_log=$FAILURE_ROOT/retry_log.tsv"
+    echo "failed_case_row=$FAILURE_ROOT/failed_case_row.tsv"
+    echo "environment_validation_report=$FAILURE_ROOT/environment_validation.txt"
+    echo "environment_validation_preflight_manifest=$FAILURE_ROOT/environment_validation/preflight_manifest.tsv"
+    echo "environment_validation_setup_env=$FAILURE_ROOT/environment_validation/setup_env.txt"
+    echo "environment_validation_build_command=$FAILURE_ROOT/environment_validation/build.command.txt"
+    echo "smoke_manifest_snapshot=$FAILURE_ROOT/smoke_cases_manifest.tsv"
     echo "suite_config=$FAILURE_ROOT/suite_config.txt"
     echo "suite_plan=$FAILURE_ROOT/suite_plan.tsv"
+    echo "setup_build_preflight_manifest=$FAILURE_ROOT/setup_build/preflight_manifest.tsv"
+    echo "setup_build_setup_env=$FAILURE_ROOT/setup_build/setup_env.txt"
+    echo "setup_build_build_command=$FAILURE_ROOT/setup_build/build.command.txt"
+    echo "setup_build_build_stdout=$FAILURE_ROOT/setup_build/build.stdout.txt"
+    echo "setup_build_build_stderr=$FAILURE_ROOT/setup_build/build.stderr.txt"
   } > "$commands_txt"
 
   cat > "$seed_repro_script" <<EOF
@@ -3095,6 +3397,19 @@ write_failure_reporting_fallback_commands() {
     echo "helper_stdout=$CURRENT_CASE_STDOUT"
     echo "helper_stderr=$CURRENT_CASE_STDERR"
     echo "failure_case_dir=$failure_case_dir"
+    echo "failed_case_row=$FAILURE_ROOT/failed_case_row.tsv"
+    echo "environment_validation_report=$FAILURE_ROOT/environment_validation.txt"
+    echo "environment_validation_preflight_manifest=$FAILURE_ROOT/environment_validation/preflight_manifest.tsv"
+    echo "environment_validation_setup_env=$FAILURE_ROOT/environment_validation/setup_env.txt"
+    echo "environment_validation_build_command=$FAILURE_ROOT/environment_validation/build.command.txt"
+    echo "smoke_manifest_snapshot=$FAILURE_ROOT/smoke_cases_manifest.tsv"
+    echo "suite_config=$FAILURE_ROOT/suite_config.txt"
+    echo "suite_plan=$FAILURE_ROOT/suite_plan.tsv"
+    echo "setup_build_preflight_manifest=$FAILURE_ROOT/setup_build/preflight_manifest.tsv"
+    echo "setup_build_setup_env=$FAILURE_ROOT/setup_build/setup_env.txt"
+    echo "setup_build_build_command=$FAILURE_ROOT/setup_build/build.command.txt"
+    echo "setup_build_build_stdout=$FAILURE_ROOT/setup_build/build.stdout.txt"
+    echo "setup_build_build_stderr=$FAILURE_ROOT/setup_build/build.stderr.txt"
     echo "exact_seed=$FAILURE_ROOT/seed.txt"
     echo "exact_input=$FAILURE_ROOT/input.txt"
     echo "exact_output=$FAILURE_ROOT/solver_output.txt"
@@ -3120,7 +3435,18 @@ write_failure_reporting_fallback_artifact_manifest() {
     "runtime_env_exports=$FAILURE_ROOT/runtime_env_exports.sh" \
     "invoked_command=$FAILURE_ROOT/invoked_command.txt" \
     "failed_case_row=$FAILURE_ROOT/failed_case_row.tsv" \
+    "environment_validation_report=$FAILURE_ROOT/environment_validation.txt" \
+    "environment_validation_preflight_manifest=$FAILURE_ROOT/environment_validation/preflight_manifest.tsv" \
+    "environment_validation_setup_env=$FAILURE_ROOT/environment_validation/setup_env.txt" \
+    "environment_validation_build_command=$FAILURE_ROOT/environment_validation/build.command.txt" \
     "smoke_manifest_snapshot=$FAILURE_ROOT/smoke_cases_manifest.tsv" \
+    "suite_config=$FAILURE_ROOT/suite_config.txt" \
+    "suite_plan=$FAILURE_ROOT/suite_plan.tsv" \
+    "setup_build_preflight_manifest=$FAILURE_ROOT/setup_build/preflight_manifest.tsv" \
+    "setup_build_setup_env=$FAILURE_ROOT/setup_build/setup_env.txt" \
+    "setup_build_build_command=$FAILURE_ROOT/setup_build/build.command.txt" \
+    "setup_build_build_stdout=$FAILURE_ROOT/setup_build/build.stdout.txt" \
+    "setup_build_build_stderr=$FAILURE_ROOT/setup_build/build.stderr.txt" \
     "exact_seed=$FAILURE_ROOT/seed.txt" \
     "exact_input=$FAILURE_ROOT/input.txt" \
     "exact_output=$FAILURE_ROOT/solver_output.txt" \
@@ -3184,6 +3510,7 @@ write_failure_reporting_fallback() {
 
   mkdir -p "$FAILURE_ROOT" || return 1
   write_failure_repro_exports "$failure_case_dir" || return 1
+  copy_setup_build_context_to_failure_root
   write_failure_reporting_fallback_commands "$failure_case_dir" "$reporting_warning" || return 1
   write_failure_structured_context "$failure_case_dir" || return 1
 
@@ -3209,6 +3536,18 @@ write_failure_reporting_fallback() {
     echo "invoked_command_path=$FAILURE_ROOT/invoked_command.txt"
     echo "artifact_manifest_path=$artifact_manifest"
     echo "structured_context_path=$FAILURE_ROOT/failure_context.json"
+    echo "environment_validation_report_path=$FAILURE_ROOT/environment_validation.txt"
+    echo "environment_validation_preflight_manifest_path=$FAILURE_ROOT/environment_validation/preflight_manifest.tsv"
+    echo "environment_validation_setup_env_path=$FAILURE_ROOT/environment_validation/setup_env.txt"
+    echo "environment_validation_build_command_path=$FAILURE_ROOT/environment_validation/build.command.txt"
+    echo "manifest_snapshot_path=$FAILURE_ROOT/smoke_cases_manifest.tsv"
+    echo "suite_config_path=$FAILURE_ROOT/suite_config.txt"
+    echo "suite_plan_path=$FAILURE_ROOT/suite_plan.tsv"
+    echo "setup_build_preflight_manifest_path=$FAILURE_ROOT/setup_build/preflight_manifest.tsv"
+    echo "setup_build_setup_env_path=$FAILURE_ROOT/setup_build/setup_env.txt"
+    echo "setup_build_build_command_path=$FAILURE_ROOT/setup_build/build.command.txt"
+    echo "setup_build_build_stdout_path=$FAILURE_ROOT/setup_build/build.stdout.txt"
+    echo "setup_build_build_stderr_path=$FAILURE_ROOT/setup_build/build.stderr.txt"
     echo "exact_seed_path=$FAILURE_ROOT/seed.txt"
     echo "exact_input_path=$FAILURE_ROOT/input.txt"
     echo "exact_output_path=$FAILURE_ROOT/solver_output.txt"
@@ -3245,6 +3584,18 @@ write_failure_reporting_fallback() {
     echo "- Invoked command snapshot: \`$FAILURE_ROOT/invoked_command.txt\`"
     echo "- Artifact manifest: \`$artifact_manifest\`"
     echo "- Structured context json: \`$FAILURE_ROOT/failure_context.json\`"
+    echo "- Environment validation report: \`$FAILURE_ROOT/environment_validation.txt\`"
+    echo "- Environment validation preflight manifest: \`$FAILURE_ROOT/environment_validation/preflight_manifest.tsv\`"
+    echo "- Environment validation setup env: \`$FAILURE_ROOT/environment_validation/setup_env.txt\`"
+    echo "- Environment validation build command: \`$FAILURE_ROOT/environment_validation/build.command.txt\`"
+    echo "- Manifest snapshot: \`$FAILURE_ROOT/smoke_cases_manifest.tsv\`"
+    echo "- Suite config: \`$FAILURE_ROOT/suite_config.txt\`"
+    echo "- Suite plan: \`$FAILURE_ROOT/suite_plan.tsv\`"
+    echo "- Setup-build preflight manifest: \`$FAILURE_ROOT/setup_build/preflight_manifest.tsv\`"
+    echo "- Setup-build env snapshot: \`$FAILURE_ROOT/setup_build/setup_env.txt\`"
+    echo "- Setup-build command: \`$FAILURE_ROOT/setup_build/build.command.txt\`"
+    echo "- Setup-build stdout: \`$FAILURE_ROOT/setup_build/build.stdout.txt\`"
+    echo "- Setup-build stderr: \`$FAILURE_ROOT/setup_build/build.stderr.txt\`"
     echo "- Exact seed snapshot: \`$FAILURE_ROOT/seed.txt\`"
     echo "- Exact input snapshot: \`$FAILURE_ROOT/input.txt\`"
     echo "- Exact actual output snapshot: \`$FAILURE_ROOT/solver_output.txt\`"
@@ -3362,6 +3713,10 @@ write_failure_summary() {
     echo "active_solver_replay_artifact_subpath=$CURRENT_CASE_ACTIVE_REPLAY_ARTIFACT_SUBPATH"
     echo "active_solver_replay_outroot=$CURRENT_CASE_ACTIVE_REPLAY_OUTROOT"
     echo "failed_case_row_path=$failed_case_row"
+    echo "environment_validation_report_path=$FAILURE_ROOT/environment_validation.txt"
+    echo "environment_validation_preflight_manifest_path=$FAILURE_ROOT/environment_validation/preflight_manifest.tsv"
+    echo "environment_validation_setup_env_path=$FAILURE_ROOT/environment_validation/setup_env.txt"
+    echo "environment_validation_build_command_path=$FAILURE_ROOT/environment_validation/build.command.txt"
     echo "manifest_snapshot_path=$manifest_snapshot"
     echo "runtime_env_path=$env_snapshot"
     echo "runtime_env_exports_path=$env_exports"
@@ -3370,6 +3725,11 @@ write_failure_summary() {
     echo "retry_log_path=$retry_log"
     echo "suite_config_path=$FAILURE_ROOT/suite_config.txt"
     echo "suite_plan_path=$FAILURE_ROOT/suite_plan.tsv"
+    echo "setup_build_preflight_manifest_path=$FAILURE_ROOT/setup_build/preflight_manifest.tsv"
+    echo "setup_build_setup_env_path=$FAILURE_ROOT/setup_build/setup_env.txt"
+    echo "setup_build_build_command_path=$FAILURE_ROOT/setup_build/build.command.txt"
+    echo "setup_build_build_stdout_path=$FAILURE_ROOT/setup_build/build.stdout.txt"
+    echo "setup_build_build_stderr_path=$FAILURE_ROOT/setup_build/build.stderr.txt"
     echo "seed_repro_script=$seed_repro_script"
     echo "preserved_input_replay_script=$preserved_input_script"
     echo "active_solver_replay_script=$active_replay_script"
@@ -3435,6 +3795,10 @@ write_failure_summary() {
     echo "- Checker replay script: \`$checker_script\`"
     echo "- Frozen solver snapshot: \`$CURRENT_CASE_SOLVER_SNAPSHOT\`"
     echo "- Failed row snapshot: \`$failed_case_row\`"
+    echo "- Environment validation report: \`$FAILURE_ROOT/environment_validation.txt\`"
+    echo "- Environment validation preflight manifest: \`$FAILURE_ROOT/environment_validation/preflight_manifest.tsv\`"
+    echo "- Environment validation setup env: \`$FAILURE_ROOT/environment_validation/setup_env.txt\`"
+    echo "- Environment validation build command: \`$FAILURE_ROOT/environment_validation/build.command.txt\`"
     echo "- Smoke manifest snapshot: \`$manifest_snapshot\`"
     echo "- Runtime env snapshot: \`$env_snapshot\`"
     echo "- Runtime env exports: \`$env_exports\`"
@@ -3444,6 +3808,11 @@ write_failure_summary() {
     echo "- Retry log: \`$retry_log\`"
     echo "- Suite config: \`$FAILURE_ROOT/suite_config.txt\`"
     echo "- Suite plan: \`$FAILURE_ROOT/suite_plan.tsv\`"
+    echo "- Setup-build preflight manifest: \`$FAILURE_ROOT/setup_build/preflight_manifest.tsv\`"
+    echo "- Setup-build env snapshot: \`$FAILURE_ROOT/setup_build/setup_env.txt\`"
+    echo "- Setup-build command: \`$FAILURE_ROOT/setup_build/build.command.txt\`"
+    echo "- Setup-build stdout: \`$FAILURE_ROOT/setup_build/build.stdout.txt\`"
+    echo "- Setup-build stderr: \`$FAILURE_ROOT/setup_build/build.stderr.txt\`"
     echo "- Seed repro script: \`$seed_repro_script\`"
     echo "- Preserved-input replay script: \`$preserved_input_script\`"
     echo "- Active-solver replay script: \`$active_replay_script\`"
@@ -3751,6 +4120,15 @@ report_failure_context() {
   echo "[lca_smoke] solver snapshot: $CURRENT_CASE_SOLVER_SNAPSHOT" >&2
   echo "[lca_smoke] artifact manifest: $FAILURE_ROOT/artifact_manifest.tsv" >&2
   echo "[lca_smoke] structured context: $FAILURE_ROOT/failure_context.json" >&2
+  echo "[lca_smoke] environment validation report: $FAILURE_ROOT/environment_validation.txt" >&2
+  echo "[lca_smoke] environment validation preflight manifest: $FAILURE_ROOT/environment_validation/preflight_manifest.tsv" >&2
+  echo "[lca_smoke] environment validation setup env: $FAILURE_ROOT/environment_validation/setup_env.txt" >&2
+  echo "[lca_smoke] environment validation build command: $FAILURE_ROOT/environment_validation/build.command.txt" >&2
+  echo "[lca_smoke] setup-build preflight manifest: $FAILURE_ROOT/setup_build/preflight_manifest.tsv" >&2
+  echo "[lca_smoke] setup-build env snapshot: $FAILURE_ROOT/setup_build/setup_env.txt" >&2
+  echo "[lca_smoke] setup-build command: $FAILURE_ROOT/setup_build/build.command.txt" >&2
+  echo "[lca_smoke] setup-build stdout: $FAILURE_ROOT/setup_build/build.stdout.txt" >&2
+  echo "[lca_smoke] setup-build stderr: $FAILURE_ROOT/setup_build/build.stderr.txt" >&2
   echo "[lca_smoke] seed repro script: $FAILURE_ROOT/repro_from_seed.sh" >&2
   echo "[lca_smoke] preserved-input replay script: $FAILURE_ROOT/replay_preserved_input.sh" >&2
   echo "[lca_smoke] active-solver replay script: $FAILURE_ROOT/replay_active_manifest_case.sh" >&2
@@ -4148,14 +4526,8 @@ run_smoke_case_once() {
     return 0
   fi
 
-  if (( LAST_BOUNDED_COMMAND_TIMED_OUT != 0 )) && [[ ! -f "$CURRENT_CASE_RESULT_JSON" ]]; then
-    CURRENT_FAILURE_HELPER_RC="$SMOKE_EXIT_SOLVER_TIMEOUT"
-    CURRENT_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
-    set_failure_classification \
-      "harness_transient_failure" \
-      "harness" \
-      1 \
-      "case helper exceeded wall-clock timeout after ${helper_timeout_s}s before writing ${RUN_CASE_RESULT_NAME}"
+  if (( LAST_BOUNDED_COMMAND_TIMED_OUT != 0 )); then
+    classify_case_helper_wallclock_timeout "$helper_timeout_s"
     populate_failure_repro_commands "$case_dir" "$SOLVER"
     restore_function_errexit "$prior_errexit"
     return "$CURRENT_FAILURE_RC"
@@ -4304,7 +4676,6 @@ trap 'handle_signal 143' TERM
 run_main() {
   local smoke_rc=0
 
-  SMOKE_CLEANUP_ACTIVE=1
   sanitize_shell_state
   mkdir -p "$ARTIFACTS_ROOT"
   resolve_output_roots
@@ -4319,6 +4690,7 @@ run_main() {
     fail "backup path exists but is not a directory: $BACKUP_ROOT"
   fi
 
+  SMOKE_CLEANUP_ACTIVE=1
   mkdir -p "$OUTPARENT" "$TMP_PARENT" "$RUN_STAGE_ROOT" "$BUILD_ROOT"
   clear_stale_state
   clear_stale_failure_state
@@ -4403,9 +4775,11 @@ main() {
   require_file "$SMOKE_CASES_SOURCE" "smoke case manifest"
   require_executable "$BUILD_WRAPPER" "build wrapper"
   require_executable "$SMOKE_TARGET_WRAPPER" "smoke target wrapper"
+  require_python_entrypoint "$ARTIFACT_RESOLVER" "artifact resolver imports"
   require_python_entrypoint "$BUILD_HELPER" "build helper imports"
   require_python_entrypoint "$RUN_CASE_HELPER" "run case helper imports"
   require_python_entrypoint "$CHECKER_HELPER" "validator helper imports"
+  require_python_entrypoint "$RESUME_HELPER" "resume helper imports"
 
   run_main
 }

@@ -1,75 +1,158 @@
 {
-  "analysis_revision": 12,
-  "last_updated": "2026-03-26 06:35:38 KST",
-  "last_failed_attempt": "attempt_001",
-  "last_failed_session_id": "orch_1736140fd0df",
+  "analysis_revision": 212,
+  "last_updated": "2026-04-12 22:59:28 KST",
+  "last_failed_attempt": "attempt_042",
+  "last_failed_session_id": "orch_42d1d2891e94",
   "current_for_latest_failure": true,
-  "current_failure_attempt": "attempt_001",
-  "current_failure_session_id": "orch_1736140fd0df",
-  "current_failure_execution_id": "exec_19e8677de11e",
-  "current_failure_timestamp": "2026-03-26 05:46:51 KST",
+  "current_failure_attempt": "attempt_042",
+  "current_failure_session_id": "orch_42d1d2891e94",
+  "current_failure_execution_id": "exec_af1d222264e6",
+  "current_failure_timestamp": "2026-04-12 22:59:18 KST",
   "current_failure_failed_acs": [
-    "4",
-    "6"
+    "1",
+    "2",
+    "3",
+    "8"
   ],
-  "current_failure_signature": "attempt_001|orch_1736140fd0df|2026-03-26 05:46:51 KST|4,6",
+  "current_failure_signature": "attempt_042|orch_42d1d2891e94|2026-04-12 22:59:18 KST|1,2,3,8",
   "current_failure": {
-    "attempt_label": "attempt_001",
-    "session_id": "orch_1736140fd0df",
-    "execution_id": "exec_19e8677de11e",
-    "timestamp": "2026-03-26 05:46:51 KST",
+    "attempt_label": "attempt_042",
+    "session_id": "orch_42d1d2891e94",
+    "execution_id": "exec_af1d222264e6",
+    "timestamp": "2026-04-12 22:59:18 KST",
     "failed_acs": [
-      "4",
-      "6"
+      "1",
+      "2",
+      "3",
+      "8"
     ],
-    "failure_signature": "attempt_001|orch_1736140fd0df|2026-03-26 05:46:51 KST|4,6"
+    "failure_signature": "attempt_042|orch_42d1d2891e94|2026-04-12 22:59:18 KST|1,2,3,8"
+  },
+  "refresh_evidence": {
+    "analysis_refresh_timestamp": "2026-04-12 22:59:28 KST",
+    "latest_failure_report_timestamp": "2026-04-12 22:59:18 KST",
+    "latest_failure_breakdown_timestamp": "2026-04-12 22:59:18 KST",
+    "current_failure_timestamp": "2026-04-12 22:59:18 KST",
+    "evidence_source_attempt_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209",
+    "analysis_log": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/analysis_workflow_round_01.log",
+    "qualifying_refreshed_assets": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md"
+    ],
+    "freshness_record": {
+      "attempt_label": "attempt_042",
+      "session_id": "orch_42d1d2891e94",
+      "execution_id": "exec_af1d222264e6",
+      "failure_timestamp": "2026-04-12 22:59:18 KST",
+      "failure_signature": "attempt_042|orch_42d1d2891e94|2026-04-12 22:59:18 KST|1,2,3,8",
+      "analysis_refresh_timestamp": "2026-04-12 22:59:28 KST",
+      "refreshed_asset": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md"
+    },
+    "refreshed_after_failure_report": true,
+    "refreshed_after_failure_breakdown": true,
+    "refreshed_after_current_failure_timestamp": true
   },
   "pinned_acs": [
-    "4"
+    "1"
   ],
-  "pinned_primary_axis": "zero_span_fastpath",
-  "pinned_secondary_axis": "state_materialization",
+  "pinned_primary_axis": "state_materialization",
+  "pinned_secondary_axis": "zero_span_fastpath",
   "pinned_paths": [
-    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_target.sh",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py",
     "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py",
-    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/test_build.py",
     "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh"
   ],
   "pinned_symbols": [
-    "function artifacts_root [34-35]",
-    "function ensure_under_artifacts [38-39]",
-    "function branch_tmp_root [42-43]",
-    "function configure_branch_process_env [46-71]",
-    "function __solver_release_env_keep_or_set [41-112]",
-    "function _read_tokens [9-18]"
+    "function parse_cases [44-46]",
+    "function artifacts_root [80-81]",
+    "class CompilerCandidateTests [14-27]"
   ],
   "recent_axes": [
     "zero_span_fastpath",
-    "state_materialization"
+    "layout_gate",
+    "state_materialization",
+    "watch_diff"
   ],
   "recent_failure_families": [
-    "strong_gate_unspecified",
-    "boj3s_gate_unspecified",
-    "large_adversarial_comb_no_touch_topology"
-  ],
-  "recent_profile_modes": [
-    "PROFILE_SAMPLED"
-  ],
-  "next_probe_command": "LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh",
-  "why_this_axis": "Selected `zero_span_fastpath` as the primary progress40 axis because the latest `strong_gate_unspecified` failure stayed in the `correctness-proof` lane and the bundled summary still names `zero-span eligibility and fastpath commit` as the safest next pivot; `state_materialization` remains a secondary cross-check axis only because the newer evidence narrows work inside the same pivot instead of proving an unrelated axis shift. Do not broaden into other progress40 axes unless later solver/runtime/profile evidence contradicts this baseline.",
-  "failure_families": [
+    "smoke_target_wrapper_readability_failure",
+    "generic_retry_failure",
+    "strong_gate_timeout_cluster",
     "strong_gate_unspecified"
   ],
-  "next_narrowing_target": "function artifacts_root [34-35], function ensure_under_artifacts [38-39]",
+  "recent_profile_modes": [
+    "PROFILE_SAMPLED",
+    "PROFILE_BASE"
+  ],
+  "next_probe_command": "./lca_smoke.sh",
+  "why_this_axis": "Selected `state_materialization` as the primary progress40 axis because the latest `generic_retry_failure` failure stayed in the `pre-gate-stability` lane and the bundled summary still names `zero-span eligibility and fastpath commit` as the safest next pivot; `zero_span_fastpath` remains a secondary cross-check axis only because the newer evidence narrows work inside the same pivot instead of proving an unrelated axis shift. Do not broaden into other progress40 axes unless later solver/runtime/profile evidence contradicts this baseline.",
+  "failure_families": [
+    "generic_retry_failure"
+  ],
+  "next_narrowing_target": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py::focus 1-260 [1-260], /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py::focus 260-520 [260-520], /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py::focus 1-260 [1-260]",
+  "latest_retry_summary": "The newest retry remains `AC 1` in the `generic_retry_failure` / `pre-gate-stability` lane. The smallest confirmed failing call path is `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py::focus 1-260 [1-260]` -> `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py::focus 260-520 [260-520]` -> `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py::focus 1-260 [1-260]`. Wrapper-wide or file-wide rereads stay fallback only.",
+  "latest_retry_statement_anchors": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py",
+      "label": "focus 1-260",
+      "focus_range": "1-260",
+      "symbol": "function parse_cases [44-46]",
+      "excerpt": "#!/usr/bin/env python3 from __future__ import annotations import argparse import csv import json import os import random import re import shutil import subprocess import sys from pathlib import Path from typing import Iterable os.environ[\"P",
+      "evidence": "observed in failed-AC trace",
+      "role": "retry-anchor focus"
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py",
+      "label": "focus 260-520",
+      "focus_range": "260-520",
+      "symbol": "function parse_cases [44-46]",
+      "excerpt": "\"validator\", \"validator_msg\", \"elapsed_s\", \"mem_kb\", \"case_dir\", ], delimiter=\"\\t\", ) writer.writeheader() writer.writerows(rows) def main() -> int: ap = argparse.ArgumentParser(description=\"BOJ 28350 branch-local helper rooted inside branc",
+      "evidence": "observed in failed-AC trace",
+      "role": "retry-anchor focus"
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py",
+      "label": "focus 1-260",
+      "focus_range": "1-260",
+      "symbol": "function artifacts_root [80-81]",
+      "excerpt": "#!/usr/bin/env python3 from __future__ import annotations import argparse import hashlib import json import os import stat import shutil import sys from pathlib import Path os.environ.setdefault(\"PYTHONDONTWRITEBYTECODE\", \"1\") sys.dont_writ",
+      "evidence": "observed in failed-AC trace, boosted by failure_analysis_state, matched pinned symbol `function artifacts_root [80-81]`",
+      "role": "retry-anchor focus"
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/test_build.py",
+      "label": "focus 1-220",
+      "focus_range": "1-220",
+      "symbol": "class CompilerCandidateTests [14-27]",
+      "excerpt": "from __future__ import annotations import os import subprocess import tempfile import unittest from unittest import mock from pathlib import Path import textwrap import build class CompilerCandidateTests(unittest.TestCase): def test_darwin_",
+      "evidence": "observed in failed-AC trace",
+      "role": "retry-anchor focus"
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh",
+      "label": "focus 1-220",
+      "focus_range": "1-220",
+      "symbol": null,
+      "excerpt": "#!/usr/bin/env bash set -euo pipefail SCRIPT_DIR=\"$(cd -- \"$(dirname -- \"${BASH_SOURCE[0]}\")\" && pwd -P)\" # Keep release builds reproducible by clearing ambient compiler/profile knobs # before the branch-local runtime envelope rehydrates it",
+      "evidence": "observed in failed-AC trace",
+      "role": "retry-anchor focus"
+    }
+  ],
+  "latest_retry_anchor_ranges": [
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py:1-260",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py:260-520",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py:1-260",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/test_build.py:1-220",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh:1-220"
+  ],
+  "baseline_localization": null,
+  "localization_refinement": null,
   "notes": [
-    "This file is updated by the mandatory analysis-only mini-session between failed solver attempts.",
-    "Use pinned paths and symbols to force narrower structural focus on repeated failures.",
-    "Use the pinned primary axis to keep solver retries aligned with the current progress40 pivot; leave the secondary axis empty unless new solver/runtime evidence genuinely supports one.",
-    "Treat the current git-health report as degraded inspection context, not as the primary root cause, unless a future gate or probe fails directly on git commands.",
-    "When a closure trace only preserves truncated `outer_suite_wrappers/lca_...` sed lines, recover the exact wrapper from the failed AC and pin both the observed wrapper-tail range and the matching `acquire_lock` symbol.",
-    "Treat `outer_suite_wrappers/lca_strong_gate.sh::acquire_lock [144-179]` and `outer_suite_wrappers/lca_boj3s_gate.sh::acquire_lock [107-142]` as the first wrapper-side checkpoints for any repeat closure stall, but keep the pinned retry probe solver-facing on the exact `comb_dense / n99999 / seed1 / L1 / Q1` row unless the next failure stalls before solver work starts.",
-    "When AC6 justification is required, explicitly compare the active primary axis against `layout_gate`, `state_materialization`, and any stale `watch_diff` carry-over. In the current failure set those alternatives are weaker because the authoritative pivot still names `zero-span eligibility and fastpath commit`, while the latest probe died before runtime/profile evidence for other axes appeared.",
-    "The latest failed workflow stalled at closure ACs 4 and 6, but the next solver retry should attack AC5-local performance work first because the repeatability gate cannot close until the no-touch comb-family blocker is reduced.",
-    "Retry preflight must reject stale analysis unless current_failure_signature matches the latest captured failure report and breakdown."
+    "Attempt-local retry diagnosis must stay anchored to the newest failure signature instead of older carry-forward notes.",
+    "Use latest_retry_statement_anchors and next_narrowing_target as the authoritative reread slice whenever the rendered latest_failure_report.md or latest_failure_breakdown.md stays coarse.",
+    "AC4, AC5, and AC6 remain blocked or guard-rejected nominal PASS until fresh same-worktree rerun evidence exists.",
+    "Keep exactly one primary axis, zero_span_fastpath, only as the parked progress40 fallback until smoke launcher dispatch clears and fresh solver/runtime/profile evidence names a rival axis.",
+    "Retry preflight must reject stale analysis unless current_failure_signature matches the latest captured failure report and breakdown.",
+    "Retry preflight must also reject any freshness record asset that is not part of the workflow-recognized branch-local analysis target set."
   ]
 }

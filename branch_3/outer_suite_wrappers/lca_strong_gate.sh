@@ -6,6 +6,8 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 BRANCH_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 cd "$BRANCH_ROOT"
 OUTER_ROOT="$(cd "$BRANCH_ROOT/.." && pwd -P)"
+# Parent-tree tooling is only an optional mirror. The active strong-gate run
+# must remain reproducible from branch_3's branch-local helper and preset set.
 TOOLING_ROOT="$OUTER_ROOT/lca_tree_stress_v5/tooling"
 export PYTHONDONTWRITEBYTECODE=1
 BINARY="$BRANCH_ROOT/artifacts/boj28350_resume/build/solve"
@@ -17,6 +19,8 @@ BUILD_WRAPPER="$BRANCH_ROOT/build.sh"
 RELEASE_ENV="$BRANCH_ROOT/solver_release_env.sh"
 CERTIFY_HELPER="$BRANCH_ROOT/branch_certify_suite.py"
 TOOLING_CERTIFY_SOURCE="$TOOLING_ROOT/certify_suite.py"
+LOCAL_GENERATOR_HELPER="$BRANCH_ROOT/branch_gen_case_local.py"
+LOCAL_VALIDATOR_HELPER="$BRANCH_ROOT/branch_validator_local.py"
 BRANCH_PRESET="$BRANCH_ROOT/suite_presets/strong_gate.json"
 OUTER_PRESET="$TOOLING_ROOT/suite_presets/strong_gate.json"
 OUTDIR=""
@@ -31,6 +35,8 @@ LOCK_ROOT="$ARTIFACTS_ROOT/.locks"
 SNAPSHOT_ROOT="$ARTIFACTS_ROOT/.solver_snapshots/lca_strong_gate"
 PRESET_CACHE_ROOT="$ARTIFACTS_ROOT/.preset_cache"
 PRESET_CACHE_PATH="$PRESET_CACHE_ROOT/lca_strong_gate.json"
+PRESET_SOURCE_HINT="$BRANCH_PRESET | $PRESET_CACHE_PATH | cached_full_gate_snapshot | $OUTER_PRESET"
+CANONICAL_OUTROOT="$ARTIFACTS_ROOT/strong_gate"
 LOCKDIR="$LOCK_ROOT/lca_strong_gate"
 LOCK_PID_FILE="$LOCKDIR/pid"
 LEGACY_RUN_WORK_GLOB=".strong_gate_in_progress.*"
@@ -47,10 +53,14 @@ RUN_TMPDIR=""
 CASE_RUN_TMP_ROOT=""
 CASE_CACHE_ROOT=""
 CASE_CACHE_TMP_ROOT=""
+SHARED_CASE_CACHE_ROOT="$TMP_PARENT/case_cache"
+SHARED_CASE_CACHE_TMP_ROOT="$TMP_PARENT/case_cache_tmp"
 LOCK_HELD=0
 HEARTBEAT_INTERVAL="${LCA_HEARTBEAT_INTERVAL:-25}"
 STALE_LOCK_SECONDS="${LCA_STALE_LOCK_SECONDS:-60}"
 CERTIFY_PID=""
+HEARTBEAT_PID=""
+CERTIFY_HEARTBEAT_FLAG=""
 SOLVER_SNAPSHOT=""
 PRECHECK_MANIFEST=""
 ENV_SNAPSHOT=""
@@ -65,6 +75,8 @@ BUILD_METADATA_SNAPSHOT=""
 NON_ARTIFACT_BASELINE=""
 NON_ARTIFACT_CURRENT=""
 NON_ARTIFACT_REPORT=""
+SUITE_CONFIG_PATH=""
+SUITE_PLAN_PATH=""
 REPEATABILITY_MANIFEST_PATH=""
 
 fail() {
@@ -87,6 +99,18 @@ usage() {
   echo "usage: ./outer_suite_wrappers/lca_strong_gate.sh [artifact_subpath] [limit_scale]" >&2
   echo "[lca_strong_gate] stage filtering remains available via LCA_STAGE_FILTER" >&2
   exit 2
+}
+
+sanitize_stage_filter_token() {
+  local raw="${1-}"
+  local sanitized=""
+  sanitized="$(printf '%s' "$raw" | tr -cs 'A-Za-z0-9._-' '_')"
+  sanitized="${sanitized##_}"
+  sanitized="${sanitized%%_}"
+  if [[ -z "$sanitized" ]]; then
+    sanitized="stage_filter"
+  fi
+  printf '%s\n' "$sanitized"
 }
 
 require_command() {
@@ -225,10 +249,6 @@ resolve_preset() {
     printf '%s\n' "$BRANCH_PRESET"
     return 0
   fi
-  if [[ -f "$OUTER_PRESET" ]] && ! path_has_dataless_flag "$OUTER_PRESET"; then
-    printf '%s\n' "$OUTER_PRESET"
-    return 0
-  fi
   if [[ -f "$PRESET_CACHE_PATH" ]] && ! path_has_dataless_flag "$PRESET_CACHE_PATH"; then
     printf '%s\n' "$PRESET_CACHE_PATH"
     return 0
@@ -267,12 +287,16 @@ resolve_preset() {
     printf '%s\n' "$BRANCH_PRESET"
     return 0
   fi
-  if [[ -f "$OUTER_PRESET" ]]; then
+  if [[ -f "$PRESET_CACHE_PATH" ]]; then
+    printf '%s\n' "$PRESET_CACHE_PATH"
+    return 0
+  fi
+  if [[ -f "$OUTER_PRESET" ]] && ! path_has_dataless_flag "$OUTER_PRESET"; then
     printf '%s\n' "$OUTER_PRESET"
     return 0
   fi
-  if [[ -f "$PRESET_CACHE_PATH" ]]; then
-    printf '%s\n' "$PRESET_CACHE_PATH"
+  if [[ -f "$OUTER_PRESET" ]]; then
+    printf '%s\n' "$OUTER_PRESET"
     return 0
   fi
   return 1
@@ -335,6 +359,14 @@ restore_previous_output() {
   fi
 }
 
+strip_internal_state_root() {
+  local root="$1"
+  if [[ -z "$root" ]]; then
+    return
+  fi
+  rm -rf "$root/.case_cache" "$root/.case_cache_tmp" "$root/.case_runs_tmp" "$root/.stage_filter"
+}
+
 archive_previous_failure_output() {
   local archive_root=""
   local archive_path=""
@@ -346,6 +378,7 @@ archive_previous_failure_output() {
     return
   fi
 
+  strip_internal_state_root "$FAILED_ROOT"
   archive_root="$FAILED_ARCHIVE_ROOT"
   mkdir -p "$archive_root"
   stamp="$(date '+%Y%m%d_%H%M%S')"
@@ -359,6 +392,45 @@ archive_previous_failure_output() {
   echo "[lca_strong_gate] archived previous failure snapshot at $archive_path" >&2
 }
 
+prune_failure_archive() {
+  local keep="${LCA_STRONG_GATE_FAILURE_ARCHIVE_KEEP:-6}"
+  if [[ ! -d "$FAILED_ARCHIVE_ROOT" ]]; then
+    return
+  fi
+  if [[ ! "$keep" =~ ^[0-9]+$ ]]; then
+    keep=6
+  fi
+  if (( keep < 1 )); then
+    keep=1
+  fi
+  python3 - "$FAILED_ARCHIVE_ROOT" "$keep" <<'PY'
+from pathlib import Path
+import shutil
+import sys
+
+root = Path(sys.argv[1])
+keep = max(1, int(sys.argv[2]))
+try:
+    entries = sorted(root.iterdir(), key=lambda path: path.stat().st_mtime, reverse=True)
+except FileNotFoundError:
+    raise SystemExit(0)
+
+removed = 0
+for path in entries[keep:]:
+    if path.is_dir():
+        shutil.rmtree(path, ignore_errors=True)
+    else:
+        try:
+            path.unlink()
+        except FileNotFoundError:
+            pass
+    removed += 1
+
+if removed:
+    print(f"[lca_strong_gate] pruned {removed} archived failure snapshots from {root}", file=sys.stderr)
+PY
+}
+
 published_output_is_complete() {
   local root="$1"
   local required_path=""
@@ -367,13 +439,20 @@ published_output_is_complete() {
   for required_path in \
     "$root/certify.json" \
     "$root/certify_summary.md" \
+    "$root/selected_preset.json" \
     "$root/runtime_env.txt" \
-    "$root/preflight_manifest.tsv"; do
+    "$root/preflight_manifest.tsv" \
+    "$root/suite_config.txt" \
+    "$root/suite_plan.tsv" \
+    "$root/repeatability_gate_manifest.txt"; do
     [[ -s "$required_path" ]] || return 1
     if path_has_dataless_flag "$required_path" && ! path_is_readable_now "$required_path"; then
       return 1
     fi
   done
+  if [[ "$root" == "$CANONICAL_OUTROOT" ]]; then
+    artifact_preset_snapshot_is_full_gate "$root/selected_preset.json" || return 1
+  fi
   return 0
 }
 
@@ -503,9 +582,12 @@ clear_stale_state() {
   clear_invalid_root_path "$BACKUP_ROOT" "backup root"
   clear_invalid_root_path "$FAILED_ROOT" "failure snapshot"
   clear_invalid_root_path "$FAILED_ARCHIVE_ROOT" "failure archive root"
+  clear_invalid_root_path "$SHARED_CASE_CACHE_ROOT" "shared case cache root"
+  clear_invalid_root_path "$SHARED_CASE_CACHE_TMP_ROOT" "shared case cache tmp root"
   clear_solver_snapshot_artifacts
   archive_previous_failure_output
   archive_incomplete_published_output
+  prune_failure_archive
   restore_previous_output
   if [[ -d "$TMP_PARENT" ]]; then
     shopt -s nullglob
@@ -609,13 +691,13 @@ load_release_environment() {
   export TMP="$RUN_TMPDIR"
   export TEMP="$RUN_TMPDIR"
   sanitize_solver_environment
-  apply_strong_gate_release_profile_overrides
   source "$RELEASE_ENV"
   mkdir -p "$RUN_TMPDIR" "$HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME" "$PYTHONPYCACHEPREFIX"
   export BRANCH_ARTIFACT_TMP_ROOT="$RUN_TMPDIR"
   export TMPDIR="$RUN_TMPDIR"
   export TMP="$RUN_TMPDIR"
   export TEMP="$RUN_TMPDIR"
+  apply_strong_gate_release_profile_overrides
   assert_runtime_environment
 }
 
@@ -677,38 +759,55 @@ print(max(0, int(time.time() - lock_path.stat().st_mtime)))
 PY
 }
 
+stop_certify_heartbeat() {
+  if [[ -n "${CERTIFY_HEARTBEAT_FLAG:-}" ]]; then
+    rm -f "$CERTIFY_HEARTBEAT_FLAG" 2>/dev/null || true
+  fi
+  if [[ -n "${HEARTBEAT_PID:-}" ]] && kill -0 "$HEARTBEAT_PID" 2>/dev/null; then
+    kill "$HEARTBEAT_PID" 2>/dev/null || true
+    wait "$HEARTBEAT_PID" 2>/dev/null || true
+  fi
+  HEARTBEAT_PID=""
+  CERTIFY_HEARTBEAT_FLAG=""
+}
+
 run_certify_suite() {
-  local start_ts now elapsed completed rc
+  local start_ts rc
 
   : > "$CERTIFY_STDOUT_LOG"
   : > "$CERTIFY_STDERR_LOG"
   start_ts="$(date +%s)"
   echo "[lca_strong_gate] certify start preset=$PRESET out=$OUTROOT workdir=$WORKDIR" >&2
 
-  BRANCH_CERTIFY_CASE_RUN_TMP_ROOT="$CASE_RUN_TMP_ROOT" \
+  CERTIFY_HEARTBEAT_FLAG="$WORKDIR/.certify_heartbeat_active"
+  ensure_under_artifacts "$CERTIFY_HEARTBEAT_FLAG"
+  : > "$CERTIFY_HEARTBEAT_FLAG"
+
+  (
+    local now elapsed completed
+    while [[ -f "$CERTIFY_HEARTBEAT_FLAG" ]]; do
+      sleep "$HEARTBEAT_INTERVAL"
+      if [[ ! -f "$CERTIFY_HEARTBEAT_FLAG" ]]; then
+        break
+      fi
+      now="$(date +%s)"
+      elapsed=$(( now - start_ts ))
+      completed="$(count_completed_cases 2>/dev/null || printf '?')"
+      echo "[lca_strong_gate] heartbeat elapsed=${elapsed}s completed_cases=${completed} workdir=$WORKDIR" >&2
+    done
+  ) &
+  HEARTBEAT_PID=$!
+
+  if BRANCH_CERTIFY_CASE_RUN_TMP_ROOT="$CASE_RUN_TMP_ROOT" \
     BRANCH_CERTIFY_CASE_CACHE_ROOT="$CASE_CACHE_ROOT" \
     BRANCH_CERTIFY_CASE_CACHE_TMP_ROOT="$CASE_CACHE_TMP_ROOT" \
     BRANCH_CERTIFY_REPORT_OUTDIR="$OUTROOT" \
-    python3 "$CERTIFY_HELPER" --solver "$SOLVER_SNAPSHOT" --preset "$PRESET" --out "$WORKDIR" --limit-scale "$LIMIT_SCALE" >"$CERTIFY_STDOUT_LOG" 2>"$CERTIFY_STDERR_LOG" &
-  CERTIFY_PID=$!
-
-  while kill -0 "$CERTIFY_PID" 2>/dev/null; do
-    sleep "$HEARTBEAT_INTERVAL"
-    if ! kill -0 "$CERTIFY_PID" 2>/dev/null; then
-      break
-    fi
-    now="$(date +%s)"
-    elapsed=$(( now - start_ts ))
-    completed="$(count_completed_cases)"
-    echo "[lca_strong_gate] heartbeat elapsed=${elapsed}s completed_cases=${completed} workdir=$WORKDIR" >&2
-  done
-
-  if wait "$CERTIFY_PID"; then
+    python3 "$CERTIFY_HELPER" --solver "$SOLVER_SNAPSHOT" --preset "$PRESET" --out "$WORKDIR" --limit-scale "$LIMIT_SCALE" >"$CERTIFY_STDOUT_LOG" 2>"$CERTIFY_STDERR_LOG"; then
     rc=0
   else
     rc=$?
   fi
-  CERTIFY_PID=""
+  stop_certify_heartbeat
   return "$rc"
 }
 
@@ -751,8 +850,12 @@ bind_runtime_artifacts_to_root() {
   mkdir -p "$root"
   ensure_under_artifacts "$root"
   CASE_RUN_TMP_ROOT="$root/.case_runs_tmp"
-  CASE_CACHE_ROOT="$root/.case_cache"
-  CASE_CACHE_TMP_ROOT="$root/.case_cache_tmp"
+  # Reuse the branch-local certify cache across strong-gate reruns instead of
+  # cloning the full generator cache into every staging workdir. This keeps the
+  # AC3 harness alive on space-constrained worktrees and preserves the fresh
+  # solver-side gate evidence path.
+  CASE_CACHE_ROOT="$SHARED_CASE_CACHE_ROOT"
+  CASE_CACHE_TMP_ROOT="$SHARED_CASE_CACHE_TMP_ROOT"
   PRECHECK_MANIFEST="$root/preflight_manifest.tsv"
   ENV_SNAPSHOT="$root/runtime_env.txt"
   BUILD_STDOUT_LOG="$root/build.stdout.txt"
@@ -766,6 +869,8 @@ bind_runtime_artifacts_to_root() {
   NON_ARTIFACT_BASELINE="$root/non_artifact_tree_baseline.json"
   NON_ARTIFACT_CURRENT="$root/non_artifact_tree_current.json"
   NON_ARTIFACT_REPORT="$root/non_artifact_tree_report.txt"
+  SUITE_CONFIG_PATH="$root/suite_config.txt"
+  SUITE_PLAN_PATH="$root/suite_plan.tsv"
   REPEATABILITY_MANIFEST_PATH="$root/repeatability_gate_manifest.txt"
 
   ensure_under_artifacts "$CASE_RUN_TMP_ROOT"
@@ -784,6 +889,8 @@ bind_runtime_artifacts_to_root() {
   ensure_under_artifacts "$NON_ARTIFACT_BASELINE"
   ensure_under_artifacts "$NON_ARTIFACT_CURRENT"
   ensure_under_artifacts "$NON_ARTIFACT_REPORT"
+  ensure_under_artifacts "$SUITE_CONFIG_PATH"
+  ensure_under_artifacts "$SUITE_PLAN_PATH"
   ensure_under_artifacts "$REPEATABILITY_MANIFEST_PATH"
 }
 
@@ -827,6 +934,11 @@ recover_staging_workdir_after_loss() {
   else
     return $?
   fi
+  if write_suite_input_bundle; then
+    :
+  else
+    return $?
+  fi
   run_setup_preflight
 }
 
@@ -840,11 +952,189 @@ record_preflight_check() {
   printf '%s\t%s\t%s\t%s\n' "$kind" "$label" "$status" "$value" >> "$PRECHECK_MANIFEST"
 }
 
-write_repeatability_manifest() {
-  python3 - "$REPEATABILITY_MANIFEST_PATH" "$WORKDIR/certify.json" "$WORKDIR/certify_summary.md" <<'PY'
+write_suite_input_bundle() {
+  local effective_preset_source="${PRESET_SOURCE_MATERIALIZED:-$PRESET_SOURCE}"
+
+  ensure_workdir_runtime_artifacts_bound
+  python3 - \
+    "$PRESET" \
+    "$SUITE_CONFIG_PATH" \
+    "$SUITE_PLAN_PATH" \
+    "$WORKDIR" \
+    "$OUTROOT" \
+    "$CASE_RUN_TMP_ROOT" \
+    "$CASE_CACHE_ROOT" \
+    "$CASE_CACHE_TMP_ROOT" \
+    "$LIMIT_SCALE" \
+    "${STAGE_FILTER:-}" \
+    "$effective_preset_source" \
+    "$PRESET_SOURCE" \
+    "${PRESET_SOURCE_MATERIALIZED:-}" \
+    "${RUN_TMPDIR:-}" <<'PY'
 from __future__ import annotations
 
+import csv
 import hashlib
+import json
+import sys
+from pathlib import Path
+
+preset_path = Path(sys.argv[1])
+config_path = Path(sys.argv[2])
+plan_path = Path(sys.argv[3])
+workdir = Path(sys.argv[4])
+outroot = Path(sys.argv[5])
+case_run_tmp_root = Path(sys.argv[6])
+case_cache_root = Path(sys.argv[7])
+case_cache_tmp_root = Path(sys.argv[8])
+limit_scale = float(sys.argv[9])
+stage_filter = sys.argv[10]
+effective_preset_source = sys.argv[11]
+selected_preset_source = sys.argv[12]
+selected_preset_source_materialized = sys.argv[13]
+runtime_tmpdir = sys.argv[14]
+
+
+def to_list_int(value, default=None):
+    if value is None:
+        return [] if default is None else list(default)
+    if isinstance(value, list):
+        return [int(item) for item in value]
+    return [int(value)]
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def fmt_timeout(value):
+    if value is None:
+        return ""
+    return f"{float(value):.12g}"
+
+
+preset = json.loads(preset_path.read_text(encoding="utf-8"))
+stages = list(preset.get("stages", []))
+rows = []
+case_index = 0
+
+for stage_index, stage in enumerate(stages, start=1):
+    stage_name = str(stage.get("name", ""))
+    modes = list(stage.get("modes") or [])
+    if not modes:
+        raise SystemExit(
+            f"[lca_strong_gate] selected preset stage {stage_name!r} must declare modes explicitly "
+            "for deterministic strong-gate planning"
+        )
+    sizes = to_list_int(stage.get("sizes"), [])
+    seeds = to_list_int(stage.get("seeds"), [1])
+    shuffle_labels = to_list_int(stage.get("shuffle_labels"), [0])
+    shuffle_queries = to_list_int(stage.get("shuffle_queries"), [0])
+    timeout_raw = stage.get("timeout")
+    timeout_scaled = None if timeout_raw is None else float(timeout_raw) * limit_scale
+    must_pass = 1 if bool(stage.get("must_pass", True)) else 0
+
+    for mode in modes:
+        for n in sizes:
+            for seed in seeds:
+                for sl in shuffle_labels:
+                    for sq in shuffle_queries:
+                        case_index += 1
+                        case_subpath = Path("runs") / stage_name / mode / f"n{n}" / f"seed{seed}_L{sl}_Q{sq}"
+                        cache_subpath = Path(mode) / f"n{n}" / f"seed{seed}_L{sl}_Q{sq}"
+                        rows.append(
+                            {
+                                "case_index": str(case_index),
+                                "stage_index": str(stage_index),
+                                "stage": stage_name,
+                                "mode": str(mode),
+                                "n": str(n),
+                                "seed": str(seed),
+                                "shuffle_labels": str(sl),
+                                "shuffle_queries": str(sq),
+                                "timeout_s": fmt_timeout(timeout_scaled),
+                                "must_pass": str(must_pass),
+                                "case_artifact_subpath": case_subpath.as_posix(),
+                                "case_cache_subpath": cache_subpath.as_posix(),
+                            }
+                        )
+
+config_lines = [
+    "gate=lca_strong_gate",
+    "wrapper=./outer_suite_wrappers/lca_strong_gate.sh",
+    "plan_schema=lca_strong_gate_suite_plan_v1",
+    "config_schema=lca_strong_gate_suite_config_v1",
+    f"selected_preset_path={preset_path}",
+    f"selected_preset_source={selected_preset_source}",
+    f"selected_preset_source_materialized={selected_preset_source_materialized}",
+    f"effective_preset_source={effective_preset_source}",
+    f"selected_preset_sha256={sha256(preset_path)}",
+    f"preset_name={preset.get('name', '')}",
+    f"stage_filter={stage_filter}",
+    f"contract_scope={'filtered_probe' if stage_filter else 'required_full_gate'}",
+    f"limit_scale={fmt_timeout(limit_scale)}",
+    f"stage_count={len(stages)}",
+    f"case_count={len(rows)}",
+    "case_path_policy=runs/{stage}/{mode}/n{n}/seed{seed}_L{shuffle_labels}_Q{shuffle_queries}",
+    "case_cache_policy={mode}/n{n}/seed{seed}_L{shuffle_labels}_Q{shuffle_queries}",
+    f"workdir={workdir}",
+    f"output_root={outroot}",
+    f"case_run_tmp_root={case_run_tmp_root}",
+    f"case_cache_root={case_cache_root}",
+    f"case_cache_tmp_root={case_cache_tmp_root}",
+    f"runtime_tmpdir={runtime_tmpdir}",
+    "input_generator=branch_gen_case_local.py",
+    "validator_oracle=branch_validator_local.py",
+    "reference_output_policy=hidden_parent.txt_generator_reference_only",
+    "acceptance_contract=branch_validator_local_rooted_tree_plus_all_lca_constraints",
+    "timeout_contract=stage.timeout*limit_scale",
+    "solver_env_contract=DENSE_PROFILE_OUTDIR=work_case_dir;DENSE_SHADOW_CASE_MODE;DENSE_SHADOW_CASE_N;DENSE_SHADOW_CASE_SEED;DENSE_SHADOW_CASE_SHUFFLE_LABELS;DENSE_SHADOW_CASE_SHUFFLE_QUERIES",
+]
+config_path.write_text("\n".join(config_lines) + "\n", encoding="utf-8")
+
+with plan_path.open("w", encoding="utf-8", newline="") as handle:
+    writer = csv.DictWriter(
+        handle,
+        fieldnames=[
+            "case_index",
+            "stage_index",
+            "stage",
+            "mode",
+            "n",
+            "seed",
+            "shuffle_labels",
+            "shuffle_queries",
+            "timeout_s",
+            "must_pass",
+            "case_artifact_subpath",
+            "case_cache_subpath",
+        ],
+        delimiter="\t",
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+PY
+}
+
+write_repeatability_manifest() {
+  python3 - \
+    "$REPEATABILITY_MANIFEST_PATH" \
+    "$WORKDIR/certify.json" \
+    "$WORKDIR/certify_summary.md" \
+    "$PRESET_SNAPSHOT_PATH" \
+    "$ENV_SNAPSHOT" \
+    "$PRECHECK_MANIFEST" \
+    "$SUITE_CONFIG_PATH" \
+    "$SUITE_PLAN_PATH" <<'PY'
+from __future__ import annotations
+
+import csv
+import hashlib
+import json
 import pathlib
 import sys
 import os
@@ -852,6 +1142,11 @@ import os
 manifest_path = pathlib.Path(sys.argv[1])
 certify_json = pathlib.Path(sys.argv[2])
 certify_summary = pathlib.Path(sys.argv[3])
+selected_preset = pathlib.Path(sys.argv[4])
+runtime_env = pathlib.Path(sys.argv[5])
+preflight_manifest = pathlib.Path(sys.argv[6])
+suite_config = pathlib.Path(sys.argv[7])
+suite_plan = pathlib.Path(sys.argv[8])
 
 
 def sha256(path: pathlib.Path) -> str:
@@ -862,12 +1157,24 @@ def sha256(path: pathlib.Path) -> str:
     return digest.hexdigest()
 
 
+selected_preset_payload = json.loads(selected_preset.read_text(encoding="utf-8"))
+with suite_plan.open(encoding="utf-8", newline="") as handle:
+    suite_plan_rows = list(csv.DictReader(handle, delimiter="\t"))
+
+
 lines = [
     "gate=lca_strong_gate",
     "wrapper=./outer_suite_wrappers/lca_strong_gate.sh",
     f"repeatability_run_token={os.environ.get('LCA_REPEATABILITY_RUN_TOKEN', '')}",
     f"repeatability_cycle={os.environ.get('LCA_REPEATABILITY_CYCLE', '')}",
     f"repeatability_gate_label={os.environ.get('LCA_REPEATABILITY_GATE_LABEL', '')}",
+    f"selected_preset_name={selected_preset_payload.get('name', '')}",
+    f"selected_preset_sha256={sha256(selected_preset)}",
+    f"runtime_env_sha256={sha256(runtime_env)}",
+    f"preflight_manifest_sha256={sha256(preflight_manifest)}",
+    f"suite_config_sha256={sha256(suite_config)}",
+    f"suite_plan_sha256={sha256(suite_plan)}",
+    f"suite_plan_case_count={len(suite_plan_rows)}",
     f"certify_json_sha256={sha256(certify_json)}",
     f"certify_summary_sha256={sha256(certify_summary)}",
 ]
@@ -1024,7 +1331,7 @@ check_selected_preset_source_ready() {
   local cached_source=""
 
   if [[ -z "$PRESET_SOURCE" ]]; then
-    record_preflight_check "file" "selected preset source" "missing" "$BRANCH_PRESET | $OUTER_PRESET"
+    record_preflight_check "file" "selected preset source" "missing" "$PRESET_SOURCE_HINT"
     return 2
   fi
 
@@ -1046,6 +1353,20 @@ check_selected_preset_source_ready() {
     record_preflight_check "materialization" "selected preset source" "ok" "$PRESET_SOURCE"
   fi
 
+  if (( rc != 0 )) && cached_source="$(resolve_cached_preset_snapshot)"; then
+    PRESET_SOURCE="$cached_source"
+    PRESET_SOURCE_MATERIALIZED=""
+    rc=0
+    record_preflight_check "file" "selected preset cached fallback" "ok" "$cached_source"
+    check_required_file_recorded "$PRESET_SOURCE" "selected preset cached fallback" || rc=2
+    if path_has_dataless_flag "$PRESET_SOURCE"; then
+      record_preflight_check "materialization" "selected preset cached fallback" "dataless" "$PRESET_SOURCE"
+      rc=2
+    else
+      record_preflight_check "materialization" "selected preset cached fallback" "ok" "$PRESET_SOURCE"
+    fi
+  fi
+
   if (( rc != 0 )) && [[ "$PRESET_SOURCE" == "$BRANCH_PRESET" ]] && [[ -f "$OUTER_PRESET" ]]; then
     fallback_source="$OUTER_PRESET"
     PRESET_SOURCE="$fallback_source"
@@ -1065,19 +1386,6 @@ check_selected_preset_source_ready() {
     fi
   fi
 
-  if (( rc != 0 )) && cached_source="$(resolve_cached_preset_snapshot)"; then
-    PRESET_SOURCE="$cached_source"
-    PRESET_SOURCE_MATERIALIZED=""
-    rc=0
-    record_preflight_check "file" "selected preset cached fallback" "ok" "$cached_source"
-    check_required_file_recorded "$PRESET_SOURCE" "selected preset cached fallback" || rc=2
-    if path_has_dataless_flag "$PRESET_SOURCE"; then
-      record_preflight_check "materialization" "selected preset cached fallback" "dataless" "$PRESET_SOURCE"
-      rc=2
-    else
-      record_preflight_check "materialization" "selected preset cached fallback" "ok" "$PRESET_SOURCE"
-    fi
-  fi
   return "$rc"
 }
 
@@ -1102,6 +1410,34 @@ PY
   fi
   record_preflight_check "python_entrypoint" "$label" "broken" "$path"
   return 1
+}
+
+check_optional_path_recorded() {
+  local path="$1"
+  local label="$2"
+  if [[ -e "$path" ]]; then
+    record_preflight_check "path" "$label" "ok" "$path"
+  else
+    record_preflight_check "path" "$label" "missing_optional" "$path"
+  fi
+}
+
+check_optional_file_recorded() {
+  local path="$1"
+  local label="$2"
+  if [[ ! -e "$path" ]]; then
+    record_preflight_check "file" "$label" "missing_optional" "$path"
+    return 0
+  fi
+  if [[ ! -f "$path" ]]; then
+    record_preflight_check "file" "$label" "non_regular_optional" "$path"
+    return 0
+  fi
+  if [[ ! -r "$path" ]]; then
+    record_preflight_check "file" "$label" "unreadable_optional" "$path"
+    return 0
+  fi
+  record_preflight_check "file" "$label" "ok" "$path"
 }
 
 check_artifact_path_recorded() {
@@ -1151,11 +1487,19 @@ write_runtime_environment_snapshot() {
     echo "selected_preset_source=$PRESET_SOURCE"
     echo "selected_preset_source_materialized=${PRESET_SOURCE_MATERIALIZED:-}"
     echo "selected_preset_path=$PRESET"
-    echo "selected_preset_snapshot=$PRESET_SNAPSHOT_PATH"
-    echo "stage_filter=${STAGE_FILTER:-}"
-    echo "limit_scale=$LIMIT_SCALE"
-    echo "heartbeat_interval=$HEARTBEAT_INTERVAL"
-    echo "stale_lock_seconds=$STALE_LOCK_SECONDS"
+	    echo "selected_preset_snapshot=$PRESET_SNAPSHOT_PATH"
+	    echo "suite_config_path=$SUITE_CONFIG_PATH"
+	    echo "suite_plan_path=$SUITE_PLAN_PATH"
+	    echo "stage_filter=${STAGE_FILTER:-}"
+    if [[ -n "$STAGE_FILTER" ]]; then
+      echo "gate_contract_scope=filtered_probe"
+    else
+      echo "gate_contract_scope=required_full_gate"
+    fi
+    echo "canonical_gate_output_root=$CANONICAL_OUTROOT"
+	    echo "limit_scale=$LIMIT_SCALE"
+	    echo "heartbeat_interval=$HEARTBEAT_INTERVAL"
+	    echo "stale_lock_seconds=$STALE_LOCK_SECONDS"
     echo "solver_source=$SOURCE"
     echo "solver_binary=$BINARY"
     echo "solver_build_metadata=$SOLVER_BUILD_METADATA"
@@ -1176,13 +1520,17 @@ write_runtime_environment_snapshot() {
     echo "cxx=${CXX:-}"
     echo "profile_mode=${PROFILE_MODE:-}"
     echo "local_skip_self_test=${LOCAL_SKIP_SELF_TEST:-}"
-    echo "enable_state_load_materialization_opt=${ENABLE_STATE_LOAD_MATERIALIZATION_OPT:-}"
-    echo "enable_prev_state_writeback_opt=${ENABLE_PREV_STATE_WRITEBACK_OPT:-}"
-    echo "enable_layout_signature_gate_opt=${ENABLE_LAYOUT_SIGNATURE_GATE_OPT:-}"
-    echo "enable_layout_reuse_zero_elision_opt=${ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT:-}"
-    echo "strong_gate_release_profile=progress40_defaults+ac3_state_materialization"
-    echo "solver_env_scrub=compiler_and_ENABLE_PROFILE_DENSE_RUN_TAG"
-  } > "$ENV_SNAPSHOT"
+	    echo "enable_state_load_materialization_opt=${ENABLE_STATE_LOAD_MATERIALIZATION_OPT:-}"
+	    echo "enable_prev_state_writeback_opt=${ENABLE_PREV_STATE_WRITEBACK_OPT:-}"
+	    echo "enable_layout_signature_gate_opt=${ENABLE_LAYOUT_SIGNATURE_GATE_OPT:-}"
+	    echo "enable_layout_reuse_zero_elision_opt=${ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT:-}"
+    echo "input_generator=$BRANCH_ROOT/branch_gen_case_local.py"
+    echo "validator_oracle=$BRANCH_ROOT/branch_validator_local.py"
+    echo "reference_output_policy=hidden_parent.txt_generator_reference_only"
+    echo "acceptance_contract=branch_validator_local_rooted_tree_plus_all_lca_constraints"
+	    echo "strong_gate_release_profile=progress40_defaults+ac3_state_materialization"
+	    echo "solver_env_scrub=compiler_and_ENABLE_PROFILE_DENSE_RUN_TAG"
+	  } > "$ENV_SNAPSHOT"
 }
 
 prepare_selected_preset() {
@@ -1243,6 +1591,8 @@ run_setup_preflight() {
     record_preflight_check "path" "selected_preset_source_materialized" "ok" "$PRESET_SOURCE_MATERIALIZED"
   fi
   record_preflight_check "path" "selected_preset" "ok" "$PRESET"
+  record_preflight_check "path" "suite_config_path" "ok" "$SUITE_CONFIG_PATH"
+  record_preflight_check "path" "suite_plan_path" "ok" "$SUITE_PLAN_PATH"
   record_preflight_check "value" "stage_filter" "ok" "${STAGE_FILTER:-}"
 
   check_required_command_recorded bash || preflight_rc=2
@@ -1274,6 +1624,8 @@ run_setup_preflight() {
     record_preflight_check "file" "selected preset" "missing" "$BRANCH_PRESET | $OUTER_PRESET"
     preflight_rc=2
   fi
+  check_required_file_recorded "$SUITE_CONFIG_PATH" "suite config" || preflight_rc=2
+  check_required_file_recorded "$SUITE_PLAN_PATH" "suite plan" || preflight_rc=2
   check_python_entrypoint_recorded "$CERTIFY_HELPER" "branch-local certify helper imports" || preflight_rc=2
   check_python_entrypoint_recorded "$BRANCH_ROOT/boj28350_resume.py" "resume helper imports" || preflight_rc=2
 
@@ -1291,6 +1643,8 @@ run_setup_preflight() {
   check_artifact_path_recorded "$CASE_CACHE_ROOT" "case_cache_root" || preflight_rc=2
   check_artifact_path_recorded "$CASE_CACHE_TMP_ROOT" "case_cache_tmp_root" || preflight_rc=2
   check_artifact_path_recorded "$RUN_TMPDIR" "runtime_tmpdir" || preflight_rc=2
+  check_artifact_path_recorded "$SUITE_CONFIG_PATH" "suite_config_path" || preflight_rc=2
+  check_artifact_path_recorded "$SUITE_PLAN_PATH" "suite_plan_path" || preflight_rc=2
   if [[ -n "$PRESET_SOURCE_MATERIALIZED" ]]; then
     check_artifact_path_recorded "$PRESET_SOURCE_MATERIALIZED" "selected_preset_source_materialized" || preflight_rc=2
   fi
@@ -1347,7 +1701,7 @@ verify_output_locality() {
 }
 
 strip_internal_state() {
-  rm -rf "$WORKDIR/.case_cache" "$WORKDIR/.case_cache_tmp" "$WORKDIR/.case_runs_tmp" "$WORKDIR/.stage_filter"
+  strip_internal_state_root "$WORKDIR"
 }
 
 write_failure_summary() {
@@ -1372,6 +1726,8 @@ write_failure_summary() {
   local final_solver_snapshot="$FAILED_ROOT/solver_snapshot"
   local final_non_artifact_current="$FAILED_ROOT/$(basename "$NON_ARTIFACT_CURRENT")"
   local final_non_artifact_report="$FAILED_ROOT/$(basename "$NON_ARTIFACT_REPORT")"
+  local final_suite_config="$FAILED_ROOT/$(basename "$SUITE_CONFIG_PATH")"
+  local final_suite_plan="$FAILED_ROOT/$(basename "$SUITE_PLAN_PATH")"
   local locality_rc=0
 
   if [[ -z "${summary_root:-}" || ! -d "$summary_root" ]]; then
@@ -1420,6 +1776,8 @@ write_failure_summary() {
     echo "solver_snapshot=$final_solver_snapshot"
     echo "non_artifact_tree_current=$final_non_artifact_current"
     echo "non_artifact_tree_report=$final_non_artifact_report"
+    echo "suite_config=$final_suite_config"
+    echo "suite_plan=$final_suite_plan"
   } > "$failure_summary_path"
 
   {
@@ -1452,6 +1810,8 @@ write_failure_summary() {
     echo "- Certify summary: \`$final_certify_summary\`"
     echo "- Non-artifact tree state: \`$final_non_artifact_current\`"
     echo "- Non-artifact tree report: \`$final_non_artifact_report\`"
+    echo "- Suite config: \`$final_suite_config\`"
+    echo "- Suite plan: \`$final_suite_plan\`"
     if command -v tail >/dev/null 2>&1 && [[ -s "$BUILD_STDERR_LOG" ]]; then
       echo
       echo "## Build stderr tail"
@@ -1521,6 +1881,7 @@ preserve_failed_output() {
     return
   fi
 
+  strip_internal_state
   mkdir -p "$OUTPARENT"
   remove_path_retry "$FAILED_ROOT" || fail "failed to clear previous failure snapshot: $FAILED_ROOT"
   mv "$WORKDIR" "$FAILED_ROOT"
@@ -1533,6 +1894,7 @@ cleanup() {
   local locality_rc=0
   trap - EXIT
   set +e
+  stop_certify_heartbeat
   if [[ -n "${CERTIFY_PID:-}" ]] && kill -0 "$CERTIFY_PID" 2>/dev/null; then
     kill "$CERTIFY_PID" 2>/dev/null || true
     wait "$CERTIFY_PID" 2>/dev/null || true
@@ -1629,7 +1991,10 @@ if [[ -e "$BACKUP_ROOT" && ! -d "$BACKUP_ROOT" ]]; then
 fi
 
 mkdir -p "$TMP_PARENT"
-WORKDIR="$(mktemp -d "$TMP_PARENT/$RUN_WORK_TEMPLATE")"
+# Keep the main staging tree under the stable artifact parent instead of the
+# transient .tmp root so certify can publish and preserve branch-local outputs
+# without losing the run tree mid-gate on APFS/iCloud-backed retries.
+WORKDIR="$(mktemp -d "$OUTPARENT/$RUN_WORK_TEMPLATE")"
 ensure_under_artifacts "$WORKDIR"
 init_runtime_artifacts
 init_output_locality_scan
@@ -1662,6 +2027,15 @@ else
   exit "$release_env_rc"
 fi
 
+if write_suite_input_bundle; then
+  :
+else
+  suite_input_rc=$?
+  write_failure_summary "suite_inputs" "$suite_input_rc" "failed to materialize deterministic strong-gate suite inputs"
+  report_failure_context "suite_inputs" "$suite_input_rc" "failed to materialize deterministic strong-gate suite inputs"
+  exit "$suite_input_rc"
+fi
+
 if run_setup_preflight; then
   :
 else
@@ -1690,8 +2064,11 @@ if [[ ! -d "$WORKDIR" ]]; then
 fi
 
 require_executable "$BINARY" "built solver binary"
-SOLVER_SNAPSHOT="$(mktemp "$SNAPSHOT_ROOT/lca_strong_gate.solver.XXXXXX")"
+# Keep the live solver snapshot inside the staging workdir so the certify
+# helper never depends on the shared snapshot cache surviving mid-run cleanup.
+SOLVER_SNAPSHOT="$WORKDIR/solver_snapshot"
 ensure_under_artifacts "$SOLVER_SNAPSHOT"
+remove_path_retry "$SOLVER_SNAPSHOT" || true
 cp "$BINARY" "$SOLVER_SNAPSHOT"
 chmod +x "$SOLVER_SNAPSHOT"
 

@@ -6,6 +6,14 @@ import shutil
 import uuid
 from pathlib import Path
 
+RETRY_HELPER_SUBDIRS = {
+    "control": ("control",),
+    "logs": ("logs",),
+    "runtime": ("runtime",),
+    "inputs": ("inputs",),
+    "preflight": ("preflight",),
+}
+
 
 def _remove_path(path: Path) -> None:
     if not path.exists() and not path.is_symlink():
@@ -17,6 +25,48 @@ def _remove_path(path: Path) -> None:
         path.unlink()
     except FileNotFoundError:
         return
+
+
+def resolve_branch_path(branch_root: Path, value: str | Path) -> Path:
+    raw = Path(value).expanduser()
+    if raw.is_absolute():
+        return raw.resolve()
+
+    parts = [part for part in raw.parts if part not in ("", ".")]
+    artifact_root_name = "artifacts"
+    # Retry helpers sometimes round-trip branch-prefixed paths such as
+    # branch_3/artifacts/... or branch_3/.ouroboros/... back into a helper even
+    # when the minimal artifact guard does not expose the shared resolver.
+    artifact_idx = next((idx for idx, part in enumerate(parts) if part == artifact_root_name), None)
+    if artifact_idx is not None and artifact_idx > 0:
+        branch_prefix = parts[:artifact_idx]
+        if all(part == branch_root.name for part in branch_prefix):
+            parts = parts[artifact_idx:]
+    while parts and parts[0] == branch_root.name:
+        parts.pop(0)
+    while len(parts) > 1 and parts[0] == artifact_root_name and parts[1] == artifact_root_name:
+        parts.pop(0)
+    return (branch_root / Path(*parts)).resolve() if parts else branch_root.resolve()
+
+
+def resolve_artifact_output_path(
+    branch_root: Path,
+    value: str | Path,
+    ensure_under_artifacts,
+) -> Path:
+    return ensure_under_artifacts(resolve_branch_path(branch_root, value))
+
+
+def retry_helper_dir(report_root: Path, namespace: str) -> Path:
+    try:
+        suffix = RETRY_HELPER_SUBDIRS[namespace]
+    except KeyError as exc:
+        raise ValueError(f"unknown retry helper namespace: {namespace}") from exc
+    return report_root.joinpath(*suffix)
+
+
+def retry_helper_path(report_root: Path, namespace: str, *parts: str) -> Path:
+    return retry_helper_dir(report_root, namespace).joinpath(*parts)
 
 
 def prepare_output_dir(path: Path) -> Path:

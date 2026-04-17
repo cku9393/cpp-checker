@@ -16,7 +16,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from retry_artifact_io import prepare_output_dir, write_text_output
+from retry_artifact_io import prepare_output_dir, resolve_artifact_output_path, write_text_output
 
 
 ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;?]*[ -/]*[@-~]")
@@ -118,15 +118,22 @@ def parse_args() -> argparse.Namespace:
 
 def _load_artifact_guard(branch_root: Path):
     sys.path.insert(0, str(branch_root))
-    from artifact_paths import ensure_under_artifacts  # type: ignore
+    import artifact_paths as artifact_guard  # type: ignore
 
-    return ensure_under_artifacts
+    return artifact_guard.ensure_under_artifacts, getattr(
+        artifact_guard, "resolve_branch_artifact_path", None
+    )
 
 
-def _resolve_artifact_path(branch_root: Path, ensure_under_artifacts, value: str) -> Path:
-    path = Path(value).expanduser()
-    resolved = path if path.is_absolute() else (branch_root / path).resolve()
-    return ensure_under_artifacts(resolved)
+def _resolve_artifact_path(
+    branch_root: Path,
+    ensure_under_artifacts,
+    value: str,
+    shared_resolver=None,
+) -> Path:
+    if shared_resolver is not None:
+        return shared_resolver(value)
+    return resolve_artifact_output_path(branch_root, value, ensure_under_artifacts)
 
 
 def strip_ansi(raw_text: str) -> str:
@@ -207,10 +214,16 @@ def main() -> int:
         if args.branch_root
         else Path(__file__).resolve().parent.parent
     )
-    ensure_under_artifacts = _load_artifact_guard(branch_root)
-    workflow_log = _resolve_artifact_path(branch_root, ensure_under_artifacts, args.workflow_log)
-    attempt_dir = _resolve_artifact_path(branch_root, ensure_under_artifacts, args.attempt_dir)
-    report_root = _resolve_artifact_path(branch_root, ensure_under_artifacts, args.report_root)
+    ensure_under_artifacts, shared_resolver = _load_artifact_guard(branch_root)
+    workflow_log = _resolve_artifact_path(
+        branch_root, ensure_under_artifacts, args.workflow_log, shared_resolver
+    )
+    attempt_dir = _resolve_artifact_path(
+        branch_root, ensure_under_artifacts, args.attempt_dir, shared_resolver
+    )
+    report_root = _resolve_artifact_path(
+        branch_root, ensure_under_artifacts, args.report_root, shared_resolver
+    )
     prepare_output_dir(attempt_dir)
     prepare_output_dir(report_root)
 

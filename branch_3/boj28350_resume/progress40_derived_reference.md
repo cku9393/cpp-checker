@@ -14,6 +14,54 @@
 - `boj28350_bundle_archive/boj28350_current_state_summary.md`
 - `boj28350_bundle_archive/boj28350_next_session_briefing.md`
 
+## Progress40 review section
+
+### 재사용 가능한 solver 아이디어
+
+1. progress40의 실제 추가분은 새 solver family가 아니라 `progress39` 위에 얹힌 `layout signature reuse gate`다.
+   `boj28350_progress40_results_merged.json`은 `base_source=boj28350_literature_progress39_same_layout_zero_span_elision.cpp`, `output_source=boj28350_literature_progress40_layout_signature_reuse_gate.cpp`를 기록한다.
+2. source상 최적화는 독립 heuristic이 아니라 누적 gate stack이다.
+   `ENABLE_PACK_ENCODE_NORMALIZE_OPT` -> `ENABLE_PACK_ENCODE_NORMALIZE_CORE_OPT` -> `ENABLE_CANONICAL_NORMALIZE_OPT` -> `ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT` -> `ENABLE_LAYOUT_SIGNATURE_GATE_OPT` 순서를 유지해야 한다.
+3. progress40이 직접 계측한 reusable subaxis는 아래 일곱 축이다.
+   `signature source load`
+   `signature materialize`
+   `signature compare core`
+   `same-layout gate`
+   `zero-span eligibility gate`
+   `fastpath commit core`
+   `connector hotpath reuse`
+4. source는 `baseline`, `delta_preserved_then_skeleton`, `connector_skeleton`, `general_delta` route별 `lgate_*` 시간을 분리한다.
+   따라서 branch-local 후속 최적화도 route-aware attribution을 유지한 채 residual을 줄여야 한다.
+5. support artifact도 progress40 line의 일부다.
+   `run_progress40_case_supervised.py`, `progress40_finalize_case.py`, `reconcile_progress40_results.py`, `merge_progress40_results.py`, `progress40_case_journal.jsonl`, `progress40_resume_remaining.sh`를 함께 봐야 reproducibility 해석이 맞다.
+
+### 보존해야 할 invariant
+
+1. `layout signature gate`는 canonical normalize와 same-layout reuse 위에서만 의미가 있다.
+   source 계측도 `__cnorm_metric -> __lreuse_metric -> __lgate_metric` 체인 안에서만 `time_lgate_*`와 `lgate_*`를 누적한다.
+2. fastpath commit은 `same-layout gate`와 `zero-span eligibility gate`를 통과한 뒤에만 해석해야 한다.
+   즉 branch-local 수정은 gate를 느슨하게 만드는 방향이 아니라, 동일 semantics를 보존한 채 signature load/materialize/compare와 zero-span commit residual을 줄이는 방향이어야 한다.
+3. progress40이 남긴 안전한 다음 축은 새 decomposition family 이동이 아니라 `zero-span eligibility and fastpath commit` 내부 residual 축소다.
+   `connector hotpath normalize reuse`는 sampled aggregate share가 `0.0036%`라서 1차 타깃이 아니다.
+4. hard family에서 이미 기각된 큰 pivot을 다시 들고 오면 안 된다.
+   `shared backbone`, `owner-local exact oracle`, `BC local-surgery`는 모두 hard family에서 cost를 줄이지 못한 채 기각됐다.
+5. bundled progress40 evidence는 `partial` authoritative 상태다.
+   bundle의 gate row는 현재 branch-local `./lca_strong_gate.sh`와 `./lca_boj3s_gate.sh` 통과를 대체하지 않는다.
+
+### stress-test 교훈과 branch-local 해석
+
+1. progress40과 branch-local 후속 검증 모두 `comb_rect_dense`, `multi_comb_rect`, `multi_comb_cap`, `caterpillar_rect_dense`를 대표 hard family로 계속 취급해야 한다.
+2. 이 family가 중요한 이유는 큰 component가 잘 줄지 않고, 같은 query 묶음이 여러 deletion 단계에 오래 남으며, 같은 witness/connector/dispatch 재계산을 반복 강요하기 때문이다.
+3. report와 merged results의 authoritative sampled after aggregate는 아래 residual 순서를 고정한다.
+   `zero-span eligibility and fastpath commit` `0.758605ms`, `49.9983%`
+   `layout signature compare and reuse gate core` `0.379830ms`, `25.0339%`
+   `signature source load and materialize` `0.378774ms`, `24.9643%`
+   `connector hotpath normalize reuse` `0.000054ms`, `0.0036%`
+4. bundle이 실제로 닫은 것은 LOCAL 512 matrix와 `both_on_multi_1024_release` 1회뿐이다.
+   dense `1024` repeat, dense `4096`, multi `4096`, long-run terminal row persistence는 아직 미완료라서 이후 branch-local gate failure도 먼저 이 missing 범위를 염두에 두고 읽어야 한다.
+5. 따라서 branch-local에서 progress40 line을 잇는 첫 해석은 아래 한 줄로 고정한다.
+   `next pivot after layout-gate round: zero-span eligibility and fastpath commit`
+
 ## 재사용해야 할 progress40 기법
 
 1. progress40은 새 알고리즘 family가 아니라 `progress39` 위에 `layout signature reuse gate`를 얹은 라운드다.
@@ -30,7 +78,9 @@
    즉 progress40은 pack/normalize -> same-layout reuse -> zero-span elision -> fastpath commit의 누적 최적화 라인을 전제로 한다.
 4. route-aware attribution은 계속 보존해야 한다.
    progress40 source는 `baseline`, `delta_preserved_then_skeleton`, `connector_skeleton`, `general_delta` route별 `lgate_*` 시간을 따로 집계한다.
-5. reproducibility support artifact도 progress40 구성 일부다.
+5. source상 `__lgate_opt`는 `__cnorm_metric` -> `__lreuse_metric` -> `__lgate_metric` 체인 위에서만 의미가 있다.
+   즉 branch-local 후속 수정도 `layout gate`를 독립 heuristic처럼 떼어내지 말고, canonical normalize와 layout reuse가 살아 있는 누적 라인 안에서 residual을 줄여야 한다.
+6. reproducibility support artifact도 progress40 구성 일부다.
    `run_progress40_case_supervised.py`, `progress40_finalize_case.py`, `reconcile_progress40_results.py`, `merge_progress40_results.py`, `progress40_case_journal.jsonl`, `progress40_resume_remaining.sh`
 
 ## 다시 들고 오면 안 되는 접근
@@ -47,6 +97,23 @@
    먼저 줄여야 할 것은 `zero-span eligibility and fastpath commit`, 그다음이 `signature source load and materialize`와 `layout signature compare and reuse gate core`다.
 6. `progress38_authoritative_close_not_completed`는 carry-forward 메타 상태일 뿐 progress40 package 안에서 actual runnable close로 승격되지 않았다.
    따라서 partial close를 full close처럼 취급하면 안 된다.
+
+## bundled acceptance history
+
+1. bundled `progress40` authoritative state는 `status: partial`이다.
+   `base_source`는 `boj28350_literature_progress39_same_layout_zero_span_elision.cpp`, `output_source`는 `boj28350_literature_progress40_layout_signature_reuse_gate.cpp`다.
+2. execution layer acceptance history는 아래 세 줄이 핵심이다.
+   `smoke_detached_256` validator OK, elapsed `3.428s`
+   `detached_multi_512_sampled_oneoff` validator OK, elapsed `5.006s`
+   `synthetic_kill_512`는 supervisor 강제 종료 뒤 `progress40_finalize_case.py`로 terminal `result.json` 복구 확인
+3. smoke/gate acceptance history는 `gate_connector_only_dense_256_after`, `gate_both_on_dense_256_after`, `gate_both_on_multi_512_after` 세 줄이 validator-clean으로 닫혀 있다.
+   이는 layout-gate 라인이 적어도 small/medium hard representative에서는 correctness와 실행 계층을 함께 유지했다는 의미다.
+4. authoritative LOCAL 512 acceptance history는 before/after dense base, dense sampled, multi sampled의 10개 row가 모두 완료된 상태다.
+   dense representative는 대체로 `27.138s`에서 `28.082s`, `after_both_on_multi_512_sampled`는 `5.005s`다.
+5. release acceptance history는 아직 부분적이다.
+   현재 bundle이 실제 release로 닫은 것은 `both_on_multi_1024_release` 1회(`22.703s`)뿐이며, dense `1024` repeat와 `4096` representative는 미완료다.
+6. bundled current safe conclusion은 `next pivot after layout-gate round: zero-span eligibility and fastpath commit`이다.
+   즉 acceptance history를 읽는 목적도 새 family로 갈아타자는 뜻이 아니라, partial authoritative 범위 안에서 다음 residual 순서를 다시 고정하는 데 있다.
 
 ## lca_tree_stress_v5 기준 benchmark expectation
 
@@ -86,6 +153,15 @@
 - long-run terminal row persistence authoritative close
 
 즉 progress40 package는 `partial` 상태다. branch_3가 이보다 강한 주장을 하려면 fresh branch-local evidence가 추가로 필요하다.
+
+### branch-local gate expectation으로 번역할 때의 주의점
+
+1. bundle 안의 `gate_*` row는 branch-local `./lca_strong_gate.sh`나 `./lca_boj3s_gate.sh` 통과를 대체하지 않는다.
+   이 row들은 progress40 라인이 hard representative 일부에서 validator-clean이었다는 근거이지, 현재 branch_3 working tree의 required gate evidence는 아니다.
+2. branch-local validation은 가볍게는 `./lca_smoke.sh`부터 시작하되, 실제 acceptance는 fresh `./lca_strong_gate.sh`와 `./lca_boj3s_gate.sh`로 다시 닫아야 한다.
+   이유는 bundled missing set에 dense `1024` repeat, dense `4096`, multi `4096`, long-run terminal row persistence가 그대로 남아 있기 때문이다.
+3. hard family 해석은 계속 `comb_rect_dense`, `multi_comb_rect`, `multi_comb_cap`, `caterpillar_rect_dense` 중심이어야 한다.
+   이 family는 같은 witness/connector/dispatch 재계산을 오래 강요하므로, 후속 gate 실패도 먼저 `zero-span eligibility and fastpath commit` 축과 그 주변 materialization/layout gate residual로 읽어야 한다.
 
 ### direct aggregate 기준 현재 기대 residual
 

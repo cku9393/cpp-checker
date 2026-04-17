@@ -493,6 +493,167 @@ class RefreshAnalysisStateFallbackTests(unittest.TestCase):
             )
             self.assertNotIn("`/tmp/branch_certify_suite.py::Timed solver invocation [466-475]`", iteration_text)
 
+    def test_refresh_does_not_carry_forward_stale_axes_or_anchors_for_new_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            attempt_dir = temp_root / "attempt_028"
+            report_root = temp_root / "retry_loop"
+            attempt_dir.mkdir(parents=True, exist_ok=True)
+            report_root.mkdir(parents=True, exist_ok=True)
+
+            smoke_path = temp_root / "lca_smoke.sh"
+            smoke_path.write_text(
+                "\n".join(f"line {idx}" for idx in range(1, 21)) + "\n",
+                encoding="utf-8",
+            )
+
+            (attempt_dir / "failure_report.json").write_text(
+                json.dumps(
+                    {
+                        "attempt": 28,
+                        "timestamp": "2026-04-11 02:16:52 KST",
+                        "session_id": "orch_dd0f78e991dd",
+                        "execution_id": "exec_a1f372e5ef17",
+                        "failed_acs": ["2", "3"],
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            (attempt_dir / "failure_breakdown.json").write_text(
+                json.dumps(
+                    {
+                        "attempt": 28,
+                        "timestamp": "2026-04-11 02:16:52 KST",
+                        "session_id": "orch_dd0f78e991dd",
+                        "execution_id": "exec_a1f372e5ef17",
+                        "failed_ac_breakdowns": [
+                            {
+                                "ac_index": "2",
+                                "failure_type": "stall/no-activity",
+                                "failure_family": "generic_retry_failure",
+                                "interpretation_lane": "pre-gate-stability",
+                                "primary_axis": "zero_span_fastpath",
+                                "secondary_axis": None,
+                                "profile_mode": None,
+                                "next_probe_command": "./lca_smoke.sh",
+                                "current_summary_pivot": "zero-span eligibility and fastpath commit",
+                                "retry_critical_anchors": [],
+                                "structural_focus": [
+                                    {
+                                        "path": str(smoke_path),
+                                        "focus_ranges": ["12-12", "15-16"],
+                                        "enclosing_symbols": [
+                                            "function classify_inner_wrapper_exit [10-18]"
+                                        ],
+                                        "note": "current attempt structural focus from smoke wrapper trace",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            analysis_log = attempt_dir / "analysis.log"
+            analysis_log.write_text("analysis ok\n", encoding="utf-8")
+            state_path = temp_root / "failure_analysis_state.json"
+            state_path.write_text(
+                json.dumps(
+                    {
+                        "analysis_revision": 189,
+                        "current_for_latest_failure": True,
+                        "current_failure_attempt": "attempt_027",
+                        "current_failure_session_id": "orch_21832d83e390",
+                        "current_failure_timestamp": "2026-04-11 00:24:14 KST",
+                        "current_failure_signature": "attempt_027|orch_21832d83e390|2026-04-11 00:24:14 KST|2,3,8",
+                        "pinned_primary_axis": "zero_span_fastpath",
+                        "pinned_secondary_axis": "watch_diff",
+                        "pinned_acs": ["2"],
+                        "pinned_paths": ["/tmp/stale.cpp"],
+                        "pinned_symbols": ["function stale_owner [90-99]"],
+                        "next_probe_command": "./lca_smoke.sh",
+                        "latest_retry_statement_anchors": [
+                            {
+                                "path": "/tmp/stale.cpp",
+                                "label": "stale carry-forward anchor",
+                                "focus_range": "90-99",
+                                "symbol": "function stale_owner [90-99]",
+                                "excerpt": "stale();",
+                                "evidence": "old failure signature only",
+                                "role": "solver-side fallback owner",
+                            }
+                        ],
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            iteration_path = temp_root / "failure_analysis_iteration.md"
+            iteration_path.write_text(
+                "\n".join(
+                    [
+                        "# Failure Analysis Iteration Ledger",
+                        "",
+                        "- Current failure signature: `attempt_027|orch_21832d83e390|2026-04-11 00:24:14 KST|2,3,8`",
+                        "",
+                        "## Latest Retry Failure Points",
+                        "",
+                        "1. `/tmp/stale.cpp::stale carry-forward anchor [90-99]`",
+                        "   Statement: `stale();`",
+                        "   Evidence: `old failure signature only`",
+                        "   Role: `solver-side fallback owner`",
+                        "",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            result = self.run_helper(
+                "--attempt",
+                "28",
+                "--attempt-dir",
+                str(attempt_dir),
+                "--report-root",
+                str(report_root),
+                "--analysis-log",
+                str(analysis_log),
+                "--analysis-round",
+                "1",
+                "--state-file",
+                str(state_path),
+                "--iteration-file",
+                str(iteration_path),
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr or result.stdout)
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertEqual(state["current_failure_attempt"], "attempt_028")
+            self.assertIsNone(state["pinned_secondary_axis"])
+            self.assertEqual(state["pinned_paths"][0], str(smoke_path))
+            self.assertEqual(
+                state["latest_retry_statement_anchors"][0]["path"],
+                str(smoke_path),
+            )
+            self.assertEqual(
+                state["latest_retry_statement_anchors"][0]["focus_range"],
+                "12-12",
+            )
+            self.assertNotEqual(
+                state["latest_retry_statement_anchors"][0]["path"],
+                "/tmp/stale.cpp",
+            )
+            self.assertIn(
+                f"{smoke_path}::focus 12-12 [12-12]",
+                state["next_narrowing_target"],
+            )
+
     def test_refresh_uses_focused_ac_from_guard_rejected_nominal_pass_fallback(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             temp_root = Path(tmp)

@@ -52,6 +52,32 @@ Required acceptance procedure:
 ./lca_acceptance_repeatability.sh 2
 ```
 
+Solver-change workflow notes:
+
+- before any major rewrite or pivot of
+  `boj28350_resume/boj28350_branch_3_solver.cpp`, both required research
+  source sets must be reviewed and recorded first
+- `source set A` is the branch-local research package:
+  `boj28350_resume/README.md`,
+  `boj28350_resume/current_state_summary.md`,
+  `boj28350_resume/next_session_briefing.md`,
+  `boj28350_complete_master_document_partA_raw.md`,
+  `boj28350_integrated_technical_history.md`,
+  `boj28350_literature_progress7_bcdecomp_report.md`,
+  `literature_grade_proof_package.md`,
+  `boj28350_resume/pre_rewrite_checkpoint.md`,
+  `boj28350_resume/pre_rewrite_synthesis_note.md`, and
+  `boj28350_resume/progress40_derived_reference.md`
+- `source set B` is the bundled `progress40` authoritative package:
+  `boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`,
+  `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`,
+  and `boj28350_bundle_archive/boj28350_progress40_results_merged.json`
+- do not open a planning note, retry note, or solver-side major-change task as
+  a rewrite/pivot unless it explicitly cites
+  `boj28350_resume/pre_rewrite_checkpoint.md` or
+  `boj28350_resume/pre_rewrite_synthesis_note.md` and restates that both
+  source-set reviews are complete in the current working tree
+
 AC7 repeatability helper after the required gates are individually green:
 
 ```bash

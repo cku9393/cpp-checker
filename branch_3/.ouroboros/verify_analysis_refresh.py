@@ -18,7 +18,23 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline-epoch", required=True, type=float)
     parser.add_argument("--analysis-log", required=True)
-    parser.add_argument("--target", action="append", default=[])
+    parser.add_argument(
+        "--target",
+        action="append",
+        default=[],
+        help=(
+            "Analysis asset to treat as refreshed. Retry start stays blocked until at least one "
+            "branch-local analysis asset is passed here and is newer than the baseline."
+        ),
+    )
+    parser.add_argument(
+        "--target-from-current-state",
+        action="store_true",
+        help=(
+            "Expand the verifier target set from refresh_evidence in --require-current-state so the "
+            "retry workflow only clears when it recognizes a refreshed branch-local analysis asset."
+        ),
+    )
     parser.add_argument(
         "--require-json-key",
         action="append",
@@ -67,6 +83,25 @@ NON_QUALIFYING_TARGET_NAMES = {
     "verify_analysis_refresh.py",
 }
 
+RECOGNIZED_BRANCH_LOCAL_ANALYSIS_TARGET_NAMES = (
+    "capture_failure_context.py",
+    "failure_analysis_playbook.md",
+    "failure_analysis_iteration.md",
+    "failure_analysis_state.json",
+    "launch_retry_loop.sh",
+    "prepare_retry_attempt_state.py",
+    "refresh_analysis_state.py",
+    "restart_retry_loop_after_attempt.sh",
+    "run_until_pass_progress40.sh",
+    "verify_analysis_refresh.py",
+)
+
+RECOGNIZED_SUPPORTING_BRANCH_LOCAL_ANALYSIS_TARGET_NAMES = tuple(
+    name
+    for name in RECOGNIZED_BRANCH_LOCAL_ANALYSIS_TARGET_NAMES
+    if name not in {"failure_analysis_state.json", "verify_analysis_refresh.py"}
+)
+
 REQUIRED_REFRESH_EVIDENCE_TIMESTAMPS = (
     "analysis_refresh_timestamp",
     "latest_failure_report_timestamp",
@@ -102,6 +137,20 @@ def branch_local_analysis_root(state_path: Path) -> Path:
     return state_path.resolve().parent
 
 
+def resolve_recognized_branch_local_analysis_targets(
+    state_path: Path,
+    *,
+    supporting_only: bool = False,
+) -> list[Path]:
+    analysis_root = branch_local_analysis_root(state_path)
+    target_names = (
+        RECOGNIZED_SUPPORTING_BRANCH_LOCAL_ANALYSIS_TARGET_NAMES
+        if supporting_only
+        else RECOGNIZED_BRANCH_LOCAL_ANALYSIS_TARGET_NAMES
+    )
+    return [analysis_root / name for name in target_names]
+
+
 def resolve_branch_local_analysis_asset(state_path: Path, asset_path: Path) -> Path | None:
     analysis_root = branch_local_analysis_root(state_path)
     resolved_asset = asset_path.expanduser().resolve()
@@ -112,8 +161,54 @@ def resolve_branch_local_analysis_asset(state_path: Path, asset_path: Path) -> P
     return resolved_asset
 
 
+def append_unique_path(paths: list[Path], candidate: Path) -> None:
+    resolved_candidate = candidate.expanduser().resolve()
+    if any(existing.expanduser().resolve() == resolved_candidate for existing in paths):
+        return
+    paths.append(resolved_candidate)
+
+
+def load_workflow_recognized_targets_from_state(state_path: Path) -> list[Path]:
+    state_payload = load_structured_dict(state_path)
+    refresh_evidence = state_payload.get("refresh_evidence")
+    if not isinstance(refresh_evidence, dict):
+        raise ValueError(f"`{state_path}` refresh_evidence is missing or not a JSON object")
+
+    recognized_targets = {
+        path.expanduser().resolve()
+        for path in resolve_recognized_branch_local_analysis_targets(state_path)
+    }
+    targets: list[Path] = []
+    append_unique_path(targets, state_path.resolve())
+    for asset in resolve_qualifying_refresh_assets(state_path, refresh_evidence):
+        resolved_asset = resolve_branch_local_analysis_asset(state_path, asset)
+        if resolved_asset is None:
+            continue
+        if resolved_asset not in recognized_targets:
+            continue
+        append_unique_path(targets, resolved_asset)
+
+    freshness_record = refresh_evidence.get("freshness_record")
+    if isinstance(freshness_record, dict):
+        refreshed_asset_text = normalize_md_scalar(freshness_record.get("refreshed_asset"))
+        if refreshed_asset_text is not None:
+            refreshed_asset = resolve_branch_local_analysis_asset(
+                state_path,
+                Path(refreshed_asset_text),
+            )
+            if (
+                refreshed_asset is not None
+                and refreshed_asset in recognized_targets
+                and is_qualifying_target(refreshed_asset)
+            ):
+                append_unique_path(targets, refreshed_asset)
+
+    return targets
+
+
 MARKDOWN_ATTEMPT_RE = re.compile(r"^# Failure (?:Report|Breakdown): Attempt (\d+)\s*$", re.MULTILINE)
 ANALYSIS_SESSION_HEADING_RE = re.compile(r"^# Analysis Session Summary\s*$", re.MULTILINE)
+ITERATION_LEDGER_HEADING_RE = re.compile(r"^# Failure Analysis Iteration Ledger\s*$", re.MULTILINE)
 MARKDOWN_META_RE = re.compile(r"^- (?P<key>[^:]+): `(?P<value>[^`]*)`$", re.MULTILINE)
 MARKDOWN_FAILED_ACS_RE = re.compile(r"^- Failed ACs: (?P<value>.+)$", re.MULTILINE)
 MARKDOWN_FAILED_BREAKDOWN_RE = re.compile(r"^### AC (\d+):(?: \[FAIL\])?\s+", re.MULTILINE)
@@ -197,6 +292,16 @@ def load_analysis_session_metadata(path: Path) -> dict[str, str]:
     metadata = {match.group("key"): match.group("value") for match in MARKDOWN_META_RE.finditer(text)}
     if not metadata:
         raise ValueError(f"`{path}` does not expose any analysis-session metadata bullets")
+    return metadata
+
+
+def load_iteration_metadata(path: Path) -> dict[str, str]:
+    text = path.read_text()
+    if not ITERATION_LEDGER_HEADING_RE.search(text):
+        raise ValueError(f"`{path}` is not a supported failure-analysis iteration ledger")
+    metadata = {match.group("key"): match.group("value") for match in MARKDOWN_META_RE.finditer(text)}
+    if not metadata:
+        raise ValueError(f"`{path}` does not expose any failure-analysis metadata bullets")
     return metadata
 
 
@@ -536,11 +641,131 @@ def resolve_supporting_refresh_assets(
     )
 
 
+def resolve_recognized_branch_local_targets(
+    state_path: Path,
+    targets: list[Path],
+) -> list[Path]:
+    recognized_target_roots = {
+        path.expanduser().resolve()
+        for path in resolve_recognized_branch_local_analysis_targets(state_path)
+    }
+    recognized_targets: list[Path] = []
+    seen: set[Path] = set()
+    for target in targets:
+        resolved_target = resolve_branch_local_analysis_asset(state_path, target)
+        if (
+            resolved_target is None
+            or resolved_target not in recognized_target_roots
+            or resolved_target in seen
+        ):
+            continue
+        seen.add(resolved_target)
+        recognized_targets.append(resolved_target)
+    return recognized_targets
+
+
+def verify_freshness_record_recognized_by_targets(
+    state_path: Path,
+    refresh_evidence: dict[str, object],
+    current_failure: dict[str, object],
+    targets: list[Path],
+) -> list[str]:
+    recognized_targets = resolve_recognized_branch_local_targets(state_path, targets)
+    if not recognized_targets:
+        analysis_root = branch_local_analysis_root(state_path)
+        rendered_targets = ", ".join(str(path) for path in targets) or "none"
+        raise ValueError(
+            f"`{state_path}` retry-start target set does not include any branch-local analysis asset under "
+            f"`{analysis_root}` (targets: {rendered_targets})"
+        )
+
+    refreshed_asset = resolve_freshness_record_asset(
+        state_path,
+        refresh_evidence,
+        current_failure,
+    )
+    recognized_target_set = {path.resolve() for path in recognized_targets}
+    if refreshed_asset.resolve() not in recognized_target_set:
+        rendered_targets = ", ".join(str(path) for path in recognized_targets)
+        raise ValueError(
+            f"`{state_path}` freshness_record.refreshed_asset `{refreshed_asset}` is not one of the "
+            f"workflow-recognized branch-local retry-start targets ({rendered_targets})"
+        )
+
+    return [f"{state_path}:recognized_refresh_target={refreshed_asset}"]
+
+
+def verify_recognized_refresh_targets(
+    state_path: Path,
+    refresh_evidence: dict[str, object],
+    targets: list[Path],
+    *,
+    baseline_epoch: float,
+    latest_failure_epoch: float | None,
+    latest_failure_label: str | None,
+) -> list[str]:
+    supporting_assets = resolve_supporting_refresh_assets(state_path, refresh_evidence)
+    supporting_by_path = {asset.resolve(): asset for asset in supporting_assets}
+    freshness_record = refresh_evidence.get("freshness_record")
+    designated_asset: Path | None = None
+    if isinstance(freshness_record, dict):
+        refreshed_asset_text = normalize_md_scalar(freshness_record.get("refreshed_asset"))
+        if refreshed_asset_text is not None:
+            designated_asset = resolve_branch_local_analysis_asset(
+                state_path,
+                Path(refreshed_asset_text),
+            )
+
+    recognized_targets: list[Path] = []
+    seen: set[Path] = set()
+    for target in targets:
+        try:
+            resolved_target = target.expanduser().resolve()
+            mtime = target.stat().st_mtime
+        except OSError:
+            continue
+        if resolved_target not in supporting_by_path:
+            continue
+        if mtime < baseline_epoch:
+            continue
+        if latest_failure_epoch is not None and mtime <= latest_failure_epoch:
+            continue
+        canonical_target = supporting_by_path[resolved_target]
+        if canonical_target in seen:
+            continue
+        seen.add(canonical_target)
+        recognized_targets.append(canonical_target)
+
+    if recognized_targets:
+        if designated_asset is None or designated_asset.resolve() not in {
+            target.resolve() for target in recognized_targets
+        }:
+            designated_label = str(designated_asset) if designated_asset is not None else "missing"
+            raise ValueError(
+                f"`{state_path}` freshness_record.refreshed_asset `{designated_label}` is not one of the "
+                "workflow-recognized refreshed analysis targets that cleared retry preflight"
+            )
+        return [
+            *[f"{state_path}:recognized_refresh_target={target}" for target in recognized_targets],
+            f"{state_path}:recognized_freshness_record_asset={designated_asset}",
+        ]
+
+    recorded_targets = ", ".join(str(asset) for asset in supporting_assets) or "none"
+    failure_label = latest_failure_label or "unknown latest failure timestamp"
+    raise ValueError(
+        f"`{state_path}` does not have any supporting refreshed analysis asset that is both newer than "
+        f"baseline/latest failure and recognized by the retry-start workflow targets "
+        f"(latest failure `{failure_label}`; recorded supporting assets: {recorded_targets})"
+    )
+
+
 def verify_post_failure_refresh_asset_freshness(
     state_path: Path,
     refresh_evidence: dict[str, object],
     latest_failure_epoch: float | None,
     latest_failure_label: str | None,
+    *,
+    require_iteration_metadata: bool = True,
 ) -> list[str]:
     state_payload = load_structured_dict(state_path)
     current_payload = state_payload.get("current_failure")
@@ -575,7 +800,17 @@ def verify_post_failure_refresh_asset_freshness(
             f"`{state_path}` freshness_record.refreshed_asset `{refreshed_asset}` could not be stat'ed"
         ) from exc
     if mtime > latest_failure_epoch:
-        return [f"{state_path}:post_failure_refresh_asset={refreshed_asset}"]
+        markers = [f"{state_path}:post_failure_refresh_asset={refreshed_asset}"]
+        if require_iteration_metadata and refreshed_asset.name == "failure_analysis_iteration.md":
+            markers.extend(
+                verify_iteration_refresh_asset(
+                    refreshed_asset,
+                    current_failure,
+                    latest_failure_epoch,
+                    latest_failure_label,
+                )
+            )
+        return markers
 
     failure_label = latest_failure_label or "unknown latest failure timestamp"
     raise ValueError(
@@ -585,7 +820,94 @@ def verify_post_failure_refresh_asset_freshness(
     )
 
 
-def verify_current_state(state_path: Path, report_path: Path, breakdown_path: Path) -> list[str]:
+def verify_iteration_refresh_asset(
+    iteration_path: Path,
+    current_failure: dict[str, object],
+    latest_failure_epoch: float | None,
+    latest_failure_label: str | None,
+) -> list[str]:
+    metadata = load_iteration_metadata(iteration_path)
+
+    current_flag = normalize_md_scalar(metadata.get("Current for latest failure"))
+    if current_flag is None or current_flag.lower() not in {"yes", "true"}:
+        raise ValueError(f"`{iteration_path}` is not marked current for latest failure")
+
+    failed_attempt = format_attempt_label(metadata.get("Failed attempt"))
+    if failed_attempt != current_failure.get("attempt_label"):
+        raise ValueError(
+            f"`{iteration_path}` failed attempt `{failed_attempt}` does not match latest failure "
+            f"`{current_failure.get('attempt_label')}`"
+        )
+
+    failure_session = normalize_md_scalar(metadata.get("Current failure session"))
+    if failure_session != current_failure.get("session_id"):
+        raise ValueError(
+            f"`{iteration_path}` current failure session `{failure_session}` does not match latest failure "
+            f"`{current_failure.get('session_id')}`"
+        )
+
+    expected_execution = normalize_md_scalar(str(current_failure.get("execution_id") or ""))
+    failure_execution = normalize_md_scalar(metadata.get("Current failure execution"))
+    if expected_execution and failure_execution != expected_execution:
+        raise ValueError(
+            f"`{iteration_path}` current failure execution `{failure_execution}` does not match latest failure "
+            f"`{expected_execution}`"
+        )
+
+    failure_timestamp = normalize_md_scalar(metadata.get("Current failure timestamp"))
+    if failure_timestamp != current_failure.get("timestamp"):
+        raise ValueError(
+            f"`{iteration_path}` current failure timestamp `{failure_timestamp}` does not match latest failure "
+            f"`{current_failure.get('timestamp')}`"
+        )
+
+    failure_signature = normalize_md_scalar(metadata.get("Current failure signature"))
+    if failure_signature != current_failure.get("failure_signature"):
+        raise ValueError(
+            f"`{iteration_path}` current failure signature `{failure_signature}` does not match latest failure "
+            f"`{current_failure.get('failure_signature')}`"
+        )
+
+    refresh_timestamp = normalize_md_scalar(metadata.get("Analysis refresh timestamp"))
+    refresh_dt = parse_branch_timestamp(refresh_timestamp)
+    if refresh_dt is None:
+        raise ValueError(f"`{iteration_path}` is missing a parseable analysis refresh timestamp")
+    if latest_failure_epoch is not None and refresh_dt.timestamp() <= latest_failure_epoch:
+        failure_label = latest_failure_label or "unknown latest failure timestamp"
+        raise ValueError(
+            f"`{iteration_path}` analysis refresh timestamp `{refresh_timestamp}` is not newer than latest failed "
+            f"attempt timestamp `{failure_label}`"
+        )
+
+    freshness_asset = normalize_md_scalar(metadata.get("Freshness record asset"))
+    if freshness_asset and Path(freshness_asset).expanduser().resolve() != iteration_path.resolve():
+        raise ValueError(
+            f"`{iteration_path}` freshness record asset `{freshness_asset}` does not point back to the designated "
+            "iteration ledger"
+        )
+
+    freshness_signature = normalize_md_scalar(metadata.get("Freshness record failure signature"))
+    if freshness_signature and freshness_signature != current_failure.get("failure_signature"):
+        raise ValueError(
+            f"`{iteration_path}` freshness record failure signature `{freshness_signature}` does not match latest "
+            f"failure `{current_failure.get('failure_signature')}`"
+        )
+
+    return [
+        f"{iteration_path}:current_for_latest_failure=yes",
+        f"{iteration_path}:failed_attempt={failed_attempt}",
+        f"{iteration_path}:current_failure_signature={failure_signature}",
+        f"{iteration_path}:analysis_refresh_timestamp={refresh_timestamp}",
+    ]
+
+
+def verify_current_state(
+    state_path: Path,
+    report_path: Path,
+    breakdown_path: Path,
+    *,
+    recognized_targets: list[Path] | None = None,
+) -> list[str]:
     report_payload = load_structured_dict(report_path)
     breakdown_payload = load_structured_dict(breakdown_path)
     state_payload = load_structured_dict(state_path)
@@ -673,6 +995,14 @@ def verify_current_state(state_path: Path, report_path: Path, breakdown_path: Pa
             raise ValueError(f"`{state_path}` refresh_evidence.{key} is not true")
     verified_refresh_assets = verify_refresh_asset_evidence(state_path, refresh_evidence)
     freshness_record_markers = verify_freshness_record(state_path, refresh_evidence, actual)
+    recognized_refresh_target_markers = []
+    if recognized_targets is not None:
+        recognized_refresh_target_markers = verify_freshness_record_recognized_by_targets(
+            state_path,
+            refresh_evidence,
+            actual,
+            recognized_targets,
+        )
 
     return [
         f"{state_path}:current_for_latest_failure",
@@ -682,6 +1012,7 @@ def verify_current_state(state_path: Path, report_path: Path, breakdown_path: Pa
         f"{state_path}:refresh_evidence.refreshed_after_failure_breakdown=true",
         *verified_refresh_assets,
         *freshness_record_markers,
+        *recognized_refresh_target_markers,
     ]
 
 
@@ -803,7 +1134,6 @@ def verify_localization_refinement(
 
 def main() -> int:
     args = parse_args()
-    targets = [Path(item) for item in args.target]
     analysis_log = Path(args.analysis_log)
     report_path = Path(args.latest_failure_report) if args.latest_failure_report else None
     breakdown_path = Path(args.latest_failure_breakdown) if args.latest_failure_breakdown else None
@@ -813,6 +1143,24 @@ def main() -> int:
         Path(args.baseline_analysis_session) if args.baseline_analysis_session else None
     )
     analysis_root = state_path.resolve().parent if state_path is not None else None
+    targets: list[Path] = []
+
+    if args.target_from_current_state:
+        if state_path is None:
+            print(
+                "analysis refresh verification failed: --target-from-current-state also needs "
+                "--require-current-state"
+            )
+            return 1
+        try:
+            for candidate in load_workflow_recognized_targets_from_state(state_path):
+                append_unique_path(targets, candidate)
+        except Exception as exc:  # noqa: BLE001
+            print(f"analysis refresh verification failed: {exc}")
+            return 1
+
+    for item in args.target:
+        append_unique_path(targets, Path(item))
 
     try:
         latest_failure_epoch, latest_failure_label = load_latest_failure_refresh_baseline(
@@ -830,6 +1178,12 @@ def main() -> int:
     post_failure_qualifying_targets = []
     post_failure_supporting_targets = []
     state_real_path = state_path.resolve() if state_path is not None else None
+    if not targets:
+        print(
+            "analysis refresh verification failed: retry start blocked until at least one refreshed "
+            "branch-local analysis asset is supplied via --target"
+        )
+        return 1
     for path in targets:
         try:
             mtime = path.stat().st_mtime
@@ -863,7 +1217,10 @@ def main() -> int:
     analysis_log_mtime = latest_mtime([analysis_log])
 
     if not refreshed_targets:
-        print("analysis refresh verification failed: no target file updated after baseline")
+        print(
+            "analysis refresh verification failed: retry start blocked until at least one refreshed "
+            "analysis asset is newer than the baseline"
+        )
         return 1
     if not refreshed_qualifying_targets:
         refreshed_target_list = ", ".join(str(path) for path in refreshed_targets)
@@ -931,10 +1288,25 @@ def main() -> int:
             assert state_path is not None
             assert report_path is not None
             assert breakdown_path is not None
-            verified_current_state = verify_current_state(state_path, report_path, breakdown_path)
+            verified_current_state = verify_current_state(
+                state_path,
+                report_path,
+                breakdown_path,
+                recognized_targets=targets,
+            )
             refresh_evidence = load_structured_dict(state_path).get("refresh_evidence")
             if not isinstance(refresh_evidence, dict):
                 raise ValueError(f"`{state_path}` refresh_evidence is missing or not a JSON object")
+            verified_current_state.extend(
+                verify_recognized_refresh_targets(
+                    state_path,
+                    refresh_evidence,
+                    targets,
+                    baseline_epoch=args.baseline_epoch,
+                    latest_failure_epoch=latest_failure_epoch,
+                    latest_failure_label=latest_failure_label,
+                )
+            )
             verified_current_state.extend(
                 verify_post_failure_refresh_asset_freshness(
                     state_path,

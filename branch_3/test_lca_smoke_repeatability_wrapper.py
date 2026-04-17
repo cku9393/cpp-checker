@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import tempfile
 import textwrap
@@ -12,6 +13,12 @@ from pathlib import Path
 ENTRYPOINT_PATH = Path(__file__).resolve().parent / "lca_smoke_repeatability.sh"
 WRAPPER_PATH = Path(__file__).resolve().parent / "outer_suite_wrappers" / "lca_smoke_repeatability.sh"
 WRAPPER_SOURCE = WRAPPER_PATH.read_text(encoding="utf-8")
+HOST_TMP_ROOT = Path("/tmp/cpp-checker-branch3-smoke-tests/repeatability-host")
+shutil.rmtree(HOST_TMP_ROOT, ignore_errors=True)
+HOST_TMP_ROOT.mkdir(parents=True, exist_ok=True)
+# Keep host-side fake-branch creation independent from any inherited retry-loop
+# TMPDIR so direct wrapper execution tests only exercise smoke repeatability.
+tempfile.tempdir = str(HOST_TMP_ROOT)
 
 
 class LcaSmokeRepeatabilityWrapperRegressionTests(unittest.TestCase):
@@ -254,6 +261,155 @@ class LcaSmokeRepeatabilityWrapperRegressionTests(unittest.TestCase):
 
             write_fail_status_bundle
             write_failure_bundle
+            exit 1
+            """
+        elif mode == "stale_status":
+            body = """
+            COUNTER_PATH="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_stale_status_counter.txt"
+
+            write_pass_status_bundle() {
+              local status_root="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_latest_status"
+
+              rm -rf "$status_root"
+              mkdir -p "$status_root"
+              cat >"$status_root/summary.txt" <<EOF
+            public_status=PASS
+            result_family=none
+            normalized_exit_code=0
+            raw_exit_code=0
+            normalized_outcome=pass
+            outcome_source=inner_wrapper
+            EOF
+              printf '# PASS status\\n' > "$status_root/latest_status_report.md"
+            }
+
+            write_pass_snapshot() {
+              local snapshot_root="${LCA_SMOKE_EXPORT_SNAPSHOT_ROOT:?}"
+
+              rm -rf "$snapshot_root"
+              mkdir -p "$snapshot_root/case_alpha"
+              printf 'stable line\\n' > "$snapshot_root/case_alpha/out.txt"
+              printf '0.10\\n' > "$snapshot_root/case_alpha/time.txt"
+            }
+
+            count=0
+            if [[ -f "$COUNTER_PATH" ]]; then
+              read -r count < "$COUNTER_PATH"
+            fi
+            count="$(( count + 1 ))"
+            printf '%s\\n' "$count" > "$COUNTER_PATH"
+
+            if (( count == 1 )); then
+              write_pass_status_bundle
+            fi
+            write_pass_snapshot
+            exit 0
+            """
+        elif mode == "stale_published_pass_output":
+            body = """
+            COUNTER_PATH="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_stale_output_counter.txt"
+
+            write_pass_status_bundle() {
+              local status_root="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_latest_status"
+
+              rm -rf "$status_root"
+              mkdir -p "$status_root"
+              cat >"$status_root/summary.txt" <<EOF
+            public_status=PASS
+            result_family=none
+            normalized_exit_code=0
+            raw_exit_code=0
+            normalized_outcome=pass
+            outcome_source=inner_wrapper
+            EOF
+              printf '# PASS status\\n' > "$status_root/latest_status_report.md"
+            }
+
+            write_live_output() {
+              local output_root="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke"
+
+              rm -rf "$output_root"
+              mkdir -p "$output_root/case_alpha"
+              cat >"$output_root/suite_config.txt" <<EOF
+            case_count=1
+            EOF
+              cat >"$output_root/suite_plan.tsv" <<EOF
+            case_index\\tcase_tag
+            1\\tcase_alpha
+            EOF
+              cat >"$output_root/environment_validation.txt" <<EOF
+            external_snapshot_root=<unset>
+            stable=ok
+            EOF
+              printf 'stable line\\n' > "$output_root/case_alpha/out.txt"
+              printf '0.10\\n' > "$output_root/case_alpha/time.txt"
+            }
+
+            count=0
+            if [[ -f "$COUNTER_PATH" ]]; then
+              read -r count < "$COUNTER_PATH"
+            fi
+            count="$(( count + 1 ))"
+            printf '%s\\n' "$count" > "$COUNTER_PATH"
+
+            write_pass_status_bundle
+            if (( count == 1 )); then
+              write_live_output
+            fi
+            exit 0
+            """
+        elif mode == "stale_solver_failure_bundle":
+            body = """
+            COUNTER_PATH="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_stale_failure_counter.txt"
+
+            write_fail_status_bundle() {
+              local status_root="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_latest_status"
+
+              rm -rf "$status_root"
+              mkdir -p "$status_root"
+              cat >"$status_root/summary.txt" <<EOF
+            public_status=FAIL
+            result_family=solver
+            normalized_exit_code=1
+            raw_exit_code=1
+            normalized_outcome=reproducible_solver_failure
+            outcome_source=inner_wrapper
+            source_failure_kind=acceptance
+            source_failure_origin=solver
+            source_failure_retryable=0
+            triage_stage_scope=inner_wrapper_case
+            triage_stage=smoke
+            EOF
+              printf '# solver FAIL status\\n' > "$status_root/latest_status_report.md"
+            }
+
+            write_failure_bundle() {
+              local failure_root="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_latest_failure"
+
+              rm -rf "$failure_root"
+              mkdir -p "$failure_root"
+              cat >"$failure_root/failure_summary.txt" <<EOF
+            helper_exit_code=1
+            failure_kind=acceptance
+            failure_origin=solver
+            failure_summary=stable smoke failure
+            EOF
+              cat >"$failure_root/latest_failure_report.md" <<EOF
+            # Stable smoke failure
+            EOF
+            }
+
+            count=0
+            if [[ -f "$COUNTER_PATH" ]]; then
+              read -r count < "$COUNTER_PATH"
+            fi
+            count="$(( count + 1 ))"
+            printf '%s\\n' "$count" > "$COUNTER_PATH"
+
+            write_fail_status_bundle
+            if (( count == 1 )); then
+              write_failure_bundle
+            fi
             exit 1
             """
         else:
@@ -511,6 +667,112 @@ class LcaSmokeRepeatabilityWrapperRegressionTests(unittest.TestCase):
             self.assertIn("baseline_result_family=none", summary)
             self.assertIn("latest_result_family=solver", summary)
             self.assertIn("failure_reason=smoke outcome divergence between run01 (PASS:0) and run02 (FAIL:1)", summary)
+
+    def test_continues_collecting_iterations_after_first_outcome_divergence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_branch(Path(tmp), "flip")
+            wrapper_path = branch_root / "lca_smoke_repeatability.sh"
+            repeatability_root = branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_repeatability"
+            counter_path = branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_flip_counter.txt"
+
+            result = subprocess.run(
+                [str(wrapper_path), "3"],
+                cwd=branch_root,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertNotEqual(result.returncode, 0, msg="diverged smoke outcomes must still fail repeatability")
+            self.assertTrue(repeatability_root.is_dir())
+            self.assertEqual("3\n", counter_path.read_text(encoding="utf-8"))
+            self.assertTrue((repeatability_root / "runs" / "run03" / "outcome.txt").is_file())
+
+            summary = (repeatability_root / "summary.txt").read_text(encoding="utf-8")
+            self.assertIn("requested_runs=3", summary)
+            self.assertIn("completed_runs=3", summary)
+            self.assertIn("first_failed_run=run02", summary)
+            self.assertIn("first_failure_kind=outcome_divergence", summary)
+            self.assertIn("failure_count=2", summary)
+            self.assertIn("failure_events=failure_events.tsv", summary)
+            self.assertIn("failure_reason=smoke outcome divergence between run01 (PASS:0) and run02 (FAIL:1)", summary)
+
+            failure_events = (repeatability_root / "failure_events.tsv").read_text(encoding="utf-8")
+            self.assertIn("run02\toutcome_divergence\t", failure_events)
+            self.assertIn("run03\toutcome_divergence\t", failure_events)
+
+    def test_rejects_stale_status_bundle_reuse_even_when_smoke_stays_green(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_branch(Path(tmp), "stale_status")
+            wrapper_path = branch_root / "lca_smoke_repeatability.sh"
+            repeatability_root = branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_repeatability"
+
+            result = subprocess.run(
+                [str(wrapper_path), "2"],
+                cwd=branch_root,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(result.returncode, 0, msg="stale status reuse must fail repeatability")
+            summary = (repeatability_root / "summary.txt").read_text(encoding="utf-8")
+            self.assertIn("status=FAIL", summary)
+            self.assertIn("baseline_outcome=PASS:0", summary)
+            self.assertIn("latest_outcome=PASS:0", summary)
+            self.assertIn("outcome_consistency=matching", summary)
+            self.assertIn("supports_solver_iteration=0", summary)
+            self.assertIn("failure_reason=smoke status bundle was not regenerated for runs/run02", summary)
+            freshness_report = repeatability_root / "runs" / "run02" / "status_bundle_freshness.txt"
+            self.assertTrue(freshness_report.is_file())
+            self.assertIn("status=stale_or_missing_current_run_artifacts", freshness_report.read_text(encoding="utf-8"))
+
+    def test_rejects_stale_published_output_fallback_reuse(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_branch(Path(tmp), "stale_published_pass_output")
+            wrapper_path = branch_root / "lca_smoke_repeatability.sh"
+            repeatability_root = branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_repeatability"
+
+            result = subprocess.run(
+                [str(wrapper_path), "2"],
+                cwd=branch_root,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(result.returncode, 0, msg="stale published smoke output must fail repeatability")
+            summary = (repeatability_root / "summary.txt").read_text(encoding="utf-8")
+            self.assertIn("status=FAIL", summary)
+            self.assertIn("baseline_outcome=PASS:0", summary)
+            self.assertIn("latest_outcome=PASS:0", summary)
+            self.assertIn("supports_solver_iteration=0", summary)
+            self.assertIn("failure_reason=smoke pass reused stale published output for runs/run02", summary)
+            freshness_report = repeatability_root / "runs" / "run02" / "output_bundle_freshness.txt"
+            self.assertTrue(freshness_report.is_file())
+            self.assertIn("bundle=published smoke output", freshness_report.read_text(encoding="utf-8"))
+
+    def test_rejects_stale_solver_failure_bundle_reuse(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_branch(Path(tmp), "stale_solver_failure_bundle")
+            wrapper_path = branch_root / "lca_smoke_repeatability.sh"
+            repeatability_root = branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_repeatability"
+
+            result = subprocess.run(
+                [str(wrapper_path), "2"],
+                cwd=branch_root,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(result.returncode, 0, msg="stale solver failure bundles must fail repeatability")
+            summary = (repeatability_root / "summary.txt").read_text(encoding="utf-8")
+            self.assertIn("status=FAIL", summary)
+            self.assertIn("baseline_outcome=FAIL:1", summary)
+            self.assertIn("latest_outcome=FAIL:1", summary)
+            self.assertIn("supports_solver_iteration=0", summary)
+            self.assertIn("failure_reason=smoke solver-failure bundle was not regenerated for runs/run02", summary)
+            freshness_report = repeatability_root / "runs" / "run02" / "failure_bundle_freshness.txt"
+            self.assertTrue(freshness_report.is_file())
+            self.assertIn("bundle=smoke_latest_failure", freshness_report.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

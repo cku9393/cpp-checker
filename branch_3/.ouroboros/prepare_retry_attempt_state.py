@@ -7,6 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -19,15 +20,19 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from retry_artifact_io import prepare_output_dir, write_text_output
+from research_review_gate import load_research_review_gate
+from retry_artifact_io import prepare_output_dir, resolve_artifact_output_path, write_text_output
 
 from verify_analysis_refresh import (
     load_latest_failure_refresh_baseline,
     load_analysis_session_metadata,
+    resolve_recognized_branch_local_analysis_targets,
+    load_workflow_recognized_targets_from_state,
     load_structured_dict,
     verify_analysis_session,
     verify_current_state,
     verify_post_failure_refresh_asset_freshness,
+    verify_recognized_refresh_targets,
 )
 
 RETRY_REPORT_VOLATILE_NAMES = {
@@ -68,6 +73,9 @@ LEGACY_NON_ARTIFACT_VOLATILE_RELATIVE_PATHS = {
     Path(".ouroboros") / "latest_analysis_seed.snapshot.yaml",
     Path(".ouroboros") / "latest_analysis_refresh.log",
 }
+LEGACY_NON_ARTIFACT_VOLATILE_GLOBS = (
+    Path(".ouroboros") / "analysis_refresh_attempt_*.log",
+)
 ARCHIVABLE_TOP_LEVEL_NAMES = {
     "smoke_latest_failure",
     "smoke_launcher_latest_failure",
@@ -77,6 +85,8 @@ LATEST_FAILURE_REPORT_NAME = "latest_failure_report.md"
 LATEST_FAILURE_BREAKDOWN_NAME = "latest_failure_breakdown.md"
 LATEST_ANALYSIS_SESSION_NAME = "latest_analysis_session.md"
 ANALYSIS_STATE_RELATIVE_PATH = Path(".ouroboros") / "failure_analysis_state.json"
+LIVE_GATE_LOCK_WAIT_SECONDS = 20.0
+LIVE_GATE_LOCK_POLL_SECONDS = 1.0
 
 
 @dataclass
@@ -97,17 +107,26 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _load_artifact_helpers(branch_root: Path) -> tuple[Any, Any]:
+def _load_artifact_helpers(branch_root: Path) -> tuple[Any, Any, Any]:
     sys.path.insert(0, str(branch_root))
-    from artifact_paths import artifacts_root, ensure_under_artifacts  # type: ignore
+    import artifact_paths as artifact_guard  # type: ignore
 
-    return artifacts_root, ensure_under_artifacts
+    return (
+        artifact_guard.artifacts_root,
+        artifact_guard.ensure_under_artifacts,
+        getattr(artifact_guard, "resolve_branch_artifact_path", None),
+    )
 
 
-def _resolve_artifact_cli_path(branch_root: Path, ensure_under_artifacts, value: str) -> Path:
-    raw = Path(value).expanduser()
-    resolved = raw if raw.is_absolute() else (branch_root / raw).resolve()
-    return ensure_under_artifacts(resolved)
+def _resolve_artifact_cli_path(
+    branch_root: Path,
+    ensure_under_artifacts,
+    value: str,
+    shared_resolver=None,
+) -> Path:
+    if shared_resolver is not None:
+        return shared_resolver(value)
+    return resolve_artifact_output_path(branch_root, value, ensure_under_artifacts)
 
 
 def _pid_alive(pid: int) -> bool:
@@ -198,6 +217,25 @@ def _cleanup_lock_root(lock_root: Path) -> tuple[list[str], list[LockState]]:
     return removed, active
 
 
+def _wait_for_active_locks(lock_root: Path) -> tuple[list[str], list[LockState]]:
+    removed_paths: list[str] = []
+    seen_removed: set[str] = set()
+    deadline = time.monotonic() + LIVE_GATE_LOCK_WAIT_SECONDS
+
+    while True:
+        removed, active = _cleanup_lock_root(lock_root)
+        for entry in removed:
+            if entry in seen_removed:
+                continue
+            seen_removed.add(entry)
+            removed_paths.append(entry)
+        if not active:
+            return removed_paths, active
+        if time.monotonic() >= deadline:
+            return removed_paths, active
+        time.sleep(LIVE_GATE_LOCK_POLL_SECONDS)
+
+
 def _cleanup_tmp_root(tmp_root: Path) -> tuple[list[str], list[str]]:
     removed: list[str] = []
     preserved: list[str] = []
@@ -247,13 +285,41 @@ def _cleanup_retry_report_root(report_root: Path) -> list[str]:
 
 def _cleanup_legacy_non_artifact_volatiles(branch_root: Path) -> list[str]:
     removed: list[str] = []
+    seen: set[Path] = set()
     for relative_path in sorted(LEGACY_NON_ARTIFACT_VOLATILE_RELATIVE_PATHS):
         candidate = (branch_root / relative_path).resolve()
         if not candidate.exists() and not candidate.is_symlink():
             continue
+        seen.add(candidate)
         _remove_path(candidate)
         removed.append(str(candidate))
+    for relative_glob in LEGACY_NON_ARTIFACT_VOLATILE_GLOBS:
+        for candidate in sorted(branch_root.glob(relative_glob.as_posix())):
+            resolved_candidate = candidate.resolve()
+            if resolved_candidate in seen:
+                continue
+            if not candidate.exists() and not candidate.is_symlink():
+                continue
+            seen.add(resolved_candidate)
+            _remove_path(candidate)
+            removed.append(str(resolved_candidate))
     return removed
+
+
+def _pre_rewrite_research_review_gate(branch_root: Path) -> dict[str, Any]:
+    try:
+        gate_payload = load_research_review_gate(branch_root)
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "status": "blocked",
+            "reason": f"pre-rewrite research review gate is stale: {exc}",
+        }
+
+    return {
+        "status": "ok",
+        "reason": "branch-local notes and bundled progress40 materials have recorded review completions",
+        **gate_payload,
+    }
 
 
 def _latest_failure_analysis_gate(branch_root: Path, report_root: Path) -> dict[str, Any]:
@@ -283,11 +349,13 @@ def _latest_failure_analysis_gate(branch_root: Path, report_root: Path) -> dict[
         }
 
     analysis_session_warning: str | None = None
+    recognized_targets = resolve_recognized_branch_local_analysis_targets(analysis_state)
     try:
         verified_markers = verify_current_state(
             analysis_state,
             latest_failure_report,
             latest_failure_breakdown,
+            recognized_targets=recognized_targets,
         )
         state_payload = load_structured_dict(analysis_state)
         refresh_evidence = state_payload.get("refresh_evidence")
@@ -303,6 +371,18 @@ def _latest_failure_analysis_gate(branch_root: Path, report_root: Path) -> dict[
                 refresh_evidence,
                 latest_failure_epoch,
                 latest_failure_label,
+                require_iteration_metadata=False,
+            )
+        )
+        recognized_targets = load_workflow_recognized_targets_from_state(analysis_state)
+        verified_markers.extend(
+            verify_recognized_refresh_targets(
+                analysis_state,
+                refresh_evidence,
+                recognized_targets,
+                baseline_epoch=0.0,
+                latest_failure_epoch=latest_failure_epoch,
+                latest_failure_label=latest_failure_label,
             )
         )
         if latest_analysis_session.exists():
@@ -421,6 +501,18 @@ def _write_reports(
     ] or ["- none"]
     removed_lines = [f"- `{path}`" for path in payload["removed_paths"]] or ["- none"]
     preserved_lines = [f"- `{path}`" for path in payload["preserved_paths"]] or ["- none"]
+    research_review_gate = payload.get("research_review_gate") or {}
+    research_gate_status = research_review_gate.get("status", "unknown")
+    research_gate_reason = research_review_gate.get("reason", "not recorded")
+    research_gate_checkpoints = [
+        f"- `{item}`" for item in research_review_gate.get("checkpoint_files", [])
+    ] or ["- none"]
+    research_gate_source_set_a = [
+        f"- `{item}`" for item in research_review_gate.get("source_set_a_paths", [])
+    ] or ["- none"]
+    research_gate_source_set_b = [
+        f"- `{item}`" for item in research_review_gate.get("source_set_b_paths", [])
+    ] or ["- none"]
     analysis_refresh_gate = payload.get("analysis_refresh_gate") or {}
     analysis_gate_status = analysis_refresh_gate.get("status", "unknown")
     analysis_gate_reason = analysis_refresh_gate.get("reason", "not recorded")
@@ -454,6 +546,16 @@ def _write_reports(
                 "## Active Locks",
                 *(active_lines or ["- none"]),
                 "",
+                "## Pre-Rewrite Research Review Gate",
+                f"- Status: `{research_gate_status}`",
+                f"- Reason: `{research_gate_reason}`",
+                "- Checkpoint files:",
+                *research_gate_checkpoints,
+                "- Source set A paths:",
+                *research_gate_source_set_a,
+                "- Source set B paths:",
+                *research_gate_source_set_b,
+                "",
                 "## Latest Failure Analysis Gate",
                 f"- Status: `{analysis_gate_status}`",
                 f"- Reason: `{analysis_gate_reason}`",
@@ -476,11 +578,15 @@ def main() -> int:
     args = parse_args()
     branch_root = Path(args.branch_root).resolve()
 
-    artifacts_root_fn, ensure_under_artifacts = _load_artifact_helpers(branch_root)
+    artifacts_root_fn, ensure_under_artifacts, shared_resolver = _load_artifact_helpers(branch_root)
     artifacts_root = ensure_under_artifacts(Path(artifacts_root_fn()))
     lca_root = ensure_under_artifacts((artifacts_root / "lca_tree_stress_v5").resolve())
-    attempt_dir = _resolve_artifact_cli_path(branch_root, ensure_under_artifacts, args.attempt_dir)
-    report_root = _resolve_artifact_cli_path(branch_root, ensure_under_artifacts, args.report_root)
+    attempt_dir = _resolve_artifact_cli_path(
+        branch_root, ensure_under_artifacts, args.attempt_dir, shared_resolver
+    )
+    report_root = _resolve_artifact_cli_path(
+        branch_root, ensure_under_artifacts, args.report_root, shared_resolver
+    )
 
     lock_root = lca_root / ".locks"
     tmp_root = lca_root / ".tmp"
@@ -493,7 +599,7 @@ def main() -> int:
     removed_paths.extend(_normalize_volatile_root(lock_root))
     removed_paths.extend(_normalize_volatile_root(tmp_root))
 
-    removed_locks, active_locks = _cleanup_lock_root(lock_root)
+    removed_locks, active_locks = _wait_for_active_locks(lock_root)
     removed_paths.extend(removed_locks)
 
     if active_locks:
@@ -520,7 +626,25 @@ def main() -> int:
     archived_paths.extend(archived_top_level)
     removed_paths.extend(_cleanup_retry_report_root(report_root))
     removed_paths.extend(_cleanup_legacy_non_artifact_volatiles(branch_root))
+    research_review_gate = _pre_rewrite_research_review_gate(branch_root)
     analysis_refresh_gate = _latest_failure_analysis_gate(branch_root, report_root)
+
+    if research_review_gate["status"] == "blocked":
+        payload = {
+            "timestamp": datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "status": "blocked_research_review",
+            "artifacts_root": str(lca_root),
+            "removed_paths": removed_paths,
+            "preserved_paths": preserved_paths,
+            "archived_paths": archived_paths,
+            "active_locks": [],
+            "research_review_gate": research_review_gate,
+            "analysis_refresh_gate": analysis_refresh_gate,
+        }
+        _write_reports(attempt_dir, report_root, payload)
+        print("pre-attempt cleanup blocked: pre-rewrite research review gate is missing or stale")
+        print(f"  {research_review_gate['reason']}")
+        return 1
 
     if analysis_refresh_gate["status"] == "blocked":
         payload = {
@@ -531,6 +655,7 @@ def main() -> int:
             "preserved_paths": preserved_paths,
             "archived_paths": archived_paths,
             "active_locks": [],
+            "research_review_gate": research_review_gate,
             "analysis_refresh_gate": analysis_refresh_gate,
         }
         _write_reports(attempt_dir, report_root, payload)
@@ -548,6 +673,7 @@ def main() -> int:
         "preserved_paths": preserved_paths,
         "archived_paths": archived_paths,
         "active_locks": [],
+        "research_review_gate": research_review_gate,
         "analysis_refresh_gate": analysis_refresh_gate,
     }
     _write_reports(attempt_dir, report_root, payload)

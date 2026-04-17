@@ -5,55 +5,55 @@ task_type: code
 brownfield_context:
   project_type: brownfield
   context_references:
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+  - path: .
     role: primary
     summary: Branch root where the retry loop and failure-analysis helpers live
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
     role: primary
     summary: Latest failed solver-attempt report that must be read first
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
     role: primary
     summary: Latest failed solver-attempt breakdown with phase and structural hotspots
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/failure_history.json
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/failure_history.json
     role: reference
     summary: Cross-attempt history used to find recurring hotspots and repeated failure signatures
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md
     role: reference
     summary: Summary from the previous mandatory analysis mini-session that should be refined rather than ignored
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_next_probe_result.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_next_probe_result.md
     role: reference
     summary: Latest automatically executed axis-focused probe result that should be incorporated into the next narrowing step
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_attempt_guard.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_attempt_guard.md
     role: reference
     summary: Latest post-attempt guard report that may invalidate a nominal PASS lacking credible gate evidence
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_git_repo_health.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_git_repo_health.md
     role: reference
     summary: Latest git repository health report used to separate solver issues from local git-pack corruption
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/current_state_summary.md
+  - path: ./boj28350_resume/current_state_summary.md
     role: reference
     summary: Authoritative progress40 summary naming the current residual and next pivot that should guide axis selection
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp
+  - path: ./boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp
     role: reference
     summary: Bundled progress40 source snapshot defining the performance-axis vocabulary
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md
+  - path: ./boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md
     role: reference
     summary: Bundled progress40 profiling report showing the known residual axes
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_results_merged.json
+  - path: ./boj28350_bundle_archive/boj28350_progress40_results_merged.json
     role: reference
     summary: Bundled merged results artifact for the authoritative progress40 baseline
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/capture_failure_context.py
+  - path: ./.ouroboros/capture_failure_context.py
     role: primary
     summary: Main failure-capture script that may be improved when the latest breakdown is still too coarse
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_playbook.md
+  - path: ./.ouroboros/failure_analysis_playbook.md
     role: primary
     summary: Auxiliary playbook that should accumulate sharper refinement rules across repeated analysis sessions
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+  - path: ./.ouroboros/failure_analysis_iteration.md
     role: primary
     summary: Analysis ledger that must be refreshed on every post-failure mini-session before solver retries resume
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+  - path: ./.ouroboros/failure_analysis_state.json
     role: primary
     summary: Persistent state carrying pinned ACs, paths, and symbols that should become narrower over repeated analysis sessions
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/verify_analysis_refresh.py
+  - path: ./.ouroboros/verify_analysis_refresh.py
     role: reference
     summary: Verification helper that gates solver retries on a real post-failure analysis refresh
   existing_patterns:
@@ -61,19 +61,21 @@ brownfield_context:
   - Compare the latest failure against failure_history.json and prior breakdowns
   - Read latest_analysis_session.md, failure_analysis_iteration.md, failure_analysis_state.json, and failure_analysis_playbook.md before deciding what to refine next
   - Read latest_next_probe_result.md, latest_attempt_guard.md, and latest_git_repo_health.md when present before deciding whether the last solver outcome is trustworthy and which axis to refine next
+  - When AC4 AC5 or AC6 are labeled PASS without fresh same-worktree rerun evidence, treat that outcome as a guard-rejected nominal PASS or partial progress rather than formal closure
   - Read current_state_summary.md and the bundled progress40 report/results before picking a primary or secondary axis
   - Tighten diagnosis from file-level to symbol, line-range, snippet, or wrapper-section evidence when possible
   - Refresh at least one analysis asset every time, even if the main capture script itself does not need a code edit
 constraints:
-- Work only in /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+- Work only in the current branch_3 root
 - Do not edit the solver, wrappers, or validation harness during this analysis mini-session
-- Allowed edit scope for this mini-session is restricted to branch_3/.ouroboros/capture_failure_context.py,
-  branch_3/.ouroboros/failure_analysis_playbook.md, branch_3/.ouroboros/failure_analysis_iteration.md,
-  branch_3/.ouroboros/failure_analysis_state.json, branch_3/.ouroboros/verify_analysis_refresh.py,
-  and other branch-local helper analysis files under branch_3/.ouroboros/ if needed
+- Allowed edit scope for this mini-session is restricted to ./.ouroboros/capture_failure_context.py,
+  ./.ouroboros/failure_analysis_playbook.md, ./.ouroboros/failure_analysis_iteration.md,
+  ./.ouroboros/failure_analysis_state.json, ./.ouroboros/verify_analysis_refresh.py,
+  and other branch-local helper analysis files under ./.ouroboros/ if needed
 - Read latest_failure_report.md and latest_failure_breakdown.md first
 - Read the previous latest_analysis_session.md, failure_analysis_iteration.md, failure_analysis_state.json, and failure_analysis_playbook.md before deciding what the next refinement should be
 - Read latest_next_probe_result.md, latest_attempt_guard.md, and latest_git_repo_health.md before deciding whether the previous attempt failed due to a solver issue, a suspicious nominal PASS, or a git health problem
+- "Preserve the formal-closure credibility rule in refreshed state and notes: AC4 AC5 and AC6 require fresh same-worktree rerun evidence, and carried-forward PASS text must be downgraded to partial progress or guard-rejected nominal PASS"
 - Read current_state_summary.md and the bundled progress40 report/results before deciding which progress40 axis should be primary next
 - Refresh failure_analysis_iteration.md on every run with what was learned from the most recent failure
 - Refresh failure_analysis_state.json on every run with the most important pinned ACs, paths, symbols, primary_axis, secondary_axis, next_probe_command, and why_this_axis for the next solver retry and the next analysis mini-session

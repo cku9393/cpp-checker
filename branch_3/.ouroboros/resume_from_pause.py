@@ -11,6 +11,12 @@ from pathlib import Path
 os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 sys.dont_write_bytecode = True
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from retry_artifact_io import resolve_artifact_output_path, resolve_branch_path as resolve_retry_branch_path
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -31,29 +37,38 @@ def parse_args() -> argparse.Namespace:
 
 
 def resolve_path(branch_root: Path, value: str) -> Path:
-    path = Path(value).expanduser()
-    return path if path.is_absolute() else (branch_root / path).resolve()
+    return resolve_retry_branch_path(branch_root, value)
 
 
 def _load_artifact_guard(branch_root: Path):
     sys.path.insert(0, str(branch_root))
-    from artifact_paths import ensure_under_artifacts  # type: ignore
+    import artifact_paths as artifact_guard  # type: ignore
 
-    return ensure_under_artifacts
+    return artifact_guard.ensure_under_artifacts, getattr(
+        artifact_guard, "resolve_branch_artifact_path", None
+    )
 
 
-def resolve_artifact_path(branch_root: Path, ensure_under_artifacts, value: str) -> Path:
-    return ensure_under_artifacts(resolve_path(branch_root, value))
+def resolve_artifact_path(
+    branch_root: Path,
+    ensure_under_artifacts,
+    value: str,
+    shared_resolver=None,
+) -> Path:
+    if shared_resolver is not None:
+        return shared_resolver(value)
+    return resolve_artifact_output_path(branch_root, value, ensure_under_artifacts)
 
 
 def main() -> int:
     args = parse_args()
     branch_root = Path(args.branch_root).resolve()
-    ensure_under_artifacts = _load_artifact_guard(branch_root)
+    ensure_under_artifacts, shared_resolver = _load_artifact_guard(branch_root)
     pause_state_file = resolve_artifact_path(
         branch_root,
         ensure_under_artifacts,
         args.pause_state_file,
+        shared_resolver,
     )
     if not pause_state_file.exists():
         raise SystemExit(f"pause state not found: {pause_state_file}")

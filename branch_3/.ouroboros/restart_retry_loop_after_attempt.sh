@@ -23,6 +23,13 @@ outcome_helper="$branch_root/.ouroboros/classify_retry_loop_outcome.py"
 analysis_verify_helper="$branch_root/.ouroboros/verify_analysis_refresh.py"
 analysis_state_file="$branch_root/.ouroboros/failure_analysis_state.json"
 analysis_iteration_file="$branch_root/.ouroboros/failure_analysis_iteration.md"
+analysis_playbook_file="$branch_root/.ouroboros/failure_analysis_playbook.md"
+analysis_capture_helper="$branch_root/.ouroboros/capture_failure_context.py"
+analysis_launch_helper="$branch_root/.ouroboros/launch_retry_loop.sh"
+analysis_pre_attempt_helper="$branch_root/.ouroboros/prepare_retry_attempt_state.py"
+analysis_refresh_helper="$branch_root/.ouroboros/refresh_analysis_state.py"
+analysis_restart_helper="$branch_root/.ouroboros/restart_retry_loop_after_attempt.sh"
+analysis_run_loop_helper="$branch_root/.ouroboros/run_until_pass_progress40.sh"
 watch_log="$branch_root/artifacts/lca_tree_stress_v5/retry_loop/restart_after_attempt_${attempt_number}.log"
 
 ensure_artifact_path() {
@@ -70,8 +77,16 @@ verify_latest_failure_analysis_session() {
     python3 "$analysis_verify_helper" \
       --baseline-epoch 0 \
       --analysis-log "$watch_log" \
+      --target-from-current-state \
       --target "$analysis_state_file" \
       --target "$analysis_iteration_file" \
+      --target "$analysis_playbook_file" \
+      --target "$analysis_capture_helper" \
+      --target "$analysis_launch_helper" \
+      --target "$analysis_pre_attempt_helper" \
+      --target "$analysis_refresh_helper" \
+      --target "$analysis_restart_helper" \
+      --target "$analysis_run_loop_helper" \
       --latest-failure-report "$latest_failure_report" \
       --latest-failure-breakdown "$latest_failure_breakdown" \
       --require-current-state "$analysis_state_file" \
@@ -83,7 +98,7 @@ verify_latest_failure_analysis_session() {
       --require-json-key "$analysis_state_file:why_this_axis" 2>&1
   )"; then
     printf '%s\n' "$verify_output" >> "$watch_log"
-    echo "[$(timestamp)] retry restart blocked: latest analysis session is missing, stale, or not tied to the newest failed attempt" >> "$watch_log"
+    echo "[$(timestamp)] retry restart blocked: latest analysis session/state is missing, stale, not tied to the newest failed attempt, or lacks a refreshed workflow-recognized branch-local analysis asset" >> "$watch_log"
     return 1
   fi
 

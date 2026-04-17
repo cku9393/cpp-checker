@@ -6,73 +6,73 @@ task_type: code
 brownfield_context:
   project_type: brownfield
   context_references:
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+  - path: .
     role: primary
     summary: Branch root where all build validation and artifact operations must occur
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp
+  - path: ./boj28350_resume/boj28350_branch_3_solver.cpp
     role: primary
     summary: Active branch-local solver source that must remain the main optimization target
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/README.md
+  - path: ./boj28350_resume/README.md
     role: primary
     summary: Branch-local note that the active solver was copied from the latest progress40 snapshot
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/current_state_summary.md
+  - path: ./boj28350_resume/current_state_summary.md
     role: primary
     summary: Summary of the authoritative progress40 baseline and the research bottlenecks to continue from
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/next_session_briefing.md
+  - path: ./boj28350_resume/next_session_briefing.md
     role: primary
     summary: Detailed BOJ 28350 research history and next-session guidance that must be read before major edits
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_complete_master_document_partA_raw.md
+  - path: ./boj28350_complete_master_document_partA_raw.md
     role: primary
     summary: Consolidated branch history document embedding the strongest literature-grade line, proof package, and integrated implementation history
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_integrated_technical_history.md
+  - path: ./boj28350_integrated_technical_history.md
     role: primary
     summary: Integrated technical history explaining architecture, implementation pivots, and why the strongest literature branch looks the way it does
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_literature_progress7_bcdecomp_report.md
+  - path: ./boj28350_literature_progress7_bcdecomp_report.md
     role: primary
     summary: Verified progress7 BC-decomposition report summarizing the strongest pre-progress40 literature-grade structure and counters
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/literature_grade_proof_package.md
+  - path: ./literature_grade_proof_package.md
     role: primary
     summary: Proof package describing the literature-grade invariants, decomposition semantics, and remaining proof obligations
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp
+  - path: ./boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp
     role: reference
     summary: Bundled progress40 source snapshot that defines the intended research direction
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md
+  - path: ./boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md
     role: reference
     summary: Bundled progress40 report documenting the prior profiling results and target hot paths
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_results_merged.json
+  - path: ./boj28350_bundle_archive/boj28350_progress40_results_merged.json
     role: reference
     summary: Bundled progress40 merged results artifact that captures the recent research baseline
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
     role: reference
     summary: Stable outer-loop failure report that records the last failed attempt and should be read before the next retry
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
     role: reference
     summary: Stable failure-breakdown file that decomposes the last failed attempt by AC, phase, and code-structure hotspots
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md
     role: reference
     summary: Mandatory post-failure analysis mini-session handoff describing the narrowed next targets before the next solver retry
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_next_probe_result.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_next_probe_result.md
     role: reference
     summary: Latest automatically executed axis-focused probe result that should focus the next solver retry
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_attempt_guard.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_attempt_guard.md
     role: reference
     summary: Latest post-attempt guard report that rejects nominal PASS states lacking credible gate evidence
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_git_repo_health.md
+  - path: ./artifacts/lca_tree_stress_v5/retry_loop/latest_git_repo_health.md
     role: reference
     summary: Latest git repository health check used to document packfile damage and other git reliability issues during retries
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_playbook.md
+  - path: ./.ouroboros/failure_analysis_playbook.md
     role: reference
     summary: Auxiliary analysis playbook that may gain sharper refinement rules across repeated failed attempts
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+  - path: ./.ouroboros/failure_analysis_state.json
     role: reference
     summary: Persistent analysis helper state carrying pinned ACs paths and symbols across retries
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+  - path: ./.ouroboros/failure_analysis_iteration.md
     role: reference
     summary: Mandatory carry-over ledger from the post-failure analysis mini-session that should narrow the next solver retry
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py
+  - path: ./artifact_paths.py
     role: reference
     summary: Branch-local artifact path resolver that may be edited for reproducibility and artifact locality
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py
+  - path: ./boj28350_resume.py
     role: reference
     summary: Branch-local helper entrypoint that may be edited only when needed for branch-local build and rerun hygiene
   - path: ./lca_smoke.sh
@@ -100,6 +100,7 @@ brownfield_context:
   - Read artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md and .ouroboros/failure_analysis_state.json before a retry attempt so the narrowed analysis is carried into the next solver session
   - Read artifacts/lca_tree_stress_v5/retry_loop/latest_next_probe_result.md before a retry attempt when it exists and use it to focus the first solver action on the pinned axis
   - Read artifacts/lca_tree_stress_v5/retry_loop/latest_attempt_guard.md before trusting a nominal PASS from the previous attempt
+  - Do not describe AC4 AC5 or AC6 as formal closure PASS unless fresh same-working-tree rerun evidence for the required gates exists inside the current attempt artifacts
   - Read artifacts/lca_tree_stress_v5/retry_loop/latest_git_repo_health.md before retrying when git-backed inspection looks unreliable
   - Read .ouroboros/failure_analysis_iteration.md before a retry attempt and use it as the direct output of the mandatory analysis mini-session
   - Read .ouroboros/failure_analysis_playbook.md before a retry attempt and apply any refinement rule added by the latest analysis mini-session
@@ -117,8 +118,8 @@ brownfield_context:
   - ./lca_rebuttal_gate.sh
   - ./lca_boj3s_gate.sh
 constraints:
-- Work only in /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
-- Keep /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp
+- Work only in the current branch_3 root
+- Keep ./boj28350_resume/boj28350_branch_3_solver.cpp
   as the primary optimization target
 - Build only with ./build.sh
 - Formal pass/fail validation uses only the branch-local wrappers ./lca_smoke.sh,
@@ -151,6 +152,7 @@ constraints:
 - Explain which failure mode, bottleneck, research hypothesis, and progress40 axis each code change targets
 - Branch-local wrapper and helper edits are allowed when needed for reproducibility, artifact hygiene, or correct branch-local execution
 - Preserve the validation intent of the existing wrappers; do not weaken gates or bypass the actual branch-local checks
+- Do not mark AC4 AC5 or AC6 PASS from stale carried-forward artifacts, future-work prose, or gate-equivalent single-case reproducers; only fresh same-worktree rerun evidence can satisfy formal closure
 - Reproducibility must not require manual cleanup or manual deletion of artifacts between reruns
 - A single failed gate run is not by itself a terminal condition; continue iterating while progress remains possible within the allowed branch-local scope
 - On failure, collect and record the concrete failing AC, the latest relevant artifact summaries, and the local workflow log context before the next retry

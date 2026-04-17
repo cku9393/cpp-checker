@@ -263,7 +263,7 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
             msg="deterministic smoke controls must validate the build timeout override by name",
         )
 
-    def test_clean_env_bootstrap_preserves_explicit_debug_manifest_override(self) -> None:
+    def test_clean_env_bootstrap_pins_branch_root_home_and_preserves_supported_overrides(self) -> None:
         self.assertIn(
             '"TMPDIR=/tmp"',
             WRAPPER_SOURCE,
@@ -280,14 +280,34 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
             msg="smoke clean-env bootstrap must reset TEMP before setup tmpdirs are configured",
         )
         self.assertIn(
-            'if [[ -n "${LCA_SMOKE_DEBUG_MANIFEST:-}" ]]; then',
+            '"HOME=$BRANCH_ROOT"',
             WRAPPER_SOURCE,
-            msg="smoke clean-env bootstrap must preserve an explicit debug manifest override",
+            msg="smoke clean-env bootstrap must pin HOME to the branch root instead of inheriting the caller HOME",
         )
         self.assertIn(
-            'clean_env_args+=("LCA_SMOKE_DEBUG_MANIFEST=$LCA_SMOKE_DEBUG_MANIFEST")',
+            'if [[ -n "${!preserved_name:-}" ]]; then',
             WRAPPER_SOURCE,
-            msg="smoke clean-env bootstrap must carry the debug manifest override across re-exec",
+            msg="smoke clean-env bootstrap must only preserve explicitly supported overrides",
+        )
+        self.assertIn(
+            'clean_env_args+=("$preserved_name=${!preserved_name}")',
+            WRAPPER_SOURCE,
+            msg="smoke clean-env bootstrap must carry supported overrides across re-exec without reopening the ambient shell env",
+        )
+        self.assertRegex(
+            WRAPPER_SOURCE,
+            re.compile(
+                r"""for preserved_name in \\
+    LCA_SMOKE_EXPORT_SNAPSHOT_ROOT \\
+    LCA_SMOKE_DEBUG_MANIFEST \\
+    LCA_SMOKE_CASE_RETRY_LIMIT \\
+    LCA_SMOKE_RETRY_SLEEP_S \\
+    LCA_SMOKE_BUILD_RETRY_LIMIT \\
+    LCA_SMOKE_BUILD_RETRY_SLEEP_S \\
+    LCA_SMOKE_BUILD_TIMEOUT_S; do""",
+                re.DOTALL,
+            ),
+            msg="smoke clean-env bootstrap must preserve the supported snapshot, manifest, and deterministic-control overrides across re-exec",
         )
 
     def test_suite_metadata_records_manifest_input_policy_for_debug_replays(self) -> None:
@@ -952,6 +972,26 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
             msg="retry-loop control json must preserve the preferred continuation command",
         )
         self.assertIn(
+            '"gate_escalation_allowed": as_bool(summary.get("gate_escalation_allowed"))',
+            launcher_source,
+            msg="retry-loop control json must explicitly say whether the next required gate may run",
+        )
+        self.assertIn(
+            '"next_gate_status": summary.get("next_gate_status")',
+            launcher_source,
+            msg="retry-loop control json must publish the blocked-vs-ready status of the next required gate",
+        )
+        self.assertIn(
+            'LAUNCHER_RETRY_LOOP_ACTION="repair_and_rerun_smoke"',
+            launcher_source,
+            msg="launcher control must keep harness failures on a smoke-rerun path instead of treating them like acceptance retries",
+        )
+        self.assertIn(
+            'echo "- Next gate status: \\`$next_gate_status\\`"',
+            launcher_source,
+            msg="launcher status reports must say explicitly when the next required gate is still blocked",
+        )
+        self.assertIn(
             'echo "- Preferred retry-loop command: \\`$LAUNCHER_RETRY_LOOP_PREFERRED_COMMAND\\`"',
             launcher_source,
             msg="launcher status reports must show the preferred retry-loop continuation command",
@@ -1218,6 +1258,492 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
             self.assertIn(
                 "failure_kind=harness_usage_failure",
                 failure_summary.read_text(encoding="utf-8"),
+            )
+
+    def test_missing_helper_result_with_timeout_stderr_keeps_solver_timeout_exit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                import sys
+
+
+                def main() -> int:
+                    print("[run_case] solver timed out after 1.0s", file=sys.stderr)
+                    return 124
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 124, msg=result.stderr)
+            self.assertNotIn(
+                "retrying harness-transient failure",
+                result.stderr,
+                msg="explicit solver-timeout stderr must keep the solver-timeout exit instead of retrying as harness noise",
+            )
+            failure_summary = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure" / "failure_summary.txt"
+            )
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=solver_timeout", failure_text)
+            self.assertIn(
+                "failure_summary=case helper reported a solver timeout before writing run_case_result.json",
+                failure_text,
+            )
+
+    def test_missing_helper_result_with_solver_runtime_stderr_keeps_runtime_exit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                import sys
+
+
+                def main() -> int:
+                    print("[run_case] solver exited with code 9 (normalized exit 125)", file=sys.stderr)
+                    return 125
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 125, msg=result.stderr)
+            self.assertNotIn(
+                "retrying harness-transient failure",
+                result.stderr,
+                msg="explicit solver-runtime stderr must keep the solver-runtime exit instead of retrying as a missing-result harness failure",
+            )
+            failure_summary = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure" / "failure_summary.txt"
+            )
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=solver_runtime_failure", failure_text)
+            self.assertIn(
+                "failure_summary=case helper reported a non-zero solver exit before writing run_case_result.json",
+                failure_text,
+            )
+
+    def test_missing_helper_script_mid_run_becomes_retryable_harness_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+
+                def main() -> int:
+                    return 0
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+            self.write_text(
+                branch_root / "solver_release_env.sh",
+                textwrap.dedent(
+                    """
+                    #!/usr/bin/env bash
+                    set -euo pipefail
+                    export LOCAL_SKIP_SELF_TEST="${LOCAL_SKIP_SELF_TEST:-1}"
+                    SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+                    rm -f "$SCRIPT_DIR/branch_run_case.py"
+                    """
+                ).strip()
+                + "\n",
+            )
+            self.make_executable(branch_root / "solver_release_env.sh")
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 70, msg=result.stderr)
+            self.assertIn(
+                "retrying harness-transient failure",
+                result.stderr,
+                msg="a vanished helper script after preflight should spend the harness retry budget instead of surfacing as an ambiguous usage failure",
+            )
+            failure_summary = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure" / "failure_summary.txt"
+            )
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=harness_transient_failure", failure_text)
+            self.assertIn(
+                "failure_summary=case helper could not start due to a missing or non-executable dependency before writing run_case_result.json",
+                failure_text,
+            )
+
+    def test_pass_result_json_does_not_override_nonzero_helper_exit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                import json
+                import sys
+                from pathlib import Path
+
+
+                def main() -> int:
+                    marker = Path(__file__).resolve().parent / "artifacts" / "helper_attempt.txt"
+                    marker.parent.mkdir(parents=True, exist_ok=True)
+                    marker.write_text("1\\n", encoding="utf-8")
+                    case_dir = Path(sys.argv[7])
+                    case_dir.mkdir(parents=True, exist_ok=True)
+                    (case_dir / "in.txt").write_text("1 0\\n", encoding="utf-8")
+                    (case_dir / "out.txt").write_text("", encoding="utf-8")
+                    (case_dir / "hidden_parent.txt").write_text("", encoding="utf-8")
+                    (case_dir / "run_case_result.json").write_text(
+                        json.dumps(
+                            {
+                                "status": "pass",
+                                "category": "pass",
+                                "exit_code": 0,
+                                "message": "OK",
+                                "validator_ok": True,
+                            }
+                        )
+                        + "\\n",
+                        encoding="utf-8",
+                    )
+                    return 1
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 70, msg=result.stderr)
+            self.assertNotIn(
+                "retrying harness-transient failure",
+                result.stderr,
+                msg="contradictory pass payloads must fail immediately instead of retrying as if they succeeded",
+            )
+            failure_summary = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure" / "failure_summary.txt"
+            )
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=harness_result_contract_failure", failure_text)
+            self.assertIn("helper_exit_code=1", failure_text)
+            self.assertIn(
+                "failure_summary=case helper recorded pass in run_case_result.json but exited with code 1",
+                failure_text,
+            )
+
+    def test_pass_result_json_requires_validator_ok_true(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                import json
+                import sys
+                from pathlib import Path
+
+
+                def main() -> int:
+                    case_dir = Path(sys.argv[7])
+                    case_dir.mkdir(parents=True, exist_ok=True)
+                    (case_dir / "in.txt").write_text("1 0\\n", encoding="utf-8")
+                    (case_dir / "out.txt").write_text("", encoding="utf-8")
+                    (case_dir / "hidden_parent.txt").write_text("", encoding="utf-8")
+                    (case_dir / "run_case_result.json").write_text(
+                        json.dumps(
+                            {
+                                "status": "pass",
+                                "category": "pass",
+                                "exit_code": 0,
+                                "message": "OK",
+                                "validator_ok": False,
+                            }
+                        )
+                        + "\\n",
+                        encoding="utf-8",
+                    )
+                    return 0
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 70, msg=result.stderr)
+            failure_summary = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure" / "failure_summary.txt"
+            )
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=harness_result_contract_failure", failure_text)
+            self.assertIn("helper_exit_code=0", failure_text)
+            self.assertIn(
+                "failure_summary=case helper recorded pass in run_case_result.json without validator_ok=1",
+                failure_text,
+            )
+            self.assertFalse(
+                (branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke").exists(),
+                msg="a contradictory pass payload must not publish a smoke success bundle",
+            )
+
+    def test_pass_result_json_requires_the_preserved_case_artifact_bundle(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                import json
+                import sys
+                from pathlib import Path
+
+
+                def main() -> int:
+                    case_dir = Path(sys.argv[7])
+                    case_dir.mkdir(parents=True, exist_ok=True)
+                    (case_dir / "in.txt").write_text("1 0\\n", encoding="utf-8")
+                    (case_dir / "meta.json").write_text("{\\"case\\": \\"fake\\"}\\n", encoding="utf-8")
+                    (case_dir / "hidden_parent.txt").write_text("0\\n", encoding="utf-8")
+                    (case_dir / "run_case_result.json").write_text(
+                        json.dumps(
+                            {
+                                "status": "pass",
+                                "category": "pass",
+                                "exit_code": 0,
+                                "message": "OK",
+                                "validator_ok": True,
+                            }
+                        )
+                        + "\\n",
+                        encoding="utf-8",
+                    )
+                    return 0
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 70, msg=result.stderr)
+            self.assertNotIn(
+                "retrying harness-transient failure",
+                result.stderr,
+                msg="missing case artifacts after a recorded pass must fail as a contract error instead of retrying as noise",
+            )
+            failure_summary = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure" / "failure_summary.txt"
+            )
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=harness_result_contract_failure", failure_text)
+            self.assertIn(
+                "failure_summary=case helper recorded pass in run_case_result.json but did not preserve required artifact out.txt",
+                failure_text,
+            )
+            self.assertFalse(
+                (branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke").exists(),
+                msg="a pass payload missing required case artifacts must not publish a smoke success bundle",
+            )
+
+    def test_build_success_without_solver_binary_becomes_setup_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                from pathlib import Path
+
+
+                def main() -> int:
+                    root = Path(__file__).resolve().parent
+                    marker = root / "artifacts" / "run_case_invoked.txt"
+                    marker.parent.mkdir(parents=True, exist_ok=True)
+                    marker.write_text("unexpected helper invocation\\n", encoding="utf-8")
+                    return 0
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+            self.write_text(
+                branch_root / "build.sh",
+                textwrap.dedent(
+                    """
+                    #!/usr/bin/env bash
+                    set -euo pipefail
+                    echo "[build] intentionally returning success without creating the solver binary" >&2
+                    exit 0
+                    """
+                ).strip()
+                + "\n",
+            )
+            self.make_executable(branch_root / "build.sh")
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 70, msg=result.stderr)
+            self.assertIn(
+                "build wrapper returned success while producing the isolated smoke solver but did not leave an executable solver binary",
+                result.stderr,
+                msg="a zero-exit build without the smoke solver artifact must fail through the setup/build path",
+            )
+            failure_root = branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure"
+            failure_summary = failure_root / "failure_summary.txt"
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=build_missing_output", failure_text)
+            self.assertIn("exit_code=70", failure_text)
+            self.assertFalse(
+                (branch_root / "artifacts" / "run_case_invoked.txt").exists(),
+                msg="missing build artifacts must stop before any case helper execution starts",
+            )
+
+    def test_build_timeout_normalizes_to_setup_failure_with_timeout_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                from pathlib import Path
+
+
+                def main() -> int:
+                    root = Path(__file__).resolve().parent
+                    marker = root / "artifacts" / "run_case_invoked.txt"
+                    marker.parent.mkdir(parents=True, exist_ok=True)
+                    marker.write_text("unexpected helper invocation\\n", encoding="utf-8")
+                    return 0
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+            self.write_text(
+                branch_root / "build.sh",
+                textwrap.dedent(
+                    """
+                    #!/usr/bin/env bash
+                    set -euo pipefail
+                    echo "[build] hanging past the bounded smoke build timeout" >&2
+                    sleep 1
+                    """
+                ).strip()
+                + "\n",
+            )
+            self.make_executable(branch_root / "build.sh")
+
+            env = os.environ.copy()
+            env["LCA_SMOKE_BUILD_TIMEOUT_S"] = "0.1"
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                env=env,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 70, msg=result.stderr)
+            self.assertIn("setup/build failed before stress start", result.stderr)
+            self.assertIn(
+                "producing the isolated smoke solver exceeded wall-clock timeout after 0.1s before smoke cases started",
+                result.stderr,
+                msg="build timeouts must preserve the smoke build context and the bounded timeout in stderr",
+            )
+            failure_root = branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke_latest_failure"
+            failure_summary = failure_root / "failure_summary.txt"
+            build_stderr = failure_root / "setup_build" / "build.stderr.txt"
+            self.assertTrue(failure_summary.is_file(), msg=result.stderr)
+            self.assertTrue(build_stderr.is_file(), msg=result.stderr)
+            failure_text = failure_summary.read_text(encoding="utf-8")
+            self.assertIn("failure_kind=build_timeout", failure_text)
+            self.assertIn("exit_code=124", failure_text)
+            self.assertIn(
+                "build exceeded wall-clock timeout after 0.1s",
+                build_stderr.read_text(encoding="utf-8"),
+            )
+            self.assertFalse(
+                (branch_root / "artifacts" / "run_case_invoked.txt").exists(),
+                msg="timed-out builds must stop before the case helper is ever invoked",
             )
 
     def test_build_failure_stops_before_case_execution_and_preserves_setup_logs(self) -> None:
@@ -1930,6 +2456,63 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
                 msg="upfront prerequisite failures must not clear prior workdirs before cleanup ownership begins",
             )
 
+    def test_broken_main_python_prerequisite_preserves_stale_smoke_state_until_validation_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(Path(tmp), run_case_body="from __future__ import annotations")
+            artifacts_root = branch_root / "artifacts" / "lca_tree_stress_v5"
+            setup_root = artifacts_root / "smoke_setup"
+            session_root = artifacts_root / ".tmp" / "lca_smoke.session"
+            setup_tmpdir = artifacts_root / ".tmp" / "lca_smoke.setup.tmp"
+            failure_root = artifacts_root / "smoke_latest_failure"
+            run_tmpdir = artifacts_root / ".tmp" / "lca_smoke.tmp.stale"
+            run_workdir = artifacts_root / ".tmp" / "lca_smoke.run.stale"
+
+            self.write_text(setup_root / "stale.txt", "stale setup state\n")
+            self.write_text(session_root / "home" / "stale.txt", "stale session state\n")
+            self.write_text(setup_tmpdir / "stale.txt", "stale setup tmp state\n")
+            self.write_text(failure_root / "stale.txt", "stale failure state\n")
+            self.write_text(run_tmpdir / "stale.txt", "stale runtime tmp state\n")
+            self.write_text(run_workdir / "stale.txt", "stale workdir state\n")
+            self.write_text(
+                branch_root / "artifact_paths.py",
+                "def broken(:\n",
+            )
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 70, msg=result.stderr)
+            self.assertIn("broken artifact resolver imports:", result.stderr)
+            self.assertTrue(
+                (setup_root / "stale.txt").is_file(),
+                msg="broken main Python prerequisites must not clear prior setup roots before cleanup ownership begins",
+            )
+            self.assertTrue(
+                (session_root / "home" / "stale.txt").is_file(),
+                msg="broken main Python prerequisites must not clear prior session roots before cleanup ownership begins",
+            )
+            self.assertTrue(
+                (setup_tmpdir / "stale.txt").is_file(),
+                msg="broken main Python prerequisites must not clear prior setup tmpdirs before cleanup ownership begins",
+            )
+            self.assertTrue(
+                (failure_root / "stale.txt").is_file(),
+                msg="broken main Python prerequisites must not clear the last failure bundle before validation passes",
+            )
+            self.assertTrue(
+                (run_tmpdir / "stale.txt").is_file(),
+                msg="broken main Python prerequisites must not clear prior runtime tmpdirs before cleanup ownership begins",
+            )
+            self.assertTrue(
+                (run_workdir / "stale.txt").is_file(),
+                msg="broken main Python prerequisites must not clear prior workdirs before cleanup ownership begins",
+            )
+
     def test_successful_run_clears_stale_shared_state_and_exports_a_fresh_external_snapshot_tree(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             branch_root = self.make_fake_runtime_branch(
@@ -2075,6 +2658,109 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
                 msg="environment validation must publish the rebound runtime TMPDIR after setup completes",
             )
 
+    def test_direct_wrapper_clean_env_reexec_preserves_supported_overrides_without_inheriting_host_home(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            branch_root = self.make_fake_runtime_branch(
+                Path(tmp),
+                run_case_body="""
+                #!/usr/bin/env python3
+                from __future__ import annotations
+
+                import json
+                import sys
+                from pathlib import Path
+
+
+                def main() -> int:
+                    outdir = Path(sys.argv[7])
+                    outdir.mkdir(parents=True, exist_ok=True)
+                    (outdir / "in.txt").write_text("1 0\\n", encoding="utf-8")
+                    (outdir / "out.txt").write_text("", encoding="utf-8")
+                    (outdir / "time.txt").write_text("0.01\\n", encoding="utf-8")
+                    (outdir / "run_case_result.json").write_text(
+                        json.dumps(
+                            {
+                                "status": "pass",
+                                "category": "pass",
+                                "exit_code": 0,
+                                "message": "OK",
+                                "validator_ok": True,
+                                "sec": 0.01,
+                                "rss_kb": 1,
+                            }
+                        )
+                        + "\\n",
+                        encoding="utf-8",
+                    )
+                    return 0
+
+
+                if __name__ == "__main__":
+                    raise SystemExit(main())
+                """,
+            )
+            debug_manifest = branch_root / "debug_smoke_cases.tsv"
+            self.write_text(
+                debug_manifest,
+                (
+                    "stage\tmode\tn\tseed\tshuffle_labels\tshuffle_queries\ttimeout_s\n"
+                    "smoke\tcomb_sparse\t32\t7\t0\t1\t4\n"
+                ),
+            )
+            hostile_tmpdir = (branch_root / "host_tmpdir").resolve()
+            hostile_home = (branch_root / "host_home").resolve()
+            hostile_tmpdir.mkdir()
+            hostile_home.mkdir()
+            env = os.environ.copy()
+            env["LCA_SMOKE_DEBUG_MANIFEST"] = "debug_smoke_cases.tsv"
+            env["LCA_SMOKE_BUILD_TIMEOUT_S"] = "17"
+            env["LCA_SMOKE_CASE_RETRY_LIMIT"] = "1"
+            env["LCA_SMOKE_RETRY_SLEEP_S"] = "0.05"
+            env["LCA_SMOKE_BUILD_RETRY_LIMIT"] = "1"
+            env["LCA_SMOKE_BUILD_RETRY_SLEEP_S"] = "0.05"
+            env["HOME"] = str(hostile_home)
+            env["TMPDIR"] = str(hostile_tmpdir)
+            env["TMP"] = str(hostile_tmpdir)
+            env["TEMP"] = str(hostile_tmpdir)
+
+            result = subprocess.run(
+                ["./outer_suite_wrappers/lca_smoke.sh"],
+                cwd=branch_root,
+                capture_output=True,
+                text=True,
+                check=False,
+                env=env,
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            suite_config = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke" / "suite_config.txt"
+            ).read_text(encoding="utf-8")
+            self.assertIn("manifest_input_policy=debug_manifest_override", suite_config)
+            self.assertIn("build_timeout_s=17", suite_config)
+            environment_validation = (
+                branch_root / "artifacts" / "lca_tree_stress_v5" / "smoke" / "environment_validation.txt"
+            ).read_text(encoding="utf-8")
+            self.assertIn(
+                f"home={(branch_root / 'artifacts' / 'lca_tree_stress_v5' / '.tmp' / 'lca_smoke.session' / 'home').resolve()}",
+                environment_validation,
+                msg="direct smoke wrapper reruns must pin HOME to the branch-local session root instead of inheriting the caller HOME",
+            )
+            self.assertNotIn(
+                f"home={hostile_home}",
+                environment_validation,
+                msg="direct smoke wrapper reruns must not leak the caller HOME into the published environment snapshot",
+            )
+            manifest_snapshot = (
+                branch_root
+                / "artifacts"
+                / "lca_tree_stress_v5"
+                / "smoke"
+                / "environment_validation"
+                / "smoke_cases.snapshot.tsv"
+            ).read_text(encoding="utf-8")
+            self.assertIn("smoke\tcomb_sparse\t32\t7\t0\t1\t4", manifest_snapshot)
+
     def test_load_release_environment_rebinds_runtime_tmpdir_after_sourcing_release_env(self) -> None:
         self.assertIn(
             'if [[ -z "${RUN_TMPDIR:-}" ]]; then',
@@ -2134,6 +2820,11 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
             msg="smoke main must validate the resume helper before setup cleanup starts",
         )
         self.assertIn(
+            'require_python_entrypoint "$ARTIFACT_RESOLVER" "artifact resolver imports"',
+            WRAPPER_SOURCE,
+            msg="smoke main must validate artifact-resolver imports before setup cleanup starts",
+        )
+        self.assertIn(
             'require_python_entrypoint "$BUILD_HELPER" "build helper imports"',
             WRAPPER_SOURCE,
             msg="smoke main must validate build-helper imports before setup cleanup starts",
@@ -2147,6 +2838,11 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
             'require_python_entrypoint "$CHECKER_HELPER" "validator helper imports"',
             WRAPPER_SOURCE,
             msg="smoke main must validate validator imports before setup cleanup starts",
+        )
+        self.assertIn(
+            'require_python_entrypoint "$RESUME_HELPER" "resume helper imports"',
+            WRAPPER_SOURCE,
+            msg="smoke main must validate resume-helper imports before setup cleanup starts",
         )
 
     def test_main_validates_repo_layout_before_mutating_smoke_state(self) -> None:
@@ -2184,6 +2880,14 @@ class LcaSmokeWrapperRegressionTests(unittest.TestCase):
             WRAPPER_SOURCE,
             re.compile(r"run_main\(\)\s*\{.*?SMOKE_CLEANUP_ACTIVE=1", re.DOTALL),
             msg="run_main must arm cleanup only after main's upfront validation succeeds",
+        )
+        self.assertRegex(
+            WRAPPER_SOURCE,
+            re.compile(
+                r"run_main\(\)\s*\{.*?acquire_lock.*?SMOKE_CLEANUP_ACTIVE=1.*?mkdir -p \"\$OUTPARENT\" \"\$TMP_PARENT\" \"\$RUN_STAGE_ROOT\" \"\$BUILD_ROOT\"",
+                re.DOTALL,
+            ),
+            msg="run_main must arm cleanup only after lock acquisition and immediately before mutable smoke-state setup begins",
         )
 
     def test_resolve_output_roots_normalizes_setup_and_output_paths(self) -> None:

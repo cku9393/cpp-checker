@@ -13,6 +13,17 @@ from typing import Any
 os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 sys.dont_write_bytecode = True
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from retry_artifact_io import (
+    prepare_output_dir,
+    resolve_artifact_output_path,
+    resolve_branch_path as resolve_retry_branch_path,
+    write_text_output,
+)
+
 
 ITERATION_FAILURE_SIGNATURE_RE = re.compile(
     r"^- Current failure signature: `(?P<value>[^`]+)`\s*$",
@@ -28,10 +39,12 @@ ITERATION_FAILURE_POINT_ANCHOR_RE = re.compile(
 PINNED_SYMBOL_RE = re.compile(
     r"^(?P<path>.+?)(?:::(?P<label>.+?))?\s*\[(?P<focus>\d+-\d+)\]\s*$"
 )
+FOCUS_RANGE_RE = re.compile(r"^(?P<start>\d+)-(?P<end>\d+)$")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--branch-root", default="")
     parser.add_argument("--attempt", required=True, type=int)
     parser.add_argument("--attempt-dir", required=True)
     parser.add_argument("--report-root", required=True)
@@ -40,6 +53,36 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--state-file", required=True)
     parser.add_argument("--iteration-file", required=True)
     return parser.parse_args()
+
+
+def _load_artifact_guard(branch_root: Path):
+    if str(branch_root) not in sys.path:
+        sys.path.insert(0, str(branch_root))
+    import artifact_paths as artifact_guard  # type: ignore
+
+    return artifact_guard.ensure_under_artifacts, getattr(
+        artifact_guard, "resolve_branch_artifact_path", None
+    )
+
+
+def resolve_branch_path(branch_root: Path, value: str) -> Path:
+    resolved = resolve_retry_branch_path(branch_root, value)
+    try:
+        resolved.relative_to(branch_root)
+    except ValueError as exc:
+        raise ValueError(f"branch-local path must stay under {branch_root}: {resolved}") from exc
+    return resolved
+
+
+def resolve_artifact_path(
+    branch_root: Path,
+    ensure_under_artifacts,
+    value: str,
+    shared_resolver=None,
+) -> Path:
+    if shared_resolver is not None:
+        return shared_resolver(value)
+    return resolve_artifact_output_path(branch_root, value, ensure_under_artifacts)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -87,6 +130,22 @@ def parse_branch_timestamp(value: Any) -> datetime | None:
         return None
 
 
+def append_unique_path(paths: list[Path], candidate: Path) -> None:
+    resolved = candidate.resolve()
+    if any(existing.resolve() == resolved for existing in paths):
+        return
+    paths.append(resolved)
+
+
+def path_is_newer_than_epoch(path: Path, epoch: float | None) -> bool:
+    if epoch is None:
+        return False
+    try:
+        return path.stat().st_mtime > epoch
+    except OSError:
+        return False
+
+
 def build_refresh_evidence(
     now: str,
     current_failure: dict[str, Any],
@@ -99,7 +158,9 @@ def build_refresh_evidence(
 ) -> dict[str, Any]:
     designated_refresh_asset = iteration_path.resolve()
     helper_path = Path(__file__).resolve()
+    capture_helper_path = helper_path.with_name("capture_failure_context.py")
     playbook_path = helper_path.with_name("failure_analysis_playbook.md")
+    prepare_retry_path = helper_path.with_name("prepare_retry_attempt_state.py")
     refresh_dt = parse_branch_timestamp(now)
     report_ts = report_payload.get("timestamp")
     breakdown_ts = breakdown_payload.get("timestamp")
@@ -107,6 +168,16 @@ def build_refresh_evidence(
     report_dt = parse_branch_timestamp(report_ts)
     breakdown_dt = parse_branch_timestamp(breakdown_ts)
     current_dt = parse_branch_timestamp(current_ts)
+    latest_failure_epoch = max(
+        (dt.timestamp() for dt in (report_dt, breakdown_dt, current_dt) if dt is not None),
+        default=None,
+    )
+    qualifying_refreshed_assets: list[Path] = []
+    append_unique_path(qualifying_refreshed_assets, state_path.resolve())
+    append_unique_path(qualifying_refreshed_assets, designated_refresh_asset)
+    for candidate in (capture_helper_path, playbook_path, prepare_retry_path, helper_path):
+        if path_is_newer_than_epoch(candidate, latest_failure_epoch):
+            append_unique_path(qualifying_refreshed_assets, candidate)
     return {
         "analysis_refresh_timestamp": now,
         "latest_failure_report_timestamp": report_ts,
@@ -114,12 +185,7 @@ def build_refresh_evidence(
         "current_failure_timestamp": current_ts,
         "evidence_source_attempt_dir": str(attempt_dir),
         "analysis_log": str(analysis_log),
-        "qualifying_refreshed_assets": [
-            str(state_path.resolve()),
-            str(helper_path),
-            str(playbook_path),
-            str(designated_refresh_asset),
-        ],
+        "qualifying_refreshed_assets": [str(path) for path in qualifying_refreshed_assets],
         "freshness_record": {
             "attempt_label": current_failure.get("attempt_label"),
             "session_id": current_failure.get("session_id"),
@@ -406,6 +472,10 @@ def load_existing_iteration_retry_anchors(
 
 
 def summarize_anchor_excerpt(anchor: dict[str, Any]) -> str | None:
+    explicit_excerpt = str(anchor.get("excerpt") or "").strip()
+    if explicit_excerpt:
+        return explicit_excerpt
+
     statement_excerpt = str(anchor.get("statement_excerpt") or "").strip()
     if statement_excerpt:
         return statement_excerpt
@@ -446,12 +516,62 @@ def infer_anchor_role(anchor: dict[str, Any]) -> str:
     return "retry-anchor focus"
 
 
+def build_anchors_from_structural_focus(failure: dict[str, Any]) -> list[dict[str, Any]]:
+    anchors: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for item in failure.get("structural_focus") or []:
+        if not isinstance(item, dict):
+            continue
+        path = str(item.get("path") or "").strip()
+        if not path:
+            continue
+        focus_ranges = item.get("focus_ranges") or []
+        if not isinstance(focus_ranges, list):
+            continue
+        symbols = item.get("enclosing_symbols") or []
+        primary_symbol = None
+        if isinstance(symbols, list):
+            for symbol in symbols:
+                symbol_text = str(symbol or "").strip()
+                if symbol_text:
+                    primary_symbol = symbol_text
+                    break
+        note = str(item.get("note") or "").strip()
+        evidence = note or (
+            "derived from failure_breakdown.structural_focus because retry_critical_anchors were absent"
+        )
+        for focus_range in focus_ranges:
+            focus_text = str(focus_range or "").strip()
+            if not FOCUS_RANGE_RE.match(focus_text):
+                continue
+            key = (path, focus_text)
+            if key in seen:
+                continue
+            seen.add(key)
+            label = f"focus {focus_text}"
+            anchors.append(
+                {
+                    "path": path,
+                    "label": label,
+                    "focus_range": focus_text,
+                    "symbol": primary_symbol,
+                    "excerpt": summarize_source_excerpt(path, focus_text),
+                    "evidence": evidence,
+                    "role": infer_anchor_role({"path": path, "label": label, "note": note}),
+                }
+            )
+            if len(anchors) >= 8:
+                return anchors
+    return anchors
+
+
 def normalize_retry_statement_anchors(
     failure: dict[str, Any],
     previous_state: dict[str, Any],
     *,
     iteration_path: Path | None = None,
     current_failure_signature: str | None = None,
+    allow_previous_state_fallback: bool = False,
 ) -> list[dict[str, Any]]:
     raw_anchors: Any = None
     if iteration_path is not None:
@@ -462,9 +582,23 @@ def normalize_retry_statement_anchors(
     if not isinstance(raw_anchors, list) or not raw_anchors:
         raw_anchors = failure.get("retry_critical_anchors")
     if not isinstance(raw_anchors, list) or not raw_anchors:
+        raw_anchors = build_anchors_from_structural_focus(failure)
+    if (not isinstance(raw_anchors, list) or not raw_anchors) and allow_previous_state_fallback:
         raw_anchors = previous_state.get("latest_retry_statement_anchors")
     if not isinstance(raw_anchors, list):
         return []
+
+    previous_anchor_map: dict[tuple[str, str, str], dict[str, Any]] = {}
+    previous_anchors = previous_state.get("latest_retry_statement_anchors")
+    if isinstance(previous_anchors, list):
+        for item in previous_anchors:
+            if not isinstance(item, dict):
+                continue
+            prev_path = str(item.get("path") or "").strip()
+            prev_focus = str(item.get("focus_range") or "").strip()
+            prev_label = str(item.get("label") or "").strip()
+            if prev_path and prev_focus:
+                previous_anchor_map[(prev_path, prev_focus, prev_label)] = item
 
     anchors: list[dict[str, Any]] = []
     seen: set[tuple[str, str, str]] = set()
@@ -480,21 +614,32 @@ def normalize_retry_statement_anchors(
         if key in seen:
             continue
         seen.add(key)
+        previous_anchor = previous_anchor_map.get(key, {})
         evidence_lines: list[str] = []
         for raw_line in raw_anchor.get("evidence_lines") or []:
             line = str(raw_line).strip()
             if line and line not in evidence_lines:
                 evidence_lines.append(line)
+        explicit_evidence = str(raw_anchor.get("evidence") or "").strip()
         note = str(raw_anchor.get("note") or "").strip()
+        previous_evidence = str(previous_anchor.get("evidence") or "").strip()
+        explicit_role = str(raw_anchor.get("role") or "").strip()
+        previous_role = str(previous_anchor.get("role") or "").strip()
         anchors.append(
             {
                 "path": path,
                 "label": label or f"focus {focus_range}",
                 "focus_range": focus_range,
-                "symbol": str(raw_anchor.get("symbol") or "").strip() or None,
-                "excerpt": summarize_anchor_excerpt(raw_anchor),
-                "evidence": evidence_lines[0] if evidence_lines else (note or None),
-                "role": infer_anchor_role(raw_anchor),
+                "symbol": (
+                    str(raw_anchor.get("symbol") or "").strip()
+                    or str(previous_anchor.get("symbol") or "").strip()
+                    or None
+                ),
+                "excerpt": summarize_anchor_excerpt(raw_anchor) or summarize_anchor_excerpt(previous_anchor),
+                "evidence": evidence_lines[0]
+                if evidence_lines
+                else (explicit_evidence or note or previous_evidence or None),
+                "role": explicit_role or previous_role or infer_anchor_role(raw_anchor),
             }
         )
     return anchors[:8]
@@ -728,11 +873,35 @@ def build_why_this_axis(failure: dict[str, Any], primary_axis: str, secondary_ax
 
 def main() -> int:
     args = parse_args()
-    attempt_dir = Path(args.attempt_dir)
-    report_root = Path(args.report_root)
-    state_path = Path(args.state_file)
-    iteration_path = Path(args.iteration_file)
-    analysis_log = Path(args.analysis_log)
+    try:
+        if args.branch_root:
+            branch_root = Path(args.branch_root).resolve()
+            ensure_under_artifacts, shared_resolver = _load_artifact_guard(branch_root)
+            attempt_dir = resolve_artifact_path(
+                branch_root, ensure_under_artifacts, args.attempt_dir, shared_resolver
+            )
+            report_root = resolve_artifact_path(
+                branch_root, ensure_under_artifacts, args.report_root, shared_resolver
+            )
+            analysis_log = resolve_artifact_path(
+                branch_root, ensure_under_artifacts, args.analysis_log, shared_resolver
+            )
+            state_path = resolve_branch_path(branch_root, args.state_file)
+            iteration_path = resolve_branch_path(branch_root, args.iteration_file)
+        else:
+            attempt_dir = Path(args.attempt_dir)
+            report_root = Path(args.report_root)
+            state_path = Path(args.state_file)
+            iteration_path = Path(args.iteration_file)
+            analysis_log = Path(args.analysis_log)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+    prepare_output_dir(attempt_dir)
+    prepare_output_dir(report_root)
+    prepare_output_dir(state_path.parent)
+    prepare_output_dir(iteration_path.parent)
     report_path = attempt_dir / "failure_report.json"
     breakdown_path = attempt_dir / "failure_breakdown.json"
     if not report_path.exists():
@@ -767,9 +936,11 @@ def main() -> int:
         return 1
 
     now = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
-    primary_axis = failure.get("primary_axis") or previous_state.get("pinned_primary_axis") or "zero_span_fastpath"
-    secondary_axis = failure.get("secondary_axis") or previous_state.get("pinned_secondary_axis")
     same_failure_overlay = previous_state_matches_current_failure(previous_state, current_failure)
+    primary_axis = failure.get("primary_axis") or previous_state.get("pinned_primary_axis") or "zero_span_fastpath"
+    secondary_axis = failure.get("secondary_axis")
+    if not secondary_axis and same_failure_overlay:
+        secondary_axis = previous_state.get("pinned_secondary_axis")
     next_probe_command = (
         previous_state.get("next_probe_command")
         if same_failure_overlay and previous_state.get("next_probe_command")
@@ -795,6 +966,7 @@ def main() -> int:
             previous_state,
             iteration_path=iteration_path,
             current_failure_signature=current_failure.get("failure_signature"),
+            allow_previous_state_fallback=same_failure_overlay,
         )
         or (
             list(previous_state.get("latest_retry_statement_anchors") or [])
@@ -805,6 +977,20 @@ def main() -> int:
     pinned_symbol_anchors = build_anchors_from_pinned_symbols(pinned_symbols, pinned_paths)
     if anchors_need_pinned_symbol_promotion(latest_retry_statement_anchors, pinned_symbol_anchors):
         latest_retry_statement_anchors = pinned_symbol_anchors or latest_retry_statement_anchors
+    if not same_failure_overlay and latest_retry_statement_anchors:
+        anchor_paths: list[str] = []
+        anchor_symbols: list[str] = []
+        for anchor in latest_retry_statement_anchors:
+            anchor_path = str(anchor.get("path") or "").strip()
+            if anchor_path and anchor_path not in anchor_paths:
+                anchor_paths.append(anchor_path)
+            anchor_symbol = str(anchor.get("symbol") or "").strip()
+            if anchor_symbol and anchor_symbol.lower() != "none" and anchor_symbol not in anchor_symbols:
+                anchor_symbols.append(anchor_symbol)
+        if anchor_paths:
+            pinned_paths = anchor_paths[:6]
+        if anchor_symbols:
+            pinned_symbols = anchor_symbols[:6]
     focus_ac = infer_focus_ac(failure)
     pinned_acs = [focus_ac] if focus_ac else []
     failure_families = [failure.get("failure_family")] if failure.get("failure_family") else []
@@ -831,19 +1017,25 @@ def main() -> int:
         if same_failure_overlay and isinstance(previous_state.get("localization_refinement"), dict)
         else None
     )
-    notes = list(
-        previous_state.get("notes")
-        or [
-            "This file is updated by the mandatory analysis-only mini-session between failed solver attempts.",
-            "Use pinned paths and symbols to force narrower structural focus on repeated failures.",
-            "Use pinned_primary_axis and pinned_secondary_axis to keep solver retries aligned with the current progress40 pivot.",
+    if same_failure_overlay and previous_state.get("notes"):
+        notes = list(previous_state.get("notes") or [])
+    else:
+        notes = [
+            "Attempt-local retry diagnosis must stay anchored to the newest failure signature instead of older carry-forward notes.",
+            "Use latest_retry_statement_anchors and next_narrowing_target as the authoritative reread slice whenever the rendered latest_failure_report.md or latest_failure_breakdown.md stays coarse.",
+            "AC4, AC5, and AC6 remain blocked or guard-rejected nominal PASS until fresh same-worktree rerun evidence exists.",
+            "Keep exactly one primary axis, zero_span_fastpath, only as the parked progress40 fallback until smoke launcher dispatch clears and fresh solver/runtime/profile evidence names a rival axis.",
         ]
-    )
     current_marker_note = (
         "Retry preflight must reject stale analysis unless current_failure_signature matches the latest captured failure report and breakdown."
     )
     if current_marker_note not in notes:
         notes.append(current_marker_note)
+    recognized_target_note = (
+        "Retry preflight must also reject any freshness record asset that is not part of the workflow-recognized branch-local analysis target set."
+    )
+    if recognized_target_note not in notes:
+        notes.append(recognized_target_note)
     refresh_evidence = build_refresh_evidence(
         now,
         current_failure,
@@ -891,7 +1083,7 @@ def main() -> int:
         "localization_refinement": localization_refinement,
         "notes": notes,
     }
-    state_path.write_text(json.dumps(state, indent=2) + "\n")
+    write_text_output(state_path, json.dumps(state, indent=2) + "\n", encoding="utf-8")
 
     history_path = report_root / "failure_history.json"
     iteration_lines = [
@@ -980,10 +1172,12 @@ def main() -> int:
             "## Retry Gate Requirement",
             "- The next solver retry must stay blocked unless `.ouroboros/failure_analysis_state.json` still carries this exact current-failure signature.",
             "- The next solver retry must also stay blocked unless `refresh_evidence.freshness_record.refreshed_asset` itself is a supporting analysis asset newer than the latest failure timestamp; another file cannot satisfy freshness on its behalf.",
+            "- The next solver retry must also stay blocked unless that designated freshness asset is one of the workflow-recognized branch-local analysis targets (`capture_failure_context.py`, `failure_analysis_playbook.md`, `failure_analysis_iteration.md`, `prepare_retry_attempt_state.py`, or `refresh_analysis_state.py`).",
+            "- When that designated freshness asset is `.ouroboros/failure_analysis_iteration.md`, the ledger itself must still say `Current for latest failure: yes` and repeat this exact failure signature; a touched-but-stale note does not satisfy the gate.",
         ]
     )
     iteration_text = "\n".join(iteration_lines)
-    iteration_path.write_text(iteration_text + "\n")
+    write_text_output(iteration_path, iteration_text + "\n", encoding="utf-8")
 
     print(state_path)
     print(iteration_path)

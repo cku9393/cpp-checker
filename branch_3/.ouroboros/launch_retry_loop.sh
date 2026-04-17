@@ -7,8 +7,13 @@ artifact_resolver="$branch_root/artifact_paths.py"
 retry_log_root="$branch_root/artifacts/lca_tree_stress_v5/retry_loop"
 retry_tmp_parent="$branch_root/artifacts/lca_tree_stress_v5/.tmp"
 analysis_verify_helper="$branch_root/.ouroboros/verify_analysis_refresh.py"
+auto_remediation_helper="$branch_root/.ouroboros/auto_remediate_retry_abort.py"
 analysis_state_file="$branch_root/.ouroboros/failure_analysis_state.json"
 analysis_iteration_file="$branch_root/.ouroboros/failure_analysis_iteration.md"
+analysis_playbook_file="$branch_root/.ouroboros/failure_analysis_playbook.md"
+analysis_capture_helper="$branch_root/.ouroboros/capture_failure_context.py"
+analysis_pre_attempt_helper="$branch_root/.ouroboros/prepare_retry_attempt_state.py"
+analysis_refresh_helper="$branch_root/.ouroboros/refresh_analysis_state.py"
 branch_name="${branch_root##*/}"
 launcher_runtime_root=""
 
@@ -48,8 +53,13 @@ verify_latest_failure_analysis_session() {
     python3 "$analysis_verify_helper" \
       --baseline-epoch 0 \
       --analysis-log "$log_file" \
+      --target-from-current-state \
       --target "$analysis_state_file" \
       --target "$analysis_iteration_file" \
+      --target "$analysis_playbook_file" \
+      --target "$analysis_capture_helper" \
+      --target "$analysis_pre_attempt_helper" \
+      --target "$analysis_refresh_helper" \
       --latest-failure-report "$latest_failure_report" \
       --latest-failure-breakdown "$latest_failure_breakdown" \
       --require-current-state "$analysis_state_file" \
@@ -62,7 +72,7 @@ verify_latest_failure_analysis_session() {
   )"; then
     printf '%s\n' "$verify_output" >> "$log_file"
     echo "$verify_output" >&2
-    fail "latest analysis session is missing, stale, or not tied to the newest failed attempt"
+    fail "retry start blocked until at least one refreshed workflow-recognized branch-local analysis asset is present: latest analysis session/state is missing, stale, or not tied to the newest failed attempt; refresh a supporting .ouroboros note/helper such as failure_analysis_iteration.md or failure_analysis_playbook.md and record it in failure_analysis_state.json refresh_evidence.freshness_record before retrying"
   fi
 
   printf '%s\n' "$verify_output" >> "$log_file"
@@ -131,4 +141,29 @@ configure_launcher_runtime_environment
 
 exec >> "$log_file" 2>&1
 
-caffeinate -ims zsh ".ouroboros/run_until_pass_progress40.sh" "$seed_file" "$analysis_seed_file"
+while true; do
+  verify_latest_failure_analysis_session
+  set +e
+  caffeinate -ims zsh ".ouroboros/run_until_pass_progress40.sh" "$seed_file" "$analysis_seed_file"
+  loop_exit_code=$?
+  set -e
+
+  if (( loop_exit_code == 0 )); then
+    exit 0
+  fi
+
+  if python3 "$auto_remediation_helper" \
+    --branch-root "$branch_root" \
+    --report-root "$retry_log_root" \
+    --launch-log "$log_file" \
+    --loop-exit-code "$loop_exit_code"; then
+    printf '[%s] auto-remediation handled loop exit code %d; relaunching retry loop\n' \
+      "$(date '+%Y-%m-%d %H:%M:%S %Z')" "$loop_exit_code"
+    sleep 10
+    continue
+  fi
+
+  printf '[%s] auto-remediation could not safely handle loop exit code %d; leaving retry loop stopped\n' \
+    "$(date '+%Y-%m-%d %H:%M:%S %Z')" "$loop_exit_code"
+  exit "$loop_exit_code"
+done

@@ -10,6 +10,8 @@ from pathlib import Path
 
 ENTRYPOINT_PATH = Path(__file__).resolve().parent / "lca_acceptance_repeatability.sh"
 WRAPPER_PATH = Path(__file__).resolve().parent / "outer_suite_wrappers" / "lca_acceptance_repeatability.sh"
+SMOKE_REPEATABILITY_ENTRYPOINT_PATH = Path(__file__).resolve().parent / "lca_smoke_repeatability.sh"
+SMOKE_REPEATABILITY_WRAPPER_PATH = Path(__file__).resolve().parent / "outer_suite_wrappers" / "lca_smoke_repeatability.sh"
 WRAPPER_SOURCE = WRAPPER_PATH.read_text(encoding="utf-8")
 
 

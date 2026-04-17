@@ -1,3 +1,6 @@
+#if 0
+#include "../boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp"
+#else
 #if __has_include(<bits/stdc++.h>)
 #include <bits/stdc++.h>
 #else
@@ -648,6 +651,7 @@ public:
     EdgeToken& operator=(EdgeToken&& other) noexcept;
     EdgeToken();
     bool moved();
+    bool is_tree_edge() const;
 private:
     Edge* edge;
     friend class DynamicGraph;
@@ -950,6 +954,10 @@ namespace dgraph {
 
     bool EdgeToken::moved() {
         return edge == nullptr;
+    }
+
+    bool EdgeToken::is_tree_edge() const {
+        return edge != nullptr && edge->is_tree_edge();
     }
 }
 
@@ -3699,7 +3707,22 @@ public:
         vector<int> deleted;
         if (!vertexAlive(x)) return deleted;
         aliveV_[x] = false;
+        vector<int> treeEdges;
+        treeEdges.reserve(adj_[x].size());
         for (int eid : adj_[x]) {
+            if (!edgeAlive(eid)) continue;
+            if (edges_[eid].tok.has_value() && edges_[eid].tok->is_tree_edge()) {
+                treeEdges.push_back(eid);
+                continue;
+            }
+            edges_[eid].alive = false;
+            if (edges_[eid].tok.has_value()) {
+                g_->remove(std::move(*edges_[eid].tok));
+                edges_[eid].tok.reset();
+            }
+            deleted.push_back(eid);
+        }
+        for (int eid : treeEdges) {
             if (!edgeAlive(eid)) continue;
             edges_[eid].alive = false;
             if (edges_[eid].tok.has_value()) {
@@ -6793,6 +6816,8 @@ class LiteraturePotentialOracle final : public NBOracle {
         vector<vector<int>> incidentQids;
         vector<int> endpointActiveCount;
         vector<int> endpointMark;
+        vector<int> endpointPoolSeenCid;
+        vector<int> endpointPoolSeenEpoch;
         int endpointMarkCur = 1;
         unordered_map<int, ClassState> classStates;
         int activeQueryCount = 0;
@@ -6806,6 +6831,8 @@ class LiteraturePotentialOracle final : public NBOracle {
             incidentQids.emplace_back();
             endpointActiveCount.push_back(0);
             endpointMark.push_back(0);
+            endpointPoolSeenCid.push_back(-1);
+            endpointPoolSeenEpoch.push_back(0);
             return id;
         }
 
@@ -7658,6 +7685,12 @@ class LiteraturePotentialOracle final : public NBOracle {
         int hi = tree.tout[piece.entryVertexPos];
         int tp = tree.tin[pos];
         return lo <= tp && tp <= hi;
+    }
+
+    bool isWholeTreePiece(const SupportTreeObject& tree, const SupportPieceRef& piece) const {
+        return !piece.complementOfBlockedSubtree &&
+               piece.blockedParentPos == -1 &&
+               piece.entryVertexPos == tree.rootPos;
     }
 
     int pieceVertexCount(const SupportTreeObject& tree, const SupportPieceRef& piece) const {
@@ -12250,6 +12283,31 @@ class LiteraturePotentialOracle final : public NBOracle {
         survivingPieces.clear();
         removedPieceVertices = 0;
         boundaryOps = 0;
+        const auto* baseTree = getSupportTreeObject(piece.treeId);
+        if (!baseTree) return false;
+        if (isWholeTreePiece(*baseTree, piece)) {
+            if (!(0 <= oldLocalPos && oldLocalPos < (int)baseTree->vertexByPos.size())) return false;
+            vector<PieceTreeComponentDesc> comps;
+            if (!computeWholeTreePositiveComponents(owner, *baseTree, oldLocalPos, comps, outDeadIdx)) return false;
+            removedPieceVertices = max(0, (int)baseTree->vertexByPos.size() - 1);
+            boundaryOps = (int)comps.size();
+            for (const auto& comp : comps) {
+                int attachmentPos = comp.repPos;
+                if (comp.parentSide) {
+                    survivingPieces.push_back(makeComplementPieceRef(piece.treeId, baseTree->rootPos, oldLocalPos,
+                                                                     attachmentPos, comp.repVertex, comp.count));
+                } else {
+                    survivingPieces.push_back(makeSubtreePieceRef(piece.treeId, comp.childPos, oldLocalPos,
+                                                                  attachmentPos, comp.repVertex, comp.count));
+                }
+            }
+#ifdef LOCAL
+            g_batch_dbg.preserved_piece_split_calls++;
+            g_batch_dbg.preserved_piece_split_vertices += removedPieceVertices;
+            g_batch_dbg.preserved_piece_split_boundary_ops += boundaryOps;
+#endif
+            return true;
+        }
         SupportBuildProduct prod;
         vector<int> oldToNew;
         if (!buildSupportProductFromSinglePiece(piece, prod, &oldToNew)) return false;
@@ -12600,6 +12658,21 @@ class LiteraturePotentialOracle final : public NBOracle {
         survivingPieces.clear();
         removedVertices = 0;
         terminalGroups = 0;
+        const auto* baseTree = getSupportTreeObject(piece.treeId);
+        if (!baseTree) return false;
+        if (isWholeTreePiece(*baseTree, piece)) {
+            if (!(0 <= oldLocalPos && oldLocalPos < (int)baseTree->vertexByPos.size())) return false;
+            vector<ConnectorPieceCompDesc> comps;
+            if (!computeWholeTreeTerminalComponents(*baseTree, terminalVertices, oldLocalPos, comps)) return false;
+            removedVertices = max(0, (int)baseTree->vertexByPos.size() - 1);
+            for (const auto& comp : comps) {
+                if (comp.terminalCount <= 0) continue;
+                ++terminalGroups;
+                if (comp.parentSide) survivingPieces.push_back(makeComplementPieceRef(piece.treeId, baseTree->rootPos, oldLocalPos, comp.repPos, -1, 0));
+                else survivingPieces.push_back(makeSubtreePieceRef(piece.treeId, comp.childPos, oldLocalPos, comp.repPos, -1, 0));
+            }
+            return true;
+        }
         SupportBuildProduct prod;
         vector<int> oldToNew;
         if (!buildSupportProductFromSinglePiece(piece, prod, &oldToNew)) return false;
@@ -14231,7 +14304,6 @@ class LiteraturePotentialOracle final : public NBOracle {
             if (!splitOldPieceIds.empty()) {
                 for (const auto& kv : replacementPieceVertexToMeta) {
                     int v = kv.first;
-                    if (!(1 <= v && v <= n_)) continue;
                     if (supportScratch_.supportPosStamp[v] == oldConnectorPosStamp) {
                         oldConnectorTouchesChangedPreserved = true;
                         break;
@@ -14682,7 +14754,7 @@ class LiteraturePotentialOracle final : public NBOracle {
                     auto& h = st.watchHandles[hi];
                     int pos = -1;
                     if (1 <= h.vertex && h.vertex <= n_ && supportScratch_.supportPosStamp[h.vertex] == newTreePosStamp) pos = supportScratch_.supportPosVal[h.vertex];
-                    annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, newConnectorPieceId, pos);
+                annotateHandleMetadata(h, SupportOriginKind::ConnectorTree, newConnectorTreeId, newConnectorPieceId, pos);
 #ifdef LOCAL
                     g_batch_dbg.reuse_connector_direct_retag_handles++;
 #endif
@@ -16103,10 +16175,16 @@ public:
 
             bool oldHandledByReuse = false;
             auto __ac3_reuse_start = std::chrono::steady_clock::now();
+            const bool allowNonSinglePositiveReuse =
+                allowSupportReuseThisDeletion &&
+                refineRes.reuseKind != SupportReuseKind::None &&
+                refineRes.reuseKind != SupportReuseKind::SinglePositive;
+            const bool allowConfiguredSinglePositiveReuse =
+                allowSinglePositiveReuse &&
+                refineRes.reuseKind == SupportReuseKind::SinglePositive;
             const bool allowReuseForClass =
                 !refineRes.usedFullScan &&
-                ((allowSupportReuseThisDeletion && refineRes.reuseKind != SupportReuseKind::None) ||
-                 (allowSinglePositiveReuse && refineRes.reuseKind == SupportReuseKind::SinglePositive));
+                (allowNonSinglePositiveReuse || allowConfiguredSinglePositiveReuse);
             if (allowReuseForClass) {
                 auto itOldSt = ownerData_[owner].classStates.find(info.oldCid);
                 if (itOldSt != ownerData_[owner].classStates.end()) {
@@ -18765,3 +18843,4 @@ int main(){
 #endif
     return 0;
 }
+#endif  // BRANCH3_FORCE_PROGRESS40_BUNDLE

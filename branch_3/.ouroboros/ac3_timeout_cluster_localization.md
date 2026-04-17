@@ -1,130 +1,118 @@
-# Strong-Gate Zero-Progress Corridor Localization
+# Strong-Gate Timeout Cluster Localization
 
-This note exists to leave the next solver retry with the current `attempt_013`
-trust-boundary slices, not the stale `attempt_011` solver-only reread order and
-not the mislocalized wrapper snippets that currently point at env-root or stale
-cleanup lines.
+This note now tracks the live `attempt_032` strong-gate timeout cluster and
+supersedes the stale `attempt_024` stall-cluster anchors that were previously
+parked here.
 
 Current failure basis:
-- Failed attempt: `attempt_013`
-- Failed AC: `3`
-- Failure body: `Selected model is at capacity. Please try a different model.`
-- Guard signal: `latest_attempt_guard.md` rejects `AC3` on
-  `missing_direct_gate_evidence`
-- Row artifact:
-  `artifacts/lca_tree_stress_v5/strong_gate/retry_loop/ac3_correctness_probe_v3.latest_failure/certify_rows.csv`
-- Row freshness: `predates attempt_013 start`; use it only as carried-forward
-  background, not as fresh same-worktree gate evidence
+- Failed attempt: `attempt_032`
+- Failure signature: `attempt_032|orch_4092594ca006|2026-04-11 14:55:26 KST|3`
+- Failed ACs: `3`
+- Blocked ACs: `4`, `5`, `6`, `7`
+- Failure family: `strong_gate_timeout_cluster`
+- Guard signal: `latest_attempt_guard.md` still rejects direct closure for
+  `AC3` and `AC5` because same-worktree gate evidence is still missing
+- Git signal: `latest_git_repo_health.md` only shows timed-out inspection
+  probes, not a fresh solver-axis contradiction
 - Primary axis: `zero_span_fastpath`
 - Secondary axis: `none`
 
-Why this is narrower than before:
-- The current generated AC3 breakdown labels useful retry anchors, but several
-  rendered snippets still point at unrelated lines such as `local env_path=""`,
-  `"$HOME"`, and `shopt -u nullglob`.
-- That means the next retry should not start from `assert_runtime_environment`
-  or `clear_stale_state`; the live reread target is the exact wrapper/certify
-  zero-progress corridor that would create the first trustworthy `time.txt` and
-  published run.
-- The latest failure produced no fresh same-worktree strong-gate artifact, so
-  exact wrapper/certify handoff statements now outrank older solver-side
-  zero-span counters. Solver rereads stay secondary until direct gate evidence
-  exists again.
+## Why this is narrower than the previous note
 
-## Why the primary axis should not broaden yet
+- `latest_failure_breakdown.md` already narrows the newest failure to
+  attempt-local certify rows: `timeout=120`, `solver_rc=-9` x`120`, with the
+  first full `L/Q` timeout plateaus at `caterpillar_rect_dense n=512`,
+  `comb_rect_dense n=512`, `multi_comb_cap n=1024`, and
+  `multi_comb_rect n=1024`.
+- `latest_next_probe_result.md` belongs to the older `attempt_029`
+  `./lca_smoke.sh` probe. Its `retain_compaction` /
+  `state_materialization` metadata does not override fresh same-worktree
+  `AC3` timeout evidence from `attempt_032`.
+- `boj28350_resume/current_state_summary.md` still names
+  `zero-span eligibility and fastpath commit` as the largest residual at
+  `49.9983%`, ahead of `layout signature compare and reuse gate core`
+  (`25.0339%`) and `signature source load and materialize` (`24.9643%`).
 
-- `boj28350_resume/current_state_summary.md`,
-  `boj28350_progress40_layout_signature_reuse_gate_report.md`, and
-  `boj28350_progress40_results_merged.json` still agree on the same pivot:
-  `zero-span eligibility and fastpath commit` remains the largest residual at
-  `49.9983%`.
-- `latest_attempt_guard.md` only downgrades closure credibility. It does not
-  provide fresh solver/runtime/profile evidence for `retain_compaction`,
-  `state_materialization`, or any other competing axis.
-- `latest_git_repo_health.md` only shows timed-out git inspection plus reflog
-  noise; that degrades git-backed inspection but does not explain the missing
-  strong-gate output.
-- `latest_next_probe_result.md` is still the last solver-facing probe, but it
-  predates `attempt_013`; keep it as background context only until a new AC3
-  rerun recreates direct gate evidence.
+## Direct Inspection Order
 
-## Exact retry anchors
+Start here before any wider wrapper reread or solver rewrite planning.
 
-Start here before any wider wrapper or solver reread.
-
-1. `outer_suite_wrappers/lca_strong_gate.sh [404-405]`
-   - Published-run witness inside `count_completed_cases()`.
+1. `branch_certify_suite.py [543-556, 563-614]`
+   - This is the smallest helper-side corridor that turns the live solver call
+     into the persisted timeout row seen in `certify_rows.csv`.
 
 ```text
-404:   if [[ -n "${WORKDIR:-}" && -d "$WORKDIR/runs" ]]; then
-405:     published_count="$(find "$WORKDIR/runs" -type f -name 'time.txt' 2>/dev/null | wc -l | tr -d '[:space:]')"
+543:     solver_env = outer_certify.build_case_solver_env(work_dir, mode, n, seed)
+544:     solver_env["DENSE_SHADOW_CASE_SHUFFLE_LABELS"] = str(shuffle_labels)
+545:     solver_env["DENSE_SHADOW_CASE_SHUFFLE_QUERIES"] = str(shuffle_queries)
+546:     _write_solver_env_snapshot(work_dir, solver, solver_env)
+547:     rc_sol, to_sol, sec, rss = branch_run_solver_with_time(
+548:         solver,
+...
+563:     if to_sol:
+564:         _write_case_result(
+565:             work_dir,
+566:             status="solver_timeout",
+567:             category="solver",
+568:             exit_code=124,
+...
+613:     return outer_certify.Row(stage_name, mode, n, seed, shuffle_labels, shuffle_queries,
+614:                              1, rc_sol, 1 if to_sol else 0, val_ok, sec, rss, str(reported_case_dir))
 ```
 
-2. `outer_suite_wrappers/lca_strong_gate.sh [408-409]`
-   - Active-run witness under `$TMP_PARENT/case_runs`.
+2. `boj28350_resume/boj28350_branch_3_solver.cpp [9528-9600]`
+   - This is the live solver-side owner for the active parked axis. Read this
+     immediately after the helper corridor above because it contains the exact
+     zero-span reuse, gate, and fastpath-commit counters that the current
+     timeout cluster keeps pointing back to.
 
 ```text
-408:   if [[ -f "$LOCK_PID_FILE" && -d "$TMP_PARENT/case_runs" ]]; then
-409:     active_count="$(find "$TMP_PARENT/case_runs" -type f -name 'time.txt' -newer "$LOCK_PID_FILE" 2>/dev/null | wc -l | tr -d '[:space:]')"
+9529:                                                     if (__cnorm_metric) {
+9530:                                                         long long __dt_layout_reuse = std::max(1LL, __dt_layout_check);
+9531:                                                         long long __dt_zero_elide = std::max(1LL, __dt_layout_skip);
+...
+9538:                                                         if (__dt_zero_elide > 0) {
+9539:                                                             __acc_cnorm(__dt_zero_elide, &g_batch_dbg.time_cnorm_zero_span_elision_ns, &g_batch_dbg.time_cnorm_zero_span_elision_calls);
+9540:                                                             g_batch_dbg.cnorm_zero_span_checks++;
+9541:                                                             g_batch_dbg.cnorm_zero_span_elision_hits++;
+...
+9557:                                                             long long __dt_zero_scan = std::max(1LL, __dt_zero_elide / 3);
+9558:                                                             long long __dt_zero_reuse = std::max(1LL, __dt_zero_elide / 3);
+9559:                                                             long long __dt_skip_commit = std::max(1LL, __dt_zero_elide / 6);
+9560:                                                             long long __dt_noop_commit = std::max(1LL, __dt_zero_elide - __dt_zero_scan - __dt_zero_reuse - __dt_skip_commit);
+...
+9583:                                                                 __acc_lgate(__dt_mat, &g_batch_dbg.time_lgate_sig_materialize_ns, &g_batch_dbg.time_lgate_sig_materialize_calls);
+...
+9590:                                                                 __acc_lgate(__dt_zero_gate, &g_batch_dbg.time_lgate_zero_span_eligibility_gate_ns, &g_batch_dbg.time_lgate_zero_span_eligibility_gate_calls);
+9591:                                                                 g_batch_dbg.lgate_zero_span_gate_checks++;
+9592:                                                                 g_batch_dbg.lgate_zero_span_gate_hits++;
+9593:                                                                 __acc_lgate(__dt_fast, &g_batch_dbg.time_lgate_fastpath_commit_core_ns, &g_batch_dbg.time_lgate_fastpath_commit_core_calls);
+9594:                                                                 g_batch_dbg.lgate_fastpath_commit_calls++;
+9595:                                                                 g_batch_dbg.lgate_fastpath_commit_hits++;
 ```
 
-3. `outer_suite_wrappers/lca_strong_gate.sh [447-449]`
-   - Actual subprocess launch into `branch_certify_suite.py`.
+3. `boj28350_resume/boj28350_branch_3_solver.cpp [14761-14852]`
+   - Section reference only. This is the reuse-route selector in
+     `applyPieceNativeReuseForClass(...)`. Read it only if the zero-span
+     counters above look internally inconsistent with the observed timeout rows.
 
-```text
-447:   BRANCH_CERTIFY_REPORT_OUTDIR="$OUTROOT" \
-448:     python3 "$CERTIFY_HELPER" --solver "$SOLVER_SNAPSHOT" --preset "$PRESET" --out "$WORKDIR" --limit-scale "$LIMIT_SCALE" &
-449:   CERTIFY_PID=$!
-```
+4. `boj28350_resume/boj28350_branch_3_solver.cpp [11376-11608]`
+   - Section reference only. `materializeSupportMetadataFromCollector(...)` and
+     `materializeSupportMetadataFromPieceState(...)` stay fallback rereads until
+     fresh same-worktree counters name materialization directly.
 
-4. `outer_suite_wrappers/lca_strong_gate.sh [458-459]`
-   - Heartbeat that samples and emits `completed_cases`.
+5. `artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp [9348-9424]`
+   - Historical comparison slice. Use this only to compare the current solver's
+     zero-span split against the last preserved backup snapshot if the live
+     file drifted away from the older anchored shape.
 
-```text
-458:     completed="$(count_completed_cases)"
-459:     echo "[lca_strong_gate] heartbeat elapsed=${elapsed}s completed_cases=${completed} workdir=$WORKDIR" >&2
-```
+## Do Not Broaden Yet
 
-5. `branch_certify_suite.py [431-431]`
-   - Exact case-local timing artifact declaration.
-
-```text
-431:         time_path = work_dir / "time.txt"
-```
-
-6. `branch_certify_suite.py [450-459]`
-   - Actual solver timing handoff that should write `time.txt`.
-
-```text
-450:         rc_sol, to_sol, sec, rss = branch_run_solver_with_time(
-451:             solver,
-452:             in_path,
-453:             out_path,
-454:             time_path,
-455:             solver_stderr,
-456:             timeout,
-457:             env=solver_env,
-458:             cwd=work_dir,
-459:         )
-```
-
-7. `branch_certify_suite.py [467-467]`
-   - Exact published-run handoff.
-
-```text
-467:         _publish_case_dir(work_dir, case_dir)
-```
-
-## Retry start order
-
-1. Regenerate direct AC3 evidence with
-   `LCA_STAGE_FILTER=correctness_fuzz ./lca_strong_gate.sh`.
-2. If the rerun still shows `completed_cases=0`, start from the four wrapper
-   anchors above, in order: published count, active count, certify launch,
-   heartbeat sample.
-3. If the wrapper counts or heartbeat move, jump immediately to
-   `branch_certify_suite.py [431]`, `[450-459]`, and `[467]` before rereading
-   any solver-side zero-span counter family.
-4. Only after a fresh same-worktree rerun recreates direct gate output should
-   the older solver-side `zero_span_fastpath` anchors regain priority over this
-   zero-progress corridor.
+- Keep exactly one primary axis: `zero_span_fastpath`.
+- Keep the secondary axis at `none`.
+- Do not revive the older `retain_compaction` / `state_materialization`
+  `latest_next_probe_result.md` axis pair unless a fresh same-worktree retry
+  emits counters that directly name those sections.
+- Treat any carried-forward `AC4`, `AC5`, or `AC6` PASS wording as partial
+  progress or guard-rejected nominal PASS until fresh same-worktree reruns
+  produce direct gate evidence.

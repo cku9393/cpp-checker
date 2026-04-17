@@ -465,6 +465,32 @@ class PrepareRetryAttemptStateTests(unittest.TestCase):
                 self.assertFalse(path.exists(), msg=f"{path} should be cleared from .ouroboros")
                 self.assertIn(self.canonical(path), payload["removed_paths"])
 
+    def test_pre_attempt_cleanup_clears_legacy_non_artifact_analysis_refresh_attempt_logs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp_root = Path(tmp)
+            branch_root, lca_root = self.make_fake_branch(temp_root)
+            retry_root = lca_root / "retry_loop"
+            attempt_dir = retry_root / "attempt_analysis_refresh_log_cleanup"
+
+            legacy_logs = (
+                branch_root / ".ouroboros" / "analysis_refresh_attempt_023_subac2.log",
+                branch_root / ".ouroboros" / "analysis_refresh_attempt_025_ac5_subac3.log",
+            )
+            for path in legacy_logs:
+                write_text(path, f"legacy::{path.name}\n")
+
+            result = self.run_helper(
+                branch_root=branch_root,
+                attempt_dir=attempt_dir,
+                report_root=retry_root,
+            )
+
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            payload = json.loads((attempt_dir / "pre_attempt_cleanup.json").read_text(encoding="utf-8"))
+            for path in legacy_logs:
+                self.assertFalse(path.exists(), msg=f"{path} should be cleared from .ouroboros")
+                self.assertIn(self.canonical(path), payload["removed_paths"])
+
     def test_pre_attempt_cleanup_still_blocks_live_gate_locks(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             temp_root = Path(tmp)

@@ -8,6 +8,12 @@ still use `../boj28350_resume/solve`.
 
 Outputs stay under `../artifacts/lca_tree_stress_v5/`.
 
+The branch also keeps a materialized strong-gate preset mirror at
+`../artifacts/lca_tree_stress_v5/.preset_cache/lca_strong_gate.json`. The
+wrapper can safely prefer that full-gate JSON when the live iCloud-backed
+`suite_presets/strong_gate.json` sources surface as `compressed,dataless`,
+which keeps AC3 reproducible without changing the actual gate surface.
+
 Formal acceptance in this branch is driven by `./lca_smoke.sh`,
 `./lca_strong_gate.sh`, and `./lca_boj3s_gate.sh`.
 

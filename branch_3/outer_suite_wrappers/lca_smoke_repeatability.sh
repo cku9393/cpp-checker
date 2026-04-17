@@ -25,6 +25,15 @@ RUN_COUNT="${LCA_SMOKE_REPEAT_COUNT:-3}"
 COMPLETED_RUNS=0
 FAILURE_REASON=""
 FAILURE_HINT=""
+CURRENT_OUTPUT_SNAPSHOT_SOURCE=""
+SEQUENCE_FAILED=0
+SEQUENCE_OUTCOME_CONSISTENCY="matching"
+SEQUENCE_FIRST_FAILURE_REASON=""
+SEQUENCE_FIRST_FAILURE_HINT=""
+SEQUENCE_FIRST_FAILURE_RUN_LABEL=""
+SEQUENCE_FIRST_FAILURE_KIND=""
+FAILURE_EVENTS_PATH=""
+FAILURE_EVENT_COUNT=0
 
 export PYTHONDONTWRITEBYTECODE=1
 
@@ -343,11 +352,87 @@ raise SystemExit(0 if status == "fresh" else 1)
 PY
 }
 
+prepare_smoke_run_freshness_probes() {
+  local run_dir="$1"
+
+  write_smoke_bundle_freshness_probe \
+    "$SMOKE_STATUS_ROOT" \
+    "$run_dir/status_bundle_before.json" \
+    summary.txt \
+    latest_status_report.md
+  write_smoke_bundle_freshness_probe \
+    "$SMOKE_FAILURE_ROOT" \
+    "$run_dir/failure_bundle_before.json" \
+    failure_summary.txt \
+    latest_failure_report.md
+  write_smoke_bundle_freshness_probe \
+    "$SMOKE_OUTROOT" \
+    "$run_dir/output_bundle_before.json" \
+    suite_config.txt \
+    suite_plan.tsv \
+    environment_validation.txt
+}
+
+verify_current_run_freshness() {
+  local run_dir="$1"
+  local run_exit_code="$2"
+  local result_family="$3"
+  local run_rel="${run_dir#$WORKDIR/}"
+
+  if ! verify_smoke_bundle_freshness \
+    "smoke_latest_status" \
+    "$run_dir/status_bundle_before.json" \
+    "$SMOKE_STATUS_ROOT" \
+    "$run_dir/status_bundle_freshness.txt" \
+    summary.txt \
+    latest_status_report.md; then
+    FAILURE_REASON="smoke status bundle was not regenerated for $run_rel"
+    FAILURE_HINT="inspect $run_rel/status_bundle_freshness.txt and the live $SMOKE_STATUS_ROOT bundle"
+    return 1
+  fi
+
+  if [[ "$run_exit_code" == "0" ]]; then
+    if [[ "$CURRENT_OUTPUT_SNAPSHOT_SOURCE" != "published_smoke_output" ]]; then
+      return 0
+    fi
+    if ! verify_smoke_bundle_freshness \
+      "published smoke output" \
+      "$run_dir/output_bundle_before.json" \
+      "$SMOKE_OUTROOT" \
+      "$run_dir/output_bundle_freshness.txt" \
+      suite_config.txt \
+      suite_plan.tsv \
+      environment_validation.txt; then
+      FAILURE_REASON="smoke pass reused stale published output for $run_rel"
+      FAILURE_HINT="inspect $run_rel/output_bundle_freshness.txt and the live $SMOKE_OUTROOT bundle"
+      return 1
+    fi
+    return 0
+  fi
+
+  if [[ "$result_family" != "solver" ]]; then
+    return 0
+  fi
+
+  if ! verify_smoke_bundle_freshness \
+    "smoke_latest_failure" \
+    "$run_dir/failure_bundle_before.json" \
+    "$SMOKE_FAILURE_ROOT" \
+    "$run_dir/failure_bundle_freshness.txt" \
+    failure_summary.txt \
+    latest_failure_report.md; then
+    FAILURE_REASON="smoke solver-failure bundle was not regenerated for $run_rel"
+    FAILURE_HINT="inspect $run_rel/failure_bundle_freshness.txt and the live $SMOKE_FAILURE_ROOT bundle"
+    return 1
+  fi
+}
+
 run_smoke_once() {
   local run_dir="$1"
   local rc=0
 
   mkdir -p "$run_dir"
+  prepare_smoke_run_freshness_probes "$run_dir"
   set +e
   LCA_SMOKE_EXPORT_SNAPSHOT_ROOT="$run_dir/smoke_snapshot" \
     "$SMOKE_WRAPPER" >"$run_dir/lca_smoke.stdout.txt" 2>"$run_dir/lca_smoke.stderr.txt"
@@ -366,12 +451,15 @@ snapshot_smoke_output() {
   local run_dir="$1"
   local snapshot_root="$run_dir/smoke_snapshot"
 
+  CURRENT_OUTPUT_SNAPSHOT_SOURCE="external_snapshot"
   if [[ ! -d "$snapshot_root" ]]; then
     if [[ ! -d "$SMOKE_OUTROOT" ]]; then
       fail "expected wrapper-exported smoke snapshot or published smoke output after successful run: $snapshot_root"
     fi
+    CURRENT_OUTPUT_SNAPSHOT_SOURCE="published_smoke_output"
     cp -R "$SMOKE_OUTROOT" "$snapshot_root"
   fi
+  printf '%s\n' "$CURRENT_OUTPUT_SNAPSHOT_SOURCE" > "$run_dir/output_snapshot_source.txt"
   python3 - "$snapshot_root" "$run_dir/manifest.tsv" "$run_dir/timings.tsv" <<'PY'
 from __future__ import annotations
 
@@ -772,6 +860,44 @@ format_outcome_label() {
   fi
 }
 
+sanitize_failure_event_field() {
+  local value="$1"
+  value="${value//$'\t'/ }"
+  value="${value//$'\n'/ }"
+  printf '%s' "$value"
+}
+
+prepare_failure_events_log() {
+  FAILURE_EVENTS_PATH="$WORKDIR/failure_events.tsv"
+  printf 'run\tkind\treason\thint\n' > "$FAILURE_EVENTS_PATH"
+}
+
+record_sequence_failure() {
+  local run_label="$1"
+  local failure_kind="$2"
+  local failure_reason="$3"
+  local failure_hint="$4"
+
+  FAILURE_EVENT_COUNT=$(( FAILURE_EVENT_COUNT + 1 ))
+  if [[ -n "$FAILURE_EVENTS_PATH" ]]; then
+    printf \
+      '%s\t%s\t%s\t%s\n' \
+      "$run_label" \
+      "$(sanitize_failure_event_field "$failure_kind")" \
+      "$(sanitize_failure_event_field "$failure_reason")" \
+      "$(sanitize_failure_event_field "$failure_hint")" \
+      >> "$FAILURE_EVENTS_PATH"
+  fi
+
+  if (( SEQUENCE_FAILED == 0 )); then
+    SEQUENCE_FAILED=1
+    SEQUENCE_FIRST_FAILURE_REASON="$failure_reason"
+    SEQUENCE_FIRST_FAILURE_HINT="$failure_hint"
+    SEQUENCE_FIRST_FAILURE_RUN_LABEL="$run_label"
+    SEQUENCE_FIRST_FAILURE_KIND="$failure_kind"
+  fi
+}
+
 write_summary() {
   local status="$1"
   local baseline_label="$2"
@@ -834,6 +960,16 @@ write_summary() {
     if [[ -n "$FAILURE_HINT" ]]; then
       echo "failure_hint=$FAILURE_HINT"
     fi
+    if (( FAILURE_EVENT_COUNT > 0 )); then
+      echo "failure_count=$FAILURE_EVENT_COUNT"
+      echo "failure_events=failure_events.tsv"
+    fi
+    if [[ -n "$SEQUENCE_FIRST_FAILURE_RUN_LABEL" ]]; then
+      echo "first_failed_run=$SEQUENCE_FIRST_FAILURE_RUN_LABEL"
+    fi
+    if [[ -n "$SEQUENCE_FIRST_FAILURE_KIND" ]]; then
+      echo "first_failure_kind=$SEQUENCE_FIRST_FAILURE_KIND"
+    fi
     echo "ignored_files=time.txt"
     echo "normalized_files=run_case.stdout.txt,solver_env_snapshot.json"
     echo "normalized_run_case_stdout_lines=[run_case] mode=... time=... mem=... ; [run_case] artifacts: ..."
@@ -841,6 +977,39 @@ write_summary() {
     echo "live_smoke_output=$SMOKE_OUTROOT"
     echo "live_smoke_failure_root=$SMOKE_FAILURE_ROOT"
   } > "$WORKDIR/summary.txt"
+}
+
+write_freshness_failure_summary() {
+  local run_label="$1"
+  local run_dir="$2"
+  local latest_outcome="$3"
+  local latest_result_family="$4"
+  local summary_baseline_label="$run_label"
+  local summary_baseline_run_dir="$run_dir"
+  local summary_baseline_outcome="$latest_outcome"
+  local summary_baseline_result_family="$latest_result_family"
+  local outcome_consistency="matching"
+
+  if [[ -n "${baseline_run_dir:-}" ]]; then
+    summary_baseline_label="$baseline_label"
+    summary_baseline_run_dir="$baseline_run_dir"
+    summary_baseline_outcome="$baseline_outcome"
+    summary_baseline_result_family="$baseline_result_family"
+    if [[ "$summary_baseline_outcome" != "$latest_outcome" ]]; then
+      outcome_consistency="diverged"
+    fi
+  fi
+
+  write_summary \
+    FAIL \
+    "$summary_baseline_label" \
+    "$summary_baseline_run_dir" \
+    "$run_dir" \
+    "$summary_baseline_outcome" \
+    "$latest_outcome" \
+    "$outcome_consistency" \
+    "$summary_baseline_result_family" \
+    "$latest_result_family"
 }
 
 if (( $# > 1 )); then
@@ -891,6 +1060,7 @@ clear_stale_state
 WORKDIR="$(mktemp -d "$STAGE_PARENT/$RUN_WORK_TEMPLATE")"
 ensure_under_artifacts "$WORKDIR"
 mkdir -p "$WORKDIR/runs"
+prepare_failure_events_log
 
 baseline_run_dir=""
 baseline_label=""
@@ -905,6 +1075,7 @@ for (( run_index = 1; run_index <= RUN_COUNT; ++run_index )); do
   run_label="$(printf 'run%02d' "$run_index")"
   run_dir="$WORKDIR/runs/$run_label"
   latest_run_dir="$run_dir"
+  CURRENT_OUTPUT_SNAPSHOT_SOURCE=""
 
   if run_smoke_once "$run_dir"; then
     run_exit_code="0"
@@ -935,21 +1106,30 @@ for (( run_index = 1; run_index <= RUN_COUNT; ++run_index )); do
     baseline_label="$run_label"
     baseline_outcome="$latest_outcome"
     baseline_result_family="$latest_result_family"
+  fi
+
+  if ! verify_current_run_freshness "$run_dir" "$run_exit_code" "$latest_result_family"; then
+    record_sequence_failure "$run_label" "freshness" "$FAILURE_REASON" "$FAILURE_HINT"
+    continue
+  fi
+
+  if [[ "$run_dir" == "$baseline_run_dir" ]]; then
     continue
   fi
 
   if [[ "$baseline_outcome" != "$latest_outcome" ]]; then
     FAILURE_REASON="smoke outcome divergence between $baseline_label ($baseline_outcome) and $run_label ($latest_outcome)"
     FAILURE_HINT="inspect ${baseline_run_dir#$WORKDIR/}/outcome.txt, ${run_dir#$WORKDIR/}/outcome.txt, and the run-local logs"
-    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
-    fail "$FAILURE_REASON; $FAILURE_HINT"
+    SEQUENCE_OUTCOME_CONSISTENCY="diverged"
+    record_sequence_failure "$run_label" "outcome_divergence" "$FAILURE_REASON" "$FAILURE_HINT"
+    continue
   fi
 
   if ! compare_status_signatures "$baseline_run_dir" "$run_dir"; then
     FAILURE_REASON="smoke status divergence between $baseline_label and $run_label"
     FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/status_signature_diff.txt and the two status_snapshot trees"
-    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
-    fail "$FAILURE_REASON; $FAILURE_HINT"
+    record_sequence_failure "$run_label" "status_signature_divergence" "$FAILURE_REASON" "$FAILURE_HINT"
+    continue
   fi
 
   if [[ "$run_exit_code" == "0" ]]; then
@@ -958,17 +1138,33 @@ for (( run_index = 1; run_index <= RUN_COUNT; ++run_index )); do
     fi
     FAILURE_REASON="smoke divergence between $baseline_label and $run_label"
     FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/manifest_diff.txt and the two smoke_snapshot trees"
-    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
-    fail "$FAILURE_REASON; $FAILURE_HINT"
+    record_sequence_failure "$run_label" "snapshot_manifest_divergence" "$FAILURE_REASON" "$FAILURE_HINT"
+    continue
   fi
 
   if ! compare_failure_signatures "$baseline_run_dir" "$run_dir"; then
     FAILURE_REASON="smoke failure signature divergence between $baseline_label and $run_label"
     FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/failure_signature_diff.txt and the two failure_snapshot trees"
-    write_summary FAIL "$baseline_label" "$baseline_run_dir" "$run_dir" "$baseline_outcome" "$latest_outcome" "diverged" "$baseline_result_family" "$latest_result_family"
-    fail "$FAILURE_REASON; $FAILURE_HINT"
+    record_sequence_failure "$run_label" "failure_signature_divergence" "$FAILURE_REASON" "$FAILURE_HINT"
+    continue
   fi
 done
+
+if (( SEQUENCE_FAILED != 0 )); then
+  FAILURE_REASON="$SEQUENCE_FIRST_FAILURE_REASON"
+  FAILURE_HINT="$SEQUENCE_FIRST_FAILURE_HINT"
+  write_summary \
+    FAIL \
+    "$baseline_label" \
+    "$baseline_run_dir" \
+    "$latest_run_dir" \
+    "$baseline_outcome" \
+    "$latest_outcome" \
+    "$SEQUENCE_OUTCOME_CONSISTENCY" \
+    "$baseline_result_family" \
+    "$latest_result_family"
+  fail "$FAILURE_REASON; $FAILURE_HINT"
+fi
 
 if [[ "$baseline_outcome" != PASS:* ]]; then
   if [[ "$baseline_result_family" != "solver" ]]; then

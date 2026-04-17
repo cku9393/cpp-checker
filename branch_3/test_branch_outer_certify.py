@@ -189,6 +189,77 @@ class BranchOuterCertifyArtifactLocalityTests(unittest.TestCase):
         self.assert_under_artifacts(mode_mock.call_args.kwargs["cwd"])
         shutil.rmtree(out_dir, ignore_errors=True)
 
+    def test_generated_output_path_guard_rejects_escaped_case_dir(self) -> None:
+        out_dir = branch_outer_certify.resolve_certify_out_dir("unit/generated_path_guard")
+        rows = [
+            branch_outer_certify.Row(
+                "correctness_fuzz",
+                "comb_core",
+                8,
+                1,
+                0,
+                0,
+                1,
+                0,
+                0,
+                1,
+                0.1,
+                123,
+                "/tmp/branch_outer_certify_case_dir_escape",
+            )
+        ]
+
+        with self.assertRaisesRegex(ValueError, r"generated case_dir\[1\] must stay under"):
+            branch_outer_certify._guard_generated_output_paths(out_dir, rows)
+
+    def test_main_fails_when_generated_case_dir_escapes_artifacts(self) -> None:
+        out_dir = branch_outer_certify.resolve_certify_out_dir("unit/main_generated_path_guard")
+        shutil.rmtree(out_dir, ignore_errors=True)
+        preset = {
+            "name": "unit",
+            "stages": [
+                {
+                    "name": "correctness_fuzz",
+                    "modes": ["comb_core"],
+                    "sizes": [8],
+                    "seeds": [1],
+                    "shuffle_labels": [0],
+                    "shuffle_queries": [0],
+                }
+            ],
+        }
+        escaped_row = branch_outer_certify.Row(
+            "correctness_fuzz",
+            "comb_core",
+            8,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0.1,
+            123,
+            "/tmp/branch_outer_certify_case_dir_escape",
+        )
+
+        with (
+            mock.patch.object(branch_outer_certify, "load_preset", return_value=preset),
+            mock.patch.object(branch_outer_certify, "resolve_solver_path", return_value=Path("/bin/true")),
+            mock.patch.object(branch_outer_certify, "ensure_executable"),
+            mock.patch.object(branch_outer_certify, "run_one_case", return_value=escaped_row),
+            mock.patch.object(
+                branch_outer_certify.sys,
+                "argv",
+                ["branch_outer_certify.py", "--out", "unit/main_generated_path_guard"],
+            ),
+        ):
+            with self.assertRaisesRegex(ValueError, r"generated case_dir\[1\] must stay under"):
+                branch_outer_certify.main()
+
+        shutil.rmtree(out_dir, ignore_errors=True)
+
 
 if __name__ == "__main__":
     unittest.main()

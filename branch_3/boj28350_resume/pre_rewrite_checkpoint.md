@@ -11,9 +11,143 @@ Do not open a major solver rewrite or pivot until both review completions below 
 
 If either review is missing, stale, or not written down, keep the solver on hold and refresh the review state first.
 
+## Required Pre-Rewrite Citation
+
+Before any major solver rewrite or pivot starts in `branch_3`, the opening note
+for that work must explicitly cite both reviewed source sets together:
+
+1. `branch_3 notes reviewed = COMPLETE` after re-reading the branch-local notes
+   and working materials that define the allowed solver family and current
+   branch drift
+2. `bundled progress40 materials reviewed = COMPLETE` after re-reading the
+   bundled `progress40` source, report, and merged-results package that defines
+   the intended optimization corridor
+
+If a rewrite/pivot note does not record both lines above together before solver
+edits begin, that note is not a valid pre-rewrite checkpoint.
+
 ## Review Completion Refresh
 
-Date: `2026-04-10`
+Date: `2026-04-12`
+
+### 2026-04-12 session pre-rewrite citation refresh
+
+This `2026-04-12` entry is the current-session planning-note citation that
+must be referenced before any solver rewrite or pivot is opened in `branch_3`.
+It re-cites the paired review checkpoint instead of allowing a rewrite/pivot
+note to start from memory or from an uncited assumption.
+
+`2026-04-12` session citation status:
+
+1. `branch_3 notes reviewed = COMPLETE` by re-opening the current branch-local
+   planning/checkpoint notes
+   (`boj28350_resume/current_state_summary.md`,
+   `boj28350_resume/next_session_briefing.md`, and
+   `boj28350_resume/pre_rewrite_checkpoint.md`) before any rewrite/pivot
+   decision is allowed to proceed.
+2. `bundled progress40 materials reviewed = COMPLETE` by re-opening the
+   bundled progress40 anchor source
+   (`boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`)
+   and by explicitly carrying forward the paired authoritative package already
+   locked in this checkpoint and in
+   `boj28350_resume/current_state_summary.md`
+   (`boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`,
+   `boj28350_bundle_archive/boj28350_progress40_results_merged.json`).
+3. `rewrite/pivot permission`: HOLD unless the later rewrite/pivot note cites
+   this `2026-04-12` refresh together with the standing paired-review gate
+   below.
+
+The purpose of this refresh is narrow and explicit: it records, in the
+branch-local research log, that the session re-cited both the `branch_3`
+notes review and the bundled `progress40` materials review before any
+solver-side rewrite or research-direction pivot is opened.
+
+### 2026-04-11 refresh evidence
+
+This refresh supersedes the older `2026-04-10` status line as the active
+branch-local pre-rewrite checkpoint. It re-confirms, in the current working
+tree, which branch-local notes and bundled `progress40` materials were
+re-read and what constraints they still impose on the next solver direction.
+
+`2026-04-11` review completion status:
+
+1. `reviewed source set A`: COMPLETE after re-reading the branch-local review
+   gate and resume notes
+   (`README.md`, `boj28350_resume/README.md`,
+   `boj28350_resume/current_state_summary.md`,
+   `boj28350_resume/next_session_briefing.md`,
+   `boj28350_resume/pre_rewrite_checkpoint.md`,
+   `boj28350_resume/pre_rewrite_synthesis_note.md`,
+   `boj28350_resume/progress40_derived_reference.md`,
+   `boj28350_complete_master_document_partA_raw.md`,
+   `boj28350_integrated_technical_history.md`,
+   `boj28350_literature_progress7_bcdecomp_report.md`,
+   `literature_grade_proof_package.md`, and
+   `boj28350_resume/boj28350_branch_3_solver.cpp`).
+2. `reviewed source set B`: COMPLETE after re-reading the bundled
+   `progress40` authoritative materials
+   (`boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`,
+   `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`,
+   `boj28350_bundle_archive/boj28350_progress40_results_merged.json`).
+
+Locked constraints from the `2026-04-11` refresh:
+
+1. `README.md`, `boj28350_resume/README.md`, and
+   `boj28350_resume/next_session_briefing.md` still treat the paired review as
+   a hard gate before any major solver rewrite or pivot. The active solver is
+   still supposed to be a progress40-derived resume line, so the next solver
+   direction must reduce branch drift instead of widening it.
+2. `boj28350_literature_progress7_bcdecomp_report.md`,
+   `boj28350_integrated_technical_history.md`,
+   `literature_grade_proof_package.md`, and
+   `boj28350_complete_master_document_partA_raw.md` still lock the permitted
+   solver family to the literature-grade BC-tree flavored explicit child
+   lattice with `closeByBCPath(...)`,
+   `buildClosedHandleFromWitness(...)`, exact strict-child testing, and no
+   release-path owner exact rebuild fallback. A new algorithm family or a
+   heuristic-only detour remains out of scope for `branch_3`.
+3. `boj28350_resume/current_state_summary.md`,
+   `boj28350_resume/progress40_derived_reference.md`, and the bundled
+   `progress40` report/results still fix the optimization order:
+   `zero-span eligibility and fastpath commit` remains the primary residual,
+   while `signature source load and materialize` plus
+   `layout signature compare and reuse gate core` remain secondary axes. The
+   bundled package is still only `partial`, with dense `1024`
+   release/repeat, `4096` representatives, and long-run terminal-row
+   persistence still outside authoritative closure.
+4. `boj28350_bundle_archive/boj28350_progress40_results_merged.json` still
+   records
+   `base_source=boj28350_literature_progress39_same_layout_zero_span_elision.cpp`
+   and
+   `output_source=boj28350_literature_progress40_layout_signature_reuse_gate.cpp`.
+   That keeps the next solver direction inside the cumulative
+   pack/normalize -> same-layout reuse -> layout-signature gate ->
+   zero-span eligibility -> fastpath commit line, with the route-aware
+   `time_lgate_*` / `lgate_*` attribution preserved rather than deleted.
+5. The current retry-loop carry-over state
+   (`.ouroboros/failure_analysis_state.json`) now pins
+   `pinned_primary_axis = zero_span_fastpath`,
+   `pinned_secondary_axis = null`,
+   `next_probe_command = ./lca_smoke.sh`, and explicitly says to keep that
+   progress40 axis parked until fresh same-worktree solver/runtime/profile
+   evidence contradicts it. This checkpoint therefore keeps the next solver
+   direction axis-focused instead of broadening into another rewrite family.
+6. Reproducibility remains part of solver direction, not separate cleanup.
+   Bundled `progress40` rows do not substitute for fresh branch-local gate
+   evidence; same-worktree reruns of `./lca_strong_gate.sh` and
+   `./lca_boj3s_gate.sh` are still required after solver work, and manual
+   artifact cleanup between reruns remains disallowed.
+
+### 2026-04-11 explicit hold point
+
+This `2026-04-11` refresh is now the active Sub-AC 3 checkpoint for
+`branch_3`.
+
+1. `reviewed source set A`: COMPLETE on `2026-04-11`
+2. `reviewed source set B`: COMPLETE on `2026-04-11`
+3. `major solver rewrite/pivot permission`: HOLD until a later planning or
+   retry note cites this `2026-04-11` checkpoint and repeats the locked
+   progress40-derived solver-direction constraints above
 
 ### 2026-04-10 refresh evidence
 
@@ -78,19 +212,151 @@ required source sets were reviewed again in the current branch-local workspace.
    retry note explicitly cites this `2026-04-10` checkpoint and restates the
    progress40-derived rewrite constraints locked above.
 
+### 2026-04-11 paired completed-review checkpoint
+
+Before any major solver rewrite or research pivot begins in `branch_3`, this
+checkpoint explicitly references both completed reviews together:
+
+1. `completed review A`: the branch-local `branch_3` notes / proof /
+   active-solver review for `reviewed source set A`, already recorded as
+   COMPLETE in this checkpoint refresh
+2. `completed review B`: the bundled `progress40` authoritative source /
+   report / results review for `reviewed source set B`, already recorded as
+   COMPLETE in this checkpoint refresh
+3. `rewrite/pivot precondition`: no major solver rewrite or research pivot may
+   begin unless both completed reviews above are cited together first
+
+This paired-review entry is the branch-local pre-rewrite checkpoint record to
+reuse in later planning or retry notes whenever a broad solver rewrite or
+research-direction decision is being considered.
+
 No major solver rewrite or pivot should open unless a planning or retry note
 explicitly cites this `2026-04-10` refresh together with the existing rewrite
 rules below.
+
+### 2026-04-10 active hypotheses, prior failures, and solver constraints
+
+This subsection is the branch-local pre-rewrite notes refresh for the current
+`branch_3` session. It captures the active research hypotheses, the most
+relevant carried-forward failures, and the solver constraints that must remain
+visible before any later solver rewrite or retry plan is opened.
+
+#### Active hypotheses
+
+1. The progress40-derived residual order is still the main solver hypothesis:
+   `zero-span eligibility and fastpath commit` stays the safest primary axis,
+   while `signature source load and materialize` plus
+   `layout signature compare and reuse gate core` remain secondary follow-up
+   axes.
+2. The latest retry-analysis state narrows the immediate reading of the current
+   failure: attempt `023` is transport-disconnect noise, not fresh solver-axis
+   evidence, so the solver-side primary axis stays parked at
+   `zero_span_fastpath` and `secondary_axis = none` until a same-worktree rerun
+   emits direct smoke or gate evidence again.
+3. The older attempt-022 probe metadata
+   (`watch_diff` / `retain_compaction`) is now historical context only. It can
+   inform later profiling if fresh branch-local solver evidence reappears, but
+   it does not outrank the current transport-shaped retry state.
+4. The next branch-local signal should remain minimal first: rerun
+   `./lca_smoke.sh` before widening back to heavier gates, and only reinterpret
+   the solver axis after that rerun produces same-worktree artifacts.
+
+#### Prior failures to carry forward
+
+1. The newest formal retry failure (attempt `023`) did not produce fresh
+   solver/gate artifacts. AC1 through AC6 all surfaced the same
+   `stream disconnected before completion` payload, and the attempt guard
+   therefore marks AC3 and AC5 as `missing_direct_gate_evidence` rather than as
+   fresh solver-localized gate outcomes.
+2. The latest fresh solver-side blocker remains the carried strong-gate timeout
+   cluster already summarized elsewhere in this checkpoint: a prior
+   `./lca_strong_gate.sh` run reported `71` timeout-only failures out of `900`,
+   concentrated in `comb_rect_dense`, `caterpillar_rect_dense`,
+   `multi_comb_rect`, and one `chain_unary` timeout, with
+   `multi_comb_rect n=1024 L0/*` surviving near `1.856s` to `1.901s` while the
+   matching `L1/*` rows tipped over the limit.
+3. The branch-local `./lca_boj3s_gate.sh` evidence remains stale relative to
+   the newest attempt, so no pre-rewrite planning note should treat AC3/AC5 as
+   freshly closed or use carried-forward gate artifacts as same-worktree proof.
+
+#### Solver constraints locked before rewrite
+
+1. Preserve the literature-grade solver family. The BC-tree flavored explicit
+   child lattice plus the `ensureLatticeChildren(...)`,
+   `closeByBCPath(...)`, and `buildClosedHandleFromWitness(...)` path remain
+   mandatory and must not be replaced with a different algorithm family or a
+   heuristic-only branch-local shortcut.
+2. Keep `boj28350_resume/boj28350_branch_3_solver.cpp` anchored to the
+   progress40-derived line. The active solver still originates from the latest
+   bundled `progress40` snapshot, so future changes should reduce branch-local
+   drift rather than widen it, while preserving the route-aware `time_lgate_*`
+   / `lgate_*` attribution and the current support-materialization /
+   layout-gate surfaces.
+3. Preserve the branch-local reproducibility contract: build only with
+   `./build.sh`; treat `./lca_smoke.sh`, `./lca_strong_gate.sh`, and
+   `./lca_boj3s_gate.sh` as the only acceptance wrappers; keep outputs under
+   `branch_3/artifacts/...`; and do not weaken wrapper meaning just to chase a
+   pass.
+4. Reproducibility is part of solver work, not post-hoc cleanup. AC3 through
+   AC6 still require fresh same-worktree reruns, and reruns must not depend on
+   manual artifact cleanup between attempts.
+5. If the next session resumes as a retry instead of a rewrite, reread the
+   retry-loop notes first and obey the current pinned state:
+   `pinned_primary_axis = zero_span_fastpath`,
+   `pinned_secondary_axis = none`,
+   `next_probe_command = ./lca_smoke.sh`.
 
 ## Current Checkpoint Status
 
 This is the explicit pre-rewrite status line for `branch_3`.
 
-- `reviewed source set A`: COMPLETE on `2026-04-10`
-- `reviewed source set B`: COMPLETE on `2026-04-10`
+- `reviewed source set A`: COMPLETE on `2026-04-11`
+- `reviewed source set B`: COMPLETE on `2026-04-11`
 - `major solver rewrite/pivot permission`: HOLD until an active planning or retry note cites this checkpoint and repeats that both source reviews are complete together
 
 If a future session cannot honestly restate all three lines above, major solver changes do not proceed.
+
+### 2026-04-10 Sub-AC 3 preservation note
+
+This subsection preserves the active pre-rewrite checkpoint in a compact,
+workflow-facing form so a later session can verify, before any major solver
+rewrite or research-direction pivot begins, that both required source-set
+reviews were completed together in the current `branch_3` workspace.
+
+Preserved review scope:
+
+1. `reviewed source set A`: branch-local `branch_3` notes, proof/history
+   package, and active solver working set
+   (`boj28350_resume/README.md`,
+   `boj28350_resume/current_state_summary.md`,
+   `boj28350_resume/next_session_briefing.md`,
+   `boj28350_resume/pre_rewrite_checkpoint.md`,
+   `boj28350_resume/progress40_derived_reference.md`,
+   `boj28350_complete_master_document_partA_raw.md`,
+   `boj28350_integrated_technical_history.md`,
+   `boj28350_literature_progress7_bcdecomp_report.md`,
+   `literature_grade_proof_package.md`,
+   `boj28350_resume/boj28350_branch_3_solver.cpp`).
+2. `reviewed source set B`: bundled `progress40` authoritative source/report /
+   results set
+   (`boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`,
+   `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`,
+   `boj28350_bundle_archive/boj28350_progress40_results_merged.json`).
+
+Preserved go/no-go rule:
+
+1. `source set A reviewed = COMPLETE`
+2. `source set B reviewed = COMPLETE`
+3. `major rewrite or pivot = HOLD` until a later planning or retry note cites
+   this checkpoint and restates the locked progress40-derived constraints
+4. `solver-family guardrail = ACTIVE`: keep the branch anchored to the
+   literature-grade BC-tree flavored child-lattice line and the bundled
+   `progress40` residual ordering rather than opening a new algorithm family
+   or heuristic-only rewrite
+
+This preservation note is intentionally redundant with the longer refresh
+sections below so the pre-rewrite checkpoint can be audited quickly without
+reconstructing the full history.
 
 ### Explicit pre-rewrite confirmation
 

@@ -15,7 +15,13 @@ from typing import Dict, List, Optional
 os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 sys.dont_write_bytecode = True
 
-from artifact_paths import configure_branch_process_env, ensure_under_artifacts, resolve_output_path
+from artifact_paths import (
+    artifacts_root,
+    configure_branch_process_env,
+    ensure_under_artifacts,
+    resolve_branch_artifact_path,
+    resolve_output_path,
+)
 from suite_utils import (
     default_solver_path,
     ensure_executable,
@@ -123,6 +129,41 @@ def ensure_case_outdir(path_like: str | Path) -> Path:
     if raw.is_absolute():
         return ensure_under_artifacts(raw.resolve())
     return resolve_certify_out_dir(raw)
+
+
+def _resolve_generated_output_path(path_like: str | Path, *, label: str) -> Path:
+    try:
+        return resolve_branch_artifact_path(path_like)
+    except ValueError as exc:
+        raise ValueError(
+            f"generated {label} must stay under {artifacts_root()}: {path_like}"
+        ) from exc
+
+
+def _guard_generated_output_paths(out_dir: Path, rows: List[Row]) -> dict[str, Path]:
+    out_dir = ensure_case_outdir(out_dir)
+    guarded = {
+        "certify_rows": _resolve_generated_output_path(
+            out_dir / "certify_rows.csv",
+            label="certify_rows.csv",
+        ),
+        "certify_summary": _resolve_generated_output_path(
+            out_dir / "certify_summary.md",
+            label="certify_summary.md",
+        ),
+        "certify_json": _resolve_generated_output_path(
+            out_dir / "certify.json",
+            label="certify.json",
+        ),
+    }
+    for idx, row in enumerate(rows, start=1):
+        row.case_dir = str(
+            _resolve_generated_output_path(
+                row.case_dir,
+                label=f"case_dir[{idx}]",
+            )
+        )
+    return guarded
 
 
 def run_one_case(
@@ -262,7 +303,9 @@ def main() -> int:
                         for sq in shuf_q:
                             rows.append(run_one_case(solver, out, stage_name, mode, n, seed, sl, sq, timeout))
 
-    csv_path = out / "certify_rows.csv"
+    guarded_outputs = _guard_generated_output_paths(out, rows)
+
+    csv_path = guarded_outputs["certify_rows"]
     with open(csv_path, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(
@@ -405,7 +448,7 @@ def main() -> int:
         for r in slowest
     ]
 
-    summary_md = out / "certify_summary.md"
+    summary_md = guarded_outputs["certify_summary"]
     with open(summary_md, "w", encoding="utf-8") as f:
         f.write("# Certification summary\n\n")
         f.write(f"overall verdict: **{overall}**\n\n")
@@ -421,7 +464,7 @@ def main() -> int:
         f.write("## Top slow cases\n\n")
         f.write(markdown_table(["stage", "mode", "n", "seed", "sec", "rss_kb", "case_dir"], slow_rows))
 
-    with open(out / "certify.json", "w", encoding="utf-8") as f:
+    with open(guarded_outputs["certify_json"], "w", encoding="utf-8") as f:
         json.dump(
             {
                 "verdict": overall,

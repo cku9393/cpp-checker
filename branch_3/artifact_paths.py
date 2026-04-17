@@ -32,6 +32,7 @@ NON_ARTIFACT_CREATED_SOURCE_WARNING_SUFFIXES = frozenset(
         ".h",
         ".hh",
         ".hpp",
+        ".ini",
         ".json",
         ".md",
         ".py",
@@ -49,6 +50,9 @@ NON_ARTIFACT_CREATED_BLOCKING_DIRS = frozenset(
         ".ruff_cache",
     }
 )
+NON_ARTIFACT_CREATED_OUROBOROS_LOG_PREFIXES = (
+    "analysis_refresh_attempt_",
+)
 
 DEFAULT_OUTPUT_SUBPATHS: dict[str, tuple[str, ...]] = {
     "boj28350_build": ("boj28350_resume", "build"),
@@ -64,8 +68,10 @@ DEFAULT_OUTPUT_SUBPATHS: dict[str, tuple[str, ...]] = {
     "lca_acceptance_repeatability": ("lca_tree_stress_v5", "acceptance_repeatability"),
     "lca_required_repeatability": ("lca_tree_stress_v5", "required_repeatability"),
     "lca_strong_gate": ("lca_tree_stress_v5", "strong_gate"),
+    "lca_strong_gate_stage_filter": ("lca_tree_stress_v5", "strong_gate_stage_filter"),
     "lca_rebuttal_gate": ("lca_tree_stress_v5", "rebuttal_gate"),
     "lca_boj3s_gate": ("lca_tree_stress_v5", "boj3s_gate"),
+    "lca_boj3s_gate_stage_filter": ("lca_tree_stress_v5", "boj3s_gate_stage_filter"),
     "lca_hunt": ("lca_tree_stress_v5", "hunt"),
 }
 ARTIFACT_NAMESPACE_ROOTS = frozenset(parts[0] for parts in DEFAULT_OUTPUT_SUBPATHS.values() if parts)
@@ -81,6 +87,19 @@ def ensure_under_artifacts(path_like: str | Path) -> Path:
 
 def ensure_resolved_under_artifacts(path_like: str | Path) -> Path:
     return _ensure_under_artifacts(Path(path_like).expanduser().resolve())
+
+
+def resolve_branch_artifact_path(path_like: str | Path) -> Path:
+    raw = Path(path_like).expanduser()
+    if raw.is_absolute():
+        candidate = raw
+    else:
+        normalized = _normalize_relative_override(raw)
+        if _looks_artifact_rooted(normalized):
+            candidate = ARTIFACTS_ROOT / normalized
+        else:
+            candidate = BRANCH_ROOT / normalized
+    return _ensure_under_artifacts(candidate.resolve())
 
 
 def branch_tmp_root() -> Path:
@@ -201,12 +220,17 @@ def _process_state_namespace() -> str:
 
 def _normalize_relative_override(raw: Path) -> Path:
     parts = [part for part in raw.parts if part not in ("", ".")]
-    # Callers sometimes forward a branch-relative artifact path such as
-    # branch_3/artifacts/... back into the resolver on retries or replays.
-    # Collapse that prefix so already-rooted artifact paths stay canonical.
-    if len(parts) >= 2 and parts[0] == BRANCH_ROOT.name and parts[1] == ARTIFACTS_ROOT.name:
-        parts = parts[1:]
-    while parts and parts[0] == ARTIFACTS_ROOT.name:
+    artifact_root_name = ARTIFACTS_ROOT.name
+    # Callers sometimes forward branch-relative artifact paths such as
+    # branch_3/artifacts/... or branch_3/branch_3/artifacts/... back into the
+    # resolver on retries or replays. Collapse any leading branch-root prefix
+    # chain so already-rooted artifact paths stay canonical.
+    artifact_idx = next((idx for idx, part in enumerate(parts) if part == artifact_root_name), None)
+    if artifact_idx is not None and artifact_idx > 0:
+        branch_prefix = parts[:artifact_idx]
+        if all(part == BRANCH_ROOT.name for part in branch_prefix):
+            parts = parts[artifact_idx:]
+    while parts and parts[0] == artifact_root_name:
         parts.pop(0)
     return Path(*parts) if parts else Path()
 
@@ -437,12 +461,21 @@ def verify_non_artifact_tree_state(
             advisory_created.append(path)
         else:
             blocking_created.append(path)
-    blocking_removed = diff["removed"]
+    baseline_entries = baseline.get("entries", {})
+    if not isinstance(baseline_entries, dict):
+        raise ValueError("baseline non-artifact tree entries must be a JSON object")
+    advisory_removed: list[str] = []
+    blocking_removed: list[str] = []
+    for path in diff["removed"]:
+        if _is_advisory_non_artifact_removal(path, baseline_entries.get(path)):
+            advisory_removed.append(path)
+        else:
+            blocking_removed.append(path)
     advisory_modified = diff["modified"]
     clean = not (blocking_created or blocking_removed)
 
     if clean:
-        status = "clean" if not (advisory_created or advisory_modified) else "modified_only_warning"
+        status = "clean" if not (advisory_created or advisory_modified or advisory_removed) else "modified_only_warning"
     else:
         status = "escape_detected"
 
@@ -456,12 +489,14 @@ def verify_non_artifact_tree_state(
         f"created_count={len(blocking_created)}",
         f"created_warning_count={len(advisory_created)}",
         f"modified_count={len(advisory_modified)}",
+        f"removed_warning_count={len(advisory_removed)}",
         f"removed_count={len(blocking_removed)}",
     ]
     for section, entries in (
         ("created", blocking_created),
         ("created_warning", advisory_created),
         ("modified_warning", advisory_modified),
+        ("removed_warning", advisory_removed),
         ("removed", blocking_removed),
     ):
         if not entries:
@@ -481,9 +516,31 @@ def _is_advisory_non_artifact_creation(path: str, entry: object) -> bool:
     rel_path = Path(path)
     if any(part in NON_ARTIFACT_CREATED_BLOCKING_DIRS for part in rel_path.parts):
         return False
+    if (
+        rel_path.parts
+        and rel_path.parts[0] == ".ouroboros"
+        and rel_path.suffix.lower() == ".log"
+        and rel_path.name.startswith(NON_ARTIFACT_CREATED_OUROBOROS_LOG_PREFIXES)
+    ):
+        return True
     if rel_path.name.startswith(".") and (not rel_path.parts or rel_path.parts[0] != ".ouroboros"):
         return False
     return rel_path.suffix.lower() in NON_ARTIFACT_CREATED_SOURCE_WARNING_SUFFIXES
+
+
+def _is_advisory_non_artifact_removal(path: str, entry: object) -> bool:
+    if not isinstance(entry, dict):
+        return False
+
+    rel_path = Path(path)
+    if any(part in NON_ARTIFACT_CREATED_BLOCKING_DIRS for part in rel_path.parts):
+        return True
+    return (
+        rel_path.parts
+        and rel_path.parts[0] == ".ouroboros"
+        and rel_path.suffix.lower() == ".log"
+        and rel_path.name.startswith(NON_ARTIFACT_CREATED_OUROBOROS_LOG_PREFIXES)
+    )
 
 
 def _reset_path(path: Path) -> None:

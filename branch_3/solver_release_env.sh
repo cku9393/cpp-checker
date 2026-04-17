@@ -136,6 +136,12 @@ export ENABLE_TSCAN_BRANCH_STATE_OPT="${ENABLE_TSCAN_BRANCH_STATE_OPT:-1}"
 # 28 AC3 line still relies on this broad gate to avoid falling back to repeated
 # full support rebuilds on the dense strong-gate families.
 export AC3_SUPPORT_REUSE_MAX_TOUCHED="${AC3_SUPPORT_REUSE_MAX_TOUCHED:-100000}"
+# The current correctness-fuzz blocker on the progress40 line is the
+# `caterpillar_rect_dense n=1024` corridor. Disabling the single-positive reuse
+# shortcut in release runs keeps the broader support-reuse machinery intact
+# while avoiding the branch-local fastpath that pushes the exact seed-2 blocker
+# over the 2s prerequisite-gate budget.
+export AC3_ALLOW_SINGLE_POSITIVE_REUSE="${AC3_ALLOW_SINGLE_POSITIVE_REUSE:-0}"
 # Fresh 2026-04-09 same-worktree probes on the rebuilt branch show that the
 # progress40 late stack only turns into a net win once the state-load
 # materialization path is re-enabled together with the pointer / pack /

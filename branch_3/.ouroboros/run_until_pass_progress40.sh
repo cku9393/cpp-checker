@@ -651,6 +651,7 @@ PY
       --exit-code "$exit_code" >> "$analysis_log" 2>&1 \
       && python3 .ouroboros/refresh_analysis_state.py \
       --attempt "$attempt" \
+      --branch-root "$PWD" \
       --attempt-dir "$attempt_dir" \
       --report-root "$report_root" \
       --analysis-log "$analysis_log" \
@@ -660,12 +661,16 @@ PY
       && python3 .ouroboros/verify_analysis_refresh.py \
       --baseline-epoch "$analysis_baseline" \
       --analysis-log "$analysis_log" \
+      --target-from-current-state \
       --target ".ouroboros/capture_failure_context.py" \
       --target ".ouroboros/failure_analysis_playbook.md" \
       --target ".ouroboros/failure_analysis_iteration.md" \
       --target ".ouroboros/failure_analysis_state.json" \
+      --target ".ouroboros/launch_retry_loop.sh" \
+      --target ".ouroboros/prepare_retry_attempt_state.py" \
       --target ".ouroboros/refresh_analysis_state.py" \
-      --target ".ouroboros/verify_analysis_refresh.py" \
+      --target ".ouroboros/restart_retry_loop_after_attempt.sh" \
+      --target ".ouroboros/run_until_pass_progress40.sh" \
       --latest-failure-report "$attempt_dir/failure_report.json" \
       --latest-failure-breakdown "$attempt_dir/failure_breakdown.json" \
       --require-current-state ".ouroboros/failure_analysis_state.json" \

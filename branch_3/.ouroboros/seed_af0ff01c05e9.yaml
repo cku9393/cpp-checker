@@ -5,19 +5,19 @@ task_type: code
 brownfield_context:
   project_type: brownfield
   context_references:
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+  - path: .
     role: primary
     summary: Branch root where all build validation and artifact operations must occur
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp
+  - path: ./boj28350_resume/boj28350_branch_3_solver.cpp
     role: primary
     summary: Primary solver source for acceptance-focused logic and performance changes
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py
+  - path: ./artifact_paths.py
     role: reference
     summary: Branch-local artifact path resolver that may be edited to preserve output locality and rerun hygiene
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py
+  - path: ./boj28350_resume.py
     role: reference
     summary: Branch-local helper entrypoint that may be edited to preserve build and smoke reproducibility
-  - path: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5
+  - path: ./artifacts/lca_tree_stress_v5
     role: reference
     summary: Required artifact subtree for validation outputs and auxiliary files
   - path: ./lca_smoke.sh
@@ -51,8 +51,8 @@ brownfield_context:
   - ./lca_rebuttal_gate.sh
   - ./lca_boj3s_gate.sh
 constraints:
-- Work only in /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
-- Keep /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp
+- Work only in the current branch_3 root
+- Keep ./boj28350_resume/boj28350_branch_3_solver.cpp
   as the primary optimization target
 - Build only with ./build.sh
 - Formal pass/fail validation uses only the branch-local wrappers ./lca_smoke.sh,

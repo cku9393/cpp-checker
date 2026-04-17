@@ -12,14 +12,47 @@
 
 ## pre-rewrite review checkpoint
 
-`2026-03-26` 기준, 다음 major solver rewrite 또는 pivot decision을 열기 전에 아래 두 source set review completion이 모두 확인됐다.
+`2026-04-12` refresh 기준, 다음 major solver rewrite 또는 pivot decision을
+열기 전에 아래 두 source set review completion이 모두 현재 working tree에서
+다시 확인됐다.
 
 1. source set A: `branch_3` working set review 완료
-   `boj28350_resume/README.md`, `boj28350_resume/current_state_summary.md`, `boj28350_resume/next_session_briefing.md`, `boj28350_complete_master_document_partA_raw.md`, `boj28350_integrated_technical_history.md`, `boj28350_literature_progress7_bcdecomp_report.md`, `literature_grade_proof_package.md`, `boj28350_resume/boj28350_branch_3_solver.cpp`
+   `boj28350_resume/README.md`, `boj28350_resume/current_state_summary.md`, `boj28350_resume/next_session_briefing.md`, `boj28350_complete_master_document_partA_raw.md`, `boj28350_integrated_technical_history.md`, `boj28350_literature_progress7_bcdecomp_report.md`, `literature_grade_proof_package.md`, `boj28350_resume/pre_rewrite_checkpoint.md`, `boj28350_resume/pre_rewrite_synthesis_note.md`, `boj28350_resume/progress40_derived_reference.md`, `boj28350_resume/boj28350_branch_3_solver.cpp`
 2. source set B: bundled `progress40` authoritative materials review 완료
    `boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp`, `boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md`, `boj28350_bundle_archive/boj28350_progress40_results_merged.json`
 
-세부 evidence는 `boj28350_resume/next_session_briefing.md`의 6.1, 6.2, 6.2.1, 6.2.2에 남겼고, 다음 rewrite/pivot은 이 두 source set review completion이 선행 확인된 상태에서만 진행한다.
+세부 evidence는 `boj28350_resume/pre_rewrite_checkpoint.md`,
+`boj28350_resume/pre_rewrite_synthesis_note.md`, 그리고
+`boj28350_resume/next_session_briefing.md`의 관련 pre-rewrite section에 남겼다.
+다음 rewrite/pivot은 이 두 source set review completion이 현재 working tree에서
+명시적으로 선행 확인된 상태에서만 진행한다. planning note나 retry note가
+major rewrite/pivot을 열 때도 위 checkpoint note 중 하나를 인용해
+`source set A reviewed = COMPLETE`와 `source set B reviewed = COMPLETE`를
+함께 다시 적어야 한다.
+
+`2026-04-12` source-set takeaway summary는 아래 네 가지다.
+
+1. source set A takeaway: 다음 solver-side major change는
+   `progress7`/proof package가 잠근 literature-grade invariant를 보존해야
+   한다. 즉 BC-tree flavored decomposition, explicit child lattice,
+   `closeByBCPath(...)`, `buildClosedHandleFromWitness(...)`, exact
+   strict-child testing, owner exact rebuild 제거 라인에서 벗어나면 안 된다.
+2. source set A takeaway: active `branch_3` solver는 현재
+   separator-decomposition drift 상태로 읽히므로, 다음 rewrite는 이 drift를
+   더 확장하지 말고 bundled `progress40` source line으로 다시 anchor를 맞춘
+   뒤 진행해야 한다.
+3. source set B takeaway: 성능 축은 progress40 direct aggregate를 따른다.
+   1차 축은 `zero-span eligibility and fastpath commit`, 2차 축은
+   `signature source load and materialize`와
+   `layout signature compare and reuse gate core`다. route-aware
+   `time_lgate_*` / `lgate_*` attribution과 누적
+   pack/normalize -> same-layout reuse -> layout-signature gate ->
+   zero-span eligibility -> fastpath commit 라인도 함께 보존해야 한다.
+4. joint takeaway: solver-side 최적화와 별개로 branch-local reproducibility
+   hygiene를 유지해야 한다. bundled `progress40` package는 아직 `partial`
+   authoritative 상태이므로 dense 1024 release/repeat, 4096 representative,
+   long-run terminal row persistence close는 fresh branch-local evidence로
+   다시 닫아야 한다.
 
 ## 현재 authoritative 상태
 

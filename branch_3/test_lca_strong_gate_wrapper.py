@@ -15,6 +15,23 @@ WRAPPER_SOURCE = WRAPPER_PATH.read_text(encoding="utf-8")
 
 
 class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
+    def test_branch_local_materialized_strong_gate_preset_cache_stays_available(self) -> None:
+        repo_root = Path(__file__).resolve().parent
+        preset_cache = repo_root / "artifacts" / "lca_tree_stress_v5" / ".preset_cache" / "lca_strong_gate.json"
+
+        self.assertTrue(
+            preset_cache.is_file(),
+            msg="branch_3 should ship a materialized strong-gate preset cache so dataless iCloud presets do not block AC3 preflight",
+        )
+
+        payload = json.loads(preset_cache.read_text(encoding="utf-8"))
+        self.assertEqual(payload.get("name"), "strong_gate")
+        self.assertEqual(
+            [stage.get("name") for stage in payload.get("stages", [])],
+            ["correctness_fuzz", "hard_scaling", "max_n_mix"],
+            msg="the branch-local preset cache must preserve the full strong-gate stage surface, not a narrowed probe snapshot",
+        )
+
     def test_wrapper_ignores_sighup_during_long_gate_runs(self) -> None:
         self.assertIn(
             "trap '' HUP",
@@ -281,12 +298,12 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
         self.assertIn(
             'SNAPSHOT_ROOT="$ARTIFACTS_ROOT/.solver_snapshots/lca_strong_gate"',
             WRAPPER_SOURCE,
-            msg="strong gate must keep its solver snapshots in a strong-gate-specific artifact namespace",
+            msg="strong gate must keep stale-snapshot cleanup scoped to a strong-gate-specific artifact namespace",
         )
         self.assertIn(
-            'SOLVER_SNAPSHOT="$(mktemp "$SNAPSHOT_ROOT/lca_strong_gate.solver.XXXXXX")"',
+            'SOLVER_SNAPSHOT="$WORKDIR/solver_snapshot"',
             WRAPPER_SOURCE,
-            msg="strong gate must freeze a unique solver snapshot per run",
+            msg="strong gate must freeze a per-run solver snapshot inside the active staging workdir",
         )
         self.assertIn(
             'python3 "$CERTIFY_HELPER" --solver "$SOLVER_SNAPSHOT" --preset "$PRESET" --out "$WORKDIR" --limit-scale "$LIMIT_SCALE" >"$CERTIFY_STDOUT_LOG" 2>"$CERTIFY_STDERR_LOG"',
@@ -398,19 +415,39 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
             msg="strong gate must preserve the exact selected preset inside the staging workdir",
         )
         self.assertIn(
+            'SUITE_CONFIG_PATH="$root/suite_config.txt"',
+            WRAPPER_SOURCE,
+            msg="strong gate must publish a deterministic suite config alongside the selected preset",
+        )
+        self.assertIn(
+            'SUITE_PLAN_PATH="$root/suite_plan.tsv"',
+            WRAPPER_SOURCE,
+            msg="strong gate must publish a deterministic suite plan alongside the selected preset",
+        )
+        self.assertIn(
             'CASE_RUN_TMP_ROOT="$root/.case_runs_tmp"',
             WRAPPER_SOURCE,
             msg="strong gate must bind case-run temp roots under the active staging workdir",
         )
         self.assertIn(
-            'CASE_CACHE_ROOT="$root/.case_cache"',
+            'SHARED_CASE_CACHE_ROOT="$TMP_PARENT/case_cache"',
             WRAPPER_SOURCE,
-            msg="strong gate must bind case cache roots under the active staging workdir",
+            msg="strong gate must reserve a shared branch-local case cache root for certify generation reuse",
         )
         self.assertIn(
-            'CASE_CACHE_TMP_ROOT="$root/.case_cache_tmp"',
+            'SHARED_CASE_CACHE_TMP_ROOT="$TMP_PARENT/case_cache_tmp"',
             WRAPPER_SOURCE,
-            msg="strong gate must bind case cache tmp roots under the active staging workdir",
+            msg="strong gate must reserve a shared branch-local case cache tmp root for certify generation reuse",
+        )
+        self.assertIn(
+            'CASE_CACHE_ROOT="$SHARED_CASE_CACHE_ROOT"',
+            WRAPPER_SOURCE,
+            msg="strong gate must point certify case caching at the shared branch-local cache root",
+        )
+        self.assertIn(
+            'CASE_CACHE_TMP_ROOT="$SHARED_CASE_CACHE_TMP_ROOT"',
+            WRAPPER_SOURCE,
+            msg="strong gate must point certify case-cache temp writes at the shared branch-local tmp root",
         )
         self.assertIn(
             'FAILURE_SUMMARY_PATH="$root/failure_summary.txt"',
@@ -421,6 +458,11 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
             'FAILURE_REPORT_PATH="$root/latest_failure_report.md"',
             WRAPPER_SOURCE,
             msg="strong gate must synthesize a failure report inside the staging workdir",
+        )
+        self.assertIn(
+            'write_suite_input_bundle',
+            WRAPPER_SOURCE,
+            msg="strong gate should materialize a deterministic suite input bundle before certify starts",
         )
         self.assertIn(
             'bind_runtime_artifacts_to_root()',
@@ -489,7 +531,7 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
             msg="certify failures must write a strong-gate failure summary before cleanup",
         )
         self.assertIn(
-            'python3 "$CERTIFY_HELPER" --solver "$SOLVER_SNAPSHOT" --preset "$PRESET" --out "$WORKDIR" --limit-scale "$LIMIT_SCALE" >"$CERTIFY_STDOUT_LOG" 2>"$CERTIFY_STDERR_LOG" &',
+            'python3 "$CERTIFY_HELPER" --solver "$SOLVER_SNAPSHOT" --preset "$PRESET" --out "$WORKDIR" --limit-scale "$LIMIT_SCALE" >"$CERTIFY_STDOUT_LOG" 2>"$CERTIFY_STDERR_LOG"',
             WRAPPER_SOURCE,
             msg="certify helper stdout/stderr must be captured into the staging workdir for failure diagnosis",
         )
@@ -587,6 +629,11 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
         )
 
     def test_preflight_recording_rebinds_runtime_artifacts_to_live_workdir(self) -> None:
+        self.assertIn(
+            'WORKDIR="$(mktemp -d "$OUTPARENT/$RUN_WORK_TEMPLATE")"',
+            WRAPPER_SOURCE,
+            msg="strong gate should stage runs under the stable artifact parent so certify output survives .tmp volatility",
+        )
         self.assertIn(
             'ensure_workdir_runtime_artifacts_bound',
             WRAPPER_SOURCE,
@@ -694,12 +741,12 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
         self.assertIn(
             'BRANCH_CERTIFY_CASE_CACHE_ROOT="$CASE_CACHE_ROOT"',
             WRAPPER_SOURCE,
-            msg="strong gate must tell the certify helper to keep per-run case cache under the staging workdir",
+            msg="strong gate must tell the certify helper to reuse the shared branch-local case cache root",
         )
         self.assertIn(
             'BRANCH_CERTIFY_CASE_CACHE_TMP_ROOT="$CASE_CACHE_TMP_ROOT"',
             WRAPPER_SOURCE,
-            msg="strong gate must tell the certify helper to keep per-run cache temp roots under the staging workdir",
+            msg="strong gate must tell the certify helper to reuse the shared branch-local case-cache tmp root",
         )
 
     def test_wrapper_executes_successfully_when_certify_reports_pass_and_scrubs_ambient_solver_controls(self) -> None:
@@ -733,6 +780,9 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
             self.assertTrue((outroot / "preflight_manifest.tsv").exists(), msg="successful strong-gate runs must publish the preflight manifest")
             self.assertTrue((outroot / "runtime_env.txt").exists(), msg="successful strong-gate runs must publish the runtime env snapshot")
             self.assertTrue((outroot / "selected_preset.json").exists(), msg="successful strong-gate runs must publish the selected preset snapshot")
+            self.assertTrue((outroot / "suite_config.txt").exists(), msg="successful strong-gate runs must publish the deterministic suite config")
+            self.assertTrue((outroot / "suite_plan.tsv").exists(), msg="successful strong-gate runs must publish the deterministic suite plan")
+            self.assertTrue((outroot / "repeatability_gate_manifest.txt").exists(), msg="successful strong-gate runs must publish the repeatability manifest")
             self.assertTrue((outroot / "build.stdout.txt").exists(), msg="successful strong-gate runs must publish build stdout")
             self.assertTrue((outroot / "build.stderr.txt").exists(), msg="successful strong-gate runs must publish build stderr")
             self.assertTrue((outroot / "solver_build_meta.json").exists(), msg="successful strong-gate runs must publish the build metadata snapshot")
@@ -746,10 +796,34 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
             self.assertIn("cxx=", runtime_env)
             self.assertIn("enable_state_load_materialization_opt=1", runtime_env)
             self.assertIn("strong_gate_release_profile=progress40_defaults+ac3_state_materialization", runtime_env)
+            self.assertIn(
+                f"case_cache_root={branch_root / 'artifacts' / 'lca_tree_stress_v5' / '.tmp' / 'case_cache'}",
+                runtime_env,
+            )
+            self.assertIn(
+                f"case_cache_tmp_root={branch_root / 'artifacts' / 'lca_tree_stress_v5' / '.tmp' / 'case_cache_tmp'}",
+                runtime_env,
+            )
 
             selected_preset = (outroot / "selected_preset.json").read_text(encoding="utf-8")
             self.assertIn('"name": "correctness_fuzz"', selected_preset)
             self.assertNotIn('"name": "hard_scaling"', selected_preset)
+
+            suite_config = (outroot / "suite_config.txt").read_text(encoding="utf-8")
+            self.assertIn("config_schema=lca_strong_gate_suite_config_v1", suite_config)
+            self.assertIn("stage_filter=correctness_fuzz", suite_config)
+            self.assertIn("case_path_policy=runs/{stage}/{mode}/n{n}/seed{seed}_L{shuffle_labels}_Q{shuffle_queries}", suite_config)
+            self.assertIn("solver_env_contract=DENSE_PROFILE_OUTDIR=work_case_dir;", suite_config)
+
+            suite_plan = (outroot / "suite_plan.tsv").read_text(encoding="utf-8")
+            self.assertIn("case_artifact_subpath", suite_plan)
+            self.assertIn("correctness_fuzz\tstub_mode\t1\t1\t1\t1", suite_plan)
+            self.assertNotIn("hard_scaling", suite_plan)
+
+            repeatability_manifest = (outroot / "repeatability_gate_manifest.txt").read_text(encoding="utf-8")
+            self.assertIn("suite_config_sha256=", repeatability_manifest)
+            self.assertIn("suite_plan_sha256=", repeatability_manifest)
+            self.assertIn("suite_plan_case_count=1", repeatability_manifest)
 
     def test_wrapper_recovers_if_build_removes_the_staging_workdir(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -781,7 +855,7 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
                       "defines": []
                     }
                     EOF
-                    rm -rf "$SCRIPT_DIR"/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.run.*
+                    rm -rf "$SCRIPT_DIR"/artifacts/lca_tree_stress_v5/lca_strong_gate.run.*
                     printf '[build] output=%s\\n' "$OUT"
                     """
                 ).strip()
@@ -814,6 +888,8 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
             self.assertTrue((outroot / "certify.json").exists(), msg="recovered runs must still publish certify.json")
             self.assertTrue((outroot / "runtime_env.txt").exists(), msg="recovered runs must still publish runtime_env.txt")
             self.assertTrue((outroot / "solver_build_meta.json").exists(), msg="recovered runs must still snapshot build metadata")
+            self.assertTrue((outroot / "suite_config.txt").exists(), msg="recovered runs must still republish the suite config")
+            self.assertTrue((outroot / "suite_plan.tsv").exists(), msg="recovered runs must still republish the suite plan")
             self.assertFalse(
                 (branch_root / "artifacts" / "lca_tree_stress_v5" / "strong_gate.latest_failure").exists(),
                 msg="successful recovery must not leave a latest_failure bundle behind",
@@ -869,7 +945,7 @@ class LcaStrongGateWrapperRegressionTests(unittest.TestCase):
                       "defines": []
                     }
                     EOF
-                    rm -rf "$SCRIPT_DIR"/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.run.*
+                    rm -rf "$SCRIPT_DIR"/artifacts/lca_tree_stress_v5/lca_strong_gate.run.*
                     rm -rf "$SCRIPT_DIR"/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.env.*
                     printf '[build] output=%s\\n' "$OUT"
                     """

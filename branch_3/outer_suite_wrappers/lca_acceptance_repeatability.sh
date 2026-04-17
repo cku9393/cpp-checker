@@ -7,6 +7,7 @@ cd "$BRANCH_ROOT"
 ARTIFACT_RESOLVER="$BRANCH_ROOT/artifact_paths.py"
 RELEASE_ENV="$BRANCH_ROOT/solver_release_env.sh"
 SMOKE_WRAPPER="$BRANCH_ROOT/lca_smoke.sh"
+SMOKE_REPEATABILITY_WRAPPER="$BRANCH_ROOT/lca_smoke_repeatability.sh"
 STRONG_WRAPPER="$BRANCH_ROOT/lca_strong_gate.sh"
 BOJ3S_WRAPPER="$BRANCH_ROOT/lca_boj3s_gate.sh"
 ARTIFACTS_ROOT="$BRANCH_ROOT/artifacts/lca_tree_stress_v5"
@@ -31,7 +32,10 @@ FAILED_STAGE=""
 FAILURE_REASON=""
 FAILURE_HINT=""
 REQUIRED_SEQUENCE="lca_smoke -> lca_strong_gate -> lca_boj3s_gate"
+SMOKE_PRECHECK="./lca_smoke_repeatability.sh"
+SMOKE_REPEATABILITY_COUNT="${LCA_ACCEPTANCE_SMOKE_REPEAT_COUNT:-2}"
 SMOKE_OUTROOT=""
+SMOKE_REPEATABILITY_OUTROOT=""
 STRONG_OUTROOT=""
 BOJ3S_OUTROOT=""
 BASELINE_RUN=""
@@ -60,7 +64,7 @@ usage() {
   cat >&2 <<'EOF'
 usage: ./outer_suite_wrappers/lca_acceptance_repeatability.sh [repeat-count]
 [lca_acceptance_repeatability] repeat-count defaults to $LCA_ACCEPTANCE_REPEAT_COUNT or 2
-[lca_acceptance_repeatability] reruns ./lca_smoke.sh -> ./lca_strong_gate.sh -> ./lca_boj3s_gate.sh per cycle
+[lca_acceptance_repeatability] prechecks ./lca_smoke.sh via ./lca_smoke_repeatability.sh before rerunning ./lca_strong_gate.sh -> ./lca_boj3s_gate.sh per cycle
 EOF
   exit 2
 }
@@ -285,6 +289,49 @@ record_result_row() {
   local verdict="$3"
   local signature_status="${4:-na}"
   printf '%s\t%s\t%s\t%s\n' "$run_label" "$stage_name" "$verdict" "$signature_status" >> "$WORKDIR/results.tsv"
+}
+
+read_summary_field() {
+  local summary_path="$1"
+  local key="$2"
+
+  python3 - "$summary_path" "$key" <<'PY'
+from __future__ import annotations
+
+from pathlib import Path
+import sys
+
+summary_path = Path(sys.argv[1])
+key = sys.argv[2]
+
+if not summary_path.is_file():
+    raise SystemExit(0)
+
+for line in summary_path.read_text(encoding="utf-8").splitlines():
+    if "=" not in line:
+        continue
+    current_key, value = line.split("=", 1)
+    if current_key == key:
+        print(value)
+        break
+PY
+}
+
+snapshot_smoke_repeatability_output() {
+  local run_dir="$1"
+  local snapshot_dir="$run_dir/smoke_repeatability"
+
+  if [[ ! -d "$SMOKE_REPEATABILITY_OUTROOT" ]]; then
+    return 0
+  fi
+
+  mkdir -p "$snapshot_dir"
+  if [[ -f "$SMOKE_REPEATABILITY_OUTROOT/summary.txt" ]]; then
+    cp "$SMOKE_REPEATABILITY_OUTROOT/summary.txt" "$snapshot_dir/summary.txt"
+  fi
+  if [[ -f "$SMOKE_REPEATABILITY_OUTROOT/failure_events.tsv" ]]; then
+    cp "$SMOKE_REPEATABILITY_OUTROOT/failure_events.tsv" "$snapshot_dir/failure_events.tsv"
+  fi
 }
 
 write_tree_freshness_probe() {
@@ -956,10 +1003,43 @@ run_smoke_once() {
   local smoke_signature_status="baseline"
   local status_freshness_marker="$run_dir/smoke_status.freshness_start.marker"
   local status_freshness_report="$run_dir/smoke_status.freshness_report.txt"
+  local smoke_repeatability_summary_path="$run_dir/smoke_repeatability/summary.txt"
   local rc=0
 
   mkdir -p "$run_dir"
   write_tree_freshness_probe "$SMOKE_STATUS_ROOT" "$status_freshness_marker" summary.txt latest_status_report.md
+  set +e
+  LCA_REPEATABILITY_RUN_TOKEN="$RUN_TOKEN" \
+    LCA_REPEATABILITY_CYCLE="${run_dir##*/}" \
+    LCA_REPEATABILITY_GATE_LABEL="lca_smoke_repeatability" \
+    "$SMOKE_REPEATABILITY_WRAPPER" "$SMOKE_REPEATABILITY_COUNT" >"$run_dir/lca_smoke_repeatability.stdout.txt" 2>"$run_dir/lca_smoke_repeatability.stderr.txt"
+  rc=$?
+  set -e
+  printf '%s\n' "$rc" > "$run_dir/lca_smoke_repeatability.exit_code.txt"
+  snapshot_smoke_repeatability_output "$run_dir"
+  if (( rc != 0 )); then
+    if [[ -f "$smoke_repeatability_summary_path" ]]; then
+      FAILURE_REASON="$(read_summary_field "$smoke_repeatability_summary_path" "failure_reason")"
+      FAILURE_HINT="$(read_summary_field "$smoke_repeatability_summary_path" "failure_hint")"
+    fi
+    if [[ -z "$FAILURE_REASON" ]]; then
+      FAILURE_REASON="lca_smoke_repeatability failed before the smoke iteration gate on ${run_dir##*/}"
+    fi
+    if [[ -z "$FAILURE_HINT" ]]; then
+      FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/lca_smoke_repeatability.stderr.txt and ${run_dir#$WORKDIR/}/smoke_repeatability/summary.txt"
+    fi
+    return "$rc"
+  fi
+  if [[ "$(read_summary_field "$smoke_repeatability_summary_path" "status")" != "PASS" ]]; then
+    FAILURE_REASON="lca_smoke_repeatability returned exit code 0 but did not publish a PASS summary"
+    FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/smoke_repeatability/summary.txt"
+    return 98
+  fi
+  if [[ "$(read_summary_field "$smoke_repeatability_summary_path" "supports_solver_iteration")" != "1" ]]; then
+    FAILURE_REASON="lca_smoke_repeatability returned exit code 0 but did not mark smoke as safe for solver iteration"
+    FAILURE_HINT="inspect ${run_dir#$WORKDIR/}/smoke_repeatability/summary.txt"
+    return 98
+  fi
   set +e
   LCA_SMOKE_EXPORT_SNAPSHOT_ROOT="$run_dir/smoke_snapshot" \
     LCA_REPEATABILITY_RUN_TOKEN="$RUN_TOKEN" \
@@ -1073,10 +1153,12 @@ write_summary() {
     echo "requested_runs=$RUN_COUNT"
     echo "completed_runs=$COMPLETED_RUNS"
     echo "required_sequence=$REQUIRED_SEQUENCE"
+    echo "smoke_precheck=$SMOKE_PRECHECK $SMOKE_REPEATABILITY_COUNT"
     echo "reproducibility_scope=consecutive_same_worktree_full_flow_cycles"
     echo "artifacts_root=$ARTIFACTS_ROOT"
     echo "artifact_root_guard=$ROOT_GUARD_MARKER"
     echo "smoke_output=$SMOKE_OUTROOT"
+    echo "smoke_repeatability_output=$SMOKE_REPEATABILITY_OUTROOT"
     echo "strong_gate_output=$STRONG_OUTROOT"
     echo "boj3s_gate_output=$BOJ3S_OUTROOT"
     if [[ -n "$FAILED_RUN" ]]; then
@@ -1114,6 +1196,7 @@ require_command cp
 require_command dirname
 require_materialized_file "$ARTIFACT_RESOLVER" "artifact resolver"
 require_materialized_file "$RELEASE_ENV" "release env wrapper"
+require_materialized_executable "$SMOKE_REPEATABILITY_WRAPPER" "smoke repeatability wrapper"
 require_materialized_executable "$SMOKE_WRAPPER" "smoke wrapper"
 require_materialized_executable "$STRONG_WRAPPER" "strong gate wrapper"
 require_materialized_executable "$BOJ3S_WRAPPER" "BOJ 3s gate wrapper"
@@ -1128,6 +1211,7 @@ ensure_under_artifacts "$LOCK_ROOT"
 mkdir -p "$ARTIFACTS_ROOT"
 acquire_lock
 SMOKE_OUTROOT="$(python3 "$ARTIFACT_RESOLVER" lca_smoke)"
+SMOKE_REPEATABILITY_OUTROOT="$(python3 "$ARTIFACT_RESOLVER" lca_smoke_repeatability)"
 STRONG_OUTROOT="$(python3 "$ARTIFACT_RESOLVER" lca_strong_gate)"
 BOJ3S_OUTROOT="$(python3 "$ARTIFACT_RESOLVER" lca_boj3s_gate)"
 OUTROOT="$(python3 "$ARTIFACT_RESOLVER" lca_acceptance_repeatability)"
@@ -1135,6 +1219,7 @@ OUTPARENT="$(dirname "$OUTROOT")"
 BACKUP_ROOT="${OUTROOT}.previous"
 RUN_TOKEN="lca_acceptance_repeatability.$$.$(date +%s)"
 ensure_under_artifacts "$SMOKE_OUTROOT"
+ensure_under_artifacts "$SMOKE_REPEATABILITY_OUTROOT"
 ensure_under_artifacts "$STRONG_OUTROOT"
 ensure_under_artifacts "$BOJ3S_OUTROOT"
 ensure_under_artifacts "$SMOKE_STATUS_ROOT"

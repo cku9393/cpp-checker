@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-SMOKE_EXIT_SOLVER_FAILURE=1
-SMOKE_EXIT_USAGE=2
-SMOKE_EXIT_SOLVER_TIMEOUT=124
-SMOKE_EXIT_SOLVER_RUNTIME_FAILURE=125
-SMOKE_EXIT_HARNESS_FAILURE=70
-LCA_SMOKE_LAUNCHER_CLEAN_ENV_FLAG="LCA_SMOKE_LAUNCHER_CLEAN_ENV_READY"
-LCA_SMOKE_INNER_CLEAN_ENV_FLAG="LCA_SMOKE_CLEAN_ENV_READY"
-LCA_SMOKE_LAUNCHER_REEXEC_ARG="--__lca_smoke_launcher_clean_env_reexec"
-LCA_SMOKE_CLEAN_PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 SCRIPT_SOURCE="${BASH_SOURCE[0]}"
 SCRIPT_SOURCE_DIR="."
 case "$SCRIPT_SOURCE" in
@@ -22,6 +13,26 @@ SCRIPT_DIR="$(
   cd -- "$SCRIPT_SOURCE_DIR"
   pwd -P
 )"
+
+if [[ "${LCA_SMOKE_ENABLE_XTRACE:-0}" == "1" ]]; then
+  export PS4='+x:${LINENO}: '
+  # Keep shell tracing branch-local even if the wrapper is launched from a
+  # different cwd.
+  mkdir -p "$SCRIPT_DIR/artifacts" 2>/dev/null || true
+  exec 9>>"$SCRIPT_DIR/artifacts/trace.log"
+  export BASH_XTRACEFD=9
+  set -x
+fi
+
+SMOKE_EXIT_SOLVER_FAILURE=1
+SMOKE_EXIT_USAGE=2
+SMOKE_EXIT_SOLVER_TIMEOUT=124
+SMOKE_EXIT_SOLVER_RUNTIME_FAILURE=125
+SMOKE_EXIT_HARNESS_FAILURE=70
+LCA_SMOKE_LAUNCHER_CLEAN_ENV_FLAG="LCA_SMOKE_LAUNCHER_CLEAN_ENV_READY"
+LCA_SMOKE_INNER_CLEAN_ENV_FLAG="LCA_SMOKE_CLEAN_ENV_READY"
+LCA_SMOKE_LAUNCHER_REEXEC_ARG="--__lca_smoke_launcher_clean_env_reexec"
+LCA_SMOKE_CLEAN_PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 SELF_PATH="$SCRIPT_DIR/${SCRIPT_SOURCE##*/}"
 BRANCH_ROOT="$SCRIPT_DIR"
 OUTER_SUITE_WRAPPERS_DIR="$BRANCH_ROOT/outer_suite_wrappers"
@@ -50,9 +61,14 @@ BRANCH_ARTIFACTS_ROOT=""
 ARTIFACTS_ROOT=""
 TMP_PARENT=""
 LOCK_ROOT=""
+LAUNCHER_LOCKDIR=""
+LAUNCHER_LOCK_PID_FILE=""
+LAUNCHER_LOCK_HELD=0
 LAUNCHER_TMPDIR=""
 LAUNCHER_TMPDIR_PARENT=""
 LAUNCHER_PREFLIGHT_ROOT=""
+LAUNCHER_PREFLIGHT_MANIFEST_PATH=""
+LAUNCHER_PREFLIGHT_ENV_SNAPSHOT_PATH=""
 LAUNCHER_HOME=""
 LAUNCHER_XDG_CONFIG_HOME=""
 LAUNCHER_XDG_CACHE_HOME=""
@@ -92,8 +108,12 @@ LAUNCHER_LAST_CHECK_LABEL=""
 LAUNCHER_LAST_CHECK_STATUS=""
 LAUNCHER_LAST_CHECK_DETAIL=""
 LAUNCHER_LAST_CHECK_ARTIFACT=""
+LAUNCHER_DISPATCH_STARTED_NS=""
 SMOKE_OUTPUT_ROOT=""
 SMOKE_FAILURE_ROOT=""
+LAUNCHER_INNER_LEGACY_OUTPUT_GLOB=".lca_smoke_in_progress.*"
+LAUNCHER_INNER_BUILD_TMP_GLOB="boj28350_branch_3_solver-*.o"
+LAUNCHER_INNER_BUILD_TMP_TMP_GLOB="boj28350_branch_3_solver-*.o.tmp"
 LAUNCHER_STATUS_ROOT_DEFAULT="$BRANCH_ROOT/artifacts/lca_tree_stress_v5/smoke_latest_status"
 LAUNCHER_STATUS_ROOT=""
 LAUNCHER_STATUS_SUMMARY=""
@@ -120,15 +140,19 @@ LAUNCHER_RUN_STATUS_RUN_RECORD_PATH=""
 LAUNCHER_RUN_STATUS_RUN_COMPARISON_PATH=""
 LAUNCHER_RUN_PREFLIGHT_ROOT=""
 LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT=""
+LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH=""
 LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT=""
 LAUNCHER_RUN_ARTIFACT_MANIFEST=""
 LAUNCHER_RUN_ID=""
 LAUNCHER_RUN_STARTED_AT_UTC=""
 LAUNCHER_RUN_FINISHED_AT_UTC=""
-LAUNCHER_RUN_STARTED_SECONDS=0
+LAUNCHER_RUN_STARTED_SECONDS=-1
 LAUNCHER_RUN_ELAPSED_SECONDS=0
 LAUNCHER_RUN_COMPARISON_SUMMARY=""
 LAUNCHER_RUN_COMPARISON_CHANGED_FIELDS=""
+LAUNCHER_RUN_HISTORY_HAS_INDEX=0
+LAUNCHER_RUN_HISTORY_MAX_SEQ=0
+LAUNCHER_RECORDED_RUN_IDS=$'\n'
 LAUNCHER_PREVIOUS_RUN_ID=""
 LAUNCHER_PREVIOUS_RUN_ARCHIVE_ROOT=""
 LAUNCHER_PREVIOUS_RUN_PUBLIC_STATUS=""
@@ -155,6 +179,7 @@ LAUNCHER_STATUS_ENV_MANIFEST_PATH=""
 LAUNCHER_STATUS_ENV_SETUP_ENV_PATH=""
 LAUNCHER_STATUS_ENV_BUILD_COMMAND_PATH=""
 LAUNCHER_STATUS_ENV_SMOKE_MANIFEST_SNAPSHOT_PATH=""
+LAUNCHER_STATUS_ENV_SMOKE_MANIFEST_SELECTION_PATH=""
 LAUNCHER_STATUS_PUBLISHED_SMOKE_SUMMARY_PATH=""
 LAUNCHER_STATUS_PUBLISHED_SMOKE_REPORT_PATH=""
 LAUNCHER_STATUS_PUBLISHED_SMOKE_FAILURE_REPORT_PATH=""
@@ -164,12 +189,16 @@ LAUNCHER_STATUS_PUBLISHED_SMOKE_DIAGNOSTICS_MANIFEST_PATH=""
 LAUNCHER_STATUS_PUBLISHED_SMOKE_STANDARD_GAP_JSON_PATH=""
 LAUNCHER_STATUS_PUBLISHED_SMOKE_RUN_RECORD_PATH=""
 LAUNCHER_STATUS_PUBLISHED_SMOKE_RUN_COMPARISON_PATH=""
+LAUNCHER_STATUS_PUBLISHED_SMOKE_MANIFEST_SELECTION_PATH=""
 LAUNCHER_REPLAY_SUMMARY=""
 LAUNCHER_REPLAY_CASE_TAG=""
 LAUNCHER_REPLAY_STAGE=""
 LAUNCHER_REPLAY_MODE=""
 LAUNCHER_REPLAY_N=""
 LAUNCHER_REPLAY_SEED=""
+LAUNCHER_REPLAY_SHUFFLE_LABELS=""
+LAUNCHER_REPLAY_SHUFFLE_QUERIES=""
+LAUNCHER_REPLAY_TIMEOUT_S=""
 LAUNCHER_REPLAY_FAILURE_ROOT=""
 LAUNCHER_REPLAY_FAILURE_CASE_DIR=""
 LAUNCHER_REPLAY_COMMANDS_PATH=""
@@ -196,6 +225,7 @@ LAUNCHER_SOURCE_CHECKER_REPLAY_STDOUT_PATH=""
 LAUNCHER_SOURCE_CHECKER_REPLAY_STDERR_PATH=""
 LAUNCHER_SOURCE_MISMATCH_SUMMARY_PATH=""
 LAUNCHER_SOURCE_RETRY_LOG_PATH=""
+LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH=""
 LAUNCHER_SOURCE_RUNTIME_ENV_PATH=""
 LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH=""
 LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH=""
@@ -211,6 +241,22 @@ LAUNCHER_SOURCE_SUITE_PLAN_PATH=""
 LAUNCHER_SOURCE_CHECKER_SCRIPT=""
 LAUNCHER_SOURCE_SEED_REPRO_SCRIPT=""
 LAUNCHER_SOURCE_PRESERVED_INPUT_REPLAY_SCRIPT=""
+LAUNCHER_SOURCE_GATE_SCRIPT=""
+LAUNCHER_SOURCE_GATE_WRAPPER_STAGE=""
+LAUNCHER_SOURCE_GATE_EXACT_FAILURE_STAGE=""
+LAUNCHER_SOURCE_GATE_PRESET_PATH=""
+LAUNCHER_SOURCE_GATE_PRESET_SNAPSHOT_PATH=""
+LAUNCHER_SOURCE_GATE_CERTIFY_SUMMARY_PATH=""
+LAUNCHER_SOURCE_GATE_CERTIFY_ROWS_PATH=""
+LAUNCHER_SOURCE_GATE_CERTIFY_FAILURE_DETAILS_PATH=""
+LAUNCHER_SOURCE_GATE_FAILURE_SOURCE=""
+LAUNCHER_SOURCE_GATE_PRIMARY_FAILED_STAGE=""
+LAUNCHER_SOURCE_GATE_FAILED_STAGES=""
+LAUNCHER_SOURCE_GATE_FAILURE_REASONS=""
+LAUNCHER_SOURCE_GATE_PRIMARY_STAGE_STATUS=""
+LAUNCHER_SOURCE_GATE_PRIMARY_STAGE_CASES=""
+LAUNCHER_SOURCE_GATE_PRIMARY_STAGE_TIMEOUTS=""
+LAUNCHER_SOURCE_GATE_PRIMARY_STAGE_RE_WA=""
 LAUNCHER_RETRY_LOOP_ACTION=""
 LAUNCHER_RETRY_LOOP_PREFERRED_COMMAND=""
 LAUNCHER_RETRY_LOOP_LAUNCH_COMMAND=""
@@ -219,12 +265,19 @@ LAUNCHER_RETRY_LOOP_HINT=""
 LAUNCHER_RETRY_LOOP_LOG_PATH=""
 LAUNCHER_STATUS_WRITTEN=0
 LAUNCHER_SKIP_FAILURE_BUNDLE=0
+LAUNCHER_STATUS_SKIP_SHARED_ARCHIVE=0
 LAUNCHER_DISPATCH_TIMEOUT_S_DEFAULT="600"
 LAUNCHER_DISPATCH_KILL_GRACE_S="0.2"
 LAUNCHER_DISPATCH_TIMEOUT_S=""
+LAUNCHER_LOCK_WAIT_TIMEOUT_S_DEFAULT="15"
+LAUNCHER_LOCK_WAIT_TIMEOUT_S=""
+LAUNCHER_LOCK_RETRY_SLEEP_S="0.05"
 LAUNCHER_DISPATCH_RESULT_PATH=""
 LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED=0
 LAUNCHER_DISPATCH_RAW_RC=0
+LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL=0
+LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID=""
+LAUNCHER_DISPATCH_STATE_PATH=""
 RETRY_LOOP_LAUNCH_WRAPPER_REL=".ouroboros/launch_retry_loop.sh"
 RETRY_LOOP_RUNNER_REL=".ouroboros/run_until_pass_progress40.sh"
 RETRY_LOOP_SOLVER_SEED_REL=".ouroboros/seed_branch3_progress40_research_loop.yaml"
@@ -526,10 +579,215 @@ ensure_launcher_directory() {
   local path="$1"
   local label="$2"
 
-  if [[ -e "$path" && ! -d "$path" ]]; then
+  if [[ -L "$path" || ( -e "$path" && ! -d "$path" ) ]]; then
     remove_path_retry "$path" || return 1
   fi
   mkdir -p "$path" || return 1
+}
+
+prepare_launcher_artifact_namespace() {
+  local branch_artifacts_root="$BRANCH_ROOT/artifacts"
+  local smoke_artifacts_root="$branch_artifacts_root/lca_tree_stress_v5"
+
+  ensure_launcher_directory "$branch_artifacts_root" "branch artifacts root" \
+    || fail "failed to prepare branch artifacts root: $branch_artifacts_root"
+  branch_artifacts_root="$(normalize_branch_local_path "$branch_artifacts_root" "branch artifacts root")"
+  if [[ "$branch_artifacts_root" != "$BRANCH_ROOT/artifacts" ]]; then
+    fail "branch artifacts root must stay pinned to $BRANCH_ROOT/artifacts (got: $branch_artifacts_root)"
+  fi
+
+  ensure_launcher_directory "$smoke_artifacts_root" "launcher smoke artifact namespace" \
+    || fail "failed to prepare launcher smoke artifact namespace: $smoke_artifacts_root"
+  smoke_artifacts_root="$(normalize_branch_local_path "$smoke_artifacts_root" "launcher smoke artifact namespace")"
+  if [[ "$smoke_artifacts_root" != "$BRANCH_ROOT/artifacts/lca_tree_stress_v5" ]]; then
+    fail "launcher smoke artifact namespace must stay pinned to $BRANCH_ROOT/artifacts/lca_tree_stress_v5 (got: $smoke_artifacts_root)"
+  fi
+}
+
+allocate_launcher_run_archive_root() {
+  local next_seq=0
+  local candidate_run_id=""
+  local candidate_root=""
+
+  if [[ -z "$LAUNCHER_RUN_HISTORY_ROOT" ]]; then
+    return 1
+  fi
+
+  scan_launcher_run_history_root || return 1
+  next_seq=$(( LAUNCHER_RUN_HISTORY_MAX_SEQ + 1 ))
+  while :; do
+    printf -v candidate_run_id 'run.%06d' "$next_seq"
+    candidate_root="$LAUNCHER_RUN_HISTORY_ROOT/$candidate_run_id"
+    if mkdir "$candidate_root" 2>/dev/null; then
+      LAUNCHER_RUN_ID="$candidate_run_id"
+      LAUNCHER_RUN_ARCHIVE_ROOT="$candidate_root"
+      LAUNCHER_RUN_EXPORT_ALIAS_ROOT="$LAUNCHER_RUN_EXPORT_ROOT/run-${candidate_run_id#run.}"
+      return 0
+    fi
+    next_seq=$(( next_seq + 1 ))
+    if (( next_seq > 999999 )); then
+      return 1
+    fi
+  done
+}
+
+reset_launcher_run_history_scan_state() {
+  LAUNCHER_RUN_HISTORY_HAS_INDEX=0
+  LAUNCHER_RUN_HISTORY_MAX_SEQ=0
+  LAUNCHER_RECORDED_RUN_IDS=$'\n'
+}
+
+launcher_run_id_is_recorded() {
+  local run_id="$1"
+  case "$LAUNCHER_RECORDED_RUN_IDS" in
+    *$'\n'"$run_id"$'\n'*)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+launcher_run_archive_is_complete() {
+  local archive_root="$1"
+  [[ -d "$archive_root" && -f "$archive_root/summary.txt" && -f "$archive_root/run_record.json" ]]
+}
+
+launcher_run_id_to_alias_name() {
+  local run_id="$1"
+  printf 'run-%s\n' "${run_id#run.}"
+}
+
+launcher_run_alias_name_to_id() {
+  local alias_name="$1"
+  local alias_seq=0
+
+  if [[ ! "$alias_name" =~ ^run-([0-9]+)$ ]]; then
+    return 1
+  fi
+  alias_seq=$((10#${BASH_REMATCH[1]}))
+  printf 'run.%06d\n' "$alias_seq"
+}
+
+scan_launcher_run_history_root() {
+  local run_id=""
+  local entry=""
+  local entry_name=""
+  local entry_seq=0
+  local nullglob_was_on=0
+
+  reset_launcher_run_history_scan_state
+  if [[ -f "$LAUNCHER_RUN_HISTORY_INDEX" ]]; then
+    LAUNCHER_RUN_HISTORY_HAS_INDEX=1
+    while IFS=$'\t' read -r run_id _ || [[ -n "$run_id" ]]; do
+      if [[ -z "$run_id" || "$run_id" == "run_id" ]]; then
+        continue
+      fi
+      if [[ "$run_id" =~ ^run\.([0-9]+)$ ]]; then
+        entry_seq=$((10#${BASH_REMATCH[1]}))
+        LAUNCHER_RECORDED_RUN_IDS+="$run_id"$'\n'
+        if (( entry_seq > LAUNCHER_RUN_HISTORY_MAX_SEQ )); then
+          LAUNCHER_RUN_HISTORY_MAX_SEQ=$entry_seq
+        fi
+      fi
+    done < "$LAUNCHER_RUN_HISTORY_INDEX"
+  elif [[ -e "$LAUNCHER_RUN_HISTORY_INDEX" ]]; then
+    remove_path_retry "$LAUNCHER_RUN_HISTORY_INDEX" || return 1
+  fi
+
+  if shopt -q nullglob; then
+    nullglob_was_on=1
+  fi
+  shopt -s nullglob
+  for entry in "$LAUNCHER_RUN_HISTORY_ROOT"/run.*; do
+    [[ -e "$entry" || -L "$entry" ]] || continue
+    entry_name="${entry##*/}"
+    if [[ ! "$entry_name" =~ ^run\.([0-9]+)$ ]]; then
+      continue
+    fi
+    entry_seq=$((10#${BASH_REMATCH[1]}))
+    if (( LAUNCHER_RUN_HISTORY_HAS_INDEX == 1 )); then
+      if launcher_run_id_is_recorded "$entry_name"; then
+        continue
+      fi
+      remove_path_retry "$entry" || return 1
+      continue
+    fi
+    if launcher_run_archive_is_complete "$entry"; then
+      LAUNCHER_RECORDED_RUN_IDS+="$entry_name"$'\n'
+      if (( entry_seq > LAUNCHER_RUN_HISTORY_MAX_SEQ )); then
+        LAUNCHER_RUN_HISTORY_MAX_SEQ=$entry_seq
+      fi
+      continue
+    fi
+    remove_path_retry "$entry" || return 1
+  done
+  if (( nullglob_was_on == 0 )); then
+    shopt -u nullglob
+  fi
+}
+
+reconcile_launcher_run_export_alias() {
+  local run_id="$1"
+  local expected_archive="$LAUNCHER_RUN_HISTORY_ROOT/$run_id"
+  local alias_path="$LAUNCHER_RUN_EXPORT_ROOT/$(launcher_run_id_to_alias_name "$run_id")"
+  local resolved_alias=""
+
+  if ! launcher_run_archive_is_complete "$expected_archive"; then
+    if [[ -e "$alias_path" || -L "$alias_path" ]]; then
+      remove_path_retry "$alias_path" || return 1
+    fi
+    return 0
+  fi
+
+  if [[ -L "$alias_path" ]]; then
+    resolved_alias="$(normalize_existing_path "$alias_path" "launcher run export alias")"
+    if [[ "$resolved_alias" == "$expected_archive" ]]; then
+      return 0
+    fi
+  fi
+
+  if [[ -e "$alias_path" || -L "$alias_path" ]]; then
+    remove_path_retry "$alias_path" || return 1
+  fi
+  ln -s "$expected_archive" "$alias_path" || return 1
+}
+
+scan_launcher_run_export_root() {
+  local entry=""
+  local entry_name=""
+  local run_id=""
+  local nullglob_was_on=0
+
+  if [[ -z "$LAUNCHER_RUN_EXPORT_ROOT" || ! -d "$LAUNCHER_RUN_EXPORT_ROOT" ]]; then
+    return 0
+  fi
+
+  if shopt -q nullglob; then
+    nullglob_was_on=1
+  fi
+  shopt -s nullglob
+  for entry in "$LAUNCHER_RUN_EXPORT_ROOT"/run-*; do
+    [[ -e "$entry" || -L "$entry" ]] || continue
+    entry_name="${entry##*/}"
+    if ! run_id="$(launcher_run_alias_name_to_id "$entry_name")"; then
+      continue
+    fi
+    if ! launcher_run_id_is_recorded "$run_id"; then
+      remove_path_retry "$entry" || return 1
+      continue
+    fi
+    reconcile_launcher_run_export_alias "$run_id" || return 1
+  done
+  if (( nullglob_was_on == 0 )); then
+    shopt -u nullglob
+  fi
+
+  while IFS= read -r run_id || [[ -n "$run_id" ]]; do
+    if [[ -z "$run_id" ]]; then
+      continue
+    fi
+    reconcile_launcher_run_export_alias "$run_id" || return 1
+  done <<< "$LAUNCHER_RECORDED_RUN_IDS"
 }
 
 parse_positive_decimal_setting() {
@@ -656,6 +914,7 @@ resolve_launcher_status_root() {
   LAUNCHER_STATUS_RUN_RECORD="$LAUNCHER_STATUS_ROOT/run_record.json"
   LAUNCHER_STATUS_RUN_COMPARISON="$LAUNCHER_STATUS_ROOT/run_comparison.json"
   LAUNCHER_RUN_EXPORT_ROOT="$resolved_artifacts_root/smoke_runs"
+  LAUNCHER_STATUS_ENV_SMOKE_MANIFEST_SELECTION_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/environment_validation/smoke_manifest_selection.txt}"
   LAUNCHER_STATUS_PUBLISHED_SMOKE_SUMMARY_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/summary.txt}"
   LAUNCHER_STATUS_PUBLISHED_SMOKE_REPORT_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/status_report.md}"
   LAUNCHER_STATUS_PUBLISHED_SMOKE_FAILURE_REPORT_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/failure_report.md}"
@@ -665,6 +924,7 @@ resolve_launcher_status_root() {
   LAUNCHER_STATUS_PUBLISHED_SMOKE_STANDARD_GAP_JSON_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/standard_gap.json}"
   LAUNCHER_STATUS_PUBLISHED_SMOKE_RUN_RECORD_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/run_record.json}"
   LAUNCHER_STATUS_PUBLISHED_SMOKE_RUN_COMPARISON_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/run_comparison.json}"
+  LAUNCHER_STATUS_PUBLISHED_SMOKE_MANIFEST_SELECTION_PATH="$LAUNCHER_STATUS_ENV_SMOKE_MANIFEST_SELECTION_PATH"
 }
 
 ensure_launcher_run_archive_root() {
@@ -692,7 +952,9 @@ ensure_launcher_run_archive_root() {
       fail "launcher run export root escaped branch-local artifacts root: $LAUNCHER_RUN_EXPORT_ROOT"
       ;;
   esac
-  LAUNCHER_RUN_ARCHIVE_ROOT="$(mktemp -d "$LAUNCHER_RUN_HISTORY_ROOT/run.XXXXXX")" || return 1
+  scan_launcher_run_history_root || return 1
+  scan_launcher_run_export_root || return 1
+  allocate_launcher_run_archive_root || return 1
   case "$LAUNCHER_RUN_ARCHIVE_ROOT" in
     "$effective_artifacts_root"|"$effective_artifacts_root"/*)
       ;;
@@ -700,7 +962,6 @@ ensure_launcher_run_archive_root() {
       fail "launcher run archive root escaped branch-local artifacts root: $LAUNCHER_RUN_ARCHIVE_ROOT"
       ;;
   esac
-  LAUNCHER_RUN_EXPORT_ALIAS_ROOT="$LAUNCHER_RUN_EXPORT_ROOT/run-${LAUNCHER_RUN_ARCHIVE_ROOT##*.}"
   LAUNCHER_RUN_CONSOLE_LOG="$LAUNCHER_RUN_ARCHIVE_ROOT/console.stderr.txt"
   LAUNCHER_RUN_STATUS_SUMMARY_PATH="$LAUNCHER_RUN_ARCHIVE_ROOT/summary.txt"
   LAUNCHER_RUN_STATUS_REPORT_PATH="$LAUNCHER_RUN_ARCHIVE_ROOT/latest_status_report.md"
@@ -712,9 +973,9 @@ ensure_launcher_run_archive_root() {
   LAUNCHER_RUN_STATUS_RUN_COMPARISON_PATH="$LAUNCHER_RUN_ARCHIVE_ROOT/run_comparison.json"
   LAUNCHER_RUN_PREFLIGHT_ROOT="$LAUNCHER_RUN_ARCHIVE_ROOT/launcher_preflight"
   LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT="$LAUNCHER_RUN_ARCHIVE_ROOT/source_root_snapshot"
+  LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH="$LAUNCHER_RUN_ARCHIVE_ROOT/source_failure_snapshot_manifest.tsv"
   LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT="$LAUNCHER_RUN_ARCHIVE_ROOT/launcher_failure_root_snapshot"
   LAUNCHER_RUN_ARTIFACT_MANIFEST="$LAUNCHER_RUN_ARCHIVE_ROOT/artifact_manifest.tsv"
-  LAUNCHER_RUN_ID="${LAUNCHER_RUN_ARCHIVE_ROOT##*/}"
   LAUNCHER_RUN_STARTED_AT_UTC="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   LAUNCHER_RUN_FINISHED_AT_UTC=""
   LAUNCHER_RUN_STARTED_SECONDS=$SECONDS
@@ -757,10 +1018,147 @@ copy_launcher_run_path() {
   fi
 }
 
+launcher_snapshot_equivalent_path() {
+  local live_path="$1"
+  local source_root="${LAUNCHER_STATUS_SOURCE_ROOT:-}"
+
+  if [[ -z "$live_path" || -z "$source_root" || -z "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT" ]]; then
+    printf '%s\n' ""
+    return 0
+  fi
+
+  case "$live_path" in
+    "$source_root")
+      printf '%s\n' "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT"
+      return 0
+      ;;
+    "$source_root"/*)
+      printf '%s\n' "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT/${live_path#"$source_root"/}"
+      return 0
+      ;;
+  esac
+
+  printf '%s\n' ""
+}
+
+launcher_snapshot_preferred_path() {
+  local live_path="$1"
+  local snapshot_path=""
+
+  if [[ -z "$live_path" ]]; then
+    printf '%s\n' ""
+    return 0
+  fi
+
+  snapshot_path="$(launcher_snapshot_equivalent_path "$live_path")"
+  if [[ -n "$snapshot_path" ]]; then
+    printf '%s\n' "$snapshot_path"
+    return 0
+  fi
+
+  printf '%s\n' "$live_path"
+}
+
+append_launcher_run_archived_artifact_row() {
+  local label="$1"
+  local live_path="$2"
+  local snapshot_path=""
+
+  if [[ -z "$label" || -z "$live_path" || -z "$LAUNCHER_RUN_ARTIFACT_MANIFEST" ]]; then
+    return 0
+  fi
+
+  snapshot_path="$(launcher_snapshot_equivalent_path "$live_path")"
+  if [[ -z "$snapshot_path" || ! -e "$snapshot_path" ]]; then
+    return 0
+  fi
+
+  printf '%s\t%s\tcopy_of_%s\n' "$label" "$snapshot_path" "$live_path" >> "$LAUNCHER_RUN_ARTIFACT_MANIFEST"
+}
+
+append_launcher_run_source_snapshot_row() {
+  local label="$1"
+  local live_path="$2"
+  local snapshot_path=""
+  local exists="0"
+
+  if [[ -z "$label" || -z "$live_path" || -z "$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH" ]]; then
+    return 0
+  fi
+
+  snapshot_path="$(launcher_snapshot_equivalent_path "$live_path")"
+  if [[ -n "$snapshot_path" && -e "$snapshot_path" ]]; then
+    exists="1"
+  fi
+
+  printf '%s\t%s\t%s\t%s\n' "$label" "$live_path" "${snapshot_path:--}" "$exists" >> "$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH"
+}
+
+write_launcher_run_source_failure_snapshot_manifest() {
+  local case_dir="${LAUNCHER_REPLAY_FAILURE_CASE_DIR:-}"
+
+  if [[ -z "$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH" || -z "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT" ]]; then
+    return 0
+  fi
+  if [[ ! -d "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT" ]]; then
+    return 0
+  fi
+
+  {
+    printf 'label\tlive_path\tsnapshot_path\texists\n'
+  } > "$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH"
+
+  append_launcher_run_source_snapshot_row "source_root" "$LAUNCHER_STATUS_SOURCE_ROOT"
+  append_launcher_run_source_snapshot_row "source_summary" "$LAUNCHER_STATUS_SOURCE_SUMMARY"
+  append_launcher_run_source_snapshot_row "source_report" "$LAUNCHER_STATUS_SOURCE_REPORT"
+  append_launcher_run_source_snapshot_row "failure_root" "$LAUNCHER_REPLAY_FAILURE_ROOT"
+  append_launcher_run_source_snapshot_row "failure_case_dir" "$case_dir"
+  append_launcher_run_source_snapshot_row "commands" "$LAUNCHER_REPLAY_COMMANDS_PATH"
+  append_launcher_run_source_snapshot_row "artifact_manifest" "$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH"
+  append_launcher_run_source_snapshot_row "rerun_command" "$LAUNCHER_REPLAY_RERUN_COMMAND_PATH"
+  append_launcher_run_source_snapshot_row "exact_seed" "$LAUNCHER_REPLAY_EXACT_SEED_PATH"
+  append_launcher_run_source_snapshot_row "exact_input" "$LAUNCHER_REPLAY_EXACT_INPUT_PATH"
+  append_launcher_run_source_snapshot_row "exact_output" "$LAUNCHER_REPLAY_EXACT_OUTPUT_PATH"
+  append_launcher_run_source_snapshot_row "expected_output" "$LAUNCHER_REPLAY_EXPECTED_OUTPUT_PATH"
+  append_launcher_run_source_snapshot_row "invoked_command" "$LAUNCHER_REPLAY_INVOKED_COMMAND_PATH"
+  append_launcher_run_source_snapshot_row "helper_stdout" "$LAUNCHER_SOURCE_HELPER_STDOUT"
+  append_launcher_run_source_snapshot_row "helper_stderr" "$LAUNCHER_SOURCE_HELPER_STDERR"
+  append_launcher_run_source_snapshot_row "helper_result_json" "$LAUNCHER_SOURCE_HELPER_RESULT_JSON"
+  append_launcher_run_source_snapshot_row "checker_result" "$LAUNCHER_SOURCE_CHECKER_RESULT_PATH"
+  append_launcher_run_source_snapshot_row "checker_replay_stdout" "$LAUNCHER_SOURCE_CHECKER_REPLAY_STDOUT_PATH"
+  append_launcher_run_source_snapshot_row "checker_replay_stderr" "$LAUNCHER_SOURCE_CHECKER_REPLAY_STDERR_PATH"
+  append_launcher_run_source_snapshot_row "mismatch_summary" "$LAUNCHER_SOURCE_MISMATCH_SUMMARY_PATH"
+  append_launcher_run_source_snapshot_row "retry_log" "$LAUNCHER_SOURCE_RETRY_LOG_PATH"
+  append_launcher_run_source_snapshot_row "environment_validation" "$LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH"
+  append_launcher_run_source_snapshot_row "runtime_env" "$LAUNCHER_SOURCE_RUNTIME_ENV_PATH"
+  append_launcher_run_source_snapshot_row "runtime_env_exports" "$LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH"
+  append_launcher_run_source_snapshot_row "preflight_manifest" "$LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH"
+  append_launcher_run_source_snapshot_row "setup_env" "$LAUNCHER_SOURCE_SETUP_ENV_PATH"
+  append_launcher_run_source_snapshot_row "build_command" "$LAUNCHER_SOURCE_BUILD_COMMAND_PATH"
+  append_launcher_run_source_snapshot_row "build_stdout" "$LAUNCHER_SOURCE_BUILD_STDOUT_PATH"
+  append_launcher_run_source_snapshot_row "build_stderr" "$LAUNCHER_SOURCE_BUILD_STDERR_PATH"
+  append_launcher_run_source_snapshot_row "structured_context" "$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH"
+  append_launcher_run_source_snapshot_row "manifest_snapshot" "$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH"
+  append_launcher_run_source_snapshot_row "failed_case_row" "$LAUNCHER_SOURCE_FAILED_CASE_ROW_PATH"
+  append_launcher_run_source_snapshot_row "suite_config" "$LAUNCHER_SOURCE_SUITE_CONFIG_PATH"
+  append_launcher_run_source_snapshot_row "suite_plan" "$LAUNCHER_SOURCE_SUITE_PLAN_PATH"
+  append_launcher_run_source_snapshot_row "checker_script" "$LAUNCHER_SOURCE_CHECKER_SCRIPT"
+  append_launcher_run_source_snapshot_row "seed_repro_script" "$LAUNCHER_SOURCE_SEED_REPRO_SCRIPT"
+  append_launcher_run_source_snapshot_row "preserved_input_replay_script" "$LAUNCHER_SOURCE_PRESERVED_INPUT_REPLAY_SCRIPT"
+  append_launcher_run_source_snapshot_row "active_solver_replay_script" "$LAUNCHER_REPLAY_ACTIVE_SCRIPT"
+  append_launcher_run_source_snapshot_row "case_input" "${case_dir:+$case_dir/in.txt}"
+  append_launcher_run_source_snapshot_row "case_meta" "${case_dir:+$case_dir/meta.json}"
+  append_launcher_run_source_snapshot_row "case_hidden_parent" "${case_dir:+$case_dir/hidden_parent.txt}"
+  append_launcher_run_source_snapshot_row "case_output" "${case_dir:+$case_dir/out.txt}"
+  append_launcher_run_source_snapshot_row "case_time" "${case_dir:+$case_dir/time.txt}"
+  append_launcher_run_source_snapshot_row "case_solver_stderr" "${case_dir:+$case_dir/solver_stderr.txt}"
+}
+
 write_launcher_run_artifact_manifest() {
   {
     printf 'artifact\tpath\tprovenance\n'
     printf 'console_stderr\t%s\tlauncher_console_transcript\n' "$LAUNCHER_RUN_CONSOLE_LOG"
+    printf 'dispatch_result\t%s\tlauncher_dispatch_result_snapshot\n' "$LAUNCHER_DISPATCH_RESULT_PATH"
     printf 'status_summary\t%s\tcopy_of_%s\n' "$LAUNCHER_RUN_STATUS_SUMMARY_PATH" "$LAUNCHER_STATUS_SUMMARY"
     printf 'status_report\t%s\tcopy_of_%s\n' "$LAUNCHER_RUN_STATUS_REPORT_PATH" "$LAUNCHER_STATUS_REPORT"
     printf 'status_iteration_evidence\t%s\tcopy_of_%s\n' "$LAUNCHER_RUN_STATUS_ITERATION_EVIDENCE_PATH" "$LAUNCHER_STATUS_ITERATION_EVIDENCE"
@@ -775,10 +1173,37 @@ write_launcher_run_artifact_manifest() {
     if [[ -e "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT" ]]; then
       printf 'source_root_snapshot\t%s\tcopy_of_%s\n' "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT" "$LAUNCHER_STATUS_SOURCE_ROOT"
     fi
+    if [[ -f "$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH" ]]; then
+      printf 'source_failure_snapshot_manifest\t%s\timmutable_snapshot_index_for_%s\n' "$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH" "$LAUNCHER_STATUS_SOURCE_ROOT"
+    fi
     if [[ -e "$LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT" ]]; then
       printf 'launcher_failure_root_snapshot\t%s\tcopy_of_%s\n' "$LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT" "$LAUNCHER_FAILURE_ROOT"
     fi
   } > "$LAUNCHER_RUN_ARTIFACT_MANIFEST"
+
+  append_launcher_run_archived_artifact_row "source_summary" "$LAUNCHER_STATUS_SOURCE_SUMMARY"
+  append_launcher_run_archived_artifact_row "source_report" "$LAUNCHER_STATUS_SOURCE_REPORT"
+  append_launcher_run_archived_artifact_row "source_failure_root" "$LAUNCHER_REPLAY_FAILURE_ROOT"
+  append_launcher_run_archived_artifact_row "source_failure_case_dir" "$LAUNCHER_REPLAY_FAILURE_CASE_DIR"
+  append_launcher_run_archived_artifact_row "source_failure_commands" "$LAUNCHER_REPLAY_COMMANDS_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_artifact_manifest" "$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_rerun_command" "$LAUNCHER_REPLAY_RERUN_COMMAND_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_exact_seed" "$LAUNCHER_REPLAY_EXACT_SEED_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_exact_input" "$LAUNCHER_REPLAY_EXACT_INPUT_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_exact_output" "$LAUNCHER_REPLAY_EXACT_OUTPUT_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_expected_output" "$LAUNCHER_REPLAY_EXPECTED_OUTPUT_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_invoked_command" "$LAUNCHER_REPLAY_INVOKED_COMMAND_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_active_solver_replay_script" "$LAUNCHER_REPLAY_ACTIVE_SCRIPT"
+  append_launcher_run_archived_artifact_row "source_failure_structured_context" "$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_runtime_env" "$LAUNCHER_SOURCE_RUNTIME_ENV_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_runtime_env_exports" "$LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_failed_case_row" "$LAUNCHER_SOURCE_FAILED_CASE_ROW_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_manifest_snapshot" "$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_suite_config" "$LAUNCHER_SOURCE_SUITE_CONFIG_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_suite_plan" "$LAUNCHER_SOURCE_SUITE_PLAN_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_helper_stderr" "$LAUNCHER_SOURCE_HELPER_STDERR"
+  append_launcher_run_archived_artifact_row "source_failure_mismatch_summary" "$LAUNCHER_SOURCE_MISMATCH_SUMMARY_PATH"
+  append_launcher_run_archived_artifact_row "source_failure_retry_log" "$LAUNCHER_SOURCE_RETRY_LOG_PATH"
 }
 
 archive_launcher_run_bundle() {
@@ -796,6 +1221,7 @@ archive_launcher_run_bundle() {
   fi
   if [[ "${LAUNCHER_STATUS_OUTCOME:-}" != "pass" && -n "$LAUNCHER_STATUS_SOURCE_ROOT" ]]; then
     copy_launcher_run_path "$LAUNCHER_STATUS_SOURCE_ROOT" "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT" || return 1
+    write_launcher_run_source_failure_snapshot_manifest || return 1
   fi
   if [[ -n "$LAUNCHER_FAILURE_ROOT" && "$LAUNCHER_FAILURE_ROOT" != "${LAUNCHER_STATUS_SOURCE_ROOT:-}" ]]; then
     copy_launcher_run_path "$LAUNCHER_FAILURE_ROOT" "$LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT" || return 1
@@ -844,6 +1270,42 @@ set_launcher_status() {
   esac
 }
 
+launcher_failure_partition_key() {
+  case "${LAUNCHER_STATUS_RESULT_FAMILY:-unknown}" in
+    none)
+      printf 'pass\n'
+      ;;
+    harness)
+      printf 'harness_setup\n'
+      ;;
+    solver|stress_gate)
+      printf 'solver_test\n'
+      ;;
+    *)
+      printf 'unknown\n'
+      ;;
+  esac
+}
+
+launcher_failure_partition_label() {
+  local partition_key="${1:-$(launcher_failure_partition_key)}"
+
+  case "$partition_key" in
+    pass)
+      printf 'pass\n'
+      ;;
+    harness_setup)
+      printf 'harness/setup\n'
+      ;;
+    solver_test)
+      printf 'solver/test\n'
+      ;;
+    *)
+      printf 'unknown\n'
+      ;;
+  esac
+}
+
 clear_launcher_source_failure_details() {
   LAUNCHER_REPLAY_SUMMARY=""
   LAUNCHER_REPLAY_CASE_TAG=""
@@ -851,6 +1313,9 @@ clear_launcher_source_failure_details() {
   LAUNCHER_REPLAY_MODE=""
   LAUNCHER_REPLAY_N=""
   LAUNCHER_REPLAY_SEED=""
+  LAUNCHER_REPLAY_SHUFFLE_LABELS=""
+  LAUNCHER_REPLAY_SHUFFLE_QUERIES=""
+  LAUNCHER_REPLAY_TIMEOUT_S=""
   LAUNCHER_REPLAY_FAILURE_ROOT=""
   LAUNCHER_REPLAY_FAILURE_CASE_DIR=""
   LAUNCHER_REPLAY_COMMANDS_PATH=""
@@ -877,6 +1342,7 @@ clear_launcher_source_failure_details() {
   LAUNCHER_SOURCE_CHECKER_REPLAY_STDERR_PATH=""
   LAUNCHER_SOURCE_MISMATCH_SUMMARY_PATH=""
   LAUNCHER_SOURCE_RETRY_LOG_PATH=""
+  LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH=""
   LAUNCHER_SOURCE_RUNTIME_ENV_PATH=""
   LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH=""
   LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH=""
@@ -972,6 +1438,42 @@ launcher_backfill_source_failure_details() {
 
   if [[ -n "$fallback_failure_root" && -d "$fallback_failure_root" ]]; then
     LAUNCHER_REPLAY_FAILURE_ROOT="$fallback_failure_root"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH \
+      "$fallback_failure_root/environment_validation.txt" \
+      "source failure environment validation report path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH \
+      "$fallback_failure_root/environment_validation/preflight_manifest.tsv" \
+      "source failure preflight manifest path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_SETUP_ENV_PATH \
+      "$fallback_failure_root/environment_validation/setup_env.txt" \
+      "source failure setup env path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_BUILD_COMMAND_PATH \
+      "$fallback_failure_root/environment_validation/build.command.txt" \
+      "source failure build command path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH \
+      "$fallback_failure_root/setup_build/preflight_manifest.tsv" \
+      "source failure setup-build preflight manifest path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_SETUP_ENV_PATH \
+      "$fallback_failure_root/setup_build/setup_env.txt" \
+      "source failure setup-build env path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_BUILD_COMMAND_PATH \
+      "$fallback_failure_root/setup_build/build.command.txt" \
+      "source failure setup-build command path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_BUILD_STDOUT_PATH \
+      "$fallback_failure_root/setup_build/build.stdout.txt" \
+      "source failure build stdout path"
+    launcher_set_source_failure_path_if_missing \
+      LAUNCHER_SOURCE_BUILD_STDERR_PATH \
+      "$fallback_failure_root/setup_build/build.stderr.txt" \
+      "source failure build stderr path"
     launcher_set_source_failure_path_if_missing \
       LAUNCHER_SOURCE_FAILED_CASE_ROW_PATH \
       "$fallback_failure_root/failed_case_row.tsv" \
@@ -1084,10 +1586,20 @@ launcher_backfill_source_failure_details() {
 capture_launcher_source_failure_details() {
   local source_summary="$1"
   local line=""
+  local env_validation_report_path=""
+  local env_validation_preflight_manifest_path=""
+  local env_validation_setup_env_path=""
+  local env_validation_build_command_path=""
+  local setup_build_preflight_manifest_path=""
+  local setup_build_setup_env_path=""
+  local setup_build_build_command_path=""
+  local setup_build_build_stdout_path=""
+  local setup_build_build_stderr_path=""
 
   clear_launcher_source_failure_details
   if [[ -n "$source_summary" && -f "$source_summary" ]]; then
     while IFS= read -r line || [[ -n "$line" ]]; do
+      line="${line#"${line%%[![:space:]]*}"}"
       case "$line" in
         failure_summary=*)
           LAUNCHER_REPLAY_SUMMARY="${line#*=}"
@@ -1193,6 +1705,18 @@ capture_launcher_source_failure_details() {
         retry_log_path=*)
           LAUNCHER_SOURCE_RETRY_LOG_PATH="${line#*=}"
           ;;
+        environment_validation_report_path=*)
+          env_validation_report_path="${line#*=}"
+          ;;
+        environment_validation_preflight_manifest_path=*)
+          env_validation_preflight_manifest_path="${line#*=}"
+          ;;
+        environment_validation_setup_env_path=*)
+          env_validation_setup_env_path="${line#*=}"
+          ;;
+        environment_validation_build_command_path=*)
+          env_validation_build_command_path="${line#*=}"
+          ;;
         runtime_env_path=*)
           LAUNCHER_SOURCE_RUNTIME_ENV_PATH="${line#*=}"
           ;;
@@ -1213,6 +1737,21 @@ capture_launcher_source_failure_details() {
           ;;
         build_stderr=*)
           LAUNCHER_SOURCE_BUILD_STDERR_PATH="${line#*=}"
+          ;;
+        setup_build_preflight_manifest_path=*)
+          setup_build_preflight_manifest_path="${line#*=}"
+          ;;
+        setup_build_setup_env_path=*)
+          setup_build_setup_env_path="${line#*=}"
+          ;;
+        setup_build_build_command_path=*)
+          setup_build_build_command_path="${line#*=}"
+          ;;
+        setup_build_build_stdout_path=*)
+          setup_build_build_stdout_path="${line#*=}"
+          ;;
+        setup_build_build_stderr_path=*)
+          setup_build_build_stderr_path="${line#*=}"
           ;;
         manifest_snapshot_path=*)
           LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH="${line#*=}"
@@ -1239,6 +1778,38 @@ capture_launcher_source_failure_details() {
     done < "$source_summary"
   fi
 
+  if [[ -z "$LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH" ]]; then
+    LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH="$env_validation_report_path"
+  fi
+  if [[ -z "$LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH" ]]; then
+    if [[ -n "$env_validation_preflight_manifest_path" ]]; then
+      LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH="$env_validation_preflight_manifest_path"
+    else
+      LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH="$setup_build_preflight_manifest_path"
+    fi
+  fi
+  if [[ -z "$LAUNCHER_SOURCE_SETUP_ENV_PATH" ]]; then
+    if [[ -n "$env_validation_setup_env_path" ]]; then
+      LAUNCHER_SOURCE_SETUP_ENV_PATH="$env_validation_setup_env_path"
+    else
+      LAUNCHER_SOURCE_SETUP_ENV_PATH="$setup_build_setup_env_path"
+    fi
+  fi
+  if [[ -z "$LAUNCHER_SOURCE_BUILD_COMMAND_PATH" ]]; then
+    if [[ -n "$env_validation_build_command_path" ]]; then
+      LAUNCHER_SOURCE_BUILD_COMMAND_PATH="$env_validation_build_command_path"
+    else
+      LAUNCHER_SOURCE_BUILD_COMMAND_PATH="$setup_build_build_command_path"
+    fi
+  fi
+  if [[ -z "$LAUNCHER_SOURCE_BUILD_STDOUT_PATH" ]]; then
+    LAUNCHER_SOURCE_BUILD_STDOUT_PATH="$setup_build_build_stdout_path"
+  fi
+  if [[ -z "$LAUNCHER_SOURCE_BUILD_STDERR_PATH" ]]; then
+    LAUNCHER_SOURCE_BUILD_STDERR_PATH="$setup_build_build_stderr_path"
+  fi
+
+  LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH="$(normalize_branch_artifact_path "$LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH" "source failure environment validation report path")"
   LAUNCHER_REPLAY_FAILURE_ROOT="$(normalize_branch_artifact_path "$LAUNCHER_REPLAY_FAILURE_ROOT" "source failure root")"
   LAUNCHER_REPLAY_FAILURE_CASE_DIR="$(normalize_branch_artifact_path "$LAUNCHER_REPLAY_FAILURE_CASE_DIR" "source failure case dir")"
   LAUNCHER_REPLAY_COMMANDS_PATH="$(normalize_branch_artifact_path "$LAUNCHER_REPLAY_COMMANDS_PATH" "source failure commands path")"
@@ -1321,6 +1892,8 @@ refresh_launcher_status_diagnostics_paths() {
   LAUNCHER_STATUS_ENV_SETUP_ENV_PATH="${LAUNCHER_SOURCE_SETUP_ENV_PATH:-${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/environment_validation/setup_env.txt}}"
   LAUNCHER_STATUS_ENV_BUILD_COMMAND_PATH="${LAUNCHER_SOURCE_BUILD_COMMAND_PATH:-${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/environment_validation/build.command.txt}}"
   LAUNCHER_STATUS_ENV_SMOKE_MANIFEST_SNAPSHOT_PATH="${LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH:-${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/environment_validation/smoke_cases.snapshot.tsv}}"
+  LAUNCHER_STATUS_ENV_SMOKE_MANIFEST_SELECTION_PATH="${SMOKE_OUTPUT_ROOT:+$SMOKE_OUTPUT_ROOT/environment_validation/smoke_manifest_selection.txt}"
+  LAUNCHER_STATUS_PUBLISHED_SMOKE_MANIFEST_SELECTION_PATH="$LAUNCHER_STATUS_ENV_SMOKE_MANIFEST_SELECTION_PATH"
 }
 
 join_launcher_paths() {
@@ -1342,6 +1915,271 @@ build_branch_root_shell_command() {
 
   printf -v branch_root_q '%q' "$BRANCH_ROOT"
   printf 'cd %s && %s\n' "$branch_root_q" "$command_body"
+}
+
+launcher_acceptance_signal_status() {
+  if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+    printf 'PASS\n'
+  else
+    printf 'FAIL\n'
+  fi
+}
+
+launcher_acceptance_failure_is_retryable() {
+  case "${LAUNCHER_STATUS_RESULT_FAMILY:-unknown}" in
+    solver|stress_gate)
+      printf '1\n'
+      ;;
+    *)
+      printf '0\n'
+      ;;
+  esac
+}
+
+launcher_acceptance_signal_summary() {
+  if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+    printf 'smoke accepted on this working tree; AC2 now has fresh same-worktree pass evidence for later gates\n'
+  elif [[ "$(launcher_acceptance_failure_is_retryable)" == "1" ]]; then
+    printf 'smoke did not satisfy AC2 on this working tree; keep the failure visible and do not treat this run as formal gate closure\n'
+  else
+    printf 'smoke did not satisfy AC2 because the launcher or smoke harness failed before acceptance evidence was trustworthy; keep later gates blocked and rerun smoke after repairing the wrapper path\n'
+  fi
+}
+
+launcher_iteration_support_status() {
+  printf 'ACTIONABLE\n'
+}
+
+launcher_iteration_support_next_step() {
+  if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+    printf 'gate_escalation\n'
+  elif [[ "$(launcher_acceptance_failure_is_retryable)" == "1" ]]; then
+    printf 'retry\n'
+  else
+    printf 'repair_then_retry\n'
+  fi
+}
+
+launcher_iteration_support_summary() {
+  if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+    printf 'stable smoke status outputs are published; proceed to ./lca_strong_gate.sh on the same working tree\n'
+  elif [[ "$(launcher_acceptance_failure_is_retryable)" == "1" ]]; then
+    printf 'stable smoke status and retry artifacts are published despite the failed acceptance signal; inspect them and continue the next debugging pass\n'
+  else
+    printf 'stable smoke failure status is published, but this run stopped before acceptance-grade evidence was trustworthy; repair the smoke launcher or harness path, then rerun ./lca_smoke.sh before later gates\n'
+  fi
+}
+
+launcher_gate_chain_status() {
+  local ac_id="$1"
+
+  case "$ac_id" in
+    2)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'satisfied\n'
+      else
+        printf 'failed\n'
+      fi
+      ;;
+    3)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'ready_to_run\n'
+      else
+        printf 'blocked_by_ac2\n'
+      fi
+      ;;
+    4)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'pending_after_ac3\n'
+      else
+        printf 'blocked_by_ac2\n'
+      fi
+      ;;
+    5)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'blocked_by_ac3\n'
+      else
+        printf 'blocked_by_ac2\n'
+      fi
+      ;;
+    6)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'blocked_by_ac5\n'
+      else
+        printf 'blocked_by_ac2\n'
+      fi
+      ;;
+    *)
+      printf 'unknown\n'
+      ;;
+  esac
+}
+
+launcher_gate_chain_dependency() {
+  local ac_id="$1"
+
+  case "$ac_id" in
+    2) printf 'none\n' ;;
+    3) printf 'AC2\n' ;;
+    4) printf 'AC3\n' ;;
+    5) printf 'AC3\n' ;;
+    6) printf 'AC5\n' ;;
+    *) printf '\n' ;;
+  esac
+}
+
+launcher_gate_chain_command() {
+  local ac_id="$1"
+
+  case "$ac_id" in
+    2) printf './lca_smoke.sh\n' ;;
+    3) printf './lca_strong_gate.sh\n' ;;
+    4) printf './lca_strong_gate.sh && ./lca_strong_gate.sh\n' ;;
+    5) printf './lca_boj3s_gate.sh\n' ;;
+    6) printf './lca_boj3s_gate.sh && ./lca_boj3s_gate.sh\n' ;;
+    *) printf '\n' ;;
+  esac
+}
+
+launcher_gate_chain_summary() {
+  local ac_id="$1"
+  local message="${LAUNCHER_STATUS_MESSAGE:-launcher status was not initialized}"
+
+  case "$ac_id" in
+    2)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'fresh smoke evidence published for this working tree\n'
+      else
+        printf 'smoke is the active blocker: %s\n' "$message"
+      fi
+      ;;
+    3)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'smoke is green; run the required prerequisite gate next on the same working tree\n'
+      else
+        printf 'strong gate is intentionally blocked until smoke publishes a fresh same-worktree pass\n'
+      fi
+      ;;
+    4)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'strong-gate repeatability remains pending until AC3 records a fresh same-worktree pass\n'
+      else
+        printf 'strong-gate repeatability is intentionally blocked until AC3 has fresh same-worktree pass evidence\n'
+      fi
+      ;;
+    5)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'boj3s gate remains blocked until AC3 records a fresh same-worktree pass\n'
+      else
+        printf 'boj3s gate is intentionally blocked until smoke and AC3 produce fresh same-worktree pass evidence\n'
+      fi
+      ;;
+    6)
+      if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+        printf 'boj3s repeatability remains blocked until AC5 records a fresh same-worktree pass\n'
+      else
+        printf 'boj3s repeatability is intentionally blocked until AC5 has fresh same-worktree pass evidence\n'
+      fi
+      ;;
+    *)
+      printf '\n'
+      ;;
+  esac
+}
+
+launcher_gate_chain_overview() {
+  printf 'AC2=%s AC3=%s AC4=%s AC5=%s AC6=%s\n' \
+    "$(launcher_gate_chain_status 2)" \
+    "$(launcher_gate_chain_status 3)" \
+    "$(launcher_gate_chain_status 4)" \
+    "$(launcher_gate_chain_status 5)" \
+    "$(launcher_gate_chain_status 6)"
+}
+
+launcher_command_control_mode() {
+  if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+    printf 'gate_escalation\n'
+  elif [[ "$(launcher_acceptance_failure_is_retryable)" == "1" ]]; then
+    printf 'acceptance_failure_retry\n'
+  else
+    printf 'smoke_repair_retry\n'
+  fi
+}
+
+launcher_command_control_preferred_command_kind() {
+  case "$(launcher_command_control_mode)" in
+    gate_escalation)
+      printf 'gate\n'
+      ;;
+    acceptance_failure_retry)
+      printf 'retry_loop\n'
+      ;;
+    *)
+      printf 'smoke_rerun\n'
+      ;;
+  esac
+}
+
+launcher_should_resume_retry_loop() {
+  if [[ "$(launcher_command_control_mode)" == "acceptance_failure_retry" ]]; then
+    printf '1\n'
+  else
+    printf '0\n'
+  fi
+}
+
+launcher_should_retry_smoke_directly() {
+  if [[ "$(launcher_command_control_mode)" == "smoke_repair_retry" ]]; then
+    printf '1\n'
+  else
+    printf '0\n'
+  fi
+}
+
+launcher_failure_is_terminal() {
+  if [[ "${LAUNCHER_STATUS_OUTCOME:-}" == "pass" ]]; then
+    printf '0\n'
+  elif [[ -n "${LAUNCHER_RETRY_LOOP_PREFERRED_COMMAND:-}" ]]; then
+    printf '0\n'
+  else
+    printf '1\n'
+  fi
+}
+
+launcher_next_gate_status() {
+  launcher_gate_chain_status 3
+}
+
+launcher_next_gate_dependency() {
+  launcher_gate_chain_dependency 3
+}
+
+launcher_next_gate_summary() {
+  launcher_gate_chain_summary 3
+}
+
+launcher_gate_escalation_allowed() {
+  if [[ "$(launcher_next_gate_status)" == "ready_to_run" ]]; then
+    printf '1\n'
+  else
+    printf '0\n'
+  fi
+}
+
+write_launcher_gate_chain_report() {
+  local ac_id=""
+  local status=""
+  local dependency=""
+  local command_text=""
+  local summary=""
+
+  for ac_id in 2 3 4 5 6; do
+    status="$(launcher_gate_chain_status "$ac_id")"
+    dependency="$(launcher_gate_chain_dependency "$ac_id")"
+    command_text="$(launcher_gate_chain_command "$ac_id")"
+    summary="$(launcher_gate_chain_summary "$ac_id")"
+    echo "- AC${ac_id} (\`$command_text\`): status=\`$status\`; depends_on=\`$dependency\`; summary=\`$summary\`"
+  done
 }
 
 refresh_launcher_retry_loop_control() {
@@ -1370,9 +2208,15 @@ refresh_launcher_retry_loop_control() {
     LAUNCHER_RETRY_LOOP_HINT="smoke passed; escalate to ./lca_strong_gate.sh on the same working tree for the next required gate"
     return 0
   fi
-  LAUNCHER_RETRY_LOOP_ACTION="resume_progress40_retry_loop"
-  LAUNCHER_RETRY_LOOP_PREFERRED_COMMAND="$LAUNCHER_RETRY_LOOP_LAUNCH_COMMAND"
-  LAUNCHER_RETRY_LOOP_HINT="after inspecting the smoke failure handoff, relaunch the branch-local retry loop so the next solver iteration starts with fresh same-worktree artifacts"
+  if [[ "$(launcher_acceptance_failure_is_retryable)" == "1" ]]; then
+    LAUNCHER_RETRY_LOOP_ACTION="resume_progress40_retry_loop"
+    LAUNCHER_RETRY_LOOP_PREFERRED_COMMAND="$LAUNCHER_RETRY_LOOP_LAUNCH_COMMAND"
+    LAUNCHER_RETRY_LOOP_HINT="after inspecting the smoke failure handoff, relaunch the branch-local retry loop so the next solver iteration starts with fresh same-worktree artifacts"
+    return 0
+  fi
+  LAUNCHER_RETRY_LOOP_ACTION="repair_and_rerun_smoke"
+  LAUNCHER_RETRY_LOOP_PREFERRED_COMMAND="./lca_smoke.sh"
+  LAUNCHER_RETRY_LOOP_HINT="repair the smoke launcher or harness failure first, then rerun ./lca_smoke.sh before attempting later gates"
 }
 
 reset_launcher_previous_run_context() {
@@ -1402,11 +2246,12 @@ load_launcher_previous_run_context() {
     return 0
   fi
 
-  previous_row="$(
+previous_row="$(
     python3 - "$LAUNCHER_RUN_HISTORY_INDEX" "$LAUNCHER_RUN_ID" <<'PY'
 from __future__ import annotations
 
 import csv
+import re
 import sys
 from pathlib import Path
 
@@ -1425,11 +2270,24 @@ with history_path.open(encoding="utf-8", newline="") as handle:
 if not rows:
     raise SystemExit(0)
 
-last = rows[-1]
+def run_sort_key(row: dict[str, str]) -> tuple[int, int | str]:
+    run_id = row.get("run_id", "")
+    match = re.fullmatch(r"run\.(\d+)", run_id)
+    if match is None:
+        return (1, run_id)
+    return (0, int(match.group(1)))
+
+
+canonical_rows: dict[str, dict[str, str]] = {}
+for row in rows:
+    canonical_rows[row["run_id"]] = row
+
+ordered_rows = sorted(canonical_rows.values(), key=run_sort_key)
+last = ordered_rows[-1]
 if last.get("run_id") == current_run_id:
-    if len(rows) < 2:
+    if len(ordered_rows) < 2:
         raise SystemExit(0)
-    last = rows[-2]
+    last = ordered_rows[-2]
 fields = [
     "run_id",
     "run_archive_root",
@@ -1441,13 +2299,13 @@ fields = [
     "status_summary_path",
     "iteration_evidence_path",
 ]
-print("\t".join(last.get(field, "") for field in fields))
+print("\x1f".join(last.get(field, "") for field in fields))
 PY
   )"
   if [[ -z "$previous_row" ]]; then
     return 0
   fi
-  IFS=$'\t' read -r \
+  IFS=$'\x1f' read -r \
     LAUNCHER_PREVIOUS_RUN_ID \
     LAUNCHER_PREVIOUS_RUN_ARCHIVE_ROOT \
     LAUNCHER_PREVIOUS_RUN_PUBLIC_STATUS \
@@ -1463,7 +2321,7 @@ finalize_launcher_run_identity() {
   if [[ -z "$LAUNCHER_RUN_FINISHED_AT_UTC" ]]; then
     LAUNCHER_RUN_FINISHED_AT_UTC="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   fi
-  if (( LAUNCHER_RUN_STARTED_SECONDS > 0 )); then
+  if (( LAUNCHER_RUN_STARTED_SECONDS >= 0 )); then
     LAUNCHER_RUN_ELAPSED_SECONDS=$(( SECONDS - LAUNCHER_RUN_STARTED_SECONDS ))
   else
     LAUNCHER_RUN_ELAPSED_SECONDS=0
@@ -1528,13 +2386,21 @@ write_launcher_iteration_evidence() {
     echo "run_elapsed_seconds=$LAUNCHER_RUN_ELAPSED_SECONDS"
     echo "public_status=${LAUNCHER_STATUS_PUBLIC_STATUS:-FAIL}"
     echo "result_family=${LAUNCHER_STATUS_RESULT_FAMILY:-unknown}"
+    echo "failure_partition=$(launcher_failure_partition_key)"
+    echo "failure_partition_label=$(launcher_failure_partition_label)"
     echo "normalized_outcome=${LAUNCHER_STATUS_OUTCOME:-harness_infrastructure_failure}"
     echo "normalized_exit_code=${LAUNCHER_STATUS_NORMALIZED_RC:-$SMOKE_EXIT_HARNESS_FAILURE}"
     echo "raw_exit_code=${LAUNCHER_STATUS_RAW_RC:-${LAUNCHER_STATUS_NORMALIZED_RC:-$SMOKE_EXIT_HARNESS_FAILURE}}"
     echo "outcome_source=${LAUNCHER_STATUS_SOURCE:-launcher}"
+    echo "acceptance_signal_status=$(launcher_acceptance_signal_status)"
+    echo "acceptance_signal_summary=$(launcher_acceptance_signal_summary)"
+    echo "iteration_support_status=$(launcher_iteration_support_status)"
+    echo "iteration_support_next_step=$(launcher_iteration_support_next_step)"
+    echo "iteration_support_summary=$(launcher_iteration_support_summary)"
     echo "run_history_index_path=$LAUNCHER_RUN_HISTORY_INDEX"
     echo "run_record_path=$LAUNCHER_STATUS_RUN_RECORD"
     echo "run_comparison_path=$LAUNCHER_STATUS_RUN_COMPARISON"
+    echo "run_dispatch_result_path=$LAUNCHER_DISPATCH_RESULT_PATH"
     echo "run_comparison_summary=$LAUNCHER_RUN_COMPARISON_SUMMARY"
     echo "run_comparison_changed_fields=$LAUNCHER_RUN_COMPARISON_CHANGED_FIELDS"
     echo "previous_run_id=$LAUNCHER_PREVIOUS_RUN_ID"
@@ -1570,6 +2436,8 @@ write_launcher_iteration_evidence() {
     echo "status_report_path=$LAUNCHER_STATUS_REPORT"
     echo "diagnostics_manifest_path=$LAUNCHER_STATUS_DIAGNOSTICS_MANIFEST"
     echo "run_archive_root=$LAUNCHER_RUN_ARCHIVE_ROOT"
+    echo "run_archive_source_root_snapshot_path=$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT"
+    echo "run_archive_source_failure_snapshot_manifest_path=$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH"
     echo "run_archive_summary_path=$LAUNCHER_RUN_STATUS_SUMMARY_PATH"
     echo "run_archive_status_report_path=$LAUNCHER_RUN_STATUS_REPORT_PATH"
     echo "run_archive_iteration_evidence_path=$LAUNCHER_RUN_STATUS_ITERATION_EVIDENCE_PATH"
@@ -1596,7 +2464,14 @@ launcher_triage_stage_scope() {
     return 0
   fi
   if [[ "${LAUNCHER_STATUS_SOURCE:-}" == "launcher" ]]; then
-    printf 'launcher_pre_dispatch\n'
+    case "${LAUNCHER_FAILURE_STAGE:-}" in
+      dispatch|dispatch_monitor|dispatch_result_capture|status_normalization)
+        printf 'launcher_dispatch\n'
+        ;;
+      *)
+        printf 'launcher_pre_dispatch\n'
+        ;;
+    esac
     return 0
   fi
   if [[ -n "$LAUNCHER_REPLAY_CASE_TAG" ]]; then
@@ -1690,9 +2565,19 @@ launcher_triage_first_artifacts() {
     "$primary_summary" \
     "$primary_report" \
     "$primary_manifest" \
+    "${LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH:-}" \
+    "${LAUNCHER_REPLAY_COMMANDS_PATH:-}" \
+    "${LAUNCHER_REPLAY_RERUN_COMMAND_PATH:-}" \
+    "${LAUNCHER_REPLAY_ACTIVE_SCRIPT:-}" \
+    "${LAUNCHER_SOURCE_FAILED_CASE_ROW_PATH:-}" \
+    "${LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH:-}" \
+    "${LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH:-}" \
+    "${LAUNCHER_REPLAY_EXACT_SEED_PATH:-}" \
+    "${LAUNCHER_REPLAY_INVOKED_COMMAND_PATH:-}" \
     "${LAUNCHER_SOURCE_MISMATCH_SUMMARY_PATH:-}" \
     "${LAUNCHER_SOURCE_RETRY_LOG_PATH:-}" \
     "${LAUNCHER_SOURCE_HELPER_STDERR:-}" \
+    "${LAUNCHER_SOURCE_ENV_VALIDATION_REPORT_PATH:-}" \
     "${LAUNCHER_SOURCE_BUILD_STDERR_PATH:-}" \
     "${LAUNCHER_SOURCE_SETUP_ENV_PATH:-}" \
     "${LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH:-}"
@@ -1785,6 +2670,18 @@ launcher_replay_artifact_descriptor() {
   if [[ -n "$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH" ]]; then
     detail="${detail:+$detail }artifact_manifest=$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH"
   fi
+  if [[ -n "$LAUNCHER_SOURCE_FAILED_CASE_ROW_PATH" ]]; then
+    detail="${detail:+$detail }failed_case_row=$LAUNCHER_SOURCE_FAILED_CASE_ROW_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH" ]]; then
+    detail="${detail:+$detail }manifest_snapshot=$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_SUITE_CONFIG_PATH" ]]; then
+    detail="${detail:+$detail }suite_config=$LAUNCHER_SOURCE_SUITE_CONFIG_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_SUITE_PLAN_PATH" ]]; then
+    detail="${detail:+$detail }suite_plan=$LAUNCHER_SOURCE_SUITE_PLAN_PATH"
+  fi
   if [[ -n "$LAUNCHER_REPLAY_EXACT_SEED_PATH" ]]; then
     detail="${detail:+$detail }exact_seed=$LAUNCHER_REPLAY_EXACT_SEED_PATH"
   fi
@@ -1799,6 +2696,18 @@ launcher_replay_artifact_descriptor() {
   fi
   if [[ -n "$LAUNCHER_REPLAY_INVOKED_COMMAND_PATH" ]]; then
     detail="${detail:+$detail }invoked_command=$LAUNCHER_REPLAY_INVOKED_COMMAND_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_ACTIVE_SCRIPT" ]]; then
+    detail="${detail:+$detail }active_solver_replay_script=$LAUNCHER_REPLAY_ACTIVE_SCRIPT"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_RUNTIME_ENV_PATH" ]]; then
+    detail="${detail:+$detail }runtime_env=$LAUNCHER_SOURCE_RUNTIME_ENV_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH" ]]; then
+    detail="${detail:+$detail }runtime_env_exports=$LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH" ]]; then
+    detail="${detail:+$detail }structured_context=$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH"
   fi
   printf '%s\n' "$detail"
 }
@@ -1830,6 +2739,7 @@ write_launcher_status_diagnostics_manifest() {
   append_launcher_status_diagnostic_entry "run_history_index" "$LAUNCHER_RUN_HISTORY_INDEX" "append-only ledger of smoke outcomes across iterations"
   append_launcher_status_diagnostic_entry "run_archive_root" "$LAUNCHER_RUN_ARCHIVE_ROOT" "per-run immutable archive for this launcher invocation"
   append_launcher_status_diagnostic_entry "run_console_stderr" "$LAUNCHER_RUN_CONSOLE_LOG" "launcher stderr transcript captured for this invocation"
+  append_launcher_status_diagnostic_entry "run_dispatch_result" "$LAUNCHER_DISPATCH_RESULT_PATH" "launcher dispatch result snapshot captured for this invocation"
   append_launcher_status_diagnostic_entry "run_archive_manifest" "$LAUNCHER_RUN_ARTIFACT_MANIFEST" "inventory of copied artifacts preserved for this invocation"
   append_launcher_status_diagnostic_entry "smoke_output_root" "$SMOKE_OUTPUT_ROOT" "published smoke output root for passing runs"
   append_launcher_status_diagnostic_entry "smoke_failure_root" "$SMOKE_FAILURE_ROOT" "stable preserved smoke failure root"
@@ -1886,11 +2796,27 @@ write_launcher_status_diagnostics_manifest() {
   append_launcher_status_diagnostic_entry "run_archive_run_record" "$LAUNCHER_RUN_STATUS_RUN_RECORD_PATH" "copy of the current run record preserved under the per-run archive"
   append_launcher_status_diagnostic_entry "run_archive_run_comparison" "$LAUNCHER_RUN_STATUS_RUN_COMPARISON_PATH" "copy of the current-vs-previous run comparison preserved under the per-run archive"
   append_launcher_status_diagnostic_entry "run_archive_source_root_snapshot" "$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT" "copy of the failure/source bundle preserved under the per-run archive"
-  append_launcher_status_diagnostic_entry "run_archive_launcher_failure_snapshot" "$LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT" "copy of the launcher failure bundle preserved under the per-run archive"
+  append_launcher_status_diagnostic_entry "run_archive_source_failure_snapshot_manifest" "$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH" "immutable per-run index that remaps source failure artifacts into the archived snapshot tree"
+append_launcher_status_diagnostic_entry "run_archive_launcher_failure_snapshot" "$LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT" "copy of the launcher failure bundle preserved under the per-run archive"
+}
+
+append_launcher_manifest_row() {
+  local manifest_path="$1"
+  local kind="$2"
+  local label="$3"
+  local status="$4"
+  local detail="$5"
+  local artifact="${6:--}"
+
+  if [[ -z "$manifest_path" ]]; then
+    return 0
+  fi
+  printf '%s\t%s\t%s\t%s\t%s\n' "$kind" "$label" "$status" "$detail" "$artifact" >> "$manifest_path"
 }
 
 append_launcher_manifest_command_status() {
-  local name="$1"
+  local manifest_path="$1"
+  local name="$2"
   local status="missing"
   local detail="-"
 
@@ -1900,28 +2826,48 @@ append_launcher_manifest_command_status() {
     detail="-"
   fi
 
-  printf 'command\t%s\t%s\t%s\t-\n' "$name" "$status" "$detail" >> "$LAUNCHER_FAILURE_PREFLIGHT_MANIFEST"
+  append_launcher_manifest_row "$manifest_path" "command" "$name" "$status" "$detail"
 }
 
 append_launcher_manifest_compiler_status() {
+  local manifest_path="$1"
   local candidate=""
   local resolved=""
 
   for candidate in clang++ g++ c++; do
     if resolved="$(command -v "$candidate" 2>/dev/null)"; then
-      printf 'compiler\t%s\tok\t%s\t-\n' "$candidate" "$resolved" >> "$LAUNCHER_FAILURE_PREFLIGHT_MANIFEST"
+      append_launcher_manifest_row "$manifest_path" "compiler" "$candidate" "ok" "$resolved"
       return 0
     fi
   done
 
-  printf 'compiler\t%s\tmissing\t-\t-\n' "clang++|g++|c++" >> "$LAUNCHER_FAILURE_PREFLIGHT_MANIFEST"
+  append_launcher_manifest_row "$manifest_path" "compiler" "clang++|g++|c++" "missing" "-"
 }
 
 append_launcher_manifest_path_status() {
-  local kind="$1"
-  local label="$2"
-  local path="$3"
+  local manifest_path=""
+  local kind=""
+  local label=""
+  local path=""
   local status="missing"
+
+  case "$#" in
+    3)
+      manifest_path="${LAUNCHER_FAILURE_PREFLIGHT_MANIFEST:-$LAUNCHER_PREFLIGHT_MANIFEST_PATH}"
+      kind="$1"
+      label="$2"
+      path="$3"
+      ;;
+    4)
+      manifest_path="$1"
+      kind="$2"
+      label="$3"
+      path="$4"
+      ;;
+    *)
+      fail "append_launcher_manifest_path_status expected 3 or 4 arguments (got: $#)"
+      ;;
+  esac
 
   if [[ -e "$path" ]]; then
     status="ok"
@@ -1948,27 +2894,97 @@ append_launcher_manifest_path_status() {
     esac
   fi
 
-  printf '%s\t%s\t%s\t%s\t-\n' "$kind" "$label" "$status" "$path" >> "$LAUNCHER_FAILURE_PREFLIGHT_MANIFEST"
+  append_launcher_manifest_row "$manifest_path" "$kind" "$label" "$status" "$path"
+}
+
+append_launcher_manifest_value_status() {
+  local manifest_path="$1"
+  local kind="$2"
+  local label="$3"
+  local value="$4"
+
+  append_launcher_manifest_row "$manifest_path" "$kind" "$label" "ok" "${value:--}"
+}
+
+write_launcher_environment_snapshot() {
+  local target_path="$1"
+  local working_directory=""
+
+  if [[ -z "$target_path" ]]; then
+    return 0
+  fi
+  mkdir -p "$(dirname "$target_path")" || return 1
+  working_directory="$(pwd -P 2>/dev/null || pwd)"
+  {
+    echo "PWD=$working_directory"
+    echo "ORIGINAL_LAUNCH_PWD=$LAUNCHER_ORIGINAL_PWD"
+    echo "BRANCH_ROOT=$BRANCH_ROOT"
+    echo "BRANCH_ARTIFACTS_ROOT=${BRANCH_ARTIFACTS_ROOT:-}"
+    echo "ARTIFACTS_ROOT=${ARTIFACTS_ROOT:-}"
+    echo "SMOKE_OUTPUT_ROOT=${SMOKE_OUTPUT_ROOT:-}"
+    echo "SMOKE_FAILURE_ROOT=${SMOKE_FAILURE_ROOT:-}"
+    echo "LAUNCHER_STATUS_ROOT=${LAUNCHER_STATUS_ROOT:-}"
+    echo "LAUNCHER_RUN_HISTORY_ROOT=${LAUNCHER_RUN_HISTORY_ROOT:-}"
+    echo "LAUNCHER_RUN_EXPORT_ROOT=${LAUNCHER_RUN_EXPORT_ROOT:-}"
+    echo "TMP_PARENT=${TMP_PARENT:-}"
+    echo "LOCK_ROOT=${LOCK_ROOT:-}"
+    echo "PATH=${PATH:-}"
+    echo "HOME=${HOME:-}"
+    echo "TERM=${TERM:-}"
+    echo "TMPDIR=${TMPDIR:-}"
+    echo "BRANCH_ARTIFACT_TMP_ROOT=${BRANCH_ARTIFACT_TMP_ROOT:-}"
+    echo "LCA_SMOKE_EXPORT_SNAPSHOT_ROOT=${LCA_SMOKE_EXPORT_SNAPSHOT_ROOT:-}"
+    echo "LCA_SMOKE_DEBUG_MANIFEST=${LCA_SMOKE_DEBUG_MANIFEST:-}"
+    echo "LCA_SMOKE_BUILD_TIMEOUT_S=${LCA_SMOKE_BUILD_TIMEOUT_S:-}"
+    echo "LCA_SMOKE_LAUNCHER_TIMEOUT_S=${LCA_SMOKE_LAUNCHER_TIMEOUT_S:-}"
+    echo "LCA_SMOKE_LAUNCHER_ORIGINAL_COMMAND=${LCA_SMOKE_LAUNCHER_ORIGINAL_COMMAND:-}"
+    echo "LCA_SMOKE_LAUNCHER_ORIGINAL_PWD=${LCA_SMOKE_LAUNCHER_ORIGINAL_PWD:-}"
+    echo "SMOKE_CASES_SOURCE=${SMOKE_CASES_SOURCE:-}"
+    echo "SMOKE_MANIFEST_INPUT_POLICY=${SMOKE_MANIFEST_INPUT_POLICY:-}"
+    echo "LAUNCHER_DISPATCH_TIMEOUT_S=${LAUNCHER_DISPATCH_TIMEOUT_S:-}"
+    echo "$LCA_SMOKE_LAUNCHER_CLEAN_ENV_FLAG=${!LCA_SMOKE_LAUNCHER_CLEAN_ENV_FLAG:-0}"
+    echo "$LCA_SMOKE_INNER_CLEAN_ENV_FLAG=${!LCA_SMOKE_INNER_CLEAN_ENV_FLAG:-0}"
+    echo "launcher_tmpdir=${LAUNCHER_TMPDIR:-}"
+    echo "launcher_home=${LAUNCHER_HOME:-}"
+    echo "launcher_preflight_root=${LAUNCHER_PREFLIGHT_ROOT:-}"
+    echo
+    env | LC_ALL=C sort
+  } > "$target_path"
+}
+
+write_launcher_preflight_artifacts() {
+  mkdir -p "$LAUNCHER_PREFLIGHT_ROOT" || fail "failed to prepare launcher preflight root: $LAUNCHER_PREFLIGHT_ROOT"
+  write_launcher_environment_snapshot "$LAUNCHER_PREFLIGHT_ENV_SNAPSHOT_PATH" \
+    || fail "failed to record launcher bootstrap environment snapshot: $LAUNCHER_PREFLIGHT_ENV_SNAPSHOT_PATH"
+  write_launcher_preflight_manifest "$LAUNCHER_PREFLIGHT_MANIFEST_PATH"
 }
 
 write_launcher_preflight_manifest() {
-  printf 'kind\tlabel\tstatus\tdetail\tartifact\n' > "$LAUNCHER_FAILURE_PREFLIGHT_MANIFEST"
-  append_launcher_manifest_command_status bash
-  append_launcher_manifest_command_status python3
-  append_launcher_manifest_command_status mkdir
-  append_launcher_manifest_command_status mktemp
-  append_launcher_manifest_command_status dirname
-  append_launcher_manifest_command_status chmod
-  append_launcher_manifest_command_status cp
-  append_launcher_manifest_command_status mv
-  append_launcher_manifest_command_status rm
-  append_launcher_manifest_command_status rmdir
-  append_launcher_manifest_command_status kill
-  append_launcher_manifest_command_status tail
-  append_launcher_manifest_command_status sleep
-  append_launcher_manifest_command_status grep
-  append_launcher_manifest_command_status sort
-  append_launcher_manifest_compiler_status
+  local manifest_path="${1:-$LAUNCHER_FAILURE_PREFLIGHT_MANIFEST}"
+
+  if [[ -z "$manifest_path" ]]; then
+    fail "missing launcher preflight manifest path"
+  fi
+  mkdir -p "$(dirname "$manifest_path")" || fail "failed to prepare launcher preflight manifest parent: $manifest_path"
+  printf 'kind\tlabel\tstatus\tdetail\tartifact\n' > "$manifest_path"
+  append_launcher_manifest_command_status "$manifest_path" bash
+  append_launcher_manifest_command_status "$manifest_path" python3
+  append_launcher_manifest_command_status "$manifest_path" mkdir
+  append_launcher_manifest_command_status "$manifest_path" mktemp
+  append_launcher_manifest_command_status "$manifest_path" dirname
+  append_launcher_manifest_command_status "$manifest_path" chmod
+  append_launcher_manifest_command_status "$manifest_path" cp
+  append_launcher_manifest_command_status "$manifest_path" mv
+  append_launcher_manifest_command_status "$manifest_path" rm
+  append_launcher_manifest_command_status "$manifest_path" rmdir
+  append_launcher_manifest_command_status "$manifest_path" kill
+  append_launcher_manifest_command_status "$manifest_path" tail
+  append_launcher_manifest_command_status "$manifest_path" sleep
+  append_launcher_manifest_command_status "$manifest_path" grep
+  append_launcher_manifest_command_status "$manifest_path" sort
+  append_launcher_manifest_command_status "$manifest_path" date
+  append_launcher_manifest_command_status "$manifest_path" ln
+  append_launcher_manifest_compiler_status "$manifest_path"
   append_launcher_manifest_path_status directory "branch root directory" "$BRANCH_ROOT"
   append_launcher_manifest_path_status executable "launcher entrypoint" "$SELF_PATH"
   append_launcher_manifest_path_status directory "outer suite wrappers directory" "$OUTER_SUITE_WRAPPERS_DIR"
@@ -1984,6 +3000,32 @@ write_launcher_preflight_manifest() {
   append_launcher_manifest_path_status file "smoke case manifest" "$SMOKE_CASES_SOURCE"
   append_launcher_manifest_path_status executable "build wrapper" "$BUILD_WRAPPER"
   append_launcher_manifest_path_status executable "smoke target wrapper" "$SMOKE_TARGET_WRAPPER"
+  append_launcher_manifest_path_status directory "branch artifacts root" "${BRANCH_ARTIFACTS_ROOT:-$BRANCH_ROOT/artifacts}"
+  append_launcher_manifest_path_status directory "launcher artifacts root" "${ARTIFACTS_ROOT:-$BRANCH_ROOT/artifacts/lca_tree_stress_v5}"
+  append_launcher_manifest_path_status directory "smoke output root" "${SMOKE_OUTPUT_ROOT:-$SMOKE_OUTPUT_ROOT_DEFAULT}"
+  append_launcher_manifest_path_status directory "smoke failure root" "${SMOKE_FAILURE_ROOT:-$SMOKE_FAILURE_ROOT_DEFAULT}"
+  append_launcher_manifest_path_status directory "launcher failure root" "$LAUNCHER_FAILURE_ROOT"
+  append_launcher_manifest_path_status directory "launcher status root" "${LAUNCHER_STATUS_ROOT:-}"
+  append_launcher_manifest_path_status directory "launcher run history root" "${LAUNCHER_RUN_HISTORY_ROOT:-}"
+  append_launcher_manifest_path_status directory "launcher run export root" "${LAUNCHER_RUN_EXPORT_ROOT:-}"
+  append_launcher_manifest_path_status directory "launcher tmp parent" "${TMP_PARENT:-}"
+  append_launcher_manifest_path_status directory "launcher lock root" "${LOCK_ROOT:-}"
+  append_launcher_manifest_path_status directory "launcher tmpdir" "${LAUNCHER_TMPDIR:-}"
+  append_launcher_manifest_path_status directory "launcher preflight root" "${LAUNCHER_PREFLIGHT_ROOT:-}"
+  append_launcher_manifest_path_status directory "launcher home root" "${LAUNCHER_HOME:-}"
+  append_launcher_manifest_path_status directory "launcher xdg config root" "${LAUNCHER_XDG_CONFIG_HOME:-}"
+  append_launcher_manifest_path_status directory "launcher xdg cache root" "${LAUNCHER_XDG_CACHE_HOME:-}"
+  append_launcher_manifest_path_status directory "launcher xdg state root" "${LAUNCHER_XDG_STATE_HOME:-}"
+  append_launcher_manifest_path_status directory "launcher pycache root" "${LAUNCHER_PYCACHE_ROOT:-}"
+  append_launcher_manifest_value_status "$manifest_path" "working_directory" "original launch working directory" "${LAUNCHER_ORIGINAL_PWD:-}"
+  append_launcher_manifest_value_status "$manifest_path" "working_directory" "branch root" "$BRANCH_ROOT"
+  append_launcher_manifest_value_status "$manifest_path" "path_policy" "clean path" "$LCA_SMOKE_CLEAN_PATH"
+  append_launcher_manifest_value_status "$manifest_path" "policy" "manifest_input_policy" "$SMOKE_MANIFEST_INPUT_POLICY"
+  append_launcher_manifest_value_status "$manifest_path" "policy" "manifest_selection_policy" "manifest_row_order"
+  append_launcher_manifest_value_status "$manifest_path" "policy" "seed_policy" "manifest_seed"
+  append_launcher_manifest_value_status "$manifest_path" "setting" "smoke_manifest_path" "$SMOKE_CASES_SOURCE"
+  append_launcher_manifest_value_status "$manifest_path" "setting" "build_timeout_override" "${LCA_SMOKE_BUILD_TIMEOUT_S:-}"
+  append_launcher_manifest_value_status "$manifest_path" "setting" "launcher_dispatch_timeout_s" "${LAUNCHER_DISPATCH_TIMEOUT_S:-}"
 }
 
 write_launcher_artifact_manifest() {
@@ -2027,6 +3069,9 @@ write_launcher_status_artifact_manifest() {
     fi
     if [[ -n "$LAUNCHER_RUN_CONSOLE_LOG" ]]; then
       printf 'run_console_stderr\t%s\n' "$LAUNCHER_RUN_CONSOLE_LOG"
+    fi
+    if [[ -n "$LAUNCHER_DISPATCH_RESULT_PATH" ]]; then
+      printf 'run_dispatch_result\t%s\n' "$LAUNCHER_DISPATCH_RESULT_PATH"
     fi
     if [[ -n "$LAUNCHER_RUN_ARTIFACT_MANIFEST" ]]; then
       printf 'run_archive_manifest\t%s\n' "$LAUNCHER_RUN_ARTIFACT_MANIFEST"
@@ -2126,6 +3171,50 @@ def split_artifacts(value: str | None) -> list[str]:
     return [part for part in value.split(" | ") if part]
 
 
+def run_sort_key(run_id: str) -> tuple[int, int | str]:
+    import re
+
+    match = re.fullmatch(r"run\.(\d+)", run_id)
+    if match is None:
+        return (1, run_id)
+    return (0, int(match.group(1)))
+
+
+def normalize_history_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    canonical_rows: dict[str, dict[str, str]] = {}
+    for row in rows:
+        run_id = row.get("run_id", "")
+        if run_id == "":
+            continue
+        canonical_rows[run_id] = row
+    return [canonical_rows[run_id] for run_id in sorted(canonical_rows, key=run_sort_key)]
+
+
+def build_gate_chain(summary: dict[str, str], *, summary_path: Path) -> list[dict[str, object]]:
+    requirements: list[tuple[int, str, str, list[int]]] = [
+        (2, "smoke", "./lca_smoke.sh", []),
+        (3, "strong_gate", "./lca_strong_gate.sh", [2]),
+        (4, "strong_gate_repeatability", "./lca_strong_gate.sh && ./lca_strong_gate.sh", [3]),
+        (5, "boj3s_gate", "./lca_boj3s_gate.sh", [3]),
+        (6, "boj3s_gate_repeatability", "./lca_boj3s_gate.sh && ./lca_boj3s_gate.sh", [5]),
+    ]
+    evidence_path = summary.get("published_smoke_summary_path") or str(summary_path)
+    gate_chain: list[dict[str, object]] = []
+    for ac, name, command, depends_on in requirements:
+        gate_chain.append(
+            {
+                "ac": ac,
+                "name": name,
+                "command": command,
+                "depends_on": depends_on,
+                "status": summary.get(f"gate_chain_ac{ac}_status"),
+                "summary": summary.get(f"gate_chain_ac{ac}_summary"),
+                "evidence_path": evidence_path,
+            }
+        )
+    return gate_chain
+
+
 public_status = summary.get("public_status", "FAIL")
 misses_standard = public_status != "PASS"
 payload = {
@@ -2138,11 +3227,36 @@ payload = {
     "misses_standard": misses_standard,
     "public_status": public_status,
     "result_family": summary.get("result_family"),
+    "failure_partition": summary.get("failure_partition"),
+    "failure_partition_label": summary.get("failure_partition_label"),
     "normalized_outcome": summary.get("normalized_outcome"),
     "normalized_exit_code": as_int(summary.get("normalized_exit_code")),
     "raw_exit_code": as_int(summary.get("raw_exit_code")),
     "outcome_summary": summary.get("outcome_summary"),
     "standard_gap_summary": summary.get("standard_gap_summary"),
+    "acceptance_signal": {
+        "status": summary.get("acceptance_signal_status"),
+        "summary": summary.get("acceptance_signal_summary"),
+    },
+    "iteration_support": {
+        "status": summary.get("iteration_support_status"),
+        "next_step": summary.get("iteration_support_next_step"),
+        "summary": summary.get("iteration_support_summary"),
+    },
+    "command_control": {
+        "mode": summary.get("command_control_mode"),
+        "preferred_command_kind": summary.get("command_control_preferred_command_kind"),
+        "should_resume_retry_loop": as_bool(summary.get("should_resume_retry_loop")),
+        "should_retry_smoke_directly": as_bool(summary.get("should_retry_smoke_directly")),
+        "failure_is_terminal": as_bool(summary.get("failure_is_terminal")),
+        "gate_escalation_allowed": as_bool(summary.get("gate_escalation_allowed")),
+        "next_gate": {
+            "command": summary.get("next_gate_command"),
+            "status": summary.get("next_gate_status"),
+            "dependency": summary.get("next_gate_dependency"),
+            "summary": summary.get("next_gate_summary"),
+        },
+    },
     "triage": {
         "scope": summary.get("triage_stage_scope"),
         "stage": summary.get("triage_stage"),
@@ -2180,18 +3294,40 @@ payload = {
         "reporting_warning": summary.get("source_failure_reporting_warning"),
         "replay_command": summary.get("source_failure_replay_command"),
         "artifacts": {
+            "failure_root_path": summary.get("source_failure_root_path"),
+            "failure_case_dir_path": summary.get("source_failure_case_dir_path"),
+            "commands_path": summary.get("source_failure_commands_path"),
+            "artifact_manifest_path": summary.get("source_failure_artifact_manifest_path"),
             "rerun_command_path": summary.get("source_failure_rerun_command_path"),
+            "exact_seed_path": summary.get("source_failure_exact_seed_path"),
+            "exact_input_path": summary.get("source_failure_exact_input_path"),
+            "exact_output_path": summary.get("source_failure_exact_output_path"),
             "expected_output_path": summary.get("source_failure_expected_output_path"),
             "invoked_command_path": summary.get("source_failure_invoked_command_path"),
+            "helper_stdout_path": summary.get("source_failure_helper_stdout_path"),
+            "helper_stderr_path": summary.get("source_failure_helper_stderr_path"),
+            "helper_result_json_path": summary.get("source_failure_helper_result_json_path"),
+            "checker_result_path": summary.get("source_failure_checker_result_path"),
+            "checker_replay_stdout_path": summary.get("source_failure_checker_replay_stdout_path"),
+            "checker_replay_stderr_path": summary.get("source_failure_checker_replay_stderr_path"),
             "mismatch_summary_path": summary.get("source_failure_mismatch_summary_path"),
             "retry_log_path": summary.get("source_failure_retry_log_path"),
             "runtime_env_path": summary.get("source_failure_runtime_env_path"),
+            "runtime_env_exports_path": summary.get("source_failure_runtime_env_exports_path"),
             "preflight_manifest_path": summary.get("source_failure_preflight_manifest_path"),
             "setup_env_path": summary.get("source_failure_setup_env_path"),
             "build_command_path": summary.get("source_failure_build_command_path"),
             "build_stdout_path": summary.get("source_failure_build_stdout_path"),
             "build_stderr_path": summary.get("source_failure_build_stderr_path"),
             "structured_context_path": summary.get("source_failure_structured_context_path"),
+            "manifest_snapshot_path": summary.get("source_failure_manifest_snapshot_path"),
+            "failed_case_row_path": summary.get("source_failure_failed_case_row_path"),
+            "suite_config_path": summary.get("source_failure_suite_config_path"),
+            "suite_plan_path": summary.get("source_failure_suite_plan_path"),
+            "checker_script_path": summary.get("source_failure_checker_script"),
+            "seed_repro_script_path": summary.get("source_failure_seed_repro_script"),
+            "preserved_input_replay_script_path": summary.get("source_failure_preserved_input_replay_script"),
+            "active_solver_replay_script_path": summary.get("source_failure_active_solver_replay_script"),
         },
     },
     "published_artifacts": {
@@ -2202,6 +3338,7 @@ payload = {
         "diagnostics_manifest_path": summary.get("published_smoke_diagnostics_manifest_path"),
         "standard_gap_json_path": summary.get("published_smoke_standard_gap_json_path"),
     },
+    "gate_chain": build_gate_chain(summary, summary_path=summary_path),
     "summary_fields": summary,
 }
 output_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -2228,22 +3365,83 @@ for raw_line in summary_path.read_text(encoding="utf-8").splitlines():
     key, value = raw_line.split("=", 1)
     summary[key] = value
 
+
+def as_bool(value: str | None) -> bool | None:
+    if value is None or value == "":
+        return None
+    lowered = value.lower()
+    if lowered in {"1", "true", "yes"}:
+        return True
+    if lowered in {"0", "false", "no"}:
+        return False
+    return None
+
+
+def build_gate_chain(summary: dict[str, str], *, summary_path: Path) -> list[dict[str, object]]:
+    requirements: list[tuple[int, str, str, list[int]]] = [
+        (2, "smoke", "./lca_smoke.sh", []),
+        (3, "strong_gate", "./lca_strong_gate.sh", [2]),
+        (4, "strong_gate_repeatability", "./lca_strong_gate.sh && ./lca_strong_gate.sh", [3]),
+        (5, "boj3s_gate", "./lca_boj3s_gate.sh", [3]),
+        (6, "boj3s_gate_repeatability", "./lca_boj3s_gate.sh && ./lca_boj3s_gate.sh", [5]),
+    ]
+    evidence_path = summary.get("published_smoke_summary_path") or str(summary_path)
+    gate_chain: list[dict[str, object]] = []
+    for ac, name, command, depends_on in requirements:
+        gate_chain.append(
+            {
+                "ac": ac,
+                "name": name,
+                "command": command,
+                "depends_on": depends_on,
+                "status": summary.get(f"gate_chain_ac{ac}_status"),
+                "summary": summary.get(f"gate_chain_ac{ac}_summary"),
+                "evidence_path": evidence_path,
+            }
+        )
+    return gate_chain
+
 public_status = summary.get("public_status", "FAIL")
 payload = {
     "script": summary.get("script", "./lca_smoke.sh"),
     "public_status": public_status,
     "normalized_outcome": summary.get("normalized_outcome"),
     "outcome_summary": summary.get("outcome_summary"),
+    "acceptance_signal_status": summary.get("acceptance_signal_status"),
+    "acceptance_signal_summary": summary.get("acceptance_signal_summary"),
+    "iteration_support_status": summary.get("iteration_support_status"),
+    "iteration_support_next_step": summary.get("iteration_support_next_step"),
+    "iteration_support_summary": summary.get("iteration_support_summary"),
     "retry_loop_action": summary.get("retry_loop_action"),
     "preferred_command": summary.get("retry_loop_preferred_command"),
     "launch_command": summary.get("retry_loop_launch_command"),
     "direct_command": summary.get("retry_loop_direct_command"),
     "hint": summary.get("retry_loop_hint"),
     "log_path": summary.get("retry_loop_log_path"),
-    "should_resume_retry_loop": summary.get("retry_loop_action") == "resume_progress40_retry_loop",
+    "should_resume_retry_loop": as_bool(summary.get("should_resume_retry_loop")),
+    "should_retry_smoke_directly": as_bool(summary.get("should_retry_smoke_directly")),
+    "failure_is_terminal": as_bool(summary.get("failure_is_terminal")),
     "smoke_retry_command": summary.get("triage_retry_command"),
     "smoke_retry_hint": summary.get("triage_retry_hint"),
     "next_gate_command": summary.get("next_gate_command"),
+    "next_gate_status": summary.get("next_gate_status"),
+    "next_gate_dependency": summary.get("next_gate_dependency"),
+    "next_gate_summary": summary.get("next_gate_summary"),
+    "gate_escalation_allowed": as_bool(summary.get("gate_escalation_allowed")),
+    "command_control": {
+        "mode": summary.get("command_control_mode"),
+        "preferred_command_kind": summary.get("command_control_preferred_command_kind"),
+        "should_resume_retry_loop": as_bool(summary.get("should_resume_retry_loop")),
+        "should_retry_smoke_directly": as_bool(summary.get("should_retry_smoke_directly")),
+        "failure_is_terminal": as_bool(summary.get("failure_is_terminal")),
+        "gate_escalation_allowed": as_bool(summary.get("gate_escalation_allowed")),
+        "next_gate": {
+            "command": summary.get("next_gate_command"),
+            "status": summary.get("next_gate_status"),
+            "dependency": summary.get("next_gate_dependency"),
+            "summary": summary.get("next_gate_summary"),
+        },
+    },
     "solver_seed_file": summary.get("retry_loop_solver_seed_file"),
     "analysis_seed_file": summary.get("retry_loop_analysis_seed_file"),
     "artifacts": {
@@ -2253,12 +3451,19 @@ payload = {
         "diagnostics_manifest_path": summary.get("status_diagnostics_manifest"),
         "standard_gap_json_path": summary.get("published_smoke_standard_gap_json_path"),
         "structured_context_path": summary.get("source_failure_structured_context_path"),
+        "source_failure_commands_path": summary.get("source_failure_commands_path"),
+        "source_failure_artifact_manifest_path": summary.get("source_failure_artifact_manifest_path"),
+        "source_failure_exact_seed_path": summary.get("source_failure_exact_seed_path"),
+        "source_failure_invoked_command_path": summary.get("source_failure_invoked_command_path"),
+        "source_failure_expected_output_path": summary.get("source_failure_expected_output_path"),
         "control_path": str(output_path),
         "published_control_path": summary.get("published_smoke_retry_loop_control_path"),
     },
+    "gate_chain": build_gate_chain(summary, summary_path=summary_path),
 }
 if public_status == "PASS":
     payload["should_resume_retry_loop"] = False
+    payload["should_retry_smoke_directly"] = False
 
 output_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 PY
@@ -2303,10 +3508,71 @@ def as_int(value: str | None) -> int | None:
         return None
 
 
+def as_bool(value: str | None) -> bool | None:
+    if value is None or value == "":
+        return None
+    lowered = value.lower()
+    if lowered in {"1", "true", "yes"}:
+        return True
+    if lowered in {"0", "false", "no"}:
+        return False
+    return None
+
+
 def split_csv(raw: str | None) -> list[str]:
     if raw is None or raw == "":
         return []
     return [part for part in raw.split(",") if part]
+
+
+def split_artifacts(value: str | None) -> list[str]:
+    if value is None or value == "":
+        return []
+    return [part for part in value.split(" | ") if part]
+
+
+def run_sort_key(run_id: str) -> tuple[int, int | str]:
+    import re
+
+    match = re.fullmatch(r"run\.(\d+)", run_id)
+    if match is None:
+        return (1, run_id)
+    return (0, int(match.group(1)))
+
+
+def normalize_history_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    canonical_rows: dict[str, dict[str, str]] = {}
+    for row in rows:
+        run_id = row.get("run_id", "")
+        if run_id == "":
+            continue
+        canonical_rows[run_id] = row
+    return [canonical_rows[run_id] for run_id in sorted(canonical_rows, key=run_sort_key)]
+
+
+def build_gate_chain(summary: dict[str, str], *, summary_path: Path) -> list[dict[str, object]]:
+    requirements: list[tuple[int, str, str, list[int]]] = [
+        (2, "smoke", "./lca_smoke.sh", []),
+        (3, "strong_gate", "./lca_strong_gate.sh", [2]),
+        (4, "strong_gate_repeatability", "./lca_strong_gate.sh && ./lca_strong_gate.sh", [3]),
+        (5, "boj3s_gate", "./lca_boj3s_gate.sh", [3]),
+        (6, "boj3s_gate_repeatability", "./lca_boj3s_gate.sh && ./lca_boj3s_gate.sh", [5]),
+    ]
+    evidence_path = summary.get("published_smoke_summary_path") or str(summary_path)
+    gate_chain: list[dict[str, object]] = []
+    for ac, name, command, depends_on in requirements:
+        gate_chain.append(
+            {
+                "ac": ac,
+                "name": name,
+                "command": command,
+                "depends_on": depends_on,
+                "status": summary.get(f"gate_chain_ac{ac}_status"),
+                "summary": summary.get(f"gate_chain_ac{ac}_summary"),
+                "evidence_path": evidence_path,
+            }
+        )
+    return gate_chain
 
 
 history_fields = [
@@ -2315,6 +3581,9 @@ history_fields = [
     "run_finished_at_utc",
     "run_elapsed_seconds",
     "public_status",
+    "acceptance_signal_status",
+    "iteration_support_status",
+    "iteration_support_next_step",
     "result_family",
     "normalized_outcome",
     "normalized_exit_code",
@@ -2325,6 +3594,7 @@ history_fields = [
     "source_failure_kind",
     "run_archive_root",
     "run_console_stderr_path",
+    "run_dispatch_result_path",
     "status_summary_path",
     "status_report_path",
     "iteration_evidence_path",
@@ -2338,6 +3608,9 @@ current_row = {
     "run_finished_at_utc": summary.get("run_finished_at_utc", ""),
     "run_elapsed_seconds": summary.get("run_elapsed_seconds", ""),
     "public_status": summary.get("public_status", ""),
+    "acceptance_signal_status": summary.get("acceptance_signal_status", ""),
+    "iteration_support_status": summary.get("iteration_support_status", ""),
+    "iteration_support_next_step": summary.get("iteration_support_next_step", ""),
     "result_family": summary.get("result_family", ""),
     "normalized_outcome": summary.get("normalized_outcome", ""),
     "normalized_exit_code": summary.get("normalized_exit_code", ""),
@@ -2348,6 +3621,7 @@ current_row = {
     "source_failure_kind": summary.get("source_failure_kind", ""),
     "run_archive_root": summary.get("run_archive_root", ""),
     "run_console_stderr_path": summary.get("run_console_stderr_path", ""),
+    "run_dispatch_result_path": summary.get("run_dispatch_result_path", ""),
     "status_summary_path": summary.get("run_archive_summary_path") or str(summary_path),
     "status_report_path": summary.get("run_archive_status_report_path") or summary.get("status_report_path", ""),
     "iteration_evidence_path": summary.get("run_archive_iteration_evidence_path") or summary.get("iteration_evidence_path", ""),
@@ -2363,17 +3637,20 @@ if history_path.is_file():
         for row in reader:
             if row.get("run_id"):
                 history_rows.append(row)
+history_rows = normalize_history_rows(history_rows)
 
 previous_row: dict[str, str] | None = None
-if history_rows:
-    if history_rows[-1].get("run_id") == current_row["run_id"]:
-        previous_row = history_rows[-2] if len(history_rows) > 1 else None
-        history_rows[-1] = current_row
-    else:
-        previous_row = history_rows[-1]
-        history_rows.append(current_row)
-else:
-    history_rows.append(current_row)
+if current_row["run_id"]:
+    history_rows = [row for row in history_rows if row.get("run_id") != current_row["run_id"]]
+history_rows.append(current_row)
+history_rows = normalize_history_rows(history_rows)
+current_index = len(history_rows) - 1
+for index, row in enumerate(history_rows):
+    if row.get("run_id") == current_row["run_id"]:
+        current_index = index
+        break
+if current_index > 0:
+    previous_row = history_rows[current_index - 1]
 
 record_payload = {
     "schema": "lca_smoke_run_record_v1",
@@ -2385,14 +3662,42 @@ record_payload = {
         "finished_at_utc": current_row["run_finished_at_utc"],
         "elapsed_seconds": as_int(current_row["run_elapsed_seconds"]),
         "public_status": current_row["public_status"],
+        "acceptance_signal_status": current_row["acceptance_signal_status"],
+        "acceptance_signal_summary": summary.get("acceptance_signal_summary", ""),
+        "iteration_support_status": current_row["iteration_support_status"],
+        "iteration_support_next_step": current_row["iteration_support_next_step"],
+        "iteration_support_summary": summary.get("iteration_support_summary", ""),
         "result_family": current_row["result_family"],
+        "failure_partition": summary.get("failure_partition", ""),
+        "failure_partition_label": summary.get("failure_partition_label", ""),
         "normalized_outcome": current_row["normalized_outcome"],
         "normalized_exit_code": as_int(current_row["normalized_exit_code"]),
         "raw_exit_code": as_int(current_row["raw_exit_code"]),
         "stage_label": current_row["stage_label"],
         "outcome_source": current_row["outcome_source"],
+        "outcome_summary": summary.get("outcome_summary", ""),
         "source_failure_case": current_row["source_failure_case"],
         "source_failure_kind": current_row["source_failure_kind"],
+    },
+    "summary": {
+        "public_status": current_row["public_status"],
+        "acceptance_signal_status": current_row["acceptance_signal_status"],
+        "acceptance_signal_summary": summary.get("acceptance_signal_summary", ""),
+        "iteration_support_status": current_row["iteration_support_status"],
+        "iteration_support_next_step": current_row["iteration_support_next_step"],
+        "iteration_support_summary": summary.get("iteration_support_summary", ""),
+        "result_family": current_row["result_family"],
+        "failure_partition": summary.get("failure_partition", ""),
+        "failure_partition_label": summary.get("failure_partition_label", ""),
+        "normalized_outcome": current_row["normalized_outcome"],
+        "normalized_exit_code": as_int(current_row["normalized_exit_code"]),
+        "raw_exit_code": as_int(current_row["raw_exit_code"]),
+        "outcome_source": current_row["outcome_source"],
+        "outcome_summary": summary.get("outcome_summary", ""),
+        "stage_label": current_row["stage_label"],
+        "source_failure_kind": current_row["source_failure_kind"],
+        "source_failure_origin": summary.get("source_failure_origin", ""),
+        "source_failure_retryable": as_bool(summary.get("source_failure_retryable")),
     },
     "comparison": {
         "summary": summary.get("run_comparison_summary", ""),
@@ -2403,21 +3708,115 @@ record_payload = {
         "previous_stage_label": summary.get("previous_run_stage_label", ""),
         "previous_source_failure_case": summary.get("previous_run_source_failure_case", ""),
     },
+    "launch": {
+        "working_directory": summary.get("working_directory", ""),
+        "original_working_directory": summary.get("original_launch_working_directory", ""),
+        "branch_root": summary.get("branch_root", ""),
+        "artifacts_root": summary.get("artifacts_root", ""),
+        "smoke_output_root": summary.get("smoke_output_root", ""),
+        "smoke_failure_root": summary.get("smoke_failure_root", ""),
+        "status_root": summary.get("status_root", ""),
+        "dispatch_timeout_seconds": summary.get("dispatch_timeout_s", ""),
+        "invocation_command": summary.get("invocation_command", ""),
+        "dispatch_command": summary.get("dispatch_command", ""),
+    },
+    "inputs": {
+        "suite_config_path": summary.get("smoke_suite_config_path", ""),
+        "suite_plan_path": summary.get("smoke_suite_plan_path", ""),
+        "environment_validation_report_path": summary.get("smoke_environment_validation_report", ""),
+        "environment_preflight_manifest_path": summary.get("smoke_environment_preflight_manifest_path", ""),
+        "environment_setup_env_path": summary.get("smoke_environment_setup_env_path", ""),
+        "environment_build_command_path": summary.get("smoke_environment_build_command_path", ""),
+        "manifest_snapshot_path": summary.get("smoke_manifest_snapshot_path", ""),
+        "source_failure_failed_case_row_path": summary.get("source_failure_failed_case_row_path", ""),
+        "source_failure_exact_seed_path": summary.get("source_failure_exact_seed_path", ""),
+        "source_failure_exact_input_path": summary.get("source_failure_exact_input_path", ""),
+        "source_failure_expected_output_path": summary.get("source_failure_expected_output_path", ""),
+    },
+    "triage": {
+        "scope": summary.get("triage_stage_scope", ""),
+        "stage": summary.get("triage_stage", ""),
+        "stage_label": summary.get("triage_stage_label", ""),
+        "primary_summary": summary.get("triage_primary_summary", ""),
+        "primary_report_path": summary.get("triage_primary_report", ""),
+        "primary_manifest_path": summary.get("triage_primary_manifest", ""),
+        "first_artifacts": split_artifacts(summary.get("triage_first_artifacts")),
+        "retry_command": summary.get("triage_retry_command", ""),
+        "retry_hint": summary.get("triage_retry_hint", ""),
+    },
+    "source_failure": {
+        "summary": summary.get("source_failure_summary", ""),
+        "case": summary.get("source_failure_case", ""),
+        "seed": as_int(summary.get("source_failure_seed")),
+        "stage": summary.get("source_failure_stage", ""),
+        "kind": summary.get("source_failure_kind", ""),
+        "origin": summary.get("source_failure_origin", ""),
+        "retryable": as_bool(summary.get("source_failure_retryable")),
+        "reporting_status": summary.get("source_failure_reporting_status", ""),
+        "reporting_warning": summary.get("source_failure_reporting_warning", ""),
+        "replay_command": summary.get("source_failure_replay_command", ""),
+        "artifacts": {
+            "failure_root_path": summary.get("source_failure_root_path", ""),
+            "failure_case_dir_path": summary.get("source_failure_case_dir_path", ""),
+            "commands_path": summary.get("source_failure_commands_path", ""),
+            "artifact_manifest_path": summary.get("source_failure_artifact_manifest_path", ""),
+            "rerun_command_path": summary.get("source_failure_rerun_command_path", ""),
+            "exact_seed_path": summary.get("source_failure_exact_seed_path", ""),
+            "exact_input_path": summary.get("source_failure_exact_input_path", ""),
+            "exact_output_path": summary.get("source_failure_exact_output_path", ""),
+            "expected_output_path": summary.get("source_failure_expected_output_path", ""),
+            "invoked_command_path": summary.get("source_failure_invoked_command_path", ""),
+            "helper_stdout_path": summary.get("source_failure_helper_stdout_path", ""),
+            "helper_stderr_path": summary.get("source_failure_helper_stderr_path", ""),
+            "helper_result_json_path": summary.get("source_failure_helper_result_json_path", ""),
+            "checker_result_path": summary.get("source_failure_checker_result_path", ""),
+            "checker_replay_stdout_path": summary.get("source_failure_checker_replay_stdout_path", ""),
+            "checker_replay_stderr_path": summary.get("source_failure_checker_replay_stderr_path", ""),
+            "mismatch_summary_path": summary.get("source_failure_mismatch_summary_path", ""),
+            "retry_log_path": summary.get("source_failure_retry_log_path", ""),
+            "runtime_env_path": summary.get("source_failure_runtime_env_path", ""),
+            "runtime_env_exports_path": summary.get("source_failure_runtime_env_exports_path", ""),
+            "preflight_manifest_path": summary.get("source_failure_preflight_manifest_path", ""),
+            "setup_env_path": summary.get("source_failure_setup_env_path", ""),
+            "build_command_path": summary.get("source_failure_build_command_path", ""),
+            "build_stdout_path": summary.get("source_failure_build_stdout_path", ""),
+            "build_stderr_path": summary.get("source_failure_build_stderr_path", ""),
+            "structured_context_path": summary.get("source_failure_structured_context_path", ""),
+            "manifest_snapshot_path": summary.get("source_failure_manifest_snapshot_path", ""),
+            "failed_case_row_path": summary.get("source_failure_failed_case_row_path", ""),
+            "suite_config_path": summary.get("source_failure_suite_config_path", ""),
+            "suite_plan_path": summary.get("source_failure_suite_plan_path", ""),
+            "checker_script_path": summary.get("source_failure_checker_script", ""),
+            "seed_repro_script_path": summary.get("source_failure_seed_repro_script", ""),
+            "preserved_input_replay_script_path": summary.get("source_failure_preserved_input_replay_script", ""),
+            "active_solver_replay_script_path": summary.get("source_failure_active_solver_replay_script", ""),
+        },
+    },
     "artifacts": {
         "status_summary_path": str(summary_path),
         "status_report_path": current_row["status_report_path"],
         "iteration_evidence_path": current_row["iteration_evidence_path"],
+        "status_artifact_manifest_path": summary.get("status_artifact_manifest", ""),
         "diagnostics_manifest_path": current_row["diagnostics_manifest_path"],
         "run_archive_root": current_row["run_archive_root"],
+        "run_archive_manifest_path": summary.get("run_archive_manifest", ""),
+        "run_archive_source_root_snapshot_path": summary.get("run_archive_source_root_snapshot_path", ""),
+        "run_archive_source_failure_snapshot_manifest_path": summary.get("run_archive_source_failure_snapshot_manifest_path", ""),
         "run_console_stderr_path": current_row["run_console_stderr_path"],
+        "run_dispatch_result_path": current_row["run_dispatch_result_path"],
         "published_smoke_summary_path": summary.get("published_smoke_summary_path", ""),
         "published_smoke_status_report_path": summary.get("published_smoke_status_report_path", ""),
+        "published_smoke_failure_report_path": summary.get("published_smoke_failure_report_path", ""),
         "published_smoke_iteration_evidence_path": summary.get("published_smoke_iteration_evidence_path", ""),
+        "published_smoke_retry_loop_control_path": summary.get("published_smoke_retry_loop_control_path", ""),
         "published_smoke_diagnostics_manifest_path": summary.get("published_smoke_diagnostics_manifest_path", ""),
+        "published_smoke_standard_gap_json_path": summary.get("published_smoke_standard_gap_json_path", ""),
         "published_smoke_run_record_path": summary.get("published_smoke_run_record_path", ""),
         "published_smoke_run_comparison_path": summary.get("published_smoke_run_comparison_path", ""),
     },
+    "gate_chain": build_gate_chain(summary, summary_path=summary_path),
 }
+record_path.parent.mkdir(parents=True, exist_ok=True)
 record_path.write_text(json.dumps(record_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 comparison_payload = {
@@ -2430,11 +3829,16 @@ comparison_payload = {
     "current_run": {
         "id": current_row["run_id"],
         "public_status": current_row["public_status"],
+        "acceptance_signal_status": current_row["acceptance_signal_status"],
+        "iteration_support_status": current_row["iteration_support_status"],
+        "iteration_support_next_step": current_row["iteration_support_next_step"],
         "result_family": current_row["result_family"],
         "normalized_outcome": current_row["normalized_outcome"],
         "stage_label": current_row["stage_label"],
         "source_failure_case": current_row["source_failure_case"],
         "run_archive_root": current_row["run_archive_root"],
+        "run_archive_source_root_snapshot_path": summary.get("run_archive_source_root_snapshot_path", ""),
+        "run_archive_source_failure_snapshot_manifest_path": summary.get("run_archive_source_failure_snapshot_manifest_path", ""),
         "status_summary_path": current_row["status_summary_path"],
         "iteration_evidence_path": current_row["iteration_evidence_path"],
         "run_record_path": current_row["run_record_path"],
@@ -2449,6 +3853,7 @@ comparison_payload = {
     },
     "history_index_path": str(history_path),
 }
+comparison_path.parent.mkdir(parents=True, exist_ok=True)
 comparison_path.write_text(json.dumps(comparison_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 history_path.parent.mkdir(parents=True, exist_ok=True)
@@ -2490,6 +3895,7 @@ publish_launcher_smoke_diagnostics_manifest_mirror() {
 write_launcher_status_bundle() {
   local status_parent=""
   local working_directory=""
+  local shared_state_owned=0
   local outcome="${LAUNCHER_STATUS_OUTCOME:-harness_infrastructure_failure}"
   local public_status="${LAUNCHER_STATUS_PUBLIC_STATUS:-FAIL}"
   local result_family="${LAUNCHER_STATUS_RESULT_FAMILY:-unknown}"
@@ -2499,8 +3905,8 @@ write_launcher_status_bundle() {
   local message="${LAUNCHER_STATUS_MESSAGE:-launcher status was not initialized}"
   local replay_case_descriptor=""
   local replay_artifact_descriptor=""
-  local triage_scope=""
-  local triage_stage=""
+  local triage_scope="completed"
+  local triage_stage="completed"
   local triage_primary_summary=""
   local triage_primary_report=""
   local triage_primary_manifest=""
@@ -2508,10 +3914,54 @@ write_launcher_status_bundle() {
   local triage_retry_command=""
   local triage_retry_hint=""
   local triage_stage_label="completed:completed"
+  local failure_partition=""
+  local failure_partition_label=""
+  local acceptance_signal_status=""
+  local acceptance_signal_summary=""
+  local iteration_support_status=""
+  local iteration_support_next_step=""
+  local iteration_support_summary=""
+  local command_control_mode=""
+  local command_control_preferred_command_kind=""
+  local should_resume_retry_loop=""
+  local should_retry_smoke_directly=""
+  local failure_is_terminal=""
+  local gate_escalation_allowed=""
+  local next_gate_status=""
+  local next_gate_dependency=""
+  local next_gate_summary=""
 
   resolve_launcher_status_root
-  ensure_launcher_run_archive_root || return 1
-  load_launcher_previous_run_context || return 1
+  reset_launcher_previous_run_context
+  if (( LAUNCHER_LOCK_HELD != 0 )); then
+    shared_state_owned=1
+    ensure_launcher_run_archive_root || return 1
+    load_launcher_previous_run_context || return 1
+  else
+    LAUNCHER_RUN_ID=""
+    LAUNCHER_RUN_ARCHIVE_ROOT=""
+    LAUNCHER_RUN_EXPORT_ALIAS_ROOT=""
+    LAUNCHER_RUN_CONSOLE_LOG=""
+    LAUNCHER_RUN_STATUS_SUMMARY_PATH=""
+    LAUNCHER_RUN_STATUS_REPORT_PATH=""
+    LAUNCHER_RUN_STATUS_ITERATION_EVIDENCE_PATH=""
+    LAUNCHER_RUN_STATUS_RETRY_LOOP_CONTROL_PATH=""
+    LAUNCHER_RUN_STATUS_DIAGNOSTICS_PATH=""
+    LAUNCHER_RUN_STATUS_ARTIFACT_MANIFEST_PATH=""
+    LAUNCHER_RUN_STATUS_RUN_RECORD_PATH=""
+    LAUNCHER_RUN_STATUS_RUN_COMPARISON_PATH=""
+    LAUNCHER_RUN_PREFLIGHT_ROOT=""
+    LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT=""
+    LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH=""
+    LAUNCHER_RUN_FAILURE_ROOT_SNAPSHOT=""
+    LAUNCHER_RUN_ARTIFACT_MANIFEST=""
+    if [[ -z "$LAUNCHER_RUN_STARTED_AT_UTC" ]]; then
+      LAUNCHER_RUN_STARTED_AT_UTC="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    fi
+    if (( LAUNCHER_RUN_STARTED_SECONDS < 0 )); then
+      LAUNCHER_RUN_STARTED_SECONDS=$SECONDS
+    fi
+  fi
   status_parent="$(dirname "$LAUNCHER_STATUS_ROOT")"
   ensure_launcher_directory "$status_parent" "launcher status parent" || return 1
   if [[ -e "$LAUNCHER_STATUS_ROOT" ]]; then
@@ -2521,6 +3971,8 @@ write_launcher_status_bundle() {
   working_directory="$(pwd -P 2>/dev/null || pwd)"
   replay_case_descriptor="$(launcher_replay_case_descriptor)"
   replay_artifact_descriptor="$(launcher_replay_artifact_descriptor)"
+  failure_partition="$(launcher_failure_partition_key)"
+  failure_partition_label="$(launcher_failure_partition_label "$failure_partition")"
   refresh_launcher_status_diagnostics_paths
   if [[ "$outcome" != "pass" ]]; then
     triage_scope="$(launcher_triage_stage_scope)"
@@ -2541,6 +3993,20 @@ write_launcher_status_bundle() {
     "$triage_stage_label" \
     "$replay_case_descriptor"
   refresh_launcher_retry_loop_control
+  acceptance_signal_status="$(launcher_acceptance_signal_status)"
+  acceptance_signal_summary="$(launcher_acceptance_signal_summary)"
+  iteration_support_status="$(launcher_iteration_support_status)"
+  iteration_support_next_step="$(launcher_iteration_support_next_step)"
+  iteration_support_summary="$(launcher_iteration_support_summary)"
+  command_control_mode="$(launcher_command_control_mode)"
+  command_control_preferred_command_kind="$(launcher_command_control_preferred_command_kind)"
+  should_resume_retry_loop="$(launcher_should_resume_retry_loop)"
+  should_retry_smoke_directly="$(launcher_should_retry_smoke_directly)"
+  failure_is_terminal="$(launcher_failure_is_terminal)"
+  gate_escalation_allowed="$(launcher_gate_escalation_allowed)"
+  next_gate_status="$(launcher_next_gate_status)"
+  next_gate_dependency="$(launcher_next_gate_dependency)"
+  next_gate_summary="$(launcher_next_gate_summary)"
 
   {
     echo "script=./lca_smoke.sh"
@@ -2552,11 +4018,23 @@ write_launcher_status_bundle() {
     echo "run_elapsed_seconds=$LAUNCHER_RUN_ELAPSED_SECONDS"
     echo "public_status=$public_status"
     echo "result_family=$result_family"
+    echo "failure_partition=$failure_partition"
+    echo "failure_partition_label=$failure_partition_label"
     echo "normalized_exit_code=$normalized_rc"
     echo "raw_exit_code=$raw_rc"
     echo "normalized_outcome=$outcome"
     echo "outcome_source=$source_kind"
     echo "outcome_summary=$message"
+    echo "acceptance_signal_status=$acceptance_signal_status"
+    echo "acceptance_signal_summary=$acceptance_signal_summary"
+    echo "iteration_support_status=$iteration_support_status"
+    echo "iteration_support_next_step=$iteration_support_next_step"
+    echo "iteration_support_summary=$iteration_support_summary"
+    echo "command_control_mode=$command_control_mode"
+    echo "command_control_preferred_command_kind=$command_control_preferred_command_kind"
+    echo "should_resume_retry_loop=$should_resume_retry_loop"
+    echo "should_retry_smoke_directly=$should_retry_smoke_directly"
+    echo "failure_is_terminal=$failure_is_terminal"
     echo "working_directory=$working_directory"
     echo "original_launch_working_directory=$LAUNCHER_ORIGINAL_PWD"
     echo "branch_root=$BRANCH_ROOT"
@@ -2574,6 +4052,7 @@ write_launcher_status_bundle() {
     echo "run_history_index_path=$LAUNCHER_RUN_HISTORY_INDEX"
     echo "run_record_path=$LAUNCHER_STATUS_RUN_RECORD"
     echo "run_comparison_path=$LAUNCHER_STATUS_RUN_COMPARISON"
+    echo "run_dispatch_result_path=$LAUNCHER_DISPATCH_RESULT_PATH"
     echo "run_comparison_summary=$LAUNCHER_RUN_COMPARISON_SUMMARY"
     echo "run_comparison_changed_fields=$LAUNCHER_RUN_COMPARISON_CHANGED_FIELDS"
     echo "previous_run_id=$LAUNCHER_PREVIOUS_RUN_ID"
@@ -2587,6 +4066,8 @@ write_launcher_status_bundle() {
     echo "previous_run_iteration_evidence_path=$LAUNCHER_PREVIOUS_RUN_ITERATION_EVIDENCE_PATH"
     echo "run_history_root=$LAUNCHER_RUN_HISTORY_ROOT"
     echo "run_archive_root=$LAUNCHER_RUN_ARCHIVE_ROOT"
+    echo "run_archive_source_root_snapshot_path=$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT"
+    echo "run_archive_source_failure_snapshot_manifest_path=$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH"
     echo "run_archive_summary_path=$LAUNCHER_RUN_STATUS_SUMMARY_PATH"
     echo "run_archive_status_report_path=$LAUNCHER_RUN_STATUS_REPORT_PATH"
     echo "run_archive_iteration_evidence_path=$LAUNCHER_RUN_STATUS_ITERATION_EVIDENCE_PATH"
@@ -2614,6 +4095,10 @@ write_launcher_status_bundle() {
     echo "retry_loop_solver_seed_file=$RETRY_LOOP_SOLVER_SEED_REL"
     echo "retry_loop_analysis_seed_file=$RETRY_LOOP_ANALYSIS_SEED_REL"
     echo "next_gate_command=$RETRY_LOOP_NEXT_GATE_COMMAND"
+    echo "next_gate_status=$next_gate_status"
+    echo "next_gate_dependency=$next_gate_dependency"
+    echo "next_gate_summary=$next_gate_summary"
+    echo "gate_escalation_allowed=$gate_escalation_allowed"
     echo "source_root=$LAUNCHER_STATUS_SOURCE_ROOT"
     echo "source_summary=$LAUNCHER_STATUS_SOURCE_SUMMARY"
     echo "source_report=$LAUNCHER_STATUS_SOURCE_REPORT"
@@ -2630,7 +4115,14 @@ write_launcher_status_bundle() {
     echo "source_failure_seed=$LAUNCHER_REPLAY_SEED"
     echo "source_failure_stage=$LAUNCHER_SOURCE_FAILURE_STAGE"
     echo "source_failure_replay_command=$LAUNCHER_REPLAY_COMMAND"
+    echo "source_failure_root_path=$LAUNCHER_REPLAY_FAILURE_ROOT"
+    echo "source_failure_case_dir_path=$LAUNCHER_REPLAY_FAILURE_CASE_DIR"
+    echo "source_failure_commands_path=$LAUNCHER_REPLAY_COMMANDS_PATH"
+    echo "source_failure_artifact_manifest_path=$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH"
     echo "source_failure_rerun_command_path=$LAUNCHER_REPLAY_RERUN_COMMAND_PATH"
+    echo "source_failure_exact_seed_path=$LAUNCHER_REPLAY_EXACT_SEED_PATH"
+    echo "source_failure_exact_input_path=$LAUNCHER_REPLAY_EXACT_INPUT_PATH"
+    echo "source_failure_exact_output_path=$LAUNCHER_REPLAY_EXACT_OUTPUT_PATH"
     echo "source_failure_expected_output_path=$LAUNCHER_REPLAY_EXPECTED_OUTPUT_PATH"
     echo "source_failure_invoked_command_path=$LAUNCHER_REPLAY_INVOKED_COMMAND_PATH"
     echo "source_failure_artifacts=$replay_artifact_descriptor"
@@ -2672,10 +4164,20 @@ write_launcher_status_bundle() {
       echo "standard_gap_status=smoke_blocker_detected"
       echo "standard_gap_summary=$message"
     fi
+    echo "gate_chain_ac2_status=$(launcher_gate_chain_status 2)"
+    echo "gate_chain_ac2_summary=$(launcher_gate_chain_summary 2)"
+    echo "gate_chain_ac3_status=$(launcher_gate_chain_status 3)"
+    echo "gate_chain_ac3_summary=$(launcher_gate_chain_summary 3)"
+    echo "gate_chain_ac4_status=$(launcher_gate_chain_status 4)"
+    echo "gate_chain_ac4_summary=$(launcher_gate_chain_summary 4)"
+    echo "gate_chain_ac5_status=$(launcher_gate_chain_status 5)"
+    echo "gate_chain_ac5_summary=$(launcher_gate_chain_summary 5)"
+    echo "gate_chain_ac6_status=$(launcher_gate_chain_status 6)"
+    echo "gate_chain_ac6_summary=$(launcher_gate_chain_summary 6)"
+    echo "triage_stage_scope=$triage_scope"
+    echo "triage_stage=$triage_stage"
+    echo "triage_stage_label=$triage_stage_label"
     if [[ "$outcome" != "pass" ]]; then
-      echo "triage_stage_scope=$triage_scope"
-      echo "triage_stage=$triage_stage"
-      echo "triage_stage_label=$triage_stage_label"
       echo "triage_primary_summary=$triage_primary_summary"
       echo "triage_primary_report=$triage_primary_report"
       echo "triage_primary_manifest=$triage_primary_manifest"
@@ -2715,6 +4217,7 @@ write_launcher_status_bundle() {
     echo "- Run elapsed seconds: \`$LAUNCHER_RUN_ELAPSED_SECONDS\`"
     echo "- Public status: \`$public_status\`"
     echo "- Result family: \`$result_family\`"
+    echo "- Failure partition: \`$failure_partition_label\`"
     echo "- Normalized outcome: \`$outcome\`"
     echo "- Normalized exit code: \`$normalized_rc\`"
     echo "- Raw exit code: \`$raw_rc\`"
@@ -2732,8 +4235,11 @@ write_launcher_status_bundle() {
     echo "- Run history root: \`$LAUNCHER_RUN_HISTORY_ROOT\`"
     echo "- Run history index: \`$LAUNCHER_RUN_HISTORY_INDEX\`"
     echo "- Run archive root: \`$LAUNCHER_RUN_ARCHIVE_ROOT\`"
+    echo "- Run-archive source snapshot: \`$LAUNCHER_RUN_SOURCE_ROOT_SNAPSHOT\`"
+    echo "- Run-archive source snapshot manifest: \`$LAUNCHER_RUN_SOURCE_FAILURE_SNAPSHOT_MANIFEST_PATH\`"
     echo "- Run archive manifest: \`$LAUNCHER_RUN_ARTIFACT_MANIFEST\`"
     echo "- Launcher console transcript: \`$LAUNCHER_RUN_CONSOLE_LOG\`"
+    echo "- Dispatch result snapshot: \`$LAUNCHER_DISPATCH_RESULT_PATH\`"
     echo "- Run record json: \`$LAUNCHER_STATUS_RUN_RECORD\`"
     echo "- Run comparison json: \`$LAUNCHER_STATUS_RUN_COMPARISON\`"
     if [[ -n "$LAUNCHER_STATUS_SOURCE_ROOT" ]]; then
@@ -2745,6 +4251,27 @@ write_launcher_status_bundle() {
     if [[ -n "$LAUNCHER_STATUS_SOURCE_REPORT" ]]; then
       echo "- Source report: \`$LAUNCHER_STATUS_SOURCE_REPORT\`"
     fi
+    echo
+    echo "## Acceptance Signal"
+    echo
+    echo "- Acceptance status: \`$acceptance_signal_status\`"
+    echo "- Acceptance summary: \`$acceptance_signal_summary\`"
+    echo
+    echo "## Iteration Support"
+    echo
+    echo "- Iteration support: \`$iteration_support_status\`"
+    echo "- Next step: \`$iteration_support_next_step\`"
+    echo "- Iteration summary: \`$iteration_support_summary\`"
+    echo "- Control action: \`$LAUNCHER_RETRY_LOOP_ACTION\`"
+    echo "- Preferred next command: \`$LAUNCHER_RETRY_LOOP_PREFERRED_COMMAND\`"
+    echo "- Command control mode: \`$command_control_mode\`"
+    echo "- Preferred command kind: \`$command_control_preferred_command_kind\`"
+    echo "- Failure terminal: \`$( [[ "$failure_is_terminal" == "1" ]] && printf 'yes' || printf 'no' )\`"
+    echo "- Gate escalation allowed: \`$( [[ "$gate_escalation_allowed" == "1" ]] && printf 'yes' || printf 'no' )\`"
+    echo "- Next gate command: \`$RETRY_LOOP_NEXT_GATE_COMMAND\`"
+    echo "- Next gate status: \`$next_gate_status\`"
+    echo "- Next gate depends on: \`$next_gate_dependency\`"
+    echo "- Next gate summary: \`$next_gate_summary\`"
     if [[ "$outcome" != "pass" ]]; then
       echo
       echo "## Failed Stage"
@@ -2769,6 +4296,10 @@ write_launcher_status_bundle() {
       echo "- Explanation: \`$message\`"
       echo "- Triage focus: \`$triage_retry_hint\`"
     fi
+    echo
+    echo "## Gate Chain"
+    echo
+    write_launcher_gate_chain_report
     echo "- Smoke summary mirror: \`$LAUNCHER_STATUS_PUBLISHED_SMOKE_SUMMARY_PATH\`"
     echo "- Smoke report mirror: \`$LAUNCHER_STATUS_PUBLISHED_SMOKE_REPORT_PATH\`"
     if [[ "$outcome" != "pass" ]]; then
@@ -2840,6 +4371,27 @@ write_launcher_status_bundle() {
       fi
       if [[ -n "$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH" ]]; then
         echo "- Artifact manifest: \`$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH\`"
+      fi
+      if [[ -n "$LAUNCHER_REPLAY_ACTIVE_SCRIPT" ]]; then
+        echo "- Active solver replay script: \`$LAUNCHER_REPLAY_ACTIVE_SCRIPT\`"
+      fi
+      if [[ -n "$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH" ]]; then
+        echo "- Structured failure context: \`$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH\`"
+      fi
+      if [[ -n "$LAUNCHER_SOURCE_RUNTIME_ENV_PATH" ]]; then
+        echo "- Runtime env snapshot: \`$LAUNCHER_SOURCE_RUNTIME_ENV_PATH\`"
+      fi
+      if [[ -n "$LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH" ]]; then
+        echo "- Runtime env exports: \`$LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH\`"
+      fi
+      if [[ -n "$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH" ]]; then
+        echo "- Manifest snapshot: \`$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH\`"
+      fi
+      if [[ -n "$LAUNCHER_SOURCE_SUITE_CONFIG_PATH" ]]; then
+        echo "- Suite config snapshot: \`$LAUNCHER_SOURCE_SUITE_CONFIG_PATH\`"
+      fi
+      if [[ -n "$LAUNCHER_SOURCE_SUITE_PLAN_PATH" ]]; then
+        echo "- Suite plan snapshot: \`$LAUNCHER_SOURCE_SUITE_PLAN_PATH\`"
       fi
     fi
     echo
@@ -2988,14 +4540,19 @@ write_launcher_status_bundle() {
     echo "\`\`\`"
   } > "$LAUNCHER_STATUS_REPORT"
 
-  write_launcher_run_tracking_artifacts || return 1
-  publish_launcher_smoke_summary_bundle || return 1
-  write_launcher_status_artifact_manifest
-  archive_launcher_run_bundle || return 1
-  publish_launcher_smoke_diagnostics_manifest_mirror || return 1
-  write_launcher_status_diagnostics_manifest
-  publish_launcher_smoke_diagnostics_manifest_mirror || return 1
-  cp "$LAUNCHER_STATUS_DIAGNOSTICS_MANIFEST" "$LAUNCHER_RUN_STATUS_DIAGNOSTICS_PATH" || return 1
+  if (( shared_state_owned != 0 )); then
+    write_launcher_run_tracking_artifacts || return 1
+    publish_launcher_smoke_summary_bundle || return 1
+    write_launcher_status_artifact_manifest
+    archive_launcher_run_bundle || return 1
+    publish_launcher_smoke_diagnostics_manifest_mirror || return 1
+    write_launcher_status_diagnostics_manifest
+    publish_launcher_smoke_diagnostics_manifest_mirror || return 1
+    cp "$LAUNCHER_STATUS_DIAGNOSTICS_MANIFEST" "$LAUNCHER_RUN_STATUS_DIAGNOSTICS_PATH" || return 1
+  else
+    write_launcher_status_artifact_manifest
+    write_launcher_status_diagnostics_manifest
+  fi
   LAUNCHER_STATUS_WRITTEN=1
 }
 
@@ -3008,12 +4565,14 @@ report_launcher_status_context() {
   local triage_first_artifacts=""
   local triage_retry_command=""
   local triage_retry_hint=""
+  local failure_partition_label=""
 
   if [[ -z "$LAUNCHER_STATUS_SUMMARY" ]]; then
     return
   fi
   replay_case_descriptor="$(launcher_replay_case_descriptor)"
   replay_artifact_descriptor="$(launcher_replay_artifact_descriptor)"
+  failure_partition_label="$(launcher_failure_partition_label)"
   if [[ "${LAUNCHER_STATUS_OUTCOME:-}" != "pass" ]]; then
     triage_scope="$(launcher_triage_stage_scope)"
     triage_stage="$(launcher_triage_stage_name)"
@@ -3023,9 +4582,16 @@ report_launcher_status_context() {
     triage_retry_hint="$(launcher_triage_retry_hint)"
   fi
   emit_launcher_context_line "[lca_smoke] public status: ${LAUNCHER_STATUS_PUBLIC_STATUS:-FAIL} family=${LAUNCHER_STATUS_RESULT_FAMILY:-unknown}"
+  emit_launcher_context_line "[lca_smoke] acceptance signal: $(launcher_acceptance_signal_status)"
+  emit_launcher_context_line "[lca_smoke] iteration support: $(launcher_iteration_support_status) next_step=$(launcher_iteration_support_next_step)"
   emit_launcher_context_line "[lca_smoke] normalized outcome: $LAUNCHER_STATUS_OUTCOME"
   emit_launcher_context_line "[lca_smoke] normalized exit code: $LAUNCHER_STATUS_NORMALIZED_RC raw_exit_code=$LAUNCHER_STATUS_RAW_RC source=$LAUNCHER_STATUS_SOURCE"
+  emit_launcher_context_line "[lca_smoke] failure partition: $failure_partition_label public_exit=$LAUNCHER_STATUS_NORMALIZED_RC raw_exit=$LAUNCHER_STATUS_RAW_RC"
   emit_launcher_context_line "[lca_smoke] outcome summary: $LAUNCHER_STATUS_MESSAGE"
+  emit_launcher_context_line "[lca_smoke] iteration summary: run_id=$LAUNCHER_RUN_ID elapsed_seconds=$LAUNCHER_RUN_ELAPSED_SECONDS comparison=$LAUNCHER_RUN_COMPARISON_SUMMARY"
+  emit_launcher_context_line "[lca_smoke] gate chain: $(launcher_gate_chain_overview)"
+  emit_launcher_context_line "[lca_smoke] command control: mode=$(launcher_command_control_mode) action=$LAUNCHER_RETRY_LOOP_ACTION preferred_kind=$(launcher_command_control_preferred_command_kind) failure_terminal=$(launcher_failure_is_terminal)"
+  emit_launcher_context_line "[lca_smoke] next gate control: command=$RETRY_LOOP_NEXT_GATE_COMMAND status=$(launcher_next_gate_status) dependency=$(launcher_next_gate_dependency) gate_escalation_allowed=$(launcher_gate_escalation_allowed)"
   if [[ "${LAUNCHER_STATUS_OUTCOME:-}" != "pass" ]]; then
     emit_launcher_context_line "[lca_smoke] failed stage: $triage_stage scope=$triage_scope"
     emit_launcher_context_line "[lca_smoke] stage label: $triage_scope:$triage_stage"
@@ -3059,6 +4625,30 @@ report_launcher_status_context() {
   if [[ -n "$replay_artifact_descriptor" ]]; then
     emit_launcher_context_line "[lca_smoke] replay artifacts: $replay_artifact_descriptor"
   fi
+  if [[ -n "$LAUNCHER_REPLAY_COMMANDS_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] commands snapshot: $LAUNCHER_REPLAY_COMMANDS_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] source artifact manifest: $LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_EXACT_SEED_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] exact seed snapshot: $LAUNCHER_REPLAY_EXACT_SEED_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_EXACT_INPUT_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] exact input snapshot: $LAUNCHER_REPLAY_EXACT_INPUT_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_EXACT_OUTPUT_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] exact output snapshot: $LAUNCHER_REPLAY_EXACT_OUTPUT_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_EXPECTED_OUTPUT_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] expected output snapshot: $LAUNCHER_REPLAY_EXPECTED_OUTPUT_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_INVOKED_COMMAND_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] invoked command snapshot: $LAUNCHER_REPLAY_INVOKED_COMMAND_PATH"
+  fi
+  if [[ -n "$LAUNCHER_REPLAY_ACTIVE_SCRIPT" ]]; then
+    emit_launcher_context_line "[lca_smoke] active solver replay script: $LAUNCHER_REPLAY_ACTIVE_SCRIPT"
+  fi
   if [[ -n "$LAUNCHER_SOURCE_MISMATCH_SUMMARY_PATH" ]]; then
     emit_launcher_context_line "[lca_smoke] mismatch summary: $LAUNCHER_SOURCE_MISMATCH_SUMMARY_PATH"
   fi
@@ -3070,6 +4660,18 @@ report_launcher_status_context() {
   fi
   if [[ -n "$LAUNCHER_SOURCE_RETRY_LOG_PATH" ]]; then
     emit_launcher_context_line "[lca_smoke] retry log: $LAUNCHER_SOURCE_RETRY_LOG_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_RUNTIME_ENV_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] source runtime env: $LAUNCHER_SOURCE_RUNTIME_ENV_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] source runtime env exports: $LAUNCHER_SOURCE_RUNTIME_ENV_EXPORTS_PATH"
+  fi
+  if [[ -n "$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] source manifest snapshot: $LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH"
+  fi
+  if [[ -n "$LAUNCHER_STATUS_SUITE_CONFIG_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] suite config: $LAUNCHER_STATUS_SUITE_CONFIG_PATH"
   fi
   if [[ -n "$LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH" ]]; then
     emit_launcher_context_line "[lca_smoke] source preflight manifest: $LAUNCHER_SOURCE_PREFLIGHT_MANIFEST_PATH"
@@ -3116,6 +4718,9 @@ report_launcher_status_context() {
   if [[ -n "$LAUNCHER_RUN_CONSOLE_LOG" ]]; then
     emit_launcher_context_line "[lca_smoke] launcher console transcript: $LAUNCHER_RUN_CONSOLE_LOG"
   fi
+  if [[ -n "$LAUNCHER_DISPATCH_RESULT_PATH" ]]; then
+    emit_launcher_context_line "[lca_smoke] dispatch result: $LAUNCHER_DISPATCH_RESULT_PATH"
+  fi
   if [[ -n "$LAUNCHER_STATUS_PUBLISHED_SMOKE_SUMMARY_PATH" ]]; then
     emit_launcher_context_line "[lca_smoke] smoke summary mirror: $LAUNCHER_STATUS_PUBLISHED_SMOKE_SUMMARY_PATH"
   fi
@@ -3139,18 +4744,51 @@ report_launcher_status_context() {
 }
 
 record_launcher_dispatch_marker() {
-  mkdir -p "$LAUNCHER_PREFLIGHT_ROOT" || fail "failed to prepare launcher preflight root for dispatch marker: $LAUNCHER_PREFLIGHT_ROOT"
+  mkdir -p "$(dirname "$LAUNCHER_DISPATCH_MARKER")" || fail "failed to prepare launcher dispatch marker root: $LAUNCHER_DISPATCH_MARKER"
   rm -f "$LAUNCHER_DISPATCH_MARKER" 2>/dev/null || true
   : > "$LAUNCHER_DISPATCH_MARKER" || fail "failed to record launcher dispatch marker: $LAUNCHER_DISPATCH_MARKER"
+  if ! LAUNCHER_DISPATCH_STARTED_NS="$(
+    python3 - "$LAUNCHER_DISPATCH_MARKER" <<'PY'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+print(Path(sys.argv[1]).stat().st_mtime_ns)
+PY
+  )"; then
+    fail "failed to record launcher dispatch marker timestamp: $LAUNCHER_DISPATCH_MARKER"
+  fi
 }
 
 artifact_is_fresh_since_dispatch() {
   local artifact="$1"
 
-  if [[ -z "${LAUNCHER_DISPATCH_MARKER:-}" || ! -e "$LAUNCHER_DISPATCH_MARKER" ]]; then
+  if [[ ! -e "$artifact" ]]; then
     return 1
   fi
-  if [[ ! -e "$artifact" ]]; then
+
+  if [[ -n "${LAUNCHER_DISPATCH_STARTED_NS:-}" ]]; then
+    python3 - "$LAUNCHER_DISPATCH_STARTED_NS" "$artifact" <<'PY' >/dev/null 2>&1
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+dispatch_started_ns_raw = sys.argv[1]
+artifact_path = Path(sys.argv[2])
+
+if not dispatch_started_ns_raw.isdigit():
+    raise SystemExit(1)
+
+dispatch_started_ns = int(dispatch_started_ns_raw)
+artifact_mtime_ns = artifact_path.stat().st_mtime_ns
+raise SystemExit(0 if artifact_mtime_ns >= dispatch_started_ns else 1)
+PY
+    return
+  fi
+
+  if [[ -z "${LAUNCHER_DISPATCH_MARKER:-}" || ! -e "$LAUNCHER_DISPATCH_MARKER" ]]; then
     return 1
   fi
   python3 - "$LAUNCHER_DISPATCH_MARKER" "$artifact" <<'PY' >/dev/null 2>&1
@@ -3195,12 +4833,195 @@ validate_inner_wrapper_success_artifacts() {
   fi
 }
 
+inner_wrapper_failure_bundle_path_issue() {
+  local label="$1"
+  local path="$2"
+  local expected_kind="${3:-path}"
+
+  if [[ -z "$path" ]]; then
+    printf 'missing %s path\n' "$label"
+    return 0
+  fi
+
+  case "$expected_kind" in
+    directory)
+      if [[ ! -d "$path" ]]; then
+        printf 'missing %s at %s\n' "$label" "$path"
+        return 0
+      fi
+      ;;
+    *)
+      if [[ ! -e "$path" ]]; then
+        printf 'missing %s at %s\n' "$label" "$path"
+        return 0
+      fi
+      ;;
+  esac
+
+  if ! artifact_is_fresh_since_dispatch "$path"; then
+    printf 'stale %s at %s\n' "$label" "$path"
+    return 0
+  fi
+}
+
+inner_wrapper_failure_bundle_issues() {
+  local failure_root="$1"
+  local source_summary="$2"
+  local source_report="$3"
+  local issues=""
+  local detail=""
+  local case_repro_required=0
+  local minimal_bundle_ready=0
+  local require_extended_metadata=0
+  if [[ ! -d "$failure_root" ]]; then
+    issues="missing preserved failure root at $failure_root"
+  elif ! artifact_is_fresh_since_dispatch "$failure_root"; then
+    issues="stale preserved failure root at $failure_root"
+  fi
+  if [[ ! -s "$source_summary" ]]; then
+    issues="${issues:+$issues; }missing failure summary at $source_summary"
+  elif ! artifact_is_fresh_since_dispatch "$source_summary"; then
+    issues="${issues:+$issues; }stale failure summary at $source_summary"
+  fi
+
+  capture_launcher_source_failure_details "$source_summary"
+
+  if [[ -n "$LAUNCHER_SOURCE_FAILURE_KIND" && -n "$LAUNCHER_SOURCE_FAILURE_ORIGIN" && -n "$LAUNCHER_SOURCE_FAILURE_RETRYABLE" ]]; then
+    minimal_bundle_ready=1
+  fi
+
+  if [[ -n "$LAUNCHER_SOURCE_FAILURE_REPORTING_STATUS" || \
+        -n "$LAUNCHER_REPLAY_COMMANDS_PATH" || \
+        -n "$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH" || \
+        -n "$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH" || \
+        -n "$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH" || \
+        -n "$LAUNCHER_SOURCE_SUITE_CONFIG_PATH" || \
+        -n "$LAUNCHER_SOURCE_SUITE_PLAN_PATH" ]]; then
+    require_extended_metadata=1
+  fi
+
+  if (( require_extended_metadata == 0 )); then
+    if [[ ! -s "$source_report" ]]; then
+      issues="${issues:+$issues; }missing failure report at $source_report"
+    elif ! artifact_is_fresh_since_dispatch "$source_report"; then
+      issues="${issues:+$issues; }stale failure report at $source_report"
+    fi
+  fi
+
+  if (( require_extended_metadata != 0 )); then
+    if [[ -z "$LAUNCHER_SOURCE_FAILURE_REPORTING_STATUS" ]]; then
+      issues="${issues:+$issues; }missing failure reporting status in $source_summary"
+    elif [[ "$LAUNCHER_SOURCE_FAILURE_REPORTING_STATUS" != "complete" && "$LAUNCHER_SOURCE_FAILURE_REPORTING_STATUS" != "degraded" ]]; then
+      issues="${issues:+$issues; }unknown failure reporting status '$LAUNCHER_SOURCE_FAILURE_REPORTING_STATUS' in $source_summary"
+    fi
+
+    detail="$(inner_wrapper_failure_bundle_path_issue "source commands snapshot" "$LAUNCHER_REPLAY_COMMANDS_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source artifact manifest" "$LAUNCHER_REPLAY_ARTIFACT_MANIFEST_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source structured context" "$LAUNCHER_SOURCE_STRUCTURED_CONTEXT_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source manifest snapshot" "$LAUNCHER_SOURCE_MANIFEST_SNAPSHOT_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source suite config" "$LAUNCHER_SOURCE_SUITE_CONFIG_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source suite plan" "$LAUNCHER_SOURCE_SUITE_PLAN_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+  fi
+
+  if [[ -n "$LAUNCHER_REPLAY_CASE_TAG" || -n "$LAUNCHER_REPLAY_SEED" || -n "$LAUNCHER_REPLAY_ACTIVE_SCRIPT" || -n "$LAUNCHER_REPLAY_EXACT_INPUT_PATH" ]]; then
+    case_repro_required=1
+  fi
+  if (( case_repro_required != 0 )); then
+    detail="$(inner_wrapper_failure_bundle_path_issue "source failure case dir" "$LAUNCHER_REPLAY_FAILURE_CASE_DIR" "directory")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source rerun command snapshot" "$LAUNCHER_REPLAY_RERUN_COMMAND_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source exact seed snapshot" "$LAUNCHER_REPLAY_EXACT_SEED_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source exact input snapshot" "$LAUNCHER_REPLAY_EXACT_INPUT_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source exact output snapshot" "$LAUNCHER_REPLAY_EXACT_OUTPUT_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source expected output snapshot" "$LAUNCHER_REPLAY_EXPECTED_OUTPUT_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source invoked command snapshot" "$LAUNCHER_REPLAY_INVOKED_COMMAND_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+    if [[ -n "$LAUNCHER_REPLAY_ACTIVE_SCRIPT" ]]; then
+      detail="$(inner_wrapper_failure_bundle_path_issue "source active solver replay script" "$LAUNCHER_REPLAY_ACTIVE_SCRIPT")"
+      if [[ -n "$detail" ]]; then
+        issues="${issues:+$issues; }$detail"
+      fi
+    fi
+    detail="$(inner_wrapper_failure_bundle_path_issue "source runtime env snapshot" "$LAUNCHER_SOURCE_RUNTIME_ENV_PATH")"
+    if [[ -n "$detail" ]]; then
+      issues="${issues:+$issues; }$detail"
+    fi
+  fi
+
+  if (( minimal_bundle_ready == 0 )) && (( require_extended_metadata == 0 )); then
+    if [[ -z "$LAUNCHER_SOURCE_FAILURE_KIND" ]]; then
+      issues="${issues:+$issues; }missing failure kind in $source_summary"
+    fi
+    if [[ -z "$LAUNCHER_SOURCE_FAILURE_ORIGIN" ]]; then
+      issues="${issues:+$issues; }missing failure origin in $source_summary"
+    fi
+    if [[ -z "$LAUNCHER_SOURCE_FAILURE_RETRYABLE" ]]; then
+      issues="${issues:+$issues; }missing failure retryable flag in $source_summary"
+    fi
+    issues="${issues:+$issues; }missing minimal fresh failure-bundle metadata in $source_summary"
+  fi
+
+  printf '%s\n' "$issues"
+}
+
 clear_stale_inner_wrapper_rerun_state() {
+  local issues=""
+
+  issues="$(clear_inner_wrapper_rerun_state_paths)"
+  if [[ -n "$issues" ]]; then
+    printf '%s\n' "inner smoke wrapper published a fresh smoke bundle but left stale rerun state behind: $issues"
+    return 1
+  fi
+}
+
+clear_inner_wrapper_rerun_state_paths() {
   local issues=""
   local stale=""
   local smoke_setup_root="$ARTIFACTS_ROOT/smoke_setup"
   local smoke_session_state_root="$TMP_PARENT/lca_smoke.session"
   local smoke_setup_tmpdir="$TMP_PARENT/lca_smoke.setup.tmp"
+  local smoke_output_parent=""
+  local smoke_backup_root=""
+
+  smoke_output_parent="$(dirname "$SMOKE_OUTPUT_ROOT")"
+  smoke_backup_root="${SMOKE_OUTPUT_ROOT}.previous"
 
   if [[ -e "$SMOKE_FAILURE_ROOT" ]] && ! remove_path_retry "$SMOKE_FAILURE_ROOT"; then
     issues="failed to clear stale inner failure root at $SMOKE_FAILURE_ROOT"
@@ -3214,18 +5035,193 @@ clear_stale_inner_wrapper_rerun_state() {
   if [[ -e "$smoke_setup_tmpdir" ]] && ! remove_path_retry "$smoke_setup_tmpdir"; then
     issues="${issues:+$issues; }failed to clear stale inner setup tmpdir at $smoke_setup_tmpdir"
   fi
+  if [[ -e "$smoke_backup_root" ]] && ! remove_path_retry "$smoke_backup_root"; then
+    issues="${issues:+$issues; }failed to clear stale inner backup output at $smoke_backup_root"
+  fi
   if [[ -d "$TMP_PARENT" ]]; then
     shopt -s nullglob
-    for stale in "$TMP_PARENT"/lca_smoke_probe.* "$TMP_PARENT"/lca_smoke.run.* "$TMP_PARENT"/lca_smoke.tmp.*; do
+    for stale in \
+      "$TMP_PARENT"/lca_smoke_probe.* \
+      "$TMP_PARENT"/lca_smoke.run.* \
+      "$TMP_PARENT"/lca_smoke.tmp.* \
+      "$TMP_PARENT"/$LAUNCHER_INNER_BUILD_TMP_GLOB \
+      "$TMP_PARENT"/$LAUNCHER_INNER_BUILD_TMP_TMP_GLOB; do
       if ! remove_path_retry "$stale"; then
         issues="${issues:+$issues; }failed to clear stale inner tmp path at $stale"
       fi
     done
     shopt -u nullglob
   fi
+  if [[ -d "$smoke_output_parent" ]]; then
+    shopt -s nullglob
+    for stale in "$smoke_output_parent"/$LAUNCHER_INNER_LEGACY_OUTPUT_GLOB; do
+      if ! remove_path_retry "$stale"; then
+        issues="${issues:+$issues; }failed to clear stale inner legacy output path at $stale"
+      fi
+    done
+    shopt -u nullglob
+  fi
 
+  printf '%s\n' "$issues"
+}
+
+clear_stale_launcher_dispatch_state() {
+  local cleanup_detail=""
+  local cleanup_rc=0
+
+  if [[ -z "${LAUNCHER_DISPATCH_STATE_PATH:-}" || ! -e "$LAUNCHER_DISPATCH_STATE_PATH" ]]; then
+    return 0
+  fi
+
+  if ! cleanup_detail="$(
+    python3 - "$LAUNCHER_DISPATCH_STATE_PATH" "$INNER_WRAPPER" "$LAUNCHER_DISPATCH_KILL_GRACE_S" "$$" <<'PY'
+from __future__ import annotations
+
+import os
+import signal
+import sys
+import time
+from pathlib import Path
+
+state_path = Path(sys.argv[1])
+expected_inner_wrapper = sys.argv[2]
+kill_grace_s = float(sys.argv[3])
+current_launcher_pid = int(sys.argv[4])
+
+payload: dict[str, str] = {}
+for raw_line in state_path.read_text(encoding="utf-8").splitlines():
+    if "=" not in raw_line:
+        continue
+    key, value = raw_line.split("=", 1)
+    payload[key.strip()] = value.strip()
+
+
+def parse_pid(name: str) -> int:
+    raw = payload.get(name, "")
+    if not raw:
+        return 0
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise SystemExit(f"invalid {name} in {state_path}: {raw}") from exc
+    if value < 0:
+        raise SystemExit(f"invalid {name} in {state_path}: {raw}")
+    return value
+
+
+def pid_is_alive(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def same_entrypoint(lhs: str, rhs: str) -> bool:
+    if not lhs or not rhs:
+        return False
+    return os.path.realpath(lhs) == os.path.realpath(rhs)
+
+
+manager_pid = parse_pid("manager_pid")
+child_pid = parse_pid("child_pid")
+child_pgid = parse_pid("child_pgid")
+recorded_child_entrypoint = payload.get("child_entrypoint", "") or payload.get("child_command", "")
+manager_is_current_launcher = manager_pid > 0 and manager_pid == current_launcher_pid
+
+child_is_alive = pid_is_alive(child_pid)
+if child_is_alive and recorded_child_entrypoint and not same_entrypoint(recorded_child_entrypoint, expected_inner_wrapper):
+    state_path.unlink(missing_ok=True)
+    print(
+        f"removed stale dispatch state file {state_path} after its recorded child pid {child_pid} "
+        f"stopped matching the inner wrapper entrypoint"
+    )
+    raise SystemExit(0)
+
+if child_is_alive:
+    if child_pgid > 0:
+        try:
+            os.killpg(child_pgid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    else:
+        try:
+            os.kill(child_pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    if pid_is_alive(child_pid):
+        deadline = time.monotonic() + kill_grace_s
+        while pid_is_alive(child_pid) and time.monotonic() < deadline:
+            time.sleep(0.05)
+        if pid_is_alive(child_pid):
+            if child_pgid > 0:
+                try:
+                    os.killpg(child_pgid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            else:
+                try:
+                    os.kill(child_pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            deadline = time.monotonic() + max(kill_grace_s, 0.2)
+            while pid_is_alive(child_pid) and time.monotonic() < deadline:
+                time.sleep(0.05)
+        if pid_is_alive(child_pid):
+            print(
+                f"failed to stop stale inner smoke wrapper pid {child_pid} "
+                f"(pgid={child_pgid}) from {state_path}"
+            )
+            raise SystemExit(2)
+
+state_path.unlink(missing_ok=True)
+if child_is_alive:
+    print(f"cleared stale inner smoke wrapper pid {child_pid} (pgid={child_pgid}) from {state_path}")
+elif manager_is_current_launcher:
+    print(f"removed stale self-owned launcher dispatch state file {state_path}")
+elif pid_is_alive(manager_pid):
+    # Once this launcher has acquired the run-control lock, a leftover manager
+    # pid in the dispatch-state file is stale metadata, not an authoritative
+    # signal that another smoke launch still owns this working tree.
+    print(
+        f"removed stale dispatch state file {state_path} after reacquiring the launcher lock "
+        f"from live manager pid {manager_pid}"
+    )
+PY
+  )"; then
+    cleanup_rc=$?
+    case "$cleanup_rc" in
+      *)
+        printf '%s\n' "${cleanup_detail:-failed to clear stale launcher dispatch state: $LAUNCHER_DISPATCH_STATE_PATH}"
+        return 1
+        ;;
+    esac
+  fi
+
+  if [[ -n "$cleanup_detail" ]]; then
+    emit_launcher_context_line "[lca_smoke] cleared stale dispatch state: $cleanup_detail"
+  fi
+}
+
+clear_stale_inner_wrapper_dispatch_state() {
+  local issues=""
+  local dispatch_message=""
+
+  if ! dispatch_message="$(clear_stale_launcher_dispatch_state)"; then
+    printf '%s\n' "${dispatch_message:-failed to clear stale launcher dispatch state before dispatch}"
+    return 1
+  fi
+  if [[ -n "$dispatch_message" ]]; then
+    emit_launcher_context_line "[lca_smoke] stale dispatch cleanup: $dispatch_message"
+  fi
+
+  issues="$(clear_inner_wrapper_rerun_state_paths)"
   if [[ -n "$issues" ]]; then
-    printf '%s\n' "inner smoke wrapper published a fresh smoke bundle but left stale rerun state behind: $issues"
+    printf '%s\n' "failed to clear stale inner-wrapper rerun state before dispatch: $issues"
     return 1
   fi
 }
@@ -3237,22 +5233,7 @@ validate_inner_wrapper_failure_bundle() {
   local source_report="$4"
   local issues=""
 
-  if [[ ! -d "$failure_root" ]]; then
-    issues="missing preserved failure root at $failure_root"
-  elif ! artifact_is_fresh_since_dispatch "$failure_root"; then
-    issues="stale preserved failure root at $failure_root"
-  fi
-  if [[ ! -s "$source_summary" ]]; then
-    issues="${issues:+$issues; }missing failure summary at $source_summary"
-  elif ! artifact_is_fresh_since_dispatch "$source_summary"; then
-    issues="${issues:+$issues; }stale failure summary at $source_summary"
-  fi
-  if [[ ! -s "$source_report" ]]; then
-    issues="${issues:+$issues; }missing failure report at $source_report"
-  elif ! artifact_is_fresh_since_dispatch "$source_report"; then
-    issues="${issues:+$issues; }stale failure report at $source_report"
-  fi
-
+  issues="$(inner_wrapper_failure_bundle_issues "$failure_root" "$source_summary" "$source_report")"
   if [[ -n "$issues" ]]; then
     printf '%s\n' "inner smoke wrapper returned a ${failure_class} result without publishing a complete fresh failure bundle: $issues"
     return 1
@@ -3262,11 +5243,91 @@ validate_inner_wrapper_failure_bundle() {
 unexpected_inner_wrapper_message() {
   local raw_rc="$1"
 
+  if (( LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL > 0 )); then
+    printf 'launcher dispatch was interrupted by signal %d while the inner smoke wrapper was running; the launcher terminated the owned process group and preserved retry-safe state for the next invocation\n' "$LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL"
+    return
+  fi
   if (( raw_rc >= 128 )); then
     printf 'inner smoke wrapper terminated by signal %d before the launcher could validate the smoke bundle\n' "$(( raw_rc - 128 ))"
     return
   fi
   printf 'inner smoke wrapper returned unexpected exit code %s; treat the run as infrastructure-failed\n' "$raw_rc"
+}
+
+launcher_dispatch_timeout_message() {
+  local message="launcher-enforced dispatch timeout after ${LAUNCHER_DISPATCH_TIMEOUT_S}s while waiting for inner smoke wrapper"
+  local bundle_issues=""
+  local source_summary="$SMOKE_FAILURE_ROOT/failure_summary.txt"
+  local source_report="$SMOKE_FAILURE_ROOT/latest_failure_report.md"
+
+  bundle_issues="$(inner_wrapper_failure_bundle_issues "$SMOKE_FAILURE_ROOT" "$source_summary" "$source_report")"
+  if [[ -n "$bundle_issues" ]]; then
+    if [[ -n "${LAUNCHER_REPLAY_SUMMARY:-}" ]]; then
+      printf '%s; inner smoke wrapper timed out without publishing a complete fresh failure bundle: %s; preserved partial detail: %s\n' \
+        "$message" \
+        "$bundle_issues" \
+        "$LAUNCHER_REPLAY_SUMMARY"
+      return 0
+    fi
+    printf '%s; inner smoke wrapper timed out without publishing a complete fresh failure bundle: %s\n' \
+      "$message" \
+      "$bundle_issues"
+    return 0
+  fi
+
+  if [[ -n "${LAUNCHER_REPLAY_SUMMARY:-}" ]]; then
+    printf '%s; preserved inner-wrapper failure detail is advisory only: %s\n' "$message" "$LAUNCHER_REPLAY_SUMMARY"
+    return 0
+  fi
+  printf '%s; no fresh inner-wrapper outcome was published before the launcher aborted the run\n' "$message"
+}
+
+dispatch_signal_name() {
+  case "${1:-0}" in
+    1)
+      printf 'SIGHUP\n'
+      ;;
+    2)
+      printf 'SIGINT\n'
+      ;;
+    15)
+      printf 'SIGTERM\n'
+      ;;
+    *)
+      printf 'signal %s\n' "${1:-0}"
+      ;;
+  esac
+}
+
+launcher_dispatch_interrupted_message() {
+  local signal_name=""
+  local message=""
+  local bundle_issues=""
+  local source_summary="$SMOKE_FAILURE_ROOT/failure_summary.txt"
+  local source_report="$SMOKE_FAILURE_ROOT/latest_failure_report.md"
+
+  signal_name="$(dispatch_signal_name "$LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL")"
+  message="launcher received ${signal_name} while waiting for inner smoke wrapper"
+  bundle_issues="$(inner_wrapper_failure_bundle_issues "$SMOKE_FAILURE_ROOT" "$source_summary" "$source_report")"
+  if [[ -n "$bundle_issues" ]]; then
+    if [[ -n "${LAUNCHER_REPLAY_SUMMARY:-}" ]]; then
+      printf '%s; cleaned up the interrupted dispatch without publishing a complete fresh failure bundle: %s; preserved partial detail: %s\n' \
+        "$message" \
+        "$bundle_issues" \
+        "$LAUNCHER_REPLAY_SUMMARY"
+      return 0
+    fi
+    printf '%s; cleaned up the interrupted dispatch without publishing a complete fresh failure bundle: %s\n' \
+      "$message" \
+      "$bundle_issues"
+    return 0
+  fi
+
+  if [[ -n "${LAUNCHER_REPLAY_SUMMARY:-}" ]]; then
+    printf '%s; preserved inner-wrapper failure detail is advisory only: %s\n' "$message" "$LAUNCHER_REPLAY_SUMMARY"
+    return 0
+  fi
+  printf '%s; no fresh inner-wrapper outcome was published before the launcher stopped the run\n' "$message"
 }
 
 launcher_normalized_failure_outcome() {
@@ -3354,13 +5415,75 @@ classify_inner_wrapper_exit() {
   local raw_rc="$1"
   local source_summary="$SMOKE_FAILURE_ROOT/failure_summary.txt"
   local source_report="$SMOKE_FAILURE_ROOT/latest_failure_report.md"
+  local source_root=""
+  local status_source_summary=""
+  local status_source_report=""
   local validation_message=""
   local normalized_outcome=""
   local normalized_rc=0
 
   clear_launcher_source_failure_details
+  if (( LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL != 0 )); then
+    capture_launcher_source_failure_details "$source_summary"
+    if [[ -d "$SMOKE_FAILURE_ROOT" ]]; then
+      source_root="$SMOKE_FAILURE_ROOT"
+    fi
+    if [[ -s "$source_summary" ]]; then
+      status_source_summary="$source_summary"
+    fi
+    if [[ -s "$source_report" ]]; then
+      status_source_report="$source_report"
+    fi
+    set_launcher_status \
+      "harness_infrastructure_failure" \
+      "$SMOKE_EXIT_HARNESS_FAILURE" \
+      "$raw_rc" \
+      "launcher" \
+      "$(launcher_dispatch_interrupted_message)" \
+      "$source_root" \
+      "$status_source_summary" \
+      "$status_source_report"
+    return
+  fi
+  if (( LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED == 1 )); then
+    capture_launcher_source_failure_details "$source_summary"
+    if [[ -d "$SMOKE_FAILURE_ROOT" ]]; then
+      source_root="$SMOKE_FAILURE_ROOT"
+    fi
+    if [[ -s "$source_summary" ]]; then
+      status_source_summary="$source_summary"
+    fi
+    if [[ -s "$source_report" ]]; then
+      status_source_report="$source_report"
+    fi
+    set_launcher_status \
+      "harness_infrastructure_failure" \
+      "$SMOKE_EXIT_HARNESS_FAILURE" \
+      "$raw_rc" \
+      "launcher" \
+      "$(launcher_dispatch_timeout_message)" \
+      "$source_root" \
+      "$status_source_summary" \
+      "$status_source_report"
+    return
+  fi
   case "$raw_rc" in
     0)
+      if validation_message="$(validate_inner_wrapper_failure_bundle "preserved" "$SMOKE_FAILURE_ROOT" "$source_summary" "$source_report")"; then
+        capture_launcher_source_failure_details "$source_summary"
+        normalized_outcome="$(launcher_normalized_failure_outcome "$SMOKE_EXIT_SOLVER_FAILURE")"
+        normalized_rc="$(launcher_normalized_failure_exit_code "$SMOKE_EXIT_SOLVER_FAILURE")"
+        set_launcher_status \
+          "$normalized_outcome" \
+          "$normalized_rc" \
+          "$normalized_rc" \
+          "inner_wrapper" \
+          "$(launcher_source_failure_message "inner smoke wrapper exited zero but published a preserved failure bundle; honoring the preserved failure artifacts")" \
+          "$SMOKE_FAILURE_ROOT" \
+          "$source_summary" \
+          "$source_report"
+        return
+      fi
       if ! validation_message="$(validate_inner_wrapper_success_artifacts)"; then
         set_launcher_status \
           "harness_infrastructure_failure" \
@@ -3533,28 +5656,7 @@ write_launcher_failure_bundle() {
     echo "$LAUNCHER_DISPATCH_COMMAND"
   } > "$LAUNCHER_FAILURE_RERUN_COMMAND_PATH"
   working_directory="$(pwd -P)"
-  {
-    echo "PWD=$working_directory"
-    echo "ORIGINAL_LAUNCH_PWD=$LAUNCHER_ORIGINAL_PWD"
-    echo "PATH=${PATH:-}"
-    echo "HOME=${HOME:-}"
-    echo "TERM=${TERM:-}"
-    echo "TMPDIR=${TMPDIR:-}"
-    echo "BRANCH_ARTIFACT_TMP_ROOT=${BRANCH_ARTIFACT_TMP_ROOT:-}"
-    echo "LCA_SMOKE_EXPORT_SNAPSHOT_ROOT=${LCA_SMOKE_EXPORT_SNAPSHOT_ROOT:-}"
-    echo "LCA_SMOKE_DEBUG_MANIFEST=${LCA_SMOKE_DEBUG_MANIFEST:-}"
-    echo "LCA_SMOKE_BUILD_TIMEOUT_S=${LCA_SMOKE_BUILD_TIMEOUT_S:-}"
-    echo "LCA_SMOKE_LAUNCHER_TIMEOUT_S=${LCA_SMOKE_LAUNCHER_TIMEOUT_S:-}"
-    echo "LCA_SMOKE_LAUNCHER_ORIGINAL_COMMAND=${LCA_SMOKE_LAUNCHER_ORIGINAL_COMMAND:-}"
-    echo "LCA_SMOKE_LAUNCHER_ORIGINAL_PWD=${LCA_SMOKE_LAUNCHER_ORIGINAL_PWD:-}"
-    echo "$LCA_SMOKE_LAUNCHER_CLEAN_ENV_FLAG=${!LCA_SMOKE_LAUNCHER_CLEAN_ENV_FLAG:-0}"
-    echo "$LCA_SMOKE_INNER_CLEAN_ENV_FLAG=${!LCA_SMOKE_INNER_CLEAN_ENV_FLAG:-0}"
-    echo "launcher_tmpdir=${LAUNCHER_TMPDIR:-}"
-    echo "launcher_home=${LAUNCHER_HOME:-}"
-    echo "launcher_preflight_root=${LAUNCHER_PREFLIGHT_ROOT:-}"
-    echo
-    env | LC_ALL=C sort
-  } > "$LAUNCHER_FAILURE_ENV_SNAPSHOT"
+  write_launcher_environment_snapshot "$LAUNCHER_FAILURE_ENV_SNAPSHOT" || return 1
   sync_launcher_preflight_artifacts
   write_launcher_preflight_manifest
   if [[ -n "$LAUNCHER_LAST_CHECK_KIND" ]]; then
@@ -3796,6 +5898,7 @@ bootstrap_clean_env() {
     LCA_SMOKE_DEBUG_MANIFEST \
     LCA_SMOKE_BUILD_TIMEOUT_S \
     LCA_SMOKE_LAUNCHER_TIMEOUT_S \
+    LCA_SMOKE_LAUNCHER_LOCK_TIMEOUT_S \
     LCA_SMOKE_LAUNCHER_ORIGINAL_COMMAND \
     LCA_SMOKE_LAUNCHER_ORIGINAL_PWD; do
     if [[ -n "${!preserved_name:-}" ]]; then
@@ -3852,6 +5955,9 @@ resolve_branch_local_roots() {
   SMOKE_FAILURE_ROOT="$ARTIFACTS_ROOT/smoke_latest_failure"
   TMP_PARENT="$ARTIFACTS_ROOT/.tmp"
   LOCK_ROOT="$ARTIFACTS_ROOT/.locks"
+  LAUNCHER_LOCKDIR="$LOCK_ROOT/lca_smoke.launcher"
+  LAUNCHER_LOCK_PID_FILE="$LAUNCHER_LOCKDIR/pid"
+  LAUNCHER_DISPATCH_STATE_PATH="$LOCK_ROOT/lca_smoke.dispatch.state"
   LAUNCHER_TMPDIR="$TMP_PARENT/lca_smoke.launcher.tmp"
   LAUNCHER_PREFLIGHT_ROOT="$LAUNCHER_TMPDIR/preflight"
   LAUNCHER_HOME="$LAUNCHER_TMPDIR/home"
@@ -3859,10 +5965,12 @@ resolve_branch_local_roots() {
   LAUNCHER_XDG_CACHE_HOME="$LAUNCHER_TMPDIR/xdg_cache"
   LAUNCHER_XDG_STATE_HOME="$LAUNCHER_TMPDIR/xdg_state"
   LAUNCHER_PYCACHE_ROOT="$LAUNCHER_TMPDIR/pycache"
+  LAUNCHER_PREFLIGHT_MANIFEST_PATH="$LAUNCHER_PREFLIGHT_ROOT/preflight_manifest.tsv"
+  LAUNCHER_PREFLIGHT_ENV_SNAPSHOT_PATH="$LAUNCHER_PREFLIGHT_ROOT/launcher_env.txt"
   LAUNCHER_PREFLIGHT_SMOKE_MANIFEST_SELECTION="$LAUNCHER_PREFLIGHT_ROOT/smoke_manifest_selection.txt"
   LAUNCHER_PREFLIGHT_SMOKE_MANIFEST_STDERR="$LAUNCHER_PREFLIGHT_ROOT/smoke_manifest_check.stderr.txt"
-  LAUNCHER_DISPATCH_MARKER="$LAUNCHER_PREFLIGHT_ROOT/dispatch.started"
-  LAUNCHER_DISPATCH_RESULT_PATH="$LAUNCHER_PREFLIGHT_ROOT/dispatch_result.txt"
+  LAUNCHER_DISPATCH_MARKER="$LAUNCHER_RUN_PREFLIGHT_ROOT/dispatch.started"
+  LAUNCHER_DISPATCH_RESULT_PATH="$LAUNCHER_RUN_ARCHIVE_ROOT/dispatch_result.txt"
   resolve_launcher_status_root
 }
 
@@ -3938,10 +6046,12 @@ prepare_launcher_environment() {
   LAUNCHER_XDG_CACHE_HOME="$LAUNCHER_TMPDIR/xdg_cache"
   LAUNCHER_XDG_STATE_HOME="$LAUNCHER_TMPDIR/xdg_state"
   LAUNCHER_PYCACHE_ROOT="$LAUNCHER_TMPDIR/pycache"
+  LAUNCHER_PREFLIGHT_MANIFEST_PATH="$LAUNCHER_PREFLIGHT_ROOT/preflight_manifest.tsv"
+  LAUNCHER_PREFLIGHT_ENV_SNAPSHOT_PATH="$LAUNCHER_PREFLIGHT_ROOT/launcher_env.txt"
   LAUNCHER_PREFLIGHT_SMOKE_MANIFEST_SELECTION="$LAUNCHER_PREFLIGHT_ROOT/smoke_manifest_selection.txt"
   LAUNCHER_PREFLIGHT_SMOKE_MANIFEST_STDERR="$LAUNCHER_PREFLIGHT_ROOT/smoke_manifest_check.stderr.txt"
-  LAUNCHER_DISPATCH_MARKER="$LAUNCHER_PREFLIGHT_ROOT/dispatch.started"
-  LAUNCHER_DISPATCH_RESULT_PATH="$LAUNCHER_PREFLIGHT_ROOT/dispatch_result.txt"
+  LAUNCHER_DISPATCH_MARKER="$LAUNCHER_RUN_PREFLIGHT_ROOT/dispatch.started"
+  LAUNCHER_DISPATCH_RESULT_PATH="$LAUNCHER_RUN_ARCHIVE_ROOT/dispatch_result.txt"
 
   for state_path in \
     "$LAUNCHER_HOME" \
@@ -3976,6 +6086,73 @@ prepare_launcher_environment() {
   export PYTHONPYCACHEPREFIX="$LAUNCHER_PYCACHE_ROOT"
 }
 
+handle_launcher_signal() {
+  local signal_name="$1"
+  local signal_number="$2"
+
+  if [[ -n "${LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID:-}" ]]; then
+    LAUNCHER_FAILURE_MESSAGE="launcher received ${signal_name} while waiting for inner smoke wrapper"
+    if [[ "$LAUNCHER_FAILURE_RC" -eq 0 ]]; then
+      LAUNCHER_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+    fi
+    LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL="$signal_number"
+    set_launcher_failure_stage "dispatch"
+    set_launcher_last_check \
+      "dispatch" \
+      "outer smoke wrapper" \
+      "interrupted" \
+      "$signal_name" \
+      "$LAUNCHER_DISPATCH_RESULT_PATH"
+    kill -s "$signal_name" "$LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID" 2>/dev/null || true
+    return 0
+  fi
+
+  LAUNCHER_FAILURE_MESSAGE="launcher received ${signal_name} before inner wrapper dispatch completed"
+  if [[ "$LAUNCHER_FAILURE_RC" -eq 0 ]]; then
+    LAUNCHER_FAILURE_RC="$SMOKE_EXIT_HARNESS_FAILURE"
+  fi
+  exit "$SMOKE_EXIT_HARNESS_FAILURE"
+}
+
+wait_for_launcher_dispatch_result_after_signal() {
+  local manager_pid="$1"
+  local attempt=0
+
+  if [[ -z "$manager_pid" || "$manager_pid" == "0" ]]; then
+    return 1
+  fi
+
+  for (( attempt = 1; attempt <= 40; attempt++ )); do
+    if [[ -s "$LAUNCHER_DISPATCH_RESULT_PATH" ]]; then
+      return 0
+    fi
+    if ! kill -0 "$manager_pid" 2>/dev/null; then
+      [[ -s "$LAUNCHER_DISPATCH_RESULT_PATH" ]]
+      return $?
+    fi
+    sleep 0.05
+  done
+
+  [[ -s "$LAUNCHER_DISPATCH_RESULT_PATH" ]]
+}
+
+stop_active_launcher_dispatch_monitor() {
+  local monitor_pid="${LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID:-}"
+
+  if [[ -z "$monitor_pid" || "$monitor_pid" == "0" ]]; then
+    return 0
+  fi
+  if kill -0 "$monitor_pid" 2>/dev/null; then
+    kill -TERM "$monitor_pid" 2>/dev/null || true
+    wait_for_launcher_dispatch_result_after_signal "$monitor_pid" || true
+    if kill -0 "$monitor_pid" 2>/dev/null; then
+      kill -KILL "$monitor_pid" 2>/dev/null || true
+    fi
+  fi
+  wait "$monitor_pid" 2>/dev/null || true
+  LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID=""
+}
+
 resolve_launcher_dispatch_timeout() {
   local raw_timeout="${LCA_SMOKE_LAUNCHER_TIMEOUT_S:-$LAUNCHER_DISPATCH_TIMEOUT_S_DEFAULT}"
 
@@ -3989,6 +6166,7 @@ resolve_launcher_dispatch_timeout() {
   fi
   LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED=0
   LAUNCHER_DISPATCH_RAW_RC=0
+  LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL=0
   set_launcher_last_check \
     "dispatch_timeout" \
     "launcher dispatch timeout" \
@@ -3996,14 +6174,125 @@ resolve_launcher_dispatch_timeout() {
     "$LAUNCHER_DISPATCH_TIMEOUT_S"
 }
 
+resolve_launcher_lock_timeout() {
+  local raw_timeout="${LCA_SMOKE_LAUNCHER_LOCK_TIMEOUT_S:-$LAUNCHER_LOCK_WAIT_TIMEOUT_S_DEFAULT}"
+
+  if ! LAUNCHER_LOCK_WAIT_TIMEOUT_S="$(parse_positive_decimal_setting "$raw_timeout" "LCA_SMOKE_LAUNCHER_LOCK_TIMEOUT_S")"; then
+    set_launcher_last_check \
+      "lock_timeout" \
+      "launcher lock timeout" \
+      "invalid" \
+      "$raw_timeout"
+    fail "invalid launcher lock timeout override: ${raw_timeout}"
+  fi
+  set_launcher_last_check \
+    "lock_timeout" \
+    "launcher lock timeout" \
+    "ok" \
+    "$LAUNCHER_LOCK_WAIT_TIMEOUT_S"
+}
+
+launcher_lock_wait_attempt_budget() {
+  python3 - "$LAUNCHER_LOCK_WAIT_TIMEOUT_S" "$LAUNCHER_LOCK_RETRY_SLEEP_S" <<'PY'
+from __future__ import annotations
+
+import math
+import sys
+
+timeout_s = float(sys.argv[1])
+sleep_s = float(sys.argv[2])
+print(max(1, int(math.ceil(timeout_s / sleep_s))))
+PY
+}
+
+release_launcher_lock() {
+  local rc=0
+
+  if (( LAUNCHER_LOCK_HELD )) && [[ -e "$LAUNCHER_LOCKDIR" ]]; then
+    if ! remove_path_retry "$LAUNCHER_LOCKDIR"; then
+      echo "[lca_smoke] warning: failed to release launcher run-control lock: $LAUNCHER_LOCKDIR" >&2
+      rc=1
+    fi
+  fi
+  LAUNCHER_LOCK_HELD=0
+  return "$rc"
+}
+
+acquire_launcher_lock() {
+  local holder=""
+  local wait_budget=1
+  local wait_count=0
+
+  if [[ -e "$LOCK_ROOT" && ! -d "$LOCK_ROOT" ]]; then
+    remove_path_retry "$LOCK_ROOT" || fail "failed to clear invalid launcher lock root: $LOCK_ROOT"
+  fi
+  mkdir -p "$LOCK_ROOT" || fail "failed to prepare launcher lock root: $LOCK_ROOT"
+  ensure_under_artifacts "$LOCK_ROOT"
+  ensure_under_artifacts "$LAUNCHER_LOCKDIR"
+  if ! wait_budget="$(launcher_lock_wait_attempt_budget)"; then
+    fail "failed to compute launcher lock wait budget from timeout ${LAUNCHER_LOCK_WAIT_TIMEOUT_S}s"
+  fi
+
+  while true; do
+    if mkdir "$LAUNCHER_LOCKDIR" 2>/dev/null; then
+      printf '%s\n' "$$" > "$LAUNCHER_LOCK_PID_FILE"
+      LAUNCHER_LOCK_HELD=1
+      set_launcher_last_check \
+        "lock" \
+        "launcher run-control lock" \
+        "ok" \
+        "$LAUNCHER_LOCKDIR" \
+        "$LAUNCHER_LOCK_PID_FILE"
+      return 0
+    fi
+
+    if [[ ! -f "$LAUNCHER_LOCK_PID_FILE" ]]; then
+      sleep "$LAUNCHER_LOCK_RETRY_SLEEP_S"
+      if [[ ! -f "$LAUNCHER_LOCK_PID_FILE" ]]; then
+        remove_path_retry "$LAUNCHER_LOCKDIR" || fail "failed to clear stale launcher run-control lock: $LAUNCHER_LOCKDIR"
+      fi
+      continue
+    fi
+
+    read -r holder < "$LAUNCHER_LOCK_PID_FILE" || holder=""
+    if [[ -z "$holder" ]]; then
+      sleep "$LAUNCHER_LOCK_RETRY_SLEEP_S"
+      if [[ -f "$LAUNCHER_LOCK_PID_FILE" ]]; then
+        continue
+      fi
+      remove_path_retry "$LAUNCHER_LOCKDIR" || fail "failed to clear empty launcher run-control lock: $LAUNCHER_LOCKDIR"
+      continue
+    fi
+
+    if kill -0 "$holder" 2>/dev/null; then
+      if (( wait_count >= wait_budget )); then
+        set_launcher_last_check \
+          "lock" \
+          "launcher run-control lock" \
+          "busy" \
+          "$holder" \
+          "$LAUNCHER_LOCKDIR"
+        fail "another lca_smoke.sh launcher run is active (pid $holder); waited ${LAUNCHER_LOCK_WAIT_TIMEOUT_S}s for the launcher run-control lock"
+      fi
+      sleep "$LAUNCHER_LOCK_RETRY_SLEEP_S"
+      wait_count=$(( wait_count + 1 ))
+      continue
+    fi
+
+    remove_path_retry "$LAUNCHER_LOCKDIR" || fail "failed to clear stale launcher run-control lock: $LAUNCHER_LOCKDIR"
+  done
+}
+
 load_launcher_dispatch_result() {
   local result_path="$1"
   local line=""
   local raw_rc=""
   local timed_out="0"
+  local interrupted_signal="0"
 
   LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED=0
   LAUNCHER_DISPATCH_RAW_RC=0
+  LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL=0
 
   while IFS= read -r line || [[ -n "$line" ]]; do
     case "$line" in
@@ -4012,6 +6301,9 @@ load_launcher_dispatch_result() {
         ;;
       timed_out=*)
         timed_out="${line#*=}"
+        ;;
+      interrupted_signal=*)
+        interrupted_signal="${line#*=}"
         ;;
     esac
   done < "$result_path"
@@ -4028,9 +6320,15 @@ load_launcher_dispatch_result() {
       return 1
       ;;
   esac
+  case "$interrupted_signal" in
+    ''|*[!0-9]*)
+      return 1
+      ;;
+  esac
 
   LAUNCHER_DISPATCH_RAW_RC="$raw_rc"
   LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED="$timed_out"
+  LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL="$interrupted_signal"
 }
 
 copy_launcher_preflight_artifact() {
@@ -4172,11 +6470,21 @@ clear_stale_launcher_status_bundle() {
   fi
 }
 
+clear_stale_launcher_smoke_output_root() {
+  if [[ -z "${SMOKE_OUTPUT_ROOT:-}" ]]; then
+    return
+  fi
+  if [[ -e "$SMOKE_OUTPUT_ROOT" ]]; then
+    remove_path_retry "$SMOKE_OUTPUT_ROOT" || fail "failed to clear stale smoke output root: $SMOKE_OUTPUT_ROOT"
+  fi
+}
+
 cleanup_launcher() {
   local rc="${1:-$?}"
 
-  trap - EXIT ERR
+  trap - EXIT ERR HUP INT TERM
   set +e
+  stop_active_launcher_dispatch_monitor || true
   if (( rc != 0 )) && (( LAUNCHER_SKIP_FAILURE_BUNDLE == 0 )); then
     if [[ "$LAUNCHER_FAILURE_RC" -eq 0 ]]; then
       LAUNCHER_FAILURE_RC="$rc"
@@ -4199,11 +6507,14 @@ cleanup_launcher() {
     report_launcher_status_context || true
     rc="$LAUNCHER_STATUS_NORMALIZED_RC"
   fi
-  if [[ -n "${LAUNCHER_TMPDIR:-}" && -e "$LAUNCHER_TMPDIR" ]]; then
-    remove_path_retry "$LAUNCHER_TMPDIR" || true
-  fi
-  if [[ -n "${LAUNCHER_TMPDIR_PARENT:-}" && -e "$LAUNCHER_TMPDIR_PARENT" ]]; then
-    remove_path_retry "$LAUNCHER_TMPDIR_PARENT" || true
+  if (( LAUNCHER_LOCK_HELD != 0 )); then
+    if [[ -n "${LAUNCHER_TMPDIR:-}" && -e "$LAUNCHER_TMPDIR" ]]; then
+      remove_path_retry "$LAUNCHER_TMPDIR" || true
+    fi
+    if [[ -n "${LAUNCHER_TMPDIR_PARENT:-}" && -e "$LAUNCHER_TMPDIR_PARENT" ]]; then
+      remove_path_retry "$LAUNCHER_TMPDIR_PARENT" || true
+    fi
+    release_launcher_lock || true
   fi
   if [[ -n "${LOCK_ROOT:-}" ]]; then
     rmdir "$LOCK_ROOT" 2>/dev/null || true
@@ -4220,7 +6531,7 @@ finalize_launcher_dispatch_result() {
   local status_report_rc=0
 
   LAUNCHER_SKIP_FAILURE_BUNDLE=1
-  trap - ERR
+  trap - ERR HUP INT TERM
   set +e
   write_launcher_status_bundle
   status_bundle_rc=$?
@@ -4239,8 +6550,11 @@ run_inner_wrapper_dispatch() {
   local manager_rc=0
 
   mkdir -p "$LAUNCHER_PREFLIGHT_ROOT" || fail "failed to prepare launcher preflight root for dispatch monitor: $LAUNCHER_PREFLIGHT_ROOT"
+  mkdir -p "$(dirname "$LAUNCHER_DISPATCH_RESULT_PATH")" || fail "failed to prepare launcher dispatch result root: $LAUNCHER_DISPATCH_RESULT_PATH"
+  mkdir -p "$(dirname "$LAUNCHER_DISPATCH_STATE_PATH")" || fail "failed to prepare launcher dispatch state root: $LAUNCHER_DISPATCH_STATE_PATH"
   rm -f "$LAUNCHER_DISPATCH_RESULT_PATH" 2>/dev/null || true
-  if python3 - "$LAUNCHER_DISPATCH_RESULT_PATH" "$LAUNCHER_DISPATCH_TIMEOUT_S" "$LAUNCHER_DISPATCH_KILL_GRACE_S" "$BASH_BIN" "$INNER_WRAPPER" "$@" <<'PY'
+  rm -f "$LAUNCHER_DISPATCH_STATE_PATH" 2>/dev/null || true
+  python3 - "$LAUNCHER_DISPATCH_RESULT_PATH" "$LAUNCHER_DISPATCH_STATE_PATH" "$LAUNCHER_DISPATCH_TIMEOUT_S" "$LAUNCHER_DISPATCH_KILL_GRACE_S" "$BASH_BIN" "$INNER_WRAPPER" "$@" <<'PY' &
 from __future__ import annotations
 
 import os
@@ -4250,46 +6564,126 @@ import sys
 from pathlib import Path
 
 result_path = Path(sys.argv[1])
-timeout_s = float(sys.argv[2])
-kill_grace_s = float(sys.argv[3])
-command = sys.argv[4:]
+state_path = Path(sys.argv[2])
+timeout_s = float(sys.argv[3])
+kill_grace_s = float(sys.argv[4])
+command = sys.argv[5:]
 
 timed_out = False
 raw_exit_code = 0
-proc = subprocess.Popen(command, start_new_session=True)
+interrupted_signal = 0
+result_written = False
+proc: subprocess.Popen[str] | None = None
 
-try:
-    raw_exit_code = proc.wait(timeout=timeout_s)
-except subprocess.TimeoutExpired:
-    timed_out = True
+
+def current_child_pgid() -> int:
+    if proc is None:
+        return 0
     try:
-        os.killpg(proc.pid, signal.SIGTERM)
+        return os.getpgid(proc.pid)
     except ProcessLookupError:
-        pass
-    try:
-        raw_exit_code = proc.wait(timeout=kill_grace_s)
-    except subprocess.TimeoutExpired:
+        return 0
+
+
+def write_state() -> None:
+    if proc is None:
+        return
+    tmp_path = state_path.with_name(state_path.name + ".tmp")
+    child_entrypoint = command[1] if len(command) > 1 else (command[0] if command else "")
+    tmp_path.write_text(
+        f"manager_pid={os.getpid()}\n"
+        f"child_pid={proc.pid}\n"
+        f"child_pgid={current_child_pgid()}\n"
+        f"child_command={command[-1] if command else ''}\n"
+        f"child_entrypoint={child_entrypoint}\n",
+        encoding="utf-8",
+    )
+    os.replace(tmp_path, state_path)
+
+
+def terminate_child_process_group(initial_signal: int = int(signal.SIGTERM)) -> int:
+    if proc is None:
+        return raw_exit_code
+    child_pgid = current_child_pgid()
+    if child_pgid > 0:
         try:
-            os.killpg(proc.pid, signal.SIGKILL)
+            os.killpg(child_pgid, initial_signal)
         except ProcessLookupError:
             pass
-        raw_exit_code = proc.wait()
+    try:
+        exit_code = proc.wait(timeout=kill_grace_s)
+    except subprocess.TimeoutExpired:
+        if child_pgid > 0:
+            try:
+                os.killpg(child_pgid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        exit_code = proc.wait()
+    return exit_code
 
-if raw_exit_code < 0:
-    raw_exit_code = 128 + (-raw_exit_code)
-if timed_out:
-    raw_exit_code = 124
+def write_result() -> None:
+    global result_written
+    tmp_path = result_path.with_name(result_path.name + ".tmp")
+    tmp_path.write_text(
+        f"raw_exit_code={raw_exit_code}\n"
+        f"timed_out={1 if timed_out else 0}\n"
+        f"interrupted_signal={interrupted_signal}\n",
+        encoding="utf-8",
+    )
+    os.replace(tmp_path, result_path)
+    result_written = True
 
-result_path.write_text(
-    f"raw_exit_code={raw_exit_code}\n"
-    f"timed_out={1 if timed_out else 0}\n",
-    encoding="utf-8",
-)
+
+def clear_state() -> None:
+    state_path.unlink(missing_ok=True)
+
+def handle_signal(signum: int, _frame: object) -> None:
+    global raw_exit_code, interrupted_signal
+    interrupted_signal = signum
+    raw_exit_code = terminate_child_process_group(signum)
+    if raw_exit_code < 0:
+        raw_exit_code = 128 + (-raw_exit_code)
+    if raw_exit_code == 0:
+        raw_exit_code = 128 + signum
+    write_result()
+    clear_state()
+    raise SystemExit(128 + signum)
+
+for signum in (signal.SIGHUP, signal.SIGINT, signal.SIGTERM):
+    signal.signal(signum, handle_signal)
+
+try:
+    proc = subprocess.Popen(command, start_new_session=True)
+    write_state()
+    raw_exit_code = proc.wait(timeout=timeout_s)
+except KeyboardInterrupt:
+    interrupted_signal = int(signal.SIGINT)
+    raw_exit_code = terminate_child_process_group(int(signal.SIGINT))
+except subprocess.TimeoutExpired:
+    timed_out = True
+    raw_exit_code = terminate_child_process_group()
+finally:
+    if proc is not None and proc.poll() is None:
+        raw_exit_code = terminate_child_process_group()
+    if raw_exit_code < 0:
+        raw_exit_code = 128 + (-raw_exit_code)
+    if timed_out:
+        raw_exit_code = 124
+    if not result_written:
+        write_result()
+    clear_state()
 PY
-  then
+  LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID=$!
+  if wait "$LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID"; then
     :
   else
     manager_rc=$?
+    if (( LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL != 0 )); then
+      wait_for_launcher_dispatch_result_after_signal "$LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID" || true
+    fi
+  fi
+
+  if (( manager_rc != 0 )) && [[ ! -s "$LAUNCHER_DISPATCH_RESULT_PATH" ]]; then
     set_launcher_failure_stage "dispatch_monitor"
     set_launcher_last_check \
       "dispatch_monitor" \
@@ -4299,7 +6693,6 @@ PY
       "$LAUNCHER_DISPATCH_RESULT_PATH"
     fail "inner wrapper dispatch monitor failed with exit code $manager_rc"
   fi
-
   if [[ ! -s "$LAUNCHER_DISPATCH_RESULT_PATH" ]]; then
     set_launcher_failure_stage "dispatch_result_capture"
     set_launcher_last_check \
@@ -4319,6 +6712,7 @@ PY
       "$LAUNCHER_DISPATCH_RESULT_PATH"
     fail "inner wrapper dispatch monitor wrote an invalid dispatch result"
   fi
+  LAUNCHER_ACTIVE_DISPATCH_MONITOR_PID=""
   return "$LAUNCHER_DISPATCH_RAW_RC"
 }
 
@@ -4339,6 +6733,9 @@ main() {
   sanitize_shell_state
   trap 'cleanup_launcher "$?"' EXIT
   trap 'capture_launcher_err "$?" "$LINENO" "$BASH_COMMAND"' ERR
+  trap 'handle_launcher_signal SIGHUP 1' HUP
+  trap 'handle_launcher_signal SIGINT 2' INT
+  trap 'handle_launcher_signal SIGTERM 15' TERM
   umask 022
   if ((${#launcher_args[@]} > 0)); then
     record_launcher_invocation "${launcher_args[@]}"
@@ -4364,7 +6761,10 @@ main() {
   require_command sleep
   require_command grep
   require_command sort
+  require_command date
+  require_command ln
   require_build_compiler
+  prepare_launcher_artifact_namespace
   validate_launcher_repo_root_layout
   normalize_launcher_prerequisite_paths
   require_executable "$INNER_WRAPPER" "outer smoke wrapper"
@@ -4389,9 +6789,12 @@ main() {
   set_launcher_failure_stage "launcher_environment_setup"
   resolve_branch_local_roots
   normalize_launcher_supported_overrides
+  set_launcher_failure_stage "launcher_lock_timeout_resolution"
+  resolve_launcher_lock_timeout
+  set_launcher_failure_stage "launcher_lock_acquisition"
+  acquire_launcher_lock
+  set_launcher_failure_stage "launcher_environment_setup"
   prepare_launcher_environment
-  set_launcher_failure_stage "stale_status_cleanup"
-  clear_stale_launcher_status_bundle
   set_launcher_failure_stage "shell_entrypoint_validation"
   check_shell_syntax "$INNER_WRAPPER" "outer smoke wrapper syntax"
   check_shell_syntax "$RELEASE_ENV" "release env wrapper syntax"
@@ -4408,8 +6811,18 @@ main() {
 
   set_launcher_failure_stage "dispatch_timeout_resolution"
   resolve_launcher_dispatch_timeout
+  set_launcher_failure_stage "preflight_snapshot_publication"
+  write_launcher_preflight_artifacts
+  set_launcher_failure_stage "stale_status_cleanup"
+  clear_stale_launcher_status_bundle
+  set_launcher_failure_stage "stale_smoke_root_cleanup"
+  clear_stale_launcher_smoke_output_root
   set_launcher_failure_stage "stale_failure_cleanup"
   clear_stale_launcher_failure_bundle
+  set_launcher_failure_stage "stale_inner_rerun_cleanup"
+  if ! LAUNCHER_FAILURE_MESSAGE="$(clear_stale_inner_wrapper_dispatch_state)"; then
+    fail "$LAUNCHER_FAILURE_MESSAGE"
+  fi
   set_launcher_failure_stage "dispatch_preparation"
   record_launcher_dispatch_marker
   set_launcher_failure_stage "dispatch"
@@ -4429,7 +6842,14 @@ main() {
       inner_wrapper_rc=$?
     fi
   fi
-  if (( LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED == 1 )); then
+  if (( LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL != 0 )); then
+    set_launcher_last_check \
+      "dispatch" \
+      "outer smoke wrapper" \
+      "interrupted" \
+      "$(dispatch_signal_name "$LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL")" \
+      "$LAUNCHER_DISPATCH_RESULT_PATH"
+  elif (( LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED == 1 )); then
     set_launcher_last_check \
       "dispatch" \
       "outer smoke wrapper" \
@@ -4444,7 +6864,11 @@ main() {
       "$inner_wrapper_rc" \
       "$LAUNCHER_DISPATCH_RESULT_PATH"
   fi
-  set_launcher_failure_stage "status_normalization"
+  if (( LAUNCHER_DISPATCH_INTERRUPTED_SIGNAL != 0 )) || (( LAUNCHER_DISPATCH_TIMEOUT_TRIGGERED == 1 )); then
+    set_launcher_failure_stage "dispatch"
+  else
+    set_launcher_failure_stage "status_normalization"
+  fi
   classify_inner_wrapper_exit "$inner_wrapper_rc"
   finalize_launcher_dispatch_result
 }
