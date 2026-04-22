@@ -1,0 +1,20 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "caterpillar_focus: 6 failing cases"
+  ],
+  "preset": "artifacts/lca_tree_stress_v5/ac3_caterpillar_focus_preset.json",
+  "stages": [
+    {
+      "name": "caterpillar_focus",
+      "status": "FAIL",
+      "cases": 20,
+      "timeouts": 6,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    }
+  ]
+}

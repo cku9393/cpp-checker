@@ -1,0 +1,11 @@
+{
+  "category": "pass",
+  "exit_code": 0,
+  "message": "case completed successfully",
+  "rss_kb": 2944,
+  "sec": 0.015037792000015315,
+  "solver_exit_code": 0,
+  "status": "pass",
+  "timed_out": false,
+  "validator_ok": true
+}

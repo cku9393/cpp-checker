@@ -1,0 +1,49 @@
+[build] failed to compile boj28350_branch_3_solver.cpp
+[build] attempted commands:
+  /usr/bin/clang++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native -flto=thin /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/clang++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/clang++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -flto=thin /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/clang++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/g++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native -flto=thin /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/g++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/g++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -flto=thin /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/g++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/c++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native -flto=thin /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/c++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -march=native /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/c++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe -flto=thin /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+  /usr/bin/c++ -Ofast -DNDEBUG -std=c++17 -ULOCAL -pipe /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp -o /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve
+clang++: warning: argument '-Ofast' is deprecated; use '-O3 -ffast-math' for the same behavior, or '-O3' to enable only conforming optimizations [-Wdeprecated-ofast]
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:3738:45: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 3738 |             if(!cc.empty()) comps.push_back(move(cc));
+      |                                             ^
+      |                                             std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:3747:45: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 3747 |             if(!cc.empty()) comps.push_back(move(cc));
+      |                                             ^
+      |                                             std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4033:233: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 4033 |                 if(disc[v]==-1){ st.push_back(eid); dfs(v,eid); low[u]=min(low[u],low[v]); if(low[v]>=disc[u]){ vector<int> comp; while(true){ int x=st.back(); st.pop_back(); comp.push_back(x); if(x==eid) break; } blocksE.push_back(move(comp)); } }
+      |                                                                                                                                                                                                                                         ^
+      |                                                                                                                                                                                                                                         std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4045:205: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 4045 |             if(hasb){ unordered_set<int> allowed={old.owner}; for(int i:blockVerts[bi]) allowed.insert(verts[i]); auto cand=buildExactRestricted(core, old.owner, old.a, old.b, allowed); auto rr=wrap(old, move(cand)); if(rr.has && (!bestR.has || (rr.strict>bestR.strict)||(rr.strict==bestR.strict && mass(rr.h)<mass(bestR.h)))) bestR=rr; }
+      |                                                                                                                                                                                                             ^
+      |                                                                                                                                                                                                             std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:4109:43: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+ 4109 |                         blocksE.push_back(move(comp));
+      |                                           ^
+      |                                           std::
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:7383:69: error: use of undeclared identifier 'od'
+ 7383 |             int ep = (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+      |                                                                     ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:7383:46: error: use of undeclared identifier 'od'
+ 7383 |             int ep = (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+      |                                              ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:7391:69: error: use of undeclared identifier 'od'
+ 7391 |             int ep = (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+      |                                                                     ^
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp:7391:46: error: use of undeclared identifier 'od'
+ 7391 |             int ep = (0 <= idx && idx < (int)od.endpoints.size()) ? od.endpoints[idx] : -1;
+      |                                              ^
+5 warnings and 4 errors generated.
+

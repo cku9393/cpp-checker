@@ -1,0 +1,47 @@
+PHASE45 STABILIZATION REPORT
+Date: 2026-04-21
+
+Scope:
+- Added current-env action ledger governance for planned/executed/applied/skipped/failed/superseded actions.
+- Added retry/failure policy for current-env actions.
+- Added reproposal-gate-to-budget-approval handoff artifact.
+- Added synthetic next-cycle due manifests for 2026-05-06, 2026-05-07, 2026-05-14, and 2026-05-16.
+- Added ops agenda lifecycle v2 and policy ops summary v11 wiring.
+- No src primitive/planner semantics were changed.
+
+Key artifacts:
+- artifacts/manifests/runtime_current_env_action_ledger_phase45.json
+- artifacts/manifests/runtime_current_env_action_retry_plan_phase45.json
+- artifacts/manifests/runtime_current_env_reproposal_handoff_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_due_soon_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_monitoring_due_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_reproposal_due_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_overdue_phase45.json
+- artifacts/manifests/policy_ops_agenda_phase45.json
+- artifacts/manifests/policy_ops_summary_phase45.json
+
+Observed phase45 governance results:
+- action ledger: generated from phase44 watch execute/apply and reproposal execute lineage.
+- retry plan: generated; no retryable action is expected for the applied happy path.
+- reproposal handoff: generated; handoff keeps approval as a separate explicit operator step.
+- next cycle:
+  - 2026-05-06T09:15:10Z: monitoring due soon.
+  - 2026-05-07T09:15:10Z: monitoring due.
+  - 2026-05-14T09:15:10Z: reproposal due.
+  - 2026-05-16T09:15:10Z: reproposal overdue.
+
+Verification:
+- Python tool syntax: PASS.
+- Phase45 machine-readable manifests: generated.
+- C++ full staged rebuild/CTest: BLOCKED in this environment because several authoritative source files are iCloud compressed,dataless and block reads during source materialization/build dependency scanning.
+- Blocked dataless examples: src/raw_primitives.cpp, src/raw_planner.cpp, src/raw_validators.cpp, src/CMakeLists.txt, and several tests/*.hpp / tests/*.cpp dependencies.
+- Last known full staged CTest baseline remains phase44: Release/Debug/ASan 363/363 PASS.
+
+Semantic result:
+- No semantic mismatch was observed in phase45 artifact generation.
+- No new regression was added.
+- production split-choice default remains exact_shadow.
+
+Remaining risk:
+- The phase45 governance/operator code needs a full staged rebuild/CTest rerun after the iCloud dataless source files are materialized locally.
+- The correctness risk remains low; the open risk is operational verification of the new action ledger/retry/handoff C++ registrations under a fully materialized source tree.

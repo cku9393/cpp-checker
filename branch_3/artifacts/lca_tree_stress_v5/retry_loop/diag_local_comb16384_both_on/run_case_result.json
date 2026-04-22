@@ -1,0 +1,12 @@
+{
+  "category": "pass",
+  "exit_code": 0,
+  "message": "OK",
+  "rss_kb": 186560,
+  "sec": 3.9621315000000004,
+  "solver_exit_code": null,
+  "solver_signal": null,
+  "status": "pass",
+  "timed_out": false,
+  "validator_ok": true
+}

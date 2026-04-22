@@ -1,0 +1,10 @@
+profile_version=
+profile_id=phase41-runtime-budget-approved-profile
+version=4
+created_at=2026-04-09T09:15:10Z
+runtime_budget_profile_entry=execution_class=asan_full role=diagnostic soft_seconds=2400.0 hard_seconds=4200.0
+runtime_budget_profile_entry=execution_class=debug_full role=production_critical soft_seconds=900.0 hard_seconds=1800.0
+runtime_budget_profile_entry=execution_class=policy_core role=operator soft_seconds=30.0 hard_seconds=90.0
+runtime_budget_profile_entry=execution_class=policy_nightly role=operator soft_seconds=180.0 hard_seconds=600.0
+runtime_budget_profile_entry=execution_class=policy_refresh role=operator soft_seconds=30.0 hard_seconds=90.0
+runtime_budget_profile_entry=execution_class=release_full role=production_critical soft_seconds=504.856 hard_seconds=807.77

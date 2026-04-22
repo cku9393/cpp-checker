@@ -1,0 +1,9 @@
+metric	value
+target_count	5
+proved_current_scope_count	1
+partial_refined_lift_count	2
+not_ready_count	2
+next_action_first	family_chain_lift_obstruction_preservation_proof
+next_action_second	prove_support_reduction_operation_sublemma
+next_action_third	higher_support_necessity_recheck
+fingerprint	5|1|2|2|refined_lift_preservation_open|family_chain_lift_obstruction_preservation_proof

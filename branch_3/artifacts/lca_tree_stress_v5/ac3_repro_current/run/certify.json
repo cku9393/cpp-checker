@@ -1,0 +1,20 @@
+{
+  "verdict": "FAIL",
+  "reasons": [
+    "ac3_repro: 3 failing cases"
+  ],
+  "preset": "ac3_repro_current",
+  "stages": [
+    {
+      "name": "ac3_repro",
+      "status": "FAIL",
+      "cases": 20,
+      "timeouts": 3,
+      "re_wa": 0,
+      "limit_scale": 1.0,
+      "sec_max": null,
+      "case_sec_max": null,
+      "scale_fail": []
+    }
+  ]
+}

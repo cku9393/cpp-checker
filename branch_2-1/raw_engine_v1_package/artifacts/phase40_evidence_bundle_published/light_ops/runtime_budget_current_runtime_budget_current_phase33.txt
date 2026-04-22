@@ -1,0 +1,12 @@
+manifest_version=runtime_budget_current_v1
+phase=phase33
+current_verdict=WARN
+budget_verdict=BUDGET_WARN
+proposal_needed=1
+source_runtime_budget_profile_id=phase29-runtime-budget-v1
+runtime_budget_current_entry=execution_class=release_full role=production_critical current_status=WARN watch_status=WATCH_STABLE watch_confidence=HIGH proposal_candidate=1
+runtime_budget_current_entry=execution_class=debug_full role=production_critical current_status=OK watch_status=CLEAR watch_confidence=HIGH proposal_candidate=0
+runtime_budget_current_entry=execution_class=asan_full role=diagnostic current_status=OK watch_status=CLEAR watch_confidence=HIGH proposal_candidate=0
+runtime_budget_current_entry=execution_class=policy_core role=operator current_status=OK watch_status=CLEAR watch_confidence=HIGH proposal_candidate=0
+runtime_budget_current_entry=execution_class=policy_refresh role=operator current_status=OK watch_status=CLEAR watch_confidence=HIGH proposal_candidate=0
+runtime_budget_current_entry=execution_class=policy_nightly role=operator current_status=OK watch_status=CLEAR watch_confidence=HIGH proposal_candidate=0

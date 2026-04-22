@@ -1,0 +1,148 @@
+analysis refresh verified
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_for_latest_failure
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_signature
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:pinned_primary_axis
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:next_probe_command
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:why_this_axis
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_for_latest_failure
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_attempt=attempt_034
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_session_id=orch_7c45965cfc0c
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_signature=attempt_034|orch_7c45965cfc0c|2026-04-11 22:07:40 KST|2,3,8
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:refresh_evidence.refreshed_after_failure_breakdown=true
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:refresh_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:refresh_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:freshness_record.refreshed_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:post_failure_refresh_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:current_for_latest_failure=yes
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:failed_attempt=attempt_034
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:current_failure_signature=attempt_034|orch_7c45965cfc0c|2026-04-11 22:07:40 KST|2,3,8
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:analysis_refresh_timestamp=2026-04-11 22:11:01 KST
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.current_for_latest_failure=yes
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.current_failure_attempt=attempt_034
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.current_failure_signature=attempt_034|orch_7c45965cfc0c|2026-04-11 22:07:40 KST|2,3,8
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.verification=refreshed analysis assets linked to latest failure
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.post_failure_timestamp=2026-04-11 22:11:01 KST
+analysis refresh verified
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_for_latest_failure
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_signature
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:pinned_primary_axis
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:next_probe_command
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:why_this_axis
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_for_latest_failure
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_attempt=attempt_034
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_session_id=orch_7c45965cfc0c
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:current_failure_signature=attempt_034|orch_7c45965cfc0c|2026-04-11 22:07:40 KST|2,3,8
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:refresh_evidence.refreshed_after_failure_breakdown=true
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:refresh_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:refresh_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:freshness_record.refreshed_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_state.json:post_failure_refresh_asset=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:current_for_latest_failure=yes
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:failed_attempt=attempt_034
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:current_failure_signature=attempt_034|orch_7c45965cfc0c|2026-04-11 22:07:40 KST|2,3,8
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/failure_analysis_iteration.md:analysis_refresh_timestamp=2026-04-11 22:11:01 KST
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.current_for_latest_failure=yes
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.current_failure_attempt=attempt_034
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.current_failure_signature=attempt_034|orch_7c45965cfc0c|2026-04-11 22:07:40 KST|2,3,8
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.verification=refreshed analysis assets linked to latest failure
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_session.md:analysis_session.post_failure_timestamp=2026-04-11 22:11:01 KST
+[2026-04-12 00:39:40 KST] attempt 36 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-12 03:06:48 KST] attempt 36 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_036_20260412_003940/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_036_20260412_003940/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-12 03:10:50 KST] attempt 36 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-04-12 03:43:04 KST] attempt 36 analysis round 1 workflow exited with code 1, but refreshed analysis assets verified; solver retry may continue
+[2026-04-12 03:43:04 KST] attempt 36 running next probe before solver retry
+[2026-04-12 03:43:32 KST] attempt 36 failed with exit code 1; failure decomposition recorded; retrying in 10 seconds
+[2026-04-12 03:43:42 KST] attempt 37 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-12 04:18:38 KST] attempt 37 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_037_20260412_034342/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_037_20260412_034342/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-12 04:24:42 KST] attempt 37 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-04-12 05:05:52 KST] attempt 37 analysis round 1 workflow exited with code 1, but refreshed analysis assets verified; solver retry may continue
+[2026-04-12 05:05:52 KST] attempt 37 running next probe before solver retry
+[2026-04-12 05:08:31 KST] attempt 37 failed with exit code 1; failure decomposition recorded; retrying in 10 seconds
+[2026-04-12 05:08:41 KST] attempt 38 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-12 08:14:43 KST] attempt 38 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_038_20260412_050841/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_038_20260412_050841/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-12 08:39:45 KST] attempt 38 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-04-12 10:29:45 KST] attempt 38 analysis round 1 workflow exited with code 1, but refreshed analysis assets verified; solver retry may continue
+[2026-04-12 10:29:45 KST] attempt 38 running next probe before solver retry
+[2026-04-12 10:30:23 KST] attempt 38 failed with exit code 1; failure decomposition recorded; retrying in 10 seconds
+[2026-04-12 10:30:33 KST] attempt 39 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-12 14:03:58 KST] attempt 39 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_039_20260412_103033/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_039_20260412_103033/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-12 14:10:30 KST] attempt 39 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-04-12 14:39:59 KST] attempt 39 analysis round 1 workflow exited with code 1, but refreshed analysis assets verified; solver retry may continue
+[2026-04-12 14:39:59 KST] attempt 39 running next probe before solver retry
+[2026-04-12 14:40:41 KST] attempt 39 failed with exit code 1; failure decomposition recorded; retrying in 10 seconds
+[2026-04-12 14:40:51 KST] attempt 40 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-12 16:41:29 KST] attempt 40 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_040_20260412_144051/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_040_20260412_144051/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-12 16:42:16 KST] attempt 40 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-04-12 17:44:46 KST] attempt 40 analysis round 1 workflow exited with code 1, but refreshed analysis assets verified; solver retry may continue
+[2026-04-12 17:44:46 KST] attempt 40 running next probe before solver retry
+[2026-04-12 17:45:26 KST] attempt 40 failed with exit code 1; failure decomposition recorded; retrying in 10 seconds
+[2026-04-12 17:45:36 KST] attempt 41 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-12 19:03:08 KST] attempt 41 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_041_20260412_174536/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_041_20260412_174536/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-12 19:10:58 KST] attempt 41 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-04-12 19:41:19 KST] attempt 41 analysis round 1 workflow exited with code 1, but refreshed analysis assets verified; solver retry may continue
+[2026-04-12 19:41:20 KST] attempt 41 running next probe before solver retry
+[2026-04-12 19:41:59 KST] attempt 41 failed with exit code 1; failure decomposition recorded; retrying in 10 seconds
+[2026-04-12 19:42:09 KST] attempt 42 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-12 21:49:36 KST] attempt 42 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-12 22:02:37 KST] attempt 42 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+[2026-04-12 22:59:29 KST] attempt 42 analysis round 1 workflow exited with code 1, but refreshed analysis assets verified; solver retry may continue
+[2026-04-12 22:59:29 KST] attempt 42 running next probe before solver retry
+[2026-04-12 23:00:24 KST] attempt 42 failed with exit code 1; failure decomposition recorded; retrying in 10 seconds
+[2026-04-12 23:00:34 KST] attempt 43 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
+[2026-04-13 00:06:38 KST] attempt 43 recorded a retryable intermediate acceptance failure (failed_acceptance_summary); starting analysis/refinement cycle
+failure report written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_043_20260412_230034/failure_report.md
+failure breakdown written: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_043_20260412_230034/failure_breakdown.md
+latest failure report updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_report.md
+latest failure breakdown updated: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_failure_breakdown.md
+[2026-04-13 00:15:09 KST] attempt 43 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+tee: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_043_20260412_230034/analysis_workflow_round_01.log: No space left on device
+[2026-04-13 00:17:31 KST] attempt 43 analysis round 1 did not produce a verified analysis refresh; retrying analysis in 10 seconds
+Traceback (most recent call last):
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/auto_remediate_retry_abort.py", line 945, in <module>
+    raise SystemExit(main())
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/auto_remediate_retry_abort.py", line 936, in main
+    _write_report(branch_root, report_root, artifact_guard, payload)
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/auto_remediate_retry_abort.py", line 137, in _write_report
+    write_text_output(json_path, json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/retry_artifact_io.py", line 107, in write_text_output
+    tmp_path.write_text(text, encoding=encoding)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1275, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors) as f:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+OSError: [Errno 28] No space left on device: '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/.latest_auto_remediation.json.tmp.67300.e2bf728632f743db94ae788b2987fbd4'
+[2026-04-13 00:17:31 KST] auto-remediation could not safely handle loop exit code 1; leaving retry loop stopped

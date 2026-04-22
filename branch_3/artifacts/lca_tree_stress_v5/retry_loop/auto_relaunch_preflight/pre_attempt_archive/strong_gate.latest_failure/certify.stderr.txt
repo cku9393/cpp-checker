@@ -1,0 +1,7 @@
+object address  : 0x103342cc0
+object refcount : 2
+object type     : 0x1027aca40
+object type name: OSError
+object repr     : OSError(28, 'No space left on device')
+lost sys.stderr
+Traceback (most recent call last):

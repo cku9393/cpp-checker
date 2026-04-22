@@ -1,0 +1,21 @@
+{
+  "phase": "phase42",
+  "published_snapshot_mode": true,
+  "regression_roots": [
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/regressions"
+  ],
+  "regression_files": [
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/regressions/split_choice_semantic_shift_state.txt",
+      "mtime_epoch": 1772961707.3852215,
+      "is_dir": false,
+      "size_bytes": 815
+    },
+    {
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/regressions/split_choice_oracle_reduced_state.txt",
+      "mtime_epoch": 1772945326.8088212,
+      "is_dir": false,
+      "size_bytes": 750
+    }
+  ]
+}

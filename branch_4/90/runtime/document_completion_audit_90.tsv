@@ -1,0 +1,50 @@
+metric	value
+audit_fingerprint	39|39|1|1|1|1|1
+required_doc_count	39
+existing_doc_count	39
+core_summary_ready	1
+shell_theorem_ready	1
+tail_pattern_ready	1
+artifact_completion_ready	1
+bridge_ready	1
+
+path	exists	nonempty
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/project_status_summary_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/boj_bridge_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent15_shell_theorem_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_outside_bounded_tail_pattern_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_tail_candidate_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_shell_tail_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_tail_obstruction_chain_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_authoritative_completion_lock_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/theorem_data_promotion_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/artifact_completion_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/document_completion_audit_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/general_schema_obstruction_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/general_schema_universe_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_rerun_completion_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support_plus_one_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_one_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/mixed_outside_bounded_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_two_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent5_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_three_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent6_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_four_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent7_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_five_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent8_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_six_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent9_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_seven_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent10_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_eight_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent11_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_nine_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent12_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_ten_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent13_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_eleven_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent14_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_twelve_frontier_notes_90.md	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent15_frontier_notes_90.md	1	1

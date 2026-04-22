@@ -1,0 +1,9 @@
+metric	value
+bridge_obligation_count	10
+satisfied_current_verified_obligations	1
+partially_satisfied_obligations	4
+shell16_dependent_obligations	3
+higher_support_dependent_obligations	1
+boj_constructivity_dependent_obligations	1
+top_unresolved_obligation	family_chain_lift_phase3_if_needed
+fingerprint	10|1|4|0|3|1|1|family_chain_lift_phase3_if_needed

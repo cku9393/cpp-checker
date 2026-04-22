@@ -1,0 +1,159 @@
+{
+  "manifest_version": "runtime_budget_refresh_v1",
+  "generated_at_utc": "2026-04-09T09:15:10Z",
+  "phase": "phase40",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase30.json",
+  "runtime_current_manifest_hash": "daca6d8c86fe93fa70c3e5485f1dc9322eca91f1883c84031bff1605530806ce",
+  "runtime_budget_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_budget_baseline_phase41_approved.json",
+  "runtime_budget_baseline_manifest_hash": "fef3be814219ccec85fa2e76b15c55efaf690a0ade446e4e4d092f83b133c26a",
+  "current_verdict": "PASS",
+  "freshness_verdict": "FRESH",
+  "comparability_verdict": "COMPARABLE",
+  "budget_verdict": "PASS",
+  "proposal_needed": false,
+  "selected_budget_profile_id": "phase41-runtime-budget-approved-profile",
+  "selected_budget_profile_tag": "phase41-runtime-budget-approved",
+  "warn_count": 0,
+  "fail_count": 0,
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "execution_role": "production_critical",
+      "current_status": "OK",
+      "budget_thresholds": {
+        "soft_seconds": 504.856,
+        "hard_seconds": 807.77,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "wall_time_sec": 458.96,
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 2,
+        "rebaseline_candidate_threshold": 4,
+        "max_bounded_jitter_percent": 12.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "rationale": "runtime remained within budget"
+    },
+    {
+      "execution_class": "debug_full",
+      "execution_role": "production_critical",
+      "current_status": "OK",
+      "budget_thresholds": {
+        "soft_seconds": 900.0,
+        "hard_seconds": 1800.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "wall_time_sec": 573.38,
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 2,
+        "rebaseline_candidate_threshold": 4,
+        "max_bounded_jitter_percent": 12.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "rationale": "runtime remained within budget"
+    },
+    {
+      "execution_class": "asan_full",
+      "execution_role": "diagnostic",
+      "current_status": "OK",
+      "budget_thresholds": {
+        "soft_seconds": 2400.0,
+        "hard_seconds": 4200.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "wall_time_sec": 2303.02,
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 20.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "rationale": "runtime remained within budget"
+    },
+    {
+      "execution_class": "policy_core",
+      "execution_role": "operator",
+      "current_status": "OK",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "wall_time_sec": 0.035,
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "rationale": "runtime remained within budget"
+    },
+    {
+      "execution_class": "policy_refresh",
+      "execution_role": "operator",
+      "current_status": "OK",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "wall_time_sec": 0.035,
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "rationale": "runtime remained within budget"
+    },
+    {
+      "execution_class": "policy_nightly",
+      "execution_role": "operator",
+      "current_status": "OK",
+      "budget_thresholds": {
+        "soft_seconds": 180.0,
+        "hard_seconds": 600.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.5,
+        "hard_delta_floor_sec": 1.0
+      },
+      "wall_time_sec": 0.045,
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "rationale": "runtime remained within budget"
+    }
+  ],
+  "refresh_hash": "235fb7689b1720d3a2791a7920fa1ff90697c81580de97f778c9c807f1ccd81c"
+}

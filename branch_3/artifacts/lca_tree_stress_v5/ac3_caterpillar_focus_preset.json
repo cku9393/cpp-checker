@@ -1,0 +1,30 @@
+{
+  "stages": [
+    {
+      "name": "caterpillar_focus",
+      "modes": [
+        "caterpillar_rect_dense"
+      ],
+      "sizes": [
+        1024
+      ],
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "shuffle_labels": [
+        0,
+        1
+      ],
+      "shuffle_queries": [
+        0,
+        1
+      ],
+      "timeout": 2.0,
+      "must_pass": true
+    }
+  ]
+}

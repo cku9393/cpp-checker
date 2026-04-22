@@ -1,0 +1,37 @@
+{
+  "command": [
+    "/usr/bin/clang++",
+    "-Ofast",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-ULOCAL",
+    "-pipe",
+    "-march=native",
+    "-flto=thin",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp",
+    "-o",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve"
+  ],
+  "compiler": "/usr/bin/clang++",
+  "cxx_env": "",
+  "defines": [],
+  "dependencies": [
+    {
+      "exists": true,
+      "path": "boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp",
+      "sha256": "91fab848ccbba929310bf221d1ef66d63c5c20943dfe38d6f6edebbb7f350615",
+      "size_bytes": 984658
+    },
+    {
+      "exists": true,
+      "path": "boj28350_resume/boj28350_branch_3_solver.cpp",
+      "sha256": "7252236384934e9e0aadcfa100e10a4d180c9ad4b73f30779fffc8867f7a273c",
+      "size_bytes": 1061457
+    }
+  ],
+  "output": "artifacts/boj28350_resume/build/solve",
+  "requested_compiler": "",
+  "schema": "boj28350_build_metadata_v2",
+  "source": "boj28350_resume/boj28350_branch_3_solver.cpp",
+  "static_mode": "auto"
+}

@@ -1,0 +1,33 @@
+kind	label	status	detail	artifact
+command	bash	ok	/bin/bash	-
+command	python3	ok	/usr/bin/python3	-
+command	mkdir	ok	/bin/mkdir	-
+command	mktemp	ok	/usr/bin/mktemp	-
+command	dirname	ok	/usr/bin/dirname	-
+command	chmod	ok	/bin/chmod	-
+command	cp	ok	/bin/cp	-
+command	mv	ok	/bin/mv	-
+command	rm	ok	/bin/rm	-
+command	rmdir	ok	/bin/rmdir	-
+command	kill	ok	kill	-
+command	tail	ok	/usr/bin/tail	-
+command	sleep	ok	/bin/sleep	-
+command	grep	ok	/usr/bin/grep	-
+command	sort	ok	/usr/bin/sort	-
+compiler	clang++	ok	/usr/bin/clang++	-
+directory	branch root directory	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3	-
+executable	launcher entrypoint	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh	-
+directory	outer suite wrappers directory	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers	-
+directory	resume workspace directory	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume	-
+executable	outer smoke wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/lca_smoke.sh	-
+file	release env wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh	-
+file	artifact resolver	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py	-
+file	branch-local case helper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py	-
+file	branch-local validator	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_validator_local.py	-
+file	build helper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.py	-
+file	resume helper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py	-
+file	solver source	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp	-
+file	smoke case manifest	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/smoke_cases.tsv	-
+executable	build wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh	-
+executable	smoke target wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_target.sh	-
+shell_syntax	smoke target wrapper syntax	broken	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_target.sh	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/smoke_target_wrapper_syntax.stderr.txt

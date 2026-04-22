@@ -1,0 +1,7 @@
+metric	value
+item_key	triple_family_expansion_theorem_data_53
+equality_rule	region-count + aggregate-count + consumer-visible triple theorem-data equality
+current_comparison_fingerprint	53|regions=35|raw=2110|canonical=2110|deduplicated=282|local=0|plus=0|theorem=0
+imported_comparison_fingerprint	53|regions=35|raw=2110|canonical=2110|deduplicated=282|local=0|plus=0|theorem=0
+imported_equality_result	counts_and_consumer_visible_fingerprint_equal
+rowset_note	legacy output 53 did not preserve a separate candidate row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality

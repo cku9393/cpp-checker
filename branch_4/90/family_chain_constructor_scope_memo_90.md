@@ -28,13 +28,16 @@
 - `ensure_triple_family_expansion_ready_fast_()`
   - loads validated triple-family theorem data and region summaries into current globals
 - `ensure_quadruple_family_expansion_ready_fast_()`
-  - loads validated quadruple theorem data into current globals
+  - builds or loads current-runtime quadruple theorem data 55 into current globals
 - `ensure_quintuple_family_expansion_ready_fast_()`
-  - fast path installs imported quintuple theorem data
-  - slow path can rebuild quintuple regions/candidates/current theorem totals
+  - current path now builds or loads current-runtime quintuple theorem data 57
+- `ensure_sextuple_family_expansion_ready_fast_()`
+  - current path now builds or loads current-runtime sextuple theorem data 57
+- `ensure_septuple_family_expansion_ready_fast_()`
+  - current path now builds or loads current-runtime septuple theorem data 57
 - `ensure_high_family_expansion_ready_fast_()`
-  - fast path installs imported sextuple/septuple/high-family theorem data
-  - slow path can rebuild sextuple + septuple expansions and aggregate them
+  - fast path still installs the imported high-family aggregate theorem data
+  - next target is to rebuild the high-family aggregate from current sextuple/septuple payloads
 
 relation to `family_chain_output_57`
 
@@ -79,22 +82,25 @@ what these constructors do
   - current pool fingerprint / pool size
   - current family summary set
   - current bounded region spec counts
-  - currently loaded triple/quadruple/quintuple/high-family theorem data
+  - current pair52 and triple53 constructor/cache outputs
+  - current quad55 constructor/cache output
+  - current quintuple57 constructor/cache output
+  - currently loaded high-family theorem data
 - therefore the theorem object layer is now current-constructed
-- lower triple-through-high layers remain validated imported inputs unless separately rederived
+- remaining 57 sublayers remain validated imported inputs unless separately rederived
 
 ## truthful provenance reading
 
 - `bounded family-chain theorem`
   - current constructor path: yes
-  - lower-layer inputs fully fresh: no
+  - lower-layer inputs fully fresh: partially; pair52, triple53, quad55, and quintuple57 are fresh, remaining 57 sublayers remain imported lower layers
 - `family-chain self verification`
   - current constructor path: yes
-  - lower-layer inputs fully fresh: no
+  - lower-layer inputs fully fresh: partially; pair52, triple53, quad55, and quintuple57 are fresh, remaining 57 sublayers remain imported lower layers
 - `exact minimal basis size = 96`
-  - unchanged, still validated import
+  - current-runtime exact basis payload constructor/cache path is fresh current-runtime generated
 - `antecedent plus twelve frontier` / `support8 antecedent15 frontier`
-  - unchanged, still validated import
+  - current-runtime shell15 frontier constructor/cache path is fresh current-runtime generated
 
 ## outcome criterion for this round
 

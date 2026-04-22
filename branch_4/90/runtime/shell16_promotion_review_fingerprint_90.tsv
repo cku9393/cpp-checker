@@ -1,0 +1,8 @@
+metric	value
+review_key	shell16_promotion_review
+promotion_candidate_count	8
+promoted_runtime_fact_count	5
+promoted_limited_bridge_lemma_count	2
+blocked_deferred_promotion_count	1
+next_action	family_chain_lift_map_refinement
+fingerprint	shell16_promotion_review|8|5|2|1|family_chain_lift_map_refinement

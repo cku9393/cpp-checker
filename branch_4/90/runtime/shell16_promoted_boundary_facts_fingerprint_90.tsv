@@ -1,0 +1,6 @@
+metric	value
+promoted_fact_rows	8
+current_verified_runtime_fact_count	5
+current_verified_limited_bridge_lemma_count	2
+reviewed_but_not_promoted_count	1
+fingerprint	shell16_promoted_boundary_facts|5|2|1|no_full_shell16_theorem

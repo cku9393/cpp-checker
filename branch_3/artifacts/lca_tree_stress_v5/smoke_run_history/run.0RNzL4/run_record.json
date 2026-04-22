@@ -1,0 +1,49 @@
+{
+  "artifacts": {
+    "diagnostics_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.0RNzL4/diagnostics_manifest.tsv",
+    "iteration_evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.0RNzL4/iteration_evidence.txt",
+    "published_smoke_diagnostics_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/diagnostics_manifest.tsv",
+    "published_smoke_iteration_evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/iteration_evidence.txt",
+    "published_smoke_run_comparison_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/run_comparison.json",
+    "published_smoke_run_record_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/run_record.json",
+    "published_smoke_status_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/status_report.md",
+    "published_smoke_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt",
+    "run_archive_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.0RNzL4",
+    "run_console_stderr_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.0RNzL4/console.stderr.txt",
+    "status_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.0RNzL4/latest_status_report.md",
+    "status_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/summary.txt"
+  },
+  "comparison": {
+    "changed_fields": [
+      "public_status",
+      "result_family",
+      "normalized_outcome",
+      "stage_label",
+      "source_failure_case"
+    ],
+    "previous_normalized_outcome": "pass",
+    "previous_run_archive_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.5oEdvs",
+    "previous_run_id": "run.5oEdvs",
+    "previous_source_failure_case": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.5oEdvs/iteration_evidence.txt",
+    "previous_stage_label": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.5oEdvs/summary.txt",
+    "summary": "changed public_status,result_family,normalized_outcome,stage_label,source_failure_case relative to previous run run.5oEdvs"
+  },
+  "required_standard": "lca_tree_stress_v5",
+  "run": {
+    "elapsed_seconds": 18,
+    "finished_at_utc": "2026-04-10T04:16:23Z",
+    "id": "run.0RNzL4",
+    "normalized_exit_code": 70,
+    "normalized_outcome": "harness_infrastructure_failure",
+    "outcome_source": "inner_wrapper",
+    "public_status": "FAIL",
+    "raw_exit_code": 70,
+    "result_family": "harness",
+    "source_failure_case": "",
+    "source_failure_kind": "",
+    "stage_label": "inner_wrapper_bundle_validation:bundle_validation",
+    "started_at_utc": "2026-04-10T04:16:05Z"
+  },
+  "schema": "lca_smoke_run_record_v1",
+  "script": "./lca_smoke.sh"
+}

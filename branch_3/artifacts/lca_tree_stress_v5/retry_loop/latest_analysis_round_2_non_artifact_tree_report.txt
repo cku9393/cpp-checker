@@ -1,0 +1,15 @@
+status=modified_only_warning
+schema=branch_non_artifact_tree_state_v1
+branch_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3
+artifacts_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts
+baseline_state=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_030_20260411_061734/.workflow_output_locality/analysis_round_2/non_artifact_tree_baseline.json
+current_state=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_030_20260411_061734/.workflow_output_locality/analysis_round_2/non_artifact_tree_current.json
+created_count=0
+created_warning_count=0
+modified_count=3
+removed_warning_count=0
+removed_count=0
+[modified_warning]
+.ouroboros/capture_failure_context.py
+.ouroboros/failure_analysis_playbook.md
+.ouroboros/failure_analysis_state.json

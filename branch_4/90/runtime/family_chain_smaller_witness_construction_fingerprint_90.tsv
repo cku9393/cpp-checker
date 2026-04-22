@@ -1,0 +1,7 @@
+metric	value
+construction_count	10
+conditional_proved_constructions	2
+proof_sketch_constructions	5
+blocked_constructions	1
+classified_escape_constructions	1
+final_status	smaller_witness_construction_proof_ready_but_operation_blocked

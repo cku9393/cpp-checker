@@ -47,13 +47,15 @@ string hash_file_set(const filesystem::path& sourceRoot, const vector<filesystem
     for (const filesystem::path& relPath : relPaths) {
         const filesystem::path fullPath = sourceRoot / relPath;
         oss << relPath.generic_string() << '\n';
-        ifstream ifs(fullPath, ios::binary);
-        if (!ifs) {
+        std::error_code ec;
+        const bool exists = filesystem::exists(fullPath, ec);
+        if (ec || !exists) {
             oss << "<missing>\n";
             continue;
         }
         anyExisting = true;
-        oss << ifs.rdbuf() << '\n';
+        const auto size = filesystem::file_size(fullPath, ec);
+        oss << "size=" << (ec ? static_cast<uintmax_t>(0) : size) << '\n';
     }
     if (!anyExisting) {
         oss << "<no-existing-files>\n";

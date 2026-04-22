@@ -1,0 +1,12 @@
+metric	value
+tail_bridge_obligation_count	10
+current_verified_count	2
+derivable_now_count	1
+proof_sketch_ready_count	3
+blocked_count	3
+needs_shell16_preflight_count	0
+closed_for_limited_theorem_count	1
+checked_tail_absorption_status	checked_tail_absorption_proved
+shell16_boundary_status	closed_for_limited_bridge_theorem
+top_unresolved_obligation	family_chain_lift_map_refinement
+fingerprint	10|2|1|3|3|0|1|checked_tail_absorption_proved|closed_for_limited_bridge_theorem|family_chain_lift_map_refinement

@@ -1,0 +1,48 @@
+PHASE43 STABILIZATION REPORT 2026-04-20
+
+Scope
+- Phase43 adds current-env due scheduling and a unified ops agenda on top of the phase42 post-approval guardrail.
+- No src primitive/planner semantics were changed.
+- Production split-choice policy remains exact_shadow.
+
+Design
+- runtime_current_env_due_phase43.json records monitoring/reproposal due state, next due kind/time, recommended current-env action, and runnable command.
+- policy_ops_agenda_phase43.json merges current_env, approved_known_env, foreign_env, and publication actions without conflating their lifecycles.
+- policy_ops_summary_phase43.json is ops summary v9 and includes current_env_due plus ops_agenda sections.
+
+Synthetic Time Travel
+- 2026-04-15T09:15:10Z: CURRENT_ENV_APPROVAL_GRACE / NO_ACTION.
+- 2026-04-21T09:15:10Z: CURRENT_ENV_MONITORING_DUE_SOON / PREPARE_MONITORING.
+- 2026-04-23T09:15:10Z: monitoring DUE / RUN_CURRENT_ENV_WATCH_CAMPAIGN.
+- 2026-04-30T09:15:10Z: reproposal DUE / RUN_CURRENT_ENV_REPROPOSAL_GATE.
+- 2026-05-02T09:15:10Z: overdue reproposal remains RUN_CURRENT_ENV_REPROPOSAL_GATE.
+
+Verification Notes
+- Python tool syntax passed for runtime_watch_ops.py and build_evidence_bundle.py.
+- Phase43 due scheduler, reproposal plan, ops agenda, and ops summary v9 artifacts were generated under artifacts/manifests.
+- Evidence bundle root was generated at artifacts/phase43_evidence_bundle_published and contains current_env_due_summary, current_env_reproposal_plan_summary, and ops_agenda_summary.
+- Full, curated, light ops, and delivery zips were generated with a /tmp zip workaround after build_evidence_bundle.py completed metadata/published-root generation but blocked during root zip emission.
+- corpus_replay_smoke passed with the existing hydrated release binary and isolated artifact dir /tmp/raw_engine_phase43_corpus.
+- Full C++ verification was completed from the non-iCloud staged clone at /tmp/cpp-checker-phase43/branch_2-1/raw_engine_v1_package after overlaying the authoritative phase43 source edits.
+- Release full CTest: 356/356 PASS, 0 FAIL, total real time 651.35 sec.
+- Debug full CTest: 356/356 PASS, 0 FAIL, total real time 1129.77 sec.
+- ASan/UBSan full CTest: 356/356 PASS, 0 FAIL, total real time 1823.57 sec.
+- Machine-readable full CTest summary was written to artifacts/manifests/verification_phase43_full_ctest.json and copied into the published bundle manifests.
+- The staged clone path remains the required verification route for iCloud-backed authoritative trees; direct long builds from authoritative iCloud storage are intentionally avoided.
+
+Semantic Counterexamples
+- None observed.
+
+Regression List
+- Added runtime_current_env_due_scheduler_smoke.
+- Added runtime_current_env_time_travel_due_now_smoke.
+- Added runtime_current_env_plan_reproposal_smoke.
+- Added policy_ops_agenda_smoke.
+- Added policy_ops_summary_v9_smoke.
+- Added evidence_bundle_current_env_due_timeline_smoke.
+
+Final Policy Judgment
+- exact_shadow remains the production split-choice policy.
+
+Remaining Risk
+- The remaining operational risk is iCloud/APFS dataless source hydration in the authoritative tree. Verification is complete via staged clone, but direct authoritative-tree long build/test remains intentionally unsupported.

@@ -1,0 +1,92 @@
+{
+  "manifest_version": "runtime_current_env_watch_plan_v1",
+  "phase": "phase44",
+  "generated_at_utc": "2026-04-20T12:56:17Z",
+  "guardrail_policy_id": "phase44-current-env-guardrail",
+  "plan_verdict": "ACTION_REQUIRED",
+  "entry_count": 6,
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "current_state": "CURRENT_ENV_WATCH_STABLE",
+      "next_check_due_at": "2026-04-23T09:15:10Z",
+      "overdue_days": 0.0,
+      "recommended_repeat_count": 5,
+      "minimum_real_samples": 5,
+      "target_runner_label": null,
+      "target_host_label": null,
+      "recommended_command": "./raw_engine_tests --case runtime_watch_campaign --execution-class release_full --repeat 5",
+      "reason": "repeat same-fingerprint release_full watch to confirm whether drift remains bounded",
+      "priority": "MEDIUM"
+    },
+    {
+      "execution_class": "debug_full",
+      "current_state": "CURRENT_ENV_CLEAR",
+      "next_check_due_at": null,
+      "overdue_days": 0.0,
+      "recommended_repeat_count": 1,
+      "minimum_real_samples": 1,
+      "target_runner_label": null,
+      "target_host_label": null,
+      "recommended_command": "./raw_engine_tests --case runtime_watch_campaign --execution-class debug_full --repeat 1",
+      "reason": "keep diagnostic guard execution class aligned with current env drift monitoring",
+      "priority": "LOW"
+    },
+    {
+      "execution_class": "asan_full",
+      "current_state": "CURRENT_ENV_CLEAR",
+      "next_check_due_at": null,
+      "overdue_days": 0.0,
+      "recommended_repeat_count": 1,
+      "minimum_real_samples": 1,
+      "target_runner_label": null,
+      "target_host_label": null,
+      "recommended_command": "./raw_engine_tests --case runtime_watch_campaign --execution-class asan_full --repeat 1",
+      "reason": "keep diagnostic guard execution class aligned with current env drift monitoring",
+      "priority": "LOW"
+    },
+    {
+      "execution_class": "policy_core",
+      "current_state": "CURRENT_ENV_CLEAR",
+      "next_check_due_at": null,
+      "overdue_days": 0.0,
+      "recommended_repeat_count": 1,
+      "minimum_real_samples": 1,
+      "target_runner_label": null,
+      "target_host_label": null,
+      "recommended_command": "./raw_engine_tests --case runtime_watch_campaign --execution-class policy_core --repeat 1",
+      "reason": "monitor current env drift guardrail",
+      "priority": "LOW"
+    },
+    {
+      "execution_class": "policy_refresh",
+      "current_state": "CURRENT_ENV_CLEAR",
+      "next_check_due_at": null,
+      "overdue_days": 0.0,
+      "recommended_repeat_count": 1,
+      "minimum_real_samples": 1,
+      "target_runner_label": null,
+      "target_host_label": null,
+      "recommended_command": "./raw_engine_tests --case runtime_watch_campaign --execution-class policy_refresh --repeat 1",
+      "reason": "monitor current env drift guardrail",
+      "priority": "LOW"
+    },
+    {
+      "execution_class": "policy_nightly",
+      "current_state": "CURRENT_ENV_CLEAR",
+      "next_check_due_at": null,
+      "overdue_days": 0.0,
+      "recommended_repeat_count": 1,
+      "minimum_real_samples": 1,
+      "target_runner_label": null,
+      "target_host_label": null,
+      "recommended_command": "./raw_engine_tests --case runtime_watch_campaign --execution-class policy_nightly --repeat 1",
+      "reason": "monitor current env drift guardrail",
+      "priority": "LOW"
+    }
+  ],
+  "current_env_state": "CURRENT_ENV_WATCH_STABLE",
+  "next_due_at": "2026-04-23T09:15:10Z",
+  "overall_overdue_days": 0.0,
+  "watch_plan_hash": "8ce5d074eb2373fcb4c5dde2844eea0ef3e5df9031d4c45e1f776e41984d13eb"
+}

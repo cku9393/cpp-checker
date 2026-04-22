@@ -1,0 +1,968 @@
+{
+  "manifest_version": "staged_mirror_manifest_v1",
+  "generated_at_utc": "2026-04-08T09:37:13Z",
+  "source_snapshot_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/source_snapshot_manifest_phase39.json",
+  "source_snapshot_hash": "fcc0de94a28cb6e0210443d0e238b83157a9481fd7c8bd55ea96895c8e2632bf",
+  "source_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package",
+  "staged_root": "/private/tmp/raw_engine_phase39_stage",
+  "copied_file_count": 102,
+  "missing_file_count": 0,
+  "hash_mismatch_count": 0,
+  "materialize_verdict": "PASS",
+  "pass_through_entries": [
+    "artifacts",
+    "counterexamples",
+    "PHASE10_STABILIZATION_REPORT_20260308.txt",
+    "PHASE11_STABILIZATION_REPORT_20260308.txt",
+    "PHASE12_STABILIZATION_REPORT_20260309.txt",
+    "PHASE13_STABILIZATION_REPORT_20260309.txt",
+    "PHASE14_STABILIZATION_REPORT_20260310.txt",
+    "PHASE15_STABILIZATION_REPORT_20260310.txt",
+    "PHASE16_STABILIZATION_REPORT_20260319 2.txt",
+    "PHASE16_STABILIZATION_REPORT_20260319.txt",
+    "PHASE17_STABILIZATION_REPORT_20260319.txt",
+    "PHASE18_STABILIZATION_REPORT_20260319 2.txt",
+    "PHASE18_STABILIZATION_REPORT_20260319.txt",
+    "PHASE19_STABILIZATION_REPORT_20260320.txt",
+    "PHASE20_STABILIZATION_REPORT_20260320.txt",
+    "PHASE21_STABILIZATION_REPORT_20260322.txt",
+    "PHASE22_STABILIZATION_REPORT_20260322.txt",
+    "PHASE23_STABILIZATION_REPORT_20260322.txt",
+    "PHASE24_STABILIZATION_REPORT_20260322.txt",
+    "PHASE25_STABILIZATION_REPORT_20260322.txt",
+    "PHASE26_STABILIZATION_REPORT_20260323.txt",
+    "PHASE27_STABILIZATION_REPORT.txt",
+    "PHASE27_STABILIZATION_REPORT_20260323.txt",
+    "PHASE28_STABILIZATION_REPORT.txt",
+    "PHASE28_STABILIZATION_REPORT_20260324.txt",
+    "PHASE29_STABILIZATION_REPORT_20260330.txt",
+    "PHASE30_STABILIZATION_REPORT_20260331.txt",
+    "PHASE31_STABILIZATION_REPORT_20260331.txt",
+    "PHASE31_STABILIZATION_REPORT_FINAL_20260331.txt",
+    "PHASE32_STABILIZATION_REPORT_20260401.txt",
+    "PHASE33_STABILIZATION_REPORT.txt",
+    "PHASE33_STABILIZATION_REPORT_20260401.txt",
+    "PHASE34_STABILIZATION_REPORT_20260405.txt",
+    "PHASE35_STABILIZATION_REPORT_20260405.txt",
+    "PHASE36_STABILIZATION_REPORT_20260406.txt",
+    "PHASE37_STABILIZATION_REPORT_20260407.txt",
+    "PHASE38_STABILIZATION_REPORT_20260407.txt",
+    "raw_engine_phase10_artifacts_20260308.zip",
+    "raw_engine_phase11_artifacts_20260308.zip",
+    "raw_engine_phase12_artifacts_20260309.zip",
+    "raw_engine_phase13_artifacts_20260309_v2.zip",
+    "raw_engine_phase14_artifacts_20260310.zip",
+    "raw_engine_phase15_artifacts_20260310.zip",
+    "raw_engine_phase16_artifacts_20260319.zip",
+    "raw_engine_phase16_deliverables_20260319_bundle.zip",
+    "raw_engine_phase16_stabilization_20260319.zip",
+    "raw_engine_phase16_stabilization_curated_20260319_r2.zip",
+    "raw_engine_phase16_stabilization_final_20260319_r2.zip",
+    "raw_engine_phase17_stabilization_20260319.zip",
+    "raw_engine_phase18_stabilization_20260319.zip",
+    "raw_engine_phase18_stabilization_curated_20260319.zip",
+    "raw_engine_phase19_stabilization_20260320.zip",
+    "raw_engine_phase19_stabilization_curated_20260320.zip",
+    "raw_engine_phase20_stabilization_20260320.zip",
+    "raw_engine_phase20_stabilization_curated_20260320.zip",
+    "raw_engine_phase21_stabilization_20260322.zip",
+    "raw_engine_phase21_stabilization_curated_20260322.zip",
+    "raw_engine_phase22_delivery_20260322.zip",
+    "raw_engine_phase22_stabilization_20260322.zip",
+    "raw_engine_phase22_stabilization_curated_20260322.zip",
+    "raw_engine_phase22_stabilization_delivery_20260322.zip",
+    "raw_engine_phase23_stabilization_20260322.zip",
+    "raw_engine_phase23_stabilization_curated_20260322.zip",
+    "raw_engine_phase23_stabilization_delivery_20260322.zip",
+    "raw_engine_phase24_stabilization_20260322.zip",
+    "raw_engine_phase24_stabilization_curated_20260322.zip",
+    "raw_engine_phase24_stabilization_delivery_20260322.zip",
+    "raw_engine_phase25_stabilization_20260322.zip",
+    "raw_engine_phase25_stabilization_curated_20260322.zip",
+    "raw_engine_phase25_stabilization_delivery_20260322.zip",
+    "raw_engine_phase26_stabilization.zip",
+    "raw_engine_phase26_stabilization_20260323.zip",
+    "raw_engine_phase26_stabilization_curated.zip",
+    "raw_engine_phase26_stabilization_curated_20260323.zip",
+    "raw_engine_phase26_stabilization_delivery.zip",
+    "raw_engine_phase26_stabilization_delivery_20260323.zip",
+    "raw_engine_phase27_stabilization.zip",
+    "raw_engine_phase27_stabilization_20260323.zip",
+    "raw_engine_phase27_stabilization_curated.zip",
+    "raw_engine_phase27_stabilization_curated_20260323.zip",
+    "raw_engine_phase27_stabilization_delivery.zip",
+    "raw_engine_phase27_stabilization_delivery_20260323.zip",
+    "raw_engine_phase28_stabilization.zip",
+    "raw_engine_phase28_stabilization_20260324.zip",
+    "raw_engine_phase28_stabilization_curated.zip",
+    "raw_engine_phase28_stabilization_curated_20260324.zip",
+    "raw_engine_phase28_stabilization_delivery.zip",
+    "raw_engine_phase28_stabilization_delivery_20260324.zip",
+    "raw_engine_phase29_stabilization_20260330.zip",
+    "raw_engine_phase29_stabilization_curated_20260330.zip",
+    "raw_engine_phase29_stabilization_delivery_20260330.zip",
+    "raw_engine_phase30_ops_light_20260331.zip",
+    "raw_engine_phase30_stabilization_20260331.zip",
+    "raw_engine_phase30_stabilization_curated_20260331.zip",
+    "raw_engine_phase30_stabilization_delivery_20260331.zip",
+    "raw_engine_phase31_ops_light_20260401.zip",
+    "raw_engine_phase31_stabilization_20260401.zip",
+    "raw_engine_phase31_stabilization_curated_20260401.zip",
+    "raw_engine_phase31_stabilization_delivery_20260401.zip",
+    "raw_engine_phase32_ops_light_20260401.zip",
+    "raw_engine_phase32_stabilization_20260401.zip",
+    "raw_engine_phase32_stabilization_curated_20260401.zip",
+    "raw_engine_phase32_stabilization_delivery_20260401.zip",
+    "raw_engine_phase33_ops_light.zip",
+    "raw_engine_phase33_ops_light_20260401.zip",
+    "raw_engine_phase33_stabilization.zip",
+    "raw_engine_phase33_stabilization_20260401.zip",
+    "raw_engine_phase33_stabilization_curated.zip",
+    "raw_engine_phase33_stabilization_curated_20260401.zip",
+    "raw_engine_phase33_stabilization_delivery.zip",
+    "raw_engine_phase33_stabilization_delivery_20260401.zip",
+    "raw_engine_phase34_ops_light_20260405.zip",
+    "raw_engine_phase34_stabilization_20260405.zip",
+    "raw_engine_phase34_stabilization_curated_20260405.zip",
+    "raw_engine_phase34_stabilization_delivery_20260405.zip",
+    "raw_engine_phase35_ops_light_20260405.zip",
+    "raw_engine_phase35_stabilization_20260405.zip",
+    "raw_engine_phase35_stabilization_curated_20260405.zip",
+    "raw_engine_phase35_stabilization_delivery_20260405.zip",
+    "raw_engine_phase36_ops_light_20260406.zip",
+    "raw_engine_phase36_stabilization_20260406.zip",
+    "raw_engine_phase36_stabilization_curated_20260406.zip",
+    "raw_engine_phase36_stabilization_delivery_20260406.zip",
+    "raw_engine_phase37_ops_light_20260407.zip",
+    "raw_engine_phase37_stabilization_20260407.zip",
+    "raw_engine_phase37_stabilization_curated_20260407.zip",
+    "raw_engine_phase37_stabilization_delivery_20260407.zip",
+    "raw_engine_phase38_ops_light_20260407.zip",
+    "raw_engine_phase38_stabilization_20260407.zip",
+    "raw_engine_phase38_stabilization_curated_20260407.zip",
+    "raw_engine_phase38_stabilization_delivery_20260407.zip",
+    "raw_engine_phase5_artifacts_20260307.zip",
+    "raw_engine_phase6_artifacts_20260308.zip",
+    "raw_engine_phase7_artifacts_20260308.zip",
+    "raw_engine_phase8_artifacts_20260308.zip",
+    "raw_engine_phase9_artifacts_20260308.zip"
+  ],
+  "entries": [
+    {
+      "relative_path": "CMakeLists.txt",
+      "materialization_mode": "synthetic_bootstrap",
+      "copy_verdict": "synthetic_bootstrap",
+      "staged_exists": true,
+      "expected_sha256": "26d147d7bcd595ec826192aa6ff8bca8c98253aa2eee945aa6c1d8b9dcb9b3a9",
+      "staged_sha256": "26d147d7bcd595ec826192aa6ff8bca8c98253aa2eee945aa6c1d8b9dcb9b3a9"
+    },
+    {
+      "relative_path": "README.md",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "dbb47cc71629ec80ab73745cdbd970c7697271cfff2c31cb1585c6406afb3ec0",
+      "staged_sha256": "dbb47cc71629ec80ab73745cdbd970c7697271cfff2c31cb1585c6406afb3ec0"
+    },
+    {
+      "relative_path": "include/raw_engine/raw_engine.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "e087908b8e62dddf52ebdc26a3535e5c60e9aae4bcda5b40bd27f00d5748c821",
+      "staged_sha256": "e087908b8e62dddf52ebdc26a3535e5c60e9aae4bcda5b40bd27f00d5748c821"
+    },
+    {
+      "relative_path": "src/CMakeLists.txt",
+      "materialization_mode": "synthetic_src_bootstrap",
+      "copy_verdict": "synthetic_src_bootstrap",
+      "staged_exists": true,
+      "expected_sha256": "f89b27c4b276bcc13b42261496dcdb018d1a38736101ce5f52b933ed8c1ac11f",
+      "staged_sha256": "f89b27c4b276bcc13b42261496dcdb018d1a38736101ce5f52b933ed8c1ac11f"
+    },
+    {
+      "relative_path": "src/raw_core.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "73269cfe8b7f26299980af8507bb25d8e94a455447eebd0033173ecfc84de57e",
+      "staged_sha256": "73269cfe8b7f26299980af8507bb25d8e94a455447eebd0033173ecfc84de57e"
+    },
+    {
+      "relative_path": "src/raw_planner.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "c5178eba0da17d6ffabaf55c22c023d0c5c7ff73be162dcdc0e926cc55389205",
+      "staged_sha256": "c5178eba0da17d6ffabaf55c22c023d0c5c7ff73be162dcdc0e926cc55389205"
+    },
+    {
+      "relative_path": "src/raw_primitives.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "fd153fce01f2305cd4414aa39f2688bf3e3de9607429f5b8fe10a4769c79dc1e",
+      "staged_sha256": "fd153fce01f2305cd4414aa39f2688bf3e3de9607429f5b8fe10a4769c79dc1e"
+    },
+    {
+      "relative_path": "src/raw_validators.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "ebacc9b8049a15285765cf58bb798d336d21c49a3cb5ce773a7f323cf9d82748",
+      "staged_sha256": "ebacc9b8049a15285765cf58bb798d336d21c49a3cb5ce773a7f323cf9d82748"
+    },
+    {
+      "relative_path": "tests/CMakeLists.txt",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "ea4192c9462c3eab337d81a134a55085e930100170c5176c66f02a10d489769a",
+      "staged_sha256": "ea4192c9462c3eab337d81a134a55085e930100170c5176c66f02a10d489769a"
+    },
+    {
+      "relative_path": "tests/campaigns/phase14_automorphism_probe.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "c27a0798f65a84b108657aa0cb566d71e193c3dcfa74212659c76dcc08dab900",
+      "staged_sha256": "c27a0798f65a84b108657aa0cb566d71e193c3dcfa74212659c76dcc08dab900"
+    },
+    {
+      "relative_path": "tests/campaigns/phase14_checkpoint_smoke.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "1a4b9359c7284a8698963a1e9b4fd386f61a570151a831e8022904e7f90de588",
+      "staged_sha256": "1a4b9359c7284a8698963a1e9b4fd386f61a570151a831e8022904e7f90de588"
+    },
+    {
+      "relative_path": "tests/campaigns/phase14_planner_tie_organic.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "c3c4427bd5c07582508feabd8352af5b2ae3563b5d6809d6053b458bbdd9106b",
+      "staged_sha256": "c3c4427bd5c07582508feabd8352af5b2ae3563b5d6809d6053b458bbdd9106b"
+    },
+    {
+      "relative_path": "tests/campaigns/phase14_resume_smoke.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "f4f4749152f2ff3b37e2c554dd5c4e50ca37a3a6983bcde8fddb949d43d62fd7",
+      "staged_sha256": "f4f4749152f2ff3b37e2c554dd5c4e50ca37a3a6983bcde8fddb949d43d62fd7"
+    },
+    {
+      "relative_path": "tests/campaigns/phase14_split_tie_organic.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "ac6f66f5d8e2d23ce83cf90006ca97a3b29e682561c104a1a8f5d96874d4121e",
+      "staged_sha256": "ac6f66f5d8e2d23ce83cf90006ca97a3b29e682561c104a1a8f5d96874d4121e"
+    },
+    {
+      "relative_path": "tests/campaigns/phase15_automorphism_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "60c1990bf52dee020103b9c92e81ee7224f90d707eedd220551794195e7ddf49",
+      "staged_sha256": "60c1990bf52dee020103b9c92e81ee7224f90d707eedd220551794195e7ddf49"
+    },
+    {
+      "relative_path": "tests/campaigns/phase15_checkpoint_smoke.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "f3236fbcc927bc43f02de601c7ae486568532bcd84c896e1f0c0372479e5647f",
+      "staged_sha256": "f3236fbcc927bc43f02de601c7ae486568532bcd84c896e1f0c0372479e5647f"
+    },
+    {
+      "relative_path": "tests/campaigns/phase15_planner_tie_organic_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "778761e39b08467d3be444d7ac755f8a058dc2dabcfff478bb97bcf7dae9da9d",
+      "staged_sha256": "778761e39b08467d3be444d7ac755f8a058dc2dabcfff478bb97bcf7dae9da9d"
+    },
+    {
+      "relative_path": "tests/campaigns/phase15_resume_smoke.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "a3f9a4925049fad81a43f2daa4baa7cecdafe39cc03e0a58373491a412e37579",
+      "staged_sha256": "a3f9a4925049fad81a43f2daa4baa7cecdafe39cc03e0a58373491a412e37579"
+    },
+    {
+      "relative_path": "tests/campaigns/phase15_split_tie_organic_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "08c5dfe1d2112381daa579989cc2719a444c4dc6ebabfc121091919263912306",
+      "staged_sha256": "08c5dfe1d2112381daa579989cc2719a444c4dc6ebabfc121091919263912306"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_automorphism_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "fb0a75d53458025e81f9c996184d1d81422a1589db8f5c7e85dd03993750d236",
+      "staged_sha256": "fb0a75d53458025e81f9c996184d1d81422a1589db8f5c7e85dd03993750d236"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_automorphism_compare_final_20260319.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "af6d0f666b7ba197fba763dcc6a5d2adf459f1ee6ab7b56e18901b8356dc21d1",
+      "staged_sha256": "af6d0f666b7ba197fba763dcc6a5d2adf459f1ee6ab7b56e18901b8356dc21d1"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_automorphism_compare_rerun.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "f5cbdd3e5e5237edd4c3acc3552ee4e389d001dde2371bf49dda91d85f20efbc",
+      "staged_sha256": "f5cbdd3e5e5237edd4c3acc3552ee4e389d001dde2371bf49dda91d85f20efbc"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_planner_tie_compare_ready.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "4be7c43e89626ec20876cf2641180199e17696574c48f5a070b411c017fbf8e9",
+      "staged_sha256": "4be7c43e89626ec20876cf2641180199e17696574c48f5a070b411c017fbf8e9"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_planner_tie_compare_ready_final_20260319.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "2416185ae27c5e5c7215f9dedb7f417da38be6d79033f0c60f060ce93706ef40",
+      "staged_sha256": "2416185ae27c5e5c7215f9dedb7f417da38be6d79033f0c60f060ce93706ef40"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_planner_tie_compare_ready_rerun.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "3eb287229d6d706a1ca5c5ad0dc675aedeb8574447c2e779e2f2afd558063aad",
+      "staged_sha256": "3eb287229d6d706a1ca5c5ad0dc675aedeb8574447c2e779e2f2afd558063aad"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_planner_tie_gap_probe.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "8bfb100a972cf52adb8c6b48b0f7341dc20bf80e30f080ed241880ad7738a6de",
+      "staged_sha256": "8bfb100a972cf52adb8c6b48b0f7341dc20bf80e30f080ed241880ad7738a6de"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_planner_tie_gap_probe_final_20260319.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "e2322f54eae6d4af979a05af75d7ff36c2ce72d0201f82a80a56f8e12ddc44e3",
+      "staged_sha256": "e2322f54eae6d4af979a05af75d7ff36c2ce72d0201f82a80a56f8e12ddc44e3"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_resume_gate_smoke.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "662be7f329e364ad42129dc0a9ae34341e7d5cbef6b05bf2dcdc3ed972ac362e",
+      "staged_sha256": "662be7f329e364ad42129dc0a9ae34341e7d5cbef6b05bf2dcdc3ed972ac362e"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_split_tie_organic_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "438386f948a6fc7271412d879d2bc18acffa66fa37015d0e506d51dd3aca738a",
+      "staged_sha256": "438386f948a6fc7271412d879d2bc18acffa66fa37015d0e506d51dd3aca738a"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_split_tie_organic_compare_final_20260319.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "ce78bbead521df678a5d3f9a03bac817a73355c7edd728826a3d3242957d8402",
+      "staged_sha256": "ce78bbead521df678a5d3f9a03bac817a73355c7edd728826a3d3242957d8402"
+    },
+    {
+      "relative_path": "tests/campaigns/phase16_split_tie_organic_compare_rerun.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "1704367a631dbbb985b302bdb40994679cbdfaa1cae31426dd508b6c58f0b86f",
+      "staged_sha256": "1704367a631dbbb985b302bdb40994679cbdfaa1cae31426dd508b6c58f0b86f"
+    },
+    {
+      "relative_path": "tests/campaigns/phase17_automorphism_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "76d1144170bab8454361e0cf06dd5192e01c226a7a101500aa177a2030a7bbce",
+      "staged_sha256": "76d1144170bab8454361e0cf06dd5192e01c226a7a101500aa177a2030a7bbce"
+    },
+    {
+      "relative_path": "tests/campaigns/phase17_planner_tie_compare_ready.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "69bf7fec0bf218cd689467610a7e59311f505e3f69c1ab1bb7caaa8793d81f79",
+      "staged_sha256": "69bf7fec0bf218cd689467610a7e59311f505e3f69c1ab1bb7caaa8793d81f79"
+    },
+    {
+      "relative_path": "tests/campaigns/phase17_planner_tie_gap_audit.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "a5a1f4fd4181df0b172e2dca3f811a1e650536ae154e4877fc33b2aa002630b2",
+      "staged_sha256": "a5a1f4fd4181df0b172e2dca3f811a1e650536ae154e4877fc33b2aa002630b2"
+    },
+    {
+      "relative_path": "tests/campaigns/phase17_split_tie_organic_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "dc53529fe52de7449ebfe600429ac562aa03e918bd253cab820526ec8a849b4b",
+      "staged_sha256": "dc53529fe52de7449ebfe600429ac562aa03e918bd253cab820526ec8a849b4b"
+    },
+    {
+      "relative_path": "tests/campaigns/phase21_automorphism_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "20f0d1b1d0b4241ec8938124775b3071ddb87321d3dd229c85c1af612aab974d",
+      "staged_sha256": "20f0d1b1d0b4241ec8938124775b3071ddb87321d3dd229c85c1af612aab974d"
+    },
+    {
+      "relative_path": "tests/campaigns/phase21_split_tie_organic_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "ea48bd99d09232127dc7a820e37edf539d802d564084e9bb9d72a2990e0ff1b9",
+      "staged_sha256": "ea48bd99d09232127dc7a820e37edf539d802d564084e9bb9d72a2990e0ff1b9"
+    },
+    {
+      "relative_path": "tests/campaigns/phase22_automorphism_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "20dc875de3a11ff5cb19b4329785cece254f1aacbb8553be6a8f6dcac9a191a8",
+      "staged_sha256": "20dc875de3a11ff5cb19b4329785cece254f1aacbb8553be6a8f6dcac9a191a8"
+    },
+    {
+      "relative_path": "tests/campaigns/phase22_planner_tie_compare_ready.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "fefbd96c94774f689fad3c74cd1fb1a8c3e10fa1387d5400c0045125f6f6b846",
+      "staged_sha256": "fefbd96c94774f689fad3c74cd1fb1a8c3e10fa1387d5400c0045125f6f6b846"
+    },
+    {
+      "relative_path": "tests/campaigns/phase22_planner_tie_gap_audit.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "e94ce3cc9c30035dbbc6d608240c1edf2d640fd93b178d496951e394ee77e35e",
+      "staged_sha256": "e94ce3cc9c30035dbbc6d608240c1edf2d640fd93b178d496951e394ee77e35e"
+    },
+    {
+      "relative_path": "tests/campaigns/phase22_split_tie_organic_compare.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "28f2039b7fdd2f200301d214fbefa76a60c5a7c1002f56c4320e67e4dc900bc2",
+      "staged_sha256": "28f2039b7fdd2f200301d214fbefa76a60c5a7c1002f56c4320e67e4dc900bc2"
+    },
+    {
+      "relative_path": "tests/campaigns/planner_phase4.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "40d2b60a8986d1500b5c0e53a918f4175a95f903bb23a88fd49be0b74dea0440",
+      "staged_sha256": "40d2b60a8986d1500b5c0e53a918f4175a95f903bb23a88fd49be0b74dea0440"
+    },
+    {
+      "relative_path": "tests/compare_ready_lineage.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "774754f7ddf33e51cd9b5ca047b733ff425eb637e5ecc847a86c5ed7152d667c",
+      "staged_sha256": "774754f7ddf33e51cd9b5ca047b733ff425eb637e5ecc847a86c5ed7152d667c"
+    },
+    {
+      "relative_path": "tests/compare_ready_lineage.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "3ccfac0ed537fa9ad619fcbbfb1f491112e6aa8e8650e073daa12b7ea25b7d9f",
+      "staged_sha256": "3ccfac0ed537fa9ad619fcbbfb1f491112e6aa8e8650e073daa12b7ea25b7d9f"
+    },
+    {
+      "relative_path": "tests/exact_canonicalizer.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "144ad72090218dc09086b76bfce7b45e01855a76df76144034af6c8a1d2b3131",
+      "staged_sha256": "144ad72090218dc09086b76bfce7b45e01855a76df76144034af6c8a1d2b3131"
+    },
+    {
+      "relative_path": "tests/exact_canonicalizer.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "f8666423d242db04b7aa5f4d0c3008c48ecc67d0ab39db5bf5dd911ddef35b39",
+      "staged_sha256": "f8666423d242db04b7aa5f4d0c3008c48ecc67d0ab39db5bf5dd911ddef35b39"
+    },
+    {
+      "relative_path": "tests/exhaustive_cases.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "06c3ef7bc537b85b61358f8dcdb9bb0864a841145dc3dcc5cc2c358434728b84",
+      "staged_sha256": "06c3ef7bc537b85b61358f8dcdb9bb0864a841145dc3dcc5cc2c358434728b84"
+    },
+    {
+      "relative_path": "tests/exhaustive_cases.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "208c2379801ae2f24c98ba2634f0302945a61a6cf566533a0bc01481cdf549c7",
+      "staged_sha256": "208c2379801ae2f24c98ba2634f0302945a61a6cf566533a0bc01481cdf549c7"
+    },
+    {
+      "relative_path": "tests/exhaustive_generator.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "fc577c5b6721a9274efde9ec1ecf8a9e56ff99c5903f08374130b489023b40b7",
+      "staged_sha256": "fc577c5b6721a9274efde9ec1ecf8a9e56ff99c5903f08374130b489023b40b7"
+    },
+    {
+      "relative_path": "tests/exhaustive_generator.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "9541586c2ad5b07094b82698fa72e52b69c66b7b4a4c8b2e1a32eeb4ffb5bc99",
+      "staged_sha256": "9541586c2ad5b07094b82698fa72e52b69c66b7b4a4c8b2e1a32eeb4ffb5bc99"
+    },
+    {
+      "relative_path": "tests/failure_signature.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "43010fab041136f07da46264a66f71ac7093f6f23870bd1c7d0a4c82ecbdd1d5",
+      "staged_sha256": "43010fab041136f07da46264a66f71ac7093f6f23870bd1c7d0a4c82ecbdd1d5"
+    },
+    {
+      "relative_path": "tests/failure_signature.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "110703dd33f7ff82936d4f5d316d5f2edc00fe2a3ece5bdcb7d5bc15149dd367",
+      "staged_sha256": "110703dd33f7ff82936d4f5d316d5f2edc00fe2a3ece5bdcb7d5bc15149dd367"
+    },
+    {
+      "relative_path": "tests/family_applicability_audit.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "6c52842e3a13c4eba20b033b3181228120c1d3439595bfe015dd8df3d21efc12",
+      "staged_sha256": "6c52842e3a13c4eba20b033b3181228120c1d3439595bfe015dd8df3d21efc12"
+    },
+    {
+      "relative_path": "tests/family_applicability_audit.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "8e68e7b66204e983bee1b80d82a6c489406be103e119d9d8c1669dd7e81e0339",
+      "staged_sha256": "8e68e7b66204e983bee1b80d82a6c489406be103e119d9d8c1669dd7e81e0339"
+    },
+    {
+      "relative_path": "tests/metamorphic_cases.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "150ae5091b9930e330da5e68fa0036b3701b43404964bb9cd2b3a844cb4b9bcf",
+      "staged_sha256": "150ae5091b9930e330da5e68fa0036b3701b43404964bb9cd2b3a844cb4b9bcf"
+    },
+    {
+      "relative_path": "tests/multiclass_catalog.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "0536fb164cb48c3bd350ce7f634f9cd71cd117d84fcff209e84881bddfa1bfc6",
+      "staged_sha256": "0536fb164cb48c3bd350ce7f634f9cd71cd117d84fcff209e84881bddfa1bfc6"
+    },
+    {
+      "relative_path": "tests/multiclass_catalog.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "191c7ebc10c479f5a125fad3a241262444a9d4605e191542a6c06a5fab1831e3",
+      "staged_sha256": "191c7ebc10c479f5a125fad3a241262444a9d4605e191542a6c06a5fab1831e3"
+    },
+    {
+      "relative_path": "tests/planner_oracle_cases.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "4bf445008a49f79c21b167d4a99592c3845f134b99c0c3b2014e39a861c51cdc",
+      "staged_sha256": "4bf445008a49f79c21b167d4a99592c3845f134b99c0c3b2014e39a861c51cdc"
+    },
+    {
+      "relative_path": "tests/policy_baseline.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "86bd8de19ddafb088a33dd530087f12a7dde0762757862a5a7db993c60826ce8",
+      "staged_sha256": "86bd8de19ddafb088a33dd530087f12a7dde0762757862a5a7db993c60826ce8"
+    },
+    {
+      "relative_path": "tests/policy_baseline.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "2a9893869ed41997ad6c19b3b7f8824a70f0d4767d6aaca74209b0344d45d406",
+      "staged_sha256": "2a9893869ed41997ad6c19b3b7f8824a70f0d4767d6aaca74209b0344d45d406"
+    },
+    {
+      "relative_path": "tests/policy_gate.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "e5f3b945121029c6a130155c36d5adb75745453318365804ac6bdb4490a877a8",
+      "staged_sha256": "e5f3b945121029c6a130155c36d5adb75745453318365804ac6bdb4490a877a8"
+    },
+    {
+      "relative_path": "tests/policy_gate.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "75458ae660f551f46f5ce0956ad7a1bcf5f269f852fef02471e9cd843d97ea24",
+      "staged_sha256": "75458ae660f551f46f5ce0956ad7a1bcf5f269f852fef02471e9cd843d97ea24"
+    },
+    {
+      "relative_path": "tests/policy_manifest_freshness.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "013f7bdf388af2f20b4004dd9a35180edc59e66d9a5815e1826dd87ba9c9ebe4",
+      "staged_sha256": "013f7bdf388af2f20b4004dd9a35180edc59e66d9a5815e1826dd87ba9c9ebe4"
+    },
+    {
+      "relative_path": "tests/policy_manifest_freshness.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "71e2b86d207d99e74330cd801b653ee96aab01a7d4714a5a9203afdaa1e89719",
+      "staged_sha256": "71e2b86d207d99e74330cd801b653ee96aab01a7d4714a5a9203afdaa1e89719"
+    },
+    {
+      "relative_path": "tests/policy_runtime_budget.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "9b216ab8e9221aaf8d82e5f047931a65a47bfbd948217be862692839a5a4d9b6",
+      "staged_sha256": "9b216ab8e9221aaf8d82e5f047931a65a47bfbd948217be862692839a5a4d9b6"
+    },
+    {
+      "relative_path": "tests/policy_runtime_budget.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "743cdb966dc4c7a0e9ad270a6eabd4bb70d6271fdc0d1358c19ba43eab0e42cb",
+      "staged_sha256": "743cdb966dc4c7a0e9ad270a6eabd4bb70d6271fdc0d1358c19ba43eab0e42cb"
+    },
+    {
+      "relative_path": "tests/raw_engine_cases.cpp",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "489d9690352d196f5b504002b1f169e8e6a7b704d39848d23c6a59d55dffc486",
+      "staged_sha256": "489d9690352d196f5b504002b1f169e8e6a7b704d39848d23c6a59d55dffc486"
+    },
+    {
+      "relative_path": "tests/raw_engine_main.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "1aeccc8c1680cbe39d27ad51ddcaf282969ec6230a4267e5fe72357d765cb3db",
+      "staged_sha256": "1aeccc8c1680cbe39d27ad51ddcaf282969ec6230a4267e5fe72357d765cb3db"
+    },
+    {
+      "relative_path": "tests/reference_model.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "1896948ecfdc52625c5379e409659a65a497b62bfc7d30c6a42adb67d159e343",
+      "staged_sha256": "1896948ecfdc52625c5379e409659a65a497b62bfc7d30c6a42adb67d159e343"
+    },
+    {
+      "relative_path": "tests/reference_model.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "5742401c3e2354043d562d0a6bba865f466b419a6ec74a2207157a8a49458f2b",
+      "staged_sha256": "5742401c3e2354043d562d0a6bba865f466b419a6ec74a2207157a8a49458f2b"
+    },
+    {
+      "relative_path": "tests/reference_oracle_cases.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "d470253c723650a294bdf8ac004e17682352169ef87ccf5adcf075e1877d60f9",
+      "staged_sha256": "d470253c723650a294bdf8ac004e17682352169ef87ccf5adcf075e1877d60f9"
+    },
+    {
+      "relative_path": "tests/reference_planner.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "81e39c60c3f3511d470883c30ee305e26caa3a2b1fb504eda16b1e729170208e",
+      "staged_sha256": "81e39c60c3f3511d470883c30ee305e26caa3a2b1fb504eda16b1e729170208e"
+    },
+    {
+      "relative_path": "tests/reference_planner.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "87d5feac56219cea1bac7605fc6a68222b8a244af0f56e59964e4fa17ca5603c",
+      "staged_sha256": "87d5feac56219cea1bac7605fc6a68222b8a244af0f56e59964e4fa17ca5603c"
+    },
+    {
+      "relative_path": "tests/regressions/split_choice_oracle_reduced_state.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "6055407e2813a205c612e2beb92984bad134f2afa55cc7a1f0a624b38a84ca1b",
+      "staged_sha256": "6055407e2813a205c612e2beb92984bad134f2afa55cc7a1f0a624b38a84ca1b"
+    },
+    {
+      "relative_path": "tests/regressions/split_choice_semantic_shift_state.txt",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "1227b3a40cbf5d17d4304751a419c5209a444b7f3abde65a599d1bf5e5c4e015",
+      "staged_sha256": "1227b3a40cbf5d17d4304751a419c5209a444b7f3abde65a599d1bf5e5c4e015"
+    },
+    {
+      "relative_path": "tests/runtime_budget_phase23.json",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "220b4572b959e7f8d6970511c4969d1971e4f25f345793913d9b3912c6ffb2a1",
+      "staged_sha256": "220b4572b959e7f8d6970511c4969d1971e4f25f345793913d9b3912c6ffb2a1"
+    },
+    {
+      "relative_path": "tests/runtime_budget_phase24.json",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "220b4572b959e7f8d6970511c4969d1971e4f25f345793913d9b3912c6ffb2a1",
+      "staged_sha256": "220b4572b959e7f8d6970511c4969d1971e4f25f345793913d9b3912c6ffb2a1"
+    },
+    {
+      "relative_path": "tests/runtime_budget_phase27.json",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "de258606db4bac14f81708dc68df22573131dc7cf743cb5d1db496b8aa9c7011",
+      "staged_sha256": "de258606db4bac14f81708dc68df22573131dc7cf743cb5d1db496b8aa9c7011"
+    },
+    {
+      "relative_path": "tests/runtime_budget_phase28.json",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "ef9ca3e52aec58aec0ea6508800e1a02602a7e11d3e40e1ec57166cb660d8ada",
+      "staged_sha256": "ef9ca3e52aec58aec0ea6508800e1a02602a7e11d3e40e1ec57166cb660d8ada"
+    },
+    {
+      "relative_path": "tests/runtime_budget_phase29.json",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "bd55ebf908ea094f64a2aeb738a07c86df09ac599e174cef83b2ea7eee7aa6af",
+      "staged_sha256": "bd55ebf908ea094f64a2aeb738a07c86df09ac599e174cef83b2ea7eee7aa6af"
+    },
+    {
+      "relative_path": "tests/runtime_manifest.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "aa74976b71d2849db4c63e08f60dc7a5013d3fca15b43dd3a442acf2f7a3d4f8",
+      "staged_sha256": "aa74976b71d2849db4c63e08f60dc7a5013d3fca15b43dd3a442acf2f7a3d4f8"
+    },
+    {
+      "relative_path": "tests/runtime_manifest.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "53316581320b7b20e916330dba7ce62416b1c370134b5875dae21915c0f6e80d",
+      "staged_sha256": "53316581320b7b20e916330dba7ce62416b1c370134b5875dae21915c0f6e80d"
+    },
+    {
+      "relative_path": "tests/split_choice_cases.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "fb7a5f3cfff53cd7071509a9e4962a4b27191a769350a7a4bacbc46a31e9eb49",
+      "staged_sha256": "fb7a5f3cfff53cd7071509a9e4962a4b27191a769350a7a4bacbc46a31e9eb49"
+    },
+    {
+      "relative_path": "tests/split_choice_oracle.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "f3a3ff51e74ffa825c054899f3a2ed9307a5be53f7696d5b8e083e7c7e0e3150",
+      "staged_sha256": "f3a3ff51e74ffa825c054899f3a2ed9307a5be53f7696d5b8e083e7c7e0e3150"
+    },
+    {
+      "relative_path": "tests/split_choice_oracle.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "f2eaf4674c240588505d4895de275060322f122282c164e8478c538c9956afed",
+      "staged_sha256": "f2eaf4674c240588505d4895de275060322f122282c164e8478c538c9956afed"
+    },
+    {
+      "relative_path": "tests/stabilization_support.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "b5f7978df5f4243ac5fb3a1670fe169bb9485bd866a615848a39a31284b8e301",
+      "staged_sha256": "b5f7978df5f4243ac5fb3a1670fe169bb9485bd866a615848a39a31284b8e301"
+    },
+    {
+      "relative_path": "tests/stabilization_support.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "d8c79f0fb7ef26215576ecebe26aee2ca814a436e2a9cdbe582097d90008532f",
+      "staged_sha256": "d8c79f0fb7ef26215576ecebe26aee2ca814a436e2a9cdbe582097d90008532f"
+    },
+    {
+      "relative_path": "tests/state_dump.cpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "86716213af4c0fba05a6591e4391772d0b15687367770bd9c8b789f92135083c",
+      "staged_sha256": "86716213af4c0fba05a6591e4391772d0b15687367770bd9c8b789f92135083c"
+    },
+    {
+      "relative_path": "tests/state_dump.hpp",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "930d1acf940f63bc3cb2aec96d614b72417b6a083a4d770fac2e932b26fe8985",
+      "staged_sha256": "930d1acf940f63bc3cb2aec96d614b72417b6a083a4d770fac2e932b26fe8985"
+    },
+    {
+      "relative_path": "tests/test_harness.hpp",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "3bb5b6eb63d0bba3720829b83f6a9d4a4214ce25f628214a1696a874e801ce4a",
+      "staged_sha256": "3bb5b6eb63d0bba3720829b83f6a9d4a4214ce25f628214a1696a874e801ce4a"
+    },
+    {
+      "relative_path": "tests/tools/build_evidence_bundle.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "11664876127ac0b9ca28408a1cc7b849f3af91582b0c01939fbd5d86778e59ae",
+      "staged_sha256": "11664876127ac0b9ca28408a1cc7b849f3af91582b0c01939fbd5d86778e59ae"
+    },
+    {
+      "relative_path": "tests/tools/create_source_snapshot.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "d37f36700cd7173239e255a12a003ea8a501233041e45b7c050c1c15c18981a6",
+      "staged_sha256": "d37f36700cd7173239e255a12a003ea8a501233041e45b7c050c1c15c18981a6"
+    },
+    {
+      "relative_path": "tests/tools/materialize_staged_mirror.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "7ed02c2c74369ed1311e3a15016a32d041fd5afc1256164b1dc40814419f6f8a",
+      "staged_sha256": "7ed02c2c74369ed1311e3a15016a32d041fd5afc1256164b1dc40814419f6f8a"
+    },
+    {
+      "relative_path": "tests/tools/run_ctest_staged.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "6f7b858b098eabf16708b4af23151ae653b3f6927e51c9097978a9f92fd78b9d",
+      "staged_sha256": "6f7b858b098eabf16708b4af23151ae653b3f6927e51c9097978a9f92fd78b9d"
+    },
+    {
+      "relative_path": "tests/tools/run_policy_pipeline.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "501221054c9e06e177aa1ed4f9e28716c2ead2e77649b48ff6ba4b1cf89f42da",
+      "staged_sha256": "501221054c9e06e177aa1ed4f9e28716c2ead2e77649b48ff6ba4b1cf89f42da"
+    },
+    {
+      "relative_path": "tests/tools/runtime_gate.py",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "85171c9ac00accc3cb1468277ac351fd5d5e51332e8fe1316d8db0a14be3770d",
+      "staged_sha256": "85171c9ac00accc3cb1468277ac351fd5d5e51332e8fe1316d8db0a14be3770d"
+    },
+    {
+      "relative_path": "tests/tools/runtime_gate_lib.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "f5924d8d5ecc0fef84bbdf7ab8c6cbfd488da862b3231a2efa62ea81ca430f5d",
+      "staged_sha256": "f5924d8d5ecc0fef84bbdf7ab8c6cbfd488da862b3231a2efa62ea81ca430f5d"
+    },
+    {
+      "relative_path": "tests/tools/runtime_lifecycle.py",
+      "materialization_mode": "git_head",
+      "copy_verdict": "git_ok",
+      "staged_exists": true,
+      "expected_sha256": "684f139c5dd4dfd7e80cad739db07fb7224d5c2b642261ad6f3336d8b41baff2",
+      "staged_sha256": "684f139c5dd4dfd7e80cad739db07fb7224d5c2b642261ad6f3336d8b41baff2"
+    },
+    {
+      "relative_path": "tests/tools/runtime_watch_ops.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "41aa46018c82633b3c58d6cdf4e4d3ee34d00beaa9bb88c0c42288bb263d9132",
+      "staged_sha256": "41aa46018c82633b3c58d6cdf4e4d3ee34d00beaa9bb88c0c42288bb263d9132"
+    },
+    {
+      "relative_path": "tests/tools/staged_verification_lib.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "a6515d825c88033d3b22f37475b0d1000eb5d93ad784b7b411c47fb5db19bcca",
+      "staged_sha256": "a6515d825c88033d3b22f37475b0d1000eb5d93ad784b7b411c47fb5db19bcca"
+    },
+    {
+      "relative_path": "tests/tools/verification_closeout.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "20d93934b3cb12877e032a32b24bd3f84cd1a89ec85a79d098f7e11341deb2ca",
+      "staged_sha256": "20d93934b3cb12877e032a32b24bd3f84cd1a89ec85a79d098f7e11341deb2ca"
+    },
+    {
+      "relative_path": "tests/tools/verify_staged_mirror.py",
+      "materialization_mode": "copy",
+      "copy_verdict": "ok",
+      "staged_exists": true,
+      "expected_sha256": "e3bd1cab8a55aba841f08915aeba5a19d011559f5d708ecf815bb49c1866ca03",
+      "staged_sha256": "e3bd1cab8a55aba841f08915aeba5a19d011559f5d708ecf815bb49c1866ca03"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "mode": "star_pairs",
+  "shape": "star",
+  "n": 128,
+  "m": 8128,
+  "seed": 1,
+  "max_depth": 1,
+  "leaves": 127,
+  "internal": 1,
+  "multi_child": 1,
+  "deepest_node": 2,
+  "subtree_root_deepest": 2
+}

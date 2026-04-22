@@ -1,0 +1,145 @@
+{
+  "manifest_version": "publication_health_v1",
+  "phase": "phase44",
+  "generated_at_utc": "2026-04-20T14:25:45Z",
+  "published_root": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/phase44_evidence_bundle_published",
+  "authoritative_root": "/private/tmp/cpp-checker-phase43/branch_2-1/raw_engine_v1_package",
+  "bundle_metadata_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/phase44_evidence_bundle_published/bundle_metadata.json",
+  "publication_snapshot_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/phase44_evidence_bundle_published/publication_snapshot.json",
+  "status": "HEALTHY",
+  "missing_artifact_count": 0,
+  "hash_mismatch_count": 0,
+  "dangling_reference_count": 0,
+  "missing_artifacts": [],
+  "hash_mismatches": [],
+  "dangling_references": [],
+  "publication_snapshot_id": "phase44-published-20260420T125618Z",
+  "published_bundle_items": [
+    {
+      "label": "report",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/PHASE44_BUNDLE_CURRENT_ENV_EXECUTE_APPLY_REPORT.txt",
+      "sha256": "910e71741d676f70a5fd024628dbd64ded876c60fea13023db945077a4aa1c7d"
+    },
+    {
+      "label": "current_manifest",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_graduation_manifest_v1.json",
+      "sha256": "21337c151609a0a89da5e9d1e33c32fd101fbc0cae1610209bf5f148395def91"
+    },
+    {
+      "label": "approved_baseline",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json",
+      "sha256": "4076d92cac50104be8859752bffd8e60ef8ca4540b2aaaaf1b938490ad7722f0"
+    },
+    {
+      "label": "refresh_manifest",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_graduation_manifest_refresh_phase22_v1.json",
+      "sha256": "29141fcdc0b8bcc44e67fa5a54b7ad8d5443dcccb4e1173a740fc9a517a0164d"
+    },
+    {
+      "label": "rerun_plan",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_rerun_plan_phase22_v1.json",
+      "sha256": "217b68c93d5bf237c399ebe46eca3a75177af88a0c8ea42cf9d90c90c09dae31"
+    },
+    {
+      "label": "nightly_pipeline_summary",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_pipeline_nightly_phase33.json",
+      "sha256": "2790a5f9e9df1612c3b2dcf757aafc507155760d066f857440f5e466ff185a69"
+    },
+    {
+      "label": "quick_pipeline_summary",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_pipeline_quick_phase33.json",
+      "sha256": "924516cdda7c0e2c51a58887c20e80073ec3f0b0830b8e9a5b9e938687ae8ce6"
+    },
+    {
+      "label": "pipeline_matrix_summary",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_pipeline_matrix_phase33.json",
+      "sha256": "c409c9bbeac3a33c623c7a0a171d6d8314b003f31eab0fdd8df378cfe7fb722c"
+    },
+    {
+      "label": "runtime_baseline_manifest",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+      "sha256": "9b5ea98665d5e8331c264786a2bc764d5a1dd953319507cd73c829bf8121f1f2"
+    },
+    {
+      "label": "runtime_current_manifest",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_current_phase22.json",
+      "sha256": "488fbf84bd456ed3bf3a9d07dd1e05969dd3748f11c874d318bdba9974999893"
+    },
+    {
+      "label": "runtime_refresh_manifest",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_refresh_phase22.json",
+      "sha256": "f6bdd45989f36537f41fb5edb8867e600d0db1bae86f43b4298911ae0cc9059c"
+    },
+    {
+      "label": "runtime_rerun_plan",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_rerun_phase22.json",
+      "sha256": "37dc91254797488c299b003843b8dd7db15d9061ec0b9e1bb647d4c3c603d814"
+    },
+    {
+      "label": "runtime_registry",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_baseline_registry_v1.json",
+      "sha256": "d92ec9057db99545cfc23784ab38bb71ed38be38ccb8b1306cd3fa2a92af1690"
+    },
+    {
+      "label": "runtime_registry_health",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_registry_health_phase35.json",
+      "sha256": "259f34e4c448f66dc9f34df4d1f184899dde6bbd990d8aa2b4619899635815c0"
+    },
+    {
+      "label": "runtime_history_index",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_history_index_v1.json",
+      "sha256": "64d7fc0b5e493e18e5d715571cf1e779c56936f06589783b0a797ea537e9cfc2"
+    },
+    {
+      "label": "runtime_history_compact",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_history_index_v1_compacted.json",
+      "sha256": "88b9bff9b48ff33378de3efe2aa5f2d9fa837bd253e8f141b008ddb00e054e92"
+    },
+    {
+      "label": "runtime_watch_current",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_watch_current_phase22.json",
+      "sha256": "130deb65f87e7d60abf5841b19e1fb0e205654dac624af5b06cc99167134ae6b"
+    },
+    {
+      "label": "runtime_watch_refresh",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_watch_refresh_phase22.json",
+      "sha256": "d6f79862be190dd8a546cf6cbda907c9b0363056faae60d45b460ea2af46dbe8"
+    },
+    {
+      "label": "runtime_watch_history_index",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_watch_history_index_v1.json",
+      "sha256": "1e86f7eaf05084f0578184b0af79510246c0daa5853360802f21993ef899fcf6"
+    },
+    {
+      "label": "runtime_watch_registry",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_watch_registry_v1.json",
+      "sha256": "11c1a4bd0477db856950527a802b99963a154aac95160b0aa917902a7d8650f0"
+    },
+    {
+      "label": "policy_ops_summary",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_ops_summary_phase22.json",
+      "sha256": "7278bb00c087d220220fb209e2d30c71a5a4f76cd60f658072e26b2b07ecd55a"
+    },
+    {
+      "label": "bundle_metadata",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/phase44_evidence_bundle_published/bundle_metadata.json",
+      "sha256": "bd9ef8b9de2dca9af6249d48515efd43a0747095e44ebcb92465fde7faf1b441"
+    },
+    {
+      "label": "bundle_zip",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/raw_engine_phase44_execute_apply_bundle.zip",
+      "sha256": "cb3122e42fa6710c6a257c1205289162d46afd4a9dc8252295fa95150596727f"
+    },
+    {
+      "label": "curated_zip",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/raw_engine_phase44_execute_apply_bundle_curated.zip",
+      "sha256": "020997a457e5192f69c021ea60115c75bd6f72381338bc07f40284d86e27d235"
+    },
+    {
+      "label": "light_ops_zip",
+      "path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/raw_engine_phase44_execute_apply_bundle_light.zip",
+      "sha256": "a9314158adc2835c90b505cdf5a0d89b48be54e7d1b315484fa5cd0dda7d2c8d"
+    }
+  ],
+  "health_hash": "164a2a968c141a4be010a960a7fdcf12b9c686f8a6d7439f2b1c6f9058dcec05"
+}

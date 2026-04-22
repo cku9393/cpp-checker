@@ -1,0 +1,22 @@
+metric	value
+audit_fingerprint	1808:4932380748279645466
+item_count	19
+current_verified_count	16
+counterexample_free_under_tested_range_count	0
+archival_claim_count	3
+not_attempted_count	0
+fresh_current_runtime_generated_count	16
+current_runtime_validated_imported_data_count	0
+archival_only_count	3
+mixed_count	0
+unknown_count	0
+current_bundle_version	90
+current_bundle_role	support8 / shell15 / tail / completion-lock proof-system bundle
+current_bundle_source_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/full_dynamic_top_tree_engine_90.cpp
+current_bundle_summary_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/project_status_summary_90.md
+runtime_summary_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/project_status_summary_90.md
+workspace_root	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker
+branch4_root	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4
+archival_bundle_root	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90
+runtime_data_root	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime
+imported_catalog_summary	basis_only_theorem_chain@version=closed-basis-chain ; family_chain_output_57@version=57 ; support_plus_one_frontier_output_67@version=67 ; mixed_outside_bounded_frontier_output_69@version=69 ; support8_shell5_frontier_output_70@version=70 ; support8_shell6_frontier_output_71@version=71 ; support8_shell7_and_shell8_frontier_output_72@version=72 ; support8_shell9_frontier_output_74@version=74 ; support8_shell10_frontier_output_75@version=75 ; support8_shell11_frontier_output_76@version=76 ; support8_shell12_and_shell13_frontier_output_77@version=77 ; support8_shell14_frontier_output_79@version=79 ; support8_shell15_frontier_output_84@version=84

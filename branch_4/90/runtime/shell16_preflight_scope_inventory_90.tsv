@@ -1,0 +1,5 @@
+scope_key	description	allowed_this_round	would_modify_code	would_generate_artifacts	would_run_expensive_scan	theorem_claim_allowed	expected_outputs	risk	recommendation
+shell16_contract_only	Define shell16 artifact document audit and failure contracts only.	1	0	1	0	0	shell16_contract_docs_and_tsvs	low	acceptable_if_no_schema_dry_run_needed
+shell16_candidate_universe_dry_run	Define shell16 candidate-universe shape row schema naming expected cache paths and guardrails without survivor scan.	1	0	1	0	0	scope_dependency_artifact_document_audit_feasibility_guardrail_protocol_tsvs	medium	selected_for_this_round
+shell16_bounded_preflight_probe	Run a limited non-theorem probe after the contract is installed.	0	possible	1	possible	0	probe_summary_without_theorem_promotion	medium	defer_until_contract_review
+shell16_full_attempt	Run the actual shell16 theorem scan and survivor audits.	0	yes	yes	yes	conditional_only_after_future_attempt	shell16_candidate_and_survivor_artifacts	high	out_of_scope_for_this_round

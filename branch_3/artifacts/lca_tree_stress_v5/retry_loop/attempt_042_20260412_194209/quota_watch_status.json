@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-04-12 22:22:36 KST",
+  "selection_mode": "auth_refresh_scoped_current_account",
+  "auth_context": {
+    "auth_mode": "chatgpt",
+    "last_refresh": "2026-04-09T10:40:50.945782Z",
+    "account_id": "374fe79f-03ed-4d7c-a2ce-03c43201eea8"
+  },
+  "session_log": "/Users/free_1/.codex/sessions/2026/04/12/rollout-2026-04-12T22-10-18-019d81d0-7f8a-7c01-9ed0-ed1e8735099c.jsonl",
+  "session_log_mtime": "2026-04-12 22:18:02 KST",
+  "session_started_at": "2026-04-12T13:10:18.255Z",
+  "event_timestamp": "2026-04-12T13:18:02.009Z",
+  "plan_type": "pro",
+  "events_considered": 6,
+  "primary": {
+    "window_minutes": 300,
+    "used_percent": 6.0,
+    "remaining_percent": 94.0,
+    "previous_remaining_percent": 94.0,
+    "last_step_percent": 0.0,
+    "guard_band_percent": 0.0,
+    "threshold_percent": 1.0,
+    "resets_at": 1776004916,
+    "triggered": false,
+    "trigger_mode": "none"
+  },
+  "secondary": {
+    "window_minutes": 10080,
+    "used_percent": 33.0,
+    "remaining_percent": 67.0,
+    "previous_remaining_percent": 67.0,
+    "last_step_percent": 0.0,
+    "guard_band_percent": 0.0,
+    "threshold_percent": 1.0,
+    "resets_at": 1776362571,
+    "triggered": false,
+    "trigger_mode": "none"
+  },
+  "triggered_limits": []
+}

@@ -1,0 +1,15 @@
+metric	value
+item_key	septuple_family_expansion_theorem_data_57
+current_provenance_label	fresh_current_runtime_generated
+current_source_fingerprint	2729415:14502595494155092201
+payload_fingerprint	804:10183455833117365445
+imported_comparison_fingerprint	57|regions=1|raw=294|canonical=294|deduplicated=294|local=0|plus=0|theorem=0
+imported_equality_result	counts_and_consumer_visible_fingerprint_equal
+region_count	1
+raw_candidates	294
+canonical_candidates	294
+deduplicated_candidates	294
+local_exact_survivors	0
+plus_one_survivors	0
+theorem_preserving_survivors	0
+runtime_fingerprint	fresh|current_runtime_septuple_family_expansion_theorem_data_57_cache|load_current_septuple_family_expansion_theorem_data_57_runtime_artifact_|0|1|1|294|294|294|0|0|0|804:10183455833117365445|57|regions=1|raw=294|canonical=294|deduplicated=294|local=0|plus=0|theorem=0|counts_and_consumer_visible_fingerprint_equal|2729415:14502595494155092201|1|0|0|0|0|0|0||Current authoritative path loaded a validated runtime septuple-family expansion theorem data 57 artifact; upstream sextuple57, quintuple57, quad55, triple53, and pair52 stayed fresh with fallback_hit=0.

@@ -1,0 +1,7 @@
+metric	value
+item_key	septuple_family_expansion_theorem_data_57
+equality_rule	region-count + aggregate-count + consumer-visible septuple theorem-data equality
+current_comparison_fingerprint	57|regions=1|raw=294|canonical=294|deduplicated=294|local=0|plus=0|theorem=0
+imported_comparison_fingerprint	57|regions=1|raw=294|canonical=294|deduplicated=294|local=0|plus=0|theorem=0
+imported_equality_result	counts_and_consumer_visible_fingerprint_equal
+rowset_note	legacy output 57 did not preserve a separate septuple row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality

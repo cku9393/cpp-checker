@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/usr/bin/clang++",
+    "-Ofast",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-ULOCAL",
+    "-pipe",
+    "-march=native",
+    "-flto=thin",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp",
+    "-o",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/ac4_backup_solver_build/solve"
+  ],
+  "compiler": "/usr/bin/clang++",
+  "cxx_env": "",
+  "defines": [],
+  "dependencies": [
+    {
+      "exists": true,
+      "path": "artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp",
+      "sha256": "6990141d06e5100449ab11e95760206cc61f4793c92218215dfe9cd62245f7bc",
+      "size_bytes": 1052480
+    }
+  ],
+  "output": "artifacts/lca_tree_stress_v5/retry_loop/ac4_backup_solver_build/solve",
+  "requested_compiler": "",
+  "schema": "boj28350_build_metadata_v2",
+  "source": "artifacts/lca_tree_stress_v5/retry_loop/ac3_active_solver_backup_before_restore_20260328.cpp",
+  "static_mode": "auto"
+}

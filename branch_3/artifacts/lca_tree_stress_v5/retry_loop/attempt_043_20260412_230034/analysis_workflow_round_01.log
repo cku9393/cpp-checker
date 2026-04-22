@@ -1,0 +1,289 @@
+[2026-04-13 00:15:09 KST] attempt 43 analysis round 1 start: .ouroboros/seed_branch3_failure_analysis.yaml
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_043_20260412_230034/.workflow_output_locality/analysis_round_1/non_artifact_tree_baseline.json
+[2m2026-04-12T15:15:14.895394Z[0m [[32m[1minfo     [0m] [1mcodex_cli_runtime.initialized [0m [36mcli_path[0m=[35m/opt/homebrew/bin/codex[0m [36mcwd[0m=[35m'/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'[0m [36mfilename[0m=[35mcodex_cli_runtime.py[0m [36mlineno[0m=[35m106[0m [36mmodel[0m=[35mNone[0m [36mpermission_mode[0m=[35macceptEdits[0m [36mskills_dir[0m=[35mpackaged://ouroboros.codex/skills[0m
+╭──────────────────────── Info ────────────────────────╮
+│ Parallel mode: independent ACs will run concurrently │
+╰──────────────────────────────────────────────────────╯
+[2m2026-04-12T15:15:14.912139Z[0m [[32m[1minfo     [0m] [1morchestrator.session.created  [0m [36mexecution_id[0m=[35mexec_b4d92c1c370e[0m [36mfilename[0m=[35msession.py[0m [36mlineno[0m=[35m455[0m [36msession_id[0m=[35morch_240424f4171d[0m
+
+Analyzing AC dependencies...
+Traceback (most recent call last):
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/monitor_codex_quota.py", line 536, in <module>
+    raise SystemExit(main())
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/monitor_codex_quota.py", line 515, in main
+    write_status(attempt_dir, report_root, status)
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/monitor_codex_quota.py", line 401, in write_status
+    write_text_output(report_json, json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+  File "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/retry_artifact_io.py", line 107, in write_text_output
+    tmp_path.write_text(text, encoding=encoding)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1275, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors) as f:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+OSError: [Errno 28] No space left on device: '/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_043_20260412_230034/.quota_watch_status.json.tmp.55001.eeb72abc5d97488c9182c328bbb7db4b'
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/free_1/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/logging/__init__.py", line 1164, in emit
+    self.flush()
+  File "/Users/free_1/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/logging/__init__.py", line 1144, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/opt/homebrew/bin/ouroboros", line 10, in <module>
+    sys.exit(app())
+  File "/Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-packages/typer/main.py", line 1135, in __call__
+    return get_command(self)(*args, **kwargs)
+Execution plan: 1 stages, parallelizable: True
+  Stage 1: ACs [1, 2, 3, 4, 5, 6]
+
+Level 1/1: Executing ACs [1, 2, 3, 4, 5, 6] in parallel
+  File "/Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-packages/click/core.py", line 1485, in __call__
+    return self.main(*args, **kwargs)
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+--- Logging error ---
+/Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-packages/structlog/_base.py:173: UserWarning: Remove `format_exc_info` from your processor chain if you want pretty exceptions.
+  event_dict = proc(self._logger, method_name, event_dict)
+--- Logging error ---
+  AC 1: Analyzing complexity...
+  AC 1: Analyzing complexity...
+  AC 2: Analyzing complexity...
+  AC 1: Analyzing complexity...
+  AC 2: Analyzing complexity...
+  AC 3: Analyzing complexity...
+  AC 1: Analyzing complexity...
+  AC 2: Analyzing complexity...
+  AC 3: Analyzing complexity...
+  AC 4: Analyzing complexity...
+  AC 1: Analyzing complexity...
+  AC 2: Analyzing complexity...
+  AC 3: Analyzing complexity...
+  AC 4: Analyzing complexity...
+  AC 5: Analyzing complexity...
+  AC 1: Analyzing complexity...
+  AC 2: Analyzing complexity...
+  AC 3: Analyzing complexity...
+  AC 4: Analyzing complexity...
+  AC 5: Analyzing complexity...
+  AC 6: Analyzing complexity...
+  AC 1: Analyzing complexity...
+  AC 2: Analyzing complexity...
+  AC 3: Analyzing complexity...
+  AC 4: Analyzing complexity...
+  AC 5: Analyzing complexity...
+  AC 6: Analyzing complexity...
+Level 1 complete: 0 succeeded, 6 failed
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/ouroboros/orchestrator/runner.py:1173 in execute_precreated_session        │
+│                                                                              │
+│   1170 │   │   # Check for parallel execution mode                           │
+│   1171 │   │   if parallel and len(seed.acceptance_criteria) > 1:            │
+│   1172 │   │   │   try:                                                      │
+│ ❱ 1173 │   │   │   │   return await self._execute_parallel(                  │
+│   1174 │   │   │   │   │   seed=seed,                                        │
+│   1175 │   │   │   │   │   exec_id=exec_id,                                  │
+│   1176 │   │   │   │   │   tracker=tracker,                                  │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/ouroboros/orchestrator/runner.py:1551 in _execute_parallel                 │
+│                                                                              │
+│   1548 │   │   │   │   start_time=start_time,                                │
+│   1549 │   │   │   )                                                         │
+│   1550 │   │                                                                 │
+│ ❱ 1551 │   │   parallel_result = await parallel_executor.execute_parallel(   │
+│   1552 │   │   │   seed=seed,                                                │
+│   1553 │   │   │   execution_plan=execution_plan,                            │
+│   1554 │   │   │   session_id=tracker.session_id,                            │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/ouroboros/orchestrator/parallel_executor.py:1352 in execute_parallel       │
+│                                                                              │
+│   1349 │   │   # Execute groups sequentially, but ACs within each group in p │
+│   1350 │   │   # The resilient progress emitter runs as a sibling background │
+│   1351 │   │   # and is automatically cancelled when the execution loop fini │
+│ ❱ 1352 │   │   async with anyio.create_task_group() as outer_tg:             │
+│   1353 │   │   │   outer_tg.start_soon(                                      │
+│   1354 │   │   │   │   self._resilient_progress_emitter,                     │
+│   1355 │   │   │   │   session_id,                                           │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/anyio/_backends/_asyncio.py:783 in __aexit__                               │
+│                                                                              │
+│    780 │   │   │   │   │   # added to self._exceptions so it's ok to break e │
+│    781 │   │   │   │   │   # chaining and avoid adding a "During handling of │
+│    782 │   │   │   │   │   # for each nesting level.                         │
+│ ❱  783 │   │   │   │   │   raise BaseExceptionGroup(                         │
+│    784 │   │   │   │   │   │   "unhandled errors in a TaskGroup", self._exce │
+│    785 │   │   │   │   │   ) from None                                       │
+│    786 │   │   │   │   elif exc_val:                                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+
+╭────────────────────────────── Sub-exception #1 ──────────────────────────────╮
+│ ╭─────────────────── Traceback (most recent call last) ────────────────────╮ │
+│ │ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-pac │ │
+│ │ kages/ouroboros/orchestrator/parallel_executor.py:1609 in                │ │
+│ │ execute_parallel                                                         │ │
+│ │                                                                          │ │
+│ │   1606 │   │   │   │   │   tool_calls_count=execution_counters["tool_cal │ │
+│ │   1607 │   │   │   │   )                                                 │ │
+│ │   1608 │   │   │   │                                                     │ │
+│ │ ❱ 1609 │   │   │   │   self._console.print(                              │ │
+│ │   1610 │   │   │   │   │   f"[green]Level {level_num} complete: "        │ │
+│ │   1611 │   │   │   │   │   f"{level_success} succeeded, {level_failed} f │ │
+│ │   1612 │   │   │   │   )                                                 │ │
+│ │                                                                          │ │
+│ │ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-pac │ │
+│ │ kages/rich/console.py:1697 in print                                      │ │
+│ │                                                                          │ │
+│ │   1694 │   │   │   │   overflow = "ignore"                               │ │
+│ │   1695 │   │   │   crop = False                                          │ │
+│ │   1696 │   │   render_hooks = self._render_hooks[:]                      │ │
+│ │ ❱ 1697 │   │   with self:                                                │ │
+│ │   1698 │   │   │   renderables = self._collect_renderables(              │ │
+│ │   1699 │   │   │   │   objects,                                          │ │
+│ │   1700 │   │   │   │   sep,                                              │ │
+│ │                                                                          │ │
+│ │ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-pac │ │
+│ │ kages/rich/console.py:870 in __exit__                                    │ │
+│ │                                                                          │ │
+│ │    867 │                                                                 │ │
+│ │    868 │   def __exit__(self, exc_type: Any, exc_value: Any, traceback:  │ │
+│ │    869 │   │   """Exit buffer context."""                                │ │
+│ │ ❱  870 │   │   self._exit_buffer()                                       │ │
+│ │    871 │                                                                 │ │
+│ │    872 │   def begin_capture(self) -> None:                              │ │
+│ │    873 │   │   """Begin capturing console output. Call :meth:`end_captur │ │
+│ │                                                                          │ │
+│ │ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-pac │ │
+│ │ kages/rich/console.py:826 in _exit_buffer                                │ │
+│ │                                                                          │ │
+│ │    823 │   def _exit_buffer(self) -> None:                               │ │
+│ │    824 │   │   """Leave buffer context, and render content if required." │ │
+│ │    825 │   │   self._buffer_index -= 1                                   │ │
+│ │ ❱  826 │   │   self._check_buffer()                                      │ │
+│ │    827 │                                                                 │ │
+│ │    828 │   def set_live(self, live: "Live") -> bool:                     │ │
+│ │    829 │   │   """Set Live instance. Used by Live context manager (no ne │ │
+│ │                                                                          │ │
+│ │ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-pac │ │
+│ │ kages/rich/console.py:2042 in _check_buffer                              │ │
+│ │                                                                          │ │
+│ │   2039 │   │   │   return                                                │ │
+│ │   2040 │   │                                                             │ │
+│ │   2041 │   │   try:                                                      │ │
+│ │ ❱ 2042 │   │   │   self._write_buffer()                                  │ │
+│ │   2043 │   │   except BrokenPipeError:                                   │ │
+│ │   2044 │   │   │   self.on_broken_pipe()                                 │ │
+│ │   2045                                                                   │ │
+│ │                                                                          │ │
+│ │ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-pac │ │
+│ │ kages/rich/console.py:2116 in _write_buffer                              │ │
+│ │                                                                          │ │
+│ │   2113 │   │   │   │   │   │   │   error.reason = f"{error.reason}\n***  │ │
+│ │   2114 │   │   │   │   │   │   │   raise                                 │ │
+│ │   2115 │   │   │   │   │                                                 │ │
+│ │ ❱ 2116 │   │   │   │   │   self.file.flush()                             │ │
+│ │   2117 │   │   │   │   │   del self._buffer[:]                           │ │
+│ │   2118 │                                                                 │ │
+│ │   2119 │   def _render_buffer(self, buffer: Iterable[Segment]) -> str:   │ │
+│ ╰──────────────────────────────────────────────────────────────────────────╯ │
+│ OSError: [Errno 28] No space left on device                                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+During handling of the above exception, another exception occurred:
+
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/ouroboros/cli/commands/run.py:401 in workflow                              │
+│                                                                              │
+│   398 │   │   │   │   "Enabling orchestrator mode.[/yellow]"                 │
+│   399 │   │   │   )                                                          │
+│   400 │   │   try:                                                           │
+│ ❱ 401 │   │   │   asyncio.run(                                               │
+│   402 │   │   │   │   _run_orchestrator(                                     │
+│   403 │   │   │   │   │   seed_file,                                         │
+│   404 │   │   │   │   │   resume_session,                                    │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/ │
+│ python3.12/asyncio/runners.py:195 in run                                     │
+│                                                                              │
+│   192 │   │   │   "asyncio.run() cannot be called from a running event loop" │
+│   193 │                                                                      │
+│   194 │   with Runner(debug=debug, loop_factory=loop_factory) as runner:     │
+│ ❱ 195 │   │   return runner.run(main)                                        │
+│   196                                                                        │
+│   197                                                                        │
+│   198 def _cancel_all_tasks(loop):                                           │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/ │
+│ python3.12/asyncio/runners.py:118 in run                                     │
+│                                                                              │
+│   115 │   │                                                                  │
+│   116 │   │   self._interrupt_count = 0                                      │
+│   117 │   │   try:                                                           │
+│ ❱ 118 │   │   │   return self._loop.run_until_complete(task)                 │
+│   119 │   │   except exceptions.CancelledError:                              │
+│   120 │   │   │   if self._interrupt_count > 0:                              │
+│   121 │   │   │   │   uncancel = getattr(task, "uncancel", None)             │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/ │
+│ python3.12/asyncio/base_events.py:691 in run_until_complete                  │
+│                                                                              │
+│    688 │   │   if not future.done():                                         │
+│    689 │   │   │   raise RuntimeError('Event loop stopped before Future comp │
+│    690 │   │                                                                 │
+│ ❱  691 │   │   return future.result()                                        │
+│    692 │                                                                     │
+│    693 │   def stop(self):                                                   │
+│    694 │   │   """Stop running the event loop.                               │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/ouroboros/cli/commands/run.py:231 in _run_orchestrator                     │
+│                                                                              │
+│   228 │   │   │   │   print_info("Parallel mode: independent ACs will run co │
+│   229 │   │   │   else:                                                      │
+│   230 │   │   │   │   print_info("Sequential mode: ACs will run one at a tim │
+│ ❱ 231 │   │   │   result = await runner.execute_seed(seed, parallel=parallel │
+│   232 │   │                                                                  │
+│   233 │   │   # Handle result                                                │
+│   234 │   │   if result.is_ok:                                               │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/ouroboros/orchestrator/runner.py:1082 in execute_seed                      │
+│                                                                              │
+│   1079 │   │   if session_result.is_err:                                     │
+│   1080 │   │   │   return Result.err(session_result.error)                   │
+│   1081 │   │                                                                 │
+│ ❱ 1082 │   │   return await self.execute_precreated_session(                 │
+│   1083 │   │   │   seed=seed,                                                │
+│   1084 │   │   │   tracker=session_result.value,                             │
+│   1085 │   │   │   parallel=parallel,                                        │
+│                                                                              │
+│ /Users/free_1/.local/share/uv/tools/ouroboros-ai/lib/python3.12/site-package │
+│ s/ouroboros/orchestrator/runner.py:1189 in execute_precreated_session        │
+│                                                                              │
+│   1186 │   │   │   │   │   session_id=tracker.session_id,                    │
+│   1187 │   │   │   │   )                                                     │
+│   1188 │   │   │   │   duration = (datetime.now(UTC) - start_time).total_sec │
+│ ❱ 1189 │   │   │   │   failed_event = create_session_failed_event(           │
+│   1190 │   │   │   │   │   session_id=tracker.session_id,                    │
+│   1191 │   │   │   │   │   execution_id=exec_id,                             │
+│   1192 │   │   │   │   │   error=str(exc),                                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+TypeError: create_session_failed_event() got an unexpected keyword argument 
+'execution_id'
+Traceback (most recent call last):

@@ -1,0 +1,12 @@
+{
+  "category": "solver",
+  "exit_code": 138,
+  "message": "solver terminated by signal 10 (normalized exit 138)",
+  "rss_kb": 109968,
+  "sec": 1.0450159589818213,
+  "solver_exit_code": -10,
+  "solver_signal": 10,
+  "status": "solver_runtime_failure",
+  "timed_out": false,
+  "validator_ok": false
+}

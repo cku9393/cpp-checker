@@ -1,0 +1,46 @@
+metric	value
+item_key	high_family_expansion_theorem_data_57
+previous_provenance_label	imported_lower_layer
+current_provenance_label	fresh_current_runtime_generated
+authoritative_constructor_name	load_current_high_family_expansion_theorem_data_57_runtime_artifact_
+upstream_septuple57_source_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/septuple_family_expansion_theorem_data_57_payload_90.tsv
+upstream_septuple57_label	fresh_current_runtime_generated
+upstream_septuple57_fallback_hit	0
+upstream_sextuple57_source_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/sextuple_family_expansion_theorem_data_57_payload_90.tsv
+upstream_sextuple57_label	fresh_current_runtime_generated
+upstream_sextuple57_fallback_hit	0
+upstream_quintuple57_source_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/quintuple_family_expansion_theorem_data_57_payload_90.tsv
+upstream_quintuple57_label	fresh_current_runtime_generated
+upstream_quintuple57_fallback_hit	0
+upstream_quad55_source_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/quadruple_family_expansion_theorem_data_55_payload_90.tsv
+upstream_quad55_label	fresh_current_runtime_generated
+upstream_quad55_fallback_hit	0
+upstream_triple53_source_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/triple_family_expansion_theorem_data_53_payload_90.tsv
+upstream_triple53_label	fresh_current_runtime_generated
+upstream_triple53_fallback_hit	0
+upstream_pair52_source_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/pair_expansion_aggregate_52_payload_90.tsv
+upstream_pair52_label	fresh_current_runtime_generated
+upstream_pair52_fallback_hit	0
+pass1_builder_used	0
+cache_loaded	1
+cache_load_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/high_family_expansion_theorem_data_57_payload_90.tsv
+sextuple_region_count	7
+septuple_region_count	1
+region_count	8
+raw_candidates	1926
+canonical_candidates	1926
+deduplicated_candidates	294
+local_exact_survivors	0
+plus_one_survivors	0
+theorem_preserving_survivors	0
+current_fingerprint	317:16323892766005099572
+imported_comparison_fingerprint	57|regions=8|sextuple=7|septuple=1|raw=1926|canonical=1926|deduplicated=294|local=0|plus=0|theorem=0
+imported_equality_result	counts_and_consumer_visible_fingerprint_equal
+fallback_reachable	1
+fallback_hit	0
+runtime_fingerprint	fresh|current_runtime_high_family_expansion_theorem_data_57_cache|load_current_high_family_expansion_theorem_data_57_runtime_artifact_|0|1|8|7|1|1926|1926|294|0|0|0|317:16323892766005099572|57|regions=8|sextuple=7|septuple=1|raw=1926|canonical=1926|deduplicated=294|local=0|plus=0|theorem=0|counts_and_consumer_visible_fingerprint_equal|2729415:14502595494155092201|1|0|0|0|0|0|0|0||Current authoritative path loaded a validated runtime high-family aggregate 57 artifact; upstream septuple57, sextuple57, quintuple57, quad55, triple53, and pair52 stayed fresh with fallback_hit=0.
+direct_consumer_summary	bounded family-chain theorem;family-chain self verification via unified bounded schema-universe theorem
+downstream_caveat_impact	high-family 57 aggregate caveat removed; all seven family-chain lower layers are current constructor/cache-backed
+family_chain_lower_layer_caveat_closed	1
+blocker	
+caveat	Current authoritative path loaded a validated runtime high-family aggregate 57 artifact; upstream septuple57, sextuple57, quintuple57, quad55, triple53, and pair52 stayed fresh with fallback_hit=0.

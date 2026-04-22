@@ -33,8 +33,8 @@ support8 slice가 닫혔다고 해서 archive 전체가 100점 completion인 것
 
 현재 남은 범위 문제는 다음 두 축이다.
 
-1. lower-frontier first-class inventory에 shell11/shell12 pair `4`개가 direct shell15 dependency subset 밖 mixed inventory row로 남아 있다.
-2. family-chain lower triple/quadruple/quintuple/sextuple/septuple layers는 top theorem object가 fresh여도 여전히 imported provenance caveat를 가진다.
+1. lower-frontier first-class inventory의 shell11/shell12 pair `4`개는 direct shell15 dependency subset 밖 `keep_inventory_only_nonblocking` row로 유지된다.
+2. family-chain lower layer `7`개는 모두 fresh current-runtime generated로 승격했고, family-chain lower-layer imported caveat는 닫혔다.
 
 즉 현재 bottleneck은 문서 누락도, artifact 누락도, rerun 미재현도 아니다.  
 현재 bottleneck은 “어디까지를 fresh current-runtime authoritative data로 더 끌어올릴 것인가”다.
@@ -51,13 +51,45 @@ support8 slice가 닫혔다고 해서 archive 전체가 100점 completion인 것
 
 현재 다음 계획은 support8 slice recovery가 아니라 completion 확장 계획이다.
 
-### priority 1
+### completed family-chain lower-layer closure
 
-lower-frontier inventory-only shell11/shell12 pair `4`개를 actual current constructor/cache path로 올릴지 결정한다.
+`high_family_expansion_theorem_data_57`까지 current constructor/cache-backed provenance로 승격했다.
 
-### priority 2
+완료된 하부 단계:
 
-family-chain lower imported layers를 어디까지 fresh current-runtime generated로 승격할지 결정한다.
+- `pair_expansion_aggregate_52`: pass1 current builder, pass2/pass3 runtime cache load, imported equality verified
+- `triple_family_expansion_theorem_data_53`: pass1 current builder, pass2/pass3 runtime cache load, imported equality verified, upstream pair52 fallback hit `0`
+- `quadruple_family_expansion_theorem_data_55`: pass1 current builder, pass2/pass3 runtime cache load, imported equality verified, upstream triple53/pair52 fallback hit `0`
+- `quintuple_family_expansion_theorem_data_57`: pass1 current builder, pass2/pass3 runtime cache load, imported equality verified, upstream quad55/triple53/pair52 fallback hit `0`
+- `sextuple_family_expansion_theorem_data_57`: pass1 current builder, pass2/pass3 runtime cache load, imported equality verified, upstream quintuple57/quad55/triple53/pair52 fallback hit `0`
+- `septuple_family_expansion_theorem_data_57`: pass1 current builder, pass2/pass3 runtime cache load, imported equality verified, upstream sextuple57/quintuple57/quad55/triple53/pair52 fallback hit `0`
+- `high_family_expansion_theorem_data_57`: pass1 current builder, pass2/pass3 runtime cache load, imported equality verified, upstream septuple57/sextuple57/quintuple57/quad55/triple53/pair52 fallback hit `0`
+
+현재 family-chain lower-layer status는 total `7`, fresh `7`, imported `0`이다.
+
+### next priority
+
+Family-chain lower-layer target은 `none_family_chain_lower_layers_complete`이다. Readiness audit 결과 다음 priority는 `general_gap_bridge_formalization`이다.
+
+이 target은 새 scan이나 solver 구현이 아니라, current finite support8/shell/tail closure가 broader general gap theorem으로 이어지는 정확한 bridge obligation을 정의하는 작업이다.
+
+### bridge formalization output
+
+`general_gap_bridge_formalization`은 다음 산출물로 구체화됐다.
+
+- `general_gap_bridge_input_package_90`
+- `general_gap_statement_scope_memo_90`
+- `general_gap_bridge_obligation_inventory_90`
+- `general_gap_bridge_dependency_graph_90`
+- `general_gap_bridge_lemma_candidates_90`
+- `limited_general_gap_bridge_skeleton_90`
+- `general_gap_bridge_next_action_matrix_90`
+
+`prove_minimal_counterexample_reduction`은 proof-ready skeleton까지 진행됐고, `tail_monotonicity_bridge`는 checked-tail absorption을 current scope에서 증명 가능한 형태로 분리했다. `shell16_result_promotion_review`는 no-promotion guard 아래 생성된 candidate/raw/canonical/outside-bounded `4/8/4/4`, local exact/plus-one/theorem-preserving survivors `2/0/0`, fingerprint `981:4479772858934799504`를 검토했고 limited boundary facts만 승격했다. Limited proof attempt는 selected limited support8/shell16-boundary theorem을 `limited_bridge_theorem_proved_under_current_scope`로 올렸다. support-bound round는 `support_minimal_counterexample_reduces_to_support8_or_escape`를 proof-ready skeleton으로 formalize했고, support-reduction round는 support `>8` branch를 `support_growth_partition`으로 세분화했다. Family-chain lift는 conditional target applicability를 부분적으로 닫았고, lift-map refinement는 recognized source-form lift map을 정의했다. obstruction-preservation round는 recognized lifted payload의 well-definedness와 conditional theorem applicability를 current scope에서 닫았다. 이번 phase2 round는 payload refinement relation과 source-target correspondence를 first-class로 formalize했지만 layer projection payload preservation, canonical lift soundness, counterexample-status preservation, operation-specific smaller-witness construction은 open으로 남겼다. 다음 completion target은 `family_chain_lift_phase3_if_needed`다.
+
+### retained perimeter
+
+lower-frontier inventory-only shell11/shell12 pair `4`개는 visible nonblocking perimeter row로 유지한다.
 
 ### out of scope
 

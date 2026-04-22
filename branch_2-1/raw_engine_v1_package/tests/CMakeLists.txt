@@ -274,22 +274,55 @@ add_test(
 )
 add_test(NAME raw_engine_runtime_rerun_plan_smoke COMMAND raw_engine_tests --case runtime_rerun_plan_smoke)
 add_test(NAME raw_engine_runtime_rerun_plan_empty_smoke COMMAND raw_engine_tests --case runtime_rerun_plan_empty_smoke)
+add_test(NAME raw_engine_runtime_proposal_gate_smoke COMMAND raw_engine_tests --case runtime_proposal_gate_smoke)
+add_test(
+    NAME raw_engine_runtime_proposal_gate_need_more_samples_smoke
+    COMMAND raw_engine_tests --case runtime_proposal_gate_need_more_samples_smoke
+)
+add_test(
+    NAME raw_engine_runtime_proposal_gate_approvable_smoke
+    COMMAND raw_engine_tests --case runtime_proposal_gate_approvable_smoke
+)
+add_test(
+    NAME raw_engine_runtime_proposal_gate_reject_hard_breach_smoke
+    COMMAND raw_engine_tests --case runtime_proposal_gate_reject_hard_breach_smoke
+)
 add_test(NAME raw_engine_runtime_approve_rebaseline_smoke COMMAND raw_engine_tests --case runtime_approve_rebaseline_smoke)
+add_test(
+    NAME raw_engine_runtime_approve_rebaseline_from_gate_smoke
+    COMMAND raw_engine_tests --case runtime_approve_rebaseline_from_gate_smoke
+)
 add_test(
     NAME raw_engine_runtime_approve_rebaseline_registry_switch_smoke
     COMMAND raw_engine_tests --case runtime_approve_rebaseline_registry_switch_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_active_switch_phase30_smoke
+    COMMAND raw_engine_tests --case runtime_registry_active_switch_phase30_smoke
 )
 add_test(
     NAME raw_engine_runtime_approve_rebaseline_archive_proposal_smoke
     COMMAND raw_engine_tests --case runtime_approve_rebaseline_archive_proposal_smoke
 )
 add_test(
+    NAME raw_engine_runtime_approve_rebaseline_reject_without_gate_smoke
+    COMMAND raw_engine_tests --case runtime_approve_rebaseline_reject_without_gate_smoke
+)
+add_test(
     NAME raw_engine_runtime_refresh_after_rebaseline_smoke
     COMMAND raw_engine_tests --case runtime_refresh_after_rebaseline_smoke
 )
 add_test(
+    NAME raw_engine_runtime_refresh_after_phase30_approval_smoke
+    COMMAND raw_engine_tests --case runtime_refresh_after_phase30_approval_smoke
+)
+add_test(
     NAME raw_engine_runtime_rerun_plan_after_rebaseline_smoke
     COMMAND raw_engine_tests --case runtime_rerun_plan_after_rebaseline_smoke
+)
+add_test(
+    NAME raw_engine_runtime_rerun_plan_after_phase30_approval_smoke
+    COMMAND raw_engine_tests --case runtime_rerun_plan_after_phase30_approval_smoke
 )
 add_test(
     NAME raw_engine_runtime_selection_after_registry_switch_smoke
@@ -300,24 +333,212 @@ add_test(
     COMMAND raw_engine_tests --case combined_pipeline_after_rebaseline_quick_smoke
 )
 add_test(
+    NAME raw_engine_combined_pipeline_after_phase30_rebaseline_quick_smoke
+    COMMAND raw_engine_tests --case combined_pipeline_after_phase30_rebaseline_quick_smoke
+)
+add_test(
     NAME raw_engine_combined_pipeline_after_rebaseline_nightly_smoke
     COMMAND raw_engine_tests --case combined_pipeline_after_rebaseline_nightly_smoke
+)
+add_test(
+    NAME raw_engine_combined_pipeline_after_phase30_rebaseline_nightly_smoke
+    COMMAND raw_engine_tests --case combined_pipeline_after_phase30_rebaseline_nightly_smoke
 )
 add_test(
     NAME raw_engine_runtime_history_append_after_rebaseline_smoke
     COMMAND raw_engine_tests --case runtime_history_append_after_rebaseline_smoke
 )
 add_test(
+    NAME raw_engine_runtime_history_append_after_phase30_rebaseline_smoke
+    COMMAND raw_engine_tests --case runtime_history_append_after_phase30_rebaseline_smoke
+)
+add_test(
     NAME raw_engine_runtime_registry_history_transition_smoke
     COMMAND raw_engine_tests --case runtime_registry_history_transition_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_history_transition_phase30_smoke
+    COMMAND raw_engine_tests --case runtime_registry_history_transition_phase30_smoke
 )
 add_test(
     NAME raw_engine_evidence_bundle_contains_rebaseline_transition_smoke
     COMMAND raw_engine_tests --case evidence_bundle_contains_rebaseline_transition_smoke
 )
 add_test(
+    NAME raw_engine_evidence_bundle_phase30_transition_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_phase30_transition_smoke
+)
+add_test(
     NAME raw_engine_evidence_bundle_runtime_transition_metadata_smoke
     COMMAND raw_engine_tests --case evidence_bundle_runtime_transition_metadata_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_phase30_metadata_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_phase30_metadata_smoke
+)
+add_test(
+    NAME raw_engine_runtime_budget_proposal_gate_smoke
+    COMMAND raw_engine_tests --case runtime_budget_proposal_gate_smoke
+)
+add_test(
+    NAME raw_engine_runtime_budget_reproposal_gate_smoke
+    COMMAND raw_engine_tests --case runtime_budget_reproposal_gate_smoke
+)
+add_test(
+    NAME raw_engine_runtime_budget_approve_reprofile_smoke
+    COMMAND raw_engine_tests --case runtime_budget_approve_reprofile_smoke
+)
+add_test(
+    NAME raw_engine_runtime_budget_refresh_after_approval_smoke
+    COMMAND raw_engine_tests --case runtime_budget_refresh_after_approval_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_watch_state_machine_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_watch_state_machine_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_age_tick_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_age_tick_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_plan_watch_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_plan_watch_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_reproposal_trigger_gate_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_reproposal_trigger_gate_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_due_scheduler_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_due_scheduler_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_time_travel_due_now_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_time_travel_due_now_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_plan_reproposal_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_plan_reproposal_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_agenda_smoke
+    COMMAND raw_engine_tests --case policy_ops_agenda_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_execute_watch_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_execute_watch_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_apply_watch_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_apply_watch_smoke
+)
+add_test(
+    NAME raw_engine_current_env_monitoring_due_execute_apply_smoke
+    COMMAND raw_engine_tests --case current_env_monitoring_due_execute_apply_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_execute_reproposal_gate_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_execute_reproposal_gate_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_agenda_action_status_smoke
+    COMMAND raw_engine_tests --case policy_ops_agenda_action_status_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_action_ledger_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_action_ledger_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_action_retry_plan_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_action_retry_plan_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_reproposal_handoff_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_reproposal_handoff_smoke
+)
+add_test(
+    NAME raw_engine_current_env_next_cycle_monitoring_due_smoke
+    COMMAND raw_engine_tests --case current_env_next_cycle_monitoring_due_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_agenda_lifecycle_v2_smoke
+    COMMAND raw_engine_tests --case policy_ops_agenda_lifecycle_v2_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_operator_decision_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_operator_decision_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_apply_operator_decision_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_apply_operator_decision_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_action_ledger_compact_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_action_ledger_compact_smoke
+)
+add_test(
+    NAME raw_engine_reproposal_handoff_closure_only_smoke
+    COMMAND raw_engine_tests --case reproposal_handoff_closure_only_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_agenda_lifecycle_v3_smoke
+    COMMAND raw_engine_tests --case policy_ops_agenda_lifecycle_v3_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_approval_runbook_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_approval_runbook_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_execute_budget_approval_dry_run_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_execute_budget_approval_dry_run_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_link_approval_execution_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_link_approval_execution_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_decision_skip_flow_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_decision_skip_flow_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_decision_defer_flow_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_decision_defer_flow_smoke
+)
+add_test(
+    NAME raw_engine_runtime_current_env_decision_retry_now_flow_smoke
+    COMMAND raw_engine_tests --case runtime_current_env_decision_retry_now_flow_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_agenda_lifecycle_v4_smoke
+    COMMAND raw_engine_tests --case policy_ops_agenda_lifecycle_v4_smoke
+)
+add_test(
+    NAME raw_engine_runtime_budget_history_append_smoke
+    COMMAND raw_engine_tests --case runtime_budget_history_append_smoke
+)
+add_test(
+    NAME raw_engine_combined_pipeline_after_budget_reprofile_quick_smoke
+    COMMAND raw_engine_tests --case combined_pipeline_after_budget_reprofile_quick_smoke
+)
+add_test(
+    NAME raw_engine_combined_pipeline_after_budget_reprofile_nightly_smoke
+    COMMAND raw_engine_tests --case combined_pipeline_after_budget_reprofile_nightly_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_budget_vs_rebaseline_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_budget_vs_rebaseline_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_current_env_clear_new_env_action_required_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_current_env_clear_new_env_action_required_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_budget_lifecycle_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_budget_lifecycle_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_budget_transition_metadata_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_budget_transition_metadata_smoke
 )
 add_test(NAME raw_engine_runtime_synthetic_warn_smoke COMMAND raw_engine_tests --case runtime_synthetic_warn_smoke)
 add_test(
@@ -331,6 +552,10 @@ add_test(
     COMMAND raw_engine_tests --case runtime_fingerprint_mismatch_smoke
 )
 add_test(NAME raw_engine_runtime_history_append_smoke COMMAND raw_engine_tests --case runtime_history_append_smoke)
+add_test(
+    NAME raw_engine_runtime_watch_history_append_phase30_smoke
+    COMMAND raw_engine_tests --case runtime_watch_history_append_phase30_smoke
+)
 add_test(NAME raw_engine_runtime_history_summary_smoke COMMAND raw_engine_tests --case runtime_history_summary_smoke)
 add_test(NAME raw_engine_runtime_history_jitter_smoke COMMAND raw_engine_tests --case runtime_history_jitter_smoke)
 add_test(
@@ -405,8 +630,16 @@ add_test(
 )
 add_test(NAME raw_engine_runtime_watch_campaign_smoke COMMAND raw_engine_tests --case runtime_watch_campaign_smoke)
 add_test(
+    NAME raw_engine_runtime_watch_campaign_phase30_repeated_smoke
+    COMMAND raw_engine_tests --case runtime_watch_campaign_phase30_repeated_smoke
+)
+add_test(
     NAME raw_engine_runtime_watch_campaign_longer_smoke
     COMMAND raw_engine_tests --case runtime_watch_campaign_longer_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_campaign_phase30_repeat10_smoke
+    COMMAND raw_engine_tests --case runtime_watch_campaign_phase30_repeat10_smoke
 )
 if(RAW_ENGINE_REGISTER_NIGHTLY_TESTS)
 add_test(
@@ -462,8 +695,104 @@ add_test(
     COMMAND raw_engine_tests --case runtime_watch_diagnostic_soft_warn_smoke
 )
 add_test(
+    NAME raw_engine_runtime_registry_import_current_smoke
+    COMMAND raw_engine_tests --case runtime_registry_import_current_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_import_new_fingerprint_smoke
+    COMMAND raw_engine_tests --case runtime_registry_import_new_fingerprint_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_import_same_fingerprint_smoke
+    COMMAND raw_engine_tests --case runtime_watch_import_same_fingerprint_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_import_fixture_vs_real_smoke
+    COMMAND raw_engine_tests --case runtime_watch_import_fixture_vs_real_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_confidence_smoke
+    COMMAND raw_engine_tests --case runtime_watch_confidence_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_campaign_release_full_smoke
+    COMMAND raw_engine_tests --case runtime_watch_campaign_release_full_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_release_full_repeat10_smoke
+    COMMAND raw_engine_tests --case runtime_watch_release_full_repeat10_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_campaign_release_repeat10_smoke
+    COMMAND raw_engine_tests --case runtime_watch_campaign_release_repeat10_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_release_full_confidence_smoke
+    COMMAND raw_engine_tests --case runtime_watch_release_full_confidence_smoke
+)
+add_test(
+    NAME raw_engine_runtime_watch_confidence_real_vs_fixture_smoke
+    COMMAND raw_engine_tests --case runtime_watch_confidence_real_vs_fixture_smoke
+)
+add_test(
+    NAME raw_engine_runtime_history_compact_smoke
+    COMMAND raw_engine_tests --case runtime_history_compact_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_unified_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_unified_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_current_vs_new_env_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_current_vs_new_env_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_release_watch_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_release_watch_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_matrix_rebaseline_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_matrix_rebaseline_smoke
+)
+add_test(
     NAME raw_engine_runtime_budget_role_sensitive_smoke
     COMMAND raw_engine_tests --case runtime_budget_role_sensitive_smoke
+)
+add_test(
+    NAME raw_engine_publication_snapshot_smoke
+    COMMAND raw_engine_tests --case publication_snapshot_smoke
+)
+add_test(
+    NAME raw_engine_publication_snapshot_bundle_smoke
+    COMMAND raw_engine_tests --case publication_snapshot_bundle_smoke
+)
+add_test(
+    NAME raw_engine_bundle_published_snapshot_smoke
+    COMMAND raw_engine_tests --case bundle_published_snapshot_smoke
+)
+add_test(
+    NAME raw_engine_bundle_delivery_contents_smoke
+    COMMAND raw_engine_tests --case bundle_delivery_contents_smoke
+)
+add_test(
+    NAME raw_engine_bundle_idempotent_from_published_snapshot_smoke
+    COMMAND raw_engine_tests --case bundle_idempotent_from_published_snapshot_smoke
+)
+add_test(
+    NAME raw_engine_staged_ctest_smoke
+    COMMAND raw_engine_tests --case staged_ctest_smoke
+)
+add_test(
+    NAME raw_engine_campaign_wrapper_tail_smoke
+    COMMAND raw_engine_tests --case campaign_wrapper_tail_smoke
+)
+add_test(
+    NAME raw_engine_ctest_executable_lookup_smoke
+    COMMAND raw_engine_tests --case ctest_executable_lookup_smoke
+)
+add_test(
+    NAME raw_engine_wrapper_infra_vs_semantic_failure_smoke
+    COMMAND raw_engine_tests --case wrapper_infra_vs_semantic_failure_smoke
 )
 add_test(
     NAME raw_engine_runtime_recommendation_watch_smoke
@@ -508,6 +837,354 @@ add_test(
 add_test(
     NAME raw_engine_runtime_rebaseline_proposal_cross_host_smoke
     COMMAND raw_engine_tests --case runtime_rebaseline_proposal_cross_host_smoke
+)
+add_test(
+    NAME raw_engine_runtime_import_external_bundle_smoke
+    COMMAND raw_engine_tests --case runtime_import_external_bundle_smoke
+)
+add_test(
+    NAME raw_engine_runtime_import_external_new_fingerprint_smoke
+    COMMAND raw_engine_tests --case runtime_import_external_new_fingerprint_smoke
+)
+add_test(
+    NAME raw_engine_runtime_import_external_same_fingerprint_append_smoke
+    COMMAND raw_engine_tests --case runtime_import_external_same_fingerprint_append_smoke
+)
+add_test(
+    NAME raw_engine_runtime_import_external_malformed_bundle_smoke
+    COMMAND raw_engine_tests --case runtime_import_external_malformed_bundle_smoke
+)
+add_test(
+    NAME raw_engine_runtime_new_env_proposal_gate_smoke
+    COMMAND raw_engine_tests --case runtime_new_env_proposal_gate_smoke
+)
+add_test(
+    NAME raw_engine_runtime_new_env_need_more_samples_smoke
+    COMMAND raw_engine_tests --case runtime_new_env_need_more_samples_smoke
+)
+add_test(
+    NAME raw_engine_runtime_new_env_approvable_smoke
+    COMMAND raw_engine_tests --case runtime_new_env_approvable_smoke
+)
+add_test(
+    NAME raw_engine_runtime_new_env_reject_hard_breach_smoke
+    COMMAND raw_engine_tests --case runtime_new_env_reject_hard_breach_smoke
+)
+add_test(
+    NAME raw_engine_runtime_approve_new_env_baseline_smoke
+    COMMAND raw_engine_tests --case runtime_approve_new_env_baseline_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_keep_current_env_active_smoke
+    COMMAND raw_engine_tests --case runtime_registry_keep_current_env_active_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_multi_fingerprint_active_smoke
+    COMMAND raw_engine_tests --case runtime_registry_multi_fingerprint_active_smoke
+)
+add_test(
+    NAME raw_engine_runtime_approve_new_env_reject_without_gate_smoke
+    COMMAND raw_engine_tests --case runtime_approve_new_env_reject_without_gate_smoke
+)
+add_test(
+    NAME raw_engine_runtime_refresh_after_new_env_approval_smoke
+    COMMAND raw_engine_tests --case runtime_refresh_after_new_env_approval_smoke
+)
+add_test(
+    NAME raw_engine_runtime_rerun_after_new_env_approval_smoke
+    COMMAND raw_engine_tests --case runtime_rerun_after_new_env_approval_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_three_way_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_three_way_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_current_vs_known_vs_foreign_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_current_vs_known_vs_foreign_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_new_env_onboarding_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_new_env_onboarding_smoke
+)
+add_test(
+    NAME raw_engine_light_ops_bundle_registry_summary_smoke
+    COMMAND raw_engine_tests --case light_ops_bundle_registry_summary_smoke
+)
+add_test(
+    NAME raw_engine_bundle_metadata_multi_active_registry_smoke
+    COMMAND raw_engine_tests --case bundle_metadata_multi_active_registry_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_health_smoke
+    COMMAND raw_engine_tests --case runtime_registry_health_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_stale_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_stale_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_reverify_required_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_reverify_required_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_retire_candidate_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_retire_candidate_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_state_machine_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_state_machine_smoke
+)
+add_test(
+    NAME raw_engine_runtime_import_known_env_evidence_smoke
+    COMMAND raw_engine_tests --case runtime_import_known_env_evidence_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_age_tick_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_age_tick_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_plan_reverify_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_plan_reverify_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_reverify_gate_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_reverify_gate_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_apply_reverify_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_apply_reverify_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_plan_retire_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_plan_retire_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_apply_retire_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_apply_retire_smoke
+)
+add_test(
+    NAME raw_engine_runtime_known_env_retired_smoke
+    COMMAND raw_engine_tests --case runtime_known_env_retired_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_health_v2_smoke
+    COMMAND raw_engine_tests --case runtime_registry_health_v2_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_health_v3_smoke
+    COMMAND raw_engine_tests --case runtime_registry_health_v3_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_same_fingerprint_supersession_smoke
+    COMMAND raw_engine_tests --case runtime_registry_same_fingerprint_supersession_smoke
+)
+add_test(
+    NAME raw_engine_runtime_registry_retired_not_selected_smoke
+    COMMAND raw_engine_tests --case runtime_registry_retired_not_selected_smoke
+)
+add_test(
+    NAME raw_engine_runtime_foreign_env_state_machine_smoke
+    COMMAND raw_engine_tests --case runtime_foreign_env_state_machine_smoke
+)
+add_test(
+    NAME raw_engine_publication_health_smoke
+    COMMAND raw_engine_tests --case publication_health_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v4_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v4_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v5_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v5_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v6_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v6_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v7_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v7_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v8_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v8_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v9_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v9_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v10_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v10_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v11_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v11_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v12_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v12_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v13_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v13_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_known_vs_foreign_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_known_vs_foreign_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_publication_health_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_publication_health_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_registry_health_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_registry_health_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_known_env_governance_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_known_env_governance_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_known_env_timeline_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_known_env_timeline_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_current_env_budget_lifecycle_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_current_env_budget_lifecycle_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_current_env_guardrail_timeline_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_current_env_guardrail_timeline_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_current_env_due_timeline_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_current_env_due_timeline_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_current_env_execute_apply_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_current_env_execute_apply_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_action_ledger_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_action_ledger_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_operator_decision_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_operator_decision_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_approval_runbook_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_approval_runbook_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_index_smoke
+    COMMAND raw_engine_tests --case operator_runbook_index_smoke
+)
+add_test(
+    NAME raw_engine_approval_execution_dry_run_smoke
+    COMMAND raw_engine_tests --case approval_execution_dry_run_smoke
+)
+add_test(
+    NAME raw_engine_approval_execution_handoff_only_smoke
+    COMMAND raw_engine_tests --case approval_execution_handoff_only_smoke
+)
+add_test(
+    NAME raw_engine_approval_execution_integrated_requires_optin_smoke
+    COMMAND raw_engine_tests --case approval_execution_integrated_requires_optin_smoke
+)
+add_test(
+    NAME raw_engine_approval_execution_integrated_optin_fixture_smoke
+    COMMAND raw_engine_tests --case approval_execution_integrated_optin_fixture_smoke
+)
+add_test(
+    NAME raw_engine_current_env_decision_skip_e2e_smoke
+    COMMAND raw_engine_tests --case current_env_decision_skip_e2e_smoke
+)
+add_test(
+    NAME raw_engine_current_env_decision_defer_e2e_smoke
+    COMMAND raw_engine_tests --case current_env_decision_defer_e2e_smoke
+)
+add_test(
+    NAME raw_engine_current_env_decision_reject_e2e_smoke
+    COMMAND raw_engine_tests --case current_env_decision_reject_e2e_smoke
+)
+add_test(
+    NAME raw_engine_current_env_decision_retry_now_e2e_smoke
+    COMMAND raw_engine_tests --case current_env_decision_retry_now_e2e_smoke
+)
+add_test(
+    NAME raw_engine_action_ledger_closure_invariants_smoke
+    COMMAND raw_engine_tests --case action_ledger_closure_invariants_smoke
+)
+add_test(
+    NAME raw_engine_source_health_preflight_smoke
+    COMMAND raw_engine_tests --case source_health_preflight_smoke
+)
+add_test(
+    NAME raw_engine_staged_sparse_clone_overlay_smoke
+    COMMAND raw_engine_tests --case staged_sparse_clone_overlay_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v14_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v14_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_runbook_index_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_runbook_index_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_publication_health_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_publication_health_smoke
+)
+add_test(
+    NAME raw_engine_light_ops_bundle_operator_summary_v4_smoke
+    COMMAND raw_engine_tests --case light_ops_bundle_operator_summary_v4_smoke
+)
+set_tests_properties(
+    raw_engine_runtime_import_external_bundle_smoke
+    raw_engine_runtime_import_external_new_fingerprint_smoke
+    raw_engine_runtime_import_external_same_fingerprint_append_smoke
+    raw_engine_runtime_import_external_malformed_bundle_smoke
+    raw_engine_runtime_new_env_proposal_gate_smoke
+    raw_engine_runtime_new_env_need_more_samples_smoke
+    raw_engine_runtime_new_env_approvable_smoke
+    raw_engine_runtime_new_env_reject_hard_breach_smoke
+    raw_engine_runtime_approve_new_env_baseline_smoke
+    raw_engine_runtime_registry_keep_current_env_active_smoke
+    raw_engine_runtime_registry_multi_fingerprint_active_smoke
+    raw_engine_runtime_approve_new_env_reject_without_gate_smoke
+    raw_engine_runtime_refresh_after_new_env_approval_smoke
+    raw_engine_runtime_rerun_after_new_env_approval_smoke
+    raw_engine_policy_ops_summary_three_way_smoke
+    raw_engine_policy_ops_summary_current_vs_known_vs_foreign_smoke
+    raw_engine_evidence_bundle_new_env_onboarding_smoke
+    raw_engine_light_ops_bundle_registry_summary_smoke
+    raw_engine_bundle_metadata_multi_active_registry_smoke
+    raw_engine_runtime_registry_health_smoke
+    raw_engine_runtime_known_env_stale_smoke
+    raw_engine_runtime_known_env_reverify_required_smoke
+    raw_engine_runtime_known_env_retire_candidate_smoke
+    raw_engine_runtime_known_env_state_machine_smoke
+    raw_engine_runtime_import_known_env_evidence_smoke
+    raw_engine_runtime_known_env_reverify_gate_smoke
+    raw_engine_runtime_known_env_plan_retire_smoke
+    raw_engine_runtime_known_env_retired_smoke
+    raw_engine_runtime_registry_health_v2_smoke
+    raw_engine_runtime_registry_same_fingerprint_supersession_smoke
+    raw_engine_runtime_registry_retired_not_selected_smoke
+    raw_engine_runtime_foreign_env_state_machine_smoke
+    raw_engine_publication_health_smoke
+    raw_engine_policy_ops_summary_v4_smoke
+    raw_engine_policy_ops_summary_v5_smoke
+    raw_engine_policy_ops_summary_known_vs_foreign_smoke
+    raw_engine_policy_ops_summary_publication_health_smoke
+    raw_engine_evidence_bundle_registry_health_smoke
+    raw_engine_evidence_bundle_known_env_governance_smoke
+    raw_engine_evidence_bundle_publication_health_smoke
+    raw_engine_light_ops_bundle_operator_summary_v4_smoke
+    PROPERTIES RUN_SERIAL TRUE
 )
 if(RAW_ENGINE_REGISTER_NIGHTLY_TESTS)
 add_test(NAME raw_engine_pipeline_matrix_smoke COMMAND raw_engine_tests --case pipeline_matrix_smoke)
@@ -568,6 +1245,10 @@ endif()
 add_test(
     NAME raw_engine_evidence_bundle_combined_summary_smoke
     COMMAND raw_engine_tests --case evidence_bundle_combined_summary_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_light_ops_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_light_ops_smoke
 )
 add_test(NAME raw_engine_ops_guide_paths_smoke COMMAND raw_engine_tests --case ops_guide_paths_smoke)
 if(RAW_ENGINE_REGISTER_NIGHTLY_TESTS)
@@ -658,7 +1339,12 @@ if (RAW_ENGINE_REGISTER_NIGHTLY_TESTS)
     add_test(NAME raw_engine_duplicate_attribution_smoke COMMAND raw_engine_tests --case duplicate_attribution_smoke)
     add_test(
         NAME raw_engine_compare_campaign_checkpoint_smoke
-        COMMAND raw_engine_tests
+        COMMAND /usr/bin/python3
+            ${PROJECT_SOURCE_DIR}/tests/tools/run_ctest_staged.py
+            --binary $<TARGET_FILE:raw_engine_tests>
+            --stage-name compare_campaign_checkpoint_smoke
+            --result-json ${CMAKE_CURRENT_BINARY_DIR}/artifacts/phase15_campaign_checkpoint_smoke/result.json
+            --
             --case campaign
             --campaign-config ${PROJECT_SOURCE_DIR}/tests/campaigns/phase15_checkpoint_smoke.txt
             --checkpoint-dir ${CMAKE_CURRENT_BINARY_DIR}/artifacts/phase15_campaign_checkpoint_smoke/checkpoints
@@ -668,13 +1354,23 @@ if (RAW_ENGINE_REGISTER_NIGHTLY_TESTS)
     )
     add_test(
         NAME raw_engine_campaign_resume_smoke
-        COMMAND raw_engine_tests
+        COMMAND /usr/bin/python3
+            ${PROJECT_SOURCE_DIR}/tests/tools/run_ctest_staged.py
+            --binary $<TARGET_FILE:raw_engine_tests>
+            --stage-name campaign_resume_smoke
+            --result-json ${CMAKE_CURRENT_BINARY_DIR}/artifacts/phase15_campaign_resume_smoke/result.json
+            --
             --case campaign
             --resume-from ${CMAKE_CURRENT_BINARY_DIR}/artifacts/phase15_campaign_checkpoint_smoke/checkpoints/latest.chk
     )
     add_test(
         NAME raw_engine_campaign_partial_merge_smoke
-        COMMAND raw_engine_tests
+        COMMAND /usr/bin/python3
+            ${PROJECT_SOURCE_DIR}/tests/tools/run_ctest_staged.py
+            --binary $<TARGET_FILE:raw_engine_tests>
+            --stage-name campaign_partial_merge_smoke
+            --result-json ${CMAKE_CURRENT_BINARY_DIR}/artifacts/phase15_campaign_partial_merge_smoke/result.json
+            --
             --case campaign
             --campaign-config ${PROJECT_SOURCE_DIR}/tests/campaigns/phase15_resume_smoke.txt
             --checkpoint-dir ${CMAKE_CURRENT_BINARY_DIR}/artifacts/phase15_campaign_partial_merge_smoke/checkpoints
@@ -920,11 +1616,85 @@ raw_engine_label_tests(compare
     raw_engine_runtime_refresh_against_promoted_baseline_smoke
     raw_engine_runtime_rerun_plan_smoke
     raw_engine_runtime_rerun_plan_empty_smoke
+    raw_engine_runtime_proposal_gate_smoke
+    raw_engine_runtime_proposal_gate_need_more_samples_smoke
+    raw_engine_runtime_proposal_gate_approvable_smoke
+    raw_engine_runtime_proposal_gate_reject_hard_breach_smoke
     raw_engine_runtime_approve_rebaseline_smoke
+    raw_engine_runtime_approve_rebaseline_from_gate_smoke
     raw_engine_runtime_approve_rebaseline_registry_switch_smoke
+    raw_engine_runtime_registry_active_switch_phase30_smoke
     raw_engine_runtime_approve_rebaseline_archive_proposal_smoke
+    raw_engine_runtime_approve_rebaseline_reject_without_gate_smoke
     raw_engine_runtime_refresh_after_rebaseline_smoke
+    raw_engine_runtime_refresh_after_phase30_approval_smoke
+    raw_engine_runtime_budget_proposal_gate_smoke
+    raw_engine_runtime_budget_approve_reprofile_smoke
+    raw_engine_runtime_budget_refresh_after_approval_smoke
+    raw_engine_runtime_current_env_age_tick_smoke
+    raw_engine_runtime_current_env_plan_watch_smoke
+    raw_engine_runtime_current_env_reproposal_trigger_gate_smoke
+    raw_engine_runtime_current_env_due_scheduler_smoke
+    raw_engine_runtime_current_env_time_travel_due_now_smoke
+    raw_engine_runtime_current_env_plan_reproposal_smoke
+    raw_engine_policy_ops_agenda_smoke
+    raw_engine_runtime_current_env_execute_watch_smoke
+    raw_engine_runtime_current_env_apply_watch_smoke
+    raw_engine_current_env_monitoring_due_execute_apply_smoke
+    raw_engine_runtime_current_env_execute_reproposal_gate_smoke
+    raw_engine_policy_ops_agenda_action_status_smoke
+    raw_engine_runtime_current_env_action_ledger_smoke
+    raw_engine_runtime_current_env_action_retry_plan_smoke
+    raw_engine_runtime_current_env_reproposal_handoff_smoke
+    raw_engine_current_env_next_cycle_monitoring_due_smoke
+    raw_engine_policy_ops_agenda_lifecycle_v2_smoke
+    raw_engine_runtime_current_env_operator_decision_smoke
+    raw_engine_runtime_current_env_apply_operator_decision_smoke
+    raw_engine_runtime_current_env_action_ledger_compact_smoke
+    raw_engine_reproposal_handoff_closure_only_smoke
+    raw_engine_policy_ops_agenda_lifecycle_v3_smoke
+    raw_engine_runtime_current_env_approval_runbook_smoke
+    raw_engine_runtime_current_env_execute_budget_approval_dry_run_smoke
+    raw_engine_runtime_current_env_link_approval_execution_smoke
+    raw_engine_runtime_current_env_decision_skip_flow_smoke
+    raw_engine_runtime_current_env_decision_defer_flow_smoke
+    raw_engine_runtime_current_env_decision_retry_now_flow_smoke
+    raw_engine_policy_ops_agenda_lifecycle_v4_smoke
+    raw_engine_runtime_budget_history_append_smoke
+    raw_engine_combined_pipeline_after_budget_reprofile_quick_smoke
+    raw_engine_combined_pipeline_after_budget_reprofile_nightly_smoke
+    raw_engine_policy_ops_summary_budget_vs_rebaseline_smoke
+    raw_engine_policy_ops_summary_v8_smoke
+    raw_engine_policy_ops_summary_v9_smoke
+    raw_engine_policy_ops_summary_v10_smoke
+    raw_engine_policy_ops_summary_v11_smoke
+    raw_engine_policy_ops_summary_v12_smoke
+    raw_engine_policy_ops_summary_v13_smoke
+    raw_engine_operator_runbook_index_smoke
+    raw_engine_approval_execution_dry_run_smoke
+    raw_engine_approval_execution_handoff_only_smoke
+    raw_engine_approval_execution_integrated_requires_optin_smoke
+    raw_engine_approval_execution_integrated_optin_fixture_smoke
+    raw_engine_current_env_decision_skip_e2e_smoke
+    raw_engine_current_env_decision_defer_e2e_smoke
+    raw_engine_current_env_decision_reject_e2e_smoke
+    raw_engine_current_env_decision_retry_now_e2e_smoke
+    raw_engine_action_ledger_closure_invariants_smoke
+    raw_engine_source_health_preflight_smoke
+    raw_engine_staged_sparse_clone_overlay_smoke
+    raw_engine_policy_ops_summary_v14_smoke
+    raw_engine_evidence_bundle_runbook_index_smoke
+    raw_engine_policy_ops_summary_current_env_clear_new_env_action_required_smoke
+    raw_engine_evidence_bundle_budget_lifecycle_smoke
+    raw_engine_evidence_bundle_budget_transition_metadata_smoke
+    raw_engine_evidence_bundle_current_env_guardrail_timeline_smoke
+    raw_engine_evidence_bundle_current_env_due_timeline_smoke
+    raw_engine_evidence_bundle_current_env_execute_apply_smoke
+    raw_engine_evidence_bundle_action_ledger_smoke
+    raw_engine_evidence_bundle_operator_decision_smoke
+    raw_engine_evidence_bundle_approval_runbook_smoke
     raw_engine_runtime_rerun_plan_after_rebaseline_smoke
+    raw_engine_runtime_rerun_plan_after_phase30_approval_smoke
     raw_engine_runtime_selection_after_registry_switch_smoke
     raw_engine_runtime_synthetic_warn_smoke
     raw_engine_runtime_synthetic_action_required_smoke
@@ -951,9 +1721,13 @@ raw_engine_label_tests(compare
     raw_engine_pipeline_matrix_mixed_fingerprints_smoke
     raw_engine_pipeline_nightly_rebaseline_candidate_smoke
     raw_engine_combined_pipeline_after_rebaseline_quick_smoke
+    raw_engine_combined_pipeline_after_phase30_rebaseline_quick_smoke
     raw_engine_combined_pipeline_after_rebaseline_nightly_smoke
+    raw_engine_combined_pipeline_after_phase30_rebaseline_nightly_smoke
     raw_engine_runtime_history_append_after_rebaseline_smoke
+    raw_engine_runtime_history_append_after_phase30_rebaseline_smoke
     raw_engine_runtime_registry_history_transition_smoke
+    raw_engine_runtime_registry_history_transition_phase30_smoke
     raw_engine_combined_policy_runtime_ok_smoke
     raw_engine_combined_policy_runtime_warn_smoke
     raw_engine_combined_policy_runtime_action_required_smoke
@@ -1077,6 +1851,15 @@ raw_engine_label_tests(policy_refresh
     raw_engine_action_required_mode_smoke
     raw_engine_policy_severity_smoke
     raw_engine_pipeline_exit_code_smoke
+    raw_engine_runtime_budget_proposal_gate_smoke
+    raw_engine_runtime_budget_approve_reprofile_smoke
+    raw_engine_runtime_budget_refresh_after_approval_smoke
+    raw_engine_combined_pipeline_after_budget_reprofile_quick_smoke
+    raw_engine_combined_pipeline_after_budget_reprofile_nightly_smoke
+    raw_engine_policy_ops_summary_budget_vs_rebaseline_smoke
+    raw_engine_policy_ops_summary_current_env_clear_new_env_action_required_smoke
+    raw_engine_evidence_bundle_budget_lifecycle_smoke
+    raw_engine_evidence_bundle_budget_transition_metadata_smoke
     raw_engine_policy_roundtrip_smoke
     raw_engine_policy_empty_plan_noop_smoke
     raw_engine_policy_manifest_missing_input_smoke
@@ -1112,7 +1895,9 @@ raw_engine_label_tests(policy_refresh
     raw_engine_evidence_bundle_runtime_history_snapshot_smoke
     raw_engine_evidence_bundle_runtime_proposal_smoke
     raw_engine_evidence_bundle_contains_rebaseline_transition_smoke
+    raw_engine_evidence_bundle_phase30_transition_smoke
     raw_engine_evidence_bundle_runtime_transition_metadata_smoke
+    raw_engine_evidence_bundle_phase30_metadata_smoke
     raw_engine_evidence_bundle_combined_summary_smoke
     raw_engine_policy_refresh_nightly_smoke
 )
@@ -1238,6 +2023,132 @@ set_tests_properties(
     PROPERTIES
         RUN_SERIAL TRUE
 )
+
+foreach(test_name
+        raw_engine_runtime_registry_promote_smoke
+        raw_engine_runtime_registry_activate_retire_smoke
+        raw_engine_runtime_registry_roundtrip_smoke
+        raw_engine_runtime_watch_campaign_smoke
+        raw_engine_runtime_watch_campaign_phase30_repeated_smoke
+        raw_engine_runtime_watch_campaign_longer_smoke
+        raw_engine_runtime_watch_campaign_phase30_repeat10_smoke
+        raw_engine_runtime_watch_multi_fingerprint_smoke
+        raw_engine_runtime_watch_same_host_compiler_bump_smoke
+        raw_engine_runtime_watch_sanitizer_change_smoke
+        raw_engine_runtime_watch_runner_tag_change_smoke
+        raw_engine_runtime_watch_cross_host_smoke
+        raw_engine_runtime_watch_retired_only_smoke
+        raw_engine_runtime_watch_stable_overrun_smoke
+        raw_engine_runtime_watch_clear_after_recovery_smoke
+        raw_engine_runtime_watch_escalate_smoke
+        raw_engine_runtime_watch_transition_clear_smoke
+        raw_engine_runtime_watch_transition_stable_smoke
+        raw_engine_runtime_watch_transition_escalate_smoke
+        raw_engine_runtime_watch_to_rebaseline_candidate_smoke
+        raw_engine_runtime_watch_production_hard_fail_smoke
+        raw_engine_runtime_watch_diagnostic_soft_warn_smoke
+        raw_engine_runtime_registry_import_current_smoke
+        raw_engine_runtime_registry_import_new_fingerprint_smoke
+        raw_engine_runtime_watch_import_same_fingerprint_smoke
+        raw_engine_runtime_watch_import_fixture_vs_real_smoke
+        raw_engine_runtime_watch_confidence_smoke
+        raw_engine_runtime_watch_campaign_release_full_smoke
+        raw_engine_runtime_watch_release_full_repeat10_smoke
+        raw_engine_runtime_watch_release_full_confidence_smoke
+        raw_engine_runtime_refresh_after_rebaseline_smoke
+        raw_engine_runtime_rerun_plan_after_rebaseline_smoke
+        raw_engine_combined_pipeline_after_rebaseline_quick_smoke
+        raw_engine_combined_pipeline_after_phase30_rebaseline_quick_smoke
+        raw_engine_combined_pipeline_after_phase30_rebaseline_nightly_smoke
+        raw_engine_runtime_history_append_after_phase30_rebaseline_smoke
+        raw_engine_runtime_registry_history_transition_phase30_smoke
+        raw_engine_evidence_bundle_phase30_transition_smoke
+        raw_engine_evidence_bundle_phase30_metadata_smoke
+        raw_engine_runtime_budget_proposal_gate_smoke
+        raw_engine_runtime_budget_approve_reprofile_smoke
+        raw_engine_runtime_budget_refresh_after_approval_smoke
+        raw_engine_runtime_current_env_age_tick_smoke
+        raw_engine_runtime_current_env_plan_watch_smoke
+        raw_engine_runtime_current_env_reproposal_trigger_gate_smoke
+        raw_engine_runtime_current_env_due_scheduler_smoke
+        raw_engine_runtime_current_env_time_travel_due_now_smoke
+        raw_engine_runtime_current_env_plan_reproposal_smoke
+        raw_engine_policy_ops_agenda_smoke
+        raw_engine_runtime_current_env_execute_watch_smoke
+        raw_engine_runtime_current_env_apply_watch_smoke
+        raw_engine_current_env_monitoring_due_execute_apply_smoke
+        raw_engine_runtime_current_env_execute_reproposal_gate_smoke
+        raw_engine_policy_ops_agenda_action_status_smoke
+        raw_engine_runtime_current_env_action_ledger_smoke
+        raw_engine_runtime_current_env_action_retry_plan_smoke
+        raw_engine_runtime_current_env_reproposal_handoff_smoke
+        raw_engine_current_env_next_cycle_monitoring_due_smoke
+        raw_engine_policy_ops_agenda_lifecycle_v2_smoke
+        raw_engine_runtime_budget_history_append_smoke
+        raw_engine_combined_pipeline_after_budget_reprofile_quick_smoke
+        raw_engine_combined_pipeline_after_budget_reprofile_nightly_smoke
+        raw_engine_policy_ops_summary_budget_vs_rebaseline_smoke
+        raw_engine_policy_ops_summary_v8_smoke
+        raw_engine_policy_ops_summary_v9_smoke
+        raw_engine_policy_ops_summary_v10_smoke
+        raw_engine_policy_ops_summary_v11_smoke
+        raw_engine_policy_ops_summary_current_env_clear_new_env_action_required_smoke
+        raw_engine_evidence_bundle_budget_lifecycle_smoke
+        raw_engine_evidence_bundle_budget_transition_metadata_smoke
+        raw_engine_evidence_bundle_current_env_guardrail_timeline_smoke
+        raw_engine_evidence_bundle_current_env_due_timeline_smoke
+        raw_engine_evidence_bundle_current_env_execute_apply_smoke
+        raw_engine_evidence_bundle_action_ledger_smoke
+        raw_engine_runtime_watch_history_append_phase30_smoke
+        raw_engine_runtime_watch_confidence_real_vs_fixture_smoke
+        raw_engine_policy_baseline_promote_smoke
+        raw_engine_policy_baseline_roundtrip_smoke
+        raw_engine_policy_baseline_history_smoke
+        raw_engine_policy_baseline_archive_roundtrip_smoke
+        raw_engine_policy_promote_reject_fail_smoke
+        raw_engine_policy_refresh_smoke
+        raw_engine_policy_refresh_against_promoted_baseline_smoke
+        raw_engine_policy_refresh_family_filter_smoke
+        raw_engine_policy_refresh_freshness_only_smoke
+        raw_engine_policy_refresh_stale_hash_smoke
+        raw_engine_policy_refresh_compare_engine_hash_smoke
+        raw_engine_policy_refresh_generator_hash_smoke
+        raw_engine_policy_refresh_campaign_config_hash_smoke
+        raw_engine_policy_gate_non_applicable_drift_smoke
+        raw_engine_planner_tie_organic_reclassify_trigger_smoke
+        raw_engine_policy_reclassify_non_applicable_smoke
+        raw_engine_runtime_history_append_smoke
+        raw_engine_runtime_history_summary_smoke
+        raw_engine_runtime_history_jitter_smoke
+        raw_engine_runtime_history_regression_spike_smoke
+        raw_engine_runtime_history_stable_smoke
+        raw_engine_runtime_history_noisy_smoke
+        raw_engine_runtime_history_regressing_smoke
+        raw_engine_runtime_history_recovery_after_rebaseline_smoke
+        raw_engine_runtime_history_compact_smoke
+        raw_engine_policy_ops_summary_unified_smoke
+        raw_engine_policy_ops_summary_current_vs_new_env_smoke
+        raw_engine_policy_ops_summary_release_watch_smoke
+        raw_engine_policy_ops_summary_matrix_rebaseline_smoke
+        raw_engine_evidence_bundle_light_ops_smoke
+        raw_engine_publication_snapshot_smoke
+        raw_engine_publication_snapshot_bundle_smoke
+        raw_engine_bundle_published_snapshot_smoke
+        raw_engine_bundle_delivery_contents_smoke
+        raw_engine_bundle_idempotent_from_published_snapshot_smoke
+        raw_engine_staged_ctest_smoke
+        raw_engine_campaign_wrapper_tail_smoke
+        raw_engine_ctest_executable_lookup_smoke
+        raw_engine_wrapper_infra_vs_semantic_failure_smoke
+        raw_engine_policy_rerun_plan_smoke
+        raw_engine_policy_rerun_plan_empty_smoke
+        raw_engine_policy_rerun_plan_family_filter_smoke
+        raw_engine_policy_rerun_plan_mode_selection_smoke
+)
+    if (TEST ${test_name})
+        set_tests_properties(${test_name} PROPERTIES RUN_SERIAL TRUE)
+    endif()
+endforeach()
 
 if (raw_engine_registered_nightly_tests)
     set_tests_properties(

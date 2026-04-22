@@ -20,10 +20,10 @@
 - current provenance label: `fresh_current_runtime_generated`
 - generation path: `build_current_family_chain_output_57_theorem_objects_`
 - promoted item count: `2`
-- rerun fingerprint: `fresh|7|21|35|35|21|7|1|0|0|0|1|build_current_family_chain_output_57_theorem_objects_||build_current_family_chain_output_57_theorem_objects_|0|authoritative family-chain theorem objects are rebuilt in the current runtime, but lower triple/quadruple/quintuple/sextuple/septuple theorem-data still comes from validated imported provenance unless separately rederived`
+- rerun fingerprint: `fresh|7|21|35|35|21|7|1|0|0|0|1|build_current_family_chain_output_57_theorem_objects_||build_current_family_chain_output_57_theorem_objects_|0|authoritative family-chain theorem objects are rebuilt in the current runtime and pair-expansion aggregate 52 is current constructor/cache-backed; triple-family theorem data 53 is current constructor/cache-backed; quadruple-family theorem data 55 is current constructor/cache-backed; quintuple-family theorem data 57 is current constructor/cache-backed; sextuple-family theorem data 57 is current constructor/cache-backed; septuple-family theorem data 57 is current constructor/cache-backed; high-family theorem data 57 is current constructor/cache-backed; family-chain lower-layer caveat closed`
 - constructor name: `build_current_family_chain_output_57_theorem_objects_`
 - fallback hit: `0`
-- caveat: `authoritative family-chain theorem objects are rebuilt in the current runtime, but lower triple/quadruple/quintuple/sextuple/septuple theorem-data still comes from validated imported provenance unless separately rederived`
+- caveat: `authoritative family-chain theorem objects are rebuilt in the current runtime and pair-expansion aggregate 52 is current constructor/cache-backed; triple-family theorem data 53 is current constructor/cache-backed; quadruple-family theorem data 55 is current constructor/cache-backed; quintuple-family theorem data 57 is current constructor/cache-backed; sextuple-family theorem data 57 is current constructor/cache-backed; septuple-family theorem data 57 is current constructor/cache-backed; high-family theorem data 57 is current constructor/cache-backed; family-chain lower-layer caveat closed`
 
 ## current implication
 - current support8 classification: `support8_authoritative_completion_locked`

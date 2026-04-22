@@ -1,0 +1,9 @@
+statement_key	evidence_sufficiency_0_100	proof_value_0_100	risk_0_100	dependency_clarity_0_100	bridge_impact_0_100	promotion_decision	promoted_label_if_any	reason	required_followup
+shell16_candidate_universe_constructed	100	70	20	100	70	promote_runtime_fact_only	current_verified_runtime_fact	Fresh stable candidate universe exists with count 4.	use_in_limited_bridge_context_only
+shell16_outside_bounded_frontier_reviewed	100	75	25	100	75	promote_runtime_fact_only	current_verified_runtime_fact	Raw canonical outside-bounded counts are audit-backed as 8/4/4.	use_in_boundary_review
+shell16_zero_plus_one_survivors	100	82	35	95	82	promote_runtime_fact_only	current_verified_runtime_fact	Plus-one survivor audit is empty while local exact survivors are visible.	use_as_nonblocking_filter
+shell16_zero_theorem_preserving_survivors	100	90	35	95	90	promote_runtime_fact_only	current_verified_runtime_fact	Theorem-preserving survivor audit is empty.	use_as_bridge_zero_condition
+shell16_local_exact_survivors_present	100	75	45	100	80	promote_runtime_fact_only	current_verified_runtime_fact	Local exact survivor count 2 is visible and must be preserved.	do_not_claim_zero_local_survivors
+shell16_boundary_no_theorem_preserving_escape	95	92	45	90	92	promote_limited_bridge_lemma	current_verified_limited_bridge_lemma	Local exact pair fails plus-one and reaches no theorem-preserving survivor.	use_only_for_current_shell16_boundary
+shell16_boundary_tail_escape_closed_under_review	88	88	50	88	88	promote_limited_bridge_lemma	current_verified_limited_bridge_lemma	The current shell16 boundary theorem-preserving escape is closed under review, while full absorption remains open.	family_chain_lift_map_refinement
+shell16_boundary_not_promotable_yet	100	60	80	100	65	reject_promotion	none	Full shell16 theorem and full tail monotonicity lack absorption/generalization proof.	prove_or_refine_tail_absorption_step_if_needed

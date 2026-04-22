@@ -1,0 +1,7 @@
+metric	value
+relation_count	10
+selected_relation	layerwise_payload_refinement
+proved_relation_contracts	2
+proof_ready_relation_contracts	5
+blocked_relation_contracts	2
+final_status	payload_refinement_relation_proof_ready_skeleton

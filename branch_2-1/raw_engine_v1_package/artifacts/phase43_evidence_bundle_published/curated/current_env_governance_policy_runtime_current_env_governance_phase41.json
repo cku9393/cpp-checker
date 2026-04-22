@@ -1,0 +1,33 @@
+{
+  "manifest_version": "runtime_current_env_governance_policy_v1",
+  "policy_id": "phase41-current-env-governance",
+  "phase": "phase41",
+  "reprofile_candidate_threshold": 5,
+  "watch_stable_threshold": 3,
+  "watch_escalate_hard_breach_count": 1,
+  "min_real_samples_for_reproposal": 5,
+  "min_watch_confidence_for_reprofile": "HIGH",
+  "max_hard_breach_count_for_reproposal": 0,
+  "bounded_jitter_percent": 15.0,
+  "production_critical_execution_classes": [
+    "release_full"
+  ],
+  "diagnostic_guard_execution_classes": [
+    "debug_full",
+    "asan_full"
+  ],
+  "current_env_roles": {
+    "production_critical": {
+      "prefer_reprofile_candidate": true
+    },
+    "diagnostic": {
+      "prefer_reprofile_candidate": false
+    },
+    "operator": {
+      "prefer_reprofile_candidate": false
+    }
+  },
+  "generated_at_utc": "2026-04-09T09:13:55Z",
+  "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/runtime_current_env_governance_phase41.json",
+  "policy_hash": "2020b1392cf8c78fca898f86be2f14ddaf73ec3bcafecf9f6dc0c65368f9df41"
+}

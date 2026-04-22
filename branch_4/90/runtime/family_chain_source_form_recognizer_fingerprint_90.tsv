@@ -1,0 +1,8 @@
+metric	value
+recognizer_status	recognizer_contract_ready_soundness_proof_sketch
+recognizer_component_count	11
+classification_count	5
+recognized_classes	2
+escape_classes	2
+non_family_chain_classes	1
+fingerprint	recognizer_contract_ready_soundness_proof_sketch|11|5|2|2|1

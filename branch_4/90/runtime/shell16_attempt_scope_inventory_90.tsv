@@ -1,0 +1,5 @@
+scope_key	description	selected	allowed_by_preflight	expected_runtime_cost	generated_artifacts	theorem_promotion_allowed	survivor_zero_claim_allowed	failure_gates	reason
+shell16_candidate_universe_attempt	Generate shell16 candidate universe and raw canonical outside-bounded counts only.	0	1	low	candidate_universe;frontier_fingerprint	0	0	candidate_generation_or_stale_artifact	candidate_only_fallback_not_needed
+shell16_survivor_probe_attempt	Generate candidate universe and run local exact plus-one theorem-preserving survivor probes.	1	1	medium	candidate_universe;survivor_audits;generation_audit;rowset;constructor;fingerprints	0	0	precondition;cost;canonicalization;fallback;stale	selected_and_completed
+shell16_full_scan_no_promotion	Run full shell16 scan without theorem promotion.	0	1	medium_high	full_shell16_attempt_artifacts	0	0	cost_or_timeout	no_separate_full_promotion_scope_this_round
+shell16_attempt_aborted_by_precondition	Abort before scan if required preconditions fail.	0	1	none	precondition_check;blocked_summary	0	0	precondition_check	all_required_preconditions_passed

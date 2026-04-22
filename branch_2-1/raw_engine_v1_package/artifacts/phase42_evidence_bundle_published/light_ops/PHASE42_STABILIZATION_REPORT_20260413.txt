@@ -1,0 +1,116 @@
+PHASE42 STABILIZATION REPORT
+timestamp_utc=2026-04-13T18:24:17Z
+phase=phase42
+
+summary:
+- phase42 keeps production split-choice on exact_shadow.
+- src primitive/planner semantics were not modified.
+- phase42 extends current-env post-approval runtime governance with a machine-readable guardrail lifecycle.
+- approved known environments remain on their existing reverify/retire governance path and are not conflated with current-env guardrail state.
+
+modified_files:
+- tests/tools/runtime_watch_ops.py
+- tests/tools/build_evidence_bundle.py
+- tests/tools/run_policy_pipeline.py
+- tests/runtime_current_env_guardrail_phase42.json
+- tests/raw_engine_cases.cpp
+- tests/CMakeLists.txt
+- README.md
+- PHASE42_STABILIZATION_REPORT_20260413.txt
+
+current_env_guardrail_lifecycle:
+- policy_manifest=artifacts/manifests/runtime_current_env_guardrail_phase42.json
+- states=CURRENT_ENV_CLEAR,CURRENT_ENV_APPROVAL_GRACE,CURRENT_ENV_MONITORING_DUE_SOON,CURRENT_ENV_MONITORING_DUE,CURRENT_ENV_WATCH,CURRENT_ENV_WATCH_STABLE,CURRENT_ENV_REPROFILE_CANDIDATE,CURRENT_ENV_REPROFILE_REQUIRED,CURRENT_ENV_FAIL
+- post_approval_grace_days=7
+- watch_due_after_days=14
+- watch_due_soon_window_days=3
+- reproposal_candidate_after_days=21
+- reproposal_cooldown_days=21
+- production_critical_class=release_full
+- intent=keep approved budget-profile provenance visible while separating no-action grace from the next watch/reproposal trigger
+
+current_env_guardrail_state:
+- current_state=CURRENT_ENV_APPROVAL_GRACE
+- approval_grace_active=true
+- post_approval_grace_until=2026-04-16T09:15:10Z
+- next_monitoring_due_at=2026-04-23T09:15:10Z
+- next_reproposal_due_at=2026-04-30T09:15:10Z
+- next_watch_execution_class=release_full
+- trigger_gate_verdict=CLEAR
+- recommended_action_current_env=NO_ACTION
+
+release_full_drift_evidence:
+- lineage=WATCH_STABLE provenance retained from phase41
+- active_budget_profile_id=phase41-runtime-budget-approved-profile
+- previous_active_budget_profile_id=phase33-runtime-budget-approved-profile
+- stable_soft_overrun_count=10
+- hard_over_budget_count=0
+- reproposal_count_for_fingerprint=0
+- rationale=phase41 approval already absorbed the bounded same-fingerprint soft-budget drift; phase42 therefore tracks cooldown/due state instead of immediately reopening reproposal
+
+reproposal_trigger_gate:
+- manifest=artifacts/manifests/runtime_current_env_reproposal_trigger_gate_phase42.json
+- trigger_gate_verdict=CLEAR
+- trigger_confidence=HIGH
+- reproposal_trigger_needed=false
+- bounded_jitter_ok=true
+- reason=budget approval grace window still active and no hard breach is present
+
+operator_interpretation:
+- current_environment=NO_ACTION
+- current_env_guardrail=CONTINUE_MONITORING via approval grace timeline, not via active warning
+- approved_known_environments=NO_ACTION
+- unapproved_foreign_environments=REBASELINE_REQUIRED
+- publication_health=HEALTHY, missing=0, hash_mismatch=0, dangling=0
+
+ops_summary_v8:
+- manifest=artifacts/manifests/policy_ops_summary_phase42.json
+- manifest_version=policy_ops_summary_v8
+- current_env_watch_budget.selected_budget_profile_id=phase41-runtime-budget-approved-profile
+- current_env_watch_budget.reproposal_gate_verdict=APPROVABLE lineage retained
+- current_env_guardrail.current_state=CURRENT_ENV_APPROVAL_GRACE
+- current_env_guardrail.trigger_gate_verdict=CLEAR
+- final_operator_actions.current_environment=NO_ACTION
+- final_operator_actions.approved_known_environments=NO_ACTION
+- final_operator_actions.unapproved_foreign_environments=REBASELINE_REQUIRED
+
+quick_nightly_matrix:
+- quick_summary=artifacts/manifests/policy_pipeline_quick_phase42.json
+- nightly_summary=artifacts/manifests/policy_pipeline_nightly_phase42.json
+- matrix_summary=artifacts/manifests/policy_pipeline_matrix_phase42.json
+- note=phase42 reinterprets the unchanged phase41 post-approval runtime verdicts under the new current-env guardrail layer; correctness semantics remain stable and foreign-env action remains REBASELINE_REQUIRED
+
+bundle_inclusion:
+- current_env_guardrail_policy
+- current_env_age_tick
+- current_env_watch_plan
+- current_env_reproposal_trigger_gate
+- current_env_watch_history
+- runtime_budget_reproposal_history
+- runtime_budget_registry_phase42_summary
+- policy_ops_summary_phase42
+- policy_pipeline_quick_phase42
+- policy_pipeline_nightly_phase42
+- policy_pipeline_matrix_phase42
+- runtime_registry_health_phase42
+
+full_ctest:
+- release=350/350 PASS, not_run=0, real_time=3163.16s
+- debug=380/380 PASS, not_run=0, real_time=4525.58s
+- asan=380/380 PASS, not_run=0, real_time=8507.38s
+
+semantic_counterexamples:
+- none
+
+new_regressions:
+- none observed in semantics/planner behavior
+
+exact_shadow_final_judgment:
+- exact_shadow remains the production default.
+- phase42 adds operator guardrails only; it does not alter planner choice semantics.
+
+remaining_risks:
+- current-env guardrail dates must be revisited once approval grace expires on 2026-04-16 UTC.
+- the next operator checkpoint is the repeated same-fingerprint release_full watch due on 2026-04-23T09:15:10Z.
+- foreign/unapproved environments still require explicit rebaseline before strict runtime comparison.
+- authoritative iCloud artifact paths remain unreliable for long-running pipeline sidecar writes; staged verification and staged artifact generation remain the defensible operating path.

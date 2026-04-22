@@ -1,0 +1,125 @@
+{
+  "captured_at": "2026-04-12 19:42:09 KST",
+  "attempt_number": 42,
+  "attempt_dir": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209",
+  "report_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop",
+  "research_review_gate": {
+    "status": "validated",
+    "reviewed_source_set_a_complete": true,
+    "reviewed_source_set_b_complete": true,
+    "checkpoint_files": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/pre_rewrite_checkpoint.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/pre_rewrite_synthesis_note.md"
+    ],
+    "required_baseline_paths": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/README.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/README.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/current_state_summary.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/next_session_briefing.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/pre_rewrite_checkpoint.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/pre_rewrite_synthesis_note.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/progress40_derived_reference.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_results_merged.json"
+    ]
+  },
+  "inputs": {
+    "solver_seed": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/seed_branch3_progress40_research_loop.yaml",
+      "size_bytes": 18009,
+      "sha256": "e6dc98338e6aae93fa092fb013a6cea654b27332a7065365c218d82be3007476",
+      "category": "seed_input",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/solver_seed.snapshot.yaml",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_solver_seed.snapshot.yaml"
+    },
+    "analysis_seed": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros/seed_branch3_failure_analysis.yaml",
+      "size_bytes": 11043,
+      "sha256": "ab72acca3dbf9c0c06e847774a98416ff40292e8fdae3754d12f5e00da5f6f84",
+      "category": "seed_input",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/analysis_seed.snapshot.yaml",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_analysis_seed.snapshot.yaml"
+    },
+    "research_branch_workspace_guide": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/README.md",
+      "size_bytes": 8901,
+      "sha256": "307cf97c239206de83b7b911454bf991e21423768e4a4638886d2327e7499d19",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_branch_workspace_guide.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_branch_workspace_guide.snapshot.md"
+    },
+    "research_resume_readme": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/README.md",
+      "size_bytes": 1930,
+      "sha256": "6a4fbd17560e3b2a7527efc299f579e86c54095e5fda2e98938e75a7acf18e2c",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_resume_readme.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_resume_readme.snapshot.md"
+    },
+    "research_current_state_summary": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/current_state_summary.md",
+      "size_bytes": 5530,
+      "sha256": "f2f7c30cf30f457eccaf2c739472960b0b338003fafd07cedf96d216427dc6bf",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_current_state_summary.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_current_state_summary.snapshot.md"
+    },
+    "research_next_session_briefing": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/next_session_briefing.md",
+      "size_bytes": 34158,
+      "sha256": "d86190ff23c98ace469a608d6ea34e94e315d86b717cacd3af7e63763ff123c4",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_next_session_briefing.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_next_session_briefing.snapshot.md"
+    },
+    "research_pre_rewrite_checkpoint": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/pre_rewrite_checkpoint.md",
+      "size_bytes": 33683,
+      "sha256": "f1b0fe3ef38895e5813cf7b87a5b9a81af9cea459c562e7d7878daa99aaf899d",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_pre_rewrite_checkpoint.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_pre_rewrite_checkpoint.snapshot.md"
+    },
+    "research_pre_rewrite_synthesis_note": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/pre_rewrite_synthesis_note.md",
+      "size_bytes": 21282,
+      "sha256": "dfba8eae92c3bbd3e66915ed9f09cc8dcb46188a38e6db08c88fa9b9fbdd1ffa",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_pre_rewrite_synthesis_note.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_pre_rewrite_synthesis_note.snapshot.md"
+    },
+    "research_progress40_derived_reference": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/progress40_derived_reference.md",
+      "size_bytes": 14039,
+      "sha256": "2b7bfb7c76352eb98891aab545411bd491b4635a584cdd548472305b8b704d70",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_progress40_derived_reference.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_progress40_derived_reference.snapshot.md"
+    },
+    "research_progress40_source": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp",
+      "size_bytes": 984658,
+      "sha256": "91fab848ccbba929310bf221d1ef66d63c5c20943dfe38d6f6edebbb7f350615",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_progress40_source.snapshot.cpp",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_progress40_source.snapshot.cpp"
+    },
+    "research_progress40_report": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md",
+      "size_bytes": 4043,
+      "sha256": "f705da82c3914f2e019790d39455c061414e82c48ea98c32dbe889cadd72fd4c",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_progress40_report.snapshot.md",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_progress40_report.snapshot.md"
+    },
+    "research_progress40_results": {
+      "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_bundle_archive/boj28350_progress40_results_merged.json",
+      "size_bytes": 1105495,
+      "sha256": "8327a294830d1a2607112ccef9f5f92e15325db42526a2697875cc2046926a33",
+      "category": "research_baseline",
+      "attempt_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/attempt_042_20260412_194209/research_progress40_results.snapshot.json",
+      "latest_snapshot": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/latest_research_progress40_results.snapshot.json"
+    }
+  }
+}

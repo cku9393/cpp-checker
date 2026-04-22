@@ -1,12 +1,12 @@
 {
-  "category": "pass",
-  "exit_code": 0,
-  "message": "OK",
-  "rss_kb": 1584,
-  "sec": 12.388340208,
+  "category": "harness",
+  "exit_code": 70,
+  "message": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/diagnostics/case_probe_debug",
+  "rss_kb": null,
+  "sec": null,
   "solver_exit_code": null,
   "solver_signal": null,
-  "status": "pass",
+  "status": "harness_transient_failure",
   "timed_out": false,
-  "validator_ok": true
+  "validator_ok": null
 }

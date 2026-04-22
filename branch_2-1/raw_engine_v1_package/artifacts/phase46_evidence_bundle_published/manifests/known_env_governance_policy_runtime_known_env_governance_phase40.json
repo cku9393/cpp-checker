@@ -1,0 +1,43 @@
+{
+  "manifest_version": "runtime_known_env_governance_policy_v1",
+  "policy_id": "phase40-known-env-governance",
+  "phase": "phase40",
+  "reverify_due_after_days": 14,
+  "stale_after_days": 30,
+  "retire_candidate_after_days": 60,
+  "retire_after_days": 90,
+  "due_soon_window_days": 3,
+  "min_real_samples_for_reverify": 5,
+  "min_watch_confidence_for_freshen": "HIGH",
+  "retain_retired_baselines_days": 90,
+  "retain_retired_known_env_entries_days": 180,
+  "counts_as_approved_known_env_requirements": {
+    "registry_status": "active",
+    "counts_as_current_env": false,
+    "requires_runtime_baseline_manifest_path": true
+  },
+  "roles": {
+    "current_env": {
+      "state": "CURRENT_ACTIVE",
+      "counts_as_current_env": true,
+      "counts_as_approved_known_env": false
+    },
+    "approved_known_env": {
+      "counts_as_current_env": false,
+      "counts_as_approved_known_env": true
+    },
+    "retired_known_env": {
+      "state": "RETIRED_KNOWN_ENV",
+      "counts_as_current_env": false,
+      "counts_as_approved_known_env": false
+    },
+    "foreign_env": {
+      "state": "FOREIGN_UNAPPROVED",
+      "counts_as_current_env": false,
+      "counts_as_approved_known_env": false
+    }
+  },
+  "generated_at_utc": "2026-04-09T00:56:16Z",
+  "source_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/runtime_known_env_governance_phase40.json",
+  "policy_hash": "52422785005a3788c45ba827f021919001ba76b510f9ad722e098c573aab4357"
+}

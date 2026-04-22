@@ -1,0 +1,26 @@
+{
+  "schema": "branch_case_generator_signature_v1",
+  "generator_digest": "556ffe825d81a9f21a3345cad876acacd9d7c58fb42e4e263d371f9a469e7a53",
+  "files": [
+    {
+      "path": "branch_gen_case_local.py",
+      "sha256": "8ed0eb2592f3e27d72b31ea536a9f0f8c9098b60916186f1d3f259af39dbe27b"
+    },
+    {
+      "path": "branch_generators_local/__init__.py",
+      "sha256": "ee10340f45ba383d6cff9942cd5da9b40f4f3509fcc9614239fa9cb898e5181d"
+    },
+    {
+      "path": "branch_generators_local/query_patterns.py",
+      "sha256": "e69bd3248499edc4e72beef3b45e554a882035a0ee9ef1e7f593bae06d601b30"
+    },
+    {
+      "path": "branch_generators_local/tree_ctx.py",
+      "sha256": "7dfcd22b42c73f66e3a39ad8b51a08b3a3a7f0939dfecf30517938f1ab435ebc"
+    },
+    {
+      "path": "branch_generators_local/tree_shapes.py",
+      "sha256": "f372fd9e05734c2e5a9066be49ca6c7be6ba72bfbaa17fea3d065818caa9f796"
+    }
+  ]
+}

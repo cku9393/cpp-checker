@@ -1,0 +1,17 @@
+metric	value
+audit_fingerprint	8|8|8|1|1
+required_artifact_count	8
+existing_artifact_count	8
+nonempty_artifact_count	8
+shell15_artifacts_complete	1
+tail_artifacts_complete	1
+
+path	exists	nonempty
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_plus_twelve_candidate_universe_90.tsv	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_antecedent15_candidate_universe_90.tsv	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_shell15_local_exact_result_cache_90.tsv	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_shell15_local_exact_progress_cache_90.tsv	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_shell15_local_exact_survivors_90.tsv	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/antecedent_shell15_plus_one_result_cache_90.tsv	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_tail_candidate_fingerprints_90.tsv	1	1
+/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/support8_tail_stabilization_certificate_90.tsv	1	1

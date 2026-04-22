@@ -1,0 +1,63 @@
+{
+  "phase": "phase44",
+  "generated_at_utc": "2026-04-20T14:22:27Z",
+  "authoritative_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package",
+  "staged_root": "/tmp/cpp-checker-phase43/branch_2-1/raw_engine_v1_package",
+  "verification_scope": "full staged Release/Debug/ASan CTest plus explicit phase44 smoke chain",
+  "source_semantics_modified": false,
+  "split_choice_production_policy": "exact_shadow",
+  "ctest_inventory": {
+    "discovered_test_count": 363,
+    "phase44_specific_smokes_present": true,
+    "zero_missing_expected": true
+  },
+  "explicit_phase44_smokes": {
+    "runtime_current_env_due_scheduler_smoke": "PASS",
+    "runtime_current_env_execute_watch_smoke": "PASS",
+    "runtime_current_env_apply_watch_smoke": "PASS",
+    "current_env_monitoring_due_execute_apply_smoke": "PASS",
+    "runtime_current_env_execute_reproposal_gate_smoke": "PASS",
+    "policy_ops_agenda_action_status_smoke": "PASS",
+    "policy_ops_summary_v10_smoke": "PASS",
+    "evidence_bundle_current_env_execute_apply_smoke": "PASS",
+    "corpus_replay_smoke": "PASS"
+  },
+  "release": {
+    "build_dir": "/tmp/raw_engine_phase44_build_release",
+    "ctest_command": "ctest --test-dir /tmp/raw_engine_phase44_build_release --output-on-failure -j 4",
+    "pass_count": 363,
+    "fail_count": 0,
+    "not_run_count": 0,
+    "total_wall_time_seconds": 529.48,
+    "execution_verdict": "PASS"
+  },
+  "debug": {
+    "build_dir": "/tmp/raw_engine_phase44_build_debug",
+    "ctest_command": "ctest --test-dir /tmp/raw_engine_phase44_build_debug --output-on-failure -j 4",
+    "pass_count": 363,
+    "fail_count": 0,
+    "not_run_count": 0,
+    "total_wall_time_seconds": 921.69,
+    "execution_verdict": "PASS"
+  },
+  "asan_ubsan": {
+    "build_dir": "/tmp/raw_engine_phase44_build_asan",
+    "ctest_command": "ctest --test-dir /tmp/raw_engine_phase44_build_asan --output-on-failure -j 1",
+    "pass_count": 363,
+    "fail_count": 0,
+    "not_run_count": 0,
+    "total_wall_time_seconds": 4108.51,
+    "isolated": true,
+    "execution_verdict": "PASS"
+  },
+  "publication_health": {
+    "manifest": "artifacts/manifests/publication_health_phase44.json",
+    "verdict": "HEALTHY"
+  },
+  "semantic_mismatch": {
+    "new_counterexample": false,
+    "new_regression": false,
+    "planner_or_primitive_change_allowed": false
+  },
+  "overall_verdict": "PASS"
+}

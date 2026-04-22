@@ -1,0 +1,8 @@
+manifest_version=runtime_current_env_operator_decision_apply_v1
+phase=phase46
+action_id=phase44-current-env-reproposal-001
+decision_valid=True
+closure_status=CLOSED
+ledger_updated=True
+approval_mode=handoff_only
+approval_applied=False

@@ -11,9 +11,9 @@ captured run result
 current gate view
 - artifact completion: `8` / `8` nonempty
 - document completion before this note generation pass: `39` / `39`
-- rerun audit fingerprint: `1|1|1|1|1|84:9663593306329234703|16856:1011248525676628134`
-- release compile stamp: `16856:1011248525676628134`
-- local test stamp: `3109144:13179252124599513051`
+- rerun audit fingerprint: `1|1|1|1|1|83:3313802010853241535|16856:14254791785929237461`
+- release compile stamp: `16856:14254791785929237461`
+- local test stamp: `3705592:7193836475275715409`
 - provenance split:
   - fresh runtime generated: `16`
   - validated imported: `0`

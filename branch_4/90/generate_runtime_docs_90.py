@@ -243,6 +243,14 @@ def main() -> int:
     basis_family_summary = parse_metric_tsv(RUNTIME_ROOT / "basis_family_generation_fingerprint_90.tsv")
     family_constructor = parse_metric_tsv(RUNTIME_ROOT / "family_chain_constructor_audit_90.tsv")
     family_constructor_fingerprint = parse_metric_tsv(RUNTIME_ROOT / "family_chain_constructor_fingerprint_90.tsv")
+    pair52_generation = parse_metric_tsv(RUNTIME_ROOT / "pair_expansion_aggregate_52_generation_audit_90.tsv")
+    triple53_generation = parse_metric_tsv(RUNTIME_ROOT / "triple_family_expansion_theorem_data_53_generation_audit_90.tsv")
+    quadruple55_generation = parse_metric_tsv(RUNTIME_ROOT / "quadruple_family_expansion_theorem_data_55_generation_audit_90.tsv")
+    quintuple57_generation = parse_metric_tsv(RUNTIME_ROOT / "quintuple_family_expansion_theorem_data_57_generation_audit_90.tsv")
+    sextuple57_generation = parse_metric_tsv(RUNTIME_ROOT / "sextuple_family_expansion_theorem_data_57_generation_audit_90.tsv")
+    septuple57_generation = parse_metric_tsv(RUNTIME_ROOT / "septuple_family_expansion_theorem_data_57_generation_audit_90.tsv")
+    high_family57_generation = parse_metric_tsv(RUNTIME_ROOT / "high_family_expansion_theorem_data_57_generation_audit_90.tsv")
+    family_lower_fingerprint = parse_metric_tsv(RUNTIME_ROOT / "family_chain_lower_layers_fingerprint_90.tsv")
     shell15_frontier_p12 = parse_metric_tsv(RUNTIME_ROOT / "antecedent_plus_twelve_frontier_generation_audit_90.tsv")
     shell15_frontier_s8 = parse_metric_tsv(RUNTIME_ROOT / "support8_antecedent15_frontier_generation_audit_90.tsv")
     shell15_frontier_pair = parse_metric_tsv(RUNTIME_ROOT / "shell15_frontier_generation_fingerprint_90.tsv")
@@ -532,6 +540,28 @@ current code-grounded facts
 - family-chain promoted item count this round: `{basis_family_summary.get('family_promoted_item_count', 'missing')}`
 - family-chain constructor path: `{family_constructor.get('constructor_name', family_generation.get('constructor_name', 'missing'))}`
 - family-chain fallback hit: `{family_constructor.get('fallback_hit', family_generation.get('fallback_hit', 'missing'))}`
+- pair-expansion aggregate 52 label: `{pair52_generation.get('current_provenance_label', 'missing')}`
+- pair-expansion aggregate 52 constructor/cache: `{pair52_generation.get('authoritative_constructor_name', 'missing')}`
+- triple-family theorem data 53 label: `{triple53_generation.get('current_provenance_label', 'missing')}`
+- triple-family theorem data 53 constructor/cache: `{triple53_generation.get('authoritative_constructor_name', 'missing')}`
+- triple-family theorem data 53 upstream pair52 fallback hit: `{triple53_generation.get('upstream_pair52_fallback_hit', 'missing')}`
+- quadruple-family theorem data 55 label: `{quadruple55_generation.get('current_provenance_label', 'missing')}`
+- quadruple-family theorem data 55 constructor/cache: `{quadruple55_generation.get('authoritative_constructor_name', 'missing')}`
+- quadruple-family theorem data 55 upstream triple53 fallback hit: `{quadruple55_generation.get('upstream_triple53_fallback_hit', 'missing')}`
+- quintuple-family theorem data 57 label: `{quintuple57_generation.get('current_provenance_label', 'missing')}`
+- quintuple-family theorem data 57 constructor/cache: `{quintuple57_generation.get('authoritative_constructor_name', 'missing')}`
+- quintuple-family theorem data 57 upstream quad55 fallback hit: `{quintuple57_generation.get('upstream_quad55_fallback_hit', 'missing')}`
+- sextuple-family theorem data 57 label: `{sextuple57_generation.get('current_provenance_label', 'missing')}`
+- sextuple-family theorem data 57 constructor/cache: `{sextuple57_generation.get('authoritative_constructor_name', 'missing')}`
+- sextuple-family theorem data 57 upstream quintuple57 fallback hit: `{sextuple57_generation.get('upstream_quintuple57_fallback_hit', 'missing')}`
+- septuple-family theorem data 57 label: `{septuple57_generation.get('current_provenance_label', 'missing')}`
+- septuple-family theorem data 57 constructor/cache: `{septuple57_generation.get('authoritative_constructor_name', 'missing')}`
+- septuple-family theorem data 57 upstream sextuple57 fallback hit: `{septuple57_generation.get('upstream_sextuple57_fallback_hit', 'missing')}`
+- high-family theorem data 57 label: `{high_family57_generation.get('current_provenance_label', 'missing')}`
+- high-family theorem data 57 constructor/cache: `{high_family57_generation.get('authoritative_constructor_name', 'missing')}`
+- high-family theorem data 57 upstream septuple57 fallback hit: `{high_family57_generation.get('upstream_septuple57_fallback_hit', 'missing')}`
+- family-chain lower-layer fresh/imported: `{family_lower_fingerprint.get('fresh_current_runtime_generated_count', 'missing')}` / `{family_lower_fingerprint.get('imported_lower_layer_count', 'missing')}`
+- family-chain lower-layer caveat closed: `{family_lower_fingerprint.get('family_chain_lower_layer_caveat_closed', high_family57_generation.get('family_chain_lower_layer_caveat_closed', 'missing'))}`
 - shell15 frontier pair fresh current generated: `{shell15_frontier_pair.get('pair_fresh_runtime_generated', 'missing')}`
 - shell15 frontier cache constructor: `{shell15_frontier_constructor.get('cache_load_constructor_name', 'missing')}`
 
@@ -540,9 +570,9 @@ current promotion reading
 - full from-scratch derivation of every imported frontier layer: not fully reproduced
 - support8 proof-engine execution path: verified
 - basis-only theorem reruns and the 96-basis payload are now current-generated.
-- family-chain theorem object layer now uses a fresh current constructor, but its lower triple-through-high inputs still remain validated imports unless separately rederived.
+- family-chain theorem object layer now uses a fresh current constructor; pair-expansion aggregate 52, triple-family theorem data 53, quadruple-family theorem data 55, quintuple-family theorem data 57, sextuple-family theorem data 57, septuple-family theorem data 57, and high-family theorem data 57 are current constructor/cache-backed when their audits report fresh.
         - the shell15 frontier pair and the direct lower-frontier shell-theorem dependency subset are now current generated, so validated-imported core items are down to zero and top-level mixed items are down to zero.
-        - the remaining provenance limitation is the broader perimeter decision around lower-frontier inventory-only shell11/shell12 rows and deeper family-chain imported layers.
+        - family-chain lower-layer provenance caveat is closed when lower-layer fresh/imported is `7` / `0`; remaining limitations are the broader nonblocking lower-frontier inventory-only perimeter rows and out-of-scope shell16 / higher-support / BOJ solver work.
 
 {archival_source_block('theorem_data_promotion_notes_90.md')}
 """,
@@ -744,7 +774,15 @@ current interpretation
             "- biggest remaining top-level mixed scope limit: none. "
             "The current top-level inventory is fully fresh/generated or archival-only; "
             "lower-frontier inventory rows for shell11/shell12 remain exposed separately as "
-            "outside the direct shell15 dependency subset."
+            "outside the direct shell15 dependency subset. "
+            f"Pair-expansion aggregate 52 is `{pair52_generation.get('current_provenance_label', 'missing')}`; "
+            f"triple-family theorem data 53 is `{triple53_generation.get('current_provenance_label', 'missing')}`; "
+            f"quadruple-family theorem data 55 is `{quadruple55_generation.get('current_provenance_label', 'missing')}`; "
+            f"quintuple-family theorem data 57 is `{quintuple57_generation.get('current_provenance_label', 'missing')}`; "
+            f"sextuple-family theorem data 57 is `{sextuple57_generation.get('current_provenance_label', 'missing')}`; "
+            f"septuple-family theorem data 57 is `{septuple57_generation.get('current_provenance_label', 'missing')}`; "
+            f"high-family theorem data 57 is `{high_family57_generation.get('current_provenance_label', 'missing')}`; "
+            f"next family-chain lower target is `{family_lower_fingerprint.get('next_target', 'none_family_chain_lower_layers_complete')}`."
         )
 
     write_note(
@@ -814,6 +852,34 @@ current reading
 - family-chain constructor path: `{family_constructor.get('constructor_name', family_generation.get('constructor_name', 'missing'))}`
 - family-chain fallback hit in captured run: `{family_constructor.get('fallback_hit', family_generation.get('fallback_hit', 'missing'))}`
 - family-chain constructor caveat: `{family_constructor.get('constructor_caveat', family_generation.get('caveat', 'missing'))}`
+- pair-expansion aggregate 52 label: `{pair52_generation.get('current_provenance_label', 'missing')}`
+- pair-expansion aggregate 52 counts: regions `{pair52_generation.get('region_count', 'missing')}`, candidates `{pair52_generation.get('raw_candidates', 'missing')}/{pair52_generation.get('canonical_candidates', 'missing')}/{pair52_generation.get('deduplicated_candidates', 'missing')}`
+- pair-expansion aggregate 52 equality: `{pair52_generation.get('imported_equality_result', 'missing')}`
+- triple-family theorem data 53 label: `{triple53_generation.get('current_provenance_label', 'missing')}`
+- triple-family theorem data 53 counts: regions `{triple53_generation.get('region_count', 'missing')}`, candidates `{triple53_generation.get('raw_candidates', 'missing')}/{triple53_generation.get('canonical_candidates', 'missing')}/{triple53_generation.get('deduplicated_candidates', 'missing')}`
+- triple-family theorem data 53 equality: `{triple53_generation.get('imported_equality_result', 'missing')}`
+- triple-family theorem data 53 upstream pair52 fallback hit: `{triple53_generation.get('upstream_pair52_fallback_hit', 'missing')}`
+- quadruple-family theorem data 55 label: `{quadruple55_generation.get('current_provenance_label', 'missing')}`
+- quadruple-family theorem data 55 counts: regions `{quadruple55_generation.get('region_count', 'missing')}`, candidates `{quadruple55_generation.get('raw_candidates', 'missing')}/{quadruple55_generation.get('canonical_candidates', 'missing')}/{quadruple55_generation.get('deduplicated_candidates', 'missing')}`
+- quadruple-family theorem data 55 equality: `{quadruple55_generation.get('imported_equality_result', 'missing')}`
+- quadruple-family theorem data 55 upstream triple53 fallback hit: `{quadruple55_generation.get('upstream_triple53_fallback_hit', 'missing')}`
+- quintuple-family theorem data 57 label: `{quintuple57_generation.get('current_provenance_label', 'missing')}`
+- quintuple-family theorem data 57 counts: regions `{quintuple57_generation.get('region_count', 'missing')}`, candidates `{quintuple57_generation.get('raw_candidates', 'missing')}/{quintuple57_generation.get('canonical_candidates', 'missing')}/{quintuple57_generation.get('deduplicated_candidates', 'missing')}`
+- quintuple-family theorem data 57 equality: `{quintuple57_generation.get('imported_equality_result', 'missing')}`
+- quintuple-family theorem data 57 upstream quad55 fallback hit: `{quintuple57_generation.get('upstream_quad55_fallback_hit', 'missing')}`
+- sextuple-family theorem data 57 label: `{sextuple57_generation.get('current_provenance_label', 'missing')}`
+- sextuple-family theorem data 57 counts: regions `{sextuple57_generation.get('region_count', 'missing')}`, candidates `{sextuple57_generation.get('raw_candidates', 'missing')}/{sextuple57_generation.get('canonical_candidates', 'missing')}/{sextuple57_generation.get('deduplicated_candidates', 'missing')}`
+- sextuple-family theorem data 57 equality: `{sextuple57_generation.get('imported_equality_result', 'missing')}`
+- sextuple-family theorem data 57 upstream quintuple57 fallback hit: `{sextuple57_generation.get('upstream_quintuple57_fallback_hit', 'missing')}`
+- septuple-family theorem data 57 label: `{septuple57_generation.get('current_provenance_label', 'missing')}`
+- septuple-family theorem data 57 counts: regions `{septuple57_generation.get('region_count', 'missing')}`, candidates `{septuple57_generation.get('raw_candidates', 'missing')}/{septuple57_generation.get('canonical_candidates', 'missing')}/{septuple57_generation.get('deduplicated_candidates', 'missing')}`
+- septuple-family theorem data 57 equality: `{septuple57_generation.get('imported_equality_result', 'missing')}`
+- septuple-family theorem data 57 upstream sextuple57 fallback hit: `{septuple57_generation.get('upstream_sextuple57_fallback_hit', 'missing')}`
+- high-family theorem data 57 label: `{high_family57_generation.get('current_provenance_label', 'missing')}`
+- high-family theorem data 57 counts: regions `{high_family57_generation.get('region_count', 'missing')}`, candidates `{high_family57_generation.get('raw_candidates', 'missing')}/{high_family57_generation.get('canonical_candidates', 'missing')}/{high_family57_generation.get('deduplicated_candidates', 'missing')}`
+- high-family theorem data 57 equality: `{high_family57_generation.get('imported_equality_result', 'missing')}`
+- high-family theorem data 57 upstream septuple57 fallback hit: `{high_family57_generation.get('upstream_septuple57_fallback_hit', 'missing')}`
+- next family-chain lower target: `{family_lower_fingerprint.get('next_target', 'none_family_chain_lower_layers_complete')}`
 """,
     )
 
@@ -831,6 +897,16 @@ summary
 - basis-only generation label: `{basis_generation.get('current_provenance_label', 'missing')}`
 - family-chain generation label: `{family_generation.get('current_provenance_label', 'missing')}`
 - family-chain constructor: `{family_constructor.get('constructor_name', family_generation.get('constructor_name', 'missing'))}`
+- pair-expansion aggregate 52 label: `{pair52_generation.get('current_provenance_label', 'missing')}`
+- triple-family theorem data 53 label: `{triple53_generation.get('current_provenance_label', 'missing')}`
+- quadruple-family theorem data 55 label: `{quadruple55_generation.get('current_provenance_label', 'missing')}`
+- quintuple-family theorem data 57 label: `{quintuple57_generation.get('current_provenance_label', 'missing')}`
+- sextuple-family theorem data 57 label: `{sextuple57_generation.get('current_provenance_label', 'missing')}`
+- septuple-family theorem data 57 label: `{septuple57_generation.get('current_provenance_label', 'missing')}`
+- high-family theorem data 57 label: `{high_family57_generation.get('current_provenance_label', 'missing')}`
+- family-chain lower-layer fresh/imported: `{family_lower_fingerprint.get('fresh_current_runtime_generated_count', 'missing')}` / `{family_lower_fingerprint.get('imported_lower_layer_count', 'missing')}`
+- family-chain lower-layer caveat closed: `{family_lower_fingerprint.get('family_chain_lower_layer_caveat_closed', high_family57_generation.get('family_chain_lower_layer_caveat_closed', 'missing'))}`
+- next broader perimeter target: `{family_lower_fingerprint.get('next_target', 'none_family_chain_lower_layers_complete')}`
 """,
     )
 
@@ -923,10 +999,74 @@ summary
             f"- basis-only generation label: `{basis_generation.get('current_provenance_label', 'missing')}` with promoted items `{basis_family_summary.get('basis_promoted_item_count', 'missing')}`\n"
             f"- family-chain generation label: `{family_generation.get('current_provenance_label', 'missing')}` with promoted items `{basis_family_summary.get('family_promoted_item_count', 'missing')}`\n"
             f"- family-chain constructor: `{family_constructor.get('constructor_name', family_generation.get('constructor_name', 'missing'))}` fallbackHit=`{family_constructor.get('fallback_hit', family_generation.get('fallback_hit', 'missing'))}`\n"
-            "8. first failing gate in captured run\n"
+            "8. pair-expansion aggregate 52\n"
+            f"- final provenance label: `{pair52_generation.get('current_provenance_label', 'missing')}`\n"
+            f"- constructor/cache path: `{pair52_generation.get('authoritative_constructor_name', 'missing')}`\n"
+            f"- region count: `{pair52_generation.get('region_count', 'missing')}`\n"
+            f"- raw / canonical / deduplicated candidates: `{pair52_generation.get('raw_candidates', 'missing')}` / `{pair52_generation.get('canonical_candidates', 'missing')}` / `{pair52_generation.get('deduplicated_candidates', 'missing')}`\n"
+            f"- imported equality result: `{pair52_generation.get('imported_equality_result', 'missing')}`\n"
+            "9. triple-family theorem data 53\n"
+            f"- final provenance label: `{triple53_generation.get('current_provenance_label', 'missing')}`\n"
+            f"- constructor/cache path: `{triple53_generation.get('authoritative_constructor_name', 'missing')}`\n"
+            f"- upstream pair52 fallback hit: `{triple53_generation.get('upstream_pair52_fallback_hit', 'missing')}`\n"
+            f"- region count: `{triple53_generation.get('region_count', 'missing')}`\n"
+            f"- raw / canonical / deduplicated candidates: `{triple53_generation.get('raw_candidates', 'missing')}` / `{triple53_generation.get('canonical_candidates', 'missing')}` / `{triple53_generation.get('deduplicated_candidates', 'missing')}`\n"
+            f"- imported equality result: `{triple53_generation.get('imported_equality_result', 'missing')}`\n"
+            "10. quadruple-family theorem data 55\n"
+            f"- final provenance label: `{quadruple55_generation.get('current_provenance_label', 'missing')}`\n"
+            f"- constructor/cache path: `{quadruple55_generation.get('authoritative_constructor_name', 'missing')}`\n"
+            f"- upstream triple53 fallback hit: `{quadruple55_generation.get('upstream_triple53_fallback_hit', 'missing')}`\n"
+            f"- upstream pair52 fallback hit: `{quadruple55_generation.get('upstream_pair52_fallback_hit', 'missing')}`\n"
+            f"- region count: `{quadruple55_generation.get('region_count', 'missing')}`\n"
+            f"- raw / canonical / deduplicated candidates: `{quadruple55_generation.get('raw_candidates', 'missing')}` / `{quadruple55_generation.get('canonical_candidates', 'missing')}` / `{quadruple55_generation.get('deduplicated_candidates', 'missing')}`\n"
+            f"- imported equality result: `{quadruple55_generation.get('imported_equality_result', 'missing')}`\n"
+            "11. quintuple-family theorem data 57\n"
+            f"- final provenance label: `{quintuple57_generation.get('current_provenance_label', 'missing')}`\n"
+            f"- constructor/cache path: `{quintuple57_generation.get('authoritative_constructor_name', 'missing')}`\n"
+            f"- upstream quad55 fallback hit: `{quintuple57_generation.get('upstream_quad55_fallback_hit', 'missing')}`\n"
+            f"- upstream triple53 fallback hit: `{quintuple57_generation.get('upstream_triple53_fallback_hit', 'missing')}`\n"
+            f"- upstream pair52 fallback hit: `{quintuple57_generation.get('upstream_pair52_fallback_hit', 'missing')}`\n"
+            f"- region count: `{quintuple57_generation.get('region_count', 'missing')}`\n"
+            f"- raw / canonical / deduplicated candidates: `{quintuple57_generation.get('raw_candidates', 'missing')}` / `{quintuple57_generation.get('canonical_candidates', 'missing')}` / `{quintuple57_generation.get('deduplicated_candidates', 'missing')}`\n"
+            f"- imported equality result: `{quintuple57_generation.get('imported_equality_result', 'missing')}`\n"
+            "12. sextuple-family theorem data 57\n"
+            f"- final provenance label: `{sextuple57_generation.get('current_provenance_label', 'missing')}`\n"
+            f"- constructor/cache path: `{sextuple57_generation.get('authoritative_constructor_name', 'missing')}`\n"
+            f"- upstream quintuple57 fallback hit: `{sextuple57_generation.get('upstream_quintuple57_fallback_hit', 'missing')}`\n"
+            f"- upstream quad55 fallback hit: `{sextuple57_generation.get('upstream_quad55_fallback_hit', 'missing')}`\n"
+            f"- upstream triple53 fallback hit: `{sextuple57_generation.get('upstream_triple53_fallback_hit', 'missing')}`\n"
+            f"- upstream pair52 fallback hit: `{sextuple57_generation.get('upstream_pair52_fallback_hit', 'missing')}`\n"
+            f"- region count: `{sextuple57_generation.get('region_count', 'missing')}`\n"
+            f"- raw / canonical / deduplicated candidates: `{sextuple57_generation.get('raw_candidates', 'missing')}` / `{sextuple57_generation.get('canonical_candidates', 'missing')}` / `{sextuple57_generation.get('deduplicated_candidates', 'missing')}`\n"
+            f"- imported equality result: `{sextuple57_generation.get('imported_equality_result', 'missing')}`\n"
+            "13. septuple-family theorem data 57\n"
+            f"- final provenance label: `{septuple57_generation.get('current_provenance_label', 'missing')}`\n"
+            f"- constructor/cache path: `{septuple57_generation.get('authoritative_constructor_name', 'missing')}`\n"
+            f"- upstream sextuple57 fallback hit: `{septuple57_generation.get('upstream_sextuple57_fallback_hit', 'missing')}`\n"
+            f"- upstream quintuple57 fallback hit: `{septuple57_generation.get('upstream_quintuple57_fallback_hit', 'missing')}`\n"
+            f"- upstream quad55 fallback hit: `{septuple57_generation.get('upstream_quad55_fallback_hit', 'missing')}`\n"
+            f"- upstream triple53 fallback hit: `{septuple57_generation.get('upstream_triple53_fallback_hit', 'missing')}`\n"
+            f"- upstream pair52 fallback hit: `{septuple57_generation.get('upstream_pair52_fallback_hit', 'missing')}`\n"
+            f"- region count: `{septuple57_generation.get('region_count', 'missing')}`\n"
+            f"- raw / canonical / deduplicated candidates: `{septuple57_generation.get('raw_candidates', 'missing')}` / `{septuple57_generation.get('canonical_candidates', 'missing')}` / `{septuple57_generation.get('deduplicated_candidates', 'missing')}`\n"
+            f"- imported equality result: `{septuple57_generation.get('imported_equality_result', 'missing')}`\n"
+            "14. high-family theorem data 57\n"
+            f"- final provenance label: `{high_family57_generation.get('current_provenance_label', 'missing')}`\n"
+            f"- constructor/cache path: `{high_family57_generation.get('authoritative_constructor_name', 'missing')}`\n"
+            f"- upstream septuple57 fallback hit: `{high_family57_generation.get('upstream_septuple57_fallback_hit', 'missing')}`\n"
+            f"- upstream sextuple57 fallback hit: `{high_family57_generation.get('upstream_sextuple57_fallback_hit', 'missing')}`\n"
+            f"- upstream quintuple57 fallback hit: `{high_family57_generation.get('upstream_quintuple57_fallback_hit', 'missing')}`\n"
+            f"- upstream quad55 fallback hit: `{high_family57_generation.get('upstream_quad55_fallback_hit', 'missing')}`\n"
+            f"- upstream triple53 fallback hit: `{high_family57_generation.get('upstream_triple53_fallback_hit', 'missing')}`\n"
+            f"- upstream pair52 fallback hit: `{high_family57_generation.get('upstream_pair52_fallback_hit', 'missing')}`\n"
+            f"- region count: `{high_family57_generation.get('region_count', 'missing')}`\n"
+            f"- raw / canonical / deduplicated candidates: `{high_family57_generation.get('raw_candidates', 'missing')}` / `{high_family57_generation.get('canonical_candidates', 'missing')}` / `{high_family57_generation.get('deduplicated_candidates', 'missing')}`\n"
+            f"- imported equality result: `{high_family57_generation.get('imported_equality_result', 'missing')}`\n"
+            f"- family-chain lower-layer caveat closed: `{high_family57_generation.get('family_chain_lower_layer_caveat_closed', 'missing')}`\n"
+            "15. first failing gate in captured run\n"
             f"- `{'none' if lock_achieved else (general_status or 'missing')}` with detail `{'' if lock_achieved else (parsed.get('document_failure', '') or parsed.get('lock_failure', ''))}`\n"
-            "9. next concrete action\n"
-            + ("- preserve the current support8 lock while deciding whether the next substrate should be the lower-frontier inventory-only shell11/shell12 rows or the deeper family-chain imported layers.\n"
+            "16. next concrete action\n"
+            + (f"- preserve the current support8 lock with family-chain lower layers at `{family_lower_fingerprint.get('fresh_current_runtime_generated_count', 'missing')}` / `{family_lower_fingerprint.get('imported_lower_layer_count', 'missing')}` fresh/imported; next family-chain lower target is `{family_lower_fingerprint.get('next_target', 'none_family_chain_lower_layers_complete')}`.\n"
                if lock_achieved
                else "- rerun LOCAL_TEST after current stamps and runtime notes converge, then inspect whether rerun completion and completion lock converge.\n")
         ),

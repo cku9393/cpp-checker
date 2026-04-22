@@ -1,0 +1,165 @@
+{
+  "summary_version": "runtime_history_summary_v1",
+  "generated_at_utc": "2026-04-20T12:56:13Z",
+  "runtime_history_index_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_history_index_v1_compacted.json",
+  "fingerprint_count": 1,
+  "trend_counts": {
+    "stable": 2,
+    "noisy": 0,
+    "regressing": 0,
+    "improved": 4,
+    "insufficient_history": 0
+  },
+  "evidence_source_counts": {
+    "real": 30
+  },
+  "latest_real_sample_timestamp": "2026-04-20T12:56:12Z",
+  "latest_fixture_sample_timestamp": null,
+  "fingerprints": [
+    {
+      "fingerprint_hash": "393d9c23f92284ad12d06c9b00ed349ede7d3c68a127ec10b56eda337d113882",
+      "runtime_fingerprint_key": "936b44e1c291ab764aacfa166336709395562d42f37854e3eb6bef122c141ddd",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.4.0",
+        "arch": "arm64",
+        "runner_tag": "smoke-runner",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)",
+        "fingerprint_hash": "393d9c23f92284ad12d06c9b00ed349ede7d3c68a127ec10b56eda337d113882"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "asan_full",
+          "sample_count": 5,
+          "latest_wall_time_sec": 900.0,
+          "baseline_wall_time_sec": 900.0,
+          "delta_vs_selected_baseline_percent": 0.0,
+          "latest_delta_percent": 0.0,
+          "latest_freshness_status": "FRESH",
+          "latest_comparability": "COMPARABLE",
+          "rolling_median_wall_time_sec": 900.0,
+          "rolling_p90_wall_time_sec": 900.0,
+          "rolling_p95_wall_time_sec": 900.0,
+          "mad_wall_time_sec": 0.0,
+          "jitter_estimate_percent": 0.0,
+          "budget_verdict": "PASS",
+          "trend_direction": "stable",
+          "evidence_source_counts": {
+            "real": 5
+          }
+        },
+        {
+          "execution_class": "debug_full",
+          "sample_count": 5,
+          "latest_wall_time_sec": 480.0,
+          "baseline_wall_time_sec": 480.0,
+          "delta_vs_selected_baseline_percent": 0.0,
+          "latest_delta_percent": 0.0,
+          "latest_freshness_status": "FRESH",
+          "latest_comparability": "COMPARABLE",
+          "rolling_median_wall_time_sec": 480.0,
+          "rolling_p90_wall_time_sec": 480.0,
+          "rolling_p95_wall_time_sec": 480.0,
+          "mad_wall_time_sec": 0.0,
+          "jitter_estimate_percent": 0.0,
+          "budget_verdict": "PASS",
+          "trend_direction": "stable",
+          "evidence_source_counts": {
+            "real": 5
+          }
+        },
+        {
+          "execution_class": "policy_core",
+          "sample_count": 5,
+          "latest_wall_time_sec": 0.0,
+          "baseline_wall_time_sec": 1.0,
+          "delta_vs_selected_baseline_percent": -100.0,
+          "latest_delta_percent": -100.0,
+          "latest_freshness_status": "FRESH",
+          "latest_comparability": "COMPARABLE",
+          "rolling_median_wall_time_sec": 1.0,
+          "rolling_p90_wall_time_sec": 1.0,
+          "rolling_p95_wall_time_sec": 1.0,
+          "mad_wall_time_sec": 0.0,
+          "jitter_estimate_percent": 0.0,
+          "budget_verdict": "PASS",
+          "trend_direction": "improved",
+          "evidence_source_counts": {
+            "real": 5
+          }
+        },
+        {
+          "execution_class": "policy_nightly",
+          "sample_count": 5,
+          "latest_wall_time_sec": 0.0,
+          "baseline_wall_time_sec": 2.0,
+          "delta_vs_selected_baseline_percent": -100.0,
+          "latest_delta_percent": -100.0,
+          "latest_freshness_status": "FRESH",
+          "latest_comparability": "COMPARABLE",
+          "rolling_median_wall_time_sec": 2.0,
+          "rolling_p90_wall_time_sec": 2.0,
+          "rolling_p95_wall_time_sec": 2.0,
+          "mad_wall_time_sec": 0.0,
+          "jitter_estimate_percent": 0.0,
+          "budget_verdict": "PASS",
+          "trend_direction": "improved",
+          "evidence_source_counts": {
+            "real": 5
+          }
+        },
+        {
+          "execution_class": "policy_refresh",
+          "sample_count": 5,
+          "latest_wall_time_sec": 0.0,
+          "baseline_wall_time_sec": 1.0,
+          "delta_vs_selected_baseline_percent": -100.0,
+          "latest_delta_percent": -100.0,
+          "latest_freshness_status": "FRESH",
+          "latest_comparability": "COMPARABLE",
+          "rolling_median_wall_time_sec": 1.0,
+          "rolling_p90_wall_time_sec": 1.0,
+          "rolling_p95_wall_time_sec": 1.0,
+          "mad_wall_time_sec": 0.0,
+          "jitter_estimate_percent": 0.0,
+          "budget_verdict": "PASS",
+          "trend_direction": "improved",
+          "evidence_source_counts": {
+            "real": 5
+          }
+        },
+        {
+          "execution_class": "release_full",
+          "sample_count": 5,
+          "latest_wall_time_sec": 120.0,
+          "baseline_wall_time_sec": 280.0,
+          "delta_vs_selected_baseline_percent": -57.14285714285714,
+          "latest_delta_percent": -57.14285714285714,
+          "latest_freshness_status": "FRESH",
+          "latest_comparability": "COMPARABLE",
+          "rolling_median_wall_time_sec": 290.0,
+          "rolling_p90_wall_time_sec": 290.0,
+          "rolling_p95_wall_time_sec": 290.0,
+          "mad_wall_time_sec": 0.0,
+          "jitter_estimate_percent": 0.0,
+          "budget_verdict": "PASS",
+          "trend_direction": "improved",
+          "evidence_source_counts": {
+            "real": 5
+          }
+        }
+      ],
+      "transition_count": 0
+    }
+  ],
+  "transition_count": 0,
+  "recent_transitions": [],
+  "summary_hash": "9d2b940ff7a7125f463eea35eac99aec3b8e352e0a850ad6e46db237ec1a57ab"
+}

@@ -1,0 +1,6 @@
+registry_version=runtime_budget_registry_v1
+active_entry_count=1
+retired_entry_count=2
+runtime_budget_registry_entry=profile_id=phase33-runtime-budget-approved-profile budget_tag=phase33-runtime-budget-approved status=retired execution_class_count=6
+runtime_budget_registry_entry=profile_id=phase33-runtime-budget-approved-profile budget_tag=phase33-runtime-budget-approved status=retired execution_class_count=6
+runtime_budget_registry_entry=profile_id=phase41-runtime-budget-approved-profile budget_tag=phase41-runtime-budget-approved status=active execution_class_count=6

@@ -1,0 +1,7 @@
+metric	value
+item_key	pair_expansion_aggregate_52
+equality_rule	region-count + aggregate-count + consumer-visible support theorem fingerprint equality
+current_comparison_fingerprint	52|regions=28|single=7|pair=21|raw=501|canonical=501|deduplicated=182|local=0|plus=0|theorem=0
+imported_comparison_fingerprint	52|regions=28|single=7|pair=21|raw=501|canonical=501|deduplicated=182|local=0|plus=0|theorem=0
+imported_equality_result	counts_and_consumer_visible_fingerprint_equal
+rowset_note	legacy output 52 did not preserve a separate candidate row-set artifact in this bundle; equality is therefore count/fingerprint/consumer-visible equality, not imported row copy equality

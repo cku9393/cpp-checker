@@ -1,5 +1,14 @@
 # Basis Family Freshization Scope Memo 90
 
+## current note
+
+This memo records the earlier basis/family freshization scope decision. It has since been superseded by later current-runtime work:
+
+- exact minimal basis size `96` is now fresh current-runtime generated.
+- family-chain theorem objects are now current constructor-backed.
+- family-chain lower layers `52`, `53`, `55`, `quintuple_family_expansion_theorem_data_57`, and `sextuple_family_expansion_theorem_data_57` are now current constructor/cache-backed.
+- the remaining family-chain lower-layer caveat is the final `high_family_expansion_theorem_data_57` aggregate row.
+
 ## target grouping
 
 ### A. basis_only_theorem_chain
@@ -43,8 +52,9 @@
 ### B. family_chain_output_57
 
 - some slow rebuild paths exist for quintuple / sextuple / septuple / high-family expansions.
-- however `support_bounded_schema_universe_obstruction_theorem_()` and `unified_bounded_schema_universe_obstruction_theorem_()` are still imported theorem constructors.
-- therefore family-chain self verification can remain current verified, but not fresh-current-generated, until those theorem objects themselves have a genuine current constructor.
+- `support_bounded_schema_universe_obstruction_theorem_()` and `unified_bounded_schema_universe_obstruction_theorem_()` are no longer the current authoritative theorem-object constructors.
+- current authoritative family-chain theorem objects use `build_current_family_chain_output_57_theorem_objects_()`.
+- lower-layer caveat remains below the fresh theorem object layer, currently starting at `septuple_family_expansion_theorem_data_57`.
 
 ### C. support8_shell15_frontier_output_84
 

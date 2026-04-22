@@ -1,0 +1,69 @@
+{
+  "plan_version":"policy_rerun_plan_v1",
+  "generated_at_utc":"2026-04-13T15:50:27Z",
+  "artifact_root":"/private/tmp/raw_engine_phase36_stage/artifacts",
+  "baseline_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_phase30_approved_v1.txt",
+  "current_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_v1.json",
+  "refresh_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_refresh_phase32_v1.json",
+  "baseline_manifest_hash":"aa137797efeaa6c1",
+  "current_manifest_hash":"38722835243e02fa",
+  "refresh_manifest_hash":"6ed9de91b52b8fd2",
+  "stale_family_count":3,
+  "requires_rerun_family_count":1,
+  "reclassify_required_count":0,
+  "selected_entry_count":4,
+  "stale_families":["split_tie_organic_symmetric","automorphism_probe_large","planner_tie_mixed_organic"],
+  "requires_rerun_families":["planner_tie_mixed_organic_compare_ready"],
+  "summary_verdict":"RERUN_REQUIRED",
+  "rationale":"rerun entries generated for stale or requires_rerun families",
+  "entries":[
+    {
+      "family":"automorphism_probe_large",
+      "current_status":"PASS",
+      "freshness_status":"STALE",
+      "rerun_kind":"direct_compare_rerun",
+      "evidence_mode":"campaign_compare",
+      "campaign_config_path":"tests/campaigns/phase22_automorphism_compare.txt",
+      "recommended_command":"./raw_engine_tests --case campaign --campaign-config tests/campaigns/phase22_automorphism_compare.txt --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes",
+      "expected_stop_criteria":"target-compared-states=32,target-eligible-states=32,semantic_disagreement=0,fallback=0",
+      "status_impact":"PASS family stale",
+      "counts_as_production_evidence":true
+    },
+    {
+      "family":"planner_tie_mixed_organic",
+      "current_status":"NON_APPLICABLE",
+      "freshness_status":"STALE",
+      "rerun_kind":"applicability_audit_rerun",
+      "evidence_mode":"applicability_only",
+      "campaign_config_path":"",
+      "recommended_command":"./raw_engine_tests --case planner_tie_organic_applicability_audit --artifact-dir artifacts/phase22_applicability",
+      "expected_stop_criteria":"target-applicability-confidence=0.95,compare_eligible_state_count=0,dominant_reason=no_split_ready",
+      "status_impact":"NON_APPLICABLE family stale",
+      "counts_as_production_evidence":false
+    },
+    {
+      "family":"planner_tie_mixed_organic_compare_ready",
+      "current_status":"INSUFFICIENT_EVIDENCE",
+      "freshness_status":"REQUIRES_RERUN",
+      "rerun_kind":"manual_reclassification",
+      "evidence_mode":"policy_gate",
+      "campaign_config_path":"",
+      "recommended_command":"./raw_engine_tests --case policy_gate --gate-strict",
+      "expected_stop_criteria":"family status must return to PASS, NON_APPLICABLE, or DIAGNOSTIC_ONLY",
+      "status_impact":"family requires manual policy reclassification",
+      "counts_as_production_evidence":false
+    },
+    {
+      "family":"split_tie_organic_symmetric",
+      "current_status":"PASS",
+      "freshness_status":"STALE",
+      "rerun_kind":"direct_compare_rerun",
+      "evidence_mode":"campaign_compare",
+      "campaign_config_path":"tests/campaigns/phase22_split_tie_organic_compare.txt",
+      "recommended_command":"./raw_engine_tests --case campaign --campaign-config tests/campaigns/phase22_split_tie_organic_compare.txt --target-compared-states 32 --target-eligible-states 32 --stop-when-gate-passes",
+      "expected_stop_criteria":"target-compared-states=32,target-eligible-states=32,semantic_disagreement=0,fallback=0",
+      "status_impact":"PASS family stale",
+      "counts_as_production_evidence":true
+    }
+  ]
+}

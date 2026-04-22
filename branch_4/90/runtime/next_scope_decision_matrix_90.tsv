@@ -1,0 +1,6 @@
+candidate_key	readiness_score_0_100	proof_value_0_100	engineering_cost_0_100	risk_0_100	dependency_clarity_0_100	expected_progress_value_0_100	recommended_order	final_recommendation
+broader_general_gap_theorem	78	95	45	55	80	90	1	general_gap_bridge_formalization
+shell16_readiness	62	75	70	60	65	78	2	shell16_preflight_then_attempt
+BOJ_solver_bridge	58	65	50	50	60	62	3	boj_bridge_formalization
+higher_support_necessity	35	70	90	80	35	45	4	higher_support_bound_formalization
+archive_wide_history_provenance_cleanup	80	35	30	20	85	35	5	archive_cleanup_before_expansion

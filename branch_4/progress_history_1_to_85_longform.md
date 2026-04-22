@@ -493,3 +493,16 @@ completion lock을 더 강하게 묶는 작업이 계속되었다.
 이 문서의 요점은 하나다.  
 **프로젝트는 실제로 많이 전진했고, 그 전진의 일부는 이제 90 번들과 병합된 역사 문서 안에 복원되어 있다.**  
 그래도 연속 버전 보존은 부족하므로, 앞으로의 100% 계획은 단순 연구 계획이 아니라 **보존 계획, 승격 계획, completion 계획**이어야 한다.
+## 90 readiness audit update
+
+Current branch_4/90 now has support8 closure and family-chain lower-layer closure:
+
+- support8 classification: `support8_authoritative_completion_locked`
+- pass1/pass2/pass3: all locked
+- top-level provenance: fresh `16`, imported `0`, mixed `0`, archival `3`
+- family-chain lower layers: total `7`, fresh `7`, imported `0`
+- lower-frontier inventory-only shell11/shell12 pair `4`: `keep_inventory_only_nonblocking`
+
+The next-scope readiness audit selected `general_gap_bridge_formalization` as the next exact target. This is a bridge-contract step, not a shell16 scan, higher-support implementation, general theorem proof, or BOJ solver implementation.
+
+The bridge formalization split the broader target into `3` candidate statements and `10` bridge obligations. The `prove_minimal_counterexample_reduction` target reached a proof-ready limited skeleton. The tail bridge round proved checked-tail capture under current scope and routed first unchecked extension tails to shell16. The shell16 promotion review separated candidate/raw/canonical/outside-bounded `4/8/4/4`, local exact/plus-one/theorem-preserving survivors `2/0/0`, and fingerprint `981:4479772858934799504`; it promotes runtime facts and limited boundary lemmas only. The limited bridge theorem proof attempt proves `limited_support8_shell16_boundary_bridge` under current scope. The support-bound round formalizes `support_minimal_counterexample_reduces_to_support8_or_escape`, the support-reduction round refines support `>8` into `support_growth_partition`, the family-chain lift round proves only target readiness/conditional applicability, and the lift-map refinement round defines recognized-source map totality. The obstruction-preservation round formalizes payload/status semantics and closes current-scope payload well-definedness/conditional absorption. The phase2 round formalizes payload refinement relation, source-target correspondence, and smaller-witness construction contract, while leaving layer projection semantic preservation and operation-specific smaller-witness construction as blockers. The next exact proof-obligation target is `family_chain_lift_phase3_if_needed`.

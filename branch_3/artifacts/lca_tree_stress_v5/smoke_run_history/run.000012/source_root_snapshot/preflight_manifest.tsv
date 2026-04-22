@@ -1,0 +1,61 @@
+kind	label	status	detail	artifact
+command	bash	ok	/bin/bash	-
+command	python3	ok	/usr/bin/python3	-
+command	mkdir	ok	/bin/mkdir	-
+command	mktemp	ok	/usr/bin/mktemp	-
+command	dirname	ok	/usr/bin/dirname	-
+command	chmod	ok	/bin/chmod	-
+command	cp	ok	/bin/cp	-
+command	mv	ok	/bin/mv	-
+command	rm	ok	/bin/rm	-
+command	rmdir	ok	/bin/rmdir	-
+command	kill	ok	kill	-
+command	tail	ok	/usr/bin/tail	-
+command	sleep	ok	/bin/sleep	-
+command	grep	ok	/usr/bin/grep	-
+command	sort	ok	/usr/bin/sort	-
+command	date	ok	/bin/date	-
+command	ln	ok	/bin/ln	-
+compiler	clang++	ok	/usr/bin/clang++	-
+directory	branch root directory	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3	-
+executable	launcher entrypoint	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke.sh	-
+directory	outer suite wrappers directory	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers	-
+directory	resume workspace directory	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume	-
+executable	outer smoke wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/lca_smoke.sh	-
+file	release env wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/solver_release_env.sh	-
+file	artifact resolver	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifact_paths.py	-
+file	branch-local case helper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py	-
+file	branch-local validator	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_validator_local.py	-
+file	build helper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.py	-
+file	resume helper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume.py	-
+file	solver source	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp	-
+file	smoke case manifest	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/smoke_cases.tsv	-
+executable	build wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/build.sh	-
+executable	smoke target wrapper	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_target.sh	-
+directory	branch artifacts root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts	-
+directory	launcher artifacts root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5	-
+directory	smoke output root	missing	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke	-
+directory	smoke failure root	missing	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_failure	-
+directory	launcher failure root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure	-
+directory	launcher status root	missing	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status	-
+directory	launcher run history root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history	-
+directory	launcher run export root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_runs	-
+directory	launcher tmp parent	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp	-
+directory	launcher lock root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.locks	-
+directory	launcher tmpdir	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_smoke.launcher.tmp	-
+directory	launcher preflight root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_smoke.launcher.tmp/preflight	-
+directory	launcher home root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_smoke.launcher.tmp/home	-
+directory	launcher xdg config root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_smoke.launcher.tmp/xdg_config	-
+directory	launcher xdg cache root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_smoke.launcher.tmp/xdg_cache	-
+directory	launcher xdg state root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_smoke.launcher.tmp/xdg_state	-
+directory	launcher pycache root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_smoke.launcher.tmp/pycache	-
+working_directory	original launch working directory	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3	-
+working_directory	branch root	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3	-
+path_policy	clean path	ok	/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin	-
+policy	manifest_input_policy	ok	branch_local_smoke_manifest	-
+policy	manifest_selection_policy	ok	manifest_row_order	-
+policy	seed_policy	ok	manifest_seed	-
+setting	smoke_manifest_path	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/smoke_cases.tsv	-
+setting	build_timeout_override	ok	-	-
+setting	launcher_dispatch_timeout_s	ok	-	-
+shell_syntax	smoke target wrapper syntax	broken	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/lca_smoke_target.sh	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/smoke_target_wrapper_syntax.stderr.txt

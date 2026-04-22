@@ -1,0 +1,27 @@
+{
+  "manifest_version": "runtime_known_env_age_tick_v1",
+  "generated_at_utc": "2026-04-09T01:10:10Z",
+  "governance_policy_id": "phase40-known-env-governance",
+  "current_time_utc": "2026-04-09T01:10:10Z",
+  "aged_time_utc": "2026-06-13T01:10:10Z",
+  "advance_days": 65.0,
+  "affected_known_env_count": 1,
+  "due_soon_reverify_count": 0,
+  "reverify_required_count": 0,
+  "stale_count": 0,
+  "retire_candidate_count": 1,
+  "retired_count": 0,
+  "transitions": [
+    {
+      "known_env_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+      "fingerprint_key": "0d045149f16d138f992da5a9f56dc290a7bf24faefc87d4e5cc11ad87c7ff1af",
+      "current_state": "APPROVED_KNOWN_FRESH",
+      "next_state": "APPROVED_KNOWN_RETIRE_CANDIDATE",
+      "due_soon": false,
+      "overdue_days": 51.01,
+      "current_reference_time_utc": "2026-04-09T01:10:10Z",
+      "aged_reference_time_utc": "2026-06-13T01:10:10Z"
+    }
+  ],
+  "age_tick_hash": "781864e9162666e85422e7c54698c9d3eb323437b7402c4feacba04e35e6546a"
+}

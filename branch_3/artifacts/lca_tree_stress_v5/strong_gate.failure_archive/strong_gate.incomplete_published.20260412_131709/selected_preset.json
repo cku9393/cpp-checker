@@ -1,0 +1,44 @@
+{
+  "name": "strong_gate",
+  "description": "Broad gate: correctness fuzz + hard scaling + max-N dense runs.",
+  "stages": [
+    {
+      "name": "correctness_fuzz",
+      "modes": [
+        "comb_rect_dense",
+        "multi_comb_rect",
+        "multi_comb_cap",
+        "chain_unary",
+        "star_pairs",
+        "balanced_dense",
+        "broom_mixed",
+        "caterpillar_rect_dense",
+        "random_recursive_mixed"
+      ],
+      "sizes": [
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "shuffle_labels": [
+        0,
+        1
+      ],
+      "shuffle_queries": [
+        0,
+        1
+      ],
+      "timeout": 2.0,
+      "must_pass": true
+    }
+  ]
+}

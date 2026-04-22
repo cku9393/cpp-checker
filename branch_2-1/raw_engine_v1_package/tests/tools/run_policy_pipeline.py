@@ -50,10 +50,51 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--runtime-watch-current", default=None)
     parser.add_argument("--runtime-watch-refresh", default=None)
     parser.add_argument("--runtime-watch-history-index", default=None)
+    parser.add_argument("--runtime-watch-registry", default=None)
+    parser.add_argument("--runtime-registry-health", default=None)
+    parser.add_argument("--publication-health", default=None)
+    parser.add_argument("--source-snapshot-manifest", default=None)
+    parser.add_argument("--staged-mirror-manifest", default=None)
+    parser.add_argument("--staged-mirror-verify", default=None)
+    parser.add_argument("--ctest-inventory-release", default=None)
+    parser.add_argument("--ctest-inventory-debug", default=None)
+    parser.add_argument("--ctest-inventory-asan", default=None)
+    parser.add_argument("--verification-release", default=None)
+    parser.add_argument("--verification-debug", default=None)
+    parser.add_argument("--verification-asan", default=None)
+    parser.add_argument("--published-snapshot-manifest", default=None)
+    parser.add_argument("--verification-closeout", default=None)
+    parser.add_argument("--ops-summary", default=None)
+    parser.add_argument("--approved-known-summary", action="append", default=[])
+    parser.add_argument("--foreign-import-summary", action="append", default=[])
+    parser.add_argument("--known-env-governance-policy", default=None)
+    parser.add_argument("--known-env-age-tick", default=None)
+    parser.add_argument("--known-env-reverify-plan", default=None)
+    parser.add_argument("--known-env-reverify-gate", default=None)
+    parser.add_argument("--known-env-reverify-apply", default=None)
+    parser.add_argument("--known-env-retire-plan", default=None)
+    parser.add_argument("--known-env-retire-apply", default=None)
+    parser.add_argument("--known-env-retire-metadata", default=None)
+    parser.add_argument("--current-env-governance-policy", default=None)
+    parser.add_argument("--current-env-guardrail-policy", default=None)
+    parser.add_argument("--current-env-watch-current", default=None)
+    parser.add_argument("--current-env-watch-refresh", default=None)
+    parser.add_argument("--current-env-watch-history", default=None)
+    parser.add_argument("--current-env-age-tick", default=None)
+    parser.add_argument("--current-env-watch-plan", default=None)
+    parser.add_argument("--current-env-trigger-gate", default=None)
+    parser.add_argument("--runtime-budget-current", default=None)
+    parser.add_argument("--runtime-budget-proposal", default=None)
+    parser.add_argument("--runtime-budget-proposal-gate", default=None)
+    parser.add_argument("--runtime-budget-baseline", default=None)
+    parser.add_argument("--runtime-budget-refresh", default=None)
+    parser.add_argument("--runtime-budget-reproposal-history", default=None)
+    parser.add_argument("--runtime-budget-registry-summary", default=None)
     parser.add_argument("--matrix-config", default=None)
     parser.add_argument("--pipeline-matrix-summary", default=None)
     parser.add_argument("--synthetic-runtime-fixture", default=None)
     parser.add_argument("--runtime-budget-config", default=None)
+    parser.add_argument("--runtime-history-compact", default=None)
     parser.add_argument("--artifact-root", required=True)
     parser.add_argument("--report-out", default=None)
     parser.add_argument("--summary-out", default=None)
@@ -62,8 +103,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--python-bin", default=None)
     parser.add_argument("--zip-out", default=None)
     parser.add_argument("--curated-zip", default=None)
+    parser.add_argument("--light-ops-zip", default=None)
+    parser.add_argument("--use-published-snapshot", action="store_true")
+    parser.add_argument("--published-root", default=None)
     parser.add_argument("--allow-empty-plan", action="store_true")
     parser.add_argument("--strict", action="store_true")
+    parser.add_argument("--skip-policy-stage", action="store_true")
+    parser.add_argument("--skip-runtime-stage", action="store_true")
+    parser.add_argument("--skip-bundle-build", action="store_true")
     parser.add_argument("--prune-artifacts", action="store_true")
     parser.add_argument("--max-bundles", type=int, default=4)
     parser.add_argument("--max-nightly-runs", type=int, default=4)
@@ -156,6 +203,9 @@ def default_runtime_path(artifact_root: Path, phase: str, kind: str) -> Path:
 
 
 def default_runtime_registry_path(artifact_root: Path) -> Path:
+    preferred = artifact_root / "manifests" / "runtime_baseline_registry_v2.json"
+    if preferred.exists():
+        return preferred
     return artifact_root / "manifests" / "runtime_baseline_registry_v1.json"
 
 
@@ -175,6 +225,50 @@ def default_runtime_watch_history_index_path(artifact_root: Path) -> Path:
     return artifact_root / "manifests" / "runtime_watch_history_index_v1.json"
 
 
+def default_runtime_watch_registry_path(artifact_root: Path) -> Path:
+    return artifact_root / "manifests" / "runtime_watch_registry_v1.json"
+
+
+def default_runtime_registry_health_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_registry_health_{phase}.json"
+
+
+def default_publication_health_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"publication_health_{phase}.json"
+
+
+def default_source_snapshot_manifest_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"source_snapshot_manifest_{phase}.json"
+
+
+def default_staged_mirror_manifest_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"staged_mirror_manifest_{phase}.json"
+
+
+def default_staged_mirror_verify_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"staged_mirror_verify_{phase}.json"
+
+
+def default_ctest_inventory_path(artifact_root: Path, phase: str, mode: str) -> Path:
+    return artifact_root / "manifests" / f"ctest_inventory_{mode}_{phase}.json"
+
+
+def default_verification_path(artifact_root: Path, phase: str, mode: str) -> Path:
+    return artifact_root / "manifests" / f"verification_{phase}_{mode}.json"
+
+
+def default_published_snapshot_manifest_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"{phase}_published_snapshot.json"
+
+
+def default_verification_closeout_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"{phase}_verification_closeout.json"
+
+
+def default_ops_summary_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"policy_ops_summary_{phase}.json"
+
+
 def default_matrix_summary_path(artifact_root: Path, phase: str) -> Path:
     return artifact_root / "manifests" / f"policy_pipeline_matrix_{phase}.json"
 
@@ -185,6 +279,19 @@ def default_zip_path(repo_root: Path, phase: str, curated: bool) -> Path:
     if curated:
         stem += "_curated"
     return repo_root / f"{stem}_{date_suffix}.zip"
+
+
+def default_light_ops_zip_path(repo_root: Path, phase: str) -> Path:
+    date_suffix = datetime.now(timezone.utc).astimezone().strftime("%Y%m%d")
+    return repo_root / f"raw_engine_{phase}_ops_light_{date_suffix}.zip"
+
+
+def default_published_bundle_root(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / f"{phase}_evidence_bundle_published"
+
+
+def default_runtime_history_compact_path(artifact_root: Path) -> Path:
+    return artifact_root / "manifests" / "runtime_history_index_v1_compacted.json"
 
 
 def infer_pipeline_phase(args: argparse.Namespace) -> str:
@@ -255,6 +362,16 @@ def run_command(stage_name: str, command: list[str], cwd: Path) -> dict[str, Any
         "duration_seconds": duration,
         "command": command,
         "note": note,
+    }
+
+
+def skipped_stage(stage_name: str, command: list[str], reason: str) -> dict[str, Any]:
+    return {
+        "name": stage_name,
+        "status": "SKIPPED",
+        "duration_seconds": 0.0,
+        "command": command,
+        "note": reason,
     }
 
 
@@ -551,7 +668,7 @@ def determine_runtime_triage(
     if current_verdict == "WARN":
         rationale.append("runtime exceeded the soft budget")
         return "WARN", "WATCH_RUNTIME", "runtime exceeded the soft budget; correctness is stable but the run is slower than baseline", rationale
-    if strongest_trend in {"regressing", "noisy"}:
+    if strongest_trend in {"regressing", "noisy"} and watch_status not in {"", "CLEAR"}:
         rationale.append(
             "runtime history shows regressing/noisy trends"
             if strongest_trend == "regressing"
@@ -621,7 +738,9 @@ def pipeline_summary_text(summary: dict[str, Any]) -> str:
         + f" runtime_watch_status={summary.get('runtime_watch_status', '')}"
         + f" runtime_watch_recommendation={summary.get('runtime_watch_recommendation', '')}"
         + f" runtime_watch_fingerprint_count={summary.get('runtime_watch_fingerprint_count', '')}"
-        + f" runtime_rebaseline_proposal_needed={int(bool(summary.get('runtime_rebaseline_proposal_needed', False)))}",
+        + f" runtime_rebaseline_proposal_needed={int(bool(summary.get('runtime_rebaseline_proposal_needed', False)))}"
+        + f" current_env_watch_confidence={summary.get('current_env_watch_confidence', '')}"
+        + f" new_env_watch_confidence={summary.get('new_env_watch_confidence', '')}",
         f"recommended_next_action={summary.get('recommended_next_action', '')}",
     ]
     for key in (
@@ -661,6 +780,198 @@ def pipeline_summary_text(summary: dict[str, Any]) -> str:
 def write_pipeline_summary(path: Path, summary: dict[str, Any]) -> None:
     write_json(path, summary)
     write_text(path.with_suffix(".txt"), pipeline_summary_text(summary))
+
+
+def enrich_summary_with_operator_artifacts(
+    summary: dict[str, Any],
+    runtime_watch_registry_path: Path | None,
+    ops_summary_path: Path | None,
+    runtime_registry_health_path: Path | None = None,
+    publication_health_path: Path | None = None,
+) -> dict[str, Any]:
+    enriched = dict(summary)
+    enriched["runtime_watch_registry"] = None if runtime_watch_registry_path is None else str(runtime_watch_registry_path)
+    enriched["policy_ops_summary"] = None if ops_summary_path is None else str(ops_summary_path)
+    enriched["runtime_registry_health"] = None if runtime_registry_health_path is None else str(runtime_registry_health_path)
+    enriched["publication_health"] = None if publication_health_path is None else str(publication_health_path)
+
+    runtime_watch_registry = load_json_if_exists(runtime_watch_registry_path)
+    ops_summary = load_json_if_exists(ops_summary_path)
+    runtime_registry_health = load_json_if_exists(runtime_registry_health_path)
+    publication_health = load_json_if_exists(publication_health_path)
+    final_operator_summary = ops_summary.get("final_operator_summary", {})
+
+    enriched["runtime_watch_registry_entry_count"] = int(runtime_watch_registry.get("entry_count", 0))
+    enriched["runtime_watch_registry_fingerprint_count"] = int(runtime_watch_registry.get("fingerprint_count", 0))
+    enriched["runtime_registry_health_status"] = runtime_registry_health.get("overall_status") or runtime_registry_health.get("status")
+    enriched["publication_health_status"] = publication_health.get("status")
+    enriched["current_env_operator_action"] = final_operator_summary.get("recommended_action_current_env")
+    enriched["new_env_operator_action"] = final_operator_summary.get("recommended_action_new_env")
+    enriched["operator_rationale_list"] = final_operator_summary.get("rationale", [])
+    enriched["current_env_watch_confidence"] = ops_summary.get("current_env_summary", {}).get("watch_confidence")
+    enriched["new_env_watch_confidence"] = ops_summary.get("new_env_summary", {}).get("watch_confidence")
+    enriched["current_env_evidence_source_counts"] = ops_summary.get("current_env_summary", {}).get("evidence_source_counts", {})
+    enriched["new_env_evidence_source_counts"] = ops_summary.get("new_env_summary", {}).get("evidence_source_counts", {})
+    enriched["verification_lane_status"] = ops_summary.get("verification_lane", {}).get("status")
+    enriched["verification_not_run_count"] = ops_summary.get("verification_lane", {}).get("verification_not_run_count", 0)
+    enriched["verification_action"] = ops_summary.get("final_operator_actions", {}).get("recommended_action_verification")
+    return enriched
+
+
+def materialize_operator_artifacts(
+    *,
+    python_bin: str,
+    watch_ops_script: Path,
+    repo_root: Path,
+    artifact_root: Path,
+    phase: str,
+    policy_manifest_path: Path,
+    runtime_refresh_manifest_path: Path,
+    runtime_history_index_path: Path | None,
+    runtime_watch_current_path: Path | None,
+    runtime_watch_refresh_path: Path | None,
+    runtime_watch_history_index_path: Path | None,
+    runtime_watch_registry_path: Path,
+    ops_summary_path: Path,
+    runtime_baseline_registry_path: Path | None,
+    runtime_registry_health_path: Path,
+    publication_health_path: Path | None,
+    source_snapshot_manifest_path: Path | None = None,
+    staged_mirror_verify_path: Path | None = None,
+    verification_release_path: Path | None = None,
+    verification_debug_path: Path | None = None,
+    verification_asan_path: Path | None = None,
+    published_snapshot_manifest_path: Path | None = None,
+    verification_closeout_path: Path | None = None,
+    approved_known_summary_paths: list[Path] | None = None,
+    foreign_import_summary_paths: list[Path] | None = None,
+    current_env_governance_policy_path: Path | None = None,
+    current_env_guardrail_policy_path: Path | None = None,
+    current_env_watch_current_path_manifest: Path | None = None,
+    current_env_watch_refresh_path_manifest: Path | None = None,
+    current_env_watch_history_path_manifest: Path | None = None,
+    current_env_age_tick_path: Path | None = None,
+    current_env_watch_plan_path: Path | None = None,
+    current_env_trigger_gate_path: Path | None = None,
+    runtime_budget_current_path_manifest: Path | None = None,
+    runtime_budget_proposal_path_manifest: Path | None = None,
+    runtime_budget_proposal_gate_path_manifest: Path | None = None,
+    runtime_budget_baseline_path_manifest: Path | None = None,
+    runtime_budget_refresh_path_manifest: Path | None = None,
+    runtime_budget_reproposal_history_path: Path | None = None,
+    runtime_budget_registry_summary_path: Path | None = None,
+) -> list[dict[str, Any]]:
+    stages: list[dict[str, Any]] = []
+    approved_known_summary_paths = approved_known_summary_paths or []
+    foreign_import_summary_paths = foreign_import_summary_paths or []
+    matrix_summary_path = default_matrix_summary_path(artifact_root, phase)
+    quick_summary_path = default_summary_path(artifact_root, phase, "quick")
+    nightly_summary_path = default_summary_path(artifact_root, phase, "nightly")
+
+    stages.append(
+        run_command(
+            "runtime_watch_registry",
+            [
+                python_bin,
+                str(watch_ops_script),
+                "watch-registry",
+                *(["--watch-current", str(runtime_watch_current_path)] if runtime_watch_current_path is not None else []),
+                *(["--watch-refresh", str(runtime_watch_refresh_path)] if runtime_watch_refresh_path is not None else []),
+                *(["--watch-history-index", str(runtime_watch_history_index_path)] if runtime_watch_history_index_path is not None else []),
+                "--matrix-summary",
+                str(matrix_summary_path),
+                "--matrix-root",
+                str(artifact_root / "matrix"),
+                "--registry-out",
+                str(runtime_watch_registry_path),
+            ],
+            repo_root,
+        )
+    )
+
+    if runtime_baseline_registry_path is not None:
+        stages.append(
+            run_command(
+                "runtime_registry_health",
+                [
+                    python_bin,
+                    str(watch_ops_script),
+                    "registry-health",
+                    "--phase",
+                    phase,
+                    "--runtime-baseline-registry",
+                    str(runtime_baseline_registry_path),
+                    "--runtime-history-index",
+                    str(runtime_history_index_path or default_runtime_history_index_path(artifact_root)),
+                    "--runtime-watch-registry",
+                    str(runtime_watch_registry_path),
+                    "--runtime-refresh",
+                    str(runtime_refresh_manifest_path),
+                    *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
+                    *sum([["--foreign-import-summary", str(path)] for path in foreign_import_summary_paths], []),
+                    "--health-out",
+                    str(runtime_registry_health_path),
+                ],
+                repo_root,
+            )
+        )
+
+    stages.append(
+        run_command(
+            "policy_ops_summary",
+            [
+                python_bin,
+                str(watch_ops_script),
+                "ops-summary",
+                "--phase",
+                phase,
+                "--policy-manifest",
+                str(policy_manifest_path),
+                "--quick-summary",
+                str(quick_summary_path),
+                "--nightly-summary",
+                str(nightly_summary_path),
+                "--matrix-summary",
+                str(matrix_summary_path),
+                "--runtime-refresh",
+                str(runtime_refresh_manifest_path),
+                *(["--runtime-watch-refresh", str(runtime_watch_refresh_path)] if runtime_watch_refresh_path is not None else []),
+                "--runtime-watch-registry",
+                str(runtime_watch_registry_path),
+                *(["--runtime-baseline-registry", str(runtime_baseline_registry_path)] if runtime_baseline_registry_path is not None else []),
+                *(["--runtime-registry-health", str(runtime_registry_health_path)] if runtime_registry_health_path is not None else []),
+                *(["--publication-health", str(publication_health_path)] if publication_health_path is not None and publication_health_path.exists() else []),
+                *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path is not None and source_snapshot_manifest_path.exists() else []),
+                *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path is not None and staged_mirror_verify_path.exists() else []),
+                *(["--verification-release", str(verification_release_path)] if verification_release_path is not None and verification_release_path.exists() else []),
+                *(["--verification-debug", str(verification_debug_path)] if verification_debug_path is not None and verification_debug_path.exists() else []),
+                *(["--verification-asan", str(verification_asan_path)] if verification_asan_path is not None and verification_asan_path.exists() else []),
+                *(["--published-snapshot-manifest", str(published_snapshot_manifest_path)] if published_snapshot_manifest_path is not None and published_snapshot_manifest_path.exists() else []),
+                *(["--verification-closeout", str(verification_closeout_path)] if verification_closeout_path is not None and verification_closeout_path.exists() else []),
+                *(["--current-env-governance-policy", str(current_env_governance_policy_path)] if current_env_governance_policy_path is not None and current_env_governance_policy_path.exists() else []),
+                *(["--current-env-guardrail-policy", str(current_env_guardrail_policy_path)] if current_env_guardrail_policy_path is not None and current_env_guardrail_policy_path.exists() else []),
+                *(["--current-env-watch-current", str(current_env_watch_current_path_manifest)] if current_env_watch_current_path_manifest is not None and current_env_watch_current_path_manifest.exists() else []),
+                *(["--current-env-watch-refresh", str(current_env_watch_refresh_path_manifest)] if current_env_watch_refresh_path_manifest is not None and current_env_watch_refresh_path_manifest.exists() else []),
+                *(["--current-env-watch-history", str(current_env_watch_history_path_manifest)] if current_env_watch_history_path_manifest is not None and current_env_watch_history_path_manifest.exists() else []),
+                *(["--current-env-age-tick", str(current_env_age_tick_path)] if current_env_age_tick_path is not None and current_env_age_tick_path.exists() else []),
+                *(["--current-env-watch-plan", str(current_env_watch_plan_path)] if current_env_watch_plan_path is not None and current_env_watch_plan_path.exists() else []),
+                *(["--current-env-trigger-gate", str(current_env_trigger_gate_path)] if current_env_trigger_gate_path is not None and current_env_trigger_gate_path.exists() else []),
+                *(["--runtime-budget-current", str(runtime_budget_current_path_manifest)] if runtime_budget_current_path_manifest is not None and runtime_budget_current_path_manifest.exists() else []),
+                *(["--runtime-budget-proposal", str(runtime_budget_proposal_path_manifest)] if runtime_budget_proposal_path_manifest is not None and runtime_budget_proposal_path_manifest.exists() else []),
+                *(["--runtime-budget-proposal-gate", str(runtime_budget_proposal_gate_path_manifest)] if runtime_budget_proposal_gate_path_manifest is not None and runtime_budget_proposal_gate_path_manifest.exists() else []),
+                *(["--runtime-budget-baseline", str(runtime_budget_baseline_path_manifest)] if runtime_budget_baseline_path_manifest is not None and runtime_budget_baseline_path_manifest.exists() else []),
+                *(["--runtime-budget-refresh", str(runtime_budget_refresh_path_manifest)] if runtime_budget_refresh_path_manifest is not None and runtime_budget_refresh_path_manifest.exists() else []),
+                *(["--runtime-budget-reproposal-history", str(runtime_budget_reproposal_history_path)] if runtime_budget_reproposal_history_path is not None and runtime_budget_reproposal_history_path.exists() else []),
+                *(["--runtime-budget-registry-summary", str(runtime_budget_registry_summary_path)] if runtime_budget_registry_summary_path is not None and runtime_budget_registry_summary_path.exists() else []),
+                *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
+                *sum([["--foreign-import-summary", str(path)] for path in foreign_import_summary_paths], []),
+                "--out",
+                str(ops_summary_path),
+            ],
+            repo_root,
+        )
+    )
+    return stages
 
 
 def build_summary(
@@ -733,6 +1044,9 @@ def build_summary(
         "runtime_rerun_plan": str(runtime_rerun_plan_path),
         "runtime_history_index": None if runtime_history_index_path is None else str(runtime_history_index_path),
         "runtime_history_summary": None if runtime_history_index_path is None else str(runtime_history_index_path.with_name(f"{runtime_history_index_path.stem}_summary.json")),
+        "runtime_history_compact": None
+        if runtime_history_index_path is None
+        else str(runtime_history_index_path.with_name("runtime_history_index_v1_compacted.json")),
         "runtime_proposal": None if runtime_proposal_path is None else str(runtime_proposal_path),
         "runtime_watch_current": None if runtime_watch_current_path is None else str(runtime_watch_current_path),
         "runtime_watch_refresh": None if runtime_watch_refresh_path is None else str(runtime_watch_refresh_path),
@@ -974,6 +1288,10 @@ def main() -> int:
         args.runtime_history_index,
         default_runtime_history_index_path(artifact_root),
     )
+    runtime_history_compact_path = manifest_json_path(
+        args.runtime_history_compact,
+        default_runtime_history_compact_path(artifact_root),
+    )
     runtime_proposal_path = manifest_json_path(
         args.runtime_proposal,
         default_runtime_proposal_path(artifact_root, pipeline_phase),
@@ -990,6 +1308,68 @@ def main() -> int:
         args.runtime_watch_history_index,
         default_runtime_watch_history_index_path(artifact_root),
     )
+    runtime_watch_registry_path = manifest_json_path(
+        args.runtime_watch_registry,
+        default_runtime_watch_registry_path(artifact_root),
+    )
+    runtime_registry_health_path = manifest_json_path(
+        args.runtime_registry_health,
+        default_runtime_registry_health_path(artifact_root, pipeline_phase),
+    )
+    publication_health_path = manifest_json_path(
+        args.publication_health,
+        default_publication_health_path(artifact_root, pipeline_phase),
+    )
+    source_snapshot_manifest_path = manifest_json_path(
+        args.source_snapshot_manifest,
+        default_source_snapshot_manifest_path(artifact_root, pipeline_phase),
+    )
+    staged_mirror_manifest_path = manifest_json_path(
+        args.staged_mirror_manifest,
+        default_staged_mirror_manifest_path(artifact_root, pipeline_phase),
+    )
+    staged_mirror_verify_path = manifest_json_path(
+        args.staged_mirror_verify,
+        default_staged_mirror_verify_path(artifact_root, pipeline_phase),
+    )
+    ctest_inventory_release_path = manifest_json_path(
+        args.ctest_inventory_release,
+        default_ctest_inventory_path(artifact_root, pipeline_phase, "release"),
+    )
+    ctest_inventory_debug_path = manifest_json_path(
+        args.ctest_inventory_debug,
+        default_ctest_inventory_path(artifact_root, pipeline_phase, "debug"),
+    )
+    ctest_inventory_asan_path = manifest_json_path(
+        args.ctest_inventory_asan,
+        default_ctest_inventory_path(artifact_root, pipeline_phase, "asan"),
+    )
+    verification_release_path = manifest_json_path(
+        args.verification_release,
+        default_verification_path(artifact_root, pipeline_phase, "release"),
+    )
+    verification_debug_path = manifest_json_path(
+        args.verification_debug,
+        default_verification_path(artifact_root, pipeline_phase, "debug"),
+    )
+    verification_asan_path = manifest_json_path(
+        args.verification_asan,
+        default_verification_path(artifact_root, pipeline_phase, "asan"),
+    )
+    published_snapshot_manifest_path = manifest_json_path(
+        args.published_snapshot_manifest,
+        default_published_snapshot_manifest_path(artifact_root, pipeline_phase),
+    )
+    verification_closeout_path = manifest_json_path(
+        args.verification_closeout,
+        default_verification_closeout_path(artifact_root, pipeline_phase),
+    )
+    ops_summary_path = manifest_json_path(
+        args.ops_summary,
+        default_ops_summary_path(artifact_root, pipeline_phase),
+    )
+    approved_known_summary_paths = [manifest_json_path(value) for value in list(args.approved_known_summary or [])]
+    foreign_import_summary_paths = [manifest_json_path(value) for value in list(args.foreign_import_summary or [])]
     summary_path = (
         Path(args.summary_out).resolve()
         if args.summary_out
@@ -998,9 +1378,11 @@ def main() -> int:
     report_path = Path(args.report_out).resolve() if args.report_out else default_report_path(repo_root, pipeline_phase)
     zip_out = Path(args.zip_out).resolve() if args.zip_out else default_zip_path(repo_root, pipeline_phase, False)
     curated_zip = Path(args.curated_zip).resolve() if args.curated_zip else default_zip_path(repo_root, pipeline_phase, True)
+    light_ops_zip = Path(args.light_ops_zip).resolve() if args.light_ops_zip else default_light_ops_zip_path(repo_root, pipeline_phase)
     python_bin = resolve_python_bin(args.python_bin)
     raw_engine_tests = resolve_raw_engine_tests(repo_root, args.raw_engine_tests)
     runtime_gate_script = repo_root / "tests" / "tools" / "runtime_gate.py"
+    watch_ops_script = repo_root / "tests" / "tools" / "runtime_watch_ops.py"
     bundle_script = repo_root / "tests" / "tools" / "build_evidence_bundle.py"
     stages: list[dict[str, Any]] = []
     bundle_metadata_path: Path | None = None
@@ -1018,57 +1400,65 @@ def main() -> int:
             synthetic_flags.extend(["--synthetic-diagnostic-promotion", args.synthetic_diagnostic_promotion])
 
         if args.mode in {"quick", "rebaseline_candidate", "matrix"}:
-            stages.append(
-                run_command(
-                    "policy_ci_check",
-                    [
-                        str(raw_engine_tests),
-                        "--case",
+            policy_ci_command = [
+                str(raw_engine_tests),
+                "--case",
+                "policy_ci_check",
+                "--baseline-manifest",
+                str(baseline_manifest_path),
+                "--current-manifest",
+                str(current_manifest_path),
+                "--refresh-manifest",
+                str(refresh_manifest_path),
+                "--rerun-plan",
+                str(rerun_plan_path),
+                "--artifact-dir",
+                str(artifact_root),
+                "--emit-summary",
+                str(summary_path.with_suffix(".txt")),
+                *synthetic_flags,
+                *(["--allow-empty-plan"] if args.allow_empty_plan else []),
+            ]
+            if args.skip_policy_stage:
+                stages.append(
+                    skipped_stage(
                         "policy_ci_check",
-                        "--baseline-manifest",
-                        str(baseline_manifest_path),
-                        "--current-manifest",
-                        str(current_manifest_path),
-                        "--refresh-manifest",
-                        str(refresh_manifest_path),
-                        "--rerun-plan",
-                        str(rerun_plan_path),
-                        "--artifact-dir",
-                        str(artifact_root),
-                        "--emit-summary",
-                        str(summary_path.with_suffix(".txt")),
-                        *synthetic_flags,
-                        *(["--allow-empty-plan"] if args.allow_empty_plan else []),
-                    ],
-                    repo_root,
+                        policy_ci_command,
+                        "policy stage skipped; pipeline summary was rebuilt from existing manifests",
+                    )
                 )
-            )
+            else:
+                stages.append(run_command("policy_ci_check", policy_ci_command, repo_root))
         elif args.mode in {"nightly", "full_local"}:
-            stages.append(
-                run_command(
-                    "policy_nightly_refresh",
-                    [
-                        str(raw_engine_tests),
-                        "--case",
+            nightly_command = [
+                str(raw_engine_tests),
+                "--case",
+                "policy_nightly_refresh",
+                "--baseline-manifest",
+                str(baseline_manifest_path),
+                "--current-manifest",
+                str(current_manifest_path),
+                "--refresh-manifest",
+                str(refresh_manifest_path),
+                "--rerun-plan",
+                str(rerun_plan_path),
+                "--artifact-dir",
+                str(artifact_root),
+                "--emit-summary",
+                str(summary_path.with_suffix(".txt")),
+                *synthetic_flags,
+                *(["--allow-empty-plan"] if args.allow_empty_plan else []),
+            ]
+            if args.skip_policy_stage:
+                stages.append(
+                    skipped_stage(
                         "policy_nightly_refresh",
-                        "--baseline-manifest",
-                        str(baseline_manifest_path),
-                        "--current-manifest",
-                        str(current_manifest_path),
-                        "--refresh-manifest",
-                        str(refresh_manifest_path),
-                        "--rerun-plan",
-                        str(rerun_plan_path),
-                        "--artifact-dir",
-                        str(artifact_root),
-                        "--emit-summary",
-                        str(summary_path.with_suffix(".txt")),
-                        *synthetic_flags,
-                        *(["--allow-empty-plan"] if args.allow_empty_plan else []),
-                    ],
-                    repo_root,
+                        nightly_command,
+                        "policy nightly stage skipped; pipeline summary was rebuilt from existing manifests",
+                    )
                 )
-            )
+            else:
+                stages.append(run_command("policy_nightly_refresh", nightly_command, repo_root))
 
         if args.mode == "matrix":
             matrix_config_path = Path(args.matrix_config).resolve() if args.matrix_config else None
@@ -1340,7 +1730,7 @@ def main() -> int:
             return int(matrix_summary["exit_code"])
 
         effective_runtime_baseline_manifest_path_for_pipeline = runtime_baseline_manifest_path
-        if args.mode != "bundle_only":
+        if args.mode != "bundle_only" and not args.skip_runtime_stage:
             existing_runtime_current = load_json_if_exists(runtime_current_manifest_path)
             runtime_stage_overrides: dict[str, float] = {}
             for stage in stages:
@@ -1514,6 +1904,15 @@ def main() -> int:
                 )
             )
 
+        elif args.skip_runtime_stage:
+            stages.append(
+                skipped_stage(
+                    "runtime_stage_refresh",
+                    [],
+                    "runtime stage skipped; pipeline summary reused the supplied runtime current/refresh/rerun/watch artifacts",
+                )
+            )
+
         summary = build_summary(
             args.mode,
             pipeline_phase,
@@ -1535,68 +1934,419 @@ def main() -> int:
             bundle_metadata_path,
             stages,
         )
+        summary = enrich_summary_with_operator_artifacts(
+            summary,
+            runtime_watch_registry_path,
+            ops_summary_path,
+            runtime_registry_health_path,
+            publication_health_path if publication_health_path.exists() else None,
+        )
+        write_pipeline_summary(summary_path, summary)
+
+        stages.extend(
+            materialize_operator_artifacts(
+                python_bin=python_bin,
+                watch_ops_script=watch_ops_script,
+                repo_root=repo_root,
+                artifact_root=artifact_root,
+                phase=pipeline_phase,
+                policy_manifest_path=current_manifest_path,
+                runtime_refresh_manifest_path=runtime_refresh_manifest_path,
+                runtime_history_index_path=runtime_history_index_path,
+                runtime_watch_current_path=runtime_watch_current_path,
+                runtime_watch_refresh_path=runtime_watch_refresh_path,
+                runtime_watch_history_index_path=runtime_watch_history_index_path,
+                runtime_watch_registry_path=runtime_watch_registry_path,
+                ops_summary_path=ops_summary_path,
+                runtime_baseline_registry_path=runtime_baseline_registry_path,
+                runtime_registry_health_path=runtime_registry_health_path,
+                publication_health_path=publication_health_path,
+                source_snapshot_manifest_path=source_snapshot_manifest_path,
+                staged_mirror_verify_path=staged_mirror_verify_path,
+                verification_release_path=verification_release_path,
+                verification_debug_path=verification_debug_path,
+                verification_asan_path=verification_asan_path,
+                published_snapshot_manifest_path=published_snapshot_manifest_path,
+                verification_closeout_path=verification_closeout_path,
+                approved_known_summary_paths=approved_known_summary_paths,
+                foreign_import_summary_paths=foreign_import_summary_paths,
+                current_env_governance_policy_path=Path(args.current_env_governance_policy).resolve() if args.current_env_governance_policy else None,
+                current_env_guardrail_policy_path=Path(args.current_env_guardrail_policy).resolve() if args.current_env_guardrail_policy else None,
+                current_env_watch_current_path_manifest=Path(args.current_env_watch_current).resolve() if args.current_env_watch_current else None,
+                current_env_watch_refresh_path_manifest=Path(args.current_env_watch_refresh).resolve() if args.current_env_watch_refresh else None,
+                current_env_watch_history_path_manifest=Path(args.current_env_watch_history).resolve() if args.current_env_watch_history else None,
+                current_env_age_tick_path=Path(args.current_env_age_tick).resolve() if args.current_env_age_tick else None,
+                current_env_watch_plan_path=Path(args.current_env_watch_plan).resolve() if args.current_env_watch_plan else None,
+                current_env_trigger_gate_path=Path(args.current_env_trigger_gate).resolve() if args.current_env_trigger_gate else None,
+                runtime_budget_current_path_manifest=Path(args.runtime_budget_current).resolve() if args.runtime_budget_current else None,
+                runtime_budget_proposal_path_manifest=Path(args.runtime_budget_proposal).resolve() if args.runtime_budget_proposal else None,
+                runtime_budget_proposal_gate_path_manifest=Path(args.runtime_budget_proposal_gate).resolve() if args.runtime_budget_proposal_gate else None,
+                runtime_budget_baseline_path_manifest=Path(args.runtime_budget_baseline).resolve() if args.runtime_budget_baseline else None,
+                runtime_budget_refresh_path_manifest=Path(args.runtime_budget_refresh).resolve() if args.runtime_budget_refresh else None,
+                runtime_budget_reproposal_history_path=Path(args.runtime_budget_reproposal_history).resolve() if args.runtime_budget_reproposal_history else None,
+                runtime_budget_registry_summary_path=Path(args.runtime_budget_registry_summary).resolve() if args.runtime_budget_registry_summary else None,
+            )
+        )
+        summary = build_summary(
+            args.mode,
+            pipeline_phase,
+            artifact_root,
+            baseline_manifest_path,
+            current_manifest_path,
+            refresh_manifest_path,
+            rerun_plan_path,
+            effective_runtime_baseline_manifest_path_for_pipeline,
+            runtime_baseline_registry_path,
+            runtime_current_manifest_path,
+            runtime_refresh_manifest_path,
+            runtime_rerun_plan_path,
+            runtime_history_index_path,
+            runtime_proposal_path,
+            runtime_watch_current_path,
+            runtime_watch_refresh_path,
+            runtime_watch_history_index_path,
+            bundle_metadata_path,
+            stages,
+        )
+        summary = enrich_summary_with_operator_artifacts(
+            summary,
+            runtime_watch_registry_path,
+            ops_summary_path,
+            runtime_registry_health_path,
+            publication_health_path if publication_health_path.exists() else None,
+        )
         write_pipeline_summary(summary_path, summary)
 
         if args.mode in {"nightly", "full_local", "bundle_only"}:
-            ensure_report(report_path, pipeline_phase, args.mode, summary["recommended_next_action"])
-            stages.append(
-                run_command(
-                    "build_evidence_bundle",
-                    [
-                        python_bin,
-                        str(bundle_script),
-                        "--phase",
-                        pipeline_phase,
-                        "--artifact-root",
-                        str(artifact_root),
-                        "--report-out",
-                        str(report_path),
-                        "--policy-manifest",
-                        str(current_manifest_path),
-                        "--baseline-manifest",
-                        str(baseline_manifest_path),
-                        "--current-manifest",
-                        str(current_manifest_path),
-                        "--refresh-manifest",
-                        str(refresh_manifest_path),
-                        "--rerun-plan",
-                        str(rerun_plan_path),
-                        "--runtime-baseline-manifest",
-                        str(effective_runtime_baseline_manifest_path_for_pipeline),
-                        "--runtime-current-manifest",
-                        str(runtime_current_manifest_path),
-                        "--runtime-refresh-manifest",
-                        str(runtime_refresh_manifest_path),
-                        "--runtime-rerun-plan",
-                        str(runtime_rerun_plan_path),
-                        *(["--runtime-registry", str(runtime_baseline_registry_path)] if runtime_baseline_registry_path is not None else []),
-                        *(["--runtime-history-index", str(runtime_history_index_path)] if runtime_history_index_path is not None else []),
-                        *(["--runtime-proposal", str(runtime_proposal_path)] if runtime_proposal_path is not None else []),
-                        "--runtime-watch-current",
-                        str(runtime_watch_current_path),
-                        "--runtime-watch-refresh",
-                        str(runtime_watch_refresh_path),
-                        "--runtime-watch-history-index",
-                        str(runtime_watch_history_index_path),
-                        "--pipeline-summary",
-                        str(summary_path),
-                        *(["--pipeline-quick-summary", str(default_summary_path(artifact_root, pipeline_phase, "quick"))]
-                          if default_summary_path(artifact_root, pipeline_phase, "quick").exists()
-                          else []),
-                        *(["--pipeline-matrix-summary", str(default_matrix_summary_path(artifact_root, pipeline_phase))]
-                          if default_matrix_summary_path(artifact_root, pipeline_phase).exists()
-                          else []),
-                        "--zip-out",
-                        str(zip_out),
-                        "--curated-zip",
-                        str(curated_zip),
-                        *(["--prune-artifacts", "--max-bundles", str(args.max_bundles), "--max-nightly-runs", str(args.max_nightly_runs)] if args.prune_artifacts else []),
-                        *(["--keep-approved"] if args.prune_artifacts and args.keep_approved else []),
-                    ],
-                    repo_root,
+            if runtime_history_index_path is not None and runtime_history_index_path.exists():
+                stages.append(
+                    run_command(
+                        "runtime_history_compact",
+                        [
+                            python_bin,
+                            str(runtime_gate_script),
+                            "history-compact",
+                            "--runtime-history-index",
+                            str(runtime_history_index_path),
+                            "--compact-out",
+                            str(runtime_history_compact_path),
+                            "--keep-latest-per-fingerprint",
+                            "4",
+                            "--keep-anchors",
+                            "1",
+                            "--keep-transitions",
+                            "--prune-old-fixture-history",
+                            "--compact-watch-history",
+                        ],
+                        repo_root,
+                    )
                 )
-            )
-            bundle_metadata_path = artifact_root / f"{pipeline_phase}_evidence_bundle" / "bundle_metadata.json"
+            if args.skip_bundle_build:
+                stages.append(
+                    skipped_stage(
+                        "build_evidence_bundle",
+                        [],
+                        "bundle stage skipped; summaries were generated without publishing bundles",
+                    )
+                )
+            else:
+                ensure_report(report_path, pipeline_phase, args.mode, summary["recommended_next_action"])
+                stages.append(
+                    run_command(
+                        "build_evidence_bundle",
+                        [
+                            python_bin,
+                            str(bundle_script),
+                            "--phase",
+                            pipeline_phase,
+                            "--artifact-root",
+                            str(artifact_root),
+                            "--report-out",
+                            str(report_path),
+                            "--policy-manifest",
+                            str(current_manifest_path),
+                            "--baseline-manifest",
+                            str(baseline_manifest_path),
+                            "--current-manifest",
+                            str(current_manifest_path),
+                            "--refresh-manifest",
+                            str(refresh_manifest_path),
+                            "--rerun-plan",
+                            str(rerun_plan_path),
+                            "--runtime-baseline-manifest",
+                            str(effective_runtime_baseline_manifest_path_for_pipeline),
+                            "--runtime-current-manifest",
+                            str(runtime_current_manifest_path),
+                            "--runtime-refresh-manifest",
+                            str(runtime_refresh_manifest_path),
+                            "--runtime-rerun-plan",
+                            str(runtime_rerun_plan_path),
+                            *(["--runtime-registry", str(runtime_baseline_registry_path)] if runtime_baseline_registry_path is not None else []),
+                            *(["--runtime-registry-health", str(runtime_registry_health_path)] if runtime_registry_health_path.exists() else []),
+                            *(["--runtime-history-index", str(runtime_history_index_path)] if runtime_history_index_path is not None else []),
+                            *(["--runtime-history-compact", str(runtime_history_compact_path)] if runtime_history_compact_path.exists() else []),
+                            *(["--runtime-proposal", str(runtime_proposal_path)] if runtime_proposal_path is not None else []),
+                            "--runtime-watch-current",
+                            str(runtime_watch_current_path),
+                            "--runtime-watch-refresh",
+                            str(runtime_watch_refresh_path),
+                            "--runtime-watch-history-index",
+                            str(runtime_watch_history_index_path),
+                            "--runtime-watch-registry",
+                            str(runtime_watch_registry_path),
+                            *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path.exists() else []),
+                            *(["--staged-mirror-manifest", str(staged_mirror_manifest_path)] if staged_mirror_manifest_path.exists() else []),
+                            *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path.exists() else []),
+                            *(["--ctest-inventory-release", str(ctest_inventory_release_path)] if ctest_inventory_release_path.exists() else []),
+                            *(["--ctest-inventory-debug", str(ctest_inventory_debug_path)] if ctest_inventory_debug_path.exists() else []),
+                            *(["--ctest-inventory-asan", str(ctest_inventory_asan_path)] if ctest_inventory_asan_path.exists() else []),
+                            *(["--verification-release", str(verification_release_path)] if verification_release_path.exists() else []),
+                            *(["--verification-debug", str(verification_debug_path)] if verification_debug_path.exists() else []),
+                            *(["--verification-asan", str(verification_asan_path)] if verification_asan_path.exists() else []),
+                            *(["--published-snapshot-manifest", str(published_snapshot_manifest_path)] if published_snapshot_manifest_path.exists() else []),
+                            *(["--verification-closeout", str(verification_closeout_path)] if verification_closeout_path.exists() else []),
+                            *(["--publication-health", str(publication_health_path)] if publication_health_path.exists() else []),
+                            "--ops-summary",
+                            str(ops_summary_path),
+                            *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
+                            *sum([["--foreign-import-summary", str(path)] for path in foreign_import_summary_paths], []),
+                            *(["--known-env-governance-policy", str(Path(args.known_env_governance_policy).resolve())] if args.known_env_governance_policy else []),
+                            *(["--known-env-age-tick", str(Path(args.known_env_age_tick).resolve())] if args.known_env_age_tick else []),
+                            *(["--known-env-reverify-plan", str(Path(args.known_env_reverify_plan).resolve())] if args.known_env_reverify_plan else []),
+                            *(["--known-env-reverify-gate", str(Path(args.known_env_reverify_gate).resolve())] if args.known_env_reverify_gate else []),
+                            *(["--known-env-reverify-apply", str(Path(args.known_env_reverify_apply).resolve())] if args.known_env_reverify_apply else []),
+                            *(["--known-env-retire-plan", str(Path(args.known_env_retire_plan).resolve())] if args.known_env_retire_plan else []),
+                            *(["--known-env-retire-apply", str(Path(args.known_env_retire_apply).resolve())] if args.known_env_retire_apply else []),
+                            *(["--known-env-retire-metadata", str(Path(args.known_env_retire_metadata).resolve())] if args.known_env_retire_metadata else []),
+                            *(["--current-env-governance-policy", str(Path(args.current_env_governance_policy).resolve())] if args.current_env_governance_policy else []),
+                            *(["--current-env-guardrail-policy", str(Path(args.current_env_guardrail_policy).resolve())] if args.current_env_guardrail_policy else []),
+                            *(["--current-env-watch-current", str(Path(args.current_env_watch_current).resolve())] if args.current_env_watch_current else []),
+                            *(["--current-env-watch-refresh", str(Path(args.current_env_watch_refresh).resolve())] if args.current_env_watch_refresh else []),
+                            *(["--current-env-watch-history", str(Path(args.current_env_watch_history).resolve())] if args.current_env_watch_history else []),
+                            *(["--current-env-age-tick", str(Path(args.current_env_age_tick).resolve())] if args.current_env_age_tick else []),
+                            *(["--current-env-watch-plan", str(Path(args.current_env_watch_plan).resolve())] if args.current_env_watch_plan else []),
+                            *(["--current-env-trigger-gate", str(Path(args.current_env_trigger_gate).resolve())] if args.current_env_trigger_gate else []),
+                            *(["--runtime-budget-current", str(Path(args.runtime_budget_current).resolve())] if args.runtime_budget_current else []),
+                            *(["--runtime-budget-proposal", str(Path(args.runtime_budget_proposal).resolve())] if args.runtime_budget_proposal else []),
+                            *(["--runtime-budget-proposal-gate", str(Path(args.runtime_budget_proposal_gate).resolve())] if args.runtime_budget_proposal_gate else []),
+                            *(["--runtime-budget-baseline", str(Path(args.runtime_budget_baseline).resolve())] if args.runtime_budget_baseline else []),
+                            *(["--runtime-budget-refresh", str(Path(args.runtime_budget_refresh).resolve())] if args.runtime_budget_refresh else []),
+                            *(["--runtime-budget-reproposal-history", str(Path(args.runtime_budget_reproposal_history).resolve())] if args.runtime_budget_reproposal_history else []),
+                            *(["--runtime-budget-registry-summary", str(Path(args.runtime_budget_registry_summary).resolve())] if args.runtime_budget_registry_summary else []),
+                            "--pipeline-summary",
+                            str(summary_path),
+                            *(["--pipeline-quick-summary", str(default_summary_path(artifact_root, pipeline_phase, "quick"))]
+                              if default_summary_path(artifact_root, pipeline_phase, "quick").exists()
+                              else []),
+                            *(["--pipeline-matrix-summary", str(default_matrix_summary_path(artifact_root, pipeline_phase))]
+                              if default_matrix_summary_path(artifact_root, pipeline_phase).exists()
+                              else []),
+                            "--zip-out",
+                            str(zip_out),
+                            "--curated-zip",
+                            str(curated_zip),
+                            "--light-ops-zip",
+                            str(light_ops_zip),
+                            *(["--use-published-snapshot"] if args.use_published_snapshot else []),
+                            *(["--published-root", str(Path(args.published_root).resolve())] if args.published_root else []),
+                            *(["--prune-artifacts", "--max-bundles", str(args.max_bundles), "--max-nightly-runs", str(args.max_nightly_runs)] if args.prune_artifacts else []),
+                            *(["--keep-approved"] if args.prune_artifacts and args.keep_approved else []),
+                        ],
+                        repo_root,
+                    )
+                )
+            bundle_root = (
+                Path(args.published_root).resolve()
+                if args.published_root
+                else default_published_bundle_root(artifact_root, pipeline_phase)
+            ) if args.use_published_snapshot else artifact_root / f"{pipeline_phase}_evidence_bundle"
+            if not args.skip_bundle_build:
+                stages.append(
+                    run_command(
+                        "publication_health",
+                        [
+                            python_bin,
+                            str(watch_ops_script),
+                            "publication-health",
+                            "--phase",
+                            pipeline_phase,
+                            "--published-root",
+                            str(bundle_root),
+                            "--authoritative-root",
+                            str(repo_root),
+                            "--health-out",
+                            str(publication_health_path),
+                            "--expect-bundles",
+                            "--expect-manifests",
+                            "--expect-report",
+                        ],
+                        repo_root,
+                    )
+                )
+                stages.append(
+                    run_command(
+                        "policy_ops_summary_post_publication",
+                        [
+                            python_bin,
+                            str(watch_ops_script),
+                            "ops-summary",
+                            "--phase",
+                            pipeline_phase,
+                            "--policy-manifest",
+                            str(current_manifest_path),
+                            "--quick-summary",
+                            str(default_summary_path(artifact_root, pipeline_phase, "quick")),
+                            "--nightly-summary",
+                            str(default_summary_path(artifact_root, pipeline_phase, "nightly")),
+                            "--matrix-summary",
+                            str(default_matrix_summary_path(artifact_root, pipeline_phase)),
+                            "--runtime-refresh",
+                            str(runtime_refresh_manifest_path),
+                            "--runtime-watch-refresh",
+                            str(runtime_watch_refresh_path),
+                            "--runtime-watch-registry",
+                            str(runtime_watch_registry_path),
+                            *(["--runtime-baseline-registry", str(runtime_baseline_registry_path)] if runtime_baseline_registry_path is not None else []),
+                            "--runtime-registry-health",
+                            str(runtime_registry_health_path),
+                            "--publication-health",
+                            str(publication_health_path),
+                            *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path.exists() else []),
+                            *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path.exists() else []),
+                            *(["--verification-release", str(verification_release_path)] if verification_release_path.exists() else []),
+                            *(["--verification-debug", str(verification_debug_path)] if verification_debug_path.exists() else []),
+                            *(["--verification-asan", str(verification_asan_path)] if verification_asan_path.exists() else []),
+                            *(["--published-snapshot-manifest", str(published_snapshot_manifest_path)] if published_snapshot_manifest_path.exists() else []),
+                            *(["--verification-closeout", str(verification_closeout_path)] if verification_closeout_path.exists() else []),
+                            *(["--current-env-governance-policy", str(Path(args.current_env_governance_policy).resolve())] if args.current_env_governance_policy else []),
+                            *(["--current-env-guardrail-policy", str(Path(args.current_env_guardrail_policy).resolve())] if args.current_env_guardrail_policy else []),
+                            *(["--current-env-watch-current", str(Path(args.current_env_watch_current).resolve())] if args.current_env_watch_current else []),
+                            *(["--current-env-watch-refresh", str(Path(args.current_env_watch_refresh).resolve())] if args.current_env_watch_refresh else []),
+                            *(["--current-env-watch-history", str(Path(args.current_env_watch_history).resolve())] if args.current_env_watch_history else []),
+                            *(["--current-env-age-tick", str(Path(args.current_env_age_tick).resolve())] if args.current_env_age_tick else []),
+                            *(["--current-env-watch-plan", str(Path(args.current_env_watch_plan).resolve())] if args.current_env_watch_plan else []),
+                            *(["--current-env-trigger-gate", str(Path(args.current_env_trigger_gate).resolve())] if args.current_env_trigger_gate else []),
+                            *(["--runtime-budget-current", str(Path(args.runtime_budget_current).resolve())] if args.runtime_budget_current else []),
+                            *(["--runtime-budget-proposal", str(Path(args.runtime_budget_proposal).resolve())] if args.runtime_budget_proposal else []),
+                            *(["--runtime-budget-proposal-gate", str(Path(args.runtime_budget_proposal_gate).resolve())] if args.runtime_budget_proposal_gate else []),
+                            *(["--runtime-budget-baseline", str(Path(args.runtime_budget_baseline).resolve())] if args.runtime_budget_baseline else []),
+                            *(["--runtime-budget-refresh", str(Path(args.runtime_budget_refresh).resolve())] if args.runtime_budget_refresh else []),
+                            *(["--runtime-budget-reproposal-history", str(Path(args.runtime_budget_reproposal_history).resolve())] if args.runtime_budget_reproposal_history else []),
+                            *(["--runtime-budget-registry-summary", str(Path(args.runtime_budget_registry_summary).resolve())] if args.runtime_budget_registry_summary else []),
+                            *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
+                            *sum([["--foreign-import-summary", str(path)] for path in foreign_import_summary_paths], []),
+                            "--out",
+                            str(ops_summary_path),
+                        ],
+                        repo_root,
+                    )
+                )
+                stages.append(
+                    run_command(
+                        "build_evidence_bundle_post_publication",
+                        [
+                            python_bin,
+                            str(bundle_script),
+                            "--phase",
+                            pipeline_phase,
+                            "--artifact-root",
+                            str(artifact_root),
+                            "--report-out",
+                            str(report_path),
+                            "--policy-manifest",
+                            str(current_manifest_path),
+                            "--baseline-manifest",
+                            str(baseline_manifest_path),
+                            "--current-manifest",
+                            str(current_manifest_path),
+                            "--refresh-manifest",
+                            str(refresh_manifest_path),
+                            "--rerun-plan",
+                            str(rerun_plan_path),
+                            "--runtime-baseline-manifest",
+                            str(effective_runtime_baseline_manifest_path_for_pipeline),
+                            "--runtime-current-manifest",
+                            str(runtime_current_manifest_path),
+                            "--runtime-refresh-manifest",
+                            str(runtime_refresh_manifest_path),
+                            "--runtime-rerun-plan",
+                            str(runtime_rerun_plan_path),
+                            *(["--runtime-registry", str(runtime_baseline_registry_path)] if runtime_baseline_registry_path is not None else []),
+                            *(["--runtime-registry-health", str(runtime_registry_health_path)] if runtime_registry_health_path.exists() else []),
+                            *(["--runtime-history-index", str(runtime_history_index_path)] if runtime_history_index_path is not None else []),
+                            *(["--runtime-history-compact", str(runtime_history_compact_path)] if runtime_history_compact_path.exists() else []),
+                            *(["--runtime-proposal", str(runtime_proposal_path)] if runtime_proposal_path is not None else []),
+                            "--runtime-watch-current",
+                            str(runtime_watch_current_path),
+                            "--runtime-watch-refresh",
+                            str(runtime_watch_refresh_path),
+                            "--runtime-watch-history-index",
+                            str(runtime_watch_history_index_path),
+                            "--runtime-watch-registry",
+                            str(runtime_watch_registry_path),
+                            *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path.exists() else []),
+                            *(["--staged-mirror-manifest", str(staged_mirror_manifest_path)] if staged_mirror_manifest_path.exists() else []),
+                            *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path.exists() else []),
+                            *(["--ctest-inventory-release", str(ctest_inventory_release_path)] if ctest_inventory_release_path.exists() else []),
+                            *(["--ctest-inventory-debug", str(ctest_inventory_debug_path)] if ctest_inventory_debug_path.exists() else []),
+                            *(["--ctest-inventory-asan", str(ctest_inventory_asan_path)] if ctest_inventory_asan_path.exists() else []),
+                            *(["--verification-release", str(verification_release_path)] if verification_release_path.exists() else []),
+                            *(["--verification-debug", str(verification_debug_path)] if verification_debug_path.exists() else []),
+                            *(["--verification-asan", str(verification_asan_path)] if verification_asan_path.exists() else []),
+                            *(["--published-snapshot-manifest", str(published_snapshot_manifest_path)] if published_snapshot_manifest_path.exists() else []),
+                            *(["--verification-closeout", str(verification_closeout_path)] if verification_closeout_path.exists() else []),
+                            "--publication-health",
+                            str(publication_health_path),
+                            "--ops-summary",
+                            str(ops_summary_path),
+                            *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
+                            *sum([["--foreign-import-summary", str(path)] for path in foreign_import_summary_paths], []),
+                            *(["--known-env-governance-policy", str(Path(args.known_env_governance_policy).resolve())] if args.known_env_governance_policy else []),
+                            *(["--known-env-age-tick", str(Path(args.known_env_age_tick).resolve())] if args.known_env_age_tick else []),
+                            *(["--known-env-reverify-plan", str(Path(args.known_env_reverify_plan).resolve())] if args.known_env_reverify_plan else []),
+                            *(["--known-env-reverify-gate", str(Path(args.known_env_reverify_gate).resolve())] if args.known_env_reverify_gate else []),
+                            *(["--known-env-reverify-apply", str(Path(args.known_env_reverify_apply).resolve())] if args.known_env_reverify_apply else []),
+                            *(["--known-env-retire-plan", str(Path(args.known_env_retire_plan).resolve())] if args.known_env_retire_plan else []),
+                            *(["--known-env-retire-apply", str(Path(args.known_env_retire_apply).resolve())] if args.known_env_retire_apply else []),
+                            *(["--known-env-retire-metadata", str(Path(args.known_env_retire_metadata).resolve())] if args.known_env_retire_metadata else []),
+                            *(["--current-env-governance-policy", str(Path(args.current_env_governance_policy).resolve())] if args.current_env_governance_policy else []),
+                            *(["--current-env-guardrail-policy", str(Path(args.current_env_guardrail_policy).resolve())] if args.current_env_guardrail_policy else []),
+                            *(["--current-env-watch-current", str(Path(args.current_env_watch_current).resolve())] if args.current_env_watch_current else []),
+                            *(["--current-env-watch-refresh", str(Path(args.current_env_watch_refresh).resolve())] if args.current_env_watch_refresh else []),
+                            *(["--current-env-watch-history", str(Path(args.current_env_watch_history).resolve())] if args.current_env_watch_history else []),
+                            *(["--current-env-age-tick", str(Path(args.current_env_age_tick).resolve())] if args.current_env_age_tick else []),
+                            *(["--current-env-watch-plan", str(Path(args.current_env_watch_plan).resolve())] if args.current_env_watch_plan else []),
+                            *(["--current-env-trigger-gate", str(Path(args.current_env_trigger_gate).resolve())] if args.current_env_trigger_gate else []),
+                            *(["--runtime-budget-current", str(Path(args.runtime_budget_current).resolve())] if args.runtime_budget_current else []),
+                            *(["--runtime-budget-proposal", str(Path(args.runtime_budget_proposal).resolve())] if args.runtime_budget_proposal else []),
+                            *(["--runtime-budget-proposal-gate", str(Path(args.runtime_budget_proposal_gate).resolve())] if args.runtime_budget_proposal_gate else []),
+                            *(["--runtime-budget-baseline", str(Path(args.runtime_budget_baseline).resolve())] if args.runtime_budget_baseline else []),
+                            *(["--runtime-budget-refresh", str(Path(args.runtime_budget_refresh).resolve())] if args.runtime_budget_refresh else []),
+                            *(["--runtime-budget-reproposal-history", str(Path(args.runtime_budget_reproposal_history).resolve())] if args.runtime_budget_reproposal_history else []),
+                            *(["--runtime-budget-registry-summary", str(Path(args.runtime_budget_registry_summary).resolve())] if args.runtime_budget_registry_summary else []),
+                            "--pipeline-summary",
+                            str(summary_path),
+                            *(["--pipeline-quick-summary", str(default_summary_path(artifact_root, pipeline_phase, "quick"))]
+                              if default_summary_path(artifact_root, pipeline_phase, "quick").exists()
+                              else []),
+                            *(["--pipeline-matrix-summary", str(default_matrix_summary_path(artifact_root, pipeline_phase))]
+                              if default_matrix_summary_path(artifact_root, pipeline_phase).exists()
+                              else []),
+                            "--zip-out",
+                            str(zip_out),
+                            "--curated-zip",
+                            str(curated_zip),
+                            "--light-ops-zip",
+                            str(light_ops_zip),
+                            *(["--use-published-snapshot"] if args.use_published_snapshot else []),
+                            *(["--published-root", str(Path(args.published_root).resolve())] if args.published_root else []),
+                            *(["--prune-artifacts", "--max-bundles", str(args.max_bundles), "--max-nightly-runs", str(args.max_nightly_runs)] if args.prune_artifacts else []),
+                            *(["--keep-approved"] if args.prune_artifacts and args.keep_approved else []),
+                        ],
+                        repo_root,
+                    )
+                )
+            bundle_metadata_path = bundle_root / "bundle_metadata.json"
             summary = build_summary(
                 args.mode,
                 pipeline_phase,
@@ -1617,6 +2367,13 @@ def main() -> int:
                 runtime_watch_history_index_path,
                 bundle_metadata_path,
                 stages,
+            )
+            summary = enrich_summary_with_operator_artifacts(
+                summary,
+                runtime_watch_registry_path,
+                ops_summary_path,
+                runtime_registry_health_path,
+                publication_health_path if publication_health_path.exists() else None,
             )
             write_pipeline_summary(summary_path, summary)
 
@@ -1641,6 +2398,8 @@ def main() -> int:
             "runtime_rerun_plan": str(runtime_rerun_plan_path),
             "runtime_history_index": None if runtime_history_index_path is None else str(runtime_history_index_path),
             "runtime_proposal": None if runtime_proposal_path is None else str(runtime_proposal_path),
+            "runtime_watch_registry": str(runtime_watch_registry_path),
+            "policy_ops_summary": str(ops_summary_path),
             "severity": "FAIL",
             "runtime_severity": "FAIL",
             "exit_code": EXIT_FAIL,

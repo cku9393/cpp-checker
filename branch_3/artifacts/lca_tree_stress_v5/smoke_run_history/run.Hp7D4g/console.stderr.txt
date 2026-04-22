@@ -1,0 +1,15 @@
+[lca_smoke] public status: PASS family=none
+[lca_smoke] normalized outcome: pass
+[lca_smoke] normalized exit code: 0 raw_exit_code=0 source=inner_wrapper
+[lca_smoke] outcome summary: inner smoke suite passed all cases
+[lca_smoke] source root: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke
+[lca_smoke] suite plan: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/suite_plan.tsv
+[lca_smoke] diagnostics manifest: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/diagnostics_manifest.tsv
+[lca_smoke] iteration evidence: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/iteration_evidence.txt
+[lca_smoke] run archive root: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.Hp7D4g
+[lca_smoke] launcher console transcript: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.Hp7D4g/console.stderr.txt
+[lca_smoke] smoke summary mirror: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt
+[lca_smoke] smoke iteration evidence mirror: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/iteration_evidence.txt
+[lca_smoke] smoke standard gap json: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/standard_gap.json
+[lca_smoke] status summary: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/summary.txt
+[lca_smoke] status report: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/latest_status_report.md

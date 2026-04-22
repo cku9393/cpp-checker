@@ -1,0 +1,16 @@
+{
+  "phase": "phase46",
+  "staged_root": "/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package",
+  "test_count_discovered": 377,
+  "pass_count": 377,
+  "fail_count": 0,
+  "not_run_count": 0,
+  "zero_not_run_verdict": "PASS",
+  "execution_verdict": "PASS",
+  "source_tree_policy": "authoritative iCloud tree read/edit only; full build/test executed from /tmp staged sparse mirror",
+  "mode": "debug",
+  "build_dir": "/tmp/raw_engine_phase46_build_debug",
+  "ctest_command": "ctest --test-dir /tmp/raw_engine_phase46_build_debug --output-on-failure -j 4",
+  "total_wall_time_seconds": 1371.06,
+  "notes": []
+}

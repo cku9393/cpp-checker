@@ -1,0 +1,18 @@
+{
+  "plan_version": "runtime_rerun_plan_v1",
+  "generated_at_utc": "2026-04-20T12:56:12Z",
+  "artifact_root": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke",
+  "baseline_runtime_manifest_path": null,
+  "current_runtime_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_current_phase22.json",
+  "refresh_runtime_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_refresh_phase22.json",
+  "baseline_runtime_manifest_hash": null,
+  "current_runtime_manifest_hash": "488fbf84bd456ed3bf3a9d07dd1e05969dd3748f11c874d318bdba9974999893",
+  "refresh_runtime_manifest_hash": "f6bdd45989f36537f41fb5edb8867e600d0db1bae86f43b4298911ae0cc9059c",
+  "stale_entry_count": 0,
+  "requires_rerun_entry_count": 0,
+  "rebaseline_required_count": 0,
+  "selected_entry_count": 0,
+  "entries": [],
+  "summary_verdict": "PASS",
+  "rationale": "no stale or over-budget runtime entries"
+}

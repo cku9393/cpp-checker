@@ -1,0 +1,8 @@
+metric	value
+obligation_count	10
+current_verified_count	2
+proof_sketch_count	5
+blocked_or_needs_count	3
+selected_statement	support_minimal_counterexample_reduces_to_support8_or_escape
+top_blocker	family_chain_lift_phase3_if_needed
+fingerprint	10|2|5|3|support_minimal_counterexample_reduces_to_support8_or_escape|family_chain_lift_phase3_if_needed

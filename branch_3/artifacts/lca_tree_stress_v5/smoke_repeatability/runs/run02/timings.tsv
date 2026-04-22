@@ -1,5 +1,5 @@
-case01_smoke_comb_core_n64_s1_L1_Q1_t2/time.txt	0.888206 1904
-case02_smoke_multi_comb_rect_n128_s1_L1_Q1_t3/time.txt	0.116174 5888
-case03_smoke_balanced_dense_n128_s1_L1_Q1_t3/time.txt	0.051638 3904
-case04_smoke_caterpillar_rect_dense_n128_s1_L1_Q1_t3/time.txt	0.223917 11584
-case05_smoke_random_recursive_mixed_n128_s1_L1_Q1_t3/time.txt	0.038942 3568
+case01_smoke_comb_core_n64_s1_L1_Q1_t2/time.txt	0.389019 1936
+case02_smoke_multi_comb_rect_n128_s1_L1_Q1_t3/time.txt	0.030944 5184
+case03_smoke_balanced_dense_n128_s1_L1_Q1_t3/time.txt	0.015837 4016
+case04_smoke_caterpillar_rect_dense_n128_s1_L1_Q1_t3/time.txt	0.037079 7088
+case05_smoke_random_recursive_mixed_n128_s1_L1_Q1_t3/time.txt	0.016106 3872

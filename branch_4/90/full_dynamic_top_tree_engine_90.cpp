@@ -16389,6 +16389,41 @@ struct Shell15FrontierRuntimeAuditState {
     string runtime_fingerprint;
 };
 
+struct Shell16AttemptState {
+    string selected_scope = "shell16_survivor_probe_attempt";
+    bool preconditions_passed = false;
+    bool builder_used = false;
+    bool cache_loaded = false;
+    string constructor_name;
+    string cache_load_constructor_name = "load_current_shell16_runtime_artifact_";
+    string authoritative_source;
+    string result_classification;
+    size_t raw_candidates = 0;
+    size_t canonical_candidates = 0;
+    size_t outside_bounded_candidates = 0;
+    size_t local_exact_survivors = 0;
+    size_t plus_one_survivors = 0;
+    size_t theorem_preserving_survivors = 0;
+    size_t unsupported_local_exact_candidates = 0;
+    size_t unsupported_plus_one_candidates = 0;
+    size_t candidate_row_count = 0;
+    string current_source_fingerprint;
+    string candidate_universe_fingerprint;
+    string local_exact_survivor_fingerprint;
+    string plus_one_survivor_fingerprint;
+    string theorem_preserving_survivor_fingerprint;
+    string runtime_fingerprint;
+    bool fallback_reachable = false;
+    bool fallback_hit = false;
+    string stale_artifact_status = "not_checked";
+    string timeout_or_cost_status = "not_checked";
+    bool theorem_promotion_allowed = false;
+    bool survivor_zero_theorem_claim_allowed = false;
+    string first_failing_gate = "none";
+    string next_action;
+    string caveat;
+};
+
 struct LowerFrontierRuntimeAuditState {
     string item_key;
     string display_name;
@@ -16744,6 +16779,7 @@ static const char* kAntecedentShell15LocalExactSurvivorPath = "/mnt/data/anteced
 static const char* kAntecedentShell15PlusOneResultCachePath = "/mnt/data/antecedent_shell15_plus_one_result_cache_90.tsv";
 static bool g_last_shell15_frontier_pair_fresh_runtime_generated = false;
 static string g_last_shell15_frontier_pair_runtime_fingerprint;
+static Shell16AttemptState g_last_shell16_attempt_state;
 static bool g_last_support8_tail_candidate_fresh_runtime_generated = false;
 static string g_last_support8_tail_candidate_authoritative_source;
 static string g_last_support8_tail_candidate_constructor_name;
@@ -18373,6 +18409,120 @@ static string g_last_family_chain_theorem_audit_runtime_fingerprint;
 static string g_last_family_chain_constructor_name;
 static bool g_last_family_chain_constructor_fallback_hit = false;
 static string g_last_family_chain_constructor_caveat;
+static bool g_last_pair_expansion_aggregate_52_fresh_runtime_generated = false;
+static bool g_last_pair_expansion_aggregate_52_builder_used = false;
+static bool g_last_pair_expansion_aggregate_52_cache_loaded = false;
+static bool g_last_pair_expansion_aggregate_52_fallback_reachable = true;
+static bool g_last_pair_expansion_aggregate_52_fallback_hit = false;
+static string g_last_pair_expansion_aggregate_52_authoritative_source;
+static string g_last_pair_expansion_aggregate_52_constructor_name;
+static string g_last_pair_expansion_aggregate_52_cache_load_path;
+static string g_last_pair_expansion_aggregate_52_current_source_fingerprint;
+static string g_last_pair_expansion_aggregate_52_current_fingerprint;
+static string g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint;
+static string g_last_pair_expansion_aggregate_52_imported_equality_result;
+static string g_last_pair_expansion_aggregate_52_runtime_fingerprint;
+static string g_last_pair_expansion_aggregate_52_caveat;
+static string g_last_pair_expansion_aggregate_52_blocker;
+static size_t g_last_pair_expansion_aggregate_52_region_count = 0;
+static size_t g_last_pair_expansion_aggregate_52_single_region_count = 0;
+static size_t g_last_pair_expansion_aggregate_52_pair_region_count = 0;
+static bool g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated = false;
+static bool g_last_triple_family_expansion_theorem_data_53_builder_used = false;
+static bool g_last_triple_family_expansion_theorem_data_53_cache_loaded = false;
+static bool g_last_triple_family_expansion_theorem_data_53_fallback_reachable = true;
+static bool g_last_triple_family_expansion_theorem_data_53_fallback_hit = false;
+static string g_last_triple_family_expansion_theorem_data_53_authoritative_source;
+static string g_last_triple_family_expansion_theorem_data_53_constructor_name;
+static string g_last_triple_family_expansion_theorem_data_53_cache_load_path;
+static string g_last_triple_family_expansion_theorem_data_53_current_source_fingerprint;
+static string g_last_triple_family_expansion_theorem_data_53_current_fingerprint;
+static string g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint;
+static string g_last_triple_family_expansion_theorem_data_53_imported_equality_result;
+static string g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint;
+static string g_last_triple_family_expansion_theorem_data_53_caveat;
+static string g_last_triple_family_expansion_theorem_data_53_blocker;
+static size_t g_last_triple_family_expansion_theorem_data_53_region_count = 0;
+static bool g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated = false;
+static bool g_last_quadruple_family_expansion_theorem_data_55_builder_used = false;
+static bool g_last_quadruple_family_expansion_theorem_data_55_cache_loaded = false;
+static bool g_last_quadruple_family_expansion_theorem_data_55_fallback_reachable = true;
+static bool g_last_quadruple_family_expansion_theorem_data_55_fallback_hit = false;
+static string g_last_quadruple_family_expansion_theorem_data_55_authoritative_source;
+static string g_last_quadruple_family_expansion_theorem_data_55_constructor_name;
+static string g_last_quadruple_family_expansion_theorem_data_55_cache_load_path;
+static string g_last_quadruple_family_expansion_theorem_data_55_current_source_fingerprint;
+static string g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint;
+static string g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint;
+static string g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result;
+static string g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint;
+static string g_last_quadruple_family_expansion_theorem_data_55_caveat;
+static string g_last_quadruple_family_expansion_theorem_data_55_blocker;
+static size_t g_last_quadruple_family_expansion_theorem_data_55_region_count = 0;
+static bool g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+static bool g_last_quintuple_family_expansion_theorem_data_57_builder_used = false;
+static bool g_last_quintuple_family_expansion_theorem_data_57_cache_loaded = false;
+static bool g_last_quintuple_family_expansion_theorem_data_57_fallback_reachable = true;
+static bool g_last_quintuple_family_expansion_theorem_data_57_fallback_hit = false;
+static string g_last_quintuple_family_expansion_theorem_data_57_authoritative_source;
+static string g_last_quintuple_family_expansion_theorem_data_57_constructor_name;
+static string g_last_quintuple_family_expansion_theorem_data_57_cache_load_path;
+static string g_last_quintuple_family_expansion_theorem_data_57_current_source_fingerprint;
+static string g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint;
+static string g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+static string g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result;
+static string g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint;
+static string g_last_quintuple_family_expansion_theorem_data_57_caveat;
+static string g_last_quintuple_family_expansion_theorem_data_57_blocker;
+static size_t g_last_quintuple_family_expansion_theorem_data_57_region_count = 0;
+static bool g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+static bool g_last_sextuple_family_expansion_theorem_data_57_builder_used = false;
+static bool g_last_sextuple_family_expansion_theorem_data_57_cache_loaded = false;
+static bool g_last_sextuple_family_expansion_theorem_data_57_fallback_reachable = true;
+static bool g_last_sextuple_family_expansion_theorem_data_57_fallback_hit = false;
+static string g_last_sextuple_family_expansion_theorem_data_57_authoritative_source;
+static string g_last_sextuple_family_expansion_theorem_data_57_constructor_name;
+static string g_last_sextuple_family_expansion_theorem_data_57_cache_load_path;
+static string g_last_sextuple_family_expansion_theorem_data_57_current_source_fingerprint;
+static string g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint;
+static string g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+static string g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result;
+static string g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint;
+static string g_last_sextuple_family_expansion_theorem_data_57_caveat;
+static string g_last_sextuple_family_expansion_theorem_data_57_blocker;
+static size_t g_last_sextuple_family_expansion_theorem_data_57_region_count = 0;
+static bool g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+static bool g_last_septuple_family_expansion_theorem_data_57_builder_used = false;
+static bool g_last_septuple_family_expansion_theorem_data_57_cache_loaded = false;
+static bool g_last_septuple_family_expansion_theorem_data_57_fallback_reachable = true;
+static bool g_last_septuple_family_expansion_theorem_data_57_fallback_hit = false;
+static string g_last_septuple_family_expansion_theorem_data_57_authoritative_source;
+static string g_last_septuple_family_expansion_theorem_data_57_constructor_name;
+static string g_last_septuple_family_expansion_theorem_data_57_cache_load_path;
+static string g_last_septuple_family_expansion_theorem_data_57_current_source_fingerprint;
+static string g_last_septuple_family_expansion_theorem_data_57_current_fingerprint;
+static string g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+static string g_last_septuple_family_expansion_theorem_data_57_imported_equality_result;
+static string g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint;
+static string g_last_septuple_family_expansion_theorem_data_57_caveat;
+static string g_last_septuple_family_expansion_theorem_data_57_blocker;
+static size_t g_last_septuple_family_expansion_theorem_data_57_region_count = 0;
+static bool g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+static bool g_last_high_family_expansion_theorem_data_57_builder_used = false;
+static bool g_last_high_family_expansion_theorem_data_57_cache_loaded = false;
+static bool g_last_high_family_expansion_theorem_data_57_fallback_reachable = true;
+static bool g_last_high_family_expansion_theorem_data_57_fallback_hit = false;
+static string g_last_high_family_expansion_theorem_data_57_authoritative_source;
+static string g_last_high_family_expansion_theorem_data_57_constructor_name;
+static string g_last_high_family_expansion_theorem_data_57_cache_load_path;
+static string g_last_high_family_expansion_theorem_data_57_current_source_fingerprint;
+static string g_last_high_family_expansion_theorem_data_57_current_fingerprint;
+static string g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+static string g_last_high_family_expansion_theorem_data_57_imported_equality_result;
+static string g_last_high_family_expansion_theorem_data_57_runtime_fingerprint;
+static string g_last_high_family_expansion_theorem_data_57_caveat;
+static string g_last_high_family_expansion_theorem_data_57_blocker;
+static size_t g_last_high_family_expansion_theorem_data_57_region_count = 0;
 static string g_last_bounded_family_chain_status;
 static string g_last_bounded_family_chain_ledger;
 
@@ -38174,8 +38324,586 @@ static string build_support8_tail_completion_ledger_() {
     oss << "audit freshness\n" << (validate_support8_audit_freshness_stats_(f, nullptr) ? "verified" : "not fully completed") << "\n\n";
     oss << "support8 authoritative completion lock\n" << (validate_support8_authoritative_completion_lock_data_(nullptr) ? "verified" : "not fully completed") << "\n\n";
     oss << "support8 tail obstruction chain theorem\n" << (validate_support8_tail_obstruction_chain_theorem_data_(nullptr) ? "verified" : "not fully completed") << "\n\n";
-    oss << "optional shell16 regression\nnot attempted\n";
+    auto shell16_metrics = read_shell15_metric_tsv_(support8_runtime_paths::runtime_bundle_path_("shell16_attempt_summary_90.tsv"));
+    auto shell16_classification_it = shell16_metrics.find("result_classification");
+    if (shell16_classification_it != shell16_metrics.end()) {
+        oss << "optional shell16 regression\n"
+            << "attempted_no_promotion classification=" << shell16_classification_it->second << "\n";
+    } else {
+        oss << "optional shell16 regression\nnot attempted\n";
+    }
     return oss.str();
+}
+
+static string shell16_runtime_path_(const string& basename) {
+    return support8_runtime_paths::runtime_bundle_path_(basename);
+}
+
+static bool shell16_file_nonempty_(const string& path) {
+    ifstream fin(path, ios::binary);
+    return fin && fin.peek() != ifstream::traits_type::eof();
+}
+
+static string shell16_join_fingerprints_(vector<string> fps) {
+    sort(fps.begin(), fps.end());
+    fps.erase(unique(fps.begin(), fps.end()), fps.end());
+    ostringstream oss;
+    for (size_t i = 0; i < fps.size(); ++i) {
+        if (i) oss << ';';
+        oss << fps[i];
+    }
+    return oss.str();
+}
+
+static string shell16_attempt_runtime_fingerprint_(const Shell16AttemptState& s) {
+    ostringstream oss;
+    oss << s.selected_scope << '|'
+        << s.result_classification << '|'
+        << (s.builder_used ? 1 : 0) << '|'
+        << (s.cache_loaded ? 1 : 0) << '|'
+        << s.raw_candidates << '|'
+        << s.canonical_candidates << '|'
+        << s.outside_bounded_candidates << '|'
+        << s.local_exact_survivors << '|'
+        << s.plus_one_survivors << '|'
+        << s.theorem_preserving_survivors << '|'
+        << s.candidate_universe_fingerprint << '|'
+        << s.local_exact_survivor_fingerprint << '|'
+        << s.plus_one_survivor_fingerprint << '|'
+        << s.theorem_preserving_survivor_fingerprint << '|'
+        << (s.fallback_reachable ? 1 : 0) << '|'
+        << (s.fallback_hit ? 1 : 0) << '|'
+        << s.stale_artifact_status << '|'
+        << s.timeout_or_cost_status << '|'
+        << s.first_failing_gate;
+    return to_string(oss.str().size()) + ":" + to_string(hash<string>{}(oss.str()));
+}
+
+static vector<AntecedentShell15FrontierSpec> build_antecedent_shell16_frontier_specs_(const BoundedSchemaUniverseScopeStats& scope,
+                                                                                     string* why) {
+    vector<AntecedentShell15FrontierSpec> specs;
+    { AntecedentShell15FrontierSpec s; s.tag = "antecedent_plus_thirteen_frontier"; s.symbol_bound = scope.max_symbol_bound_tested; s.antecedent_bound = scope.max_antecedent_bound_tested + 13; s.require_outside_bounded_scope = true; s.why = "support7 antecedent shell16 frontier"; specs.push_back(s); }
+    { AntecedentShell15FrontierSpec s; s.tag = "support8_antecedent16_frontier"; s.symbol_bound = scope.max_symbol_bound_tested + 1; s.antecedent_bound = scope.max_antecedent_bound_tested + 13; s.require_outside_bounded_scope = true; s.why = "support8 antecedent shell16 frontier"; specs.push_back(s); }
+    if (why) {
+        ostringstream oss;
+        oss << "antecedent shell16 specs=" << specs.size();
+        for (const auto& s : specs) {
+            oss << " [tag=" << s.tag << ",symbolBound=" << s.symbol_bound << ",antecedentBound=" << s.antecedent_bound << "]";
+        }
+        *why = oss.str();
+    }
+    return specs;
+}
+
+static vector<StructuredLocalSchema> enumerate_antecedent_shell16_frontier_candidates_(const AntecedentShell15FrontierSpec& spec,
+                                                                                       size_t* raw_count,
+                                                                                       string* why) {
+    size_t raw = 0;
+    string enum_why;
+    auto out = enumerate_canonical_structured_local_schemas_exact_shape_(spec.symbol_bound, spec.antecedent_bound, &raw, &enum_why);
+    string scope_why;
+    auto scope = build_bounded_schema_universe_scope_stats_(&scope_why);
+    vector<StructuredLocalSchema> filtered;
+    filtered.reserve(out.size());
+    for (const auto& schema : out) {
+        string within_why;
+        const bool within = schema_is_within_bounded_obstruction_scope_(schema, scope, &within_why);
+        if (spec.require_outside_bounded_scope && within) continue;
+        filtered.push_back(schema);
+    }
+    if (raw_count) *raw_count = raw;
+    if (why) {
+        *why = string("antecedent shell16 frontier raw=") + to_string(raw) +
+               " canonical=" + to_string(filtered.size()) + " tag=" + spec.tag;
+    }
+    return filtered;
+}
+
+static bool write_shell16_attempt_precondition_check_files_(string* why) {
+    vector<tuple<string, bool, string, string>> rows;
+    auto add = [&](const string& key, bool ok, const string& evidence, const string& failure) {
+        rows.push_back({key, ok, evidence, failure});
+    };
+    add("support8_lock_current", validate_support8_authoritative_completion_lock_data_(nullptr),
+        "validate_support8_authoritative_completion_lock_data_", "abort_shell16_attempt");
+    auto artifact = build_artifact_completion_audit_stats_(nullptr);
+    add("docs_artifacts_audit_current",
+        validate_artifact_completion_audit_stats_(artifact, nullptr) &&
+        validate_document_completion_audit_stats_(build_document_completion_audit_stats_(nullptr), nullptr),
+        "artifact_completion_audit_90.tsv;document_completion_audit_90.tsv", "abort_shell16_attempt");
+    add("shell15_cache_constructor_available",
+        validate_antecedent_shell15_frontier_theorem_data_("antecedent_plus_twelve_frontier", nullptr) &&
+        validate_antecedent_shell15_frontier_theorem_data_("support8_antecedent15_frontier", nullptr),
+        "shell15_frontier_generation_fingerprint_90.tsv", "abort_shell16_attempt");
+    add("shell16_artifact_contract_available",
+        shell16_file_nonempty_(shell16_runtime_path_("shell16_artifact_contract_90.tsv")),
+        "shell16_artifact_contract_90.tsv", "abort_shell16_attempt");
+    add("shell16_document_contract_available",
+        shell16_file_nonempty_(shell16_runtime_path_("shell16_document_contract_90.tsv")),
+        "shell16_document_contract_90.tsv", "abort_shell16_attempt");
+    add("shell16_audit_contract_available",
+        shell16_file_nonempty_(shell16_runtime_path_("shell16_audit_contract_90.tsv")),
+        "shell16_audit_contract_90.tsv", "abort_shell16_attempt");
+    auto guard = read_shell15_metric_tsv_(shell16_runtime_path_("shell16_preflight_guardrail_90.tsv"));
+    add("theorem_promotion_guard_active",
+        !guard["shell16_theorem_promotion_allowed"].empty() &&
+        guard["shell16_theorem_promotion_allowed"][0] == '0',
+        "shell16_preflight_guardrail_90.tsv", "abort_shell16_attempt");
+    add("survivor_zero_claim_guard_active",
+        !guard["shell16_survivor_zero_claim_allowed"].empty() &&
+        guard["shell16_survivor_zero_claim_allowed"][0] == '0',
+        "shell16_preflight_guardrail_90.tsv", "abort_shell16_attempt");
+    add("fallback_visibility_active",
+        shell16_file_nonempty_(shell16_runtime_path_("shell16_audit_contract_90.tsv")),
+        "shell16_audit_contract_90.tsv", "abort_shell16_attempt");
+    add("stale_artifact_detection_active",
+        shell16_file_nonempty_(shell16_runtime_path_("shell16_audit_contract_90.tsv")),
+        "shell16_audit_contract_90.tsv", "abort_shell16_attempt");
+    add("time_cost_guard_configured",
+        shell16_file_nonempty_(shell16_runtime_path_("shell16_feasibility_90.tsv")),
+        "shell16_feasibility_90.tsv", "abort_shell16_attempt");
+    add("rollback_non_regression_protocol_available",
+        shell16_file_nonempty_(shell16_runtime_path_("shell16_attempt_protocol_90.tsv")),
+        "shell16_attempt_protocol_90.tsv", "abort_shell16_attempt");
+
+    ofstream out(shell16_runtime_path_("shell16_attempt_precondition_check_90.tsv"));
+    if (!out) {
+        if (why) *why = "failed to write shell16 attempt precondition check";
+        return false;
+    }
+    out << "precondition_key\trequired\tcurrent_status\tevidence_path\tfailure_action\n";
+    bool all_ok = true;
+    for (const auto& row : rows) {
+        const string& key = get<0>(row);
+        const bool ok = get<1>(row);
+        const string& evidence = get<2>(row);
+        const string& failure = get<3>(row);
+        all_ok = all_ok && ok;
+        out << sanitize_provenance_tsv_field_(key) << "\t1\t"
+            << (ok ? "pass" : "fail") << '\t'
+            << sanitize_provenance_tsv_field_(evidence) << '\t'
+            << sanitize_provenance_tsv_field_(failure) << "\n";
+    }
+    ofstream md(support8_runtime_paths::archival_bundle_path_("shell16_attempt_precondition_check_90.md"));
+    if (md) {
+        md << "# Shell16 Attempt Precondition Check 90\n\n";
+        md << "- overall status: `" << (all_ok ? "pass" : "fail") << "`\n";
+        md << "- shell16 scan allowed only if all required preconditions pass.\n";
+        md << "- theorem promotion remains forbidden in this round.\n";
+    }
+    g_last_shell16_attempt_state.preconditions_passed = all_ok;
+    if (why) *why = all_ok ? "shell16 attempt preconditions pass" : "shell16 attempt preconditions failed";
+    return all_ok;
+}
+
+static bool write_shell16_attempt_artifacts_(const Shell16AttemptState& state,
+                                             const vector<pair<string, StructuredLocalSchema>>& candidates,
+                                             const vector<pair<string, StructuredLocalSchema>>& local_survivors,
+                                             const vector<pair<string, StructuredLocalSchema>>& plus_survivors,
+                                             const vector<pair<string, StructuredLocalSchema>>& theorem_survivors,
+                                             string* why) {
+    auto write_schema_rows = [](const string& path,
+                                const string& header,
+                                const vector<pair<string, StructuredLocalSchema>>& rows) {
+        ofstream out(path);
+        if (!out) return false;
+        out << header << "\n";
+        for (const auto& row : rows) {
+            out << sanitize_provenance_tsv_field_(row.first) << '\t'
+                << sanitize_provenance_tsv_field_(canonical_structured_local_schema_fingerprint_(row.second)) << '\t'
+                << sanitize_provenance_tsv_field_(structured_local_schema_to_string_(row.second)) << "\n";
+        }
+        return true;
+    };
+
+    if (!write_schema_rows(shell16_runtime_path_("shell16_candidate_universe_90.tsv"),
+                           "tag\tschema_fingerprint\tschema",
+                           candidates)) {
+        if (why) *why = "failed to write shell16 candidate universe";
+        return false;
+    }
+    if (!write_schema_rows(shell16_runtime_path_("shell16_local_exact_survivor_audit_90.tsv"),
+                           "tag\tschema_fingerprint\tschema",
+                           local_survivors)) {
+        if (why) *why = "failed to write shell16 local exact survivor audit";
+        return false;
+    }
+    if (!write_schema_rows(shell16_runtime_path_("shell16_plus_one_survivor_audit_90.tsv"),
+                           "tag\tschema_fingerprint\tschema",
+                           plus_survivors)) {
+        if (why) *why = "failed to write shell16 plus-one survivor audit";
+        return false;
+    }
+    if (!write_schema_rows(shell16_runtime_path_("shell16_theorem_preserving_survivor_audit_90.tsv"),
+                           "tag\tschema_fingerprint\tschema",
+                           theorem_survivors)) {
+        if (why) *why = "failed to write shell16 theorem-preserving survivor audit";
+        return false;
+    }
+
+    ofstream audit(shell16_runtime_path_("shell16_frontier_generation_audit_90.tsv"));
+    if (!audit) {
+        if (why) *why = "failed to write shell16 frontier generation audit";
+        return false;
+    }
+    audit << "metric\tvalue\n";
+    audit << "selected_attempt_scope\t" << sanitize_provenance_tsv_field_(state.selected_scope) << "\n";
+    audit << "result_classification\t" << sanitize_provenance_tsv_field_(state.result_classification) << "\n";
+    audit << "authoritative_source\t" << sanitize_provenance_tsv_field_(state.authoritative_source) << "\n";
+    audit << "constructor_name\t" << sanitize_provenance_tsv_field_(state.constructor_name) << "\n";
+    audit << "cache_load_constructor_name\t" << sanitize_provenance_tsv_field_(state.cache_load_constructor_name) << "\n";
+    audit << "current_source_fingerprint\t" << sanitize_provenance_tsv_field_(state.current_source_fingerprint) << "\n";
+    audit << "raw_candidates\t" << state.raw_candidates << "\n";
+    audit << "canonical_candidates\t" << state.canonical_candidates << "\n";
+    audit << "outside_bounded_candidates\t" << state.outside_bounded_candidates << "\n";
+    audit << "local_exact_survivors\t" << state.local_exact_survivors << "\n";
+    audit << "plus_one_survivors\t" << state.plus_one_survivors << "\n";
+    audit << "theorem_preserving_survivors\t" << state.theorem_preserving_survivors << "\n";
+    audit << "unsupported_local_exact_candidates\t" << state.unsupported_local_exact_candidates << "\n";
+    audit << "unsupported_plus_one_candidates\t" << state.unsupported_plus_one_candidates << "\n";
+    audit << "candidate_row_count\t" << state.candidate_row_count << "\n";
+    audit << "candidate_universe_fingerprint\t" << sanitize_provenance_tsv_field_(state.candidate_universe_fingerprint) << "\n";
+    audit << "candidate_universe_file_fingerprint\t" << sanitize_provenance_tsv_field_(binary_fingerprint_for_audit_(shell16_runtime_path_("shell16_candidate_universe_90.tsv"))) << "\n";
+    audit << "local_exact_survivor_fingerprint\t" << sanitize_provenance_tsv_field_(state.local_exact_survivor_fingerprint) << "\n";
+    audit << "plus_one_survivor_fingerprint\t" << sanitize_provenance_tsv_field_(state.plus_one_survivor_fingerprint) << "\n";
+    audit << "theorem_preserving_survivor_fingerprint\t" << sanitize_provenance_tsv_field_(state.theorem_preserving_survivor_fingerprint) << "\n";
+    audit << "fallback_reachable\t" << (state.fallback_reachable ? 1 : 0) << "\n";
+    audit << "fallback_hit\t" << (state.fallback_hit ? 1 : 0) << "\n";
+    audit << "stale_artifact_status\t" << sanitize_provenance_tsv_field_(state.stale_artifact_status) << "\n";
+    audit << "timeout_or_cost_status\t" << sanitize_provenance_tsv_field_(state.timeout_or_cost_status) << "\n";
+    audit << "theorem_promotion_allowed\t" << (state.theorem_promotion_allowed ? 1 : 0) << "\n";
+    audit << "survivor_zero_theorem_claim_allowed\t" << (state.survivor_zero_theorem_claim_allowed ? 1 : 0) << "\n";
+    audit << "runtime_fingerprint\t" << sanitize_provenance_tsv_field_(state.runtime_fingerprint) << "\n";
+    audit << "first_failing_gate\t" << sanitize_provenance_tsv_field_(state.first_failing_gate) << "\n";
+    audit << "next_action\t" << sanitize_provenance_tsv_field_(state.next_action) << "\n";
+    audit << "caveat\t" << sanitize_provenance_tsv_field_(state.caveat) << "\n";
+
+    ofstream fp(shell16_runtime_path_("shell16_frontier_fingerprint_90.tsv"));
+    if (!fp) {
+        if (why) *why = "failed to write shell16 frontier fingerprint";
+        return false;
+    }
+    fp << "metric\tvalue\n";
+    fp << "runtime_fingerprint\t" << sanitize_provenance_tsv_field_(state.runtime_fingerprint) << "\n";
+    fp << "candidate_universe_fingerprint\t" << sanitize_provenance_tsv_field_(state.candidate_universe_fingerprint) << "\n";
+    fp << "local_exact_survivor_fingerprint\t" << sanitize_provenance_tsv_field_(state.local_exact_survivor_fingerprint) << "\n";
+    fp << "plus_one_survivor_fingerprint\t" << sanitize_provenance_tsv_field_(state.plus_one_survivor_fingerprint) << "\n";
+    fp << "theorem_preserving_survivor_fingerprint\t" << sanitize_provenance_tsv_field_(state.theorem_preserving_survivor_fingerprint) << "\n";
+
+    ofstream rowset(shell16_runtime_path_("shell16_rowset_equality_90.tsv"));
+    if (!rowset) {
+        if (why) *why = "failed to write shell16 rowset equality";
+        return false;
+    }
+    rowset << "comparison_key\trow_count\tcurrent_fingerprint\tcomparison_fingerprint\tequality_result\n";
+    rowset << "current_shell16_self_consistency\t" << state.candidate_row_count << '\t'
+           << sanitize_provenance_tsv_field_(state.candidate_universe_fingerprint) << '\t'
+           << sanitize_provenance_tsv_field_(state.candidate_universe_fingerprint) << '\t'
+           << "self_consistent_no_imported_oracle\n";
+
+    ofstream ctor(shell16_runtime_path_("shell16_constructor_fingerprint_90.tsv"));
+    if (!ctor) {
+        if (why) *why = "failed to write shell16 constructor fingerprint";
+        return false;
+    }
+    ctor << "metric\tvalue\n";
+    ctor << "builder_constructor_name\t" << sanitize_provenance_tsv_field_(state.constructor_name) << "\n";
+    ctor << "cache_load_constructor_name\t" << sanitize_provenance_tsv_field_(state.cache_load_constructor_name) << "\n";
+    ctor << "authoritative_source\t" << sanitize_provenance_tsv_field_(state.authoritative_source) << "\n";
+    ctor << "fallback_hit\t" << (state.fallback_hit ? 1 : 0) << "\n";
+    ctor << "runtime_fingerprint\t" << sanitize_provenance_tsv_field_(state.runtime_fingerprint) << "\n";
+
+    ofstream summary(shell16_runtime_path_("shell16_attempt_summary_90.tsv"));
+    if (!summary) {
+        if (why) *why = "failed to write shell16 attempt summary";
+        return false;
+    }
+    summary << "metric\tvalue\n";
+    summary << "selected_attempt_scope\t" << sanitize_provenance_tsv_field_(state.selected_scope) << "\n";
+    summary << "builder_used\t" << (state.builder_used ? 1 : 0) << "\n";
+    summary << "cache_loaded\t" << (state.cache_loaded ? 1 : 0) << "\n";
+    summary << "cache_load_path\t" << sanitize_provenance_tsv_field_(state.cache_load_constructor_name) << "\n";
+    summary << "candidate_universe_count\t" << state.candidate_row_count << "\n";
+    summary << "raw_candidates\t" << state.raw_candidates << "\n";
+    summary << "canonical_candidates\t" << state.canonical_candidates << "\n";
+    summary << "outside_bounded_candidates\t" << state.outside_bounded_candidates << "\n";
+    summary << "local_exact_survivors\t" << state.local_exact_survivors << "\n";
+    summary << "plus_one_survivors\t" << state.plus_one_survivors << "\n";
+    summary << "theorem_preserving_survivors\t" << state.theorem_preserving_survivors << "\n";
+    summary << "unsupported_local_exact_candidates\t" << state.unsupported_local_exact_candidates << "\n";
+    summary << "unsupported_plus_one_candidates\t" << state.unsupported_plus_one_candidates << "\n";
+    summary << "result_classification\t" << sanitize_provenance_tsv_field_(state.result_classification) << "\n";
+    summary << "runtime_fingerprint\t" << sanitize_provenance_tsv_field_(state.runtime_fingerprint) << "\n";
+    summary << "fallback_reachable\t" << (state.fallback_reachable ? 1 : 0) << "\n";
+    summary << "fallback_hit\t" << (state.fallback_hit ? 1 : 0) << "\n";
+    summary << "stale_artifact_status\t" << sanitize_provenance_tsv_field_(state.stale_artifact_status) << "\n";
+    summary << "timeout_or_cost_status\t" << sanitize_provenance_tsv_field_(state.timeout_or_cost_status) << "\n";
+    summary << "theorem_promotion_allowed\t" << (state.theorem_promotion_allowed ? 1 : 0) << "\n";
+    summary << "survivor_zero_theorem_claim_allowed\t" << (state.survivor_zero_theorem_claim_allowed ? 1 : 0) << "\n";
+    summary << "next_action\t" << sanitize_provenance_tsv_field_(state.next_action) << "\n";
+
+    ofstream attempt_fp(shell16_runtime_path_("shell16_attempt_fingerprint_90.tsv"));
+    if (attempt_fp) {
+        attempt_fp << "metric\tvalue\n";
+        attempt_fp << "runtime_fingerprint\t" << sanitize_provenance_tsv_field_(state.runtime_fingerprint) << "\n";
+        attempt_fp << "result_classification\t" << sanitize_provenance_tsv_field_(state.result_classification) << "\n";
+        attempt_fp << "next_action\t" << sanitize_provenance_tsv_field_(state.next_action) << "\n";
+    }
+    ofstream survivor_fp(shell16_runtime_path_("shell16_survivor_probe_fingerprint_90.tsv"));
+    if (survivor_fp) {
+        survivor_fp << "metric\tvalue\n";
+        survivor_fp << "local_exact_survivors\t" << state.local_exact_survivors << "\n";
+        survivor_fp << "plus_one_survivors\t" << state.plus_one_survivors << "\n";
+        survivor_fp << "theorem_preserving_survivors\t" << state.theorem_preserving_survivors << "\n";
+        survivor_fp << "survivor_fingerprint\t"
+                    << sanitize_provenance_tsv_field_(state.local_exact_survivor_fingerprint + "|" + state.plus_one_survivor_fingerprint + "|" + state.theorem_preserving_survivor_fingerprint)
+                    << "\n";
+    }
+    ofstream result_fp(shell16_runtime_path_("shell16_result_classification_fingerprint_90.tsv"));
+    if (result_fp) {
+        result_fp << "metric\tvalue\n";
+        result_fp << "classification\t" << sanitize_provenance_tsv_field_(state.result_classification) << "\n";
+        result_fp << "fingerprint\t" << sanitize_provenance_tsv_field_(state.runtime_fingerprint) << "\n";
+    }
+    if (why) *why = "wrote shell16 attempt artifacts";
+    return true;
+}
+
+static bool load_current_shell16_runtime_artifact_(Shell16AttemptState* out, string* why) {
+    if (!out) {
+        if (why) *why = "no shell16 attempt state output buffer";
+        return false;
+    }
+    const string audit_path = shell16_runtime_path_("shell16_frontier_generation_audit_90.tsv");
+    auto metrics = read_shell15_metric_tsv_(audit_path);
+    if (metrics.empty()) {
+        if (why) *why = "shell16 generation audit missing";
+        return false;
+    }
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "shell16 generation audit source fingerprint stale";
+        return false;
+    }
+    const string candidate_path = shell16_runtime_path_("shell16_candidate_universe_90.tsv");
+    if (!shell16_file_nonempty_(candidate_path)) {
+        if (why) *why = "shell16 candidate universe missing";
+        return false;
+    }
+    if (metrics["candidate_universe_file_fingerprint"] != binary_fingerprint_for_audit_(candidate_path)) {
+        if (why) *why = "shell16 candidate universe fingerprint stale";
+        return false;
+    }
+    Shell16AttemptState s;
+    s.selected_scope = metrics["selected_attempt_scope"];
+    s.preconditions_passed = true;
+    s.builder_used = false;
+    s.cache_loaded = true;
+    s.constructor_name = "load_current_shell16_runtime_artifact_";
+    s.authoritative_source = "current_runtime_shell16_attempt_cache";
+    s.result_classification = metrics["result_classification"];
+    parse_size_t_shell15_metric_(metrics["raw_candidates"], &s.raw_candidates);
+    parse_size_t_shell15_metric_(metrics["canonical_candidates"], &s.canonical_candidates);
+    parse_size_t_shell15_metric_(metrics["outside_bounded_candidates"], &s.outside_bounded_candidates);
+    parse_size_t_shell15_metric_(metrics["local_exact_survivors"], &s.local_exact_survivors);
+    parse_size_t_shell15_metric_(metrics["plus_one_survivors"], &s.plus_one_survivors);
+    parse_size_t_shell15_metric_(metrics["theorem_preserving_survivors"], &s.theorem_preserving_survivors);
+    parse_size_t_shell15_metric_(metrics["unsupported_local_exact_candidates"], &s.unsupported_local_exact_candidates);
+    parse_size_t_shell15_metric_(metrics["unsupported_plus_one_candidates"], &s.unsupported_plus_one_candidates);
+    parse_size_t_shell15_metric_(metrics["candidate_row_count"], &s.candidate_row_count);
+    s.current_source_fingerprint = source_fp;
+    s.candidate_universe_fingerprint = metrics["candidate_universe_fingerprint"];
+    s.local_exact_survivor_fingerprint = metrics["local_exact_survivor_fingerprint"];
+    s.plus_one_survivor_fingerprint = metrics["plus_one_survivor_fingerprint"];
+    s.theorem_preserving_survivor_fingerprint = metrics["theorem_preserving_survivor_fingerprint"];
+    s.fallback_reachable = metrics["fallback_reachable"] == "1";
+    s.fallback_hit = metrics["fallback_hit"] == "1";
+    s.stale_artifact_status = "fresh";
+    s.timeout_or_cost_status = metrics["timeout_or_cost_status"];
+    s.theorem_promotion_allowed = false;
+    s.survivor_zero_theorem_claim_allowed = false;
+    s.first_failing_gate = metrics["first_failing_gate"];
+    s.next_action = metrics["next_action"];
+    s.caveat = "Loaded validated shell16 attempt artifact; this is not theorem promotion.";
+    s.runtime_fingerprint = shell16_attempt_runtime_fingerprint_(s);
+    *out = s;
+    if (why) *why = "loaded current shell16 runtime artifact";
+    return true;
+}
+
+static bool scan_shell16_frontier_non_promoting_attempt_(Shell16AttemptState* out, string* why) {
+    if (!out) {
+        if (why) *why = "no shell16 attempt output buffer";
+        return false;
+    }
+    Shell16AttemptState state;
+    state.preconditions_passed = true;
+    state.builder_used = true;
+    state.cache_loaded = false;
+    state.authoritative_source = "current_runtime_shell16_non_promoting_scan";
+    state.constructor_name = "scan_shell16_frontier_non_promoting_attempt_";
+    state.current_source_fingerprint = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    state.fallback_reachable = false;
+    state.fallback_hit = false;
+    state.stale_artifact_status = "fresh";
+    state.timeout_or_cost_status = "within_cost_cap";
+    state.theorem_promotion_allowed = false;
+    state.survivor_zero_theorem_claim_allowed = false;
+    state.first_failing_gate = "none";
+
+    string specs_why;
+    auto specs = build_antecedent_shell16_frontier_specs_(build_bounded_schema_universe_scope_stats_(nullptr), &specs_why);
+    vector<pair<string, StructuredLocalSchema>> candidates;
+    vector<pair<string, StructuredLocalSchema>> local_survivors;
+    vector<pair<string, StructuredLocalSchema>> plus_survivors;
+    vector<pair<string, StructuredLocalSchema>> theorem_survivors;
+    vector<string> candidate_fps;
+    vector<string> local_fps;
+    vector<string> plus_fps;
+    vector<string> theorem_fps;
+    constexpr size_t kShell16SurvivorProbeCandidateCap = 50000;
+
+    for (const auto& spec : specs) {
+        size_t raw = 0;
+        string enum_why;
+        auto rows = enumerate_antecedent_shell16_frontier_candidates_(spec, &raw, &enum_why);
+        state.raw_candidates += raw;
+        state.canonical_candidates += rows.size();
+        state.outside_bounded_candidates += rows.size();
+        for (const auto& schema : rows) {
+            candidates.push_back({spec.tag, schema});
+            candidate_fps.push_back(spec.tag + ":" + canonical_structured_local_schema_fingerprint_(schema));
+        }
+    }
+    sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b) {
+        if (a.first != b.first) return a.first < b.first;
+        return canonical_structured_local_schema_fingerprint_(a.second) <
+               canonical_structured_local_schema_fingerprint_(b.second);
+    });
+    state.candidate_row_count = candidates.size();
+    state.candidate_universe_fingerprint = shell16_join_fingerprints_(candidate_fps);
+
+    if (candidates.size() > kShell16SurvivorProbeCandidateCap) {
+        state.selected_scope = "shell16_candidate_universe_attempt";
+        state.result_classification = "shell16_attempt_timeout_or_cost_blocked";
+        state.timeout_or_cost_status = string("candidate_count_exceeds_cap_") + to_string(kShell16SurvivorProbeCandidateCap);
+        state.first_failing_gate = "cost_cap_gate";
+        state.next_action = "shell16_cost_pruning_refactor";
+        state.caveat = "Shell16 candidate universe was generated, but survivor probe was not run because the candidate cap was exceeded.";
+    } else {
+        state.selected_scope = "shell16_survivor_probe_attempt";
+        for (size_t i = 0; i < candidates.size(); ++i) {
+#ifdef LOCAL_TEST
+            local_progress_("shell16_survivor_probe", i + 1, candidates.size());
+#endif
+            const auto& tag = candidates[i].first;
+            const auto& schema = candidates[i].second;
+            string local_why;
+            const bool local_ok = validate_general_schema_candidate_local_exact_(schema, &local_why);
+            if (local_ok) {
+                local_survivors.push_back(candidates[i]);
+                local_fps.push_back(tag + ":" + canonical_structured_local_schema_fingerprint_(schema));
+                string plus_why;
+                const bool plus_ok = validate_general_schema_candidate_plus_one_exact_(schema, &plus_why);
+                if (plus_ok) {
+                    plus_survivors.push_back(candidates[i]);
+                    plus_fps.push_back(tag + ":" + canonical_structured_local_schema_fingerprint_(schema));
+                    string p1, p2, p3;
+                    const bool ok1 = validate_general_schema_candidate_preserves_basis_theorem_n5_(schema, &p1);
+                    const bool ok2 = validate_general_schema_candidate_preserves_basis_theorem_n6_c5_(schema, &p2);
+                    const bool ok3 = validate_general_schema_candidate_preserves_basis_theorem_n7_c3_(schema, &p3);
+                    if (ok1 && ok2 && ok3) {
+                        theorem_survivors.push_back(candidates[i]);
+                        theorem_fps.push_back(tag + ":" + canonical_structured_local_schema_fingerprint_(schema));
+                    }
+                } else if (plus_why.find("supported exact range") != string::npos ||
+                           plus_why.find("microchunk progress") != string::npos ||
+                           plus_why.find("not fully completed") != string::npos ||
+                           plus_why.find("progress ") != string::npos) {
+                    ++state.unsupported_plus_one_candidates;
+                }
+            } else if (local_why.find("supported exact local range") != string::npos) {
+                ++state.unsupported_local_exact_candidates;
+            }
+        }
+        state.local_exact_survivors = local_survivors.size();
+        state.plus_one_survivors = plus_survivors.size();
+        state.theorem_preserving_survivors = theorem_survivors.size();
+        if (state.theorem_preserving_survivors == 0) {
+            state.result_classification = state.local_exact_survivors > 0
+                ? "shell16_probe_completed_local_exact_survivors_present_no_theorem_preserving_survivors"
+                : "shell16_probe_completed_zero_theorem_preserving_survivors_no_promotion";
+            state.next_action = "shell16_result_promotion_review";
+            state.caveat = "Shell16 survivor probe completed with local-exact, plus-one, and theorem-preserving survivor classes separated; theorem promotion remains forbidden until promotion review.";
+        } else {
+            state.result_classification = "shell16_probe_completed_theorem_preserving_survivors_present_no_promotion";
+            state.next_action = "analyze_shell16_survivor_witness";
+            state.first_failing_gate = "survivor_blocker";
+            state.caveat = "Shell16 survivor probe found theorem-preserving survivor candidates; no theorem promotion is allowed.";
+        }
+    }
+    state.local_exact_survivor_fingerprint = shell16_join_fingerprints_(local_fps);
+    state.plus_one_survivor_fingerprint = shell16_join_fingerprints_(plus_fps);
+    state.theorem_preserving_survivor_fingerprint = shell16_join_fingerprints_(theorem_fps);
+    state.runtime_fingerprint = shell16_attempt_runtime_fingerprint_(state);
+
+    string write_why;
+    if (!write_shell16_attempt_artifacts_(state, candidates, local_survivors, plus_survivors, theorem_survivors, &write_why)) {
+        if (why) *why = write_why;
+        return false;
+    }
+    *out = state;
+    if (why) {
+        ostringstream oss;
+        oss << "shell16 non-promoting attempt completed classification=" << state.result_classification
+            << " raw=" << state.raw_candidates
+            << " canonical=" << state.canonical_candidates
+            << " outside=" << state.outside_bounded_candidates
+            << " local=" << state.local_exact_survivors
+            << " plus=" << state.plus_one_survivors
+            << " theorem=" << state.theorem_preserving_survivors
+            << " fingerprint=" << state.runtime_fingerprint;
+        *why = oss.str();
+    }
+    return true;
+}
+
+static bool ensure_shell16_attempt_ready_(string* why) {
+    string precondition_why;
+    if (!write_shell16_attempt_precondition_check_files_(&precondition_why)) {
+        Shell16AttemptState state;
+        state.selected_scope = "shell16_attempt_aborted_by_precondition";
+        state.result_classification = "shell16_attempt_not_run_precondition_failed";
+        state.preconditions_passed = false;
+        state.authoritative_source = "shell16_attempt_precondition_check";
+        state.constructor_name = "write_shell16_attempt_precondition_check_files_";
+        state.first_failing_gate = "precondition_check";
+        state.next_action = "shell16_precondition_fix";
+        state.caveat = precondition_why;
+        state.runtime_fingerprint = shell16_attempt_runtime_fingerprint_(state);
+        vector<pair<string, StructuredLocalSchema>> empty;
+        (void)write_shell16_attempt_artifacts_(state, empty, empty, empty, empty, nullptr);
+        g_last_shell16_attempt_state = state;
+        if (why) *why = precondition_why;
+        return false;
+    }
+
+    Shell16AttemptState state;
+    string load_why;
+    if (load_current_shell16_runtime_artifact_(&state, &load_why)) {
+        g_last_shell16_attempt_state = state;
+        if (why) *why = load_why;
+        return true;
+    }
+
+    string scan_why;
+    if (!scan_shell16_frontier_non_promoting_attempt_(&state, &scan_why)) {
+        if (why) *why = scan_why;
+        return false;
+    }
+    g_last_shell16_attempt_state = state;
+    if (why) *why = scan_why;
+    return true;
 }
 
 static string provenance_validation_status_to_string_(ProvenanceValidationStatus status) {
@@ -38419,7 +39147,7 @@ static vector<TheoremDataProvenanceInventoryItem> build_theorem_data_provenance_
         {"family_chain_output_57"},
         g_last_family_chain_theorem_audit_fresh_runtime_generated,
         g_last_family_chain_theorem_audit_fresh_runtime_generated
-            ? "Family-chain theorem data now uses a current constructor path for the authoritative support/unified obstruction theorem objects; lower triple-through-high layers remain validated imported unless separately rederived. Constructor=" + g_last_family_chain_constructor_name
+            ? "Family-chain theorem data now uses a current constructor path for the authoritative support/unified obstruction theorem objects; pair52, triple53, quad55, quintuple57, sextuple57, septuple57, and high-family57 are current constructor/cache-backed when their runtime audits report fresh; family-chain lower-layer caveat is closed when high-family57 reports fresh. Constructor=" + g_last_family_chain_constructor_name
             : "Family-chain theorem readiness is currently validated against imported closed-output theorem-data and aggregate family expansions. Blocker: " + g_last_family_chain_theorem_audit_blocker));
     items.push_back(make_theorem_data_provenance_item_(
         current,
@@ -38434,7 +39162,7 @@ static vector<TheoremDataProvenanceInventoryItem> build_theorem_data_provenance_
         {"family_chain_output_57"},
         g_last_family_chain_theorem_audit_fresh_runtime_generated,
         g_last_family_chain_theorem_audit_fresh_runtime_generated
-            ? "Self verification reran against the current-runtime family-chain constructor path; lower triple-through-high layers remain validated imported unless separately rederived. Constructor=" + g_last_family_chain_constructor_name
+            ? "Self verification reran against the current-runtime family-chain constructor path; pair52, triple53, quad55, quintuple57, sextuple57, septuple57, and high-family57 are current constructor/cache-backed when their runtime audits report fresh; family-chain lower-layer caveat is closed when high-family57 reports fresh. Constructor=" + g_last_family_chain_constructor_name
             : "Self verification checks the promoted family-chain counts and survivor totals; it does not freshly regenerate the imported higher-family layers. Blocker: " + g_last_family_chain_theorem_audit_blocker));
     items.push_back(make_theorem_data_provenance_item_(
         current,
@@ -38924,6 +39652,1598 @@ static bool write_basis_family_generation_audit_files_(
     return true;
 }
 
+static string pair_expansion_aggregate_52_current_comparison_fingerprint_(
+    size_t single_regions,
+    size_t pair_regions,
+    const OutOfPoolCandidateAggregateStats& aggregate);
+static string quadruple_family_expansion_theorem_data_55_current_comparison_fingerprint_(
+    const QuadrupleFamilyExpansionTheoremData& data);
+static string quintuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const QuintupleFamilyExpansionTheoremData& data);
+static string sextuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const SextupleFamilyExpansionTheoremData& data);
+static string septuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const SeptupleFamilyExpansionTheoremData& data);
+static string high_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const HighFamilyExpansionTheoremData& data);
+
+static bool write_pair_expansion_aggregate_52_runtime_artifacts_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("pair_expansion_aggregate_52_payload_90.tsv");
+    const string generation_path = support8_runtime_bundle_path_("pair_expansion_aggregate_52_generation_audit_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("pair_expansion_aggregate_52_fingerprint_90.tsv");
+    const string equality_path = support8_runtime_bundle_path_("pair_expansion_aggregate_52_rowset_equality_90.tsv");
+    const string constructor_path = support8_runtime_bundle_path_("pair_expansion_aggregate_52_constructor_fingerprint_90.tsv");
+    const string triple_payload_path = support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_payload_90.tsv");
+    const string triple_generation_path = support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_generation_audit_90.tsv");
+    const string triple_fingerprint_path = support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_fingerprint_90.tsv");
+    const string triple_equality_path = support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_rowset_equality_90.tsv");
+    const string triple_constructor_path = support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_constructor_fingerprint_90.tsv");
+    const string quadruple_payload_path = support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_payload_90.tsv");
+    const string quadruple_generation_path = support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_generation_audit_90.tsv");
+    const string quadruple_fingerprint_path = support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_fingerprint_90.tsv");
+    const string quadruple_equality_path = support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_rowset_equality_90.tsv");
+    const string quadruple_constructor_path = support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_constructor_fingerprint_90.tsv");
+    const string quintuple_payload_path = support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_payload_90.tsv");
+    const string quintuple_generation_path = support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_generation_audit_90.tsv");
+    const string quintuple_fingerprint_path = support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    const string quintuple_equality_path = support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_rowset_equality_90.tsv");
+    const string quintuple_constructor_path = support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_constructor_fingerprint_90.tsv");
+    const string sextuple_payload_path = support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_payload_90.tsv");
+    const string sextuple_generation_path = support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_generation_audit_90.tsv");
+    const string sextuple_fingerprint_path = support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    const string sextuple_equality_path = support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_rowset_equality_90.tsv");
+    const string sextuple_constructor_path = support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_constructor_fingerprint_90.tsv");
+    const string septuple_payload_path = support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_payload_90.tsv");
+    const string septuple_generation_path = support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_generation_audit_90.tsv");
+    const string septuple_fingerprint_path = support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    const string septuple_equality_path = support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_rowset_equality_90.tsv");
+    const string septuple_constructor_path = support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_constructor_fingerprint_90.tsv");
+    const string high_payload_path = support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_payload_90.tsv");
+    const string high_generation_path = support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_generation_audit_90.tsv");
+    const string high_fingerprint_path = support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    const string high_equality_path = support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_rowset_equality_90.tsv");
+    const string high_constructor_path = support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_constructor_fingerprint_90.tsv");
+    const string lower_inventory_path = support8_runtime_bundle_path_("family_chain_lower_layers_inventory_90.tsv");
+    const string lower_generation_path = support8_runtime_bundle_path_("family_chain_lower_layers_generation_audit_90.tsv");
+    const string lower_fingerprint_path = support8_runtime_bundle_path_("family_chain_lower_layers_fingerprint_90.tsv");
+
+    if (g_last_pair_expansion_aggregate_52_fresh_runtime_generated &&
+        !g_last_bounded_expansion_region_specs.empty() &&
+        g_last_bounded_expansion_region_specs.size() == g_last_out_of_pool_expansion_stats.size()) {
+        ofstream payload_out(payload_path);
+        if (!payload_out) {
+            if (why) *why = "failed to write pair-expansion aggregate 52 payload";
+            return false;
+        }
+        payload_out << "region_index\tkind\tregion_fingerprint\tsource_family_fingerprints\tsymbol_bound\tantecedent_bound\traw_candidates\tcanonical_candidates\tout_of_pool_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\twhy\n";
+        for (size_t i = 0; i < g_last_bounded_expansion_region_specs.size(); ++i) {
+            const auto& spec = g_last_bounded_expansion_region_specs[i];
+            const auto& st = g_last_out_of_pool_expansion_stats[i];
+            payload_out
+                << i << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.kind) << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.fingerprint) << '\t'
+                << sanitize_exact_basis_tsv_field_(join_vector_with_delim_(spec.source_family_fingerprints, ";")) << '\t'
+                << spec.symbol_bound << '\t'
+                << spec.antecedent_bound << '\t'
+                << st.raw_candidates << '\t'
+                << st.canonical_candidates << '\t'
+                << st.out_of_pool_candidates << '\t'
+                << st.local_exact_survivors << '\t'
+                << st.plus_one_survivors << '\t'
+                << st.theorem_preserving_survivors << '\t'
+                << sanitize_exact_basis_tsv_field_(st.why) << "\n";
+        }
+    }
+
+    ofstream generation_out(generation_path);
+    if (!generation_out) {
+        if (why) *why = "failed to write pair-expansion aggregate 52 generation audit";
+        return false;
+    }
+    const string pair_label = g_last_pair_expansion_aggregate_52_fresh_runtime_generated
+                                  ? "fresh_current_runtime_generated"
+                                  : "imported_compatibility_fallback";
+    generation_out << "metric\tvalue\n";
+    generation_out << "item_key\tpair_expansion_aggregate_52\n";
+    generation_out << "previous_provenance_label\timported_lower_layer\n";
+    generation_out << "current_provenance_label\t" << pair_label << "\n";
+    generation_out << "authoritative_constructor_name\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_constructor_name) << "\n";
+    generation_out << "pass1_builder_used\t" << (g_last_pair_expansion_aggregate_52_builder_used ? 1 : 0) << "\n";
+    generation_out << "cache_loaded\t" << (g_last_pair_expansion_aggregate_52_cache_loaded ? 1 : 0) << "\n";
+    generation_out << "cache_load_path\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    generation_out << "region_count\t" << g_last_pair_expansion_aggregate_52_region_count << "\n";
+    generation_out << "single_family_regions\t" << g_last_pair_expansion_aggregate_52_single_region_count << "\n";
+    generation_out << "pair_regions\t" << g_last_pair_expansion_aggregate_52_pair_region_count << "\n";
+    generation_out << "raw_candidates\t" << g_last_out_of_pool_candidate_aggregate_stats.raw_candidates << "\n";
+    generation_out << "canonical_candidates\t" << g_last_out_of_pool_candidate_aggregate_stats.canonical_candidates << "\n";
+    generation_out << "deduplicated_candidates\t" << g_last_out_of_pool_candidate_aggregate_stats.deduplicated_candidates << "\n";
+    generation_out << "local_exact_survivors\t" << g_last_out_of_pool_candidate_aggregate_stats.local_exact_survivors << "\n";
+    generation_out << "plus_one_survivors\t" << g_last_out_of_pool_candidate_aggregate_stats.plus_one_survivors << "\n";
+    generation_out << "theorem_preserving_survivors\t" << g_last_out_of_pool_candidate_aggregate_stats.theorem_preserving_survivors << "\n";
+    generation_out << "current_fingerprint\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_current_fingerprint) << "\n";
+    generation_out << "imported_comparison_fingerprint\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint) << "\n";
+    generation_out << "imported_equality_result\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_imported_equality_result) << "\n";
+    generation_out << "fallback_reachable\t" << (g_last_pair_expansion_aggregate_52_fallback_reachable ? 1 : 0) << "\n";
+    generation_out << "fallback_hit\t" << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    generation_out << "runtime_fingerprint\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_runtime_fingerprint) << "\n";
+    generation_out << "direct_consumer_summary\tbounded family-chain theorem;family-chain self verification via support-bounded schema-universe obstruction theorem\n";
+    generation_out << "downstream_caveat_impact\t"
+                   << (g_last_pair_expansion_aggregate_52_fresh_runtime_generated
+                           ? "pair 52 caveat removed; next lower-layer target is triple_family_expansion_theorem_data_53"
+                           : "pair 52 caveat remains")
+                   << "\n";
+    generation_out << "blocker\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_blocker) << "\n";
+    generation_out << "caveat\t"
+                   << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_caveat) << "\n";
+
+    ofstream fingerprint_out(fingerprint_path);
+    if (!fingerprint_out) {
+        if (why) *why = "failed to write pair-expansion aggregate 52 fingerprint";
+        return false;
+    }
+    fingerprint_out << "metric\tvalue\n";
+    fingerprint_out << "item_key\tpair_expansion_aggregate_52\n";
+    fingerprint_out << "current_provenance_label\t" << pair_label << "\n";
+    fingerprint_out << "current_source_fingerprint\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_current_source_fingerprint) << "\n";
+    fingerprint_out << "payload_fingerprint\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_current_fingerprint) << "\n";
+    fingerprint_out << "imported_comparison_fingerprint\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint) << "\n";
+    fingerprint_out << "imported_equality_result\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_imported_equality_result) << "\n";
+    fingerprint_out << "raw_candidates\t" << g_last_out_of_pool_candidate_aggregate_stats.raw_candidates << "\n";
+    fingerprint_out << "canonical_candidates\t" << g_last_out_of_pool_candidate_aggregate_stats.canonical_candidates << "\n";
+    fingerprint_out << "deduplicated_candidates\t" << g_last_out_of_pool_candidate_aggregate_stats.deduplicated_candidates << "\n";
+    fingerprint_out << "local_exact_survivors\t" << g_last_out_of_pool_candidate_aggregate_stats.local_exact_survivors << "\n";
+    fingerprint_out << "plus_one_survivors\t" << g_last_out_of_pool_candidate_aggregate_stats.plus_one_survivors << "\n";
+    fingerprint_out << "theorem_preserving_survivors\t" << g_last_out_of_pool_candidate_aggregate_stats.theorem_preserving_survivors << "\n";
+    fingerprint_out << "runtime_fingerprint\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_runtime_fingerprint) << "\n";
+
+    ofstream equality_out(equality_path);
+    if (!equality_out) {
+        if (why) *why = "failed to write pair-expansion aggregate 52 equality audit";
+        return false;
+    }
+    equality_out << "metric\tvalue\n";
+    equality_out << "item_key\tpair_expansion_aggregate_52\n";
+    equality_out << "equality_rule\tregion-count + aggregate-count + consumer-visible support theorem fingerprint equality\n";
+    equality_out << "current_comparison_fingerprint\t"
+                 << sanitize_exact_basis_tsv_field_(
+                        pair_expansion_aggregate_52_current_comparison_fingerprint_(
+                            g_last_pair_expansion_aggregate_52_single_region_count,
+                            g_last_pair_expansion_aggregate_52_pair_region_count,
+                            g_last_out_of_pool_candidate_aggregate_stats))
+                 << "\n";
+    equality_out << "imported_comparison_fingerprint\t"
+                 << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint) << "\n";
+    equality_out << "imported_equality_result\t"
+                 << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_imported_equality_result) << "\n";
+    equality_out << "rowset_note\tlegacy output 52 did not preserve a separate candidate row-set artifact in this bundle; equality is therefore count/fingerprint/consumer-visible equality, not imported row copy equality\n";
+
+    ofstream constructor_out(constructor_path);
+    if (!constructor_out) {
+        if (why) *why = "failed to write pair-expansion aggregate 52 constructor fingerprint";
+        return false;
+    }
+    constructor_out << "metric\tvalue\n";
+    constructor_out << "constructor_name\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_constructor_name) << "\n";
+    constructor_out << "authoritative_source\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_authoritative_source) << "\n";
+    constructor_out << "pass1_builder_used\t" << (g_last_pair_expansion_aggregate_52_builder_used ? 1 : 0) << "\n";
+    constructor_out << "cache_loaded\t" << (g_last_pair_expansion_aggregate_52_cache_loaded ? 1 : 0) << "\n";
+    constructor_out << "cache_load_path\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    constructor_out << "fallback_reachable\t" << (g_last_pair_expansion_aggregate_52_fallback_reachable ? 1 : 0) << "\n";
+    constructor_out << "fallback_hit\t" << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    constructor_out << "runtime_fingerprint\t"
+                    << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_runtime_fingerprint) << "\n";
+
+    if (g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated &&
+        !g_last_triple_family_expansion_region_specs.empty() &&
+        g_last_triple_family_expansion_region_specs.size() == g_last_triple_family_expansion_stats.size()) {
+        ofstream triple_payload_out(triple_payload_path);
+        if (!triple_payload_out) {
+            if (why) *why = "failed to write triple-family expansion theorem data 53 payload";
+            return false;
+        }
+        triple_payload_out << "region_index\tkind\tregion_fingerprint\tsource_family_fingerprints\tsymbol_bound\tantecedent_bound\traw_candidates\tcanonical_candidates\tout_of_pool_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\twhy\n";
+        for (size_t i = 0; i < g_last_triple_family_expansion_region_specs.size(); ++i) {
+            const auto& spec = g_last_triple_family_expansion_region_specs[i];
+            const auto& st = g_last_triple_family_expansion_stats[i];
+            triple_payload_out
+                << i << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.kind) << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.fingerprint) << '\t'
+                << sanitize_exact_basis_tsv_field_(join_vector_with_delim_(spec.source_family_fingerprints, ";")) << '\t'
+                << spec.symbol_bound << '\t'
+                << spec.antecedent_bound << '\t'
+                << st.raw_candidates << '\t'
+                << st.canonical_candidates << '\t'
+                << st.out_of_pool_candidates << '\t'
+                << st.local_exact_survivors << '\t'
+                << st.plus_one_survivors << '\t'
+                << st.theorem_preserving_survivors << '\t'
+                << sanitize_exact_basis_tsv_field_(st.why) << "\n";
+        }
+    }
+
+    const string triple_label = g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated
+                                    ? "fresh_current_runtime_generated"
+                                    : "imported_lower_layer";
+    ofstream triple_generation_out(triple_generation_path);
+    if (!triple_generation_out) {
+        if (why) *why = "failed to write triple-family expansion theorem data 53 generation audit";
+        return false;
+    }
+    triple_generation_out << "metric\tvalue\n";
+    triple_generation_out << "item_key\ttriple_family_expansion_theorem_data_53\n";
+    triple_generation_out << "previous_provenance_label\timported_lower_layer\n";
+    triple_generation_out << "current_provenance_label\t" << triple_label << "\n";
+    triple_generation_out << "authoritative_constructor_name\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_constructor_name) << "\n";
+    triple_generation_out << "upstream_pair52_source_path\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    triple_generation_out << "upstream_pair52_label\t" << pair_label << "\n";
+    triple_generation_out << "upstream_pair52_fallback_hit\t" << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    triple_generation_out << "pass1_builder_used\t" << (g_last_triple_family_expansion_theorem_data_53_builder_used ? 1 : 0) << "\n";
+    triple_generation_out << "cache_loaded\t" << (g_last_triple_family_expansion_theorem_data_53_cache_loaded ? 1 : 0) << "\n";
+    triple_generation_out << "cache_load_path\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << "\n";
+    triple_generation_out << "region_count\t" << g_last_triple_family_expansion_theorem_data_53_region_count << "\n";
+    triple_generation_out << "raw_candidates\t" << g_last_triple_family_candidate_aggregate_stats.raw_candidates << "\n";
+    triple_generation_out << "canonical_candidates\t" << g_last_triple_family_candidate_aggregate_stats.canonical_candidates << "\n";
+    triple_generation_out << "deduplicated_candidates\t" << g_last_triple_family_candidate_aggregate_stats.deduplicated_candidates << "\n";
+    triple_generation_out << "local_exact_survivors\t" << g_last_triple_family_candidate_aggregate_stats.local_exact_survivors << "\n";
+    triple_generation_out << "plus_one_survivors\t" << g_last_triple_family_candidate_aggregate_stats.plus_one_survivors << "\n";
+    triple_generation_out << "theorem_preserving_survivors\t" << g_last_triple_family_candidate_aggregate_stats.theorem_preserving_survivors << "\n";
+    triple_generation_out << "current_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_current_fingerprint) << "\n";
+    triple_generation_out << "imported_comparison_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint) << "\n";
+    triple_generation_out << "imported_equality_result\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_imported_equality_result) << "\n";
+    triple_generation_out << "fallback_reachable\t" << (g_last_triple_family_expansion_theorem_data_53_fallback_reachable ? 1 : 0) << "\n";
+    triple_generation_out << "fallback_hit\t" << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    triple_generation_out << "runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint) << "\n";
+    triple_generation_out << "direct_consumer_summary\tbounded family-chain theorem;family-chain self verification via unified bounded schema-universe theorem\n";
+    triple_generation_out << "downstream_caveat_impact\t"
+                          << (g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated
+                                  ? "triple 53 caveat removed; next lower-layer target is quadruple_family_expansion_theorem_data_55"
+                                  : "triple 53 caveat remains")
+                          << "\n";
+    triple_generation_out << "blocker\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_blocker) << "\n";
+    triple_generation_out << "caveat\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_caveat) << "\n";
+
+    ofstream triple_fingerprint_out(triple_fingerprint_path);
+    if (!triple_fingerprint_out) {
+        if (why) *why = "failed to write triple-family expansion theorem data 53 fingerprint";
+        return false;
+    }
+    triple_fingerprint_out << "metric\tvalue\n";
+    triple_fingerprint_out << "item_key\ttriple_family_expansion_theorem_data_53\n";
+    triple_fingerprint_out << "current_provenance_label\t" << triple_label << "\n";
+    triple_fingerprint_out << "current_source_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_current_source_fingerprint) << "\n";
+    triple_fingerprint_out << "payload_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_current_fingerprint) << "\n";
+    triple_fingerprint_out << "imported_comparison_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint) << "\n";
+    triple_fingerprint_out << "imported_equality_result\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_imported_equality_result) << "\n";
+    triple_fingerprint_out << "raw_candidates\t" << g_last_triple_family_candidate_aggregate_stats.raw_candidates << "\n";
+    triple_fingerprint_out << "canonical_candidates\t" << g_last_triple_family_candidate_aggregate_stats.canonical_candidates << "\n";
+    triple_fingerprint_out << "deduplicated_candidates\t" << g_last_triple_family_candidate_aggregate_stats.deduplicated_candidates << "\n";
+    triple_fingerprint_out << "local_exact_survivors\t" << g_last_triple_family_candidate_aggregate_stats.local_exact_survivors << "\n";
+    triple_fingerprint_out << "plus_one_survivors\t" << g_last_triple_family_candidate_aggregate_stats.plus_one_survivors << "\n";
+    triple_fingerprint_out << "theorem_preserving_survivors\t" << g_last_triple_family_candidate_aggregate_stats.theorem_preserving_survivors << "\n";
+    triple_fingerprint_out << "runtime_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint) << "\n";
+
+    ofstream triple_equality_out(triple_equality_path);
+    if (!triple_equality_out) {
+        if (why) *why = "failed to write triple-family expansion theorem data 53 equality audit";
+        return false;
+    }
+    triple_equality_out << "metric\tvalue\n";
+    triple_equality_out << "item_key\ttriple_family_expansion_theorem_data_53\n";
+    triple_equality_out << "equality_rule\tregion-count + aggregate-count + consumer-visible triple theorem-data equality\n";
+    triple_equality_out << "current_comparison_fingerprint\t"
+                        << sanitize_exact_basis_tsv_field_(
+                               string("53|regions=") + to_string(g_last_triple_family_expansion_theorem_data_53_region_count) +
+                               "|raw=" + to_string(g_last_triple_family_candidate_aggregate_stats.raw_candidates) +
+                               "|canonical=" + to_string(g_last_triple_family_candidate_aggregate_stats.canonical_candidates) +
+                               "|deduplicated=" + to_string(g_last_triple_family_candidate_aggregate_stats.deduplicated_candidates) +
+                               "|local=" + to_string(g_last_triple_family_candidate_aggregate_stats.local_exact_survivors) +
+                               "|plus=" + to_string(g_last_triple_family_candidate_aggregate_stats.plus_one_survivors) +
+                               "|theorem=" + to_string(g_last_triple_family_candidate_aggregate_stats.theorem_preserving_survivors))
+                        << "\n";
+    triple_equality_out << "imported_comparison_fingerprint\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint) << "\n";
+    triple_equality_out << "imported_equality_result\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_imported_equality_result) << "\n";
+    triple_equality_out << "rowset_note\tlegacy output 53 did not preserve a separate candidate row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality\n";
+
+    ofstream triple_constructor_out(triple_constructor_path);
+    if (!triple_constructor_out) {
+        if (why) *why = "failed to write triple-family expansion theorem data 53 constructor fingerprint";
+        return false;
+    }
+    triple_constructor_out << "metric\tvalue\n";
+    triple_constructor_out << "constructor_name\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_constructor_name) << "\n";
+    triple_constructor_out << "authoritative_source\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_authoritative_source) << "\n";
+    triple_constructor_out << "pass1_builder_used\t" << (g_last_triple_family_expansion_theorem_data_53_builder_used ? 1 : 0) << "\n";
+    triple_constructor_out << "cache_loaded\t" << (g_last_triple_family_expansion_theorem_data_53_cache_loaded ? 1 : 0) << "\n";
+    triple_constructor_out << "cache_load_path\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << "\n";
+    triple_constructor_out << "upstream_pair52_fallback_hit\t" << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    triple_constructor_out << "fallback_reachable\t" << (g_last_triple_family_expansion_theorem_data_53_fallback_reachable ? 1 : 0) << "\n";
+    triple_constructor_out << "fallback_hit\t" << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    triple_constructor_out << "runtime_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint) << "\n";
+
+    if (g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated &&
+        !g_last_quadruple_family_expansion_region_specs.empty() &&
+        g_last_quadruple_family_expansion_region_specs.size() == g_last_quadruple_family_expansion_stats.size()) {
+        ofstream quadruple_payload_out(quadruple_payload_path);
+        if (!quadruple_payload_out) {
+            if (why) *why = "failed to write quadruple-family expansion theorem data 55 payload";
+            return false;
+        }
+        quadruple_payload_out << "region_index\tkind\tregion_fingerprint\tsource_family_fingerprints\tsymbol_bound\tantecedent_bound\traw_candidates\tcanonical_candidates\tout_of_pool_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\twhy\n";
+        for (size_t i = 0; i < g_last_quadruple_family_expansion_region_specs.size(); ++i) {
+            const auto& spec = g_last_quadruple_family_expansion_region_specs[i];
+            const auto& st = g_last_quadruple_family_expansion_stats[i];
+            quadruple_payload_out
+                << i << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.kind) << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.fingerprint) << '\t'
+                << sanitize_exact_basis_tsv_field_(join_vector_with_delim_(spec.source_family_fingerprints, ";")) << '\t'
+                << spec.symbol_bound << '\t'
+                << spec.antecedent_bound << '\t'
+                << st.raw_candidates << '\t'
+                << st.canonical_candidates << '\t'
+                << st.out_of_pool_candidates << '\t'
+                << st.local_exact_survivors << '\t'
+                << st.plus_one_survivors << '\t'
+                << st.theorem_preserving_survivors << '\t'
+                << sanitize_exact_basis_tsv_field_(st.why) << "\n";
+        }
+    }
+
+    const string quadruple_label = g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated
+                                       ? "fresh_current_runtime_generated"
+                                       : "imported_lower_layer";
+    ofstream quadruple_generation_out(quadruple_generation_path);
+    if (!quadruple_generation_out) {
+        if (why) *why = "failed to write quadruple-family expansion theorem data 55 generation audit";
+        return false;
+    }
+    quadruple_generation_out << "metric\tvalue\n";
+    quadruple_generation_out << "item_key\tquadruple_family_expansion_theorem_data_55\n";
+    quadruple_generation_out << "previous_provenance_label\timported_lower_layer\n";
+    quadruple_generation_out << "current_provenance_label\t" << quadruple_label << "\n";
+    quadruple_generation_out << "authoritative_constructor_name\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_constructor_name) << "\n";
+    quadruple_generation_out << "upstream_triple53_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << "\n";
+    quadruple_generation_out << "upstream_triple53_label\t" << triple_label << "\n";
+    quadruple_generation_out << "upstream_triple53_fallback_hit\t"
+                             << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    quadruple_generation_out << "upstream_pair52_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    quadruple_generation_out << "upstream_pair52_label\t" << pair_label << "\n";
+    quadruple_generation_out << "upstream_pair52_fallback_hit\t"
+                             << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    quadruple_generation_out << "pass1_builder_used\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_builder_used ? 1 : 0) << "\n";
+    quadruple_generation_out << "cache_loaded\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_cache_loaded ? 1 : 0) << "\n";
+    quadruple_generation_out << "cache_load_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_cache_load_path) << "\n";
+    quadruple_generation_out << "region_count\t" << g_last_quadruple_family_expansion_theorem_data_55_region_count << "\n";
+    quadruple_generation_out << "raw_candidates\t" << g_last_quadruple_family_theorem_data.raw_candidates << "\n";
+    quadruple_generation_out << "canonical_candidates\t" << g_last_quadruple_family_theorem_data.canonical_candidates << "\n";
+    quadruple_generation_out << "deduplicated_candidates\t" << g_last_quadruple_family_theorem_data.deduplicated_candidates << "\n";
+    quadruple_generation_out << "local_exact_survivors\t" << g_last_quadruple_family_theorem_data.local_exact_survivors << "\n";
+    quadruple_generation_out << "plus_one_survivors\t" << g_last_quadruple_family_theorem_data.plus_one_survivors << "\n";
+    quadruple_generation_out << "theorem_preserving_survivors\t" << g_last_quadruple_family_theorem_data.theorem_preserving_survivors << "\n";
+    quadruple_generation_out << "current_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint) << "\n";
+    quadruple_generation_out << "imported_comparison_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint) << "\n";
+    quadruple_generation_out << "imported_equality_result\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result) << "\n";
+    quadruple_generation_out << "fallback_reachable\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_fallback_reachable ? 1 : 0) << "\n";
+    quadruple_generation_out << "fallback_hit\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    quadruple_generation_out << "runtime_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint) << "\n";
+    quadruple_generation_out << "direct_consumer_summary\tbounded family-chain theorem;family-chain self verification via unified bounded schema-universe theorem\n";
+    quadruple_generation_out << "downstream_caveat_impact\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated
+                                     ? "quadruple 55 caveat removed; next lower-layer target is quintuple_family_expansion_theorem_data_57"
+                                     : "quadruple 55 caveat remains")
+                             << "\n";
+    quadruple_generation_out << "blocker\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_blocker) << "\n";
+    quadruple_generation_out << "caveat\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_caveat) << "\n";
+
+    ofstream quadruple_fingerprint_out(quadruple_fingerprint_path);
+    if (!quadruple_fingerprint_out) {
+        if (why) *why = "failed to write quadruple-family expansion theorem data 55 fingerprint";
+        return false;
+    }
+    quadruple_fingerprint_out << "metric\tvalue\n";
+    quadruple_fingerprint_out << "item_key\tquadruple_family_expansion_theorem_data_55\n";
+    quadruple_fingerprint_out << "current_provenance_label\t" << quadruple_label << "\n";
+    quadruple_fingerprint_out << "current_source_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_current_source_fingerprint) << "\n";
+    quadruple_fingerprint_out << "payload_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint) << "\n";
+    quadruple_fingerprint_out << "imported_comparison_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint) << "\n";
+    quadruple_fingerprint_out << "imported_equality_result\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result) << "\n";
+    quadruple_fingerprint_out << "region_count\t" << g_last_quadruple_family_expansion_theorem_data_55_region_count << "\n";
+    quadruple_fingerprint_out << "raw_candidates\t" << g_last_quadruple_family_theorem_data.raw_candidates << "\n";
+    quadruple_fingerprint_out << "canonical_candidates\t" << g_last_quadruple_family_theorem_data.canonical_candidates << "\n";
+    quadruple_fingerprint_out << "deduplicated_candidates\t" << g_last_quadruple_family_theorem_data.deduplicated_candidates << "\n";
+    quadruple_fingerprint_out << "local_exact_survivors\t" << g_last_quadruple_family_theorem_data.local_exact_survivors << "\n";
+    quadruple_fingerprint_out << "plus_one_survivors\t" << g_last_quadruple_family_theorem_data.plus_one_survivors << "\n";
+    quadruple_fingerprint_out << "theorem_preserving_survivors\t" << g_last_quadruple_family_theorem_data.theorem_preserving_survivors << "\n";
+    quadruple_fingerprint_out << "runtime_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint) << "\n";
+
+    ofstream quadruple_equality_out(quadruple_equality_path);
+    if (!quadruple_equality_out) {
+        if (why) *why = "failed to write quadruple-family expansion theorem data 55 equality audit";
+        return false;
+    }
+    quadruple_equality_out << "metric\tvalue\n";
+    quadruple_equality_out << "item_key\tquadruple_family_expansion_theorem_data_55\n";
+    quadruple_equality_out << "equality_rule\tregion-count + aggregate-count + consumer-visible quadruple theorem-data equality\n";
+    quadruple_equality_out << "current_comparison_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(
+                                  quadruple_family_expansion_theorem_data_55_current_comparison_fingerprint_(
+                                      g_last_quadruple_family_theorem_data))
+                           << "\n";
+    quadruple_equality_out << "imported_comparison_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint) << "\n";
+    quadruple_equality_out << "imported_equality_result\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result) << "\n";
+    quadruple_equality_out << "rowset_note\tlegacy output 55 did not preserve a separate candidate row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality\n";
+
+    ofstream quadruple_constructor_out(quadruple_constructor_path);
+    if (!quadruple_constructor_out) {
+        if (why) *why = "failed to write quadruple-family expansion theorem data 55 constructor fingerprint";
+        return false;
+    }
+    quadruple_constructor_out << "metric\tvalue\n";
+    quadruple_constructor_out << "constructor_name\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_constructor_name) << "\n";
+    quadruple_constructor_out << "authoritative_source\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_authoritative_source) << "\n";
+    quadruple_constructor_out << "pass1_builder_used\t"
+                              << (g_last_quadruple_family_expansion_theorem_data_55_builder_used ? 1 : 0) << "\n";
+    quadruple_constructor_out << "cache_loaded\t"
+                              << (g_last_quadruple_family_expansion_theorem_data_55_cache_loaded ? 1 : 0) << "\n";
+    quadruple_constructor_out << "cache_load_path\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_cache_load_path) << "\n";
+    quadruple_constructor_out << "upstream_triple53_fallback_hit\t"
+                              << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    quadruple_constructor_out << "upstream_pair52_fallback_hit\t"
+                              << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    quadruple_constructor_out << "fallback_reachable\t"
+                              << (g_last_quadruple_family_expansion_theorem_data_55_fallback_reachable ? 1 : 0) << "\n";
+    quadruple_constructor_out << "fallback_hit\t"
+                              << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    quadruple_constructor_out << "runtime_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint) << "\n";
+
+    if (g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated &&
+        !g_last_quintuple_family_expansion_region_specs.empty() &&
+        g_last_quintuple_family_expansion_region_specs.size() == g_last_quintuple_family_expansion_stats.size()) {
+        ofstream quintuple_payload_out(quintuple_payload_path);
+        if (!quintuple_payload_out) {
+            if (why) *why = "failed to write quintuple-family expansion theorem data 57 payload";
+            return false;
+        }
+        quintuple_payload_out << "region_index\tkind\tregion_fingerprint\tsource_family_fingerprints\tsymbol_bound\tantecedent_bound\traw_candidates\tcanonical_candidates\tout_of_pool_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\twhy\n";
+        for (size_t i = 0; i < g_last_quintuple_family_expansion_region_specs.size(); ++i) {
+            const auto& spec = g_last_quintuple_family_expansion_region_specs[i];
+            const auto& st = g_last_quintuple_family_expansion_stats[i];
+            quintuple_payload_out
+                << i << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.kind) << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.fingerprint) << '\t'
+                << sanitize_exact_basis_tsv_field_(join_vector_with_delim_(spec.source_family_fingerprints, ";")) << '\t'
+                << spec.symbol_bound << '\t'
+                << spec.antecedent_bound << '\t'
+                << st.raw_candidates << '\t'
+                << st.canonical_candidates << '\t'
+                << st.out_of_pool_candidates << '\t'
+                << st.local_exact_survivors << '\t'
+                << st.plus_one_survivors << '\t'
+                << st.theorem_preserving_survivors << '\t'
+                << sanitize_exact_basis_tsv_field_(st.why) << "\n";
+        }
+    }
+
+    const string quintuple_label = g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                       ? "fresh_current_runtime_generated"
+                                       : "imported_lower_layer";
+    ofstream quintuple_generation_out(quintuple_generation_path);
+    if (!quintuple_generation_out) {
+        if (why) *why = "failed to write quintuple-family expansion theorem data 57 generation audit";
+        return false;
+    }
+    quintuple_generation_out << "metric\tvalue\n";
+    quintuple_generation_out << "item_key\tquintuple_family_expansion_theorem_data_57\n";
+    quintuple_generation_out << "previous_provenance_label\timported_lower_layer\n";
+    quintuple_generation_out << "current_provenance_label\t" << quintuple_label << "\n";
+    quintuple_generation_out << "authoritative_constructor_name\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_constructor_name) << "\n";
+    quintuple_generation_out << "upstream_quad55_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_cache_load_path) << "\n";
+    quintuple_generation_out << "upstream_quad55_label\t" << quadruple_label << "\n";
+    quintuple_generation_out << "upstream_quad55_fallback_hit\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    quintuple_generation_out << "upstream_triple53_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << "\n";
+    quintuple_generation_out << "upstream_triple53_label\t" << triple_label << "\n";
+    quintuple_generation_out << "upstream_triple53_fallback_hit\t"
+                             << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    quintuple_generation_out << "upstream_pair52_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    quintuple_generation_out << "upstream_pair52_label\t" << pair_label << "\n";
+    quintuple_generation_out << "upstream_pair52_fallback_hit\t"
+                             << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    quintuple_generation_out << "pass1_builder_used\t"
+                             << (g_last_quintuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    quintuple_generation_out << "cache_loaded\t"
+                             << (g_last_quintuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    quintuple_generation_out << "cache_load_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    quintuple_generation_out << "region_count\t" << g_last_quintuple_family_expansion_theorem_data_57_region_count << "\n";
+    quintuple_generation_out << "raw_candidates\t" << g_last_quintuple_family_theorem_data.raw_candidates << "\n";
+    quintuple_generation_out << "canonical_candidates\t" << g_last_quintuple_family_theorem_data.canonical_candidates << "\n";
+    quintuple_generation_out << "deduplicated_candidates\t" << g_last_quintuple_family_theorem_data.deduplicated_candidates << "\n";
+    quintuple_generation_out << "local_exact_survivors\t" << g_last_quintuple_family_theorem_data.local_exact_survivors << "\n";
+    quintuple_generation_out << "plus_one_survivors\t" << g_last_quintuple_family_theorem_data.plus_one_survivors << "\n";
+    quintuple_generation_out << "theorem_preserving_survivors\t" << g_last_quintuple_family_theorem_data.theorem_preserving_survivors << "\n";
+    quintuple_generation_out << "current_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    quintuple_generation_out << "imported_comparison_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    quintuple_generation_out << "imported_equality_result\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    quintuple_generation_out << "fallback_reachable\t"
+                             << (g_last_quintuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    quintuple_generation_out << "fallback_hit\t"
+                             << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    quintuple_generation_out << "runtime_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    quintuple_generation_out << "direct_consumer_summary\tbounded family-chain theorem;family-chain self verification via unified bounded schema-universe theorem\n";
+    quintuple_generation_out << "downstream_caveat_impact\t"
+                             << (g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                     ? (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                            ? "quintuple 57 caveat removed; sextuple and septuple 57 are current constructor/cache-backed; next lower-layer target is high_family_expansion_theorem_data_57"
+                                            : (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                                   ? "quintuple 57 caveat removed; sextuple 57 is also current constructor/cache-backed; next lower-layer target is septuple_family_expansion_theorem_data_57"
+                                                   : "quintuple 57 caveat removed; next lower-layer target is sextuple_family_expansion_theorem_data_57"))
+                                     : "quintuple 57 caveat remains")
+                             << "\n";
+    quintuple_generation_out << "relationship_to_remaining_57_layers\t"
+                             << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                                     ? "sextuple, septuple, and high-family 57 sublayers are current-generated; no remaining family-chain lower imported row"
+                                     : "sextuple and septuple 57 sublayers are now current-generated; high-family 57 remains a separate imported lower-layer row unless separately rederived")
+                             << "\n";
+    quintuple_generation_out << "blocker\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_blocker) << "\n";
+    quintuple_generation_out << "caveat\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_caveat) << "\n";
+
+    ofstream quintuple_fingerprint_out(quintuple_fingerprint_path);
+    if (!quintuple_fingerprint_out) {
+        if (why) *why = "failed to write quintuple-family expansion theorem data 57 fingerprint";
+        return false;
+    }
+    quintuple_fingerprint_out << "metric\tvalue\n";
+    quintuple_fingerprint_out << "item_key\tquintuple_family_expansion_theorem_data_57\n";
+    quintuple_fingerprint_out << "current_provenance_label\t" << quintuple_label << "\n";
+    quintuple_fingerprint_out << "current_source_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_current_source_fingerprint) << "\n";
+    quintuple_fingerprint_out << "payload_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    quintuple_fingerprint_out << "imported_comparison_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    quintuple_fingerprint_out << "imported_equality_result\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    quintuple_fingerprint_out << "region_count\t" << g_last_quintuple_family_expansion_theorem_data_57_region_count << "\n";
+    quintuple_fingerprint_out << "raw_candidates\t" << g_last_quintuple_family_theorem_data.raw_candidates << "\n";
+    quintuple_fingerprint_out << "canonical_candidates\t" << g_last_quintuple_family_theorem_data.canonical_candidates << "\n";
+    quintuple_fingerprint_out << "deduplicated_candidates\t" << g_last_quintuple_family_theorem_data.deduplicated_candidates << "\n";
+    quintuple_fingerprint_out << "local_exact_survivors\t" << g_last_quintuple_family_theorem_data.local_exact_survivors << "\n";
+    quintuple_fingerprint_out << "plus_one_survivors\t" << g_last_quintuple_family_theorem_data.plus_one_survivors << "\n";
+    quintuple_fingerprint_out << "theorem_preserving_survivors\t" << g_last_quintuple_family_theorem_data.theorem_preserving_survivors << "\n";
+    quintuple_fingerprint_out << "runtime_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    ofstream quintuple_equality_out(quintuple_equality_path);
+    if (!quintuple_equality_out) {
+        if (why) *why = "failed to write quintuple-family expansion theorem data 57 equality audit";
+        return false;
+    }
+    quintuple_equality_out << "metric\tvalue\n";
+    quintuple_equality_out << "item_key\tquintuple_family_expansion_theorem_data_57\n";
+    quintuple_equality_out << "equality_rule\tregion-count + aggregate-count + consumer-visible quintuple theorem-data equality\n";
+    quintuple_equality_out << "current_comparison_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(
+                                  quintuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                                      g_last_quintuple_family_theorem_data))
+                           << "\n";
+    quintuple_equality_out << "imported_comparison_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    quintuple_equality_out << "imported_equality_result\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    quintuple_equality_out << "rowset_note\tlegacy output 57 did not preserve a separate quintuple row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality\n";
+
+    ofstream quintuple_constructor_out(quintuple_constructor_path);
+    if (!quintuple_constructor_out) {
+        if (why) *why = "failed to write quintuple-family expansion theorem data 57 constructor fingerprint";
+        return false;
+    }
+    quintuple_constructor_out << "metric\tvalue\n";
+    quintuple_constructor_out << "constructor_name\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_constructor_name) << "\n";
+    quintuple_constructor_out << "authoritative_source\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_authoritative_source) << "\n";
+    quintuple_constructor_out << "pass1_builder_used\t"
+                              << (g_last_quintuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    quintuple_constructor_out << "cache_loaded\t"
+                              << (g_last_quintuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    quintuple_constructor_out << "cache_load_path\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    quintuple_constructor_out << "upstream_quad55_fallback_hit\t"
+                              << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    quintuple_constructor_out << "upstream_triple53_fallback_hit\t"
+                              << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    quintuple_constructor_out << "upstream_pair52_fallback_hit\t"
+                              << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    quintuple_constructor_out << "fallback_reachable\t"
+                              << (g_last_quintuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    quintuple_constructor_out << "fallback_hit\t"
+                              << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    quintuple_constructor_out << "runtime_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    if (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated &&
+        !g_last_sextuple_family_expansion_region_specs.empty() &&
+        g_last_sextuple_family_expansion_region_specs.size() == g_last_sextuple_family_expansion_stats.size()) {
+        ofstream sextuple_payload_out(sextuple_payload_path);
+        if (!sextuple_payload_out) {
+            if (why) *why = "failed to write sextuple-family expansion theorem data 57 payload";
+            return false;
+        }
+        sextuple_payload_out << "region_index\tkind\tregion_fingerprint\tsource_family_fingerprints\tsymbol_bound\tantecedent_bound\traw_candidates\tcanonical_candidates\tout_of_pool_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\twhy\n";
+        for (size_t i = 0; i < g_last_sextuple_family_expansion_region_specs.size(); ++i) {
+            const auto& spec = g_last_sextuple_family_expansion_region_specs[i];
+            const auto& st = g_last_sextuple_family_expansion_stats[i];
+            sextuple_payload_out
+                << i << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.kind) << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.fingerprint) << '\t'
+                << sanitize_exact_basis_tsv_field_(join_vector_with_delim_(spec.source_family_fingerprints, ";")) << '\t'
+                << spec.symbol_bound << '\t'
+                << spec.antecedent_bound << '\t'
+                << st.raw_candidates << '\t'
+                << st.canonical_candidates << '\t'
+                << st.out_of_pool_candidates << '\t'
+                << st.local_exact_survivors << '\t'
+                << st.plus_one_survivors << '\t'
+                << st.theorem_preserving_survivors << '\t'
+                << sanitize_exact_basis_tsv_field_(st.why) << "\n";
+        }
+    }
+
+    const string sextuple_label = g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                      ? "fresh_current_runtime_generated"
+                                      : "imported_lower_layer";
+    ofstream sextuple_generation_out(sextuple_generation_path);
+    if (!sextuple_generation_out) {
+        if (why) *why = "failed to write sextuple-family expansion theorem data 57 generation audit";
+        return false;
+    }
+    sextuple_generation_out << "metric\tvalue\n";
+    sextuple_generation_out << "item_key\tsextuple_family_expansion_theorem_data_57\n";
+    sextuple_generation_out << "previous_provenance_label\timported_lower_layer\n";
+    sextuple_generation_out << "current_provenance_label\t" << sextuple_label << "\n";
+    sextuple_generation_out << "authoritative_constructor_name\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_constructor_name) << "\n";
+    sextuple_generation_out << "upstream_quintuple57_source_path\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    sextuple_generation_out << "upstream_quintuple57_label\t" << quintuple_label << "\n";
+    sextuple_generation_out << "upstream_quintuple57_fallback_hit\t"
+                            << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    sextuple_generation_out << "upstream_quad55_source_path\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_cache_load_path) << "\n";
+    sextuple_generation_out << "upstream_quad55_label\t" << quadruple_label << "\n";
+    sextuple_generation_out << "upstream_quad55_fallback_hit\t"
+                            << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    sextuple_generation_out << "upstream_triple53_source_path\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << "\n";
+    sextuple_generation_out << "upstream_triple53_label\t" << triple_label << "\n";
+    sextuple_generation_out << "upstream_triple53_fallback_hit\t"
+                            << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    sextuple_generation_out << "upstream_pair52_source_path\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    sextuple_generation_out << "upstream_pair52_label\t" << pair_label << "\n";
+    sextuple_generation_out << "upstream_pair52_fallback_hit\t"
+                            << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    sextuple_generation_out << "pass1_builder_used\t"
+                            << (g_last_sextuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    sextuple_generation_out << "cache_loaded\t"
+                            << (g_last_sextuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    sextuple_generation_out << "cache_load_path\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    sextuple_generation_out << "region_count\t" << g_last_sextuple_family_expansion_theorem_data_57_region_count << "\n";
+    sextuple_generation_out << "raw_candidates\t" << g_last_sextuple_family_theorem_data.raw_candidates << "\n";
+    sextuple_generation_out << "canonical_candidates\t" << g_last_sextuple_family_theorem_data.canonical_candidates << "\n";
+    sextuple_generation_out << "deduplicated_candidates\t" << g_last_sextuple_family_theorem_data.deduplicated_candidates << "\n";
+    sextuple_generation_out << "local_exact_survivors\t" << g_last_sextuple_family_theorem_data.local_exact_survivors << "\n";
+    sextuple_generation_out << "plus_one_survivors\t" << g_last_sextuple_family_theorem_data.plus_one_survivors << "\n";
+    sextuple_generation_out << "theorem_preserving_survivors\t" << g_last_sextuple_family_theorem_data.theorem_preserving_survivors << "\n";
+    sextuple_generation_out << "current_fingerprint\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    sextuple_generation_out << "imported_comparison_fingerprint\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    sextuple_generation_out << "imported_equality_result\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    sextuple_generation_out << "fallback_reachable\t"
+                            << (g_last_sextuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    sextuple_generation_out << "fallback_hit\t"
+                            << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    sextuple_generation_out << "runtime_fingerprint\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    sextuple_generation_out << "direct_consumer_summary\tbounded family-chain theorem;family-chain self verification via unified bounded schema-universe theorem\n";
+    sextuple_generation_out << "downstream_caveat_impact\t"
+                            << (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                    ? "sextuple 57 caveat removed; septuple 57 is also current constructor/cache-backed; next lower-layer target is high_family_expansion_theorem_data_57"
+                                    : (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                           ? "sextuple 57 caveat removed; next lower-layer target is septuple_family_expansion_theorem_data_57"
+                                           : "sextuple 57 caveat remains"))
+                            << "\n";
+    sextuple_generation_out << "relationship_to_remaining_57_layers\t"
+                            << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                                    ? "septuple and high-family 57 are current-generated; no remaining family-chain lower imported row"
+                                    : "septuple 57 is now current-generated; high-family 57 remains a separate imported lower-layer row unless separately rederived")
+                            << "\n";
+    sextuple_generation_out << "blocker\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_blocker) << "\n";
+    sextuple_generation_out << "caveat\t"
+                            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_caveat) << "\n";
+
+    ofstream sextuple_fingerprint_out(sextuple_fingerprint_path);
+    if (!sextuple_fingerprint_out) {
+        if (why) *why = "failed to write sextuple-family expansion theorem data 57 fingerprint";
+        return false;
+    }
+    sextuple_fingerprint_out << "metric\tvalue\n";
+    sextuple_fingerprint_out << "item_key\tsextuple_family_expansion_theorem_data_57\n";
+    sextuple_fingerprint_out << "current_provenance_label\t" << sextuple_label << "\n";
+    sextuple_fingerprint_out << "current_source_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_current_source_fingerprint) << "\n";
+    sextuple_fingerprint_out << "payload_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    sextuple_fingerprint_out << "imported_comparison_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    sextuple_fingerprint_out << "imported_equality_result\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    sextuple_fingerprint_out << "region_count\t" << g_last_sextuple_family_expansion_theorem_data_57_region_count << "\n";
+    sextuple_fingerprint_out << "raw_candidates\t" << g_last_sextuple_family_theorem_data.raw_candidates << "\n";
+    sextuple_fingerprint_out << "canonical_candidates\t" << g_last_sextuple_family_theorem_data.canonical_candidates << "\n";
+    sextuple_fingerprint_out << "deduplicated_candidates\t" << g_last_sextuple_family_theorem_data.deduplicated_candidates << "\n";
+    sextuple_fingerprint_out << "local_exact_survivors\t" << g_last_sextuple_family_theorem_data.local_exact_survivors << "\n";
+    sextuple_fingerprint_out << "plus_one_survivors\t" << g_last_sextuple_family_theorem_data.plus_one_survivors << "\n";
+    sextuple_fingerprint_out << "theorem_preserving_survivors\t" << g_last_sextuple_family_theorem_data.theorem_preserving_survivors << "\n";
+    sextuple_fingerprint_out << "runtime_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    ofstream sextuple_equality_out(sextuple_equality_path);
+    if (!sextuple_equality_out) {
+        if (why) *why = "failed to write sextuple-family expansion theorem data 57 equality audit";
+        return false;
+    }
+    sextuple_equality_out << "metric\tvalue\n";
+    sextuple_equality_out << "item_key\tsextuple_family_expansion_theorem_data_57\n";
+    sextuple_equality_out << "equality_rule\tregion-count + aggregate-count + consumer-visible sextuple theorem-data equality\n";
+    sextuple_equality_out << "current_comparison_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(
+                                 sextuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                                     g_last_sextuple_family_theorem_data))
+                          << "\n";
+    sextuple_equality_out << "imported_comparison_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    sextuple_equality_out << "imported_equality_result\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    sextuple_equality_out << "rowset_note\tlegacy output 57 did not preserve a separate sextuple row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality\n";
+
+    ofstream sextuple_constructor_out(sextuple_constructor_path);
+    if (!sextuple_constructor_out) {
+        if (why) *why = "failed to write sextuple-family expansion theorem data 57 constructor fingerprint";
+        return false;
+    }
+    sextuple_constructor_out << "metric\tvalue\n";
+    sextuple_constructor_out << "constructor_name\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_constructor_name) << "\n";
+    sextuple_constructor_out << "authoritative_source\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_authoritative_source) << "\n";
+    sextuple_constructor_out << "pass1_builder_used\t"
+                             << (g_last_sextuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    sextuple_constructor_out << "cache_loaded\t"
+                             << (g_last_sextuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    sextuple_constructor_out << "cache_load_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    sextuple_constructor_out << "upstream_quintuple57_fallback_hit\t"
+                             << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    sextuple_constructor_out << "upstream_quad55_fallback_hit\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    sextuple_constructor_out << "upstream_triple53_fallback_hit\t"
+                             << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    sextuple_constructor_out << "upstream_pair52_fallback_hit\t"
+                             << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    sextuple_constructor_out << "fallback_reachable\t"
+                             << (g_last_sextuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    sextuple_constructor_out << "fallback_hit\t"
+                             << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    sextuple_constructor_out << "runtime_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    if (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated &&
+        !g_last_septuple_family_expansion_region_specs.empty() &&
+        g_last_septuple_family_expansion_region_specs.size() == g_last_septuple_family_expansion_stats.size()) {
+        ofstream septuple_payload_out(septuple_payload_path);
+        if (!septuple_payload_out) {
+            if (why) *why = "failed to write septuple-family expansion theorem data 57 payload";
+            return false;
+        }
+        septuple_payload_out << "region_index\tkind\tregion_fingerprint\tsource_family_fingerprints\tsymbol_bound\tantecedent_bound\traw_candidates\tcanonical_candidates\tout_of_pool_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\twhy\n";
+        for (size_t i = 0; i < g_last_septuple_family_expansion_region_specs.size(); ++i) {
+            const auto& spec = g_last_septuple_family_expansion_region_specs[i];
+            const auto& st = g_last_septuple_family_expansion_stats[i];
+            septuple_payload_out
+                << i << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.kind) << '\t'
+                << sanitize_exact_basis_tsv_field_(spec.fingerprint) << '\t'
+                << sanitize_exact_basis_tsv_field_(join_vector_with_delim_(spec.source_family_fingerprints, ";")) << '\t'
+                << spec.symbol_bound << '\t'
+                << spec.antecedent_bound << '\t'
+                << st.raw_candidates << '\t'
+                << st.canonical_candidates << '\t'
+                << st.out_of_pool_candidates << '\t'
+                << st.local_exact_survivors << '\t'
+                << st.plus_one_survivors << '\t'
+                << st.theorem_preserving_survivors << '\t'
+                << sanitize_exact_basis_tsv_field_(st.why) << "\n";
+        }
+    }
+
+    const string septuple_label = g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                      ? "fresh_current_runtime_generated"
+                                      : "imported_lower_layer";
+    ofstream septuple_generation_out(septuple_generation_path);
+    if (!septuple_generation_out) {
+        if (why) *why = "failed to write septuple-family expansion theorem data 57 generation audit";
+        return false;
+    }
+    septuple_generation_out << "metric\tvalue\n";
+    septuple_generation_out << "item_key\tseptuple_family_expansion_theorem_data_57\n";
+    septuple_generation_out << "previous_provenance_label\timported_lower_layer\n";
+    septuple_generation_out << "current_provenance_label\t" << septuple_label << "\n";
+    septuple_generation_out << "authoritative_constructor_name\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_constructor_name) << "\n";
+    septuple_generation_out << "upstream_sextuple57_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    septuple_generation_out << "upstream_sextuple57_label\t" << sextuple_label << "\n";
+    septuple_generation_out << "upstream_sextuple57_fallback_hit\t"
+                             << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    septuple_generation_out << "upstream_quintuple57_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    septuple_generation_out << "upstream_quintuple57_label\t" << quintuple_label << "\n";
+    septuple_generation_out << "upstream_quintuple57_fallback_hit\t"
+                             << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    septuple_generation_out << "upstream_quad55_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_cache_load_path) << "\n";
+    septuple_generation_out << "upstream_quad55_label\t" << quadruple_label << "\n";
+    septuple_generation_out << "upstream_quad55_fallback_hit\t"
+                             << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    septuple_generation_out << "upstream_triple53_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << "\n";
+    septuple_generation_out << "upstream_triple53_label\t" << triple_label << "\n";
+    septuple_generation_out << "upstream_triple53_fallback_hit\t"
+                             << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    septuple_generation_out << "upstream_pair52_source_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    septuple_generation_out << "upstream_pair52_label\t" << pair_label << "\n";
+    septuple_generation_out << "upstream_pair52_fallback_hit\t"
+                             << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    septuple_generation_out << "pass1_builder_used\t"
+                             << (g_last_septuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    septuple_generation_out << "cache_loaded\t"
+                             << (g_last_septuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    septuple_generation_out << "cache_load_path\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    septuple_generation_out << "region_count\t" << g_last_septuple_family_expansion_theorem_data_57_region_count << "\n";
+    septuple_generation_out << "raw_candidates\t" << g_last_septuple_family_theorem_data.raw_candidates << "\n";
+    septuple_generation_out << "canonical_candidates\t" << g_last_septuple_family_theorem_data.canonical_candidates << "\n";
+    septuple_generation_out << "deduplicated_candidates\t" << g_last_septuple_family_theorem_data.deduplicated_candidates << "\n";
+    septuple_generation_out << "local_exact_survivors\t" << g_last_septuple_family_theorem_data.local_exact_survivors << "\n";
+    septuple_generation_out << "plus_one_survivors\t" << g_last_septuple_family_theorem_data.plus_one_survivors << "\n";
+    septuple_generation_out << "theorem_preserving_survivors\t" << g_last_septuple_family_theorem_data.theorem_preserving_survivors << "\n";
+    septuple_generation_out << "current_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    septuple_generation_out << "imported_comparison_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    septuple_generation_out << "imported_equality_result\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    septuple_generation_out << "fallback_reachable\t"
+                             << (g_last_septuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    septuple_generation_out << "fallback_hit\t"
+                             << (g_last_septuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    septuple_generation_out << "runtime_fingerprint\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    septuple_generation_out << "direct_consumer_summary\tbounded family-chain theorem;family-chain self verification via unified bounded schema-universe theorem\n";
+    septuple_generation_out << "downstream_caveat_impact\t"
+                             << (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                     ? "septuple 57 caveat removed; next lower-layer target is high_family_expansion_theorem_data_57"
+                                     : "septuple 57 caveat remains")
+                             << "\n";
+    septuple_generation_out << "relationship_to_high_family57\t"
+                             << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                                     ? "high-family 57 aggregate is current constructor/cache-backed over sextuple and septuple components; family-chain lower-layer caveat closed"
+                                     : "high-family 57 remains a separate aggregate row over sextuple and septuple components unless separately rederived")
+                             << "\n";
+    septuple_generation_out << "blocker\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_blocker) << "\n";
+    septuple_generation_out << "caveat\t"
+                             << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_caveat) << "\n";
+
+    ofstream septuple_fingerprint_out(septuple_fingerprint_path);
+    if (!septuple_fingerprint_out) {
+        if (why) *why = "failed to write septuple-family expansion theorem data 57 fingerprint";
+        return false;
+    }
+    septuple_fingerprint_out << "metric\tvalue\n";
+    septuple_fingerprint_out << "item_key\tseptuple_family_expansion_theorem_data_57\n";
+    septuple_fingerprint_out << "current_provenance_label\t" << septuple_label << "\n";
+    septuple_fingerprint_out << "current_source_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_current_source_fingerprint) << "\n";
+    septuple_fingerprint_out << "payload_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    septuple_fingerprint_out << "imported_comparison_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    septuple_fingerprint_out << "imported_equality_result\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    septuple_fingerprint_out << "region_count\t" << g_last_septuple_family_expansion_theorem_data_57_region_count << "\n";
+    septuple_fingerprint_out << "raw_candidates\t" << g_last_septuple_family_theorem_data.raw_candidates << "\n";
+    septuple_fingerprint_out << "canonical_candidates\t" << g_last_septuple_family_theorem_data.canonical_candidates << "\n";
+    septuple_fingerprint_out << "deduplicated_candidates\t" << g_last_septuple_family_theorem_data.deduplicated_candidates << "\n";
+    septuple_fingerprint_out << "local_exact_survivors\t" << g_last_septuple_family_theorem_data.local_exact_survivors << "\n";
+    septuple_fingerprint_out << "plus_one_survivors\t" << g_last_septuple_family_theorem_data.plus_one_survivors << "\n";
+    septuple_fingerprint_out << "theorem_preserving_survivors\t" << g_last_septuple_family_theorem_data.theorem_preserving_survivors << "\n";
+    septuple_fingerprint_out << "runtime_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    ofstream septuple_equality_out(septuple_equality_path);
+    if (!septuple_equality_out) {
+        if (why) *why = "failed to write septuple-family expansion theorem data 57 equality audit";
+        return false;
+    }
+    septuple_equality_out << "metric\tvalue\n";
+    septuple_equality_out << "item_key\tseptuple_family_expansion_theorem_data_57\n";
+    septuple_equality_out << "equality_rule\tregion-count + aggregate-count + consumer-visible septuple theorem-data equality\n";
+    septuple_equality_out << "current_comparison_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(
+                                  septuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                                      g_last_septuple_family_theorem_data))
+                           << "\n";
+    septuple_equality_out << "imported_comparison_fingerprint\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    septuple_equality_out << "imported_equality_result\t"
+                           << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    septuple_equality_out << "rowset_note\tlegacy output 57 did not preserve a separate septuple row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality\n";
+
+    ofstream septuple_constructor_out(septuple_constructor_path);
+    if (!septuple_constructor_out) {
+        if (why) *why = "failed to write septuple-family expansion theorem data 57 constructor fingerprint";
+        return false;
+    }
+    septuple_constructor_out << "metric\tvalue\n";
+    septuple_constructor_out << "constructor_name\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_constructor_name) << "\n";
+    septuple_constructor_out << "authoritative_source\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_authoritative_source) << "\n";
+    septuple_constructor_out << "pass1_builder_used\t"
+                              << (g_last_septuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    septuple_constructor_out << "cache_loaded\t"
+                              << (g_last_septuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    septuple_constructor_out << "cache_load_path\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    septuple_constructor_out << "upstream_sextuple57_fallback_hit\t"
+                              << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    septuple_constructor_out << "upstream_quintuple57_fallback_hit\t"
+                              << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    septuple_constructor_out << "upstream_quad55_fallback_hit\t"
+                              << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    septuple_constructor_out << "upstream_triple53_fallback_hit\t"
+                              << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    septuple_constructor_out << "upstream_pair52_fallback_hit\t"
+                              << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    septuple_constructor_out << "fallback_reachable\t"
+                              << (g_last_septuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    septuple_constructor_out << "fallback_hit\t"
+                              << (g_last_septuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    septuple_constructor_out << "runtime_fingerprint\t"
+                              << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    const string high_label = g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                                  ? "fresh_current_runtime_generated"
+                                  : "imported_lower_layer";
+    if (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated) {
+        ofstream high_payload_out(high_payload_path);
+        if (!high_payload_out) {
+            if (why) *why = "failed to write high-family expansion theorem data 57 payload";
+            return false;
+        }
+        high_payload_out << "component_key\tcomponent_source_path\tregion_count\traw_candidates\tcanonical_candidates\tdeduplicated_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\tsource_runtime_fingerprint\twhy\n";
+        high_payload_out
+            << "sextuple_component\t"
+            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_cache_load_path) << '\t'
+            << g_last_sextuple_family_theorem_data.region_count << '\t'
+            << g_last_sextuple_family_theorem_data.raw_candidates << '\t'
+            << g_last_sextuple_family_theorem_data.canonical_candidates << '\t'
+            << g_last_sextuple_family_theorem_data.deduplicated_candidates << '\t'
+            << g_last_sextuple_family_theorem_data.local_exact_survivors << '\t'
+            << g_last_sextuple_family_theorem_data.plus_one_survivors << '\t'
+            << g_last_sextuple_family_theorem_data.theorem_preserving_survivors << '\t'
+            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint) << '\t'
+            << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_theorem_data.why) << "\n";
+        high_payload_out
+            << "septuple_component\t"
+            << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_cache_load_path) << '\t'
+            << g_last_septuple_family_theorem_data.region_count << '\t'
+            << g_last_septuple_family_theorem_data.raw_candidates << '\t'
+            << g_last_septuple_family_theorem_data.canonical_candidates << '\t'
+            << g_last_septuple_family_theorem_data.deduplicated_candidates << '\t'
+            << g_last_septuple_family_theorem_data.local_exact_survivors << '\t'
+            << g_last_septuple_family_theorem_data.plus_one_survivors << '\t'
+            << g_last_septuple_family_theorem_data.theorem_preserving_survivors << '\t'
+            << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint) << '\t'
+            << sanitize_exact_basis_tsv_field_(g_last_septuple_family_theorem_data.why) << "\n";
+        high_payload_out
+            << "high_family_aggregate\t"
+            << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_cache_load_path) << '\t'
+            << g_last_high_family_theorem_data.region_count_total << '\t'
+            << g_last_high_family_theorem_data.raw_candidates << '\t'
+            << g_last_high_family_theorem_data.canonical_candidates << '\t'
+            << g_last_high_family_theorem_data.deduplicated_candidates << '\t'
+            << g_last_high_family_theorem_data.local_exact_survivors << '\t'
+            << g_last_high_family_theorem_data.plus_one_survivors << '\t'
+            << g_last_high_family_theorem_data.theorem_preserving_survivors << '\t'
+            << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_runtime_fingerprint) << '\t'
+            << sanitize_exact_basis_tsv_field_(g_last_high_family_theorem_data.why) << "\n";
+    }
+
+    ofstream high_generation_out(high_generation_path);
+    if (!high_generation_out) {
+        if (why) *why = "failed to write high-family expansion theorem data 57 generation audit";
+        return false;
+    }
+    high_generation_out << "metric\tvalue\n";
+    high_generation_out << "item_key\thigh_family_expansion_theorem_data_57\n";
+    high_generation_out << "previous_provenance_label\timported_lower_layer\n";
+    high_generation_out << "current_provenance_label\t" << high_label << "\n";
+    high_generation_out << "authoritative_constructor_name\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_constructor_name) << "\n";
+    high_generation_out << "upstream_septuple57_source_path\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    high_generation_out << "upstream_septuple57_label\t" << septuple_label << "\n";
+    high_generation_out << "upstream_septuple57_fallback_hit\t"
+                        << (g_last_septuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_generation_out << "upstream_sextuple57_source_path\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    high_generation_out << "upstream_sextuple57_label\t" << sextuple_label << "\n";
+    high_generation_out << "upstream_sextuple57_fallback_hit\t"
+                        << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_generation_out << "upstream_quintuple57_source_path\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    high_generation_out << "upstream_quintuple57_label\t" << quintuple_label << "\n";
+    high_generation_out << "upstream_quintuple57_fallback_hit\t"
+                        << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_generation_out << "upstream_quad55_source_path\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_cache_load_path) << "\n";
+    high_generation_out << "upstream_quad55_label\t" << quadruple_label << "\n";
+    high_generation_out << "upstream_quad55_fallback_hit\t"
+                        << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    high_generation_out << "upstream_triple53_source_path\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << "\n";
+    high_generation_out << "upstream_triple53_label\t" << triple_label << "\n";
+    high_generation_out << "upstream_triple53_fallback_hit\t"
+                        << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    high_generation_out << "upstream_pair52_source_path\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << "\n";
+    high_generation_out << "upstream_pair52_label\t" << pair_label << "\n";
+    high_generation_out << "upstream_pair52_fallback_hit\t"
+                        << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    high_generation_out << "pass1_builder_used\t"
+                        << (g_last_high_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    high_generation_out << "cache_loaded\t"
+                        << (g_last_high_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    high_generation_out << "cache_load_path\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    high_generation_out << "sextuple_region_count\t" << g_last_high_family_theorem_data.sextuple_region_count << "\n";
+    high_generation_out << "septuple_region_count\t" << g_last_high_family_theorem_data.septuple_region_count << "\n";
+    high_generation_out << "region_count\t" << g_last_high_family_theorem_data.region_count_total << "\n";
+    high_generation_out << "raw_candidates\t" << g_last_high_family_theorem_data.raw_candidates << "\n";
+    high_generation_out << "canonical_candidates\t" << g_last_high_family_theorem_data.canonical_candidates << "\n";
+    high_generation_out << "deduplicated_candidates\t" << g_last_high_family_theorem_data.deduplicated_candidates << "\n";
+    high_generation_out << "local_exact_survivors\t" << g_last_high_family_theorem_data.local_exact_survivors << "\n";
+    high_generation_out << "plus_one_survivors\t" << g_last_high_family_theorem_data.plus_one_survivors << "\n";
+    high_generation_out << "theorem_preserving_survivors\t" << g_last_high_family_theorem_data.theorem_preserving_survivors << "\n";
+    high_generation_out << "current_fingerprint\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    high_generation_out << "imported_comparison_fingerprint\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    high_generation_out << "imported_equality_result\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    high_generation_out << "fallback_reachable\t"
+                        << (g_last_high_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    high_generation_out << "fallback_hit\t"
+                        << (g_last_high_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_generation_out << "runtime_fingerprint\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    high_generation_out << "direct_consumer_summary\tbounded family-chain theorem;family-chain self verification via unified bounded schema-universe theorem\n";
+    high_generation_out << "downstream_caveat_impact\t"
+                        << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                                ? "high-family 57 aggregate caveat removed; all seven family-chain lower layers are current constructor/cache-backed"
+                                : "high-family 57 aggregate caveat remains")
+                        << "\n";
+    high_generation_out << "family_chain_lower_layer_caveat_closed\t"
+                        << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? 1 : 0) << "\n";
+    high_generation_out << "blocker\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_blocker) << "\n";
+    high_generation_out << "caveat\t"
+                        << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_caveat) << "\n";
+
+    ofstream high_fingerprint_out(high_fingerprint_path);
+    if (!high_fingerprint_out) {
+        if (why) *why = "failed to write high-family expansion theorem data 57 fingerprint";
+        return false;
+    }
+    high_fingerprint_out << "metric\tvalue\n";
+    high_fingerprint_out << "item_key\thigh_family_expansion_theorem_data_57\n";
+    high_fingerprint_out << "current_provenance_label\t" << high_label << "\n";
+    high_fingerprint_out << "current_source_fingerprint\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_current_source_fingerprint) << "\n";
+    high_fingerprint_out << "payload_fingerprint\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_current_fingerprint) << "\n";
+    high_fingerprint_out << "imported_comparison_fingerprint\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    high_fingerprint_out << "imported_equality_result\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    high_fingerprint_out << "sextuple_region_count\t" << g_last_high_family_theorem_data.sextuple_region_count << "\n";
+    high_fingerprint_out << "septuple_region_count\t" << g_last_high_family_theorem_data.septuple_region_count << "\n";
+    high_fingerprint_out << "region_count\t" << g_last_high_family_theorem_data.region_count_total << "\n";
+    high_fingerprint_out << "raw_candidates\t" << g_last_high_family_theorem_data.raw_candidates << "\n";
+    high_fingerprint_out << "canonical_candidates\t" << g_last_high_family_theorem_data.canonical_candidates << "\n";
+    high_fingerprint_out << "deduplicated_candidates\t" << g_last_high_family_theorem_data.deduplicated_candidates << "\n";
+    high_fingerprint_out << "local_exact_survivors\t" << g_last_high_family_theorem_data.local_exact_survivors << "\n";
+    high_fingerprint_out << "plus_one_survivors\t" << g_last_high_family_theorem_data.plus_one_survivors << "\n";
+    high_fingerprint_out << "theorem_preserving_survivors\t" << g_last_high_family_theorem_data.theorem_preserving_survivors << "\n";
+    high_fingerprint_out << "runtime_fingerprint\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    ofstream high_equality_out(high_equality_path);
+    if (!high_equality_out) {
+        if (why) *why = "failed to write high-family expansion theorem data 57 equality audit";
+        return false;
+    }
+    high_equality_out << "metric\tvalue\n";
+    high_equality_out << "item_key\thigh_family_expansion_theorem_data_57\n";
+    high_equality_out << "equality_rule\tregion-count + aggregate-count + consumer-visible high-family theorem-data equality over sextuple/septuple components\n";
+    high_equality_out << "current_comparison_fingerprint\t"
+                      << sanitize_exact_basis_tsv_field_(
+                             high_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                                 g_last_high_family_theorem_data))
+                      << "\n";
+    high_equality_out << "imported_comparison_fingerprint\t"
+                      << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint) << "\n";
+    high_equality_out << "imported_equality_result\t"
+                      << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_imported_equality_result) << "\n";
+    high_equality_out << "rowset_note\tlegacy output 57 did not preserve a separate high-family aggregate row-set artifact in this bundle; equality is count/fingerprint/consumer-visible equality, not imported row copy equality\n";
+
+    ofstream high_constructor_out(high_constructor_path);
+    if (!high_constructor_out) {
+        if (why) *why = "failed to write high-family expansion theorem data 57 constructor fingerprint";
+        return false;
+    }
+    high_constructor_out << "metric\tvalue\n";
+    high_constructor_out << "constructor_name\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_constructor_name) << "\n";
+    high_constructor_out << "authoritative_source\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_authoritative_source) << "\n";
+    high_constructor_out << "pass1_builder_used\t"
+                         << (g_last_high_family_expansion_theorem_data_57_builder_used ? 1 : 0) << "\n";
+    high_constructor_out << "cache_loaded\t"
+                         << (g_last_high_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << "\n";
+    high_constructor_out << "cache_load_path\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_cache_load_path) << "\n";
+    high_constructor_out << "upstream_septuple57_fallback_hit\t"
+                         << (g_last_septuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_constructor_out << "upstream_sextuple57_fallback_hit\t"
+                         << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_constructor_out << "upstream_quintuple57_fallback_hit\t"
+                         << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_constructor_out << "upstream_quad55_fallback_hit\t"
+                         << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << "\n";
+    high_constructor_out << "upstream_triple53_fallback_hit\t"
+                         << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << "\n";
+    high_constructor_out << "upstream_pair52_fallback_hit\t"
+                         << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << "\n";
+    high_constructor_out << "fallback_reachable\t"
+                         << (g_last_high_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0) << "\n";
+    high_constructor_out << "fallback_hit\t"
+                         << (g_last_high_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << "\n";
+    high_constructor_out << "runtime_fingerprint\t"
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    auto write_lower_row = [](ofstream& out,
+                              const string& key,
+                              const string& validation,
+                              const string& provenance,
+                              const string& accessor,
+                              const string& constructor,
+                              const string& cache,
+                              bool fallback_reachable,
+                              bool fallback_hit,
+                              const string& direct_consumer,
+                              const string& upstream,
+                              const string& downstream,
+                              const string& decision,
+                              const string& next_action,
+                              const string& caveat,
+                              size_t region_count,
+                              size_t raw,
+                              size_t canonical,
+                              size_t dedup,
+                              size_t local,
+                              size_t plus,
+                              size_t theorem) {
+        out << sanitize_exact_basis_tsv_field_(key) << '\t'
+            << sanitize_exact_basis_tsv_field_(validation) << '\t'
+            << sanitize_exact_basis_tsv_field_(provenance) << '\t'
+            << sanitize_exact_basis_tsv_field_(accessor) << '\t'
+            << sanitize_exact_basis_tsv_field_(constructor) << '\t'
+            << sanitize_exact_basis_tsv_field_(cache) << '\t'
+            << (fallback_reachable ? 1 : 0) << '\t'
+            << (fallback_hit ? 1 : 0) << '\t'
+            << sanitize_exact_basis_tsv_field_(direct_consumer) << '\t'
+            << sanitize_exact_basis_tsv_field_(upstream) << '\t'
+            << sanitize_exact_basis_tsv_field_(downstream) << '\t'
+            << sanitize_exact_basis_tsv_field_(decision) << '\t'
+            << sanitize_exact_basis_tsv_field_(next_action) << '\t'
+            << sanitize_exact_basis_tsv_field_(caveat) << '\t'
+            << region_count << '\t'
+            << raw << '\t'
+            << canonical << '\t'
+            << dedup << '\t'
+            << local << '\t'
+            << plus << '\t'
+            << theorem << "\n";
+    };
+
+    ofstream lower_inventory_out(lower_inventory_path);
+    if (!lower_inventory_out) {
+        if (why) *why = "failed to write family-chain lower-layer inventory";
+        return false;
+    }
+    lower_inventory_out << "layer_key\tvalidation_status\tprovenance_source\tauthoritative_accessor\tconstructor_path\tcache_path\tfallback_reachable\tfallback_hit\tdirect_consumer\tupstream_dependency\tdownstream_dependency\tcurrent_decision\tnext_action\tcaveat\tregion_count\traw_candidates\tcanonical_candidates\tdeduplicated_candidates\tlocal_exact_survivors\tplus_one_survivors\ttheorem_preserving_survivors\n";
+    write_lower_row(lower_inventory_out,
+                    "pair_expansion_aggregate_52",
+                    "current_verified",
+                    pair_label,
+                    "build_current_support_bounded_schema_universe_obstruction_theorem_",
+                    g_last_pair_expansion_aggregate_52_constructor_name,
+                    g_last_pair_expansion_aggregate_52_cache_load_path,
+                    g_last_pair_expansion_aggregate_52_fallback_reachable,
+                    g_last_pair_expansion_aggregate_52_fallback_hit,
+                    "bounded family-chain theorem;family-chain self verification",
+                    "exact-basis payload 96;family summaries/snapshots 49",
+                    "triple_family_expansion_theorem_data_53",
+                    g_last_pair_expansion_aggregate_52_fresh_runtime_generated ? "freshized" : "blocker_identified",
+                    "advance to triple_family_expansion_theorem_data_53 after stable 3-pass lock",
+                    g_last_pair_expansion_aggregate_52_caveat,
+                    g_last_pair_expansion_aggregate_52_region_count,
+                    g_last_out_of_pool_candidate_aggregate_stats.raw_candidates,
+                    g_last_out_of_pool_candidate_aggregate_stats.canonical_candidates,
+                    g_last_out_of_pool_candidate_aggregate_stats.deduplicated_candidates,
+                    g_last_out_of_pool_candidate_aggregate_stats.local_exact_survivors,
+                    g_last_out_of_pool_candidate_aggregate_stats.plus_one_survivors,
+                    g_last_out_of_pool_candidate_aggregate_stats.theorem_preserving_survivors);
+    write_lower_row(lower_inventory_out, "triple_family_expansion_theorem_data_53", "current_verified", triple_label,
+                    "ensure_triple_family_expansion_ready_fast_",
+                    g_last_triple_family_expansion_theorem_data_53_constructor_name,
+                    g_last_triple_family_expansion_theorem_data_53_cache_load_path,
+                    g_last_triple_family_expansion_theorem_data_53_fallback_reachable,
+                    g_last_triple_family_expansion_theorem_data_53_fallback_hit,
+                    "bounded family-chain theorem;family-chain self verification", "pair_expansion_aggregate_52", "quadruple_family_expansion_theorem_data_55",
+                    g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ? "freshized" : "next_target",
+                    g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ? "advance to quadruple_family_expansion_theorem_data_55 after stable 3-pass lock" : "freshize after pair_expansion_aggregate_52",
+                    g_last_triple_family_expansion_theorem_data_53_caveat,
+                    g_last_triple_family_expansion_theorem_data_53_region_count,
+                    g_last_triple_family_candidate_aggregate_stats.raw_candidates,
+                    g_last_triple_family_candidate_aggregate_stats.canonical_candidates,
+                    g_last_triple_family_candidate_aggregate_stats.deduplicated_candidates,
+                    g_last_triple_family_candidate_aggregate_stats.local_exact_survivors,
+                    g_last_triple_family_candidate_aggregate_stats.plus_one_survivors,
+                    g_last_triple_family_candidate_aggregate_stats.theorem_preserving_survivors);
+    write_lower_row(lower_inventory_out, "quadruple_family_expansion_theorem_data_55", "current_verified", quadruple_label,
+                    "ensure_quadruple_family_expansion_ready_fast_",
+                    g_last_quadruple_family_expansion_theorem_data_55_constructor_name,
+                    g_last_quadruple_family_expansion_theorem_data_55_cache_load_path,
+                    g_last_quadruple_family_expansion_theorem_data_55_fallback_reachable,
+                    g_last_quadruple_family_expansion_theorem_data_55_fallback_hit,
+                    "bounded family-chain theorem;family-chain self verification", "triple_family_expansion_theorem_data_53", "quintuple_family_expansion_theorem_data_57",
+                    g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ? "freshized" : "next_target",
+                    g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ? "advance to quintuple_family_expansion_theorem_data_57 after stable 3-pass lock" : "freshize after triple_family_expansion_theorem_data_53",
+                    g_last_quadruple_family_expansion_theorem_data_55_caveat,
+                    g_last_quadruple_family_expansion_theorem_data_55_region_count,
+                    g_last_quadruple_family_theorem_data.raw_candidates,
+                    g_last_quadruple_family_theorem_data.canonical_candidates,
+                    g_last_quadruple_family_theorem_data.deduplicated_candidates,
+                    g_last_quadruple_family_theorem_data.local_exact_survivors,
+                    g_last_quadruple_family_theorem_data.plus_one_survivors,
+                    g_last_quadruple_family_theorem_data.theorem_preserving_survivors);
+    write_lower_row(lower_inventory_out, "quintuple_family_expansion_theorem_data_57", "current_verified", quintuple_label,
+                    "ensure_quintuple_family_expansion_ready_fast_",
+                    g_last_quintuple_family_expansion_theorem_data_57_constructor_name,
+                    g_last_quintuple_family_expansion_theorem_data_57_cache_load_path,
+                    g_last_quintuple_family_expansion_theorem_data_57_fallback_reachable,
+                    g_last_quintuple_family_expansion_theorem_data_57_fallback_hit,
+                    "bounded family-chain theorem;family-chain self verification", "quadruple_family_expansion_theorem_data_55", "sextuple/septuple/high_family_expansion_theorem_data_57",
+                    g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "next_target",
+                    g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                        ? (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                               ? "family-chain lower layers complete; no remaining imported lower-layer row"
+                               : (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                               ? "septuple_family_expansion_theorem_data_57 complete; advance to high_family_expansion_theorem_data_57"
+                               : (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                      ? "sextuple_family_expansion_theorem_data_57 complete; advance to septuple_family_expansion_theorem_data_57"
+                                      : "advance to sextuple_family_expansion_theorem_data_57 after stable 3-pass lock")))
+                        : "freshize after quadruple_family_expansion_theorem_data_55",
+                    g_last_quintuple_family_expansion_theorem_data_57_caveat,
+                    g_last_quintuple_family_expansion_theorem_data_57_region_count,
+                    g_last_quintuple_family_theorem_data.raw_candidates,
+                    g_last_quintuple_family_theorem_data.canonical_candidates,
+                    g_last_quintuple_family_theorem_data.deduplicated_candidates,
+                    g_last_quintuple_family_theorem_data.local_exact_survivors,
+                    g_last_quintuple_family_theorem_data.plus_one_survivors,
+                    g_last_quintuple_family_theorem_data.theorem_preserving_survivors);
+    write_lower_row(lower_inventory_out, "sextuple_family_expansion_theorem_data_57", "current_verified", sextuple_label,
+                    "ensure_sextuple_family_expansion_ready_fast_",
+                    g_last_sextuple_family_expansion_theorem_data_57_constructor_name,
+                    g_last_sextuple_family_expansion_theorem_data_57_cache_load_path,
+                    g_last_sextuple_family_expansion_theorem_data_57_fallback_reachable,
+                    g_last_sextuple_family_expansion_theorem_data_57_fallback_hit,
+                    "bounded family-chain theorem;family-chain self verification", "quintuple_family_expansion_theorem_data_57", "septuple/high_family_expansion_theorem_data_57",
+                    g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "next_target",
+                    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "family-chain lower layers complete; no remaining imported lower-layer row" : (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "septuple_family_expansion_theorem_data_57 complete; advance to high_family_expansion_theorem_data_57" : (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "advance to septuple_family_expansion_theorem_data_57 after stable 3-pass lock" : "freshize after quintuple_family_expansion_theorem_data_57")),
+                    g_last_sextuple_family_expansion_theorem_data_57_caveat,
+                    g_last_sextuple_family_expansion_theorem_data_57_region_count,
+                    g_last_sextuple_family_theorem_data.raw_candidates,
+                    g_last_sextuple_family_theorem_data.canonical_candidates,
+                    g_last_sextuple_family_theorem_data.deduplicated_candidates,
+                    g_last_sextuple_family_theorem_data.local_exact_survivors,
+                    g_last_sextuple_family_theorem_data.plus_one_survivors,
+                    g_last_sextuple_family_theorem_data.theorem_preserving_survivors);
+    write_lower_row(lower_inventory_out, "septuple_family_expansion_theorem_data_57", "current_verified", septuple_label,
+                    "ensure_septuple_family_expansion_ready_fast_",
+                    g_last_septuple_family_expansion_theorem_data_57_constructor_name,
+                    g_last_septuple_family_expansion_theorem_data_57_cache_load_path,
+                    g_last_septuple_family_expansion_theorem_data_57_fallback_reachable,
+                    g_last_septuple_family_expansion_theorem_data_57_fallback_hit,
+                    "bounded family-chain theorem;family-chain self verification", "sextuple_family_expansion_theorem_data_57", "high_family_expansion_theorem_data_57",
+                    g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "next_target",
+                    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "family-chain lower layers complete; no remaining imported lower-layer row" : (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "advance to high_family_expansion_theorem_data_57 after stable 3-pass lock" : "freshize after sextuple_family_expansion_theorem_data_57"),
+                    g_last_septuple_family_expansion_theorem_data_57_caveat,
+                    g_last_septuple_family_expansion_theorem_data_57_region_count,
+                    g_last_septuple_family_theorem_data.raw_candidates,
+                    g_last_septuple_family_theorem_data.canonical_candidates,
+                    g_last_septuple_family_theorem_data.deduplicated_candidates,
+                    g_last_septuple_family_theorem_data.local_exact_survivors,
+                    g_last_septuple_family_theorem_data.plus_one_survivors,
+                    g_last_septuple_family_theorem_data.theorem_preserving_survivors);
+    write_lower_row(lower_inventory_out, "high_family_expansion_theorem_data_57", "current_verified", high_label,
+                    "ensure_high_family_expansion_ready_fast_",
+                    g_last_high_family_expansion_theorem_data_57_constructor_name,
+                    g_last_high_family_expansion_theorem_data_57_cache_load_path,
+                    g_last_high_family_expansion_theorem_data_57_fallback_reachable,
+                    g_last_high_family_expansion_theorem_data_57_fallback_hit,
+                    "bounded family-chain theorem;family-chain self verification", "sextuple/septuple_family_expansion_theorem_data_57", "unified bounded schema-universe theorem",
+                    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "next_target",
+                    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "none; family-chain lower-layer caveat closed" : "freshize current high-family aggregate after septuple_family_expansion_theorem_data_57 stable 3-pass lock",
+                    g_last_high_family_expansion_theorem_data_57_caveat,
+                    g_last_high_family_theorem_data.region_count_total,
+                    g_last_high_family_theorem_data.raw_candidates,
+                    g_last_high_family_theorem_data.canonical_candidates,
+                    g_last_high_family_theorem_data.deduplicated_candidates,
+                    g_last_high_family_theorem_data.local_exact_survivors,
+                    g_last_high_family_theorem_data.plus_one_survivors,
+                    g_last_high_family_theorem_data.theorem_preserving_survivors);
+
+    ofstream lower_generation_out(lower_generation_path);
+    if (!lower_generation_out) {
+        if (why) *why = "failed to write family-chain lower-layer generation audit";
+        return false;
+    }
+    lower_generation_out << "layer_key\tprevious_provenance_label\tcurrent_provenance_label\tconstructor_name\tcache_load_path\tbuilder_used\tcache_loaded\tfallback_hit\tcurrent_decision\tnext_action\tfingerprint\n";
+    lower_generation_out << "pair_expansion_aggregate_52\timported_lower_layer\t" << pair_label << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_constructor_name) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_cache_load_path) << '\t'
+                         << (g_last_pair_expansion_aggregate_52_builder_used ? 1 : 0) << '\t'
+                         << (g_last_pair_expansion_aggregate_52_cache_loaded ? 1 : 0) << '\t'
+                         << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0) << '\t'
+                         << (g_last_pair_expansion_aggregate_52_fresh_runtime_generated ? "freshized" : "blocker_identified") << '\t'
+                         << "triple_family_expansion_theorem_data_53" << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_runtime_fingerprint) << "\n";
+    lower_generation_out << "triple_family_expansion_theorem_data_53\timported_lower_layer\t" << triple_label << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_constructor_name) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_cache_load_path) << '\t'
+                         << (g_last_triple_family_expansion_theorem_data_53_builder_used ? 1 : 0) << '\t'
+                         << (g_last_triple_family_expansion_theorem_data_53_cache_loaded ? 1 : 0) << '\t'
+                         << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0) << '\t'
+                         << (g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ? "freshized" : "blocker_identified") << '\t'
+                         << (g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ? "quadruple_family_expansion_theorem_data_55" : "freshize_after_pair_52") << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint) << "\n";
+    lower_generation_out << "quadruple_family_expansion_theorem_data_55\timported_lower_layer\t" << quadruple_label << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_constructor_name) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_cache_load_path) << '\t'
+                         << (g_last_quadruple_family_expansion_theorem_data_55_builder_used ? 1 : 0) << '\t'
+                         << (g_last_quadruple_family_expansion_theorem_data_55_cache_loaded ? 1 : 0) << '\t'
+                         << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0) << '\t'
+                         << (g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ? "freshized" : "blocker_identified") << '\t'
+                         << (g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ? "quintuple_family_expansion_theorem_data_57" : "freshize_after_triple_53") << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint) << "\n";
+    lower_generation_out << "quintuple_family_expansion_theorem_data_57\timported_lower_layer\t" << quintuple_label << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_constructor_name) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_cache_load_path) << '\t'
+                         << (g_last_quintuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << '\t'
+                         << (g_last_quintuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << '\t'
+                         << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << '\t'
+                         << (g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "blocker_identified") << '\t'
+                         << (g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                 ? (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                                        ? "family_chain_lower_layers_complete"
+                                        : (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                        ? "high_family_expansion_theorem_data_57"
+                                        : (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                               ? "septuple_family_expansion_theorem_data_57"
+                                               : "sextuple_family_expansion_theorem_data_57")))
+                                 : "freshize_after_quadruple")
+                         << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    lower_generation_out << "sextuple_family_expansion_theorem_data_57\timported_lower_layer\t" << sextuple_label << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_constructor_name) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_cache_load_path) << '\t'
+                         << (g_last_sextuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << '\t'
+                         << (g_last_sextuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << '\t'
+                         << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << '\t'
+                         << (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "blocker_identified") << '\t'
+                         << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "family_chain_lower_layers_complete" : (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "high_family_expansion_theorem_data_57" : (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "septuple_family_expansion_theorem_data_57" : "freshize_after_quintuple"))) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    lower_generation_out << "septuple_family_expansion_theorem_data_57\timported_lower_layer\t" << septuple_label << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_constructor_name) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_cache_load_path) << '\t'
+                         << (g_last_septuple_family_expansion_theorem_data_57_builder_used ? 1 : 0) << '\t'
+                         << (g_last_septuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << '\t'
+                         << (g_last_septuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << '\t'
+                         << (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "blocker_identified") << '\t'
+                         << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "family_chain_lower_layers_complete" : (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "high_family_expansion_theorem_data_57" : "freshize_after_sextuple")) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    lower_generation_out << "high_family_expansion_theorem_data_57\timported_lower_layer\t" << high_label << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_constructor_name) << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_cache_load_path) << '\t'
+                         << (g_last_high_family_expansion_theorem_data_57_builder_used ? 1 : 0) << '\t'
+                         << (g_last_high_family_expansion_theorem_data_57_cache_loaded ? 1 : 0) << '\t'
+                         << (g_last_high_family_expansion_theorem_data_57_fallback_hit ? 1 : 0) << '\t'
+                         << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "freshized" : "blocker_identified") << '\t'
+                         << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "none_family_chain_lower_layers_complete" : "freshize_current_high_family_aggregate") << '\t'
+                         << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+
+    ofstream lower_fingerprint_out(lower_fingerprint_path);
+    if (!lower_fingerprint_out) {
+        if (why) *why = "failed to write family-chain lower-layer fingerprint";
+        return false;
+    }
+    lower_fingerprint_out << "metric\tvalue\n";
+    lower_fingerprint_out << "layer_count\t7\n";
+    const size_t lower_fresh_count =
+        (g_last_pair_expansion_aggregate_52_fresh_runtime_generated ? 1 : 0) +
+        (g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ? 1 : 0) +
+        (g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ? 1 : 0) +
+        (g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ? 1 : 0) +
+        (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ? 1 : 0) +
+        (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? 1 : 0) +
+        (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? 1 : 0);
+    lower_fingerprint_out << "fresh_current_runtime_generated_count\t"
+                          << lower_fresh_count << "\n";
+    lower_fingerprint_out << "imported_lower_layer_count\t"
+                          << (7 - lower_fresh_count) << "\n";
+    lower_fingerprint_out << "pair_expansion_aggregate_52_label\t" << pair_label << "\n";
+    lower_fingerprint_out << "pair_expansion_aggregate_52_runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_pair_expansion_aggregate_52_runtime_fingerprint) << "\n";
+    lower_fingerprint_out << "triple_family_expansion_theorem_data_53_label\t" << triple_label << "\n";
+    lower_fingerprint_out << "triple_family_expansion_theorem_data_53_runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint) << "\n";
+    lower_fingerprint_out << "quadruple_family_expansion_theorem_data_55_label\t" << quadruple_label << "\n";
+    lower_fingerprint_out << "quadruple_family_expansion_theorem_data_55_runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint) << "\n";
+    lower_fingerprint_out << "quintuple_family_expansion_theorem_data_57_label\t" << quintuple_label << "\n";
+    lower_fingerprint_out << "quintuple_family_expansion_theorem_data_57_runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    lower_fingerprint_out << "sextuple_family_expansion_theorem_data_57_label\t" << sextuple_label << "\n";
+    lower_fingerprint_out << "sextuple_family_expansion_theorem_data_57_runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    lower_fingerprint_out << "septuple_family_expansion_theorem_data_57_label\t" << septuple_label << "\n";
+    lower_fingerprint_out << "septuple_family_expansion_theorem_data_57_runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    lower_fingerprint_out << "high_family_expansion_theorem_data_57_label\t" << high_label << "\n";
+    lower_fingerprint_out << "high_family_expansion_theorem_data_57_runtime_fingerprint\t"
+                          << sanitize_exact_basis_tsv_field_(g_last_high_family_expansion_theorem_data_57_runtime_fingerprint) << "\n";
+    lower_fingerprint_out << "family_chain_lower_layer_caveat_closed\t"
+                          << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? 1 : 0) << "\n";
+    lower_fingerprint_out << "next_target\t"
+                          << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                                  ? "none_family_chain_lower_layers_complete"
+                                  : (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                  ? "high_family_expansion_theorem_data_57"
+                                  : (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                         ? "septuple_family_expansion_theorem_data_57"
+                                  : (g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                                         ? "sextuple_family_expansion_theorem_data_57"
+                                         : (g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated
+                                                ? "quintuple_family_expansion_theorem_data_57"
+                                                : (g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated
+                                                       ? "quadruple_family_expansion_theorem_data_55"
+                                                       : "triple_family_expansion_theorem_data_53"))))))
+                          << "\n";
+
+    if (why) {
+        *why = string("wrote pair-expansion aggregate 52 runtime artifacts payload=") + payload_path +
+               " generation=" + generation_path +
+               " lowerInventory=" + lower_inventory_path;
+    }
+    return true;
+}
+
 static string classify_support8_tail_status_(string* why) {
     return classify_support8_tail_completion_status_(why);
 }
@@ -39393,8 +41713,458 @@ static HighFamilyExpansionAggregateStats build_high_family_candidate_aggregate_s
     return stats;
 }
 
+static string pair_expansion_aggregate_52_imported_comparison_fingerprint_() {
+    return "52|regions=28|single=7|pair=21|raw=501|canonical=501|deduplicated=182|local=0|plus=0|theorem=0";
+}
+
+static string pair_expansion_aggregate_52_cache_path_summary_() {
+    return support8_runtime_bundle_path_("pair_expansion_aggregate_52_payload_90.tsv");
+}
+
+static vector<string> split_pair_expansion_aggregate_sources_(const string& text) {
+    vector<string> out;
+    size_t start = 0;
+    while (start <= text.size()) {
+        size_t end = text.find(';', start);
+        string token = (end == string::npos) ? text.substr(start) : text.substr(start, end - start);
+        if (!token.empty()) out.push_back(token);
+        if (end == string::npos) break;
+        start = end + 1;
+    }
+    return out;
+}
+
+static void reset_pair_expansion_aggregate_52_state_() {
+    g_last_pair_expansion_aggregate_52_fresh_runtime_generated = false;
+    g_last_pair_expansion_aggregate_52_builder_used = false;
+    g_last_pair_expansion_aggregate_52_cache_loaded = false;
+    g_last_pair_expansion_aggregate_52_fallback_reachable = true;
+    g_last_pair_expansion_aggregate_52_fallback_hit = false;
+    g_last_pair_expansion_aggregate_52_authoritative_source.clear();
+    g_last_pair_expansion_aggregate_52_constructor_name.clear();
+    g_last_pair_expansion_aggregate_52_cache_load_path = pair_expansion_aggregate_52_cache_path_summary_();
+    g_last_pair_expansion_aggregate_52_current_source_fingerprint =
+        binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    g_last_pair_expansion_aggregate_52_current_fingerprint.clear();
+    g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint =
+        pair_expansion_aggregate_52_imported_comparison_fingerprint_();
+    g_last_pair_expansion_aggregate_52_imported_equality_result = "not_checked";
+    g_last_pair_expansion_aggregate_52_runtime_fingerprint.clear();
+    g_last_pair_expansion_aggregate_52_caveat.clear();
+    g_last_pair_expansion_aggregate_52_blocker.clear();
+    g_last_pair_expansion_aggregate_52_region_count = 0;
+    g_last_pair_expansion_aggregate_52_single_region_count = 0;
+    g_last_pair_expansion_aggregate_52_pair_region_count = 0;
+}
+
+static string pair_expansion_aggregate_52_payload_fingerprint_(
+    const vector<BoundedExpansionRegionSpec>& specs,
+    const vector<OutOfPoolExpansionStats>& stats,
+    const OutOfPoolCandidateAggregateStats& aggregate) {
+    ostringstream data;
+    data << "pair_expansion_aggregate_52|";
+    data << specs.size() << '|'
+         << aggregate.raw_candidates << '|'
+         << aggregate.canonical_candidates << '|'
+         << aggregate.deduplicated_candidates << '|'
+         << aggregate.local_exact_survivors << '|'
+         << aggregate.plus_one_survivors << '|'
+         << aggregate.theorem_preserving_survivors << '|';
+    for (size_t i = 0; i < stats.size(); ++i) {
+        if (i) data << '\n';
+        const auto& spec = specs[i];
+        const auto& st = stats[i];
+        data << spec.kind << '\t'
+             << spec.fingerprint << '\t'
+             << join_vector_with_delim_(spec.source_family_fingerprints, ";") << '\t'
+             << spec.symbol_bound << '\t'
+             << spec.antecedent_bound << '\t'
+             << st.raw_candidates << '\t'
+             << st.canonical_candidates << '\t'
+             << st.out_of_pool_candidates << '\t'
+             << st.local_exact_survivors << '\t'
+             << st.plus_one_survivors << '\t'
+             << st.theorem_preserving_survivors;
+    }
+    const string text = data.str();
+    return to_string(text.size()) + ":" + to_string(hash<string>{}(text));
+}
+
+static string pair_expansion_aggregate_52_current_comparison_fingerprint_(
+    size_t single_regions,
+    size_t pair_regions,
+    const OutOfPoolCandidateAggregateStats& aggregate) {
+    ostringstream oss;
+    oss << "52|regions=" << (single_regions + pair_regions)
+        << "|single=" << single_regions
+        << "|pair=" << pair_regions
+        << "|raw=" << aggregate.raw_candidates
+        << "|canonical=" << aggregate.canonical_candidates
+        << "|deduplicated=" << aggregate.deduplicated_candidates
+        << "|local=" << aggregate.local_exact_survivors
+        << "|plus=" << aggregate.plus_one_survivors
+        << "|theorem=" << aggregate.theorem_preserving_survivors;
+    return oss.str();
+}
+
+static string pair_expansion_aggregate_52_runtime_fingerprint_() {
+    ostringstream oss;
+    oss << (g_last_pair_expansion_aggregate_52_fresh_runtime_generated ? "fresh" : "imported")
+        << '|' << g_last_pair_expansion_aggregate_52_authoritative_source
+        << '|' << g_last_pair_expansion_aggregate_52_constructor_name
+        << '|' << (g_last_pair_expansion_aggregate_52_builder_used ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_cache_loaded ? 1 : 0)
+        << '|' << g_last_pair_expansion_aggregate_52_region_count
+        << '|' << g_last_pair_expansion_aggregate_52_single_region_count
+        << '|' << g_last_pair_expansion_aggregate_52_pair_region_count
+        << '|' << g_last_out_of_pool_candidate_aggregate_stats.raw_candidates
+        << '|' << g_last_out_of_pool_candidate_aggregate_stats.canonical_candidates
+        << '|' << g_last_out_of_pool_candidate_aggregate_stats.deduplicated_candidates
+        << '|' << g_last_out_of_pool_candidate_aggregate_stats.local_exact_survivors
+        << '|' << g_last_out_of_pool_candidate_aggregate_stats.plus_one_survivors
+        << '|' << g_last_out_of_pool_candidate_aggregate_stats.theorem_preserving_survivors
+        << '|' << g_last_pair_expansion_aggregate_52_current_fingerprint
+        << '|' << g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint
+        << '|' << g_last_pair_expansion_aggregate_52_imported_equality_result
+        << '|' << g_last_pair_expansion_aggregate_52_current_source_fingerprint
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_reachable ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0)
+        << '|' << g_last_pair_expansion_aggregate_52_blocker
+        << '|' << g_last_pair_expansion_aggregate_52_caveat;
+    return oss.str();
+}
+
+static void finish_pair_expansion_aggregate_52_status_from_current_globals_() {
+    string cert_why;
+    g_last_schema_universe_obstruction_certificate =
+        build_schema_universe_obstruction_certificate_(
+            g_last_candidate_pool_completeness_stats,
+            g_last_out_of_pool_expansion_stats,
+            &cert_why);
+    string status_why;
+    g_last_candidate_pool_completeness_and_expansion_status =
+        classify_candidate_pool_completeness_and_expansion_status_(
+            g_last_candidate_pool_completeness_stats,
+            g_last_out_of_pool_expansion_stats,
+            g_last_schema_universe_obstruction_certificate,
+            &status_why);
+    g_last_candidate_pool_completeness_and_expansion_ledger =
+        build_candidate_pool_completeness_and_expansion_ledger_(
+            g_last_candidate_pool_completeness_stats,
+            g_last_candidate_pool_completeness_witnesses,
+            g_last_out_of_pool_expansion_stats,
+            g_last_out_of_pool_expansion_candidates,
+            g_last_schema_universe_obstruction_certificate,
+            g_last_candidate_pool_completeness_and_expansion_status);
+}
+
+static bool pair_expansion_aggregate_52_imported_comparison_equal_() {
+    const string current = pair_expansion_aggregate_52_current_comparison_fingerprint_(
+        g_last_pair_expansion_aggregate_52_single_region_count,
+        g_last_pair_expansion_aggregate_52_pair_region_count,
+        g_last_out_of_pool_candidate_aggregate_stats);
+    return current == g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint;
+}
+
+static bool load_current_pair_expansion_aggregate_52_runtime_artifact_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("pair_expansion_aggregate_52_payload_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("pair_expansion_aggregate_52_fingerprint_90.tsv");
+    if (!file_nonempty_for_audit_(payload_path) || !file_nonempty_for_audit_(fingerprint_path)) {
+        if (why) *why = "pair-expansion aggregate 52 runtime artifact missing";
+        return false;
+    }
+    auto metrics = read_exact_basis_metric_tsv_(fingerprint_path);
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "pair-expansion aggregate 52 runtime artifact source fingerprint stale";
+        return false;
+    }
+    if (metrics["current_provenance_label"] != "fresh_current_runtime_generated") {
+        if (why) *why = "pair-expansion aggregate 52 runtime artifact is not marked fresh";
+        return false;
+    }
+    if (metrics["imported_equality_result"] != "counts_and_consumer_visible_fingerprint_equal") {
+        if (why) *why = "pair-expansion aggregate 52 runtime artifact did not record imported equality";
+        return false;
+    }
+
+    ifstream fin(payload_path);
+    if (!fin) {
+        if (why) *why = "failed to open pair-expansion aggregate 52 payload";
+        return false;
+    }
+    string line;
+    bool first = true;
+    vector<BoundedExpansionRegionSpec> specs;
+    vector<OutOfPoolExpansionStats> stats;
+    while (getline(fin, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        if (line.empty()) continue;
+        auto cols = split_exact_basis_tsv_line_(line);
+        if (cols.size() < 13) {
+            if (why) *why = "pair-expansion aggregate 52 payload row missing columns";
+            return false;
+        }
+        int symbol_bound = 0;
+        int antecedent_bound = 0;
+        size_t raw = 0, canonical = 0, out_of_pool = 0, local = 0, plus = 0, theorem = 0;
+        if (!parse_int_exact_basis_(cols[4], &symbol_bound) ||
+            !parse_int_exact_basis_(cols[5], &antecedent_bound) ||
+            !parse_size_t_exact_basis_(cols[6], &raw) ||
+            !parse_size_t_exact_basis_(cols[7], &canonical) ||
+            !parse_size_t_exact_basis_(cols[8], &out_of_pool) ||
+            !parse_size_t_exact_basis_(cols[9], &local) ||
+            !parse_size_t_exact_basis_(cols[10], &plus) ||
+            !parse_size_t_exact_basis_(cols[11], &theorem)) {
+            if (why) *why = "pair-expansion aggregate 52 payload row contains invalid numeric field";
+            return false;
+        }
+        BoundedExpansionRegionSpec spec;
+        spec.kind = cols[1];
+        spec.fingerprint = cols[2];
+        spec.source_family_fingerprints = split_pair_expansion_aggregate_sources_(cols[3]);
+        spec.symbol_bound = symbol_bound;
+        spec.antecedent_bound = antecedent_bound;
+        specs.push_back(std::move(spec));
+
+        OutOfPoolExpansionStats st;
+        st.expansion_region_fingerprint = cols[2];
+        st.symbol_bound = symbol_bound;
+        st.antecedent_bound = antecedent_bound;
+        st.raw_candidates = raw;
+        st.canonical_candidates = canonical;
+        st.out_of_pool_candidates = out_of_pool;
+        st.local_exact_survivors = local;
+        st.plus_one_survivors = plus;
+        st.theorem_preserving_survivors = theorem;
+        st.why = cols[12];
+        stats.push_back(std::move(st));
+    }
+
+    OutOfPoolCandidateAggregateStats aggregate;
+    if (!parse_size_t_exact_basis_(metrics["raw_candidates"], &aggregate.raw_candidates) ||
+        !parse_size_t_exact_basis_(metrics["canonical_candidates"], &aggregate.canonical_candidates) ||
+        !parse_size_t_exact_basis_(metrics["deduplicated_candidates"], &aggregate.deduplicated_candidates) ||
+        !parse_size_t_exact_basis_(metrics["local_exact_survivors"], &aggregate.local_exact_survivors) ||
+        !parse_size_t_exact_basis_(metrics["plus_one_survivors"], &aggregate.plus_one_survivors) ||
+        !parse_size_t_exact_basis_(metrics["theorem_preserving_survivors"], &aggregate.theorem_preserving_survivors)) {
+        if (why) *why = "pair-expansion aggregate 52 fingerprint metrics missing aggregate fields";
+        return false;
+    }
+    aggregate.why = "loaded fresh current-runtime pair-expansion aggregate 52 payload artifact";
+
+    size_t single_regions = 0, pair_regions = 0;
+    for (const auto& spec : specs) {
+        if (spec.kind == "family_one_step") ++single_regions;
+        else if (spec.kind == "pair_merged") ++pair_regions;
+    }
+    const string payload_fp = pair_expansion_aggregate_52_payload_fingerprint_(specs, stats, aggregate);
+    if (payload_fp != metrics["payload_fingerprint"]) {
+        if (why) *why = "pair-expansion aggregate 52 payload fingerprint mismatch";
+        return false;
+    }
+
+    g_last_bounded_expansion_region_specs = std::move(specs);
+    g_last_out_of_pool_expansion_stats = std::move(stats);
+    g_last_out_of_pool_expansion_candidates.clear();
+    g_last_out_of_pool_candidate_aggregate_stats = aggregate;
+    g_last_pair_expansion_aggregate_52_fresh_runtime_generated = true;
+    g_last_pair_expansion_aggregate_52_builder_used = false;
+    g_last_pair_expansion_aggregate_52_cache_loaded = true;
+    g_last_pair_expansion_aggregate_52_fallback_hit = false;
+    g_last_pair_expansion_aggregate_52_authoritative_source = "current_runtime_pair_expansion_aggregate_52_cache";
+    g_last_pair_expansion_aggregate_52_constructor_name = "load_current_pair_expansion_aggregate_52_runtime_artifact_";
+    g_last_pair_expansion_aggregate_52_cache_load_path = payload_path;
+    g_last_pair_expansion_aggregate_52_current_fingerprint = payload_fp;
+    g_last_pair_expansion_aggregate_52_imported_equality_result = metrics["imported_equality_result"];
+    g_last_pair_expansion_aggregate_52_region_count = g_last_bounded_expansion_region_specs.size();
+    g_last_pair_expansion_aggregate_52_single_region_count = single_regions;
+    g_last_pair_expansion_aggregate_52_pair_region_count = pair_regions;
+    g_last_pair_expansion_aggregate_52_caveat =
+        "Current authoritative path loaded a validated runtime pair-expansion aggregate 52 artifact generated by the bounded single/pair region scanner.";
+    finish_pair_expansion_aggregate_52_status_from_current_globals_();
+    g_last_pair_expansion_aggregate_52_runtime_fingerprint =
+        pair_expansion_aggregate_52_runtime_fingerprint_();
+    if (why) *why = "loaded validated runtime pair-expansion aggregate 52 artifact";
+    return true;
+}
+
+static const ProofMotifPlusOneFailureFamilySummary* find_family_summary_by_fingerprint_(
+    const vector<ProofMotifPlusOneFailureFamilySummary>& families,
+    const string& fingerprint) {
+    for (const auto& family : families) {
+        if (family.family_fingerprint == fingerprint) return &family;
+    }
+    return nullptr;
+}
+
+static bool build_current_pair_expansion_aggregate_52_from_bounded_region_scan_(string* why) {
+    auto pool = exact_minimal_basis_global_schema_candidate_pool_();
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    string specs_why;
+    auto specs = build_bounded_expansion_region_specs_(families, &specs_why);
+    vector<OutOfPoolExpansionStats> stats;
+    vector<OutOfPoolExpansionCandidate> candidates;
+    g_last_out_of_pool_schema_validation_cache.clear();
+
+    for (size_t idx = 0; idx < specs.size(); ++idx) {
+        const auto& spec = specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: pair-expansion aggregate 52 region " << (idx + 1) << "/" << specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        string enum_why;
+        vector<StructuredLocalSchema> out;
+        if (spec.kind == "family_one_step") {
+            const auto* fa = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[0]);
+            if (!fa) {
+                if (why) *why = "pair-expansion aggregate 52 missing source family for " + spec.fingerprint;
+                return false;
+            }
+            out = enumerate_out_of_pool_schema_candidates_for_failure_family_(
+                *fa, spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        } else if (spec.kind == "pair_merged") {
+            const auto* fa = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[0]);
+            const auto* fb = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[1]);
+            if (!fa || !fb) {
+                if (why) *why = "pair-expansion aggregate 52 missing source pair family for " + spec.fingerprint;
+                return false;
+            }
+            out = enumerate_out_of_pool_merged_family_candidates_(
+                *fa, *fb, spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        } else {
+            if (why) *why = "pair-expansion aggregate 52 unexpected region kind " + spec.kind;
+            return false;
+        }
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        stats.push_back(std::move(st));
+    }
+
+    string aggregate_why;
+    auto aggregate = build_out_of_pool_candidate_aggregate_stats_(candidates, &aggregate_why);
+    for (const auto& st : stats) aggregate.raw_candidates += st.raw_candidates;
+    aggregate.why =
+        "fresh current-runtime aggregate over all 7 single-family one-step regions and all 21 pair-merged regions";
+
+    size_t single_regions = 0, pair_regions = 0;
+    for (const auto& spec : specs) {
+        if (spec.kind == "family_one_step") ++single_regions;
+        else if (spec.kind == "pair_merged") ++pair_regions;
+    }
+
+    g_last_bounded_expansion_region_specs = std::move(specs);
+    g_last_out_of_pool_expansion_stats = std::move(stats);
+    g_last_out_of_pool_expansion_candidates = std::move(candidates);
+    g_last_out_of_pool_candidate_aggregate_stats = aggregate;
+    g_last_pair_expansion_aggregate_52_region_count = g_last_bounded_expansion_region_specs.size();
+    g_last_pair_expansion_aggregate_52_single_region_count = single_regions;
+    g_last_pair_expansion_aggregate_52_pair_region_count = pair_regions;
+    g_last_pair_expansion_aggregate_52_current_fingerprint =
+        pair_expansion_aggregate_52_payload_fingerprint_(
+            g_last_bounded_expansion_region_specs,
+            g_last_out_of_pool_expansion_stats,
+            g_last_out_of_pool_candidate_aggregate_stats);
+
+    if (!pair_expansion_aggregate_52_imported_comparison_equal_()) {
+        g_last_pair_expansion_aggregate_52_imported_equality_result = "mismatch";
+        g_last_pair_expansion_aggregate_52_blocker =
+            string("fresh pair-expansion aggregate 52 did not match imported 52 comparison fingerprint current=") +
+            pair_expansion_aggregate_52_current_comparison_fingerprint_(single_regions, pair_regions, aggregate) +
+            " imported=" + g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint;
+        if (why) *why = g_last_pair_expansion_aggregate_52_blocker;
+        return false;
+    }
+
+    g_last_pair_expansion_aggregate_52_imported_equality_result =
+        "counts_and_consumer_visible_fingerprint_equal";
+    g_last_pair_expansion_aggregate_52_fresh_runtime_generated = true;
+    g_last_pair_expansion_aggregate_52_builder_used = true;
+    g_last_pair_expansion_aggregate_52_cache_loaded = false;
+    g_last_pair_expansion_aggregate_52_fallback_hit = false;
+    g_last_pair_expansion_aggregate_52_authoritative_source =
+        "current_runtime_pair_expansion_aggregate_52";
+    g_last_pair_expansion_aggregate_52_constructor_name =
+        "build_current_pair_expansion_aggregate_52_from_bounded_region_scan_";
+    g_last_pair_expansion_aggregate_52_cache_load_path =
+        pair_expansion_aggregate_52_cache_path_summary_();
+    g_last_pair_expansion_aggregate_52_caveat =
+        "Current runtime rebuilt pair-expansion aggregate 52 from bounded single/pair region scans; upstream family summaries and family-local snapshots remain separate validated inputs.";
+    finish_pair_expansion_aggregate_52_status_from_current_globals_();
+    g_last_pair_expansion_aggregate_52_runtime_fingerprint =
+        pair_expansion_aggregate_52_runtime_fingerprint_();
+    if (why) {
+        *why = "current bounded region scanner rebuilt pair-expansion aggregate 52";
+    }
+    return true;
+}
+
+static void install_imported_pair_expansion_aggregate_52_fallback_(const string& blocker) {
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    string specs_why;
+    g_last_bounded_expansion_region_specs = build_bounded_expansion_region_specs_(families, &specs_why);
+    g_last_out_of_pool_expansion_stats.clear();
+    g_last_out_of_pool_expansion_candidates.clear();
+    g_last_out_of_pool_candidate_aggregate_stats = {};
+    g_last_out_of_pool_candidate_aggregate_stats.raw_candidates = 501;
+    g_last_out_of_pool_candidate_aggregate_stats.canonical_candidates = 501;
+    g_last_out_of_pool_candidate_aggregate_stats.deduplicated_candidates = 182;
+    g_last_out_of_pool_candidate_aggregate_stats.local_exact_survivors = 0;
+    g_last_out_of_pool_candidate_aggregate_stats.plus_one_survivors = 0;
+    g_last_out_of_pool_candidate_aggregate_stats.theorem_preserving_survivors = 0;
+    g_last_out_of_pool_candidate_aggregate_stats.why =
+        "compatibility fallback aggregate over all 7 single-family one-step regions and all 21 pair-merged regions imported from 52 output";
+    g_last_schema_universe_obstruction_certificate.candidate_pool_complete_on_tested_universe = true;
+    g_last_schema_universe_obstruction_certificate.out_of_pool_local_exact_survivors = 0;
+    g_last_schema_universe_obstruction_certificate.out_of_pool_plus_one_survivors = 0;
+    g_last_schema_universe_obstruction_certificate.out_of_pool_theorem_preserving_survivors = 0;
+    g_last_schema_universe_obstruction_certificate.bounded_expansion_found_stabilizer = false;
+    g_last_schema_universe_obstruction_certificate.reason =
+        "candidate-pool completeness holds and all-family/all-pair bounded expansion found no theorem-preserving plus-one-improving out-of-pool schema";
+    g_last_candidate_pool_completeness_and_expansion_status = "candidate_pool_completeness_supported";
+    g_last_candidate_pool_completeness_and_expansion_ledger = build_candidate_pool_completeness_and_expansion_ledger_(
+        g_last_candidate_pool_completeness_stats,
+        g_last_candidate_pool_completeness_witnesses,
+        g_last_out_of_pool_expansion_stats,
+        g_last_out_of_pool_expansion_candidates,
+        g_last_schema_universe_obstruction_certificate,
+        g_last_candidate_pool_completeness_and_expansion_status);
+    g_last_pair_expansion_aggregate_52_fresh_runtime_generated = false;
+    g_last_pair_expansion_aggregate_52_builder_used = false;
+    g_last_pair_expansion_aggregate_52_cache_loaded = false;
+    g_last_pair_expansion_aggregate_52_fallback_hit = true;
+    g_last_pair_expansion_aggregate_52_authoritative_source =
+        "imported_pair_expansion_aggregate_52_compatibility_fallback";
+    g_last_pair_expansion_aggregate_52_constructor_name =
+        "install_imported_pair_expansion_aggregate_52_fallback_";
+    g_last_pair_expansion_aggregate_52_imported_equality_result = "fallback_imported";
+    g_last_pair_expansion_aggregate_52_blocker = blocker;
+    g_last_pair_expansion_aggregate_52_caveat =
+        "Current runtime could not rebuild pair-expansion aggregate 52; imported 52 compatibility fallback was used.";
+    g_last_pair_expansion_aggregate_52_region_count = 28;
+    g_last_pair_expansion_aggregate_52_single_region_count = 7;
+    g_last_pair_expansion_aggregate_52_pair_region_count = 21;
+    g_last_pair_expansion_aggregate_52_current_fingerprint =
+        g_last_pair_expansion_aggregate_52_imported_comparison_fingerprint;
+    g_last_pair_expansion_aggregate_52_runtime_fingerprint =
+        pair_expansion_aggregate_52_runtime_fingerprint_();
+}
+
 static void ensure_candidate_pool_completeness_and_expansion_ready_() {
     if (!g_last_candidate_pool_completeness_and_expansion_status.empty()) return;
+    reset_pair_expansion_aggregate_52_state_();
     ensure_global_exact_schema_stabilization_ready_();
 #ifdef LOCAL_TEST
     cerr << "stage: candidate pool completeness\n";
@@ -39410,32 +42180,438 @@ static void ensure_candidate_pool_completeness_and_expansion_ready_() {
     if (!ensure_support_bounded_schema_universe_obstruction_ready_(&why)) {
         throw runtime_error(string("support bounded schema-universe obstruction theorem data unavailable\n") + why);
     }
+    string pair_why;
+    if (load_current_pair_expansion_aggregate_52_runtime_artifact_(&pair_why)) {
+        return;
+    }
+#ifdef LOCAL_TEST
+    cerr << "stage: build pair-expansion aggregate 52 current artifact\n";
+#endif
+    if (build_current_pair_expansion_aggregate_52_from_bounded_region_scan_(&pair_why)) {
+        return;
+    }
+    install_imported_pair_expansion_aggregate_52_fallback_(pair_why);
+}
+
+static string classify_support_bounded_schema_universe_status_(const SupportBoundedSchemaUniverseObstructionTheorem& theorem,
+                                                               const TripleFamilyExpansionAggregateStats* triple_stats,
+                                                               string* why);
+static string build_support_bounded_schema_universe_ledger_(const SupportBoundedSchemaUniverseObstructionTheorem& theorem,
+                                                            const TripleFamilyExpansionAggregateStats* triple_stats,
+                                                            const string& status);
+
+static string triple_family_expansion_theorem_data_53_imported_comparison_fingerprint_() {
+    return "53|regions=35|raw=2110|canonical=2110|deduplicated=282|local=0|plus=0|theorem=0";
+}
+
+static string triple_family_expansion_theorem_data_53_cache_path_summary_() {
+    return support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_payload_90.tsv");
+}
+
+static void reset_triple_family_expansion_theorem_data_53_state_() {
+    g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated = false;
+    g_last_triple_family_expansion_theorem_data_53_builder_used = false;
+    g_last_triple_family_expansion_theorem_data_53_cache_loaded = false;
+    g_last_triple_family_expansion_theorem_data_53_fallback_reachable = true;
+    g_last_triple_family_expansion_theorem_data_53_fallback_hit = false;
+    g_last_triple_family_expansion_theorem_data_53_authoritative_source.clear();
+    g_last_triple_family_expansion_theorem_data_53_constructor_name.clear();
+    g_last_triple_family_expansion_theorem_data_53_cache_load_path =
+        triple_family_expansion_theorem_data_53_cache_path_summary_();
+    g_last_triple_family_expansion_theorem_data_53_current_source_fingerprint =
+        binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    g_last_triple_family_expansion_theorem_data_53_current_fingerprint.clear();
+    g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint =
+        triple_family_expansion_theorem_data_53_imported_comparison_fingerprint_();
+    g_last_triple_family_expansion_theorem_data_53_imported_equality_result = "not_checked";
+    g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint.clear();
+    g_last_triple_family_expansion_theorem_data_53_caveat.clear();
+    g_last_triple_family_expansion_theorem_data_53_blocker.clear();
+    g_last_triple_family_expansion_theorem_data_53_region_count = 0;
+}
+
+static string triple_family_expansion_theorem_data_53_payload_fingerprint_(
+    const vector<BoundedExpansionRegionSpec>& specs,
+    const vector<OutOfPoolExpansionStats>& stats,
+    const TripleFamilyExpansionAggregateStats& aggregate) {
+    ostringstream data;
+    data << "triple_family_expansion_theorem_data_53|";
+    data << specs.size() << '|'
+         << aggregate.raw_candidates << '|'
+         << aggregate.canonical_candidates << '|'
+         << aggregate.deduplicated_candidates << '|'
+         << aggregate.local_exact_survivors << '|'
+         << aggregate.plus_one_survivors << '|'
+         << aggregate.theorem_preserving_survivors << '|';
+    for (size_t i = 0; i < stats.size(); ++i) {
+        if (i) data << '\n';
+        const auto& spec = specs[i];
+        const auto& st = stats[i];
+        data << spec.kind << '\t'
+             << spec.fingerprint << '\t'
+             << join_vector_with_delim_(spec.source_family_fingerprints, ";") << '\t'
+             << spec.symbol_bound << '\t'
+             << spec.antecedent_bound << '\t'
+             << st.raw_candidates << '\t'
+             << st.canonical_candidates << '\t'
+             << st.out_of_pool_candidates << '\t'
+             << st.local_exact_survivors << '\t'
+             << st.plus_one_survivors << '\t'
+             << st.theorem_preserving_survivors;
+    }
+    const string text = data.str();
+    return to_string(text.size()) + ":" + to_string(hash<string>{}(text));
+}
+
+static string triple_family_expansion_theorem_data_53_current_comparison_fingerprint_(
+    size_t region_count,
+    const TripleFamilyExpansionAggregateStats& aggregate) {
+    ostringstream oss;
+    oss << "53|regions=" << region_count
+        << "|raw=" << aggregate.raw_candidates
+        << "|canonical=" << aggregate.canonical_candidates
+        << "|deduplicated=" << aggregate.deduplicated_candidates
+        << "|local=" << aggregate.local_exact_survivors
+        << "|plus=" << aggregate.plus_one_survivors
+        << "|theorem=" << aggregate.theorem_preserving_survivors;
+    return oss.str();
+}
+
+static string triple_family_expansion_theorem_data_53_runtime_fingerprint_() {
+    ostringstream oss;
+    oss << (g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ? "fresh" : "imported")
+        << '|' << g_last_triple_family_expansion_theorem_data_53_authoritative_source
+        << '|' << g_last_triple_family_expansion_theorem_data_53_constructor_name
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_builder_used ? 1 : 0)
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_cache_loaded ? 1 : 0)
+        << '|' << g_last_triple_family_expansion_theorem_data_53_region_count
+        << '|' << g_last_triple_family_candidate_aggregate_stats.raw_candidates
+        << '|' << g_last_triple_family_candidate_aggregate_stats.canonical_candidates
+        << '|' << g_last_triple_family_candidate_aggregate_stats.deduplicated_candidates
+        << '|' << g_last_triple_family_candidate_aggregate_stats.local_exact_survivors
+        << '|' << g_last_triple_family_candidate_aggregate_stats.plus_one_survivors
+        << '|' << g_last_triple_family_candidate_aggregate_stats.theorem_preserving_survivors
+        << '|' << g_last_triple_family_expansion_theorem_data_53_current_fingerprint
+        << '|' << g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint
+        << '|' << g_last_triple_family_expansion_theorem_data_53_imported_equality_result
+        << '|' << g_last_triple_family_expansion_theorem_data_53_current_source_fingerprint
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_fallback_reachable ? 1 : 0)
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0)
+        << '|' << g_last_triple_family_expansion_theorem_data_53_blocker
+        << '|' << g_last_triple_family_expansion_theorem_data_53_caveat;
+    return oss.str();
+}
+
+static void finish_triple_family_expansion_theorem_data_53_status_from_current_globals_() {
+    g_last_support_bounded_schema_universe_obstruction_theorem =
+        support_bounded_schema_universe_obstruction_theorem_();
+    string status_why;
+    g_last_support_bounded_schema_universe_status =
+        classify_support_bounded_schema_universe_status_(
+            g_last_support_bounded_schema_universe_obstruction_theorem,
+            &g_last_triple_family_candidate_aggregate_stats,
+            &status_why);
+    g_last_support_bounded_schema_universe_ledger =
+        build_support_bounded_schema_universe_ledger_(
+            g_last_support_bounded_schema_universe_obstruction_theorem,
+            &g_last_triple_family_candidate_aggregate_stats,
+            g_last_support_bounded_schema_universe_status);
+}
+
+static bool triple_family_expansion_theorem_data_53_imported_comparison_equal_() {
+    const string current = triple_family_expansion_theorem_data_53_current_comparison_fingerprint_(
+        g_last_triple_family_expansion_theorem_data_53_region_count,
+        g_last_triple_family_candidate_aggregate_stats);
+    return current == g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint;
+}
+
+static bool load_current_triple_family_expansion_theorem_data_53_runtime_artifact_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_payload_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("triple_family_expansion_theorem_data_53_fingerprint_90.tsv");
+    if (!file_nonempty_for_audit_(payload_path) || !file_nonempty_for_audit_(fingerprint_path)) {
+        if (why) *why = "triple-family expansion theorem data 53 runtime artifact missing";
+        return false;
+    }
+    auto metrics = read_exact_basis_metric_tsv_(fingerprint_path);
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "triple-family expansion theorem data 53 runtime artifact source fingerprint stale";
+        return false;
+    }
+    if (metrics["current_provenance_label"] != "fresh_current_runtime_generated") {
+        if (why) *why = "triple-family expansion theorem data 53 runtime artifact is not marked fresh";
+        return false;
+    }
+    if (metrics["imported_equality_result"] != "counts_and_consumer_visible_fingerprint_equal") {
+        if (why) *why = "triple-family expansion theorem data 53 runtime artifact did not record imported equality";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "triple-family expansion theorem data 53 cache refused because upstream pair52 is not fresh";
+        return false;
+    }
+
+    ifstream fin(payload_path);
+    if (!fin) {
+        if (why) *why = "failed to open triple-family expansion theorem data 53 payload";
+        return false;
+    }
+    string line;
+    bool first = true;
+    vector<BoundedExpansionRegionSpec> specs;
+    vector<OutOfPoolExpansionStats> stats;
+    while (getline(fin, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        if (line.empty()) continue;
+        auto cols = split_exact_basis_tsv_line_(line);
+        if (cols.size() < 13) {
+            if (why) *why = "triple-family expansion theorem data 53 payload row missing columns";
+            return false;
+        }
+        int symbol_bound = 0;
+        int antecedent_bound = 0;
+        size_t raw = 0, canonical = 0, out_of_pool = 0, local = 0, plus = 0, theorem = 0;
+        if (!parse_int_exact_basis_(cols[4], &symbol_bound) ||
+            !parse_int_exact_basis_(cols[5], &antecedent_bound) ||
+            !parse_size_t_exact_basis_(cols[6], &raw) ||
+            !parse_size_t_exact_basis_(cols[7], &canonical) ||
+            !parse_size_t_exact_basis_(cols[8], &out_of_pool) ||
+            !parse_size_t_exact_basis_(cols[9], &local) ||
+            !parse_size_t_exact_basis_(cols[10], &plus) ||
+            !parse_size_t_exact_basis_(cols[11], &theorem)) {
+            if (why) *why = "triple-family expansion theorem data 53 payload row contains invalid numeric field";
+            return false;
+        }
+        BoundedExpansionRegionSpec spec;
+        spec.kind = cols[1];
+        spec.fingerprint = cols[2];
+        spec.source_family_fingerprints = split_pair_expansion_aggregate_sources_(cols[3]);
+        spec.symbol_bound = symbol_bound;
+        spec.antecedent_bound = antecedent_bound;
+        specs.push_back(std::move(spec));
+
+        OutOfPoolExpansionStats st;
+        st.expansion_region_fingerprint = cols[2];
+        st.symbol_bound = symbol_bound;
+        st.antecedent_bound = antecedent_bound;
+        st.raw_candidates = raw;
+        st.canonical_candidates = canonical;
+        st.out_of_pool_candidates = out_of_pool;
+        st.local_exact_survivors = local;
+        st.plus_one_survivors = plus;
+        st.theorem_preserving_survivors = theorem;
+        st.why = cols[12];
+        stats.push_back(std::move(st));
+    }
+
+    TripleFamilyExpansionAggregateStats aggregate;
+    if (!parse_size_t_exact_basis_(metrics["raw_candidates"], &aggregate.raw_candidates) ||
+        !parse_size_t_exact_basis_(metrics["canonical_candidates"], &aggregate.canonical_candidates) ||
+        !parse_size_t_exact_basis_(metrics["deduplicated_candidates"], &aggregate.deduplicated_candidates) ||
+        !parse_size_t_exact_basis_(metrics["local_exact_survivors"], &aggregate.local_exact_survivors) ||
+        !parse_size_t_exact_basis_(metrics["plus_one_survivors"], &aggregate.plus_one_survivors) ||
+        !parse_size_t_exact_basis_(metrics["theorem_preserving_survivors"], &aggregate.theorem_preserving_survivors)) {
+        if (why) *why = "triple-family expansion theorem data 53 fingerprint metrics missing aggregate fields";
+        return false;
+    }
+    aggregate.why = "loaded fresh current-runtime triple-family expansion theorem data 53 payload artifact";
+
+    const string payload_fp =
+        triple_family_expansion_theorem_data_53_payload_fingerprint_(specs, stats, aggregate);
+    if (payload_fp != metrics["payload_fingerprint"]) {
+        if (why) *why = "triple-family expansion theorem data 53 payload fingerprint mismatch";
+        return false;
+    }
+
+    g_last_triple_family_expansion_region_specs = std::move(specs);
+    g_last_triple_family_expansion_stats = std::move(stats);
+    g_last_triple_family_expansion_candidates.clear();
+    g_last_triple_family_candidate_aggregate_stats = aggregate;
+    g_last_triple_family_expansion_theorem_data_53_region_count =
+        g_last_triple_family_expansion_region_specs.size();
+    g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated = true;
+    g_last_triple_family_expansion_theorem_data_53_builder_used = false;
+    g_last_triple_family_expansion_theorem_data_53_cache_loaded = true;
+    g_last_triple_family_expansion_theorem_data_53_fallback_hit = false;
+    g_last_triple_family_expansion_theorem_data_53_authoritative_source =
+        "current_runtime_triple_family_expansion_theorem_data_53_cache";
+    g_last_triple_family_expansion_theorem_data_53_constructor_name =
+        "load_current_triple_family_expansion_theorem_data_53_runtime_artifact_";
+    g_last_triple_family_expansion_theorem_data_53_cache_load_path = payload_path;
+    g_last_triple_family_expansion_theorem_data_53_current_fingerprint = payload_fp;
+    g_last_triple_family_expansion_theorem_data_53_imported_equality_result =
+        metrics["imported_equality_result"];
+    g_last_triple_family_expansion_theorem_data_53_caveat =
+        "Current authoritative path loaded a validated runtime triple-family expansion theorem data 53 artifact; upstream pair52 stayed fresh with fallback_hit=0.";
+    finish_triple_family_expansion_theorem_data_53_status_from_current_globals_();
+    g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint =
+        triple_family_expansion_theorem_data_53_runtime_fingerprint_();
+    if (why) *why = "loaded validated runtime triple-family expansion theorem data 53 artifact";
+    return true;
+}
+
+static bool build_current_triple_family_expansion_theorem_data_53_from_pair52_ready_family_scan_(string* why) {
+    ensure_candidate_pool_completeness_and_expansion_ready_();
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "cannot freshize triple-family expansion theorem data 53 because upstream pair52 is not fresh";
+        return false;
+    }
+
     auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
-    g_last_bounded_expansion_region_specs = build_bounded_expansion_region_specs_(families, &why);
-    g_last_out_of_pool_expansion_stats.clear();
-    g_last_out_of_pool_expansion_candidates.clear();
-    g_last_out_of_pool_candidate_aggregate_stats = {};
-    g_last_out_of_pool_candidate_aggregate_stats.raw_candidates = 501;
-    g_last_out_of_pool_candidate_aggregate_stats.canonical_candidates = 501;
-    g_last_out_of_pool_candidate_aggregate_stats.deduplicated_candidates = 182;
-    g_last_out_of_pool_candidate_aggregate_stats.local_exact_survivors = 0;
-    g_last_out_of_pool_candidate_aggregate_stats.plus_one_survivors = 0;
-    g_last_out_of_pool_candidate_aggregate_stats.theorem_preserving_survivors = 0;
-    g_last_out_of_pool_candidate_aggregate_stats.why = "authoritative aggregate over all 7 single-family one-step regions and all 21 pair-merged regions imported from 52 output";
-    g_last_schema_universe_obstruction_certificate.candidate_pool_complete_on_tested_universe = true;
-    g_last_schema_universe_obstruction_certificate.out_of_pool_local_exact_survivors = 0;
-    g_last_schema_universe_obstruction_certificate.out_of_pool_plus_one_survivors = 0;
-    g_last_schema_universe_obstruction_certificate.out_of_pool_theorem_preserving_survivors = 0;
-    g_last_schema_universe_obstruction_certificate.bounded_expansion_found_stabilizer = false;
-    g_last_schema_universe_obstruction_certificate.reason = "candidate-pool completeness holds and all-family/all-pair bounded expansion found no theorem-preserving plus-one-improving out-of-pool schema";
-    g_last_candidate_pool_completeness_and_expansion_status = "candidate_pool_completeness_supported";
-    g_last_candidate_pool_completeness_and_expansion_ledger = build_candidate_pool_completeness_and_expansion_ledger_(
-        g_last_candidate_pool_completeness_stats,
-        g_last_candidate_pool_completeness_witnesses,
-        g_last_out_of_pool_expansion_stats,
-        g_last_out_of_pool_expansion_candidates,
-        g_last_schema_universe_obstruction_certificate,
-        g_last_candidate_pool_completeness_and_expansion_status);
+    auto pool = exact_minimal_basis_global_schema_candidate_pool_();
+    string specs_why;
+    auto specs = build_triple_family_expansion_region_specs_(families, &specs_why);
+    vector<OutOfPoolExpansionStats> stats;
+    vector<OutOfPoolExpansionCandidate> candidates;
+    g_last_out_of_pool_schema_validation_cache.clear();
+
+    for (size_t idx = 0; idx < specs.size(); ++idx) {
+        const auto& spec = specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: triple-family expansion theorem data 53 region " << (idx + 1) << "/" << specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        const auto* fa = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[0]);
+        const auto* fb = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[1]);
+        const auto* fc = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[2]);
+        if (!fa || !fb || !fc) {
+            if (why) *why = "triple-family expansion theorem data 53 missing source family for " + spec.fingerprint;
+            return false;
+        }
+        string enum_why;
+        auto out = enumerate_out_of_pool_triple_family_candidates_(
+            *fa, *fb, *fc, spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        stats.push_back(std::move(st));
+    }
+
+    string aggregate_why;
+    auto aggregate = build_triple_family_candidate_aggregate_stats_(candidates, &aggregate_why);
+    aggregate.raw_candidates = 0;
+    for (const auto& st : stats) aggregate.raw_candidates += st.raw_candidates;
+    aggregate.why =
+        "fresh current-runtime aggregate over all 35 triple-family merged regions; pair52 was verified fresh before construction";
+
+    g_last_triple_family_expansion_region_specs = std::move(specs);
+    g_last_triple_family_expansion_stats = std::move(stats);
+    g_last_triple_family_expansion_candidates = std::move(candidates);
+    g_last_triple_family_candidate_aggregate_stats = aggregate;
+    g_last_triple_family_expansion_theorem_data_53_region_count =
+        g_last_triple_family_expansion_region_specs.size();
+    g_last_triple_family_expansion_theorem_data_53_current_fingerprint =
+        triple_family_expansion_theorem_data_53_payload_fingerprint_(
+            g_last_triple_family_expansion_region_specs,
+            g_last_triple_family_expansion_stats,
+            g_last_triple_family_candidate_aggregate_stats);
+
+    if (!triple_family_expansion_theorem_data_53_imported_comparison_equal_()) {
+        g_last_triple_family_expansion_theorem_data_53_imported_equality_result = "mismatch";
+        g_last_triple_family_expansion_theorem_data_53_blocker =
+            string("fresh triple-family expansion theorem data 53 did not match imported 53 comparison fingerprint current=") +
+            triple_family_expansion_theorem_data_53_current_comparison_fingerprint_(
+                g_last_triple_family_expansion_theorem_data_53_region_count,
+                g_last_triple_family_candidate_aggregate_stats) +
+            " imported=" + g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint;
+        if (why) *why = g_last_triple_family_expansion_theorem_data_53_blocker;
+        return false;
+    }
+
+    g_last_triple_family_expansion_theorem_data_53_imported_equality_result =
+        "counts_and_consumer_visible_fingerprint_equal";
+    g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated = true;
+    g_last_triple_family_expansion_theorem_data_53_builder_used = true;
+    g_last_triple_family_expansion_theorem_data_53_cache_loaded = false;
+    g_last_triple_family_expansion_theorem_data_53_fallback_hit = false;
+    g_last_triple_family_expansion_theorem_data_53_authoritative_source =
+        "current_runtime_triple_family_expansion_theorem_data_53";
+    g_last_triple_family_expansion_theorem_data_53_constructor_name =
+        "build_current_triple_family_expansion_theorem_data_53_from_pair52_ready_family_scan_";
+    g_last_triple_family_expansion_theorem_data_53_cache_load_path =
+        triple_family_expansion_theorem_data_53_cache_path_summary_();
+    g_last_triple_family_expansion_theorem_data_53_caveat =
+        "Current runtime rebuilt triple-family expansion theorem data 53 from the seven family summaries after verifying pair52 as fresh; pair52 rows are not copied as the triple payload source.";
+    finish_triple_family_expansion_theorem_data_53_status_from_current_globals_();
+    g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint =
+        triple_family_expansion_theorem_data_53_runtime_fingerprint_();
+    if (why) {
+        *why = "current triple-family region scanner rebuilt theorem data 53";
+    }
+    return true;
+}
+
+static void install_imported_triple_family_expansion_theorem_data_53_fallback_(const string& blocker) {
+    auto summaries = authoritative_triple_family_expansion_region_summaries_();
+    g_last_triple_family_expansion_region_specs.clear();
+    g_last_triple_family_expansion_stats.clear();
+    g_last_triple_family_expansion_candidates.clear();
+    g_last_triple_family_expansion_region_specs.reserve(summaries.size());
+    g_last_triple_family_expansion_stats.reserve(summaries.size());
+    for (const auto& s : summaries) {
+        BoundedExpansionRegionSpec spec;
+        spec.fingerprint = s.region_fingerprint;
+        spec.kind = "triple_merged_authoritative_imported_fallback";
+        spec.symbol_bound = s.symbol_bound;
+        spec.antecedent_bound = s.antecedent_bound;
+        g_last_triple_family_expansion_region_specs.push_back(std::move(spec));
+
+        OutOfPoolExpansionStats stats;
+        stats.expansion_region_fingerprint = s.region_fingerprint;
+        stats.symbol_bound = s.symbol_bound;
+        stats.antecedent_bound = s.antecedent_bound;
+        stats.raw_candidates = s.raw_candidates;
+        stats.canonical_candidates = s.canonical_candidates;
+        stats.out_of_pool_candidates = s.out_of_pool_candidates;
+        stats.local_exact_survivors = s.local_exact_survivors;
+        stats.plus_one_survivors = s.plus_one_survivors;
+        stats.theorem_preserving_survivors = s.theorem_preserving_survivors;
+        stats.why = s.why;
+        g_last_triple_family_expansion_stats.push_back(std::move(stats));
+    }
+    auto data = authoritative_triple_family_expansion_theorem_data_();
+    g_last_triple_family_candidate_aggregate_stats = {};
+    g_last_triple_family_candidate_aggregate_stats.raw_candidates = data.raw_candidates;
+    g_last_triple_family_candidate_aggregate_stats.canonical_candidates = data.canonical_candidates;
+    g_last_triple_family_candidate_aggregate_stats.deduplicated_candidates = data.deduplicated_candidates;
+    g_last_triple_family_candidate_aggregate_stats.local_exact_survivors = data.local_exact_survivors;
+    g_last_triple_family_candidate_aggregate_stats.plus_one_survivors = data.plus_one_survivors;
+    g_last_triple_family_candidate_aggregate_stats.theorem_preserving_survivors = data.theorem_preserving_survivors;
+    g_last_triple_family_candidate_aggregate_stats.why = data.why;
+
+    g_last_triple_family_expansion_theorem_data_53_region_count =
+        g_last_triple_family_expansion_region_specs.size();
+    g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated = false;
+    g_last_triple_family_expansion_theorem_data_53_builder_used = false;
+    g_last_triple_family_expansion_theorem_data_53_cache_loaded = false;
+    g_last_triple_family_expansion_theorem_data_53_fallback_hit = true;
+    g_last_triple_family_expansion_theorem_data_53_authoritative_source =
+        "imported_triple_family_expansion_theorem_data_53_compatibility_fallback";
+    g_last_triple_family_expansion_theorem_data_53_constructor_name =
+        "install_imported_triple_family_expansion_theorem_data_53_fallback_";
+    g_last_triple_family_expansion_theorem_data_53_imported_equality_result = "fallback_imported";
+    g_last_triple_family_expansion_theorem_data_53_blocker = blocker;
+    g_last_triple_family_expansion_theorem_data_53_caveat =
+        "Current runtime could not rebuild triple-family expansion theorem data 53; imported 53 compatibility fallback was used.";
+    g_last_triple_family_expansion_theorem_data_53_current_fingerprint =
+        g_last_triple_family_expansion_theorem_data_53_imported_comparison_fingerprint;
+    finish_triple_family_expansion_theorem_data_53_status_from_current_globals_();
+    g_last_triple_family_expansion_theorem_data_53_runtime_fingerprint =
+        triple_family_expansion_theorem_data_53_runtime_fingerprint_();
 }
 
 static bool ensure_basis_plus_one_ready_fast_(bool allow_slow_rebuild,
@@ -39602,57 +42778,30 @@ static bool ensure_triple_family_expansion_ready_fast_(bool allow_slow_rebuild,
         if (why) *why = g_last_support_bounded_schema_universe_ledger;
         return true;
     }
+    reset_triple_family_expansion_theorem_data_53_state_();
+    ensure_candidate_pool_completeness_and_expansion_ready_();
+
+    string current_why;
+    if (load_current_triple_family_expansion_theorem_data_53_runtime_artifact_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+#ifdef LOCAL_TEST
+    cerr << "stage: build triple-family expansion theorem data 53 current artifact\n";
+#endif
+    if (build_current_triple_family_expansion_theorem_data_53_from_pair52_ready_family_scan_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+
     string theorem_why;
     if (validate_authoritative_triple_family_expansion_data_(&theorem_why)) {
-        g_last_support_bounded_schema_universe_obstruction_theorem = support_bounded_schema_universe_obstruction_theorem_();
-        auto summaries = authoritative_triple_family_expansion_region_summaries_();
-        g_last_triple_family_expansion_region_specs.clear();
-        g_last_triple_family_expansion_stats.clear();
-        g_last_triple_family_expansion_candidates.clear();
-        g_last_triple_family_expansion_region_specs.reserve(summaries.size());
-        g_last_triple_family_expansion_stats.reserve(summaries.size());
-        for (const auto& s : summaries) {
-            BoundedExpansionRegionSpec spec;
-            spec.fingerprint = s.region_fingerprint;
-            spec.kind = "triple_merged_authoritative";
-            spec.symbol_bound = s.symbol_bound;
-            spec.antecedent_bound = s.antecedent_bound;
-            g_last_triple_family_expansion_region_specs.push_back(std::move(spec));
-
-            OutOfPoolExpansionStats stats;
-            stats.expansion_region_fingerprint = s.region_fingerprint;
-            stats.symbol_bound = s.symbol_bound;
-            stats.antecedent_bound = s.antecedent_bound;
-            stats.raw_candidates = s.raw_candidates;
-            stats.canonical_candidates = s.canonical_candidates;
-            stats.out_of_pool_candidates = s.out_of_pool_candidates;
-            stats.local_exact_survivors = s.local_exact_survivors;
-            stats.plus_one_survivors = s.plus_one_survivors;
-            stats.theorem_preserving_survivors = s.theorem_preserving_survivors;
-            stats.why = s.why;
-            g_last_triple_family_expansion_stats.push_back(std::move(stats));
-        }
-        auto data = authoritative_triple_family_expansion_theorem_data_();
-        g_last_triple_family_candidate_aggregate_stats = {};
-        g_last_triple_family_candidate_aggregate_stats.raw_candidates = data.raw_candidates;
-        g_last_triple_family_candidate_aggregate_stats.canonical_candidates = data.canonical_candidates;
-        g_last_triple_family_candidate_aggregate_stats.deduplicated_candidates = data.deduplicated_candidates;
-        g_last_triple_family_candidate_aggregate_stats.local_exact_survivors = data.local_exact_survivors;
-        g_last_triple_family_candidate_aggregate_stats.plus_one_survivors = data.plus_one_survivors;
-        g_last_triple_family_candidate_aggregate_stats.theorem_preserving_survivors = data.theorem_preserving_survivors;
-        g_last_triple_family_candidate_aggregate_stats.why = data.why;
-        string status_why;
-        g_last_support_bounded_schema_universe_status = classify_support_bounded_schema_universe_status_(g_last_support_bounded_schema_universe_obstruction_theorem,
-                                                                                                          &g_last_triple_family_candidate_aggregate_stats,
-                                                                                                          &status_why);
-        g_last_support_bounded_schema_universe_ledger = build_support_bounded_schema_universe_ledger_(g_last_support_bounded_schema_universe_obstruction_theorem,
-                                                                                                       &g_last_triple_family_candidate_aggregate_stats,
-                                                                                                       g_last_support_bounded_schema_universe_status);
-        if (why) *why = theorem_why;
+        install_imported_triple_family_expansion_theorem_data_53_fallback_(current_why.empty() ? theorem_why : current_why);
+        if (why) *why = current_why.empty() ? theorem_why : current_why;
         return true;
     }
     if (!allow_slow_rebuild) {
-        if (why) *why = theorem_why;
+        if (why) *why = current_why + "\n" + theorem_why;
         return false;
     }
     ensure_triple_family_expansion_ready_slow_();
@@ -39665,6 +42814,391 @@ static void ensure_triple_family_expansion_ready_() {
     if (!ensure_triple_family_expansion_ready_fast_(false, &why)) {
         throw runtime_error(string("authoritative triple-family theorem data unavailable\n") + why);
     }
+}
+
+static string quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint_() {
+    return "55|regions=35|raw=3962|canonical=3962|deduplicated=294|local=0|plus=0|theorem=0";
+}
+
+static string quadruple_family_expansion_theorem_data_55_cache_path_summary_() {
+    return support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_payload_90.tsv");
+}
+
+static void reset_quadruple_family_expansion_theorem_data_55_state_() {
+    g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated = false;
+    g_last_quadruple_family_expansion_theorem_data_55_builder_used = false;
+    g_last_quadruple_family_expansion_theorem_data_55_cache_loaded = false;
+    g_last_quadruple_family_expansion_theorem_data_55_fallback_reachable = true;
+    g_last_quadruple_family_expansion_theorem_data_55_fallback_hit = false;
+    g_last_quadruple_family_expansion_theorem_data_55_authoritative_source.clear();
+    g_last_quadruple_family_expansion_theorem_data_55_constructor_name.clear();
+    g_last_quadruple_family_expansion_theorem_data_55_cache_load_path =
+        quadruple_family_expansion_theorem_data_55_cache_path_summary_();
+    g_last_quadruple_family_expansion_theorem_data_55_current_source_fingerprint =
+        binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint.clear();
+    g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint =
+        quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint_();
+    g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result = "not_checked";
+    g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint.clear();
+    g_last_quadruple_family_expansion_theorem_data_55_caveat.clear();
+    g_last_quadruple_family_expansion_theorem_data_55_blocker.clear();
+    g_last_quadruple_family_expansion_theorem_data_55_region_count = 0;
+}
+
+static string quadruple_family_expansion_theorem_data_55_payload_fingerprint_(
+    const vector<BoundedExpansionRegionSpec>& specs,
+    const vector<OutOfPoolExpansionStats>& stats,
+    const QuadrupleFamilyExpansionTheoremData& data) {
+    ostringstream text;
+    text << "quadruple_family_expansion_theorem_data_55|";
+    text << specs.size() << '|'
+         << data.raw_candidates << '|'
+         << data.canonical_candidates << '|'
+         << data.deduplicated_candidates << '|'
+         << data.local_exact_survivors << '|'
+         << data.plus_one_survivors << '|'
+         << data.theorem_preserving_survivors << '|';
+    for (size_t i = 0; i < stats.size(); ++i) {
+        if (i) text << '\n';
+        const auto& spec = specs[i];
+        const auto& st = stats[i];
+        text << spec.kind << '\t'
+             << spec.fingerprint << '\t'
+             << join_vector_with_delim_(spec.source_family_fingerprints, ";") << '\t'
+             << spec.symbol_bound << '\t'
+             << spec.antecedent_bound << '\t'
+             << st.raw_candidates << '\t'
+             << st.canonical_candidates << '\t'
+             << st.out_of_pool_candidates << '\t'
+             << st.local_exact_survivors << '\t'
+             << st.plus_one_survivors << '\t'
+             << st.theorem_preserving_survivors;
+    }
+    const string out = text.str();
+    return to_string(out.size()) + ":" + to_string(hash<string>{}(out));
+}
+
+static string quadruple_family_expansion_theorem_data_55_current_comparison_fingerprint_(
+    const QuadrupleFamilyExpansionTheoremData& data) {
+    ostringstream oss;
+    oss << "55|regions=" << data.region_count
+        << "|raw=" << data.raw_candidates
+        << "|canonical=" << data.canonical_candidates
+        << "|deduplicated=" << data.deduplicated_candidates
+        << "|local=" << data.local_exact_survivors
+        << "|plus=" << data.plus_one_survivors
+        << "|theorem=" << data.theorem_preserving_survivors;
+    return oss.str();
+}
+
+static string quadruple_family_expansion_theorem_data_55_runtime_fingerprint_() {
+    ostringstream oss;
+    oss << (g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ? "fresh" : "imported")
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_authoritative_source
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_constructor_name
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_builder_used ? 1 : 0)
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_cache_loaded ? 1 : 0)
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_region_count
+        << '|' << g_last_quadruple_family_theorem_data.raw_candidates
+        << '|' << g_last_quadruple_family_theorem_data.canonical_candidates
+        << '|' << g_last_quadruple_family_theorem_data.deduplicated_candidates
+        << '|' << g_last_quadruple_family_theorem_data.local_exact_survivors
+        << '|' << g_last_quadruple_family_theorem_data.plus_one_survivors
+        << '|' << g_last_quadruple_family_theorem_data.theorem_preserving_survivors
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_current_source_fingerprint
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_fallback_reachable ? 1 : 0)
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0)
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0)
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_blocker
+        << '|' << g_last_quadruple_family_expansion_theorem_data_55_caveat;
+    return oss.str();
+}
+
+static bool quadruple_family_expansion_theorem_data_55_imported_comparison_equal_() {
+    return quadruple_family_expansion_theorem_data_55_current_comparison_fingerprint_(
+               g_last_quadruple_family_theorem_data) ==
+           g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint;
+}
+
+static bool load_current_quadruple_family_expansion_theorem_data_55_runtime_artifact_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_payload_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("quadruple_family_expansion_theorem_data_55_fingerprint_90.tsv");
+    if (!file_nonempty_for_audit_(payload_path) || !file_nonempty_for_audit_(fingerprint_path)) {
+        if (why) *why = "quadruple-family expansion theorem data 55 runtime artifact missing";
+        return false;
+    }
+    auto metrics = read_exact_basis_metric_tsv_(fingerprint_path);
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "quadruple-family expansion theorem data 55 runtime artifact source fingerprint stale";
+        return false;
+    }
+    if (metrics["current_provenance_label"] != "fresh_current_runtime_generated") {
+        if (why) *why = "quadruple-family expansion theorem data 55 runtime artifact is not marked fresh";
+        return false;
+    }
+    if (metrics["imported_equality_result"] != "counts_and_consumer_visible_fingerprint_equal") {
+        if (why) *why = "quadruple-family expansion theorem data 55 runtime artifact did not record imported equality";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "quadruple-family expansion theorem data 55 cache refused because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "quadruple-family expansion theorem data 55 cache refused because upstream pair52 is not fresh";
+        return false;
+    }
+
+    ifstream fin(payload_path);
+    if (!fin) {
+        if (why) *why = "failed to open quadruple-family expansion theorem data 55 payload";
+        return false;
+    }
+    string line;
+    bool first = true;
+    vector<BoundedExpansionRegionSpec> specs;
+    vector<OutOfPoolExpansionStats> stats;
+    while (getline(fin, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        if (line.empty()) continue;
+        auto cols = split_exact_basis_tsv_line_(line);
+        if (cols.size() < 13) {
+            if (why) *why = "quadruple-family expansion theorem data 55 payload row missing columns";
+            return false;
+        }
+        int symbol_bound = 0;
+        int antecedent_bound = 0;
+        size_t raw = 0, canonical = 0, out_of_pool = 0, local = 0, plus = 0, theorem = 0;
+        if (!parse_int_exact_basis_(cols[4], &symbol_bound) ||
+            !parse_int_exact_basis_(cols[5], &antecedent_bound) ||
+            !parse_size_t_exact_basis_(cols[6], &raw) ||
+            !parse_size_t_exact_basis_(cols[7], &canonical) ||
+            !parse_size_t_exact_basis_(cols[8], &out_of_pool) ||
+            !parse_size_t_exact_basis_(cols[9], &local) ||
+            !parse_size_t_exact_basis_(cols[10], &plus) ||
+            !parse_size_t_exact_basis_(cols[11], &theorem)) {
+            if (why) *why = "quadruple-family expansion theorem data 55 payload row contains invalid numeric field";
+            return false;
+        }
+        BoundedExpansionRegionSpec spec;
+        spec.kind = cols[1];
+        spec.fingerprint = cols[2];
+        spec.source_family_fingerprints = split_pair_expansion_aggregate_sources_(cols[3]);
+        spec.symbol_bound = symbol_bound;
+        spec.antecedent_bound = antecedent_bound;
+        specs.push_back(std::move(spec));
+
+        OutOfPoolExpansionStats st;
+        st.expansion_region_fingerprint = cols[2];
+        st.symbol_bound = symbol_bound;
+        st.antecedent_bound = antecedent_bound;
+        st.raw_candidates = raw;
+        st.canonical_candidates = canonical;
+        st.out_of_pool_candidates = out_of_pool;
+        st.local_exact_survivors = local;
+        st.plus_one_survivors = plus;
+        st.theorem_preserving_survivors = theorem;
+        st.why = cols[12];
+        stats.push_back(std::move(st));
+    }
+
+    QuadrupleFamilyExpansionTheoremData data;
+    if (!parse_size_t_exact_basis_(metrics["region_count"], &data.region_count) ||
+        !parse_size_t_exact_basis_(metrics["raw_candidates"], &data.raw_candidates) ||
+        !parse_size_t_exact_basis_(metrics["canonical_candidates"], &data.canonical_candidates) ||
+        !parse_size_t_exact_basis_(metrics["deduplicated_candidates"], &data.deduplicated_candidates) ||
+        !parse_size_t_exact_basis_(metrics["local_exact_survivors"], &data.local_exact_survivors) ||
+        !parse_size_t_exact_basis_(metrics["plus_one_survivors"], &data.plus_one_survivors) ||
+        !parse_size_t_exact_basis_(metrics["theorem_preserving_survivors"], &data.theorem_preserving_survivors)) {
+        if (why) *why = "quadruple-family expansion theorem data 55 fingerprint metrics missing theorem-data fields";
+        return false;
+    }
+    data.why = "loaded fresh current-runtime quadruple-family expansion theorem data 55 payload artifact";
+
+    const string payload_fp =
+        quadruple_family_expansion_theorem_data_55_payload_fingerprint_(specs, stats, data);
+    if (payload_fp != metrics["payload_fingerprint"]) {
+        if (why) *why = "quadruple-family expansion theorem data 55 payload fingerprint mismatch";
+        return false;
+    }
+
+    g_last_quadruple_family_expansion_region_specs = std::move(specs);
+    g_last_quadruple_family_expansion_stats = std::move(stats);
+    g_last_quadruple_family_expansion_candidates.clear();
+    g_last_quadruple_family_theorem_data = data;
+    g_last_quadruple_family_expansion_theorem_data_55_region_count =
+        g_last_quadruple_family_expansion_region_specs.size();
+    g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated = true;
+    g_last_quadruple_family_expansion_theorem_data_55_builder_used = false;
+    g_last_quadruple_family_expansion_theorem_data_55_cache_loaded = true;
+    g_last_quadruple_family_expansion_theorem_data_55_fallback_hit = false;
+    g_last_quadruple_family_expansion_theorem_data_55_authoritative_source =
+        "current_runtime_quadruple_family_expansion_theorem_data_55_cache";
+    g_last_quadruple_family_expansion_theorem_data_55_constructor_name =
+        "load_current_quadruple_family_expansion_theorem_data_55_runtime_artifact_";
+    g_last_quadruple_family_expansion_theorem_data_55_cache_load_path = payload_path;
+    g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint = payload_fp;
+    g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result =
+        metrics["imported_equality_result"];
+    g_last_quadruple_family_expansion_theorem_data_55_caveat =
+        "Current authoritative path loaded a validated runtime quadruple-family expansion theorem data 55 artifact; upstream triple53 and pair52 stayed fresh with fallback_hit=0.";
+    g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint =
+        quadruple_family_expansion_theorem_data_55_runtime_fingerprint_();
+    if (why) *why = "loaded validated runtime quadruple-family expansion theorem data 55 artifact";
+    return true;
+}
+
+static bool build_current_quadruple_family_expansion_theorem_data_55_from_triple53_ready_family_scan_(string* why) {
+    if (!ensure_triple_family_expansion_ready_fast_(false, why)) {
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "cannot freshize quadruple-family expansion theorem data 55 because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "cannot freshize quadruple-family expansion theorem data 55 because upstream pair52 is not fresh";
+        return false;
+    }
+
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    auto pool = exact_minimal_basis_global_schema_candidate_pool_();
+    string specs_why;
+    auto specs = build_quadruple_family_expansion_region_specs_(families, &specs_why);
+    vector<OutOfPoolExpansionStats> stats;
+    vector<OutOfPoolExpansionCandidate> candidates;
+    g_last_out_of_pool_schema_validation_cache.clear();
+
+    for (size_t idx = 0; idx < specs.size(); ++idx) {
+        const auto& spec = specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: quadruple-family expansion theorem data 55 region " << (idx + 1) << "/" << specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        const auto* fa = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[0]);
+        const auto* fb = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[1]);
+        const auto* fc = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[2]);
+        const auto* fd = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[3]);
+        if (!fa || !fb || !fc || !fd) {
+            if (why) *why = "quadruple-family expansion theorem data 55 missing source family for " + spec.fingerprint;
+            return false;
+        }
+        string enum_why;
+        auto out = enumerate_out_of_pool_quadruple_family_candidates_(
+            *fa, *fb, *fc, *fd, spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        stats.push_back(std::move(st));
+    }
+
+    QuadrupleFamilyExpansionTheoremData data;
+    data.region_count = stats.size();
+    for (const auto& st : stats) {
+        data.raw_candidates += st.raw_candidates;
+        data.canonical_candidates += st.canonical_candidates;
+        data.local_exact_survivors += st.local_exact_survivors;
+        data.plus_one_survivors += st.plus_one_survivors;
+        data.theorem_preserving_survivors += st.theorem_preserving_survivors;
+    }
+    string aggregate_why;
+    auto aggregate = build_quadruple_family_candidate_aggregate_stats_(candidates, &aggregate_why);
+    data.deduplicated_candidates = aggregate.deduplicated_candidates;
+    data.why =
+        "fresh current-runtime aggregate over all 35 quadruple-family merged regions; triple53 and pair52 were verified fresh before construction";
+
+    g_last_quadruple_family_expansion_region_specs = std::move(specs);
+    g_last_quadruple_family_expansion_stats = std::move(stats);
+    g_last_quadruple_family_expansion_candidates = std::move(candidates);
+    g_last_quadruple_family_theorem_data = data;
+    g_last_quadruple_family_expansion_theorem_data_55_region_count =
+        g_last_quadruple_family_expansion_region_specs.size();
+    g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint =
+        quadruple_family_expansion_theorem_data_55_payload_fingerprint_(
+            g_last_quadruple_family_expansion_region_specs,
+            g_last_quadruple_family_expansion_stats,
+            g_last_quadruple_family_theorem_data);
+
+    if (!quadruple_family_expansion_theorem_data_55_imported_comparison_equal_()) {
+        g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result = "mismatch";
+        g_last_quadruple_family_expansion_theorem_data_55_blocker =
+            string("fresh quadruple-family expansion theorem data 55 did not match imported 55 comparison fingerprint current=") +
+            quadruple_family_expansion_theorem_data_55_current_comparison_fingerprint_(
+                g_last_quadruple_family_theorem_data) +
+            " imported=" + g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint;
+        if (why) *why = g_last_quadruple_family_expansion_theorem_data_55_blocker;
+        return false;
+    }
+
+    g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result =
+        "counts_and_consumer_visible_fingerprint_equal";
+    g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated = true;
+    g_last_quadruple_family_expansion_theorem_data_55_builder_used = true;
+    g_last_quadruple_family_expansion_theorem_data_55_cache_loaded = false;
+    g_last_quadruple_family_expansion_theorem_data_55_fallback_hit = false;
+    g_last_quadruple_family_expansion_theorem_data_55_authoritative_source =
+        "current_runtime_quadruple_family_expansion_theorem_data_55";
+    g_last_quadruple_family_expansion_theorem_data_55_constructor_name =
+        "build_current_quadruple_family_expansion_theorem_data_55_from_triple53_ready_family_scan_";
+    g_last_quadruple_family_expansion_theorem_data_55_cache_load_path =
+        quadruple_family_expansion_theorem_data_55_cache_path_summary_();
+    g_last_quadruple_family_expansion_theorem_data_55_caveat =
+        "Current runtime rebuilt quadruple-family expansion theorem data 55 from the seven family summaries after verifying triple53 and pair52 as fresh; upstream payload rows are not copied as the quadruple payload source.";
+    g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint =
+        quadruple_family_expansion_theorem_data_55_runtime_fingerprint_();
+    if (why) {
+        *why = "current quadruple-family region scanner rebuilt theorem data 55";
+    }
+    return true;
+}
+
+static void install_imported_quadruple_family_expansion_theorem_data_55_fallback_(const string& blocker) {
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    string spec_why;
+    g_last_quadruple_family_expansion_region_specs =
+        build_quadruple_family_expansion_region_specs_(families, &spec_why);
+    g_last_quadruple_family_expansion_stats.clear();
+    g_last_quadruple_family_expansion_candidates.clear();
+    g_last_quadruple_family_theorem_data = authoritative_quadruple_family_expansion_theorem_data_();
+    g_last_quadruple_family_expansion_theorem_data_55_region_count =
+        g_last_quadruple_family_theorem_data.region_count;
+    g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated = false;
+    g_last_quadruple_family_expansion_theorem_data_55_builder_used = false;
+    g_last_quadruple_family_expansion_theorem_data_55_cache_loaded = false;
+    g_last_quadruple_family_expansion_theorem_data_55_fallback_hit = true;
+    g_last_quadruple_family_expansion_theorem_data_55_authoritative_source =
+        "imported_quadruple_family_expansion_theorem_data_55_compatibility_fallback";
+    g_last_quadruple_family_expansion_theorem_data_55_constructor_name =
+        "install_imported_quadruple_family_expansion_theorem_data_55_fallback_";
+    g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result = "fallback_imported";
+    g_last_quadruple_family_expansion_theorem_data_55_blocker = blocker;
+    g_last_quadruple_family_expansion_theorem_data_55_caveat =
+        "Current runtime could not rebuild quadruple-family expansion theorem data 55; imported 55 compatibility fallback was used.";
+    g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint =
+        g_last_quadruple_family_expansion_theorem_data_55_imported_comparison_fingerprint;
+    g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint =
+        quadruple_family_expansion_theorem_data_55_runtime_fingerprint_();
 }
 
 
@@ -39721,22 +43255,63 @@ static bool ensure_quadruple_family_expansion_ready_fast_(bool allow_slow_rebuil
         if (why) *why = quadruple_family_expansion_theorem_data_to_string_(g_last_quadruple_family_theorem_data);
         return true;
     }
+    reset_quadruple_family_expansion_theorem_data_55_state_();
+    string upstream_why;
+    if (!ensure_triple_family_expansion_ready_fast_(allow_slow_rebuild, &upstream_why)) {
+        if (why) *why = upstream_why;
+        return false;
+    }
+
+    string current_why;
+    if (load_current_quadruple_family_expansion_theorem_data_55_runtime_artifact_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+#ifdef LOCAL_TEST
+    cerr << "stage: build quadruple-family expansion theorem data 55 current artifact\n";
+#endif
+    if (build_current_quadruple_family_expansion_theorem_data_55_from_triple53_ready_family_scan_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+
     string theorem_why;
     if (validate_authoritative_quadruple_family_expansion_data_(&theorem_why)) {
-        auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
-        string spec_why;
-        g_last_quadruple_family_expansion_region_specs = build_quadruple_family_expansion_region_specs_(families, &spec_why);
-        g_last_quadruple_family_expansion_stats.clear();
-        g_last_quadruple_family_expansion_candidates.clear();
-        g_last_quadruple_family_theorem_data = authoritative_quadruple_family_expansion_theorem_data_();
-        if (why) *why = theorem_why;
+        install_imported_quadruple_family_expansion_theorem_data_55_fallback_(
+            current_why.empty() ? theorem_why : current_why);
+        if (why) *why = current_why.empty() ? theorem_why : current_why;
         return true;
     }
     if (!allow_slow_rebuild) {
-        if (why) *why = theorem_why;
+        if (why) *why = current_why + "\n" + theorem_why;
         return false;
     }
     ensure_quadruple_family_expansion_ready_slow_();
+    g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated = true;
+    g_last_quadruple_family_expansion_theorem_data_55_builder_used = true;
+    g_last_quadruple_family_expansion_theorem_data_55_cache_loaded = false;
+    g_last_quadruple_family_expansion_theorem_data_55_fallback_hit = false;
+    g_last_quadruple_family_expansion_theorem_data_55_authoritative_source =
+        "current_runtime_quadruple_family_expansion_theorem_data_55_slow";
+    g_last_quadruple_family_expansion_theorem_data_55_constructor_name =
+        "ensure_quadruple_family_expansion_ready_slow_";
+    g_last_quadruple_family_expansion_theorem_data_55_cache_load_path =
+        quadruple_family_expansion_theorem_data_55_cache_path_summary_();
+    g_last_quadruple_family_expansion_theorem_data_55_region_count =
+        g_last_quadruple_family_theorem_data.region_count;
+    g_last_quadruple_family_expansion_theorem_data_55_current_fingerprint =
+        quadruple_family_expansion_theorem_data_55_payload_fingerprint_(
+            g_last_quadruple_family_expansion_region_specs,
+            g_last_quadruple_family_expansion_stats,
+            g_last_quadruple_family_theorem_data);
+    g_last_quadruple_family_expansion_theorem_data_55_imported_equality_result =
+        quadruple_family_expansion_theorem_data_55_imported_comparison_equal_()
+            ? "counts_and_consumer_visible_fingerprint_equal"
+            : "mismatch";
+    g_last_quadruple_family_expansion_theorem_data_55_caveat =
+        "Slow path rebuilt quadruple-family expansion theorem data 55 in the current runtime.";
+    g_last_quadruple_family_expansion_theorem_data_55_runtime_fingerprint =
+        quadruple_family_expansion_theorem_data_55_runtime_fingerprint_();
     if (why) *why = "slow quadruple-family rebuild completed";
     return true;
 }
@@ -39746,6 +43321,417 @@ static void ensure_quadruple_family_expansion_ready_() {
     if (!ensure_quadruple_family_expansion_ready_fast_(false, &why)) {
         throw runtime_error(string("authoritative quadruple-family theorem data unavailable\n") + why);
     }
+}
+
+static string quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint_() {
+    return "57|regions=21|raw=3634|canonical=3634|deduplicated=294|local=0|plus=0|theorem=0";
+}
+
+static string quintuple_family_expansion_theorem_data_57_cache_path_summary_() {
+    return support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_payload_90.tsv");
+}
+
+static void reset_quintuple_family_expansion_theorem_data_57_state_() {
+    g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_quintuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_quintuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_quintuple_family_expansion_theorem_data_57_fallback_reachable = true;
+    g_last_quintuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_quintuple_family_expansion_theorem_data_57_authoritative_source.clear();
+    g_last_quintuple_family_expansion_theorem_data_57_constructor_name.clear();
+    g_last_quintuple_family_expansion_theorem_data_57_cache_load_path =
+        quintuple_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_quintuple_family_expansion_theorem_data_57_current_source_fingerprint =
+        binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint.clear();
+    g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint =
+        quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint_();
+    g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result = "not_checked";
+    g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint.clear();
+    g_last_quintuple_family_expansion_theorem_data_57_caveat.clear();
+    g_last_quintuple_family_expansion_theorem_data_57_blocker.clear();
+    g_last_quintuple_family_expansion_theorem_data_57_region_count = 0;
+}
+
+static string quintuple_family_expansion_theorem_data_57_payload_fingerprint_(
+    const vector<BoundedExpansionRegionSpec>& specs,
+    const vector<OutOfPoolExpansionStats>& stats,
+    const QuintupleFamilyExpansionTheoremData& data) {
+    ostringstream text;
+    text << "quintuple_family_expansion_theorem_data_57|";
+    text << specs.size() << '|'
+         << data.raw_candidates << '|'
+         << data.canonical_candidates << '|'
+         << data.deduplicated_candidates << '|'
+         << data.local_exact_survivors << '|'
+         << data.plus_one_survivors << '|'
+         << data.theorem_preserving_survivors << '|';
+    for (size_t i = 0; i < stats.size(); ++i) {
+        if (i) text << '\n';
+        const auto& spec = specs[i];
+        const auto& st = stats[i];
+        text << spec.kind << '\t'
+             << spec.fingerprint << '\t'
+             << join_vector_with_delim_(spec.source_family_fingerprints, ";") << '\t'
+             << spec.symbol_bound << '\t'
+             << spec.antecedent_bound << '\t'
+             << st.raw_candidates << '\t'
+             << st.canonical_candidates << '\t'
+             << st.out_of_pool_candidates << '\t'
+             << st.local_exact_survivors << '\t'
+             << st.plus_one_survivors << '\t'
+             << st.theorem_preserving_survivors;
+    }
+    const string out = text.str();
+    return to_string(out.size()) + ":" + to_string(hash<string>{}(out));
+}
+
+static string quintuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const QuintupleFamilyExpansionTheoremData& data) {
+    ostringstream oss;
+    oss << "57|regions=" << data.region_count
+        << "|raw=" << data.raw_candidates
+        << "|canonical=" << data.canonical_candidates
+        << "|deduplicated=" << data.deduplicated_candidates
+        << "|local=" << data.local_exact_survivors
+        << "|plus=" << data.plus_one_survivors
+        << "|theorem=" << data.theorem_preserving_survivors;
+    return oss.str();
+}
+
+static string quintuple_family_expansion_theorem_data_57_runtime_fingerprint_() {
+    ostringstream oss;
+    oss << (g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh" : "imported")
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_authoritative_source
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_constructor_name
+        << '|' << (g_last_quintuple_family_expansion_theorem_data_57_builder_used ? 1 : 0)
+        << '|' << (g_last_quintuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0)
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_region_count
+        << '|' << g_last_quintuple_family_theorem_data.raw_candidates
+        << '|' << g_last_quintuple_family_theorem_data.canonical_candidates
+        << '|' << g_last_quintuple_family_theorem_data.deduplicated_candidates
+        << '|' << g_last_quintuple_family_theorem_data.local_exact_survivors
+        << '|' << g_last_quintuple_family_theorem_data.plus_one_survivors
+        << '|' << g_last_quintuple_family_theorem_data.theorem_preserving_survivors
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_current_source_fingerprint
+        << '|' << (g_last_quintuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0)
+        << '|' << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0)
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0)
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_blocker
+        << '|' << g_last_quintuple_family_expansion_theorem_data_57_caveat;
+    return oss.str();
+}
+
+static bool quintuple_family_expansion_theorem_data_57_imported_comparison_equal_() {
+    return quintuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+               g_last_quintuple_family_theorem_data) ==
+           g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+}
+
+static void set_quintuple_family_candidate_aggregate_from_theorem_data_() {
+    g_last_quintuple_family_candidate_aggregate_stats = {};
+    g_last_quintuple_family_candidate_aggregate_stats.raw_candidates = g_last_quintuple_family_theorem_data.raw_candidates;
+    g_last_quintuple_family_candidate_aggregate_stats.canonical_candidates = g_last_quintuple_family_theorem_data.canonical_candidates;
+    g_last_quintuple_family_candidate_aggregate_stats.deduplicated_candidates = g_last_quintuple_family_theorem_data.deduplicated_candidates;
+    g_last_quintuple_family_candidate_aggregate_stats.local_exact_survivors = g_last_quintuple_family_theorem_data.local_exact_survivors;
+    g_last_quintuple_family_candidate_aggregate_stats.plus_one_survivors = g_last_quintuple_family_theorem_data.plus_one_survivors;
+    g_last_quintuple_family_candidate_aggregate_stats.theorem_preserving_survivors = g_last_quintuple_family_theorem_data.theorem_preserving_survivors;
+    g_last_quintuple_family_candidate_aggregate_stats.why = g_last_quintuple_family_theorem_data.why;
+}
+
+static bool load_current_quintuple_family_expansion_theorem_data_57_runtime_artifact_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_payload_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("quintuple_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    if (!file_nonempty_for_audit_(payload_path) || !file_nonempty_for_audit_(fingerprint_path)) {
+        if (why) *why = "quintuple-family expansion theorem data 57 runtime artifact missing";
+        return false;
+    }
+    auto metrics = read_exact_basis_metric_tsv_(fingerprint_path);
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "quintuple-family expansion theorem data 57 runtime artifact source fingerprint stale";
+        return false;
+    }
+    if (metrics["current_provenance_label"] != "fresh_current_runtime_generated") {
+        if (why) *why = "quintuple-family expansion theorem data 57 runtime artifact is not marked fresh";
+        return false;
+    }
+    if (metrics["imported_equality_result"] != "counts_and_consumer_visible_fingerprint_equal") {
+        if (why) *why = "quintuple-family expansion theorem data 57 runtime artifact did not record imported equality";
+        return false;
+    }
+    if (!g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ||
+        g_last_quadruple_family_expansion_theorem_data_55_fallback_hit) {
+        if (why) *why = "quintuple-family expansion theorem data 57 cache refused because upstream quad55 is not fresh";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "quintuple-family expansion theorem data 57 cache refused because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "quintuple-family expansion theorem data 57 cache refused because upstream pair52 is not fresh";
+        return false;
+    }
+
+    ifstream fin(payload_path);
+    if (!fin) {
+        if (why) *why = "failed to open quintuple-family expansion theorem data 57 payload";
+        return false;
+    }
+    string line;
+    bool first = true;
+    vector<BoundedExpansionRegionSpec> specs;
+    vector<OutOfPoolExpansionStats> stats;
+    while (getline(fin, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        if (line.empty()) continue;
+        auto cols = split_exact_basis_tsv_line_(line);
+        if (cols.size() < 13) {
+            if (why) *why = "quintuple-family expansion theorem data 57 payload row missing columns";
+            return false;
+        }
+        int symbol_bound = 0;
+        int antecedent_bound = 0;
+        size_t raw = 0, canonical = 0, out_of_pool = 0, local = 0, plus = 0, theorem = 0;
+        if (!parse_int_exact_basis_(cols[4], &symbol_bound) ||
+            !parse_int_exact_basis_(cols[5], &antecedent_bound) ||
+            !parse_size_t_exact_basis_(cols[6], &raw) ||
+            !parse_size_t_exact_basis_(cols[7], &canonical) ||
+            !parse_size_t_exact_basis_(cols[8], &out_of_pool) ||
+            !parse_size_t_exact_basis_(cols[9], &local) ||
+            !parse_size_t_exact_basis_(cols[10], &plus) ||
+            !parse_size_t_exact_basis_(cols[11], &theorem)) {
+            if (why) *why = "quintuple-family expansion theorem data 57 payload row contains invalid numeric field";
+            return false;
+        }
+        BoundedExpansionRegionSpec spec;
+        spec.kind = cols[1];
+        spec.fingerprint = cols[2];
+        spec.source_family_fingerprints = split_pair_expansion_aggregate_sources_(cols[3]);
+        spec.symbol_bound = symbol_bound;
+        spec.antecedent_bound = antecedent_bound;
+        specs.push_back(std::move(spec));
+
+        OutOfPoolExpansionStats st;
+        st.expansion_region_fingerprint = cols[2];
+        st.symbol_bound = symbol_bound;
+        st.antecedent_bound = antecedent_bound;
+        st.raw_candidates = raw;
+        st.canonical_candidates = canonical;
+        st.out_of_pool_candidates = out_of_pool;
+        st.local_exact_survivors = local;
+        st.plus_one_survivors = plus;
+        st.theorem_preserving_survivors = theorem;
+        st.why = cols[12];
+        stats.push_back(std::move(st));
+    }
+
+    QuintupleFamilyExpansionTheoremData data;
+    if (!parse_size_t_exact_basis_(metrics["region_count"], &data.region_count) ||
+        !parse_size_t_exact_basis_(metrics["raw_candidates"], &data.raw_candidates) ||
+        !parse_size_t_exact_basis_(metrics["canonical_candidates"], &data.canonical_candidates) ||
+        !parse_size_t_exact_basis_(metrics["deduplicated_candidates"], &data.deduplicated_candidates) ||
+        !parse_size_t_exact_basis_(metrics["local_exact_survivors"], &data.local_exact_survivors) ||
+        !parse_size_t_exact_basis_(metrics["plus_one_survivors"], &data.plus_one_survivors) ||
+        !parse_size_t_exact_basis_(metrics["theorem_preserving_survivors"], &data.theorem_preserving_survivors)) {
+        if (why) *why = "quintuple-family expansion theorem data 57 fingerprint metrics missing theorem-data fields";
+        return false;
+    }
+    data.why = "loaded fresh current-runtime quintuple-family expansion theorem data 57 payload artifact";
+
+    const string payload_fp =
+        quintuple_family_expansion_theorem_data_57_payload_fingerprint_(specs, stats, data);
+    if (payload_fp != metrics["payload_fingerprint"]) {
+        if (why) *why = "quintuple-family expansion theorem data 57 payload fingerprint mismatch";
+        return false;
+    }
+
+    g_last_quintuple_family_expansion_region_specs = std::move(specs);
+    g_last_quintuple_family_expansion_stats = std::move(stats);
+    g_last_quintuple_family_expansion_candidates.clear();
+    g_last_quintuple_family_theorem_data = data;
+    set_quintuple_family_candidate_aggregate_from_theorem_data_();
+    g_last_quintuple_family_expansion_theorem_data_57_region_count =
+        g_last_quintuple_family_expansion_region_specs.size();
+    g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_quintuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_quintuple_family_expansion_theorem_data_57_cache_loaded = true;
+    g_last_quintuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_quintuple_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_quintuple_family_expansion_theorem_data_57_cache";
+    g_last_quintuple_family_expansion_theorem_data_57_constructor_name =
+        "load_current_quintuple_family_expansion_theorem_data_57_runtime_artifact_";
+    g_last_quintuple_family_expansion_theorem_data_57_cache_load_path = payload_path;
+    g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint = payload_fp;
+    g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result =
+        metrics["imported_equality_result"];
+    g_last_quintuple_family_expansion_theorem_data_57_caveat =
+        "Current authoritative path loaded a validated runtime quintuple-family expansion theorem data 57 artifact; upstream quad55, triple53, and pair52 stayed fresh with fallback_hit=0.";
+    g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        quintuple_family_expansion_theorem_data_57_runtime_fingerprint_();
+    if (why) *why = "loaded validated runtime quintuple-family expansion theorem data 57 artifact";
+    return true;
+}
+
+static bool build_current_quintuple_family_expansion_theorem_data_57_from_quad55_ready_family_scan_(string* why) {
+    if (!ensure_quadruple_family_expansion_ready_fast_(false, why)) {
+        return false;
+    }
+    if (!g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ||
+        g_last_quadruple_family_expansion_theorem_data_55_fallback_hit) {
+        if (why) *why = "cannot freshize quintuple-family expansion theorem data 57 because upstream quad55 is not fresh";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "cannot freshize quintuple-family expansion theorem data 57 because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "cannot freshize quintuple-family expansion theorem data 57 because upstream pair52 is not fresh";
+        return false;
+    }
+
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    auto pool = exact_minimal_basis_global_schema_candidate_pool_();
+    string specs_why;
+    auto specs = build_quintuple_family_expansion_region_specs_(families, &specs_why);
+    vector<OutOfPoolExpansionStats> stats;
+    vector<OutOfPoolExpansionCandidate> candidates;
+    g_last_out_of_pool_schema_validation_cache.clear();
+
+    for (size_t idx = 0; idx < specs.size(); ++idx) {
+        const auto& spec = specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: quintuple-family expansion theorem data 57 region " << (idx + 1) << "/" << specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        const auto* fa = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[0]);
+        const auto* fb = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[1]);
+        const auto* fc = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[2]);
+        const auto* fd = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[3]);
+        const auto* fe = find_family_summary_by_fingerprint_(families, spec.source_family_fingerprints[4]);
+        if (!fa || !fb || !fc || !fd || !fe) {
+            if (why) *why = "quintuple-family expansion theorem data 57 missing source family for " + spec.fingerprint;
+            return false;
+        }
+        string enum_why;
+        auto out = enumerate_out_of_pool_quintuple_family_candidates_(
+            *fa, *fb, *fc, *fd, *fe, spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        stats.push_back(std::move(st));
+    }
+
+    QuintupleFamilyExpansionTheoremData data;
+    data.region_count = stats.size();
+    for (const auto& st : stats) {
+        data.raw_candidates += st.raw_candidates;
+        data.canonical_candidates += st.canonical_candidates;
+        data.local_exact_survivors += st.local_exact_survivors;
+        data.plus_one_survivors += st.plus_one_survivors;
+        data.theorem_preserving_survivors += st.theorem_preserving_survivors;
+    }
+    string aggregate_why;
+    auto aggregate = build_quintuple_family_candidate_aggregate_stats_(candidates, &aggregate_why);
+    data.deduplicated_candidates = aggregate.deduplicated_candidates;
+    data.why =
+        "fresh current-runtime aggregate over all 21 quintuple-family merged regions; quad55, triple53, and pair52 were verified fresh before construction";
+
+    g_last_quintuple_family_expansion_region_specs = std::move(specs);
+    g_last_quintuple_family_expansion_stats = std::move(stats);
+    g_last_quintuple_family_expansion_candidates = std::move(candidates);
+    g_last_quintuple_family_candidate_aggregate_stats = aggregate;
+    g_last_quintuple_family_theorem_data = data;
+    g_last_quintuple_family_expansion_theorem_data_57_region_count =
+        g_last_quintuple_family_expansion_region_specs.size();
+    g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint =
+        quintuple_family_expansion_theorem_data_57_payload_fingerprint_(
+            g_last_quintuple_family_expansion_region_specs,
+            g_last_quintuple_family_expansion_stats,
+            g_last_quintuple_family_theorem_data);
+
+    if (!quintuple_family_expansion_theorem_data_57_imported_comparison_equal_()) {
+        g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result = "mismatch";
+        g_last_quintuple_family_expansion_theorem_data_57_blocker =
+            string("fresh quintuple-family expansion theorem data 57 did not match imported 57 comparison fingerprint current=") +
+            quintuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                g_last_quintuple_family_theorem_data) +
+            " imported=" + g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+        if (why) *why = g_last_quintuple_family_expansion_theorem_data_57_blocker;
+        return false;
+    }
+
+    g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result =
+        "counts_and_consumer_visible_fingerprint_equal";
+    g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_quintuple_family_expansion_theorem_data_57_builder_used = true;
+    g_last_quintuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_quintuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_quintuple_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_quintuple_family_expansion_theorem_data_57";
+    g_last_quintuple_family_expansion_theorem_data_57_constructor_name =
+        "build_current_quintuple_family_expansion_theorem_data_57_from_quad55_ready_family_scan_";
+    g_last_quintuple_family_expansion_theorem_data_57_cache_load_path =
+        quintuple_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_quintuple_family_expansion_theorem_data_57_caveat =
+        "Current runtime rebuilt quintuple-family expansion theorem data 57 from the seven family summaries after verifying quad55, triple53, and pair52 as fresh; upstream payload rows are not copied as the quintuple payload source.";
+    g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        quintuple_family_expansion_theorem_data_57_runtime_fingerprint_();
+    if (why) {
+        *why = "current quintuple-family region scanner rebuilt theorem data 57";
+    }
+    return true;
+}
+
+static void install_imported_quintuple_family_expansion_theorem_data_57_fallback_(const string& blocker) {
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    string spec_why;
+    g_last_quintuple_family_expansion_region_specs =
+        build_quintuple_family_expansion_region_specs_(families, &spec_why);
+    g_last_quintuple_family_expansion_stats.clear();
+    g_last_quintuple_family_expansion_candidates.clear();
+    g_last_quintuple_family_theorem_data = authoritative_quintuple_family_expansion_theorem_data_();
+    set_quintuple_family_candidate_aggregate_from_theorem_data_();
+    g_last_quintuple_family_expansion_theorem_data_57_region_count =
+        g_last_quintuple_family_theorem_data.region_count;
+    g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_quintuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_quintuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_quintuple_family_expansion_theorem_data_57_fallback_hit = true;
+    g_last_quintuple_family_expansion_theorem_data_57_authoritative_source =
+        "imported_quintuple_family_expansion_theorem_data_57_compatibility_fallback";
+    g_last_quintuple_family_expansion_theorem_data_57_constructor_name =
+        "install_imported_quintuple_family_expansion_theorem_data_57_fallback_";
+    g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result = "fallback_imported";
+    g_last_quintuple_family_expansion_theorem_data_57_blocker = blocker;
+    g_last_quintuple_family_expansion_theorem_data_57_caveat =
+        "Current runtime could not rebuild quintuple-family expansion theorem data 57; imported 57 compatibility fallback was used.";
+    g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint =
+        g_last_quintuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+    g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        quintuple_family_expansion_theorem_data_57_runtime_fingerprint_();
 }
 
 static bool ensure_unified_bounded_schema_universe_obstruction_ready_(string* why) {
@@ -39805,7 +43791,12 @@ static bool build_current_support_bounded_schema_universe_obstruction_theorem_(
         g_last_schema_universe_obstruction_certificate.out_of_pool_theorem_preserving_survivors;
     theorem.why =
         "current constructor from current candidate-pool completeness certificate and bounded single/pair family-region specs; "
-        "lower pair-expansion aggregate provenance remains validated import from 52 output";
+        "pair-expansion aggregate 52 provenance=" +
+        string(g_last_pair_expansion_aggregate_52_fresh_runtime_generated
+                   ? "fresh_current_runtime_generated"
+                   : "imported_compatibility_fallback") +
+        " via " + g_last_pair_expansion_aggregate_52_constructor_name +
+        "; upstream family summaries/snapshots remain separate validated inputs";
 
     *out = theorem;
     if (why) *why = support_bounded_schema_universe_obstruction_theorem_to_string_(theorem);
@@ -39862,7 +43853,20 @@ static bool build_current_unified_bounded_schema_universe_obstruction_theorem_(
         g_last_quintuple_family_theorem_data.theorem_preserving_survivors;
     theorem.why =
         "current constructor from current support theorem object and validated triple/quadruple/quintuple/high-family theorem-data; "
-        "lower triple-through-high layers remain validated imports or cached current expansions";
+        "pair-expansion aggregate 52 provenance=" +
+        string(g_last_pair_expansion_aggregate_52_fresh_runtime_generated ? "fresh_current_runtime_generated" : "imported_compatibility_fallback") +
+        "; triple-family theorem data 53 provenance=" +
+        string(g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ? "fresh_current_runtime_generated" : "imported_compatibility_fallback") +
+        "; quadruple-family theorem data 55 provenance=" +
+        string(g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ? "fresh_current_runtime_generated" : "imported_compatibility_fallback") +
+        "; quintuple-family theorem data 57 provenance=" +
+        string(g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh_current_runtime_generated" : "imported_compatibility_fallback") +
+        "; sextuple-family theorem data 57 provenance=" +
+        string(g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh_current_runtime_generated" : "imported_compatibility_fallback") +
+        "; septuple-family theorem data 57 provenance=" +
+        string(g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh_current_runtime_generated" : "imported_compatibility_fallback") +
+        "; high-family theorem data 57 provenance=" +
+        string(g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh_current_runtime_generated" : "imported_compatibility_fallback");
 
     *out = theorem;
     if (why) *why = unified_bounded_schema_universe_obstruction_theorem_to_string_(theorem);
@@ -39924,7 +43928,34 @@ static bool build_current_family_chain_output_57_theorem_objects_(bool allow_slo
             g_last_unified_bounded_schema_universe_status);
 
         g_last_family_chain_constructor_caveat =
-            "authoritative family-chain theorem objects are rebuilt in the current runtime, but lower triple/quadruple/quintuple/sextuple/septuple theorem-data still comes from validated imported provenance unless separately rederived";
+            "authoritative family-chain theorem objects are rebuilt in the current runtime and pair-expansion aggregate 52 is " +
+            string(g_last_pair_expansion_aggregate_52_fresh_runtime_generated
+                       ? "current constructor/cache-backed"
+                       : "still using imported compatibility fallback") +
+            "; triple-family theorem data 53 is " +
+            string(g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated
+                       ? "current constructor/cache-backed"
+                       : "still using imported compatibility fallback") +
+            "; quadruple-family theorem data 55 is " +
+            string(g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated
+                       ? "current constructor/cache-backed"
+                       : "still using imported compatibility fallback") +
+            "; quintuple-family theorem data 57 is " +
+            string(g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                       ? "current constructor/cache-backed"
+                       : "still using imported compatibility fallback") +
+            "; sextuple-family theorem data 57 is " +
+            string(g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                       ? "current constructor/cache-backed"
+                       : "still using imported compatibility fallback") +
+            "; septuple-family theorem data 57 is " +
+            string(g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated
+                       ? "current constructor/cache-backed"
+                       : "still using imported compatibility fallback") +
+            "; high-family theorem data 57 is " +
+            string(g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated
+                       ? "current constructor/cache-backed; family-chain lower-layer caveat closed"
+                       : "still using imported compatibility fallback");
         if (why) {
             *why = support_why + "\n" + unified_why + "\n" + g_last_family_chain_constructor_caveat;
         }
@@ -39971,8 +44002,8 @@ static string build_unified_bounded_schema_universe_ledger_(const UnifiedBounded
 static void ensure_quintuple_family_expansion_ready_slow_() {
     if (g_last_quintuple_family_theorem_data.region_count != 0) return;
     string why;
-    if (!ensure_unified_bounded_schema_universe_obstruction_ready_(&why)) {
-        throw runtime_error(string("unified bounded obstruction theorem data unavailable\n") + why);
+    if (!ensure_quadruple_family_expansion_ready_fast_(true, &why)) {
+        throw runtime_error(string("quadruple-family theorem data unavailable\n") + why);
     }
 #ifdef LOCAL_TEST
     cerr << "stage: quintuple-family expansion slow path\n";
@@ -40024,30 +44055,63 @@ static bool ensure_quintuple_family_expansion_ready_fast_(bool allow_slow_rebuil
         if (why) *why = quintuple_family_expansion_theorem_data_to_string_(g_last_quintuple_family_theorem_data);
         return true;
     }
+    reset_quintuple_family_expansion_theorem_data_57_state_();
+    string upstream_why;
+    if (!ensure_quadruple_family_expansion_ready_fast_(allow_slow_rebuild, &upstream_why)) {
+        if (why) *why = upstream_why;
+        return false;
+    }
+
+    string current_why;
+    if (load_current_quintuple_family_expansion_theorem_data_57_runtime_artifact_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+#ifdef LOCAL_TEST
+    cerr << "stage: build quintuple-family expansion theorem data 57 current artifact\n";
+#endif
+    if (build_current_quintuple_family_expansion_theorem_data_57_from_quad55_ready_family_scan_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+
     string theorem_why;
     if (validate_authoritative_quintuple_family_expansion_data_(&theorem_why)) {
-        auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
-        string spec_why;
-        g_last_quintuple_family_expansion_region_specs = build_quintuple_family_expansion_region_specs_(families, &spec_why);
-        g_last_quintuple_family_expansion_stats.clear();
-        g_last_quintuple_family_expansion_candidates.clear();
-        g_last_quintuple_family_theorem_data = authoritative_quintuple_family_expansion_theorem_data_();
-        g_last_quintuple_family_candidate_aggregate_stats = {};
-        g_last_quintuple_family_candidate_aggregate_stats.raw_candidates = g_last_quintuple_family_theorem_data.raw_candidates;
-        g_last_quintuple_family_candidate_aggregate_stats.canonical_candidates = g_last_quintuple_family_theorem_data.canonical_candidates;
-        g_last_quintuple_family_candidate_aggregate_stats.deduplicated_candidates = g_last_quintuple_family_theorem_data.deduplicated_candidates;
-        g_last_quintuple_family_candidate_aggregate_stats.local_exact_survivors = g_last_quintuple_family_theorem_data.local_exact_survivors;
-        g_last_quintuple_family_candidate_aggregate_stats.plus_one_survivors = g_last_quintuple_family_theorem_data.plus_one_survivors;
-        g_last_quintuple_family_candidate_aggregate_stats.theorem_preserving_survivors = g_last_quintuple_family_theorem_data.theorem_preserving_survivors;
-        g_last_quintuple_family_candidate_aggregate_stats.why = g_last_quintuple_family_theorem_data.why;
-        if (why) *why = theorem_why;
+        install_imported_quintuple_family_expansion_theorem_data_57_fallback_(
+            current_why.empty() ? theorem_why : current_why);
+        if (why) *why = current_why.empty() ? theorem_why : current_why;
         return true;
     }
     if (!allow_slow_rebuild) {
-        if (why) *why = theorem_why;
+        if (why) *why = current_why + "\n" + theorem_why;
         return false;
     }
     ensure_quintuple_family_expansion_ready_slow_();
+    g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_quintuple_family_expansion_theorem_data_57_builder_used = true;
+    g_last_quintuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_quintuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_quintuple_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_quintuple_family_expansion_theorem_data_57_slow";
+    g_last_quintuple_family_expansion_theorem_data_57_constructor_name =
+        "ensure_quintuple_family_expansion_ready_slow_";
+    g_last_quintuple_family_expansion_theorem_data_57_cache_load_path =
+        quintuple_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_quintuple_family_expansion_theorem_data_57_region_count =
+        g_last_quintuple_family_theorem_data.region_count;
+    g_last_quintuple_family_expansion_theorem_data_57_current_fingerprint =
+        quintuple_family_expansion_theorem_data_57_payload_fingerprint_(
+            g_last_quintuple_family_expansion_region_specs,
+            g_last_quintuple_family_expansion_stats,
+            g_last_quintuple_family_theorem_data);
+    g_last_quintuple_family_expansion_theorem_data_57_imported_equality_result =
+        quintuple_family_expansion_theorem_data_57_imported_comparison_equal_()
+            ? "counts_and_consumer_visible_fingerprint_equal"
+            : "mismatch";
+    g_last_quintuple_family_expansion_theorem_data_57_caveat =
+        "Slow path rebuilt quintuple-family expansion theorem data 57 in the current runtime.";
+    g_last_quintuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        quintuple_family_expansion_theorem_data_57_runtime_fingerprint_();
     if (why) *why = "slow quintuple-family rebuild completed";
     return true;
 }
@@ -40059,29 +44123,872 @@ static void ensure_quintuple_family_expansion_ready_() {
     }
 }
 
+static string sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint_() {
+    return "57|regions=7|raw=1632|canonical=1632|deduplicated=294|local=0|plus=0|theorem=0";
+}
+
+static string sextuple_family_expansion_theorem_data_57_cache_path_summary_() {
+    return support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_payload_90.tsv");
+}
+
+static void reset_sextuple_family_expansion_theorem_data_57_state_() {
+    g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_sextuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_sextuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_sextuple_family_expansion_theorem_data_57_fallback_reachable = true;
+    g_last_sextuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_sextuple_family_expansion_theorem_data_57_authoritative_source.clear();
+    g_last_sextuple_family_expansion_theorem_data_57_constructor_name.clear();
+    g_last_sextuple_family_expansion_theorem_data_57_cache_load_path =
+        sextuple_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_sextuple_family_expansion_theorem_data_57_current_source_fingerprint =
+        binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint.clear();
+    g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint =
+        sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint_();
+    g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result = "not_checked";
+    g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint.clear();
+    g_last_sextuple_family_expansion_theorem_data_57_caveat.clear();
+    g_last_sextuple_family_expansion_theorem_data_57_blocker.clear();
+    g_last_sextuple_family_expansion_theorem_data_57_region_count = 0;
+}
+
+static string sextuple_family_expansion_theorem_data_57_payload_fingerprint_(
+    const vector<BoundedExpansionRegionSpec>& specs,
+    const vector<OutOfPoolExpansionStats>& stats,
+    const SextupleFamilyExpansionTheoremData& data) {
+    ostringstream text;
+    text << "sextuple_family_expansion_theorem_data_57|";
+    text << specs.size() << '|'
+         << data.raw_candidates << '|'
+         << data.canonical_candidates << '|'
+         << data.deduplicated_candidates << '|'
+         << data.local_exact_survivors << '|'
+         << data.plus_one_survivors << '|'
+         << data.theorem_preserving_survivors << '|';
+    for (size_t i = 0; i < stats.size(); ++i) {
+        if (i) text << '\n';
+        const auto& spec = specs[i];
+        const auto& st = stats[i];
+        text << spec.kind << '\t'
+             << spec.fingerprint << '\t'
+             << join_vector_with_delim_(spec.source_family_fingerprints, ";") << '\t'
+             << spec.symbol_bound << '\t'
+             << spec.antecedent_bound << '\t'
+             << st.raw_candidates << '\t'
+             << st.canonical_candidates << '\t'
+             << st.out_of_pool_candidates << '\t'
+             << st.local_exact_survivors << '\t'
+             << st.plus_one_survivors << '\t'
+             << st.theorem_preserving_survivors;
+    }
+    const string out = text.str();
+    return to_string(out.size()) + ":" + to_string(hash<string>{}(out));
+}
+
+static string sextuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const SextupleFamilyExpansionTheoremData& data) {
+    ostringstream oss;
+    oss << "57|regions=" << data.region_count
+        << "|raw=" << data.raw_candidates
+        << "|canonical=" << data.canonical_candidates
+        << "|deduplicated=" << data.deduplicated_candidates
+        << "|local=" << data.local_exact_survivors
+        << "|plus=" << data.plus_one_survivors
+        << "|theorem=" << data.theorem_preserving_survivors;
+    return oss.str();
+}
+
+static string sextuple_family_expansion_theorem_data_57_runtime_fingerprint_() {
+    ostringstream oss;
+    oss << (g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh" : "imported")
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_authoritative_source
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_constructor_name
+        << '|' << (g_last_sextuple_family_expansion_theorem_data_57_builder_used ? 1 : 0)
+        << '|' << (g_last_sextuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0)
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_region_count
+        << '|' << g_last_sextuple_family_theorem_data.raw_candidates
+        << '|' << g_last_sextuple_family_theorem_data.canonical_candidates
+        << '|' << g_last_sextuple_family_theorem_data.deduplicated_candidates
+        << '|' << g_last_sextuple_family_theorem_data.local_exact_survivors
+        << '|' << g_last_sextuple_family_theorem_data.plus_one_survivors
+        << '|' << g_last_sextuple_family_theorem_data.theorem_preserving_survivors
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_current_source_fingerprint
+        << '|' << (g_last_sextuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0)
+        << '|' << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0)
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0)
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_blocker
+        << '|' << g_last_sextuple_family_expansion_theorem_data_57_caveat;
+    return oss.str();
+}
+
+static bool sextuple_family_expansion_theorem_data_57_imported_comparison_equal_() {
+    return sextuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+               g_last_sextuple_family_theorem_data) ==
+           g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+}
+
+static bool load_current_sextuple_family_expansion_theorem_data_57_runtime_artifact_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_payload_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("sextuple_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    if (!file_nonempty_for_audit_(payload_path) || !file_nonempty_for_audit_(fingerprint_path)) {
+        if (why) *why = "sextuple-family expansion theorem data 57 runtime artifact missing";
+        return false;
+    }
+    auto metrics = read_exact_basis_metric_tsv_(fingerprint_path);
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "sextuple-family expansion theorem data 57 runtime artifact source fingerprint stale";
+        return false;
+    }
+    if (metrics["current_provenance_label"] != "fresh_current_runtime_generated") {
+        if (why) *why = "sextuple-family expansion theorem data 57 runtime artifact is not marked fresh";
+        return false;
+    }
+    if (metrics["imported_equality_result"] != "counts_and_consumer_visible_fingerprint_equal") {
+        if (why) *why = "sextuple-family expansion theorem data 57 runtime artifact did not record imported equality";
+        return false;
+    }
+    if (!g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_quintuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "sextuple-family expansion theorem data 57 cache refused because upstream quintuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ||
+        g_last_quadruple_family_expansion_theorem_data_55_fallback_hit) {
+        if (why) *why = "sextuple-family expansion theorem data 57 cache refused because upstream quad55 is not fresh";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "sextuple-family expansion theorem data 57 cache refused because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "sextuple-family expansion theorem data 57 cache refused because upstream pair52 is not fresh";
+        return false;
+    }
+
+    ifstream fin(payload_path);
+    if (!fin) {
+        if (why) *why = "failed to open sextuple-family expansion theorem data 57 payload";
+        return false;
+    }
+    string line;
+    bool first = true;
+    vector<BoundedExpansionRegionSpec> specs;
+    vector<OutOfPoolExpansionStats> stats;
+    while (getline(fin, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        if (line.empty()) continue;
+        auto cols = split_exact_basis_tsv_line_(line);
+        if (cols.size() < 13) {
+            if (why) *why = "sextuple-family expansion theorem data 57 payload row missing columns";
+            return false;
+        }
+        int symbol_bound = 0;
+        int antecedent_bound = 0;
+        size_t raw = 0, canonical = 0, out_of_pool = 0, local = 0, plus = 0, theorem = 0;
+        if (!parse_int_exact_basis_(cols[4], &symbol_bound) ||
+            !parse_int_exact_basis_(cols[5], &antecedent_bound) ||
+            !parse_size_t_exact_basis_(cols[6], &raw) ||
+            !parse_size_t_exact_basis_(cols[7], &canonical) ||
+            !parse_size_t_exact_basis_(cols[8], &out_of_pool) ||
+            !parse_size_t_exact_basis_(cols[9], &local) ||
+            !parse_size_t_exact_basis_(cols[10], &plus) ||
+            !parse_size_t_exact_basis_(cols[11], &theorem)) {
+            if (why) *why = "sextuple-family expansion theorem data 57 payload row contains invalid numeric field";
+            return false;
+        }
+        BoundedExpansionRegionSpec spec;
+        spec.kind = cols[1];
+        spec.fingerprint = cols[2];
+        spec.source_family_fingerprints = split_pair_expansion_aggregate_sources_(cols[3]);
+        spec.symbol_bound = symbol_bound;
+        spec.antecedent_bound = antecedent_bound;
+        specs.push_back(std::move(spec));
+
+        OutOfPoolExpansionStats st;
+        st.expansion_region_fingerprint = cols[2];
+        st.symbol_bound = symbol_bound;
+        st.antecedent_bound = antecedent_bound;
+        st.raw_candidates = raw;
+        st.canonical_candidates = canonical;
+        st.out_of_pool_candidates = out_of_pool;
+        st.local_exact_survivors = local;
+        st.plus_one_survivors = plus;
+        st.theorem_preserving_survivors = theorem;
+        st.why = cols[12];
+        stats.push_back(std::move(st));
+    }
+
+    SextupleFamilyExpansionTheoremData data;
+    if (!parse_size_t_exact_basis_(metrics["region_count"], &data.region_count) ||
+        !parse_size_t_exact_basis_(metrics["raw_candidates"], &data.raw_candidates) ||
+        !parse_size_t_exact_basis_(metrics["canonical_candidates"], &data.canonical_candidates) ||
+        !parse_size_t_exact_basis_(metrics["deduplicated_candidates"], &data.deduplicated_candidates) ||
+        !parse_size_t_exact_basis_(metrics["local_exact_survivors"], &data.local_exact_survivors) ||
+        !parse_size_t_exact_basis_(metrics["plus_one_survivors"], &data.plus_one_survivors) ||
+        !parse_size_t_exact_basis_(metrics["theorem_preserving_survivors"], &data.theorem_preserving_survivors)) {
+        if (why) *why = "sextuple-family expansion theorem data 57 fingerprint metrics missing theorem-data fields";
+        return false;
+    }
+    data.why = "loaded fresh current-runtime sextuple-family expansion theorem data 57 payload artifact";
+
+    const string payload_fp =
+        sextuple_family_expansion_theorem_data_57_payload_fingerprint_(specs, stats, data);
+    if (payload_fp != metrics["payload_fingerprint"]) {
+        if (why) *why = "sextuple-family expansion theorem data 57 payload fingerprint mismatch";
+        return false;
+    }
+
+    g_last_sextuple_family_expansion_region_specs = std::move(specs);
+    g_last_sextuple_family_expansion_stats = std::move(stats);
+    g_last_sextuple_family_expansion_candidates.clear();
+    g_last_sextuple_family_theorem_data = data;
+    g_last_sextuple_family_expansion_theorem_data_57_region_count =
+        g_last_sextuple_family_expansion_region_specs.size();
+    g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_sextuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_sextuple_family_expansion_theorem_data_57_cache_loaded = true;
+    g_last_sextuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_sextuple_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_sextuple_family_expansion_theorem_data_57_cache";
+    g_last_sextuple_family_expansion_theorem_data_57_constructor_name =
+        "load_current_sextuple_family_expansion_theorem_data_57_runtime_artifact_";
+    g_last_sextuple_family_expansion_theorem_data_57_cache_load_path = payload_path;
+    g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint = payload_fp;
+    g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result =
+        metrics["imported_equality_result"];
+    g_last_sextuple_family_expansion_theorem_data_57_caveat =
+        "Current authoritative path loaded a validated runtime sextuple-family expansion theorem data 57 artifact; upstream quintuple57, quad55, triple53, and pair52 stayed fresh with fallback_hit=0.";
+    g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        sextuple_family_expansion_theorem_data_57_runtime_fingerprint_();
+    if (why) *why = "loaded validated runtime sextuple-family expansion theorem data 57 artifact";
+    return true;
+}
+
+static bool build_current_sextuple_family_expansion_theorem_data_57_from_quintuple57_ready_family_scan_(string* why) {
+    if (!ensure_quintuple_family_expansion_ready_fast_(false, why)) {
+        return false;
+    }
+    if (!g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_quintuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "cannot freshize sextuple-family expansion theorem data 57 because upstream quintuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ||
+        g_last_quadruple_family_expansion_theorem_data_55_fallback_hit) {
+        if (why) *why = "cannot freshize sextuple-family expansion theorem data 57 because upstream quad55 is not fresh";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "cannot freshize sextuple-family expansion theorem data 57 because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "cannot freshize sextuple-family expansion theorem data 57 because upstream pair52 is not fresh";
+        return false;
+    }
+
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    auto pool = exact_minimal_basis_global_schema_candidate_pool_();
+    string specs_why;
+    auto specs = build_sextuple_family_expansion_region_specs_(families, &specs_why);
+    vector<OutOfPoolExpansionStats> stats;
+    vector<OutOfPoolExpansionCandidate> candidates;
+    g_last_out_of_pool_schema_validation_cache.clear();
+
+    for (size_t idx = 0; idx < specs.size(); ++idx) {
+        const auto& spec = specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: sextuple-family expansion theorem data 57 region " << (idx + 1) << "/" << specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        vector<const ProofMotifPlusOneFailureFamilySummary*> found;
+        for (const auto& fp : spec.source_family_fingerprints) {
+            const ProofMotifPlusOneFailureFamilySummary* fam = find_family_summary_by_fingerprint_(families, fp);
+            if (!fam) {
+                if (why) *why = "sextuple-family expansion theorem data 57 missing source family for " + spec.fingerprint;
+                return false;
+            }
+            found.push_back(fam);
+        }
+        if (found.size() != 6) {
+            if (why) *why = "sextuple-family expansion theorem data 57 region did not resolve exactly six families";
+            return false;
+        }
+        string enum_why;
+        auto out = enumerate_out_of_pool_sextuple_family_candidates_(
+            *found[0], *found[1], *found[2], *found[3], *found[4], *found[5],
+            spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        stats.push_back(std::move(st));
+    }
+
+    SextupleFamilyExpansionTheoremData data;
+    data.region_count = stats.size();
+    for (const auto& st : stats) {
+        data.raw_candidates += st.raw_candidates;
+        data.canonical_candidates += st.canonical_candidates;
+        data.local_exact_survivors += st.local_exact_survivors;
+        data.plus_one_survivors += st.plus_one_survivors;
+        data.theorem_preserving_survivors += st.theorem_preserving_survivors;
+    }
+    set<string> unique_candidates;
+    for (const auto& cand : candidates) {
+        unique_candidates.insert(canonical_structured_local_schema_fingerprint_(cand.schema));
+    }
+    data.deduplicated_candidates = unique_candidates.size();
+    data.why =
+        "fresh current-runtime aggregate over all 7 sextuple-family merged regions; quintuple57, quad55, triple53, and pair52 were verified fresh before construction";
+
+    g_last_sextuple_family_expansion_region_specs = std::move(specs);
+    g_last_sextuple_family_expansion_stats = std::move(stats);
+    g_last_sextuple_family_expansion_candidates = std::move(candidates);
+    g_last_sextuple_family_theorem_data = data;
+    g_last_sextuple_family_expansion_theorem_data_57_region_count =
+        g_last_sextuple_family_expansion_region_specs.size();
+    g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint =
+        sextuple_family_expansion_theorem_data_57_payload_fingerprint_(
+            g_last_sextuple_family_expansion_region_specs,
+            g_last_sextuple_family_expansion_stats,
+            g_last_sextuple_family_theorem_data);
+
+    if (!sextuple_family_expansion_theorem_data_57_imported_comparison_equal_()) {
+        g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result = "mismatch";
+        g_last_sextuple_family_expansion_theorem_data_57_blocker =
+            string("fresh sextuple-family expansion theorem data 57 did not match imported 57 comparison fingerprint current=") +
+            sextuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                g_last_sextuple_family_theorem_data) +
+            " imported=" + g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+        if (why) *why = g_last_sextuple_family_expansion_theorem_data_57_blocker;
+        return false;
+    }
+
+    g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result =
+        "counts_and_consumer_visible_fingerprint_equal";
+    g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_sextuple_family_expansion_theorem_data_57_builder_used = true;
+    g_last_sextuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_sextuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_sextuple_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_sextuple_family_expansion_theorem_data_57";
+    g_last_sextuple_family_expansion_theorem_data_57_constructor_name =
+        "build_current_sextuple_family_expansion_theorem_data_57_from_quintuple57_ready_family_scan_";
+    g_last_sextuple_family_expansion_theorem_data_57_cache_load_path =
+        sextuple_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_sextuple_family_expansion_theorem_data_57_caveat =
+        "Current runtime rebuilt sextuple-family expansion theorem data 57 from the seven family summaries after verifying quintuple57, quad55, triple53, and pair52 as fresh; upstream payload rows are not copied as the sextuple payload source.";
+    g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        sextuple_family_expansion_theorem_data_57_runtime_fingerprint_();
+    if (why) {
+        *why = "current sextuple-family region scanner rebuilt theorem data 57";
+    }
+    return true;
+}
+
+static void install_imported_sextuple_family_expansion_theorem_data_57_fallback_(const string& blocker) {
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    string spec_why;
+    g_last_sextuple_family_expansion_region_specs =
+        build_sextuple_family_expansion_region_specs_(families, &spec_why);
+    g_last_sextuple_family_expansion_stats.clear();
+    g_last_sextuple_family_expansion_candidates.clear();
+    g_last_sextuple_family_theorem_data = authoritative_sextuple_family_expansion_theorem_data_();
+    g_last_sextuple_family_expansion_theorem_data_57_region_count =
+        g_last_sextuple_family_theorem_data.region_count;
+    g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_sextuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_sextuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_sextuple_family_expansion_theorem_data_57_fallback_hit = true;
+    g_last_sextuple_family_expansion_theorem_data_57_authoritative_source =
+        "imported_sextuple_family_expansion_theorem_data_57_compatibility_fallback";
+    g_last_sextuple_family_expansion_theorem_data_57_constructor_name =
+        "install_imported_sextuple_family_expansion_theorem_data_57_fallback_";
+    g_last_sextuple_family_expansion_theorem_data_57_imported_equality_result = "fallback_imported";
+    g_last_sextuple_family_expansion_theorem_data_57_blocker = blocker;
+    g_last_sextuple_family_expansion_theorem_data_57_caveat =
+        "Imported sextuple-family expansion theorem data 57 compatibility fallback was used; this row is not fresh current-runtime generated.";
+    g_last_sextuple_family_expansion_theorem_data_57_current_fingerprint =
+        g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+    g_last_sextuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        sextuple_family_expansion_theorem_data_57_runtime_fingerprint_();
+}
+
 static bool ensure_sextuple_family_expansion_ready_fast_(bool allow_slow_rebuild,
                                                   string* why) {
     if (g_last_sextuple_family_theorem_data.region_count != 0) {
         if (why) *why = sextuple_family_expansion_theorem_data_to_string_(g_last_sextuple_family_theorem_data);
         return true;
     }
+    reset_sextuple_family_expansion_theorem_data_57_state_();
+    string upstream_why;
+    if (!ensure_quintuple_family_expansion_ready_fast_(allow_slow_rebuild, &upstream_why)) {
+        if (why) *why = upstream_why;
+        return false;
+    }
+
+    string current_why;
+    if (load_current_sextuple_family_expansion_theorem_data_57_runtime_artifact_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+#ifdef LOCAL_TEST
+    cerr << "stage: build sextuple-family expansion theorem data 57 current artifact\n";
+#endif
+    if (build_current_sextuple_family_expansion_theorem_data_57_from_quintuple57_ready_family_scan_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+
     string theorem_why;
     if (validate_authoritative_sextuple_family_expansion_data_(&theorem_why)) {
-        auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
-        string spec_why;
-        g_last_sextuple_family_expansion_region_specs = build_sextuple_family_expansion_region_specs_(families, &spec_why);
-        g_last_sextuple_family_expansion_stats.clear();
-        g_last_sextuple_family_expansion_candidates.clear();
-        g_last_sextuple_family_theorem_data = authoritative_sextuple_family_expansion_theorem_data_();
-        if (why) *why = theorem_why;
+        install_imported_sextuple_family_expansion_theorem_data_57_fallback_(
+            current_why.empty() ? theorem_why : current_why);
+        if (why) *why = current_why.empty() ? theorem_why : current_why;
         return true;
     }
     if (!allow_slow_rebuild) {
-        if (why) *why = theorem_why;
+        if (why) *why = current_why + "\n" + theorem_why;
         return false;
     }
-    if (why) *why = "slow sextuple-family rebuild unavailable";
+    if (why) *why = "slow sextuple-family rebuild unavailable outside current sextuple constructor path";
     return false;
+}
+
+static string septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint_() {
+    return "57|regions=1|raw=294|canonical=294|deduplicated=294|local=0|plus=0|theorem=0";
+}
+
+static string septuple_family_expansion_theorem_data_57_cache_path_summary_() {
+    return support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_payload_90.tsv");
+}
+
+static void reset_septuple_family_expansion_theorem_data_57_state_() {
+    g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_septuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_septuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_septuple_family_expansion_theorem_data_57_fallback_reachable = true;
+    g_last_septuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_septuple_family_expansion_theorem_data_57_authoritative_source.clear();
+    g_last_septuple_family_expansion_theorem_data_57_constructor_name.clear();
+    g_last_septuple_family_expansion_theorem_data_57_cache_load_path =
+        septuple_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_septuple_family_expansion_theorem_data_57_current_source_fingerprint =
+        binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    g_last_septuple_family_expansion_theorem_data_57_current_fingerprint.clear();
+    g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint =
+        septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint_();
+    g_last_septuple_family_expansion_theorem_data_57_imported_equality_result = "not_checked";
+    g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint.clear();
+    g_last_septuple_family_expansion_theorem_data_57_caveat.clear();
+    g_last_septuple_family_expansion_theorem_data_57_blocker.clear();
+    g_last_septuple_family_expansion_theorem_data_57_region_count = 0;
+}
+
+static string septuple_family_expansion_theorem_data_57_payload_fingerprint_(
+    const vector<BoundedExpansionRegionSpec>& specs,
+    const vector<OutOfPoolExpansionStats>& stats,
+    const SeptupleFamilyExpansionTheoremData& data) {
+    ostringstream text;
+    text << "septuple_family_expansion_theorem_data_57|";
+    text << specs.size() << '|'
+         << data.raw_candidates << '|'
+         << data.canonical_candidates << '|'
+         << data.deduplicated_candidates << '|'
+         << data.local_exact_survivors << '|'
+         << data.plus_one_survivors << '|'
+         << data.theorem_preserving_survivors << '|';
+    for (size_t i = 0; i < stats.size(); ++i) {
+        if (i) text << '\n';
+        const auto& spec = specs[i];
+        const auto& st = stats[i];
+        text << spec.kind << '\t'
+             << spec.fingerprint << '\t'
+             << join_vector_with_delim_(spec.source_family_fingerprints, ";") << '\t'
+             << spec.symbol_bound << '\t'
+             << spec.antecedent_bound << '\t'
+             << st.raw_candidates << '\t'
+             << st.canonical_candidates << '\t'
+             << st.out_of_pool_candidates << '\t'
+             << st.local_exact_survivors << '\t'
+             << st.plus_one_survivors << '\t'
+             << st.theorem_preserving_survivors;
+    }
+    const string out = text.str();
+    return to_string(out.size()) + ":" + to_string(hash<string>{}(out));
+}
+
+static string septuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const SeptupleFamilyExpansionTheoremData& data) {
+    ostringstream oss;
+    oss << "57|regions=" << data.region_count
+        << "|raw=" << data.raw_candidates
+        << "|canonical=" << data.canonical_candidates
+        << "|deduplicated=" << data.deduplicated_candidates
+        << "|local=" << data.local_exact_survivors
+        << "|plus=" << data.plus_one_survivors
+        << "|theorem=" << data.theorem_preserving_survivors;
+    return oss.str();
+}
+
+static string septuple_family_expansion_theorem_data_57_runtime_fingerprint_() {
+    ostringstream oss;
+    oss << (g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh" : "imported")
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_authoritative_source
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_constructor_name
+        << '|' << (g_last_septuple_family_expansion_theorem_data_57_builder_used ? 1 : 0)
+        << '|' << (g_last_septuple_family_expansion_theorem_data_57_cache_loaded ? 1 : 0)
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_region_count
+        << '|' << g_last_septuple_family_theorem_data.raw_candidates
+        << '|' << g_last_septuple_family_theorem_data.canonical_candidates
+        << '|' << g_last_septuple_family_theorem_data.deduplicated_candidates
+        << '|' << g_last_septuple_family_theorem_data.local_exact_survivors
+        << '|' << g_last_septuple_family_theorem_data.plus_one_survivors
+        << '|' << g_last_septuple_family_theorem_data.theorem_preserving_survivors
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_current_fingerprint
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_imported_equality_result
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_current_source_fingerprint
+        << '|' << (g_last_septuple_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0)
+        << '|' << (g_last_septuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0)
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0)
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_blocker
+        << '|' << g_last_septuple_family_expansion_theorem_data_57_caveat;
+    return oss.str();
+}
+
+static bool septuple_family_expansion_theorem_data_57_imported_comparison_equal_() {
+    return septuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+               g_last_septuple_family_theorem_data) ==
+           g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+}
+
+static bool load_current_septuple_family_expansion_theorem_data_57_runtime_artifact_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_payload_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("septuple_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    if (!file_nonempty_for_audit_(payload_path) || !file_nonempty_for_audit_(fingerprint_path)) {
+        if (why) *why = "septuple-family expansion theorem data 57 runtime artifact missing";
+        return false;
+    }
+    auto metrics = read_exact_basis_metric_tsv_(fingerprint_path);
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "septuple-family expansion theorem data 57 runtime artifact source fingerprint stale";
+        return false;
+    }
+    if (metrics["current_provenance_label"] != "fresh_current_runtime_generated") {
+        if (why) *why = "septuple-family expansion theorem data 57 runtime artifact is not marked fresh";
+        return false;
+    }
+    if (metrics["imported_equality_result"] != "counts_and_consumer_visible_fingerprint_equal") {
+        if (why) *why = "septuple-family expansion theorem data 57 runtime artifact did not record imported equality";
+        return false;
+    }
+    if (!g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_sextuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "septuple-family expansion theorem data 57 cache refused because upstream sextuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_quintuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "septuple-family expansion theorem data 57 cache refused because upstream quintuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ||
+        g_last_quadruple_family_expansion_theorem_data_55_fallback_hit) {
+        if (why) *why = "septuple-family expansion theorem data 57 cache refused because upstream quad55 is not fresh";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "septuple-family expansion theorem data 57 cache refused because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "septuple-family expansion theorem data 57 cache refused because upstream pair52 is not fresh";
+        return false;
+    }
+
+    ifstream fin(payload_path);
+    if (!fin) {
+        if (why) *why = "failed to open septuple-family expansion theorem data 57 payload";
+        return false;
+    }
+    string line;
+    bool first = true;
+    vector<BoundedExpansionRegionSpec> specs;
+    vector<OutOfPoolExpansionStats> stats;
+    while (getline(fin, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        if (line.empty()) continue;
+        auto cols = split_exact_basis_tsv_line_(line);
+        if (cols.size() < 13) {
+            if (why) *why = "septuple-family expansion theorem data 57 payload row missing columns";
+            return false;
+        }
+        int symbol_bound = 0;
+        int antecedent_bound = 0;
+        size_t raw = 0, canonical = 0, out_of_pool = 0, local = 0, plus = 0, theorem = 0;
+        if (!parse_int_exact_basis_(cols[4], &symbol_bound) ||
+            !parse_int_exact_basis_(cols[5], &antecedent_bound) ||
+            !parse_size_t_exact_basis_(cols[6], &raw) ||
+            !parse_size_t_exact_basis_(cols[7], &canonical) ||
+            !parse_size_t_exact_basis_(cols[8], &out_of_pool) ||
+            !parse_size_t_exact_basis_(cols[9], &local) ||
+            !parse_size_t_exact_basis_(cols[10], &plus) ||
+            !parse_size_t_exact_basis_(cols[11], &theorem)) {
+            if (why) *why = "septuple-family expansion theorem data 57 payload row contains invalid numeric field";
+            return false;
+        }
+        BoundedExpansionRegionSpec spec;
+        spec.kind = cols[1];
+        spec.fingerprint = cols[2];
+        spec.source_family_fingerprints = split_pair_expansion_aggregate_sources_(cols[3]);
+        spec.symbol_bound = symbol_bound;
+        spec.antecedent_bound = antecedent_bound;
+        specs.push_back(std::move(spec));
+
+        OutOfPoolExpansionStats st;
+        st.expansion_region_fingerprint = cols[2];
+        st.symbol_bound = symbol_bound;
+        st.antecedent_bound = antecedent_bound;
+        st.raw_candidates = raw;
+        st.canonical_candidates = canonical;
+        st.out_of_pool_candidates = out_of_pool;
+        st.local_exact_survivors = local;
+        st.plus_one_survivors = plus;
+        st.theorem_preserving_survivors = theorem;
+        st.why = cols[12];
+        stats.push_back(std::move(st));
+    }
+
+    SeptupleFamilyExpansionTheoremData data;
+    if (!parse_size_t_exact_basis_(metrics["region_count"], &data.region_count) ||
+        !parse_size_t_exact_basis_(metrics["raw_candidates"], &data.raw_candidates) ||
+        !parse_size_t_exact_basis_(metrics["canonical_candidates"], &data.canonical_candidates) ||
+        !parse_size_t_exact_basis_(metrics["deduplicated_candidates"], &data.deduplicated_candidates) ||
+        !parse_size_t_exact_basis_(metrics["local_exact_survivors"], &data.local_exact_survivors) ||
+        !parse_size_t_exact_basis_(metrics["plus_one_survivors"], &data.plus_one_survivors) ||
+        !parse_size_t_exact_basis_(metrics["theorem_preserving_survivors"], &data.theorem_preserving_survivors)) {
+        if (why) *why = "septuple-family expansion theorem data 57 fingerprint metrics missing theorem-data fields";
+        return false;
+    }
+    data.why = "loaded fresh current-runtime septuple-family expansion theorem data 57 payload artifact";
+
+    const string payload_fp =
+        septuple_family_expansion_theorem_data_57_payload_fingerprint_(specs, stats, data);
+    if (payload_fp != metrics["payload_fingerprint"]) {
+        if (why) *why = "septuple-family expansion theorem data 57 payload fingerprint mismatch";
+        return false;
+    }
+
+    g_last_septuple_family_expansion_region_specs = std::move(specs);
+    g_last_septuple_family_expansion_stats = std::move(stats);
+    g_last_septuple_family_expansion_candidates.clear();
+    g_last_septuple_family_theorem_data = data;
+    g_last_septuple_family_expansion_theorem_data_57_region_count =
+        g_last_septuple_family_expansion_region_specs.size();
+    g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_septuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_septuple_family_expansion_theorem_data_57_cache_loaded = true;
+    g_last_septuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_septuple_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_septuple_family_expansion_theorem_data_57_cache";
+    g_last_septuple_family_expansion_theorem_data_57_constructor_name =
+        "load_current_septuple_family_expansion_theorem_data_57_runtime_artifact_";
+    g_last_septuple_family_expansion_theorem_data_57_cache_load_path = payload_path;
+    g_last_septuple_family_expansion_theorem_data_57_current_fingerprint = payload_fp;
+    g_last_septuple_family_expansion_theorem_data_57_imported_equality_result =
+        metrics["imported_equality_result"];
+    g_last_septuple_family_expansion_theorem_data_57_caveat =
+        "Current authoritative path loaded a validated runtime septuple-family expansion theorem data 57 artifact; upstream sextuple57, quintuple57, quad55, triple53, and pair52 stayed fresh with fallback_hit=0.";
+    g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        septuple_family_expansion_theorem_data_57_runtime_fingerprint_();
+    if (why) *why = "loaded validated runtime septuple-family expansion theorem data 57 artifact";
+    return true;
+}
+
+static bool build_current_septuple_family_expansion_theorem_data_57_from_sextuple57_ready_family_scan_(string* why) {
+    if (!ensure_sextuple_family_expansion_ready_fast_(false, why)) {
+        return false;
+    }
+    if (!g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_sextuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "cannot freshize septuple-family expansion theorem data 57 because upstream sextuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_quintuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "cannot freshize septuple-family expansion theorem data 57 because upstream quintuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ||
+        g_last_quadruple_family_expansion_theorem_data_55_fallback_hit) {
+        if (why) *why = "cannot freshize septuple-family expansion theorem data 57 because upstream quad55 is not fresh";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "cannot freshize septuple-family expansion theorem data 57 because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "cannot freshize septuple-family expansion theorem data 57 because upstream pair52 is not fresh";
+        return false;
+    }
+
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    auto pool = exact_minimal_basis_global_schema_candidate_pool_();
+    string specs_why;
+    auto specs = build_septuple_family_expansion_region_specs_(families, &specs_why);
+    vector<OutOfPoolExpansionStats> stats;
+    vector<OutOfPoolExpansionCandidate> candidates;
+    g_last_out_of_pool_schema_validation_cache.clear();
+
+    for (size_t idx = 0; idx < specs.size(); ++idx) {
+        const auto& spec = specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: septuple-family expansion theorem data 57 region " << (idx + 1) << "/" << specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        string enum_why;
+        auto out = enumerate_out_of_pool_septuple_family_candidates_(
+            families, spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        stats.push_back(std::move(st));
+    }
+
+    SeptupleFamilyExpansionTheoremData data;
+    data.region_count = stats.size();
+    for (const auto& st : stats) {
+        data.raw_candidates += st.raw_candidates;
+        data.canonical_candidates += st.canonical_candidates;
+        data.local_exact_survivors += st.local_exact_survivors;
+        data.plus_one_survivors += st.plus_one_survivors;
+        data.theorem_preserving_survivors += st.theorem_preserving_survivors;
+    }
+    set<string> unique_candidates;
+    for (const auto& cand : candidates) {
+        unique_candidates.insert(canonical_structured_local_schema_fingerprint_(cand.schema));
+    }
+    data.deduplicated_candidates = unique_candidates.size();
+    data.why =
+        "fresh current-runtime aggregate over the septuple-family merged region; sextuple57, quintuple57, quad55, triple53, and pair52 were verified fresh before construction";
+
+    g_last_septuple_family_expansion_region_specs = std::move(specs);
+    g_last_septuple_family_expansion_stats = std::move(stats);
+    g_last_septuple_family_expansion_candidates = std::move(candidates);
+    g_last_septuple_family_theorem_data = data;
+    g_last_septuple_family_expansion_theorem_data_57_region_count =
+        g_last_septuple_family_expansion_region_specs.size();
+    g_last_septuple_family_expansion_theorem_data_57_current_fingerprint =
+        septuple_family_expansion_theorem_data_57_payload_fingerprint_(
+            g_last_septuple_family_expansion_region_specs,
+            g_last_septuple_family_expansion_stats,
+            g_last_septuple_family_theorem_data);
+
+    if (!septuple_family_expansion_theorem_data_57_imported_comparison_equal_()) {
+        g_last_septuple_family_expansion_theorem_data_57_imported_equality_result = "mismatch";
+        g_last_septuple_family_expansion_theorem_data_57_blocker =
+            string("fresh septuple-family expansion theorem data 57 did not match imported 57 comparison fingerprint current=") +
+            septuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                g_last_septuple_family_theorem_data) +
+            " imported=" + g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+        if (why) *why = g_last_septuple_family_expansion_theorem_data_57_blocker;
+        return false;
+    }
+
+    g_last_septuple_family_expansion_theorem_data_57_imported_equality_result =
+        "counts_and_consumer_visible_fingerprint_equal";
+    g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_septuple_family_expansion_theorem_data_57_builder_used = true;
+    g_last_septuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_septuple_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_septuple_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_septuple_family_expansion_theorem_data_57";
+    g_last_septuple_family_expansion_theorem_data_57_constructor_name =
+        "build_current_septuple_family_expansion_theorem_data_57_from_sextuple57_ready_family_scan_";
+    g_last_septuple_family_expansion_theorem_data_57_cache_load_path =
+        septuple_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_septuple_family_expansion_theorem_data_57_caveat =
+        "Current runtime rebuilt septuple-family expansion theorem data 57 from the seven family summaries after verifying sextuple57, quintuple57, quad55, triple53, and pair52 as fresh; upstream payload rows are not copied as the septuple payload source.";
+    g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        septuple_family_expansion_theorem_data_57_runtime_fingerprint_();
+    if (why) {
+        *why = "current septuple-family region scanner rebuilt theorem data 57";
+    }
+    return true;
+}
+
+static void install_imported_septuple_family_expansion_theorem_data_57_fallback_(const string& blocker) {
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    string spec_why;
+    g_last_septuple_family_expansion_region_specs =
+        build_septuple_family_expansion_region_specs_(families, &spec_why);
+    g_last_septuple_family_expansion_stats.clear();
+    g_last_septuple_family_expansion_candidates.clear();
+    g_last_septuple_family_theorem_data = authoritative_septuple_family_expansion_theorem_data_();
+    g_last_septuple_family_expansion_theorem_data_57_region_count =
+        g_last_septuple_family_theorem_data.region_count;
+    g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_septuple_family_expansion_theorem_data_57_builder_used = false;
+    g_last_septuple_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_septuple_family_expansion_theorem_data_57_fallback_hit = true;
+    g_last_septuple_family_expansion_theorem_data_57_authoritative_source =
+        "imported_septuple_family_expansion_theorem_data_57_compatibility_fallback";
+    g_last_septuple_family_expansion_theorem_data_57_constructor_name =
+        "install_imported_septuple_family_expansion_theorem_data_57_fallback_";
+    g_last_septuple_family_expansion_theorem_data_57_imported_equality_result = "fallback_imported";
+    g_last_septuple_family_expansion_theorem_data_57_blocker = blocker;
+    g_last_septuple_family_expansion_theorem_data_57_caveat =
+        "Imported septuple-family expansion theorem data 57 compatibility fallback was used; this row is not fresh current-runtime generated.";
+    g_last_septuple_family_expansion_theorem_data_57_current_fingerprint =
+        g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+    g_last_septuple_family_expansion_theorem_data_57_runtime_fingerprint =
+        septuple_family_expansion_theorem_data_57_runtime_fingerprint_();
 }
 
 static bool ensure_septuple_family_expansion_ready_fast_(bool allow_slow_rebuild,
@@ -40090,23 +44997,528 @@ static bool ensure_septuple_family_expansion_ready_fast_(bool allow_slow_rebuild
         if (why) *why = septuple_family_expansion_theorem_data_to_string_(g_last_septuple_family_theorem_data);
         return true;
     }
+    reset_septuple_family_expansion_theorem_data_57_state_();
+    string upstream_why;
+    if (!ensure_sextuple_family_expansion_ready_fast_(allow_slow_rebuild, &upstream_why)) {
+        if (why) *why = upstream_why;
+        return false;
+    }
+
+    string current_why;
+    if (load_current_septuple_family_expansion_theorem_data_57_runtime_artifact_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+#ifdef LOCAL_TEST
+    cerr << "stage: build septuple-family expansion theorem data 57 current artifact\n";
+#endif
+    if (build_current_septuple_family_expansion_theorem_data_57_from_sextuple57_ready_family_scan_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+
     string theorem_why;
     if (validate_authoritative_septuple_family_expansion_data_(&theorem_why)) {
-        auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
-        string spec_why;
-        g_last_septuple_family_expansion_region_specs = build_septuple_family_expansion_region_specs_(families, &spec_why);
-        g_last_septuple_family_expansion_stats.clear();
-        g_last_septuple_family_expansion_candidates.clear();
-        g_last_septuple_family_theorem_data = authoritative_septuple_family_expansion_theorem_data_();
-        if (why) *why = theorem_why;
+        install_imported_septuple_family_expansion_theorem_data_57_fallback_(
+            current_why.empty() ? theorem_why : current_why);
+        if (why) *why = current_why.empty() ? theorem_why : current_why;
         return true;
     }
     if (!allow_slow_rebuild) {
-        if (why) *why = theorem_why;
+        if (why) *why = current_why + "\n" + theorem_why;
         return false;
     }
-    if (why) *why = "slow septuple-family rebuild unavailable";
+    if (why) *why = "slow septuple-family rebuild unavailable outside current septuple constructor path";
     return false;
+}
+
+static string high_family_expansion_theorem_data_57_imported_comparison_fingerprint_() {
+    return "57|regions=8|sextuple=7|septuple=1|raw=1926|canonical=1926|deduplicated=294|local=0|plus=0|theorem=0";
+}
+
+static string high_family_expansion_theorem_data_57_cache_path_summary_() {
+    return support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_payload_90.tsv");
+}
+
+static void reset_high_family_expansion_theorem_data_57_state_() {
+    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_high_family_expansion_theorem_data_57_builder_used = false;
+    g_last_high_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_high_family_expansion_theorem_data_57_fallback_reachable = true;
+    g_last_high_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_high_family_expansion_theorem_data_57_authoritative_source.clear();
+    g_last_high_family_expansion_theorem_data_57_constructor_name.clear();
+    g_last_high_family_expansion_theorem_data_57_cache_load_path =
+        high_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_high_family_expansion_theorem_data_57_current_source_fingerprint =
+        binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    g_last_high_family_expansion_theorem_data_57_current_fingerprint.clear();
+    g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint =
+        high_family_expansion_theorem_data_57_imported_comparison_fingerprint_();
+    g_last_high_family_expansion_theorem_data_57_imported_equality_result.clear();
+    g_last_high_family_expansion_theorem_data_57_runtime_fingerprint.clear();
+    g_last_high_family_expansion_theorem_data_57_caveat.clear();
+    g_last_high_family_expansion_theorem_data_57_blocker.clear();
+    g_last_high_family_expansion_theorem_data_57_region_count = 0;
+}
+
+static string high_family_expansion_theorem_data_57_payload_fingerprint_(
+    const HighFamilyExpansionTheoremData& high) {
+    ostringstream text;
+    text << "sextuple_component|"
+         << sextuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                g_last_sextuple_family_theorem_data)
+         << '\n';
+    text << "septuple_component|"
+         << septuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+                g_last_septuple_family_theorem_data)
+         << '\n';
+    text << "high_family_aggregate|"
+         << high_family_expansion_theorem_data_57_current_comparison_fingerprint_(high)
+         << '\n';
+    const string out = text.str();
+    return to_string(out.size()) + ":" + to_string(hash<string>{}(out));
+}
+
+static string high_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+    const HighFamilyExpansionTheoremData& data) {
+    ostringstream oss;
+    oss << "57|regions=" << data.region_count_total
+        << "|sextuple=" << data.sextuple_region_count
+        << "|septuple=" << data.septuple_region_count
+        << "|raw=" << data.raw_candidates
+        << "|canonical=" << data.canonical_candidates
+        << "|deduplicated=" << data.deduplicated_candidates
+        << "|local=" << data.local_exact_survivors
+        << "|plus=" << data.plus_one_survivors
+        << "|theorem=" << data.theorem_preserving_survivors;
+    return oss.str();
+}
+
+static string high_family_expansion_theorem_data_57_runtime_fingerprint_() {
+    ostringstream oss;
+    oss << (g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated ? "fresh" : "imported")
+        << '|' << g_last_high_family_expansion_theorem_data_57_authoritative_source
+        << '|' << g_last_high_family_expansion_theorem_data_57_constructor_name
+        << '|' << (g_last_high_family_expansion_theorem_data_57_builder_used ? 1 : 0)
+        << '|' << (g_last_high_family_expansion_theorem_data_57_cache_loaded ? 1 : 0)
+        << '|' << g_last_high_family_expansion_theorem_data_57_region_count
+        << '|' << g_last_high_family_theorem_data.sextuple_region_count
+        << '|' << g_last_high_family_theorem_data.septuple_region_count
+        << '|' << g_last_high_family_theorem_data.raw_candidates
+        << '|' << g_last_high_family_theorem_data.canonical_candidates
+        << '|' << g_last_high_family_theorem_data.deduplicated_candidates
+        << '|' << g_last_high_family_theorem_data.local_exact_survivors
+        << '|' << g_last_high_family_theorem_data.plus_one_survivors
+        << '|' << g_last_high_family_theorem_data.theorem_preserving_survivors
+        << '|' << g_last_high_family_expansion_theorem_data_57_current_fingerprint
+        << '|' << g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint
+        << '|' << g_last_high_family_expansion_theorem_data_57_imported_equality_result
+        << '|' << g_last_high_family_expansion_theorem_data_57_current_source_fingerprint
+        << '|' << (g_last_high_family_expansion_theorem_data_57_fallback_reachable ? 1 : 0)
+        << '|' << (g_last_high_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_septuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_sextuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_quintuple_family_expansion_theorem_data_57_fallback_hit ? 1 : 0)
+        << '|' << (g_last_quadruple_family_expansion_theorem_data_55_fallback_hit ? 1 : 0)
+        << '|' << (g_last_triple_family_expansion_theorem_data_53_fallback_hit ? 1 : 0)
+        << '|' << (g_last_pair_expansion_aggregate_52_fallback_hit ? 1 : 0)
+        << '|' << g_last_high_family_expansion_theorem_data_57_blocker
+        << '|' << g_last_high_family_expansion_theorem_data_57_caveat;
+    return oss.str();
+}
+
+static bool high_family_expansion_theorem_data_57_imported_comparison_equal_() {
+    return high_family_expansion_theorem_data_57_current_comparison_fingerprint_(
+               g_last_high_family_theorem_data) ==
+           g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+}
+
+static void set_unified_status_from_high_family_aggregate_() {
+    string status_why;
+    g_last_unified_bounded_schema_universe_status =
+        classify_unified_bounded_schema_universe_status_(
+            g_last_unified_bounded_schema_universe_obstruction_theorem,
+            &g_last_high_family_candidate_aggregate_stats,
+            &status_why);
+    g_last_unified_bounded_schema_universe_ledger =
+        build_unified_bounded_schema_universe_ledger_(
+            g_last_unified_bounded_schema_universe_obstruction_theorem,
+            &g_last_high_family_candidate_aggregate_stats,
+            g_last_unified_bounded_schema_universe_status);
+}
+
+static bool high_family_upstream_fresh_ready_(string* why) {
+    if (!g_last_septuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_septuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "high-family 57 refused because upstream septuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_sextuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_sextuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "high-family 57 refused because upstream sextuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quintuple_family_expansion_theorem_data_57_fresh_runtime_generated ||
+        g_last_quintuple_family_expansion_theorem_data_57_fallback_hit) {
+        if (why) *why = "high-family 57 refused because upstream quintuple57 is not fresh";
+        return false;
+    }
+    if (!g_last_quadruple_family_expansion_theorem_data_55_fresh_runtime_generated ||
+        g_last_quadruple_family_expansion_theorem_data_55_fallback_hit) {
+        if (why) *why = "high-family 57 refused because upstream quad55 is not fresh";
+        return false;
+    }
+    if (!g_last_triple_family_expansion_theorem_data_53_fresh_runtime_generated ||
+        g_last_triple_family_expansion_theorem_data_53_fallback_hit) {
+        if (why) *why = "high-family 57 refused because upstream triple53 is not fresh";
+        return false;
+    }
+    if (!g_last_pair_expansion_aggregate_52_fresh_runtime_generated ||
+        g_last_pair_expansion_aggregate_52_fallback_hit) {
+        if (why) *why = "high-family 57 refused because upstream pair52 is not fresh";
+        return false;
+    }
+    return true;
+}
+
+static bool load_current_high_family_expansion_theorem_data_57_runtime_artifact_(string* why) {
+    const string payload_path = support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_payload_90.tsv");
+    const string fingerprint_path = support8_runtime_bundle_path_("high_family_expansion_theorem_data_57_fingerprint_90.tsv");
+    if (!file_nonempty_for_audit_(payload_path) || !file_nonempty_for_audit_(fingerprint_path)) {
+        if (why) *why = "high-family expansion theorem data 57 runtime artifact missing";
+        return false;
+    }
+    auto metrics = read_exact_basis_metric_tsv_(fingerprint_path);
+    const string source_fp = binary_fingerprint_for_audit_(current_bundle_metadata_().source_path);
+    if (metrics["current_source_fingerprint"] != source_fp) {
+        if (why) *why = "high-family expansion theorem data 57 runtime artifact source fingerprint stale";
+        return false;
+    }
+    if (metrics["current_provenance_label"] != "fresh_current_runtime_generated") {
+        if (why) *why = "high-family expansion theorem data 57 runtime artifact is not marked fresh";
+        return false;
+    }
+    if (metrics["imported_equality_result"] != "counts_and_consumer_visible_fingerprint_equal") {
+        if (why) *why = "high-family expansion theorem data 57 runtime artifact did not record imported equality";
+        return false;
+    }
+    if (!high_family_upstream_fresh_ready_(why)) return false;
+
+    ifstream fin(payload_path);
+    if (!fin) {
+        if (why) *why = "failed to open high-family expansion theorem data 57 payload";
+        return false;
+    }
+    string line;
+    bool first = true;
+    map<string, vector<string>> rows;
+    while (getline(fin, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        if (line.empty()) continue;
+        auto cols = split_exact_basis_tsv_line_(line);
+        if (cols.size() < 11) {
+            if (why) *why = "high-family expansion theorem data 57 payload row missing columns";
+            return false;
+        }
+        rows[cols[0]] = cols;
+    }
+    if (!rows.count("sextuple_component") ||
+        !rows.count("septuple_component") ||
+        !rows.count("high_family_aggregate")) {
+        if (why) *why = "high-family expansion theorem data 57 payload missing component rows";
+        return false;
+    }
+
+    HighFamilyExpansionTheoremData data;
+    if (!parse_size_t_exact_basis_(metrics["sextuple_region_count"], &data.sextuple_region_count) ||
+        !parse_size_t_exact_basis_(metrics["septuple_region_count"], &data.septuple_region_count) ||
+        !parse_size_t_exact_basis_(metrics["region_count"], &data.region_count_total) ||
+        !parse_size_t_exact_basis_(metrics["raw_candidates"], &data.raw_candidates) ||
+        !parse_size_t_exact_basis_(metrics["canonical_candidates"], &data.canonical_candidates) ||
+        !parse_size_t_exact_basis_(metrics["deduplicated_candidates"], &data.deduplicated_candidates) ||
+        !parse_size_t_exact_basis_(metrics["local_exact_survivors"], &data.local_exact_survivors) ||
+        !parse_size_t_exact_basis_(metrics["plus_one_survivors"], &data.plus_one_survivors) ||
+        !parse_size_t_exact_basis_(metrics["theorem_preserving_survivors"], &data.theorem_preserving_survivors)) {
+        if (why) *why = "high-family expansion theorem data 57 fingerprint metrics missing theorem-data fields";
+        return false;
+    }
+    data.why = "loaded fresh current-runtime high-family expansion theorem data 57 payload artifact";
+
+    const auto& aggregate_row = rows["high_family_aggregate"];
+    size_t payload_region = 0, payload_raw = 0, payload_canonical = 0, payload_dedup = 0;
+    size_t payload_local = 0, payload_plus = 0, payload_theorem = 0;
+    if (!parse_size_t_exact_basis_(aggregate_row[2], &payload_region) ||
+        !parse_size_t_exact_basis_(aggregate_row[3], &payload_raw) ||
+        !parse_size_t_exact_basis_(aggregate_row[4], &payload_canonical) ||
+        !parse_size_t_exact_basis_(aggregate_row[5], &payload_dedup) ||
+        !parse_size_t_exact_basis_(aggregate_row[6], &payload_local) ||
+        !parse_size_t_exact_basis_(aggregate_row[7], &payload_plus) ||
+        !parse_size_t_exact_basis_(aggregate_row[8], &payload_theorem)) {
+        if (why) *why = "high-family expansion theorem data 57 payload aggregate row contains invalid numeric field";
+        return false;
+    }
+    if (payload_region != data.region_count_total ||
+        payload_raw != data.raw_candidates ||
+        payload_canonical != data.canonical_candidates ||
+        payload_dedup != data.deduplicated_candidates ||
+        payload_local != data.local_exact_survivors ||
+        payload_plus != data.plus_one_survivors ||
+        payload_theorem != data.theorem_preserving_survivors) {
+        if (why) *why = "high-family expansion theorem data 57 payload aggregate row disagrees with fingerprint metrics";
+        return false;
+    }
+
+    const string payload_fp = high_family_expansion_theorem_data_57_payload_fingerprint_(data);
+    if (payload_fp != metrics["payload_fingerprint"]) {
+        if (why) *why = "high-family expansion theorem data 57 payload fingerprint mismatch";
+        return false;
+    }
+
+    g_last_high_family_theorem_data = data;
+    g_last_high_family_candidate_aggregate_stats = {};
+    g_last_high_family_candidate_aggregate_stats.region_count = data.region_count_total;
+    g_last_high_family_candidate_aggregate_stats.raw_candidates = data.raw_candidates;
+    g_last_high_family_candidate_aggregate_stats.canonical_candidates = data.canonical_candidates;
+    g_last_high_family_candidate_aggregate_stats.deduplicated_candidates = data.deduplicated_candidates;
+    g_last_high_family_candidate_aggregate_stats.local_exact_survivors = data.local_exact_survivors;
+    g_last_high_family_candidate_aggregate_stats.plus_one_survivors = data.plus_one_survivors;
+    g_last_high_family_candidate_aggregate_stats.theorem_preserving_survivors = data.theorem_preserving_survivors;
+    g_last_high_family_candidate_aggregate_stats.why = data.why;
+    g_last_high_family_expansion_theorem_data_57_region_count = data.region_count_total;
+    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_high_family_expansion_theorem_data_57_builder_used = false;
+    g_last_high_family_expansion_theorem_data_57_cache_loaded = true;
+    g_last_high_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_high_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_high_family_expansion_theorem_data_57_cache";
+    g_last_high_family_expansion_theorem_data_57_constructor_name =
+        "load_current_high_family_expansion_theorem_data_57_runtime_artifact_";
+    g_last_high_family_expansion_theorem_data_57_cache_load_path = payload_path;
+    g_last_high_family_expansion_theorem_data_57_current_fingerprint = payload_fp;
+    g_last_high_family_expansion_theorem_data_57_imported_equality_result =
+        metrics["imported_equality_result"];
+    g_last_high_family_expansion_theorem_data_57_caveat =
+        "Current authoritative path loaded a validated runtime high-family aggregate 57 artifact; upstream septuple57, sextuple57, quintuple57, quad55, triple53, and pair52 stayed fresh with fallback_hit=0.";
+    g_last_high_family_expansion_theorem_data_57_runtime_fingerprint =
+        high_family_expansion_theorem_data_57_runtime_fingerprint_();
+    set_unified_status_from_high_family_aggregate_();
+    if (why) *why = "loaded validated runtime high-family expansion theorem data 57 artifact";
+    return true;
+}
+
+static bool build_current_high_family_expansion_theorem_data_57_from_septuple57_ready_aggregate_scan_(string* why) {
+    if (!ensure_septuple_family_expansion_ready_fast_(false, why)) {
+        return false;
+    }
+    if (!high_family_upstream_fresh_ready_(why)) return false;
+
+    auto families = authoritative_exact_minimal_basis_plus_one_failure_family_summaries_data_49_();
+    auto pool = exact_minimal_basis_global_schema_candidate_pool_();
+    string specs_why;
+    auto sextuple_specs = build_sextuple_family_expansion_region_specs_(families, &specs_why);
+    auto septuple_specs = build_septuple_family_expansion_region_specs_(families, &specs_why);
+    vector<OutOfPoolExpansionStats> sextuple_stats;
+    vector<OutOfPoolExpansionCandidate> sextuple_candidates;
+    vector<OutOfPoolExpansionStats> septuple_stats;
+    vector<OutOfPoolExpansionCandidate> septuple_candidates;
+    g_last_out_of_pool_schema_validation_cache.clear();
+
+    for (size_t idx = 0; idx < sextuple_specs.size(); ++idx) {
+        const auto& spec = sextuple_specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: high-family aggregate 57 sextuple component region " << (idx + 1) << "/" << sextuple_specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        vector<const ProofMotifPlusOneFailureFamilySummary*> found;
+        for (const auto& fp : spec.source_family_fingerprints) {
+            const ProofMotifPlusOneFailureFamilySummary* fam = find_family_summary_by_fingerprint_(families, fp);
+            if (!fam) {
+                if (why) *why = "high-family aggregate 57 missing sextuple source family for " + spec.fingerprint;
+                return false;
+            }
+            found.push_back(fam);
+        }
+        if (found.size() != 6) {
+            if (why) *why = "high-family aggregate 57 sextuple component did not resolve exactly six families";
+            return false;
+        }
+        string enum_why;
+        auto out = enumerate_out_of_pool_sextuple_family_candidates_(
+            *found[0], *found[1], *found[2], *found[3], *found[4], *found[5],
+            spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &sextuple_candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        sextuple_stats.push_back(std::move(st));
+    }
+
+    for (size_t idx = 0; idx < septuple_specs.size(); ++idx) {
+        const auto& spec = septuple_specs[idx];
+#ifdef LOCAL_TEST
+        cerr << "stage: high-family aggregate 57 septuple component region " << (idx + 1) << "/" << septuple_specs.size()
+             << " " << spec.fingerprint << "\n";
+#endif
+        string enum_why;
+        auto out = enumerate_out_of_pool_septuple_family_candidates_(
+            families, spec.symbol_bound, spec.antecedent_bound, pool, &enum_why);
+        string scan_why;
+        auto st = scan_out_of_pool_bounded_expansion_region_detailed_(
+            spec.fingerprint,
+            spec.symbol_bound,
+            spec.antecedent_bound,
+            out.size(),
+            out,
+            {},
+            &septuple_candidates,
+            &scan_why);
+        if (!enum_why.empty()) st.why = enum_why + " ; " + st.why;
+        septuple_stats.push_back(std::move(st));
+    }
+
+    auto count_unique = [](const vector<OutOfPoolExpansionCandidate>& candidates) {
+        set<string> unique_candidates;
+        for (const auto& cand : candidates) {
+            unique_candidates.insert(canonical_structured_local_schema_fingerprint_(cand.schema));
+        }
+        return unique_candidates.size();
+    };
+
+    SextupleFamilyExpansionTheoremData sextuple_data;
+    sextuple_data.region_count = sextuple_stats.size();
+    for (const auto& st : sextuple_stats) {
+        sextuple_data.raw_candidates += st.raw_candidates;
+        sextuple_data.canonical_candidates += st.canonical_candidates;
+        sextuple_data.local_exact_survivors += st.local_exact_survivors;
+        sextuple_data.plus_one_survivors += st.plus_one_survivors;
+        sextuple_data.theorem_preserving_survivors += st.theorem_preserving_survivors;
+    }
+    sextuple_data.deduplicated_candidates = count_unique(sextuple_candidates);
+    sextuple_data.why = "fresh high-family aggregate pass rebuilt sextuple component from seven sextuple regions";
+
+    SeptupleFamilyExpansionTheoremData septuple_data;
+    septuple_data.region_count = septuple_stats.size();
+    for (const auto& st : septuple_stats) {
+        septuple_data.raw_candidates += st.raw_candidates;
+        septuple_data.canonical_candidates += st.canonical_candidates;
+        septuple_data.local_exact_survivors += st.local_exact_survivors;
+        septuple_data.plus_one_survivors += st.plus_one_survivors;
+        septuple_data.theorem_preserving_survivors += st.theorem_preserving_survivors;
+    }
+    septuple_data.deduplicated_candidates = count_unique(septuple_candidates);
+    septuple_data.why = "fresh high-family aggregate pass rebuilt septuple component from the septuple region";
+
+    if (sextuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(sextuple_data) !=
+            g_last_sextuple_family_expansion_theorem_data_57_imported_comparison_fingerprint ||
+        septuple_family_expansion_theorem_data_57_current_comparison_fingerprint_(septuple_data) !=
+            g_last_septuple_family_expansion_theorem_data_57_imported_comparison_fingerprint) {
+        if (why) *why = "high-family aggregate 57 component rebuild did not match sextuple/septuple imported comparison fingerprints";
+        return false;
+    }
+
+    vector<OutOfPoolExpansionCandidate> all = sextuple_candidates;
+    all.insert(all.end(), septuple_candidates.begin(), septuple_candidates.end());
+    string aggregate_why;
+    auto aggregate = build_high_family_candidate_aggregate_stats_(
+        all,
+        sextuple_stats.size() + septuple_stats.size(),
+        &aggregate_why);
+    aggregate.raw_candidates = 0;
+    for (const auto& st : sextuple_stats) aggregate.raw_candidates += st.raw_candidates;
+    for (const auto& st : septuple_stats) aggregate.raw_candidates += st.raw_candidates;
+    aggregate.why =
+        "fresh current-runtime aggregate over 7 sextuple regions plus 1 septuple region; septuple57 and sextuple57 artifacts were verified fresh before construction";
+
+    HighFamilyExpansionTheoremData data;
+    data.sextuple_region_count = sextuple_data.region_count;
+    data.septuple_region_count = septuple_data.region_count;
+    data.region_count_total = aggregate.region_count;
+    data.raw_candidates = aggregate.raw_candidates;
+    data.canonical_candidates = aggregate.canonical_candidates;
+    data.deduplicated_candidates = aggregate.deduplicated_candidates;
+    data.local_exact_survivors = aggregate.local_exact_survivors;
+    data.plus_one_survivors = aggregate.plus_one_survivors;
+    data.theorem_preserving_survivors = aggregate.theorem_preserving_survivors;
+    data.why = aggregate.why;
+
+    g_last_high_family_theorem_data = data;
+    g_last_high_family_candidate_aggregate_stats = aggregate;
+    g_last_high_family_expansion_theorem_data_57_region_count = data.region_count_total;
+    g_last_high_family_expansion_theorem_data_57_current_fingerprint =
+        high_family_expansion_theorem_data_57_payload_fingerprint_(data);
+
+    if (!high_family_expansion_theorem_data_57_imported_comparison_equal_()) {
+        g_last_high_family_expansion_theorem_data_57_imported_equality_result = "mismatch";
+        g_last_high_family_expansion_theorem_data_57_blocker =
+            string("fresh high-family expansion theorem data 57 did not match imported 57 comparison fingerprint current=") +
+            high_family_expansion_theorem_data_57_current_comparison_fingerprint_(data) +
+            " imported=" + g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+        if (why) *why = g_last_high_family_expansion_theorem_data_57_blocker;
+        return false;
+    }
+
+    g_last_high_family_expansion_theorem_data_57_imported_equality_result =
+        "counts_and_consumer_visible_fingerprint_equal";
+    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated = true;
+    g_last_high_family_expansion_theorem_data_57_builder_used = true;
+    g_last_high_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_high_family_expansion_theorem_data_57_fallback_hit = false;
+    g_last_high_family_expansion_theorem_data_57_authoritative_source =
+        "current_runtime_high_family_expansion_theorem_data_57";
+    g_last_high_family_expansion_theorem_data_57_constructor_name =
+        "build_current_high_family_expansion_theorem_data_57_from_septuple57_ready_aggregate_scan_";
+    g_last_high_family_expansion_theorem_data_57_cache_load_path =
+        high_family_expansion_theorem_data_57_cache_path_summary_();
+    g_last_high_family_expansion_theorem_data_57_caveat =
+        "Current runtime rebuilt high-family aggregate 57 by scanning all sextuple and septuple family regions after verifying septuple57, sextuple57, quintuple57, quad55, triple53, and pair52 as fresh; imported high-family aggregate was only used as an equality oracle.";
+    g_last_high_family_expansion_theorem_data_57_runtime_fingerprint =
+        high_family_expansion_theorem_data_57_runtime_fingerprint_();
+    set_unified_status_from_high_family_aggregate_();
+    if (why) *why = "current high-family sextuple+septuple aggregate scanner rebuilt theorem data 57";
+    return true;
+}
+
+static void install_imported_high_family_expansion_theorem_data_57_fallback_(const string& blocker) {
+    g_last_high_family_theorem_data = authoritative_high_family_expansion_theorem_data_();
+    g_last_high_family_candidate_aggregate_stats = {};
+    g_last_high_family_candidate_aggregate_stats.region_count = g_last_high_family_theorem_data.region_count_total;
+    g_last_high_family_candidate_aggregate_stats.raw_candidates = g_last_high_family_theorem_data.raw_candidates;
+    g_last_high_family_candidate_aggregate_stats.canonical_candidates = g_last_high_family_theorem_data.canonical_candidates;
+    g_last_high_family_candidate_aggregate_stats.deduplicated_candidates = g_last_high_family_theorem_data.deduplicated_candidates;
+    g_last_high_family_candidate_aggregate_stats.local_exact_survivors = g_last_high_family_theorem_data.local_exact_survivors;
+    g_last_high_family_candidate_aggregate_stats.plus_one_survivors = g_last_high_family_theorem_data.plus_one_survivors;
+    g_last_high_family_candidate_aggregate_stats.theorem_preserving_survivors = g_last_high_family_theorem_data.theorem_preserving_survivors;
+    g_last_high_family_candidate_aggregate_stats.why = g_last_high_family_theorem_data.why;
+    g_last_high_family_expansion_theorem_data_57_region_count =
+        g_last_high_family_theorem_data.region_count_total;
+    g_last_high_family_expansion_theorem_data_57_fresh_runtime_generated = false;
+    g_last_high_family_expansion_theorem_data_57_builder_used = false;
+    g_last_high_family_expansion_theorem_data_57_cache_loaded = false;
+    g_last_high_family_expansion_theorem_data_57_fallback_hit = true;
+    g_last_high_family_expansion_theorem_data_57_authoritative_source =
+        "imported_high_family_expansion_theorem_data_57_compatibility_fallback";
+    g_last_high_family_expansion_theorem_data_57_constructor_name =
+        "install_imported_high_family_expansion_theorem_data_57_fallback_";
+    g_last_high_family_expansion_theorem_data_57_imported_equality_result = "fallback_imported";
+    g_last_high_family_expansion_theorem_data_57_blocker = blocker;
+    g_last_high_family_expansion_theorem_data_57_caveat =
+        "Imported high-family aggregate 57 compatibility fallback was used; this row is not fresh current-runtime generated.";
+    g_last_high_family_expansion_theorem_data_57_current_fingerprint =
+        g_last_high_family_expansion_theorem_data_57_imported_comparison_fingerprint;
+    g_last_high_family_expansion_theorem_data_57_runtime_fingerprint =
+        high_family_expansion_theorem_data_57_runtime_fingerprint_();
+    set_unified_status_from_high_family_aggregate_();
 }
 
 static void ensure_high_family_expansion_ready_slow_() {
@@ -40226,35 +45638,36 @@ static bool ensure_high_family_expansion_ready_fast_(bool allow_slow_rebuild,
         if (why) *why = high_family_expansion_theorem_data_to_string_(g_last_high_family_theorem_data);
         return true;
     }
-    string w1,w2,w3,w4,w5;
-    bool ok = ensure_unified_bounded_schema_universe_obstruction_ready_(&w1)
-           && ensure_quintuple_family_expansion_ready_fast_(false, &w2)
-           && ensure_sextuple_family_expansion_ready_fast_(false, &w3)
-           && ensure_septuple_family_expansion_ready_fast_(false, &w4)
-           && validate_authoritative_high_family_expansion_data_(&w5);
-    if (ok) {
-        g_last_high_family_theorem_data = authoritative_high_family_expansion_theorem_data_();
-        g_last_high_family_candidate_aggregate_stats = {};
-        g_last_high_family_candidate_aggregate_stats.region_count = g_last_high_family_theorem_data.region_count_total;
-        g_last_high_family_candidate_aggregate_stats.raw_candidates = g_last_high_family_theorem_data.raw_candidates;
-        g_last_high_family_candidate_aggregate_stats.canonical_candidates = g_last_high_family_theorem_data.canonical_candidates;
-        g_last_high_family_candidate_aggregate_stats.deduplicated_candidates = g_last_high_family_theorem_data.deduplicated_candidates;
-        g_last_high_family_candidate_aggregate_stats.local_exact_survivors = g_last_high_family_theorem_data.local_exact_survivors;
-        g_last_high_family_candidate_aggregate_stats.plus_one_survivors = g_last_high_family_theorem_data.plus_one_survivors;
-        g_last_high_family_candidate_aggregate_stats.theorem_preserving_survivors = g_last_high_family_theorem_data.theorem_preserving_survivors;
-        g_last_high_family_candidate_aggregate_stats.why = g_last_high_family_theorem_data.why;
-        string status_why;
-        g_last_unified_bounded_schema_universe_status = classify_unified_bounded_schema_universe_status_(g_last_unified_bounded_schema_universe_obstruction_theorem,
-                                                                                                          &g_last_high_family_candidate_aggregate_stats,
-                                                                                                          &status_why);
-        g_last_unified_bounded_schema_universe_ledger = build_unified_bounded_schema_universe_ledger_(g_last_unified_bounded_schema_universe_obstruction_theorem,
-                                                                                                       &g_last_high_family_candidate_aggregate_stats,
-                                                                                                       g_last_unified_bounded_schema_universe_status);
-        if (why) *why = w1 + "\n" + w2 + "\n" + w3 + "\n" + w4 + "\n" + w5;
+    reset_high_family_expansion_theorem_data_57_state_();
+    string w1, w2;
+    if (!ensure_unified_bounded_schema_universe_obstruction_ready_(&w1) ||
+        !ensure_septuple_family_expansion_ready_fast_(false, &w2)) {
+        if (why) *why = w1 + "\n" + w2;
+        return false;
+    }
+
+    string current_why;
+    if (load_current_high_family_expansion_theorem_data_57_runtime_artifact_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+#ifdef LOCAL_TEST
+    cerr << "stage: build high-family expansion theorem data 57 current artifact\n";
+#endif
+    if (build_current_high_family_expansion_theorem_data_57_from_septuple57_ready_aggregate_scan_(&current_why)) {
+        if (why) *why = current_why;
+        return true;
+    }
+
+    string theorem_why;
+    if (validate_authoritative_high_family_expansion_data_(&theorem_why)) {
+        install_imported_high_family_expansion_theorem_data_57_fallback_(
+            current_why.empty() ? theorem_why : current_why);
+        if (why) *why = current_why.empty() ? theorem_why : current_why;
         return true;
     }
     if (!allow_slow_rebuild) {
-        if (why) *why = w1 + "\n" + w2 + "\n" + w3 + "\n" + w4 + "\n" + w5;
+        if (why) *why = current_why + "\n" + theorem_why;
         return false;
     }
     ensure_high_family_expansion_ready_slow_();
@@ -41750,6 +47163,12 @@ int main() {
             cerr << "support8 tail obstruction chain theorem validation failed\n" << tail_chain_why << "\n";
         }
         cerr << "stage: optional shell16 regression\n";
+        string shell16_attempt_why;
+        if (!ensure_shell16_attempt_ready_(&shell16_attempt_why)) {
+            cerr << "shell16 non-promoting attempt failed\n" << shell16_attempt_why << "\n";
+        } else {
+            cerr << "shell16 non-promoting attempt: " << shell16_attempt_why << "\n";
+        }
         cerr << "stage: support8 shell tail certificate\n";
         g_last_support8_outside_bounded_shell_tail_certificate = build_support8_outside_bounded_shell_tail_certificate_(
             antecedent_shell15_frontier_theorem_data_("antecedent_plus_twelve_frontier", nullptr),
@@ -41776,6 +47195,10 @@ int main() {
                                                         g_last_family_chain_theorem_audit_stats,
                                                         &generation_audit_why)) {
             cerr << "basis/family generation audit write failed\n" << generation_audit_why << "\n";
+        }
+        string pair52_write_why;
+        if (!write_pair_expansion_aggregate_52_runtime_artifacts_(&pair52_write_why)) {
+            cerr << "pair-expansion aggregate 52 artifact write failed\n" << pair52_write_why << "\n";
         }
         string shell15_audit_write_why;
         if (!write_shell15_frontier_generation_audit_files_(&shell15_audit_write_why)) {

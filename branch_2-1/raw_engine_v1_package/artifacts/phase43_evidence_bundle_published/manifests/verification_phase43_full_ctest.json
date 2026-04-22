@@ -1,0 +1,65 @@
+{
+  "aggregate": {
+    "all_modes_pass": true,
+    "execution_verdict": "PASS",
+    "modes": [
+      "release",
+      "debug",
+      "asan_ubsan"
+    ],
+    "total_discovered_tests": 1068,
+    "total_fail_count": 0,
+    "total_not_run_count": 0,
+    "total_pass_count": 1068,
+    "zero_not_run_verdict": "PASS"
+  },
+  "authoritative_tree_build_policy": "read-only source; long build/test on staged clone only",
+  "generated_at_utc": "2026-04-20T12:17:21Z",
+  "manifest_sha256": "b6e3e8f261b8d75147b0b0b9bd74e189b434919f0e4edca7cd2907e7517ba6ad",
+  "manifest_version": "phase43_full_ctest_verification_v1",
+  "phase": "phase43",
+  "production_split_choice_policy": "exact_shadow",
+  "results": [
+    {
+      "build_dir": "/tmp/raw_engine_phase43_build_release",
+      "ctest_command": "ctest --test-dir /tmp/raw_engine_phase43_build_release --output-on-failure -j 4",
+      "discovered_test_count": 356,
+      "execution_verdict": "PASS",
+      "fail_count": 0,
+      "mode": "release",
+      "not_run_count": 0,
+      "pass_count": 356,
+      "total_wall_time_seconds": 651.35,
+      "zero_not_run_verdict": "PASS"
+    },
+    {
+      "build_dir": "/tmp/raw_engine_phase43_build_debug",
+      "ctest_command": "ctest --test-dir /tmp/raw_engine_phase43_build_debug --output-on-failure -j 4",
+      "discovered_test_count": 356,
+      "execution_verdict": "PASS",
+      "fail_count": 0,
+      "mode": "debug",
+      "not_run_count": 0,
+      "pass_count": 356,
+      "total_wall_time_seconds": 1129.77,
+      "zero_not_run_verdict": "PASS"
+    },
+    {
+      "build_dir": "/tmp/raw_engine_phase43_build_asan",
+      "ctest_command": "ctest --test-dir /tmp/raw_engine_phase43_build_asan --output-on-failure -j 4",
+      "discovered_test_count": 356,
+      "execution_verdict": "PASS",
+      "fail_count": 0,
+      "mode": "asan_ubsan",
+      "not_run_count": 0,
+      "pass_count": 356,
+      "total_wall_time_seconds": 1823.57,
+      "zero_not_run_verdict": "PASS"
+    }
+  ],
+  "semantic_counterexample_observed": false,
+  "source_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package",
+  "src_primitive_or_planner_semantics_changed": false,
+  "staged_root": "/tmp/cpp-checker-phase43/branch_2-1/raw_engine_v1_package",
+  "verification_mode": "non_icloud_staged_clone_full_ctest"
+}

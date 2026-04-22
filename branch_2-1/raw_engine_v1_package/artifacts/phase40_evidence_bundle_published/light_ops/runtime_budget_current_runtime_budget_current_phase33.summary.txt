@@ -1,0 +1,1 @@
+runtime_budget_current_summary current_verdict=WARN budget_verdict=BUDGET_WARN proposal_needed=1 entry_count=6

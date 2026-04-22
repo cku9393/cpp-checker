@@ -1,0 +1,213 @@
+{
+  "artifacts": {
+    "diagnostics_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/diagnostics_manifest.tsv",
+    "iteration_evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/iteration_evidence.txt",
+    "published_smoke_diagnostics_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/diagnostics_manifest.tsv",
+    "published_smoke_failure_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/failure_report.md",
+    "published_smoke_iteration_evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/iteration_evidence.txt",
+    "published_smoke_retry_loop_control_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/retry_loop_control.json",
+    "published_smoke_run_comparison_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/run_comparison.json",
+    "published_smoke_run_record_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/run_record.json",
+    "published_smoke_standard_gap_json_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/standard_gap.json",
+    "published_smoke_status_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/status_report.md",
+    "published_smoke_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt",
+    "run_archive_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/artifact_manifest.tsv",
+    "run_archive_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011",
+    "run_archive_source_failure_snapshot_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/source_failure_snapshot_manifest.tsv",
+    "run_archive_source_root_snapshot_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/source_root_snapshot",
+    "run_console_stderr_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/console.stderr.txt",
+    "run_dispatch_result_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/dispatch_result.txt",
+    "status_artifact_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/artifact_manifest.tsv",
+    "status_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000011/latest_status_report.md",
+    "status_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/summary.txt"
+  },
+  "comparison": {
+    "changed_fields": [],
+    "previous_normalized_outcome": "harness_infrastructure_failure",
+    "previous_run_archive_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.000010",
+    "previous_run_id": "run.000010",
+    "previous_source_failure_case": "",
+    "previous_stage_label": "launcher_pre_dispatch:shell_entrypoint_validation",
+    "summary": "same normalized outcome as previous run run.000010 (harness_infrastructure_failure at launcher_pre_dispatch:shell_entrypoint_validation)"
+  },
+  "gate_chain": [
+    {
+      "ac": 2,
+      "command": "./lca_smoke.sh",
+      "depends_on": [],
+      "evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt",
+      "name": "smoke",
+      "status": "failed",
+      "summary": "smoke is the active blocker: launcher exited non-zero before inner wrapper dispatch"
+    },
+    {
+      "ac": 3,
+      "command": "./lca_strong_gate.sh",
+      "depends_on": [
+        2
+      ],
+      "evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt",
+      "name": "strong_gate",
+      "status": "blocked_by_ac2",
+      "summary": "strong gate is intentionally blocked until smoke publishes a fresh same-worktree pass"
+    },
+    {
+      "ac": 4,
+      "command": "./lca_strong_gate.sh && ./lca_strong_gate.sh",
+      "depends_on": [
+        3
+      ],
+      "evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt",
+      "name": "strong_gate_repeatability",
+      "status": "blocked_by_ac2",
+      "summary": "strong-gate repeatability is intentionally blocked until AC3 has fresh same-worktree pass evidence"
+    },
+    {
+      "ac": 5,
+      "command": "./lca_boj3s_gate.sh",
+      "depends_on": [
+        3
+      ],
+      "evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt",
+      "name": "boj3s_gate",
+      "status": "blocked_by_ac2",
+      "summary": "boj3s gate is intentionally blocked until smoke and AC3 produce fresh same-worktree pass evidence"
+    },
+    {
+      "ac": 6,
+      "command": "./lca_boj3s_gate.sh && ./lca_boj3s_gate.sh",
+      "depends_on": [
+        5
+      ],
+      "evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/summary.txt",
+      "name": "boj3s_gate_repeatability",
+      "status": "blocked_by_ac2",
+      "summary": "boj3s repeatability is intentionally blocked until AC5 has fresh same-worktree pass evidence"
+    }
+  ],
+  "inputs": {
+    "environment_build_command_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/environment_validation/build.command.txt",
+    "environment_preflight_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/environment_validation/preflight_manifest.tsv",
+    "environment_setup_env_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/environment_validation/setup_env.txt",
+    "environment_validation_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/environment_validation.txt",
+    "manifest_snapshot_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/environment_validation/smoke_cases.snapshot.tsv",
+    "source_failure_exact_input_path": "",
+    "source_failure_exact_seed_path": "",
+    "source_failure_expected_output_path": "",
+    "source_failure_failed_case_row_path": "",
+    "suite_config_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/suite_config.txt",
+    "suite_plan_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/suite_plan.tsv"
+  },
+  "launch": {
+    "artifacts_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5",
+    "branch_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3",
+    "dispatch_command": "/bin/bash /Users/free_1/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/lca_smoke.sh",
+    "dispatch_timeout_seconds": "",
+    "invocation_command": "./lca_smoke.sh",
+    "original_working_directory": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3",
+    "smoke_failure_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_failure",
+    "smoke_output_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke",
+    "status_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status",
+    "working_directory": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3"
+  },
+  "required_standard": "lca_tree_stress_v5",
+  "run": {
+    "elapsed_seconds": 138,
+    "failure_partition": "harness_setup",
+    "failure_partition_label": "harness/setup",
+    "finished_at_utc": "2026-04-11T15:49:13Z",
+    "id": "run.000011",
+    "normalized_exit_code": 70,
+    "normalized_outcome": "harness_infrastructure_failure",
+    "outcome_source": "launcher",
+    "outcome_summary": "launcher exited non-zero before inner wrapper dispatch",
+    "public_status": "FAIL",
+    "raw_exit_code": 130,
+    "result_family": "harness",
+    "source_failure_case": "",
+    "source_failure_kind": "",
+    "stage_label": "launcher_pre_dispatch:shell_entrypoint_validation",
+    "started_at_utc": "2026-04-11T15:46:55Z"
+  },
+  "schema": "lca_smoke_run_record_v1",
+  "script": "./lca_smoke.sh",
+  "source_failure": {
+    "artifacts": {
+      "active_solver_replay_script_path": "",
+      "artifact_manifest_path": "",
+      "build_command_path": "",
+      "build_stderr_path": "",
+      "build_stdout_path": "",
+      "checker_replay_stderr_path": "",
+      "checker_replay_stdout_path": "",
+      "checker_result_path": "",
+      "checker_script_path": "",
+      "commands_path": "",
+      "exact_input_path": "",
+      "exact_output_path": "",
+      "exact_seed_path": "",
+      "expected_output_path": "",
+      "failed_case_row_path": "",
+      "failure_case_dir_path": "",
+      "failure_root_path": "",
+      "helper_result_json_path": "",
+      "helper_stderr_path": "",
+      "helper_stdout_path": "",
+      "invoked_command_path": "",
+      "manifest_snapshot_path": "",
+      "mismatch_summary_path": "",
+      "preflight_manifest_path": "",
+      "preserved_input_replay_script_path": "",
+      "rerun_command_path": "",
+      "retry_log_path": "",
+      "runtime_env_exports_path": "",
+      "runtime_env_path": "",
+      "seed_repro_script_path": "",
+      "setup_env_path": "",
+      "structured_context_path": "",
+      "suite_config_path": "",
+      "suite_plan_path": ""
+    },
+    "case": "",
+    "kind": "",
+    "origin": "",
+    "replay_command": "",
+    "reporting_status": "",
+    "reporting_warning": "",
+    "retryable": null,
+    "seed": null,
+    "stage": "",
+    "summary": ""
+  },
+  "summary": {
+    "failure_partition": "harness_setup",
+    "failure_partition_label": "harness/setup",
+    "normalized_exit_code": 70,
+    "normalized_outcome": "harness_infrastructure_failure",
+    "outcome_source": "launcher",
+    "outcome_summary": "launcher exited non-zero before inner wrapper dispatch",
+    "public_status": "FAIL",
+    "raw_exit_code": 130,
+    "result_family": "harness",
+    "source_failure_kind": "",
+    "source_failure_origin": "",
+    "source_failure_retryable": null,
+    "stage_label": "launcher_pre_dispatch:shell_entrypoint_validation"
+  },
+  "triage": {
+    "first_artifacts": [
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/failure_summary.txt",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/latest_failure_report.md",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/preflight_manifest.tsv",
+      "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/failure_reason.txt"
+    ],
+    "primary_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/preflight_manifest.tsv",
+    "primary_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/latest_failure_report.md",
+    "primary_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/failure_summary.txt",
+    "retry_command": "./lca_smoke.sh",
+    "retry_hint": "fix the launcher/preflight failure at stage shell_entrypoint_validation, inspect /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/failure_summary.txt | /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/latest_failure_report.md | /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/preflight_manifest.tsv | /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/failure_reason.txt, then rerun ./lca_smoke.sh",
+    "scope": "launcher_pre_dispatch",
+    "stage": "shell_entrypoint_validation",
+    "stage_label": "launcher_pre_dispatch:shell_entrypoint_validation"
+  }
+}

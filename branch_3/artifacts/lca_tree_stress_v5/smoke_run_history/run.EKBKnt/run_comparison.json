@@ -1,0 +1,29 @@
+{
+  "changed_fields": [],
+  "comparison_flags": {
+    "normalized_outcome_changed": false,
+    "public_status_changed": false,
+    "result_family_changed": false,
+    "source_failure_case_changed": false,
+    "stage_label_changed": false
+  },
+  "current_run": {
+    "id": "run.EKBKnt",
+    "iteration_evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.EKBKnt/iteration_evidence.txt",
+    "normalized_outcome": "pass",
+    "public_status": "PASS",
+    "result_family": "none",
+    "run_archive_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.EKBKnt",
+    "run_record_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.EKBKnt/run_record.json",
+    "source_failure_case": "",
+    "stage_label": "",
+    "status_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/run.EKBKnt/summary.txt"
+  },
+  "has_previous_run": false,
+  "history_index_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/history.tsv",
+  "previous_run": null,
+  "required_standard": "lca_tree_stress_v5",
+  "schema": "lca_smoke_run_comparison_v1",
+  "script": "./lca_smoke.sh",
+  "summary": "first recorded smoke run under /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_run_history/history.tsv; no previous iteration is available for comparison"
+}

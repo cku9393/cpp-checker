@@ -1,0 +1,12 @@
+metric	value
+constructor_name	load_current_quintuple_family_expansion_theorem_data_57_runtime_artifact_
+authoritative_source	current_runtime_quintuple_family_expansion_theorem_data_57_cache
+pass1_builder_used	0
+cache_loaded	1
+cache_load_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/quintuple_family_expansion_theorem_data_57_payload_90.tsv
+upstream_quad55_fallback_hit	0
+upstream_triple53_fallback_hit	0
+upstream_pair52_fallback_hit	0
+fallback_reachable	1
+fallback_hit	0
+runtime_fingerprint	fresh|current_runtime_quintuple_family_expansion_theorem_data_57_cache|load_current_quintuple_family_expansion_theorem_data_57_runtime_artifact_|0|1|21|3634|3634|294|0|0|0|11519:14985224666762482157|57|regions=21|raw=3634|canonical=3634|deduplicated=294|local=0|plus=0|theorem=0|counts_and_consumer_visible_fingerprint_equal|2729415:14502595494155092201|1|0|0|0|0||Current authoritative path loaded a validated runtime quintuple-family expansion theorem data 57 artifact; upstream quad55, triple53, and pair52 stayed fresh with fallback_hit=0.

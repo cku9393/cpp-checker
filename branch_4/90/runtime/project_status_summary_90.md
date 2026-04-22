@@ -9,7 +9,7 @@ current workspace reality
 - runtime path report: `workspaceRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker branch4Root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4 archivalBundleRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90 runtimeDataRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime`
 - required docs: `39` / `39` before this note generation pass
 - required artifacts: `8` / `8`
-- rerun audit fingerprint: `1|1|1|1|1|84:9663593306329234703|16856:1011248525676628134`
+- rerun audit fingerprint: `1|1|1|1|1|83:3313802010853241535|16856:14254791785929237461`
 
 provenance inventory
 - item count: `19`

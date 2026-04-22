@@ -1,0 +1,79 @@
+{
+  "plan_version": "runtime_rerun_plan_v1",
+  "generated_at_utc": "2026-04-20T12:56:11Z",
+  "artifact_root": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke",
+  "baseline_runtime_manifest_path": null,
+  "current_runtime_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/matrix/retired_only/retired_only_runtime_current.json",
+  "refresh_runtime_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/matrix/retired_only/retired_only_runtime_refresh.json",
+  "baseline_runtime_manifest_hash": null,
+  "current_runtime_manifest_hash": "14ff46492512cadd57c3c3a4a6fc33c7a63805e5086136f01d1ef4373765df04",
+  "refresh_runtime_manifest_hash": "9cb44849b5e9846b37b0d7c5f54c49e707ef0a0006657e9c157ff202dc4c0ed8",
+  "stale_entry_count": 0,
+  "requires_rerun_entry_count": 0,
+  "rebaseline_required_count": 6,
+  "selected_entry_count": 6,
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "rerun_kind": "rebaseline_required",
+      "recommended_command": "ctest --test-dir build-release-phase23 --output-on-failure",
+      "expected_stop_criteria": "wall_time within hard budget",
+      "status_impact": "release_full runtime requires refresh"
+    },
+    {
+      "execution_class": "debug_full",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "rerun_kind": "rebaseline_required",
+      "recommended_command": "ctest --test-dir build-debug-phase23 --output-on-failure",
+      "expected_stop_criteria": "wall_time within hard budget",
+      "status_impact": "debug_full runtime requires refresh"
+    },
+    {
+      "execution_class": "asan_full",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "rerun_kind": "rebaseline_required",
+      "recommended_command": "ctest --test-dir build-asan-phase23 --output-on-failure",
+      "expected_stop_criteria": "wall_time within hard budget",
+      "status_impact": "asan_full runtime requires refresh"
+    },
+    {
+      "execution_class": "policy_core",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "rerun_kind": "rebaseline_required",
+      "recommended_command": "python tests/tools/run_policy_pipeline.py --mode quick --strict",
+      "expected_stop_criteria": "wall_time within hard budget",
+      "status_impact": "policy_core runtime requires refresh"
+    },
+    {
+      "execution_class": "policy_refresh",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "rerun_kind": "rebaseline_required",
+      "recommended_command": "python tests/tools/run_policy_pipeline.py --mode nightly --strict",
+      "expected_stop_criteria": "wall_time within hard budget",
+      "status_impact": "policy_refresh runtime requires refresh"
+    },
+    {
+      "execution_class": "policy_nightly",
+      "current_status": "OK",
+      "freshness_status": "REBASELINE_REQUIRED",
+      "comparability": "REBASELINE_REQUIRED",
+      "rerun_kind": "rebaseline_required",
+      "recommended_command": "python tests/tools/run_policy_pipeline.py --mode nightly --strict",
+      "expected_stop_criteria": "wall_time within hard budget",
+      "status_impact": "policy_nightly runtime requires refresh"
+    }
+  ],
+  "summary_verdict": "ACTION_REQUIRED",
+  "rationale": "runtime entries require refresh"
+}

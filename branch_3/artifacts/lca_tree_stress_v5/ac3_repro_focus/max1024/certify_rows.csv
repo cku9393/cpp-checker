@@ -1,0 +1,5 @@
+stage,mode,n,seed,shuffle_labels,shuffle_queries,gen_ok,solver_rc,timed_out,val_ok,sec,rss_kb,case_dir
+ac3_focus,caterpillar_rect_dense,1024,2,0,1,1,0,0,1,1.965330,619536,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/ac3_repro_focus/max1024/runs/ac3_focus/caterpillar_rect_dense/n1024/seed2_L0_Q1
+ac3_focus,caterpillar_rect_dense,1024,2,1,1,1,0,0,1,1.967321,623728,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/ac3_repro_focus/max1024/runs/ac3_focus/caterpillar_rect_dense/n1024/seed2_L1_Q1
+ac3_focus,caterpillar_rect_dense,1024,5,0,1,1,0,0,1,1.736467,527808,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/ac3_repro_focus/max1024/runs/ac3_focus/caterpillar_rect_dense/n1024/seed5_L0_Q1
+ac3_focus,caterpillar_rect_dense,1024,5,1,1,1,0,0,1,1.729836,528928,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/ac3_repro_focus/max1024/runs/ac3_focus/caterpillar_rect_dense/n1024/seed5_L1_Q1

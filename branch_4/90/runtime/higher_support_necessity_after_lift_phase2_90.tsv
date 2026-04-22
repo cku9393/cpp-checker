@@ -1,0 +1,8 @@
+check_key	current_result	impact	next_action
+payload_refinement_closes_obstruction_blocker	no	Relation and correspondence are defined, but semantic layerwise payload preservation is not proved.	family_chain_lift_phase3_if_needed
+smaller_witness_closes_support_reduction_blocker	no	Measure decrease is conditional; operation-specific smaller-witness construction is blocked.	prove_support_reduction_operation_sublemma
+remaining_failure_case	named_refinement_or_smaller_witness_blocker	Failure remains explicit rather than hidden.	family_chain_lift_phase3_if_needed
+higher_support_scan_needed_now	no	Higher-support expansion should not precede layer projection/status proof attempts.	no_scan
+support_reduction_operation_priority	high	If phase3 cannot prove preservation, operation-specific reduction becomes the practical route.	prove_support_reduction_operation_sublemma
+limited_to_broader_plan_ready	no	Broader plan still depends on closing phase2/phase3 or operation blocker.	family_chain_lift_phase3_if_needed
+final_status	higher_support_recheck_deferred_until_phase2_followup	Recheck after phase3 or operation-sublemma attempt.	family_chain_lift_phase3_if_needed

@@ -1,0 +1,14 @@
+metric	value
+item_key	triple_family_expansion_theorem_data_53
+current_provenance_label	fresh_current_runtime_generated
+current_source_fingerprint	2729415:14502595494155092201
+payload_fingerprint	11888:3562593626991170520
+imported_comparison_fingerprint	53|regions=35|raw=2110|canonical=2110|deduplicated=282|local=0|plus=0|theorem=0
+imported_equality_result	counts_and_consumer_visible_fingerprint_equal
+raw_candidates	2110
+canonical_candidates	2110
+deduplicated_candidates	282
+local_exact_survivors	0
+plus_one_survivors	0
+theorem_preserving_survivors	0
+runtime_fingerprint	fresh|current_runtime_triple_family_expansion_theorem_data_53_cache|load_current_triple_family_expansion_theorem_data_53_runtime_artifact_|0|1|35|2110|2110|282|0|0|0|11888:3562593626991170520|53|regions=35|raw=2110|canonical=2110|deduplicated=282|local=0|plus=0|theorem=0|counts_and_consumer_visible_fingerprint_equal|2729415:14502595494155092201|1|0|0||Current authoritative path loaded a validated runtime triple-family expansion theorem data 53 artifact; upstream pair52 stayed fresh with fallback_hit=0.

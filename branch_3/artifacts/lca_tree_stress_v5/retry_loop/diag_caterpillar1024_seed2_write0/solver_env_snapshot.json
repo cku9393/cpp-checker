@@ -1,0 +1,23 @@
+{
+  "schema": "branch_run_case_solver_env_snapshot_v1",
+  "solver": {
+    "exists": true,
+    "mtime_ns": 1774603249924577342,
+    "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/solve",
+    "sha256": "83ffac57c0389e984d93a06192cc717c6d888118e4a6a9764c9f040307702965",
+    "size_bytes": 2052
+  },
+  "tracked_env": {
+    "DENSE_PROFILE_OUTDIR": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/diag_caterpillar1024_seed2_write0",
+    "DENSE_SHADOW_CASE_MODE": "caterpillar_rect_dense",
+    "DENSE_SHADOW_CASE_N": "1024",
+    "DENSE_SHADOW_CASE_SEED": "2",
+    "DENSE_SHADOW_CASE_SHUFFLE_LABELS": "0",
+    "DENSE_SHADOW_CASE_SHUFFLE_QUERIES": "0",
+    "ENABLE_LAYOUT_REUSE_ZERO_ELISION_OPT": "1",
+    "ENABLE_LAYOUT_SIGNATURE_GATE_OPT": "1",
+    "ENABLE_PREV_STATE_WRITEBACK_OPT": "0",
+    "ENABLE_STATE_LOAD_MATERIALIZATION_OPT": "1",
+    "PROFILE_MODE": "PROFILE_BASE"
+  }
+}

@@ -79,15 +79,43 @@ def sha256_file(path: Path | None) -> str | None:
     return digest.hexdigest()
 
 
+def normalized_evidence_source(value: str | None) -> str:
+    normalized = str(value or "").strip().lower()
+    if normalized in {"", "real", "same_fingerprint", "imported_real"}:
+        return "real"
+    if normalized in {"fixture", "matrix_fixture", "imported_fixture"}:
+        return "fixture"
+    if normalized in {"replay", "imported_replay"}:
+        return "replay"
+    return normalized or "real"
+
+
 def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    last_error: Exception | None = None
+    for attempt in range(60):
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, json.JSONDecodeError) as exc:
+            last_error = exc
+            if attempt == 59:
+                raise
+            time.sleep(0.1)
+    raise last_error if last_error is not None else RuntimeError(f"failed to read json: {path}")
 
 
 def atomic_write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = path.with_name(f".{path.name}.tmp.{os.getpid()}.{time.time_ns()}")
     temp_path.write_text(text, encoding="utf-8")
-    os.replace(temp_path, path)
+    if not temp_path.exists():
+        # Rare file-provider/tmp races should not make artifact generation fail.
+        path.write_text(text, encoding="utf-8")
+        return
+    try:
+        os.replace(temp_path, path)
+    except FileNotFoundError:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
 
 
 def write_json(path: Path, data: dict[str, Any]) -> None:
@@ -211,8 +239,97 @@ def normalize_runtime_registry_path(path_value: str | Path | None) -> Path | Non
     return path if path.suffix == ".json" else path.with_suffix(".json")
 
 
+def normalize_runtime_budget_registry_path(path_value: str | Path | None) -> Path | None:
+    return normalize_runtime_registry_path(path_value)
+
+
 def default_runtime_selection_path(current_manifest_path: Path) -> Path:
     return current_manifest_path.with_name(f"{current_manifest_path.stem}_baseline_selection.json")
+
+
+def runtime_registry_version_for_path(path: Path | None) -> str:
+    if path is not None and "_v2" in path.stem:
+        return "runtime_baseline_registry_v2"
+    return "runtime_baseline_registry_v1"
+
+
+def runtime_registry_summary_payload(registry: dict[str, Any]) -> dict[str, Any]:
+    entries = [dict(entry) for entry in registry.get("entries", []) if isinstance(entry, dict)]
+    active_entries = [entry for entry in entries if str(entry.get("status", REGISTRY_STATUS_RETIRED)) == REGISTRY_STATUS_ACTIVE]
+    active_by_fingerprint: dict[str, list[dict[str, Any]]] = {}
+    lineage_history_by_fingerprint: dict[str, dict[str, Any]] = {}
+    for entry in active_entries:
+        fingerprint_key = str(entry.get("runtime_fingerprint_key", entry.get("fingerprint_key", ""))).strip()
+        if not fingerprint_key:
+            continue
+        active_by_fingerprint.setdefault(fingerprint_key, []).append(entry)
+    for entry in entries:
+        fingerprint_key = str(entry.get("runtime_fingerprint_key", entry.get("fingerprint_key", ""))).strip()
+        if not fingerprint_key:
+            continue
+        bucket = lineage_history_by_fingerprint.setdefault(
+            fingerprint_key,
+            {
+                "active_count": 0,
+                "retired_count": 0,
+                "entries": [],
+            },
+        )
+        status = str(entry.get("status", REGISTRY_STATUS_RETIRED))
+        if status == REGISTRY_STATUS_ACTIVE:
+            bucket["active_count"] += 1
+        elif status == REGISTRY_STATUS_RETIRED:
+            bucket["retired_count"] += 1
+        bucket["entries"].append(
+            {
+                "baseline_id": entry.get("baseline_id"),
+                "baseline_tag": entry.get("baseline_tag"),
+                "status": status,
+                "approval_timestamp_utc": entry.get("approval_timestamp_utc"),
+                "previous_active_baseline_id": entry.get("previous_active_baseline_id"),
+                "supersedes_baseline_ids": entry.get("supersedes_baseline_ids", []),
+                "superseded_by_baseline_id": entry.get("superseded_by_baseline_id"),
+                "retired_reason": entry.get("retired_reason"),
+                "runtime_baseline_manifest_path": entry.get("runtime_baseline_manifest_path"),
+            }
+        )
+    for bucket in lineage_history_by_fingerprint.values():
+        bucket["entries"] = sorted(bucket["entries"], key=runtime_selection_sort_key, reverse=True)
+    return {
+        "manifest_version": "runtime_baseline_registry_summary_v2",
+        "generated_at_utc": registry.get("generated_at_utc", timestamp_utc_now()),
+        "registry_version": registry.get("registry_version", "runtime_baseline_registry_v1"),
+        "entry_count": len(entries),
+        "active_entry_count": len(active_entries),
+        "retired_entry_count": sum(
+            1 for entry in entries if str(entry.get("status", REGISTRY_STATUS_ACTIVE)) == REGISTRY_STATUS_RETIRED
+        ),
+        "fingerprint_count": len(
+            {
+                str(entry.get("runtime_fingerprint_key", entry.get("fingerprint_key", "")))
+                for entry in entries
+                if str(entry.get("runtime_fingerprint_key", entry.get("fingerprint_key", ""))).strip()
+            }
+        ),
+        "active_fingerprint_count": len(active_by_fingerprint),
+        "active_baselines_by_fingerprint": {
+            fingerprint_key: [
+                {
+                    "baseline_id": item.get("baseline_id"),
+                    "baseline_tag": item.get("baseline_tag"),
+                    "status": item.get("status"),
+                    "runtime_baseline_manifest_path": item.get("runtime_baseline_manifest_path"),
+                }
+                for item in sorted(items, key=runtime_selection_sort_key, reverse=True)
+            ]
+            for fingerprint_key, items in sorted(active_by_fingerprint.items())
+        },
+        "lineage_history_by_fingerprint": {
+            fingerprint_key: lineage_history_by_fingerprint[fingerprint_key]
+            for fingerprint_key in sorted(lineage_history_by_fingerprint)
+        },
+        "active_baseline_ids": [str(entry.get("baseline_id", "")) for entry in active_entries if str(entry.get("baseline_id", "")).strip()],
+    }
 
 
 def default_runtime_history_summary_path(history_index_path: Path) -> Path:
@@ -223,8 +340,47 @@ def default_runtime_proposal_path(current_manifest_path: Path) -> Path:
     return current_manifest_path.with_name(f"{current_manifest_path.stem}_rebaseline_proposal.json")
 
 
+def default_runtime_proposal_gate_path(current_manifest_path: Path) -> Path:
+    return current_manifest_path.with_name(f"{current_manifest_path.stem}_proposal_gate.json")
+
+
 def default_runtime_approval_metadata_path(baseline_manifest_path: Path) -> Path:
     return baseline_manifest_path.with_name(f"{baseline_manifest_path.stem}_approval_metadata.json")
+
+
+def default_runtime_budget_current_path(current_manifest_path: Path) -> Path:
+    stem = current_manifest_path.stem
+    if stem.startswith("policy_runtime_current_"):
+        return current_manifest_path.with_name(f"runtime_budget_current_{stem.removeprefix('policy_runtime_current_')}.json")
+    return current_manifest_path.with_name(f"{stem}_budget_current.json")
+
+
+def default_runtime_budget_refresh_path(current_manifest_path: Path) -> Path:
+    stem = current_manifest_path.stem
+    if stem.startswith("policy_runtime_current_"):
+        return current_manifest_path.with_name(f"runtime_budget_refresh_{stem.removeprefix('policy_runtime_current_')}.json")
+    return current_manifest_path.with_name(f"{stem}_budget_refresh.json")
+
+
+def default_runtime_budget_rerun_path(current_manifest_path: Path) -> Path:
+    stem = current_manifest_path.stem
+    if stem.startswith("policy_runtime_current_"):
+        return current_manifest_path.with_name(f"runtime_budget_rerun_{stem.removeprefix('policy_runtime_current_')}.json")
+    return current_manifest_path.with_name(f"{stem}_budget_rerun.json")
+
+
+def default_runtime_budget_proposal_path(current_manifest_path: Path) -> Path:
+    stem = current_manifest_path.stem
+    if stem.startswith("policy_runtime_current_"):
+        return current_manifest_path.with_name(f"runtime_budget_proposal_{stem.removeprefix('policy_runtime_current_')}.json")
+    return current_manifest_path.with_name(f"{stem}_budget_proposal.json")
+
+
+def default_runtime_budget_proposal_gate_path(current_manifest_path: Path) -> Path:
+    stem = current_manifest_path.stem
+    if stem.startswith("policy_runtime_current_"):
+        return current_manifest_path.with_name(f"runtime_budget_proposal_gate_{stem.removeprefix('policy_runtime_current_')}.json")
+    return current_manifest_path.with_name(f"{stem}_budget_proposal_gate.json")
 
 
 def runtime_selection_manifest_text(selection: dict[str, Any]) -> str:
@@ -377,13 +533,15 @@ def known_runtime_execution_classes() -> list[str]:
 
 
 def load_runtime_budget_profile(
-    path_value: str | Path | None,
+    path_value: str | Path | dict[str, Any] | None,
     execution_classes: list[str] | None = None,
 ) -> dict[str, Any]:
     classes = sorted(set(execution_classes or known_runtime_execution_classes()))
     raw: dict[str, Any] = {}
     path: Path | None = None
-    if path_value is not None:
+    if isinstance(path_value, dict):
+        raw = json.loads(json.dumps(path_value))
+    elif path_value is not None:
         path = Path(path_value).resolve()
         raw = read_json(path)
 
@@ -399,14 +557,65 @@ def load_runtime_budget_profile(
         entry_raw = raw_entries.get(execution_class, {})
         if not isinstance(entry_raw, dict):
             entry_raw = {}
+        nested_thresholds = entry_raw.get("thresholds", {})
+        if not isinstance(nested_thresholds, dict):
+            nested_thresholds = {}
         role = str(entry_raw.get("role", default_runtime_role(execution_class)))
         thresholds = {
-            "soft_seconds": float(entry_raw.get("soft_seconds", entry_raw.get("softSeconds", default_runtime_threshold(execution_class)["soft_seconds"]))),
-            "hard_seconds": float(entry_raw.get("hard_seconds", entry_raw.get("hardSeconds", default_runtime_threshold(execution_class)["hard_seconds"]))),
-            "soft_delta_percent": float(entry_raw.get("soft_delta_percent", entry_raw.get("softDeltaPercent", default_runtime_threshold(execution_class)["soft_delta_percent"]))),
-            "hard_delta_percent": float(entry_raw.get("hard_delta_percent", entry_raw.get("hardDeltaPercent", default_runtime_threshold(execution_class)["hard_delta_percent"]))),
-            "soft_delta_floor_sec": float(entry_raw.get("soft_delta_floor_sec", entry_raw.get("softDeltaFloorSec", default_runtime_threshold(execution_class)["soft_delta_floor_sec"]))),
-            "hard_delta_floor_sec": float(entry_raw.get("hard_delta_floor_sec", entry_raw.get("hardDeltaFloorSec", default_runtime_threshold(execution_class)["hard_delta_floor_sec"]))),
+            "soft_seconds": float(
+                entry_raw.get(
+                    "soft_seconds",
+                    entry_raw.get(
+                        "softSeconds",
+                        nested_thresholds.get("soft_seconds", nested_thresholds.get("softSeconds", default_runtime_threshold(execution_class)["soft_seconds"])),
+                    ),
+                )
+            ),
+            "hard_seconds": float(
+                entry_raw.get(
+                    "hard_seconds",
+                    entry_raw.get(
+                        "hardSeconds",
+                        nested_thresholds.get("hard_seconds", nested_thresholds.get("hardSeconds", default_runtime_threshold(execution_class)["hard_seconds"])),
+                    ),
+                )
+            ),
+            "soft_delta_percent": float(
+                entry_raw.get(
+                    "soft_delta_percent",
+                    entry_raw.get(
+                        "softDeltaPercent",
+                        nested_thresholds.get("soft_delta_percent", nested_thresholds.get("softDeltaPercent", default_runtime_threshold(execution_class)["soft_delta_percent"])),
+                    ),
+                )
+            ),
+            "hard_delta_percent": float(
+                entry_raw.get(
+                    "hard_delta_percent",
+                    entry_raw.get(
+                        "hardDeltaPercent",
+                        nested_thresholds.get("hard_delta_percent", nested_thresholds.get("hardDeltaPercent", default_runtime_threshold(execution_class)["hard_delta_percent"])),
+                    ),
+                )
+            ),
+            "soft_delta_floor_sec": float(
+                entry_raw.get(
+                    "soft_delta_floor_sec",
+                    entry_raw.get(
+                        "softDeltaFloorSec",
+                        nested_thresholds.get("soft_delta_floor_sec", nested_thresholds.get("softDeltaFloorSec", default_runtime_threshold(execution_class)["soft_delta_floor_sec"])),
+                    ),
+                )
+            ),
+            "hard_delta_floor_sec": float(
+                entry_raw.get(
+                    "hard_delta_floor_sec",
+                    entry_raw.get(
+                        "hardDeltaFloorSec",
+                        nested_thresholds.get("hard_delta_floor_sec", nested_thresholds.get("hardDeltaFloorSec", default_runtime_threshold(execution_class)["hard_delta_floor_sec"])),
+                    ),
+                )
+            ),
         }
         watch_policy = dict(default_runtime_watch_policy(execution_class, role))
         raw_watch_policy = entry_raw.get("watch_policy", {})
@@ -454,9 +663,16 @@ def runtime_budget_profile_entry(profile: dict[str, Any] | None, execution_class
 
 def runtime_budget_profile_for_manifest(
     manifest: dict[str, Any],
-    path_value: str | Path | None = None,
+    path_value: str | Path | dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    return load_runtime_budget_profile(path_value, runtime_execution_classes(manifest))
+    profile_source: str | Path | dict[str, Any] | None = path_value
+    if profile_source is None:
+        embedded_profile = manifest.get("runtime_budget_profile")
+        if not isinstance(embedded_profile, dict) or not embedded_profile:
+            embedded_profile = manifest.get("budget_profile")
+        if isinstance(embedded_profile, dict) and embedded_profile:
+            profile_source = embedded_profile
+    return load_runtime_budget_profile(profile_source, runtime_execution_classes(manifest))
 
 
 def default_runtime_budget_profile_output_path(watch_manifest_path: Path) -> Path:
@@ -498,6 +714,929 @@ def write_runtime_budget_profile_outputs(json_path: Path, profile: dict[str, Any
     write_json(json_path, profile)
     write_text(json_path.with_suffix(".txt"), runtime_budget_profile_text(profile))
     write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_budget_profile_summary(profile))
+
+
+def budget_confidence_rank(value: str) -> int:
+    return {"LOW": 0, "MEDIUM": 1, "HIGH": 2}.get(str(value).strip().upper(), 0)
+
+
+def classify_runtime_budget_confidence(entry: dict[str, Any]) -> tuple[str, str]:
+    role = str(entry.get("execution_role", entry.get("role", ROLE_OPERATOR))).strip() or ROLE_OPERATOR
+    sample_count = int(entry.get("sample_count", 0))
+    real_sample_count = int(entry.get("real_sample_count", 0))
+    stable_overrun_count = int(entry.get("stable_overrun_count", 0))
+    hard_over_budget_count = int(entry.get("hard_over_budget_count", 0))
+    jitter_estimate_percent = float(entry.get("jitter_estimate_percent", 0.0))
+    history_depth = max(sample_count, int(entry.get("history_depth", sample_count)))
+    high_real_required = {
+        ROLE_PRODUCTION_CRITICAL: 5,
+        ROLE_DIAGNOSTIC: 8,
+        ROLE_OPERATOR: 3,
+    }.get(role, 5)
+    medium_real_required = {
+        ROLE_PRODUCTION_CRITICAL: 2,
+        ROLE_DIAGNOSTIC: 3,
+        ROLE_OPERATOR: 1,
+    }.get(role, 1)
+    bounded_jitter_limit = {
+        ROLE_PRODUCTION_CRITICAL: 12.0,
+        ROLE_DIAGNOSTIC: 20.0,
+        ROLE_OPERATOR: 30.0,
+    }.get(role, 15.0)
+    bounded_jitter = jitter_estimate_percent <= bounded_jitter_limit
+    if hard_over_budget_count > 0:
+        if real_sample_count >= medium_real_required:
+            return "HIGH", f"{role} budget evidence includes repeated same-fingerprint hard breaches"
+        return "MEDIUM", f"{role} budget evidence includes hard breaches but repeated real samples are still limited"
+    if (
+        real_sample_count >= high_real_required
+        and sample_count >= high_real_required
+        and history_depth >= high_real_required
+        and bounded_jitter
+    ):
+        if stable_overrun_count > 0:
+            return "HIGH", f"{role} budget evidence is backed by repeated real samples with stable overrun depth {stable_overrun_count}"
+        return "HIGH", f"{role} budget evidence is backed by repeated same-fingerprint real samples with bounded jitter"
+    if real_sample_count >= medium_real_required:
+        return "MEDIUM", f"{role} budget evidence is real-observed but history depth is not yet high-confidence"
+    return "LOW", f"{role} budget evidence is still sparse"
+
+
+def empty_runtime_budget_registry() -> dict[str, Any]:
+    return {
+        "registry_version": "runtime_budget_registry_v1",
+        "generated_at_utc": timestamp_utc_now(),
+        "entries": [],
+        "active_entry_count": 0,
+        "retired_entry_count": 0,
+    }
+
+
+def finalize_runtime_budget_registry(registry: dict[str, Any]) -> dict[str, Any]:
+    registry["generated_at_utc"] = timestamp_utc_now()
+    registry["active_entry_count"] = sum(
+        1 for entry in registry.get("entries", []) if str(entry.get("status", REGISTRY_STATUS_RETIRED)) == REGISTRY_STATUS_ACTIVE
+    )
+    registry["retired_entry_count"] = sum(
+        1 for entry in registry.get("entries", []) if str(entry.get("status", REGISTRY_STATUS_ACTIVE)) == REGISTRY_STATUS_RETIRED
+    )
+    registry["registry_hash"] = sha256_text(json.dumps(registry, sort_keys=True))
+    return registry
+
+
+def runtime_budget_registry_text(registry: dict[str, Any]) -> str:
+    lines = [
+        f"registry_version={registry.get('registry_version', '')}",
+        f"active_entry_count={registry.get('active_entry_count', 0)}",
+        f"retired_entry_count={registry.get('retired_entry_count', 0)}",
+    ]
+    for entry in registry.get("entries", []):
+        lines.append(
+            "runtime_budget_registry_entry="
+            + f"profile_id={entry.get('profile_id', '')}"
+            + f" budget_tag={entry.get('budget_tag', '')}"
+            + f" status={entry.get('status', '')}"
+            + f" execution_class_count={len(entry.get('execution_classes_covered', []))}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def runtime_budget_registry_summary(registry: dict[str, Any]) -> str:
+    return (
+        "runtime_budget_registry_summary"
+        + f" active_entry_count={registry.get('active_entry_count', 0)}"
+        + f" retired_entry_count={registry.get('retired_entry_count', 0)}"
+        + f" entry_count={len(registry.get('entries', []))}\n"
+    )
+
+
+def write_runtime_budget_registry_outputs(json_path: Path, registry: dict[str, Any]) -> None:
+    write_json(json_path, registry)
+    write_text(json_path.with_suffix(".txt"), runtime_budget_registry_text(registry))
+    write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_budget_registry_summary(registry))
+
+
+def load_runtime_budget_registry(path: Path | None) -> dict[str, Any]:
+    if path is None or not path.exists():
+        return empty_runtime_budget_registry()
+    data = read_json(path)
+    if not isinstance(data.get("entries", []), list):
+        raise RuntimeError(f"invalid runtime budget registry payload: {path}")
+    return finalize_runtime_budget_registry(data)
+
+
+def build_runtime_budget_registry_entry(
+    approved_budget_profile: dict[str, Any],
+    approved_budget_profile_path: Path,
+    budget_tag: str,
+    activate: bool,
+) -> dict[str, Any]:
+    host = dict(approved_budget_profile.get("host_fingerprint", {}))
+    toolchain = dict(approved_budget_profile.get("toolchain_fingerprint", {}))
+    execution_classes = sorted(str(value) for value in approved_budget_profile.get("execution_classes_covered", []) if str(value))
+    if not execution_classes:
+        execution_classes = sorted(str(key) for key in dict(approved_budget_profile.get("entries", {})).keys() if str(key))
+    approval_timestamp = str(approved_budget_profile.get("approval_timestamp_utc") or timestamp_utc_now())
+    profile_id = str(approved_budget_profile.get("profile_id", approved_budget_profile_path.stem) or approved_budget_profile_path.stem)
+    return {
+        "profile_id": profile_id,
+        "version": approved_budget_profile.get("version"),
+        "budget_tag": budget_tag,
+        "approval_timestamp_utc": approval_timestamp,
+        "runtime_budget_manifest_path": str(approved_budget_profile_path),
+        "runtime_budget_manifest_hash": sha256_file(approved_budget_profile_path),
+        "runtime_budget_profile_id": profile_id,
+        "runtime_budget_profile_version": approved_budget_profile.get("version"),
+        "host_fingerprint": host,
+        "toolchain_fingerprint": toolchain,
+        "host_fingerprint_hash": str(host.get("fingerprint_hash", "")),
+        "toolchain_fingerprint_hash": toolchain_fingerprint_hash(toolchain),
+        "execution_classes_covered": execution_classes,
+        "role_counts": dict(approved_budget_profile.get("role_counts", {})),
+        "source_runtime_current_manifest_path": approved_budget_profile.get("source_runtime_current_manifest_path"),
+        "source_runtime_baseline_manifest_path": approved_budget_profile.get("source_runtime_baseline_manifest_path"),
+        "status": REGISTRY_STATUS_ACTIVE if activate else REGISTRY_STATUS_RETIRED,
+    }
+
+
+def promote_runtime_budget_registry(
+    registry: dict[str, Any],
+    approved_budget_profile: dict[str, Any],
+    approved_budget_profile_path: Path,
+    budget_tag: str,
+    activate: bool,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    entry = build_runtime_budget_registry_entry(approved_budget_profile, approved_budget_profile_path, budget_tag, activate)
+    existing = None
+    for candidate in registry.get("entries", []):
+        if (
+            str(candidate.get("runtime_budget_manifest_hash", "")) == str(entry.get("runtime_budget_manifest_hash", ""))
+            and str(candidate.get("profile_id", "")) == str(entry.get("profile_id", ""))
+        ):
+            existing = candidate
+            break
+    if existing is not None:
+        existing.update(entry)
+        entry = existing
+    else:
+        registry.setdefault("entries", []).append(entry)
+
+    if activate:
+        for candidate in registry.get("entries", []):
+            if candidate is entry:
+                continue
+            if str(candidate.get("status", REGISTRY_STATUS_RETIRED)) == REGISTRY_STATUS_ACTIVE:
+                candidate["status"] = REGISTRY_STATUS_RETIRED
+                candidate["retired_timestamp_utc"] = timestamp_utc_now()
+                candidate["retired_reason"] = f"superseded by {entry['profile_id']}"
+    entry["status"] = REGISTRY_STATUS_ACTIVE if activate else str(entry.get("status", REGISTRY_STATUS_RETIRED))
+    return finalize_runtime_budget_registry(registry), entry
+
+
+def active_runtime_budget_profile_path(registry: dict[str, Any]) -> Path | None:
+    active_entries = [
+        dict(entry)
+        for entry in registry.get("entries", [])
+        if str(entry.get("status", REGISTRY_STATUS_RETIRED)) == REGISTRY_STATUS_ACTIVE
+    ]
+    if not active_entries:
+        return None
+    selected = max(
+        active_entries,
+        key=lambda item: (
+            str(item.get("approval_timestamp_utc", "")),
+            str(item.get("profile_id", "")),
+        ),
+    )
+    path_text = str(selected.get("runtime_budget_manifest_path", "")).strip()
+    if not path_text:
+        return None
+    candidate = Path(path_text).resolve()
+    return candidate if candidate.exists() else None
+
+
+def history_samples_for_execution_class(
+    history_index: dict[str, Any],
+    current_manifest: dict[str, Any],
+    execution_class: str,
+) -> list[dict[str, Any]]:
+    bucket = history_bucket_for_manifest(history_index, current_manifest)
+    payload = dict(bucket.get("execution_classes", {})).get(execution_class, {})
+    return [dict(sample) for sample in payload.get("samples", []) if isinstance(sample, dict)]
+
+
+def proposed_runtime_budget_thresholds(
+    execution_class: str,
+    current_entry: dict[str, Any],
+    watch_entry: dict[str, Any],
+    budget_profile_entry: dict[str, Any],
+) -> dict[str, float]:
+    thresholds = dict(budget_profile_entry.get("thresholds", default_runtime_threshold(execution_class)))
+    observed_wall = max(
+        float(current_entry.get("wall_time_sec", 0.0)),
+        float(watch_entry.get("rolling_median_wall_time_sec", current_entry.get("wall_time_sec", 0.0))),
+        float(watch_entry.get("rolling_p95_wall_time_sec", current_entry.get("wall_time_sec", 0.0))),
+    )
+    proposed_soft = max(
+        float(thresholds.get("soft_seconds", 0.0)),
+        round(max(observed_wall * 1.1, observed_wall + max(5.0, observed_wall * 0.05)), 3),
+    )
+    proposed_hard = max(
+        float(thresholds.get("hard_seconds", 0.0)),
+        round(max(proposed_soft * 1.6, proposed_soft + 60.0), 3),
+    )
+    return {
+        "soft_seconds": proposed_soft,
+        "hard_seconds": proposed_hard,
+        "soft_delta_percent": float(thresholds.get("soft_delta_percent", 0.0)),
+        "hard_delta_percent": float(thresholds.get("hard_delta_percent", 0.0)),
+        "soft_delta_floor_sec": float(thresholds.get("soft_delta_floor_sec", 0.0)),
+        "hard_delta_floor_sec": float(thresholds.get("hard_delta_floor_sec", 0.0)),
+    }
+
+
+def apply_budget_profile_to_runtime_manifest(
+    current_manifest: dict[str, Any],
+    budget_profile: dict[str, Any],
+) -> dict[str, Any]:
+    mutated = json.loads(json.dumps(current_manifest))
+    mutated["runtime_budget_profile_id"] = budget_profile.get("profile_id")
+    mutated["runtime_budget_profile_version"] = budget_profile.get("version")
+    mutated["runtime_budget_profile"] = {
+        "profile_id": budget_profile.get("profile_id"),
+        "version": budget_profile.get("version"),
+        "created_at": budget_profile.get("created_at"),
+        "entries": {
+            execution_class: runtime_budget_profile_entry(budget_profile, execution_class)
+            for execution_class in runtime_execution_classes(mutated)
+        },
+    }
+    warn_count = 0
+    fail_count = 0
+    for entry in mutated.get("entries", []):
+        if not isinstance(entry, dict):
+            continue
+        execution_class = str(entry.get("execution_class", "")).strip()
+        if not execution_class:
+            continue
+        budget_entry = runtime_budget_profile_entry(budget_profile, execution_class)
+        thresholds = dict(budget_entry.get("thresholds", default_runtime_threshold(execution_class)))
+        role = str(budget_entry.get("role", default_runtime_role(execution_class)))
+        watch_policy = dict(budget_entry.get("watch_policy", default_runtime_watch_policy(execution_class, role)))
+        entry["budget_thresholds"] = thresholds
+        entry["execution_role"] = role
+        entry["watch_policy"] = watch_policy
+        entry["runtime_budget_profile_id"] = budget_profile.get("profile_id")
+        entry["runtime_budget_profile_version"] = budget_profile.get("version")
+        status, delta_percent, rationale = entry_status(float(entry.get("wall_time_sec", 0.0)), thresholds, None)
+        entry["current_status"] = status
+        entry["delta_percent"] = delta_percent
+        entry["rationale"] = rationale
+        if status == STATUS_WARN:
+            warn_count += 1
+        elif status == STATUS_FAIL:
+            fail_count += 1
+    mutated["warn_count"] = warn_count
+    mutated["fail_count"] = fail_count
+    mutated["overall_status"] = STATUS_FAIL if fail_count else STATUS_WARN if warn_count else STATUS_OK
+    mutated["current_verdict"] = VERDICT_FAIL if fail_count else VERDICT_WARN if warn_count else VERDICT_PASS
+    mutated["overall_budget_verdict"] = "BUDGET_FAIL" if fail_count else "BUDGET_WARN" if warn_count else "PASS"
+    mutated["current_runtime_manifest_hash"] = manifest_hash_without_field(mutated, "current_runtime_manifest_hash")
+    return mutated
+
+
+def build_runtime_budget_current(
+    current_manifest: dict[str, Any],
+    current_manifest_path: Path,
+    baseline_manifest: dict[str, Any] | None,
+    baseline_manifest_path: Path | None,
+    watch_current_manifest: dict[str, Any],
+    watch_refresh_manifest: dict[str, Any],
+    history_index: dict[str, Any],
+    budget_profile: dict[str, Any],
+) -> dict[str, Any]:
+    watch_current_entries = {
+        str(entry.get("execution_class", "")): dict(entry)
+        for entry in watch_current_manifest.get("entries", [])
+        if isinstance(entry, dict)
+    }
+    watch_refresh_entries = {
+        str(entry.get("execution_class", "")): dict(entry)
+        for entry in watch_refresh_manifest.get("entries", [])
+        if isinstance(entry, dict)
+    }
+    baseline_entries = {
+        str(entry.get("execution_class", "")): dict(entry)
+        for entry in (baseline_manifest or {}).get("entries", [])
+        if isinstance(entry, dict)
+    }
+    entries: list[dict[str, Any]] = []
+    proposal_needed = False
+    role_counts: dict[str, int] = {}
+    for current_entry in current_manifest.get("entries", []):
+        if not isinstance(current_entry, dict):
+            continue
+        execution_class = str(current_entry.get("execution_class", "")).strip()
+        if not execution_class:
+            continue
+        watch_entry = dict(watch_refresh_entries.get(execution_class) or watch_current_entries.get(execution_class) or {})
+        budget_entry = runtime_budget_profile_entry(budget_profile, execution_class)
+        thresholds = dict(budget_entry.get("thresholds", default_runtime_threshold(execution_class)))
+        role = str(budget_entry.get("role", current_entry.get("execution_role", default_runtime_role(execution_class))))
+        role_counts[role] = role_counts.get(role, 0) + 1
+        samples = history_samples_for_execution_class(history_index, current_manifest, execution_class)
+        evidence_source_counts: dict[str, int] = {}
+        latest_real_sample_timestamp = ""
+        for sample in samples:
+            source = normalized_evidence_source(sample.get("evidence_source"))
+            evidence_source_counts[source] = evidence_source_counts.get(source, 0) + 1
+            timestamp = str(sample.get("timestamp_utc", "")).strip()
+            if source == "real" and timestamp and timestamp >= latest_real_sample_timestamp:
+                latest_real_sample_timestamp = timestamp
+        summary = summarize_runtime_sample_series(samples)
+        merged_entry = {
+            "execution_class": execution_class,
+            "execution_role": role,
+            "budget_thresholds": thresholds,
+            "current_wall_time_sec": round(float(current_entry.get("wall_time_sec", 0.0)), 3),
+            "baseline_wall_time_sec": None if execution_class not in baseline_entries else baseline_entries[execution_class].get("wall_time_sec"),
+            "current_status": current_entry.get("current_status"),
+            "watch_status": watch_entry.get("watch_status", WATCH_CLEAR),
+            "watch_recommendation": watch_entry.get("watch_recommendation", "NO_ACTION"),
+            "sample_count": max(int(watch_entry.get("sample_count", 0)), int(summary.get("sample_count", 0))),
+            "real_sample_count": int(evidence_source_counts.get("real", 0)),
+            "evidence_source_counts": evidence_source_counts,
+            "stable_overrun_count": int(watch_entry.get("stable_overrun_count", 0)),
+            "hard_over_budget_count": int(watch_entry.get("hard_over_budget_count", 0)),
+            "soft_over_budget_count": int(watch_entry.get("soft_over_budget_count", 0)),
+            "over_budget_ratio": watch_entry.get("over_budget_ratio", 0.0),
+            "trend_direction": watch_entry.get("trend_direction", summary.get("trend_direction", TREND_INSUFFICIENT)),
+            "rolling_median_wall_time_sec": watch_entry.get("rolling_median_wall_time_sec", summary.get("rolling_median_wall_time_sec")),
+            "rolling_p90_wall_time_sec": watch_entry.get("rolling_p90_wall_time_sec", summary.get("rolling_p90_wall_time_sec")),
+            "rolling_p95_wall_time_sec": watch_entry.get("rolling_p95_wall_time_sec", summary.get("rolling_p95_wall_time_sec")),
+            "mad_wall_time_sec": watch_entry.get("mad_wall_time_sec", summary.get("mad_wall_time_sec")),
+            "jitter_estimate_percent": watch_entry.get("jitter_estimate_percent", summary.get("jitter_estimate_percent", 0.0)),
+            "history_depth": len(samples),
+            "latest_real_sample_timestamp": latest_real_sample_timestamp or None,
+        }
+        watch_confidence, confidence_reason = classify_runtime_budget_confidence(merged_entry)
+        merged_entry["watch_confidence"] = watch_confidence
+        merged_entry["confidence_reason"] = confidence_reason
+        proposal_candidate = (
+            role == ROLE_PRODUCTION_CRITICAL
+            and str(merged_entry.get("watch_status", WATCH_CLEAR)) in {WATCH_STABLE, WATCH_REBASELINE_CANDIDATE}
+            and int(merged_entry.get("hard_over_budget_count", 0)) == 0
+            and int(merged_entry.get("stable_overrun_count", 0)) > 0
+            and budget_confidence_rank(watch_confidence) >= budget_confidence_rank("HIGH")
+            and str(current_entry.get("current_status", STATUS_OK)) == STATUS_WARN
+        )
+        merged_entry["proposal_candidate"] = proposal_candidate
+        merged_entry["proposed_thresholds"] = (
+            proposed_runtime_budget_thresholds(execution_class, current_entry, merged_entry, budget_entry)
+            if proposal_candidate
+            else None
+        )
+        proposal_needed = proposal_needed or proposal_candidate
+        entries.append(merged_entry)
+    current_budget = {
+        "manifest_version": "runtime_budget_current_v1",
+        "generated_at_utc": timestamp_utc_now(),
+        "phase": current_manifest.get("phase", ""),
+        "runtime_current_manifest_path": str(current_manifest_path),
+        "runtime_current_manifest_hash": sha256_file(current_manifest_path),
+        "runtime_baseline_manifest_path": None if baseline_manifest_path is None else str(baseline_manifest_path),
+        "runtime_baseline_manifest_hash": sha256_file(baseline_manifest_path),
+        "runtime_fingerprint_key": runtime_manifest_fingerprint_key(current_manifest),
+        "host_fingerprint": current_manifest.get("host_fingerprint", {}),
+        "toolchain_fingerprint": current_manifest.get("toolchain_fingerprint", {}),
+        "source_runtime_budget_profile_id": budget_profile.get("profile_id"),
+        "source_runtime_budget_profile_version": budget_profile.get("version"),
+        "budget_profile": budget_profile,
+        "entries": entries,
+        "current_verdict": current_manifest.get("current_verdict"),
+        "freshness_verdict": FRESHNESS_FRESH,
+        "comparability_verdict": COMPARABLE if baseline_manifest_path is not None else NOT_COMPARABLE,
+        "budget_verdict": current_manifest.get("overall_budget_verdict"),
+        "proposal_needed": proposal_needed,
+        "budget_reproposal_needed": proposal_needed,
+        "overall_watch_status": max(
+            (str(entry.get("watch_status", WATCH_CLEAR)) for entry in entries),
+            default=WATCH_CLEAR,
+            key=runtime_watch_status_rank,
+        ),
+        "role_counts": role_counts,
+    }
+    current_budget["current_budget_hash"] = sha256_text(json.dumps(current_budget, sort_keys=True))
+    return current_budget
+
+
+def runtime_budget_current_text(manifest: dict[str, Any]) -> str:
+    lines = [
+        f"manifest_version={manifest.get('manifest_version', '')}",
+        f"phase={manifest.get('phase', '')}",
+        f"current_verdict={manifest.get('current_verdict', '')}",
+        f"budget_verdict={manifest.get('budget_verdict', '')}",
+        f"proposal_needed={int(bool(manifest.get('proposal_needed', False)))}",
+        f"source_runtime_budget_profile_id={manifest.get('source_runtime_budget_profile_id', '')}",
+    ]
+    for entry in manifest.get("entries", []):
+        lines.append(
+            "runtime_budget_current_entry="
+            + f"execution_class={entry.get('execution_class', '')}"
+            + f" role={entry.get('execution_role', '')}"
+            + f" current_status={entry.get('current_status', '')}"
+            + f" watch_status={entry.get('watch_status', '')}"
+            + f" watch_confidence={entry.get('watch_confidence', '')}"
+            + f" proposal_candidate={int(bool(entry.get('proposal_candidate', False)))}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def runtime_budget_current_summary(manifest: dict[str, Any]) -> str:
+    return (
+        "runtime_budget_current_summary"
+        + f" current_verdict={manifest.get('current_verdict', '')}"
+        + f" budget_verdict={manifest.get('budget_verdict', '')}"
+        + f" proposal_needed={int(bool(manifest.get('proposal_needed', False)))}"
+        + f" entry_count={len(manifest.get('entries', []))}\n"
+    )
+
+
+def write_runtime_budget_current_outputs(json_path: Path, manifest: dict[str, Any]) -> None:
+    write_json(json_path, manifest)
+    write_text(json_path.with_suffix(".txt"), runtime_budget_current_text(manifest))
+    write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_budget_current_summary(manifest))
+
+
+def build_runtime_budget_proposal(
+    current_budget_manifest: dict[str, Any],
+    current_budget_manifest_path: Path,
+    budget_tag: str,
+) -> dict[str, Any]:
+    source_profile = dict(current_budget_manifest.get("budget_profile", {}))
+    proposed_profile = json.loads(json.dumps(source_profile))
+    relevant_entries = [
+        dict(entry)
+        for entry in current_budget_manifest.get("entries", [])
+        if bool(entry.get("proposal_candidate", False))
+    ]
+    for entry in relevant_entries:
+        execution_class = str(entry.get("execution_class", "")).strip()
+        if not execution_class:
+            continue
+        proposed_profile.setdefault("entries", {}).setdefault(execution_class, {})
+        proposed_profile["entries"][execution_class].update(
+            {
+                "execution_class": execution_class,
+                "role": entry.get("execution_role"),
+                "thresholds": dict(entry.get("proposed_thresholds") or entry.get("budget_thresholds", {})),
+                "watch_policy": dict(
+                    source_profile.get("entries", {}).get(execution_class, {}).get("watch_policy", default_runtime_watch_policy(execution_class, str(entry.get("execution_role", ROLE_OPERATOR))))
+                ),
+            }
+        )
+    proposed_profile["profile_id"] = f"{budget_tag}-profile"
+    proposed_profile["version"] = int(source_profile.get("version", 0)) + 1
+    proposed_profile["created_at"] = timestamp_utc_now()
+    proposal = {
+        "proposal_version": "runtime_budget_proposal_v1",
+        "generated_at_utc": timestamp_utc_now(),
+        "runtime_budget_current_path": str(current_budget_manifest_path),
+        "runtime_budget_current_hash": sha256_file(current_budget_manifest_path),
+        "runtime_current_manifest_path": current_budget_manifest.get("runtime_current_manifest_path"),
+        "runtime_baseline_manifest_path": current_budget_manifest.get("runtime_baseline_manifest_path"),
+        "source_runtime_budget_profile_id": current_budget_manifest.get("source_runtime_budget_profile_id"),
+        "source_runtime_budget_profile_version": current_budget_manifest.get("source_runtime_budget_profile_version"),
+        "budget_proposal_needed": bool(relevant_entries),
+        "budget_reproposal_needed": bool(relevant_entries),
+        "suggested_budget_tag": budget_tag,
+        "recommended_action": "PROPOSE_BUDGET_REPROFILE" if relevant_entries else "NO_ACTION",
+        "affected_execution_classes": [entry.get("execution_class") for entry in relevant_entries],
+        "proposed_budget_profile": proposed_profile,
+        "why_budget_reprofile_is_needed": (
+            "stable production-critical soft-budget overrun is now backed by repeated same-fingerprint real evidence"
+            if relevant_entries
+            else "no execution class currently qualifies for budget reprofile"
+        ),
+        "per_execution_class": relevant_entries,
+    }
+    proposal["proposal_hash"] = sha256_text(json.dumps(proposal, sort_keys=True))
+    return proposal
+
+
+def runtime_budget_proposal_text(proposal: dict[str, Any]) -> str:
+    lines = [
+        f"proposal_version={proposal.get('proposal_version', '')}",
+        f"budget_proposal_needed={int(bool(proposal.get('budget_proposal_needed', False)))}",
+        f"suggested_budget_tag={proposal.get('suggested_budget_tag', '')}",
+        f"recommended_action={proposal.get('recommended_action', '')}",
+    ]
+    for execution_class in proposal.get("affected_execution_classes", []):
+        lines.append(f"affected_execution_class={execution_class}")
+    for reason in [proposal.get("why_budget_reprofile_is_needed", "")]:
+        if reason:
+            lines.append(f"rationale={reason}")
+    return "\n".join(lines) + "\n"
+
+
+def runtime_budget_proposal_summary(proposal: dict[str, Any]) -> str:
+    return (
+        "runtime_budget_proposal_summary"
+        + f" budget_proposal_needed={int(bool(proposal.get('budget_proposal_needed', False)))}"
+        + f" affected_execution_class_count={len(proposal.get('affected_execution_classes', []))}\n"
+    )
+
+
+def write_runtime_budget_proposal_outputs(json_path: Path, proposal: dict[str, Any]) -> None:
+    write_json(json_path, proposal)
+    write_text(json_path.with_suffix(".txt"), runtime_budget_proposal_text(proposal))
+    write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_budget_proposal_summary(proposal))
+
+
+def build_runtime_budget_proposal_gate(
+    current_budget_manifest: dict[str, Any],
+    current_budget_manifest_path: Path,
+    proposal: dict[str, Any],
+    proposal_path: Path,
+    min_real_samples_release: int,
+    max_hard_breach_count: int,
+    min_watch_confidence: str,
+) -> dict[str, Any]:
+    relevant_entries = [
+        dict(entry)
+        for entry in current_budget_manifest.get("entries", [])
+        if bool(entry.get("proposal_candidate", False))
+    ]
+    rationale: list[str] = []
+    verdict = "REJECT"
+    confidence = "LOW"
+    if not bool(proposal.get("budget_proposal_needed", False)) or not relevant_entries:
+        rationale.append("no production-critical execution class qualifies for budget reprofile")
+    else:
+        verdict = "APPROVABLE"
+        confidence = min(
+            (str(entry.get("watch_confidence", "LOW")) for entry in relevant_entries),
+            default="LOW",
+            key=budget_confidence_rank,
+        )
+        required_confidence_rank = budget_confidence_rank(min_watch_confidence)
+        for entry in relevant_entries:
+            execution_class = str(entry.get("execution_class", ""))
+            real_sample_count = int(entry.get("real_sample_count", 0))
+            hard_over_budget_count = int(entry.get("hard_over_budget_count", 0))
+            required_real_samples = min_real_samples_release if execution_class == "release_full" else 1
+            if hard_over_budget_count > max_hard_breach_count:
+                verdict = "REJECT"
+                rationale.append(f"{execution_class} recorded hard budget breaches; budget reprofile is not safe")
+            elif real_sample_count < required_real_samples:
+                if verdict != "REJECT":
+                    verdict = "NEED_MORE_SAMPLES"
+                rationale.append(
+                    f"{execution_class} has only {real_sample_count} real same-fingerprint samples; require {required_real_samples}"
+                )
+            if budget_confidence_rank(str(entry.get("watch_confidence", "LOW"))) < required_confidence_rank:
+                if verdict != "REJECT":
+                    verdict = "NEED_MORE_SAMPLES"
+                rationale.append(
+                    f"{execution_class} watch confidence {entry.get('watch_confidence', 'LOW')} is below required {min_watch_confidence}"
+                )
+        if verdict == "APPROVABLE":
+            rationale.append("release_full stable soft-budget overrun is sufficiently backed by repeated same-fingerprint evidence")
+    gate = {
+        "proposal_gate_version": "runtime_budget_proposal_gate_v1",
+        "generated_at_utc": timestamp_utc_now(),
+        "runtime_budget_current_path": str(current_budget_manifest_path),
+        "runtime_budget_current_hash": sha256_file(current_budget_manifest_path),
+        "runtime_budget_proposal_path": str(proposal_path),
+        "runtime_budget_proposal_hash": sha256_file(proposal_path),
+        "budget_proposal_needed": bool(proposal.get("budget_proposal_needed", False)),
+        "budget_reproposal_needed": bool(proposal.get("budget_proposal_needed", False)),
+        "proposal_gate_verdict": verdict,
+        "reproposal_gate_verdict": verdict,
+        "proposal_confidence": confidence,
+        "reproposal_confidence": confidence,
+        "recommended_action": (
+            "PROPOSE_BUDGET_REPROFILE"
+            if verdict == "APPROVABLE" and bool(proposal.get("budget_proposal_needed", False))
+            else "CONTINUE_MONITORING"
+            if verdict == "NEED_MORE_SAMPLES"
+            else "WATCH_RUNTIME"
+        ),
+        "rationale": rationale,
+        "per_execution_class_evidence": relevant_entries,
+    }
+    focus_entry = relevant_entries[0] if relevant_entries else {}
+    gate["selected_budget_profile_id"] = current_budget_manifest.get("source_runtime_budget_profile_id")
+    gate["selected_runtime_baseline_id"] = current_budget_manifest.get("runtime_baseline_manifest_path")
+    gate["sample_count"] = int(focus_entry.get("sample_count", 0))
+    gate["real_sample_count"] = int(focus_entry.get("real_sample_count", 0))
+    gate["watch_status"] = focus_entry.get("watch_status")
+    gate["watch_confidence"] = focus_entry.get("watch_confidence")
+    gate["stable_overrun_count"] = int(focus_entry.get("stable_overrun_count", 0))
+    gate["hard_over_budget_count"] = int(focus_entry.get("hard_over_budget_count", 0))
+    gate["proposal_gate_hash"] = sha256_text(json.dumps(gate, sort_keys=True))
+    return gate
+
+
+def runtime_budget_proposal_gate_text(gate: dict[str, Any]) -> str:
+    lines = [
+        f"proposal_gate_version={gate.get('proposal_gate_version', '')}",
+        f"budget_proposal_needed={int(bool(gate.get('budget_proposal_needed', False)))}",
+        f"proposal_gate_verdict={gate.get('proposal_gate_verdict', '')}",
+        f"proposal_confidence={gate.get('proposal_confidence', '')}",
+        f"recommended_action={gate.get('recommended_action', '')}",
+    ]
+    for entry in gate.get("per_execution_class_evidence", []):
+        lines.append(
+            "runtime_budget_gate_entry="
+            + f"execution_class={entry.get('execution_class', '')}"
+            + f" real_sample_count={entry.get('real_sample_count', 0)}"
+            + f" watch_confidence={entry.get('watch_confidence', '')}"
+            + f" stable_overrun_count={entry.get('stable_overrun_count', 0)}"
+        )
+    for reason in gate.get("rationale", []):
+        lines.append(f"rationale={reason}")
+    return "\n".join(lines) + "\n"
+
+
+def runtime_budget_proposal_gate_summary(gate: dict[str, Any]) -> str:
+    return (
+        "runtime_budget_proposal_gate_summary"
+        + f" proposal_gate_verdict={gate.get('proposal_gate_verdict', '')}"
+        + f" proposal_confidence={gate.get('proposal_confidence', '')}"
+        + f" execution_class_count={len(gate.get('per_execution_class_evidence', []))}\n"
+    )
+
+
+def write_runtime_budget_proposal_gate_outputs(json_path: Path, gate: dict[str, Any]) -> None:
+    write_json(json_path, gate)
+    write_text(json_path.with_suffix(".txt"), runtime_budget_proposal_gate_text(gate))
+    write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_budget_proposal_gate_summary(gate))
+
+
+def archived_runtime_budget_proposal(
+    proposal: dict[str, Any],
+    archive_path: Path,
+    approval_metadata: dict[str, Any],
+) -> dict[str, Any]:
+    archived = json.loads(json.dumps(proposal))
+    archived["proposal_archived"] = True
+    archived["archived_at_utc"] = approval_metadata.get("approval_timestamp_utc", timestamp_utc_now())
+    archived["archive_path"] = str(archive_path)
+    archived["approved_budget_tag"] = approval_metadata.get("budget_tag")
+    archived["approved_budget_profile_id"] = approval_metadata.get("new_active_budget_profile_id")
+    archived["proposal_hash"] = sha256_text(json.dumps(archived, sort_keys=True))
+    return archived
+
+
+def approve_runtime_budget_reprofile(
+    runtime_budget_current: dict[str, Any],
+    runtime_budget_current_path: Path,
+    proposal: dict[str, Any],
+    proposal_path: Path,
+    proposal_gate: dict[str, Any],
+    proposal_gate_path: Path,
+    registry: dict[str, Any],
+    registry_path: Path,
+    baseline_out_path: Path,
+    budget_tag: str,
+    activate: bool,
+    archive_proposal_path: Path | None,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any] | None]:
+    gate_verdict = str(proposal_gate.get("proposal_gate_verdict", "")).strip()
+    if gate_verdict != "APPROVABLE":
+        raise RuntimeError(f"runtime budget approval rejected proposal gate verdict={gate_verdict or 'missing'}")
+    if not bool(proposal.get("budget_proposal_needed", False)):
+        raise RuntimeError("runtime budget approval rejected proposal that does not request reprofile")
+    runtime_current_path = Path(str(runtime_budget_current.get("runtime_current_manifest_path", ""))).resolve()
+    if not runtime_current_path.exists():
+        raise RuntimeError("runtime budget approval rejected missing runtime current manifest")
+    runtime_current_manifest = read_json(runtime_current_path)
+    approved_profile = dict(proposal.get("proposed_budget_profile", {}))
+    if not approved_profile:
+        raise RuntimeError("runtime budget approval rejected empty proposed budget profile")
+    approved_profile.setdefault("profile_id", f"{budget_tag}-profile")
+    approved_profile["created_at"] = timestamp_utc_now()
+    updated_current_manifest = apply_budget_profile_to_runtime_manifest(runtime_current_manifest, approved_profile)
+    previous_active = active_runtime_budget_profile_path(registry)
+    previous_active_entry = None
+    if previous_active is not None:
+        for candidate in registry.get("entries", []):
+            if Path(str(candidate.get("runtime_budget_manifest_path", ""))).resolve() == previous_active:
+                previous_active_entry = dict(candidate)
+                break
+
+    approval_metadata = {
+        "approval_version": "runtime_budget_reprofile_approval_v1",
+        "approval_status": "approved",
+        "approved_from_runtime_current": str(runtime_current_path),
+        "approved_from_runtime_current_hash": sha256_file(runtime_current_path),
+        "approved_from_budget_current": str(runtime_budget_current_path),
+        "approved_from_budget_current_hash": sha256_file(runtime_budget_current_path),
+        "approved_from_budget_proposal": str(proposal_path),
+        "approved_from_budget_proposal_hash": sha256_file(proposal_path),
+        "approved_from_budget_gate": str(proposal_gate_path),
+        "approved_from_budget_gate_hash": sha256_file(proposal_gate_path),
+        "approved_from_budget_gate_verdict": gate_verdict,
+        "proposal_confidence": proposal_gate.get("proposal_confidence"),
+        "previous_active_budget_profile_id": None if previous_active_entry is None else previous_active_entry.get("profile_id"),
+        "previous_active_budget_profile_tag": None if previous_active_entry is None else previous_active_entry.get("budget_tag"),
+        "approval_timestamp_utc": timestamp_utc_now(),
+        "budget_tag": budget_tag,
+        "evidence_summary": {
+            "affected_execution_classes": proposal.get("affected_execution_classes", []),
+            "rationale": proposal_gate.get("rationale", []),
+        },
+    }
+    approved_budget_baseline = {
+        "manifest_version": "runtime_budget_baseline_v1",
+        "manifest_role": "baseline",
+        "profile_id": approved_profile.get("profile_id"),
+        "version": approved_profile.get("version"),
+        "created_at": approved_profile.get("created_at"),
+        "entries": approved_profile.get("entries", {}),
+        "budget_tag": budget_tag,
+        "approval_timestamp_utc": approval_metadata["approval_timestamp_utc"],
+        "source_runtime_current_manifest_path": str(runtime_current_path),
+        "source_runtime_current_manifest_hash": sha256_file(runtime_current_path),
+        "source_runtime_baseline_manifest_path": runtime_budget_current.get("runtime_baseline_manifest_path"),
+        "host_fingerprint": updated_current_manifest.get("host_fingerprint", {}),
+        "toolchain_fingerprint": updated_current_manifest.get("toolchain_fingerprint", {}),
+        "execution_classes_covered": runtime_execution_classes(updated_current_manifest),
+        "role_counts": {},
+        "approval_metadata": approval_metadata,
+        "current_verdict": updated_current_manifest.get("current_verdict"),
+        "overall_budget_verdict": updated_current_manifest.get("overall_budget_verdict"),
+    }
+    role_counts: dict[str, int] = {}
+    for execution_class, entry in dict(approved_profile.get("entries", {})).items():
+        role = str(entry.get("role", default_runtime_role(str(execution_class))))
+        role_counts[role] = role_counts.get(role, 0) + 1
+    approved_budget_baseline["role_counts"] = role_counts
+    write_runtime_budget_profile_outputs(baseline_out_path, approved_budget_baseline)
+    updated_registry, registry_entry = promote_runtime_budget_registry(
+        registry,
+        approved_budget_baseline,
+        baseline_out_path,
+        budget_tag,
+        activate,
+    )
+    approval_metadata["new_active_budget_profile_id"] = registry_entry.get("profile_id")
+    approval_metadata["new_active_budget_profile_tag"] = registry_entry.get("budget_tag")
+    approval_metadata["new_active_budget_profile_hash"] = sha256_file(baseline_out_path)
+    approval_metadata["budget_transition_status"] = (
+        "ACTIVE_SWITCHED"
+        if approval_metadata.get("previous_active_budget_profile_id")
+        and approval_metadata.get("previous_active_budget_profile_id") != approval_metadata.get("new_active_budget_profile_id")
+        else "ACTIVE_CONFIRMED"
+    )
+    approved_budget_baseline["approval_metadata"] = approval_metadata
+    write_runtime_budget_profile_outputs(baseline_out_path, approved_budget_baseline)
+    updated_current_manifest["runtime_budget_approval_metadata"] = approval_metadata
+    updated_current_manifest["runtime_budget_profile_path"] = str(baseline_out_path)
+    updated_current_manifest["runtime_budget_transition_status"] = approval_metadata["budget_transition_status"]
+    updated_current_manifest["current_runtime_manifest_hash"] = manifest_hash_without_field(updated_current_manifest, "current_runtime_manifest_hash")
+    archived_proposal = None
+    if archive_proposal_path is not None:
+        archived_proposal = archived_runtime_budget_proposal(proposal, archive_proposal_path, approval_metadata)
+    return updated_current_manifest, approved_budget_baseline, updated_registry, approval_metadata, archived_proposal
+
+
+def build_runtime_budget_refresh(
+    current_manifest: dict[str, Any],
+    current_manifest_path: Path,
+    budget_baseline_manifest: dict[str, Any] | None,
+    budget_baseline_manifest_path: Path | None,
+) -> dict[str, Any]:
+    entries: list[dict[str, Any]] = []
+    warn_count = 0
+    fail_count = 0
+    for current_entry in current_manifest.get("entries", []):
+        if not isinstance(current_entry, dict):
+            continue
+        execution_class = str(current_entry.get("execution_class", "")).strip()
+        if not execution_class:
+            continue
+        current_status = str(current_entry.get("current_status", STATUS_OK))
+        if current_status == STATUS_WARN:
+            warn_count += 1
+        elif current_status == STATUS_FAIL:
+            fail_count += 1
+        entries.append(
+            {
+                "execution_class": execution_class,
+                "execution_role": current_entry.get("execution_role"),
+                "current_status": current_status,
+                "budget_thresholds": current_entry.get("budget_thresholds", {}),
+                "wall_time_sec": current_entry.get("wall_time_sec"),
+                "watch_policy": current_entry.get("watch_policy", {}),
+                "rationale": current_entry.get("rationale"),
+            }
+        )
+    current_verdict = VERDICT_FAIL if fail_count else VERDICT_WARN if warn_count else VERDICT_PASS
+    refresh = {
+        "manifest_version": "runtime_budget_refresh_v1",
+        "generated_at_utc": timestamp_utc_now(),
+        "phase": current_manifest.get("phase", ""),
+        "runtime_current_manifest_path": str(current_manifest_path),
+        "runtime_current_manifest_hash": sha256_file(current_manifest_path),
+        "runtime_budget_baseline_manifest_path": None if budget_baseline_manifest_path is None else str(budget_baseline_manifest_path),
+        "runtime_budget_baseline_manifest_hash": sha256_file(budget_baseline_manifest_path),
+        "current_verdict": current_verdict,
+        "freshness_verdict": FRESHNESS_FRESH,
+        "comparability_verdict": COMPARABLE if budget_baseline_manifest_path is not None else NOT_COMPARABLE,
+        "budget_verdict": current_manifest.get("overall_budget_verdict"),
+        "proposal_needed": current_verdict != VERDICT_PASS,
+        "selected_budget_profile_id": None if budget_baseline_manifest is None else budget_baseline_manifest.get("profile_id"),
+        "selected_budget_profile_tag": None if budget_baseline_manifest is None else budget_baseline_manifest.get("budget_tag"),
+        "warn_count": warn_count,
+        "fail_count": fail_count,
+        "entries": entries,
+    }
+    refresh["refresh_hash"] = sha256_text(json.dumps(refresh, sort_keys=True))
+    return refresh
+
+
+def runtime_budget_refresh_text(manifest: dict[str, Any]) -> str:
+    lines = [
+        f"manifest_version={manifest.get('manifest_version', '')}",
+        f"current_verdict={manifest.get('current_verdict', '')}",
+        f"freshness_verdict={manifest.get('freshness_verdict', '')}",
+        f"comparability_verdict={manifest.get('comparability_verdict', '')}",
+        f"budget_verdict={manifest.get('budget_verdict', '')}",
+        f"selected_budget_profile_id={manifest.get('selected_budget_profile_id', '')}",
+    ]
+    for entry in manifest.get("entries", []):
+        lines.append(
+            "runtime_budget_refresh_entry="
+            + f"execution_class={entry.get('execution_class', '')}"
+            + f" current_status={entry.get('current_status', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def runtime_budget_refresh_summary(manifest: dict[str, Any]) -> str:
+    return (
+        "runtime_budget_refresh_summary"
+        + f" current_verdict={manifest.get('current_verdict', '')}"
+        + f" budget_verdict={manifest.get('budget_verdict', '')}"
+        + f" entry_count={len(manifest.get('entries', []))}\n"
+    )
+
+
+def write_runtime_budget_refresh_outputs(json_path: Path, manifest: dict[str, Any]) -> None:
+    write_json(json_path, manifest)
+    write_text(json_path.with_suffix(".txt"), runtime_budget_refresh_text(manifest))
+    write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_budget_refresh_summary(manifest))
+
+
+def build_runtime_budget_rerun_plan(refresh_manifest: dict[str, Any]) -> dict[str, Any]:
+    selected_entries = [
+        {
+            "execution_class": entry.get("execution_class"),
+            "reason": entry.get("rationale", "runtime budget entry requires rerun"),
+        }
+        for entry in refresh_manifest.get("entries", [])
+        if isinstance(entry, dict) and str(entry.get("current_status", STATUS_OK)) in {STATUS_WARN, STATUS_FAIL}
+    ]
+    plan = {
+        "plan_version": "runtime_budget_rerun_plan_v1",
+        "generated_at_utc": timestamp_utc_now(),
+        "selected_entry_count": len(selected_entries),
+        "summary_verdict": "PASS" if not selected_entries else "ACTION_REQUIRED",
+        "entries": selected_entries,
+    }
+    plan["plan_hash"] = sha256_text(json.dumps(plan, sort_keys=True))
+    return plan
+
+
+def runtime_budget_rerun_plan_text(plan: dict[str, Any]) -> str:
+    lines = [
+        f"plan_version={plan.get('plan_version', '')}",
+        f"summary_verdict={plan.get('summary_verdict', '')}",
+        f"selected_entry_count={plan.get('selected_entry_count', 0)}",
+    ]
+    for entry in plan.get("entries", []):
+        lines.append(
+            "runtime_budget_rerun_entry="
+            + f"execution_class={entry.get('execution_class', '')}"
+            + f" reason={entry.get('reason', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def runtime_budget_rerun_plan_summary(plan: dict[str, Any]) -> str:
+    return (
+        "runtime_budget_rerun_plan_summary"
+        + f" summary_verdict={plan.get('summary_verdict', '')}"
+        + f" selected_entry_count={plan.get('selected_entry_count', 0)}\n"
+    )
+
+
+def write_runtime_budget_rerun_plan_outputs(json_path: Path, plan: dict[str, Any]) -> None:
+    write_json(json_path, plan)
+    write_text(json_path.with_suffix(".txt"), runtime_budget_rerun_plan_text(plan))
+    write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_budget_rerun_plan_summary(plan))
 
 
 def parse_runtime_entry_text(text: str) -> dict[str, Any]:
@@ -872,11 +2011,291 @@ def archived_runtime_proposal(
     return archived
 
 
+def watch_confidence_rank(value: str) -> int:
+    return {"LOW": 0, "MEDIUM": 1, "HIGH": 2}.get(str(value).strip().upper(), -1)
+
+
+def runtime_history_bucket_for_manifest(
+    history_index: dict[str, Any],
+    current_manifest: dict[str, Any],
+) -> dict[str, Any]:
+    runtime_key = runtime_manifest_fingerprint_key(current_manifest)
+    fingerprint_hash = str(current_manifest.get("host_fingerprint", {}).get("fingerprint_hash", ""))
+    toolchain = dict(current_manifest.get("toolchain_fingerprint", {}))
+    for bucket in history_index.get("fingerprints", []):
+        if str(bucket.get("runtime_fingerprint_key", "")) == runtime_key:
+            return bucket
+    for bucket in history_index.get("fingerprints", []):
+        if str(bucket.get("fingerprint_hash", "")) != fingerprint_hash:
+            continue
+        bucket_toolchain = dict(bucket.get("toolchain_fingerprint", {}))
+        if (
+            str(bucket_toolchain.get("compiler_id", "")) == str(toolchain.get("compiler_id", ""))
+            and str(bucket_toolchain.get("compiler_version", "")) == str(toolchain.get("compiler_version", ""))
+        ):
+            return bucket
+    return {}
+
+
+def proposal_gate_thresholds(args: Any) -> dict[str, int]:
+    return {
+        "release_full": max(int(getattr(args, "min_real_samples_release", 1) or 1), 1),
+        "debug_full": max(int(getattr(args, "min_real_samples_debug", 1) or 1), 1),
+        "asan_full": max(int(getattr(args, "min_real_samples_asan", 5) or 1), 1),
+    }
+
+
+def normalize_watch_confidence_requirement(value: str | None) -> str:
+    normalized = str(value or "MEDIUM").strip().upper()
+    if normalized not in {"LOW", "MEDIUM", "HIGH"}:
+        raise RuntimeError(f"invalid min watch confidence: {value}")
+    return normalized
+
+
+def classify_proposal_watch_confidence(
+    *,
+    sample_count: int,
+    real_sample_count: int,
+    watch_status: str,
+    jitter_estimate_percent: float,
+) -> tuple[str, str]:
+    bounded_jitter = jitter_estimate_percent <= 15.0
+    if (
+        real_sample_count >= 5
+        and sample_count >= 5
+        and bounded_jitter
+        and watch_status in {
+            WATCH_CLEAR,
+            WATCH_WATCH,
+            WATCH_STABLE,
+            WATCH_REBASELINE_CANDIDATE,
+            WATCH_REBASELINE_REQUIRED,
+        }
+    ):
+        if watch_status == WATCH_REBASELINE_REQUIRED:
+            return "HIGH", "repeated same-fingerprint real evidence is available and the runtime is ready for a new fingerprint-specific baseline approval"
+        return "HIGH", "repeated same-fingerprint real evidence is available with bounded jitter"
+    if real_sample_count >= 1 and sample_count >= 1:
+        return "MEDIUM", "same-fingerprint real evidence exists, but repeated coverage is still limited"
+    return "LOW", "same-fingerprint real evidence is sparse"
+
+
+def build_runtime_proposal_gate(
+    current_manifest: dict[str, Any],
+    current_manifest_path: Path,
+    proposal: dict[str, Any],
+    proposal_path: Path,
+    history_index: dict[str, Any],
+    watch_current: dict[str, Any],
+    watch_refresh: dict[str, Any],
+    thresholds: dict[str, int],
+    min_watch_confidence: str,
+) -> dict[str, Any]:
+    current_manifest_hash = sha256_file(current_manifest_path)
+    history_bucket = runtime_history_bucket_for_manifest(history_index, current_manifest)
+    watch_entry_map: dict[str, dict[str, Any]] = {}
+    for manifest in (watch_current, watch_refresh):
+        for entry in manifest.get("entries", []):
+            if not isinstance(entry, dict):
+                continue
+            execution_class = str(entry.get("execution_class", "")).strip()
+            if execution_class:
+                watch_entry_map[execution_class] = dict(entry)
+
+    relevant_execution_classes = [
+        execution_class
+        for execution_class in runtime_execution_classes(current_manifest)
+        if execution_class in {"release_full", "debug_full", "asan_full"}
+    ]
+    if not relevant_execution_classes:
+        relevant_execution_classes = runtime_execution_classes(current_manifest)
+
+    rationale: list[str] = []
+    reject_reasons: list[str] = []
+    need_more_sample_reasons: list[str] = []
+    per_execution_class: list[dict[str, Any]] = []
+    confidence_levels: list[str] = []
+    confidence_reasons: list[str] = []
+
+    proposal_current_manifest_path = str(proposal.get("runtime_current_manifest_path", "")).strip()
+    if proposal_current_manifest_path and proposal_current_manifest_path != str(current_manifest_path):
+        reject_reasons.append("current/proposal mismatch: runtime current manifest path changed")
+    proposal_current_manifest_hash = str(proposal.get("runtime_current_manifest_hash", "")).strip()
+    if proposal_current_manifest_hash and proposal_current_manifest_hash != str(current_manifest_hash):
+        reject_reasons.append("current/proposal mismatch: runtime current manifest hash changed")
+    if not bool(proposal.get("proposal_needed", False)):
+        reject_reasons.append("proposal does not request a runtime rebaseline")
+
+    if not history_bucket:
+        need_more_sample_reasons.append("history 부족: same-fingerprint runtime history bucket is missing")
+
+    execution_payloads = dict(history_bucket.get("execution_classes", {}))
+    for execution_class in relevant_execution_classes:
+        payload = dict(execution_payloads.get(execution_class, {}))
+        samples = [dict(sample) for sample in payload.get("samples", []) if isinstance(sample, dict)]
+        sample_count = len(samples)
+        real_sample_count = sum(
+            1 for sample in samples if normalized_evidence_source(sample.get("evidence_source")) == "real"
+        )
+        soft_over_budget_count = sum(
+            1
+            for sample in samples
+            if str(sample.get("current_status", STATUS_OK)) in {STATUS_WARN, STATUS_FAIL}
+        )
+        hard_over_budget_count = sum(
+            1 for sample in samples if str(sample.get("current_status", STATUS_OK)) == STATUS_FAIL
+        )
+        over_budget_ratio = round(soft_over_budget_count / sample_count, 3) if sample_count else 0.0
+        summary = dict(payload.get("summary", summarize_runtime_sample_series(samples)))
+        watch_entry = dict(watch_entry_map.get(execution_class, {}))
+        watch_status = str(watch_entry.get("watch_status", WATCH_WATCH if sample_count else WATCH_CLEAR))
+        watch_confidence, watch_confidence_reason = classify_proposal_watch_confidence(
+            sample_count=sample_count,
+            real_sample_count=real_sample_count,
+            watch_status=watch_status,
+            jitter_estimate_percent=float(
+                watch_entry.get("jitter_estimate_percent", summary.get("jitter_estimate_percent", 0.0)) or 0.0
+            ),
+        )
+        threshold = thresholds.get(execution_class, 1)
+        threshold_reason = None
+        if real_sample_count < threshold:
+            threshold_reason = (
+                f"same_fingerprint_real_sample_count 부족: {execution_class} real samples {real_sample_count} < required {threshold}"
+            )
+            need_more_sample_reasons.append(threshold_reason)
+        if watch_confidence_rank(watch_confidence) < watch_confidence_rank(min_watch_confidence):
+            need_more_sample_reasons.append(
+                f"watch stability 부족: {execution_class} watch confidence {watch_confidence} < required {min_watch_confidence}"
+            )
+        if hard_over_budget_count > 0 or watch_status in {WATCH_FAIL, WATCH_ESCALATE}:
+            reject_reasons.append(
+                f"hard breach 존재: {execution_class} reported hard_over_budget_count={hard_over_budget_count} watch_status={watch_status}"
+            )
+        per_execution_class.append(
+            {
+                "execution_class": execution_class,
+                "sample_count": sample_count,
+                "real_sample_count": real_sample_count,
+                "required_real_sample_count": threshold,
+                "watch_status": watch_status,
+                "watch_confidence": watch_confidence,
+                "watch_confidence_reason": watch_confidence_reason,
+                "trend_direction": watch_entry.get("trend_direction", summary.get("trend_direction", TREND_INSUFFICIENT)),
+                "over_budget_ratio": over_budget_ratio,
+                "hard_over_budget_count": hard_over_budget_count,
+                "soft_over_budget_count": soft_over_budget_count,
+                "stable_overrun_count": int(watch_entry.get("stable_overrun_count", 0)),
+                "jitter_estimate_percent": watch_entry.get(
+                    "jitter_estimate_percent", summary.get("jitter_estimate_percent", 0.0)
+                ),
+                "latest_wall_time_sec": summary.get("latest_wall_time_sec"),
+                "latest_baseline_tag": samples[-1].get("baseline_tag") if samples else None,
+                "evidence_source_counts": dict(summary.get("evidence_source_counts", {})),
+            }
+        )
+        confidence_levels.append(watch_confidence)
+        confidence_reasons.append(f"{execution_class}: {watch_confidence_reason}")
+
+    if reject_reasons:
+        proposal_gate_verdict = "REJECT"
+        proposal_confidence = "LOW"
+        rationale.extend(reject_reasons)
+    elif need_more_sample_reasons:
+        proposal_gate_verdict = "NEED_MORE_SAMPLES"
+        proposal_confidence = "LOW" if not confidence_levels else min(
+            confidence_levels, key=lambda value: watch_confidence_rank(value)
+        )
+        rationale.extend(dict.fromkeys(need_more_sample_reasons))
+    else:
+        proposal_gate_verdict = "APPROVABLE"
+        proposal_confidence = "HIGH" if all(
+            watch_confidence_rank(value) >= watch_confidence_rank("HIGH") for value in confidence_levels
+        ) else "MEDIUM"
+        rationale.append("same-fingerprint real evidence satisfies the configured proposal gate")
+        if confidence_reasons:
+            rationale.extend(confidence_reasons)
+
+    gate = {
+        "proposal_gate_version": "runtime_proposal_gate_v1",
+        "generated_at_utc": timestamp_utc_now(),
+        "runtime_current_manifest_path": str(current_manifest_path),
+        "runtime_current_manifest_hash": current_manifest_hash,
+        "runtime_proposal_path": str(proposal_path),
+        "runtime_proposal_hash": sha256_file(proposal_path),
+        "runtime_history_index_path": str(history_index.get("runtime_history_index_path", "")) or None,
+        "runtime_watch_current_path": str(watch_current.get("runtime_current_manifest_path", "")) or None,
+        "runtime_watch_refresh_path": str(watch_refresh.get("runtime_refresh_manifest_path", "")) or None,
+        "selected_baseline_id": proposal.get("selected_baseline_id"),
+        "selected_baseline_tag": proposal.get("selected_baseline_tag"),
+        "proposal_confidence": proposal_confidence,
+        "proposal_gate_verdict": proposal_gate_verdict,
+        "min_watch_confidence": min_watch_confidence,
+        "required_real_sample_thresholds": thresholds,
+        "rationale": rationale,
+        "per_execution_class_evidence": per_execution_class,
+        "evidence_summary": {
+            "relevant_execution_class_count": len(relevant_execution_classes),
+            "total_real_sample_count": sum(int(entry.get("real_sample_count", 0)) for entry in per_execution_class),
+            "total_sample_count": sum(int(entry.get("sample_count", 0)) for entry in per_execution_class),
+            "hard_breach_execution_class_count": sum(
+                1 for entry in per_execution_class if int(entry.get("hard_over_budget_count", 0)) > 0
+            ),
+            "watch_status_counts": {
+                status: sum(1 for entry in per_execution_class if str(entry.get("watch_status", "")) == status)
+                for status in sorted({str(entry.get("watch_status", "")) for entry in per_execution_class})
+                if status
+            },
+        },
+    }
+    gate["proposal_gate_hash"] = sha256_text(json.dumps(gate, sort_keys=True))
+    return gate
+
+
+def runtime_proposal_gate_text(gate: dict[str, Any]) -> str:
+    lines = [
+        f"proposal_gate_version={gate.get('proposal_gate_version', '')}",
+        f"proposal_confidence={gate.get('proposal_confidence', '')}",
+        f"proposal_gate_verdict={gate.get('proposal_gate_verdict', '')}",
+        f"selected_baseline_id={gate.get('selected_baseline_id', '')}",
+        f"selected_baseline_tag={gate.get('selected_baseline_tag', '')}",
+    ]
+    for entry in gate.get("per_execution_class_evidence", []):
+        lines.append(
+            "runtime_proposal_gate_entry="
+            + f"execution_class={entry.get('execution_class', '')}"
+            + f" sample_count={entry.get('sample_count', 0)}"
+            + f" real_sample_count={entry.get('real_sample_count', 0)}"
+            + f" watch_status={entry.get('watch_status', '')}"
+            + f" watch_confidence={entry.get('watch_confidence', '')}"
+        )
+    for reason in gate.get("rationale", []):
+        lines.append(f"rationale={reason}")
+    return "\n".join(lines) + "\n"
+
+
+def runtime_proposal_gate_summary(gate: dict[str, Any]) -> str:
+    return (
+        "runtime_proposal_gate_summary"
+        + f" proposal_gate_verdict={gate.get('proposal_gate_verdict', '')}"
+        + f" proposal_confidence={gate.get('proposal_confidence', '')}"
+        + f" execution_class_count={len(gate.get('per_execution_class_evidence', []))}\n"
+    )
+
+
+def write_runtime_proposal_gate_outputs(json_path: Path, gate: dict[str, Any]) -> None:
+    write_json(json_path, gate)
+    write_text(json_path.with_suffix(".txt"), runtime_proposal_gate_text(gate))
+    write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_proposal_gate_summary(gate))
+
+
 def approve_runtime_rebaseline(
     current_manifest: dict[str, Any],
     current_manifest_path: Path,
     proposal: dict[str, Any],
     proposal_path: Path,
+    proposal_gate: dict[str, Any],
+    proposal_gate_path: Path,
     registry: dict[str, Any],
     registry_path: Path,
     baseline_out_path: Path,
@@ -888,6 +2307,9 @@ def approve_runtime_rebaseline(
     current_manifest = normalize_runtime_current_manifest(json.loads(json.dumps(current_manifest)))
     if require_acceptable_status and current_manifest.get("overall_status") == STATUS_FAIL:
         raise RuntimeError("runtime rebaseline approval rejected FAIL current manifest")
+    gate_verdict = str(proposal_gate.get("proposal_gate_verdict", "")).strip()
+    if gate_verdict != "APPROVABLE":
+        raise RuntimeError(f"runtime rebaseline approval rejected proposal gate verdict={gate_verdict or 'missing'}")
     if str(proposal.get("runtime_current_manifest_path", "")) not in {"", str(current_manifest_path)}:
         raise RuntimeError("runtime rebaseline approval rejected mismatched current manifest path")
     current_manifest_hash = sha256_file(current_manifest_path)
@@ -925,6 +2347,10 @@ def approve_runtime_rebaseline(
         "approved_from_current_manifest_hash": current_manifest_hash,
         "approved_from_proposal": str(proposal_path),
         "approved_from_proposal_hash": sha256_file(proposal_path),
+        "approved_from_proposal_gate": str(proposal_gate_path),
+        "approved_from_proposal_gate_hash": sha256_file(proposal_gate_path),
+        "approved_from_proposal_gate_verdict": gate_verdict,
+        "proposal_confidence": proposal_gate.get("proposal_confidence"),
         "selected_previous_baseline": None if previous_active_entry is None else previous_active_entry.get("baseline_id"),
         "selected_previous_baseline_id": None if previous_active_entry is None else previous_active_entry.get("baseline_id"),
         "selected_previous_baseline_tag": None if previous_active_entry is None else previous_active_entry.get("baseline_tag"),
@@ -942,6 +2368,7 @@ def approve_runtime_rebaseline(
         "proposal_current_manifest_hash": proposal.get("runtime_current_manifest_hash"),
         "approval_current_manifest_hash": current_manifest_hash,
         "activate": bool(activate),
+        "evidence_summary": dict(proposal_gate.get("evidence_summary", {})),
     }
     approved_baseline["approval_metadata"] = runtime_baseline_embedded_approval_metadata(approval_metadata)
     write_runtime_manifest_outputs(baseline_out_path, approved_baseline)
@@ -953,25 +2380,16 @@ def approve_runtime_rebaseline(
         baseline_tag,
         activate,
     )
-    previous_selected_id = str(selection.get("selected_baseline_id", "")).strip()
-    if previous_selected_id and previous_selected_id != str(registry_entry.get("baseline_id", "")):
-        for candidate in updated_registry.get("entries", []):
-            if str(candidate.get("baseline_id", "")) != previous_selected_id:
-                continue
-            candidate["status"] = REGISTRY_STATUS_RETIRED
-            candidate["retired_timestamp_utc"] = approval_metadata["approval_timestamp_utc"]
-            candidate["retired_reason"] = f"superseded by {registry_entry.get('baseline_id', '')}"
-            break
-        updated_registry = finalize_runtime_registry(updated_registry)
     approval_metadata["new_active_runtime_baseline_id"] = registry_entry.get("baseline_id")
     approval_metadata["new_active_runtime_baseline_tag"] = registry_entry.get("baseline_tag")
     approval_metadata["new_active_runtime_baseline_manifest_hash"] = sha256_file(baseline_out_path)
     registry_entry["runtime_baseline_manifest_hash"] = approval_metadata["new_active_runtime_baseline_manifest_hash"]
+    approval_metadata["previous_active_baseline_id_for_same_fingerprint"] = registry_entry.get("previous_active_baseline_id")
     approval_metadata["previous_active_runtime_baseline_id"] = approval_metadata.get("selected_previous_baseline")
     approval_metadata["runtime_transition_status"] = (
         "ACTIVE_SWITCHED"
-        if approval_metadata.get("previous_active_runtime_baseline_id")
-        and approval_metadata.get("previous_active_runtime_baseline_id") != approval_metadata.get("new_active_runtime_baseline_id")
+        if approval_metadata.get("previous_active_baseline_id_for_same_fingerprint")
+        and approval_metadata.get("previous_active_baseline_id_for_same_fingerprint") != approval_metadata.get("new_active_runtime_baseline_id")
         else "ACTIVE_CONFIRMED"
     )
     approved_baseline["approval_metadata"] = runtime_baseline_embedded_approval_metadata(approval_metadata)
@@ -1003,9 +2421,9 @@ def approve_runtime_rebaseline(
     return current_manifest, approved_baseline, updated_registry, approval_metadata, archived_proposal
 
 
-def empty_runtime_registry() -> dict[str, Any]:
+def empty_runtime_registry(registry_version: str = "runtime_baseline_registry_v1") -> dict[str, Any]:
     return {
-        "registry_version": "runtime_baseline_registry_v1",
+        "registry_version": registry_version,
         "generated_at_utc": timestamp_utc_now(),
         "entries": [],
         "active_entry_count": 0,
@@ -1056,14 +2474,17 @@ def write_runtime_registry_outputs(json_path: Path, registry: dict[str, Any]) ->
     write_json(json_path, registry)
     write_text(json_path.with_suffix(".txt"), runtime_registry_text(registry))
     write_text(json_path.with_name(f"{json_path.stem}.summary.txt"), runtime_registry_summary(registry))
+    write_json(json_path.with_name(f"{json_path.stem}_summary.json"), runtime_registry_summary_payload(registry))
 
 
 def load_runtime_registry(path: Path | None) -> dict[str, Any]:
     if path is None or not path.exists():
-        return empty_runtime_registry()
+        return empty_runtime_registry(runtime_registry_version_for_path(path))
     data = read_json(path)
     if not isinstance(data.get("entries", []), list):
         raise RuntimeError(f"invalid runtime registry payload: {path}")
+    if not str(data.get("registry_version", "")).strip():
+        data["registry_version"] = runtime_registry_version_for_path(path)
     return finalize_runtime_registry(data)
 
 
@@ -1096,8 +2517,10 @@ def build_runtime_registry_entry(
         "host_fingerprint_hash": host_hash,
         "toolchain_fingerprint_hash": toolchain_hash,
         "runtime_fingerprint_key": runtime_fingerprint_key(host, toolchain, execution_signatures),
+        "fingerprint_key": runtime_fingerprint_key(host, toolchain, execution_signatures),
         "execution_signature_hash": sha256_text(",".join(execution_signatures)),
         "build_classes_covered": execution_classes,
+        "execution_classes_covered": execution_classes,
         "execution_class_signatures": execution_signature_map,
         "runtime_budget_profile_id": str(
             baseline_manifest.get("runtime_budget_profile_id", baseline_manifest.get("baseline_tag", baseline_tag))
@@ -1106,6 +2529,10 @@ def build_runtime_registry_entry(
         "runtime_budget_profile_version": baseline_manifest.get("runtime_budget_profile_version"),
         "manifest_role": str(baseline_manifest.get("manifest_role", "")),
         "provenance_frozen": bool(baseline_manifest.get("provenance_frozen", False)),
+        "approved_from_current_manifest": str(baseline_manifest.get("promoted_from_manifest", "")) or None,
+        "previous_active_baseline_id": None,
+        "supersedes_baseline_ids": [],
+        "superseded_by_baseline_id": None,
         "status": REGISTRY_STATUS_ACTIVE if activate else REGISTRY_STATUS_RETIRED,
     }
 
@@ -1118,6 +2545,7 @@ def promote_runtime_baseline_registry(
     activate: bool,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     entry = build_runtime_registry_entry(baseline_manifest, baseline_manifest_path, baseline_tag, activate)
+    retired_same_fingerprint_ids: list[str] = []
     existing = None
     for candidate in registry.get("entries", []):
         if (
@@ -1140,9 +2568,14 @@ def promote_runtime_baseline_registry(
                 str(candidate.get("status", REGISTRY_STATUS_RETIRED)) == REGISTRY_STATUS_ACTIVE
                 and str(candidate.get("runtime_fingerprint_key", "")) == str(entry.get("runtime_fingerprint_key", ""))
             ):
+                retired_same_fingerprint_ids.append(str(candidate.get("baseline_id", "")))
                 candidate["status"] = REGISTRY_STATUS_RETIRED
                 candidate["retired_timestamp_utc"] = timestamp_utc_now()
                 candidate["retired_reason"] = f"superseded by {entry['baseline_id']}"
+                candidate["superseded_by_baseline_id"] = entry["baseline_id"]
+    if retired_same_fingerprint_ids:
+        entry["previous_active_baseline_id"] = retired_same_fingerprint_ids[-1]
+        entry["supersedes_baseline_ids"] = retired_same_fingerprint_ids
     entry["status"] = REGISTRY_STATUS_ACTIVE if activate else str(entry.get("status", REGISTRY_STATUS_RETIRED))
     return finalize_runtime_registry(registry), entry
 
@@ -1829,6 +3262,10 @@ def append_runtime_history(
     current_manifest_path: Path,
     refresh_manifest: dict[str, Any] | None,
     refresh_manifest_path: Path | None,
+    evidence_source: str = "real",
+    runner_id: str = "",
+    host_label: str = "",
+    import_timestamp: str | None = None,
 ) -> dict[str, Any]:
     bucket = history_bucket_for_manifest(history_index, current_manifest)
     refresh_entries = {
@@ -1859,8 +3296,9 @@ def append_runtime_history(
         history_entry = bucket.setdefault("execution_classes", {}).setdefault(execution_class, {"samples": [], "summary": {}})
         refresh_entry = refresh_entries.get(execution_class, {})
         previous_sample = history_entry.get("samples", [])[-1] if history_entry.get("samples") else None
+        sample_timestamp = import_timestamp or timestamp_utc_now()
         sample = {
-            "timestamp_utc": timestamp_utc_now(),
+            "timestamp_utc": sample_timestamp,
             "phase": current_manifest.get("phase", ""),
             "baseline_tag": current_manifest.get("baseline_tag", ""),
             "current_manifest_path": str(current_manifest_path),
@@ -1872,6 +3310,16 @@ def append_runtime_history(
             "comparability": str(refresh_entry.get("comparability", COMPARABLE)),
             "baseline_wall_time_sec": refresh_entry.get("baseline_wall_time_sec"),
             "delta_percent": refresh_entry.get("delta_percent", current_entry.get("delta_percent")),
+            "evidence_source": normalized_evidence_source(evidence_source),
+            "runner_id": runner_id or str(current_manifest.get("host_fingerprint", {}).get("runner_tag", "")),
+            "host_label": host_label
+            or "|".join(
+                [
+                    str(current_manifest.get("host_fingerprint", {}).get("os", "")),
+                    str(current_manifest.get("host_fingerprint", {}).get("arch", "")),
+                ]
+            ).strip("|"),
+            "import_timestamp": sample_timestamp,
         }
         transition_source_sample = previous_sample if previous_sample is not None else latest_cross_bucket_sample
         if transition_source_sample is not None:
@@ -1911,13 +3359,29 @@ def runtime_history_summary(history_index: dict[str, Any], history_index_path: P
         "improved": 0,
         "insufficient_history": 0,
     }
+    evidence_source_counts: dict[str, int] = {}
+    latest_real_sample_timestamp = ""
+    latest_fixture_sample_timestamp = ""
     for bucket in history_index.get("fingerprints", []):
         execution_classes: list[dict[str, Any]] = []
         for execution_class, payload in sorted(dict(bucket.get("execution_classes", {})).items()):
             summary = dict(payload.get("summary", summarize_runtime_sample_series(payload.get("samples", []))))
             trend = str(summary.get("trend_direction", "insufficient_history"))
             trend_counts[trend] = trend_counts.get(trend, 0) + 1
+            sample_source_counts: dict[str, int] = {}
+            for sample in payload.get("samples", []):
+                if not isinstance(sample, dict):
+                    continue
+                source = normalized_evidence_source(sample.get("evidence_source"))
+                sample_source_counts[source] = sample_source_counts.get(source, 0) + 1
+                evidence_source_counts[source] = evidence_source_counts.get(source, 0) + 1
+                timestamp = str(sample.get("timestamp_utc", "")).strip()
+                if source == "real" and timestamp and timestamp >= latest_real_sample_timestamp:
+                    latest_real_sample_timestamp = timestamp
+                if source == "fixture" and timestamp and timestamp >= latest_fixture_sample_timestamp:
+                    latest_fixture_sample_timestamp = timestamp
             execution_classes.append({"execution_class": execution_class, **summary})
+            execution_classes[-1]["evidence_source_counts"] = sample_source_counts
         fingerprints.append(
             {
                 "fingerprint_hash": str(bucket.get("fingerprint_hash", "")),
@@ -1938,6 +3402,9 @@ def runtime_history_summary(history_index: dict[str, Any], history_index_path: P
         "runtime_history_index_path": str(history_index_path),
         "fingerprint_count": len(fingerprints),
         "trend_counts": trend_counts,
+        "evidence_source_counts": evidence_source_counts,
+        "latest_real_sample_timestamp": latest_real_sample_timestamp or None,
+        "latest_fixture_sample_timestamp": latest_fixture_sample_timestamp or None,
         "fingerprints": fingerprints,
         "transition_count": len(history_index.get("transitions", [])),
         "recent_transitions": list(history_index.get("transitions", []))[-10:],
@@ -1987,6 +3454,96 @@ def write_runtime_history_outputs(history_index_path: Path, history_index: dict[
     write_text(history_summary_path.with_suffix(".txt"), runtime_history_summary_text(summary))
     write_text(history_summary_path.with_name(f"{history_summary_path.stem}.summary.txt"), runtime_history_summary_short(summary))
     return history_summary_path
+
+
+def compact_runtime_history_index(
+    history_index: dict[str, Any],
+    keep_latest_per_fingerprint: int,
+    keep_anchors: int,
+    keep_transitions: bool,
+    prune_old_fixture_history: bool,
+) -> dict[str, Any]:
+    compacted = json.loads(json.dumps(history_index))
+    transition_keys: set[tuple[str, str, str]] = set()
+    if keep_transitions:
+        for transition in history_index.get("transitions", []):
+            if not isinstance(transition, dict):
+                continue
+            transition_keys.add(
+                (
+                    str(transition.get("fingerprint_hash", "")),
+                    str(transition.get("execution_class", "")),
+                    str(transition.get("timestamp_utc", "")),
+                )
+            )
+
+    for bucket in compacted.get("fingerprints", []):
+        fingerprint_hash = str(bucket.get("fingerprint_hash", ""))
+        execution_classes = dict(bucket.get("execution_classes", {}))
+        for execution_class, payload in execution_classes.items():
+            samples = [dict(sample) for sample in payload.get("samples", []) if isinstance(sample, dict)]
+            if not samples:
+                payload["compaction"] = {
+                    "original_sample_count": 0,
+                    "retained_sample_count": 0,
+                }
+                continue
+            selected_indexes: set[int] = set()
+            anchors = max(0, keep_anchors)
+            latest_keep = max(1, keep_latest_per_fingerprint)
+
+            for index in range(min(anchors, len(samples))):
+                selected_indexes.add(index)
+            for index in range(max(0, len(samples) - anchors), len(samples)):
+                selected_indexes.add(index)
+
+            real_indexes = [
+                index
+                for index, sample in enumerate(samples)
+                if normalized_evidence_source(sample.get("evidence_source")) != "fixture"
+            ]
+            fixture_indexes = [
+                index
+                for index, sample in enumerate(samples)
+                if normalized_evidence_source(sample.get("evidence_source")) == "fixture"
+            ]
+            for index in real_indexes[-latest_keep:]:
+                selected_indexes.add(index)
+            fixture_keep = latest_keep if not prune_old_fixture_history else min(latest_keep, 2)
+            for index in fixture_indexes[-fixture_keep:]:
+                selected_indexes.add(index)
+
+            if keep_transitions:
+                for index, sample in enumerate(samples):
+                    key = (
+                        fingerprint_hash,
+                        str(execution_class),
+                        str(sample.get("timestamp_utc", "")),
+                    )
+                    if key in transition_keys:
+                        selected_indexes.add(index)
+
+            retained = [samples[index] for index in sorted(selected_indexes)]
+            payload["samples"] = retained
+            payload["summary"] = summarize_runtime_sample_series(retained)
+            payload["compaction"] = {
+                "original_sample_count": len(samples),
+                "retained_sample_count": len(retained),
+                "keep_latest_per_fingerprint": latest_keep,
+                "keep_anchors": anchors,
+                "keep_transitions": bool(keep_transitions),
+                "prune_old_fixture_history": bool(prune_old_fixture_history),
+            }
+    compacted["history_version"] = "runtime_history_index_v1_compacted"
+    compacted["generated_at_utc"] = timestamp_utc_now()
+    compacted["history_hash"] = sha256_text(json.dumps(compacted, sort_keys=True))
+    compacted["compaction_policy"] = {
+        "keep_latest_per_fingerprint": max(1, keep_latest_per_fingerprint),
+        "keep_anchors": max(0, keep_anchors),
+        "keep_transitions": bool(keep_transitions),
+        "prune_old_fixture_history": bool(prune_old_fixture_history),
+    }
+    return compacted
 
 
 def default_runtime_watch_history_summary_path(history_index_path: Path) -> Path:
@@ -2130,8 +3687,12 @@ def classify_runtime_watch_entry(
     for sample in series:
         wall_time = round(float(sample.get("wall_time_sec", 0.0)), 3)
         current_status = str(sample.get("current_status", STATUS_OK))
-        soft = current_status in {STATUS_WARN, STATUS_FAIL} or (soft_limit > 0.0 and wall_time > soft_limit)
-        hard = current_status == STATUS_FAIL or (hard_limit > 0.0 and wall_time > hard_limit)
+        soft = (soft_limit > 0.0 and wall_time > soft_limit) or (
+            soft_limit <= 0.0 and current_status in {STATUS_WARN, STATUS_FAIL}
+        )
+        hard = (hard_limit > 0.0 and wall_time > hard_limit) or (
+            hard_limit <= 0.0 and current_status == STATUS_FAIL
+        )
         sample_copy = dict(sample)
         sample_copy["wall_time_sec"] = wall_time
         sample_copy["soft_over_budget"] = soft
@@ -2631,6 +4192,9 @@ def build_runtime_watch_refresh(
         "generated_at_utc": timestamp_utc_now(),
         "phase": current_manifest.get("phase", ""),
         "artifact_root": current_manifest.get("artifact_root", ""),
+        "runtime_fingerprint_key": runtime_manifest_fingerprint_key(current_manifest),
+        "host_fingerprint": dict(current_manifest.get("host_fingerprint", {})),
+        "toolchain_fingerprint": dict(current_manifest.get("toolchain_fingerprint", {})),
         "runtime_baseline_manifest_path": None if baseline_manifest_path is None else str(baseline_manifest_path),
         "runtime_current_manifest_path": str(current_manifest_path),
         "runtime_refresh_manifest_path": str(refresh_manifest_path),
@@ -2843,17 +4407,29 @@ def build_runtime_rebaseline_proposal(
         "suggested_next_command": (
             "none"
             if not proposal_needed
-            else f"./raw_engine_tests --case runtime_approve_rebaseline "
-            f"--runtime-current-manifest {current_manifest_path} "
-            f"--runtime-proposal {default_runtime_proposal_path(current_manifest_path)} "
-            f"--runtime-baseline-registry {registry_path} "
-            f"--runtime-baseline-out {current_manifest_path.parent / ('policy_runtime_baseline_' + str(current_manifest.get('phase', 'runtime')) + '_approved.json')} "
-            f"--baseline-tag {current_manifest.get('phase', 'runtime')}-runtime-approved --activate "
-            f"--archive-proposal {default_runtime_proposal_path(current_manifest_path).with_name(default_runtime_proposal_path(current_manifest_path).stem + '_archived.json')}"
+            else (
+                f"./raw_engine_tests --case runtime_proposal_gate "
+                f"--runtime-current-manifest {current_manifest_path} "
+                f"--runtime-proposal {default_runtime_proposal_path(current_manifest_path)} "
+                f"--runtime-history-index {current_manifest_path.parent / 'runtime_history_index_v1.json'} "
+                f"--runtime-watch-current {current_manifest_path.parent / (str(current_manifest.get('phase', 'runtime')) and ('runtime_watch_current_' + str(current_manifest.get('phase', 'runtime')) + '.json'))} "
+                f"--runtime-watch-refresh {current_manifest_path.parent / (str(current_manifest.get('phase', 'runtime')) and ('runtime_watch_refresh_' + str(current_manifest.get('phase', 'runtime')) + '.json'))} "
+                f"--proposal-gate-out {default_runtime_proposal_gate_path(current_manifest_path)} "
+                f"--min-real-samples-release 1 --min-real-samples-debug 1 --min-real-samples-asan 5 --min-watch-confidence MEDIUM "
+                f"&& ./raw_engine_tests --case runtime_approve_rebaseline "
+                f"--runtime-current-manifest {current_manifest_path} "
+                f"--runtime-proposal {default_runtime_proposal_path(current_manifest_path)} "
+                f"--runtime-proposal-gate {default_runtime_proposal_gate_path(current_manifest_path)} "
+                f"--runtime-baseline-registry {registry_path} "
+                f"--runtime-baseline-out {current_manifest_path.parent / ('policy_runtime_baseline_' + str(current_manifest.get('phase', 'runtime')) + '_approved.json')} "
+                f"--baseline-tag {current_manifest.get('phase', 'runtime')}-runtime-approved --activate "
+                f"--archive-proposal {default_runtime_proposal_path(current_manifest_path).with_name(default_runtime_proposal_path(current_manifest_path).stem + '_archived.json')}"
+            )
         ),
         "approval_checklist": [
             "confirm the host/toolchain fingerprint is the intended long-lived runtime baseline target",
             "confirm correctness lifecycle remains PASS/FRESH before approving a runtime rebaseline",
+            "confirm the runtime proposal gate verdict is APPROVABLE before promoting a new baseline",
             "confirm the affected execution classes are stable across at least one clean rerun",
         ],
         "registry_entry_count": len(registry.get("entries", [])),
@@ -3027,10 +4603,26 @@ def parse_args() -> Any:
             "history_append",
             "history-summary",
             "history_summary",
+            "history-compact",
+            "history_compact",
             "propose-rebaseline",
             "propose_rebaseline",
+            "proposal-gate",
+            "proposal_gate",
+            "new-env-proposal-gate",
+            "new_env_proposal_gate",
             "approve-rebaseline",
             "approve_rebaseline",
+            "approve-new-env-baseline",
+            "approve_new_env_baseline",
+            "budget-proposal-gate",
+            "budget_proposal_gate",
+            "budget-approve-reprofile",
+            "budget_approve_reprofile",
+            "budget-refresh",
+            "budget_refresh",
+            "budget-plan-rerun",
+            "budget_plan_rerun",
             "watch-campaign",
             "watch_campaign",
             "watch-refresh",
@@ -3052,14 +4644,30 @@ def parse_args() -> Any:
     parser.add_argument("--runtime-watch-history-index", default=None)
     parser.add_argument("--watch-history-out", default=None)
     parser.add_argument("--runtime-budget-config", default=None)
+    parser.add_argument("--runtime-budget-current", default=None)
+    parser.add_argument("--runtime-budget-baseline-manifest", default=None)
+    parser.add_argument("--runtime-budget-baseline-out", default=None)
+    parser.add_argument("--runtime-budget-refresh", default=None)
+    parser.add_argument("--runtime-budget-rerun", default=None)
+    parser.add_argument("--runtime-budget-registry", default=None)
+    parser.add_argument("--runtime-budget-proposal", default=None)
+    parser.add_argument("--runtime-budget-proposal-gate", default=None)
     parser.add_argument("--baseline-tag", default="")
+    parser.add_argument("--budget-tag", default="")
     parser.add_argument("--retire-baseline", default=None)
     parser.add_argument("--activate", action="store_true")
     parser.add_argument("--runner-tag", default="")
     parser.add_argument("--require-acceptable-status", action="store_true")
     parser.add_argument("--proposal-out", default=None)
     parser.add_argument("--runtime-proposal", default=None)
+    parser.add_argument("--proposal-gate-out", default=None)
+    parser.add_argument("--runtime-proposal-gate", default=None)
     parser.add_argument("--archive-proposal", default=None)
+    parser.add_argument("--min-real-samples-release", type=int, default=1)
+    parser.add_argument("--min-real-samples-debug", type=int, default=1)
+    parser.add_argument("--min-real-samples-asan", type=int, default=5)
+    parser.add_argument("--max-hard-breach-count", type=int, default=0)
+    parser.add_argument("--min-watch-confidence", default="MEDIUM")
     parser.add_argument("--execution-class", default="all")
     parser.add_argument("--entry", action="append", default=[])
     parser.add_argument("--runtime-entry", action="append", default=[])
@@ -3071,6 +4679,17 @@ def parse_args() -> Any:
     parser.add_argument("--synthetic-inflate", action="append", default=[])
     parser.add_argument("--synthetic-fingerprint-mismatch", default=None)
     parser.add_argument("--synthetic-runtime-fixture", default=None)
+    parser.add_argument("--compact-out", default=None)
+    parser.add_argument("--keep-latest-per-fingerprint", type=int, default=4)
+    parser.add_argument("--keep-anchors", type=int, default=1)
+    parser.add_argument("--keep-transitions", action="store_true")
+    parser.add_argument("--prune-old-fixture-history", action="store_true")
+    parser.add_argument("--compact-watch-history", action="store_true")
+    parser.add_argument("--evidence-source", default="real")
+    parser.add_argument("--runner-id", default="")
+    parser.add_argument("--host-label", default="")
+    parser.add_argument("--merge-only", action="store_true")
+    parser.add_argument("--refresh-after-import", action="store_true")
     return parser.parse_args()
 
 
@@ -3243,7 +4862,16 @@ def action_history_append(args: Any) -> int:
     history_index = read_json(history_path) if history_path.exists() else empty_runtime_history_index()
     current_manifest = read_json(current_path)
     refresh_manifest = read_json(refresh_path) if refresh_path is not None and refresh_path.exists() else None
-    history_index = append_runtime_history(history_index, current_manifest, current_path, refresh_manifest, refresh_path)
+    history_index = append_runtime_history(
+        history_index,
+        current_manifest,
+        current_path,
+        refresh_manifest,
+        refresh_path,
+        evidence_source=args.evidence_source,
+        runner_id=args.runner_id,
+        host_label=args.host_label,
+    )
     history_summary_path = write_runtime_history_outputs(history_path, history_index)
     print(str(history_summary_path))
     return 0
@@ -3256,6 +4884,38 @@ def action_history_summary(args: Any) -> int:
     history_index = read_json(history_path) if history_path.exists() else empty_runtime_history_index()
     history_summary_path = write_runtime_history_outputs(history_path, history_index)
     print(str(history_summary_path))
+    return 0
+
+
+def action_history_compact(args: Any) -> int:
+    history_path = normalize_manifest_path(args.runtime_history_index)
+    compact_out = normalize_manifest_path(args.compact_out)
+    if history_path is None or compact_out is None:
+        raise SystemExit("--runtime-history-index and --compact-out are required")
+    history_index = read_json(history_path) if history_path.exists() else empty_runtime_history_index()
+    compacted = compact_runtime_history_index(
+        history_index,
+        int(args.keep_latest_per_fingerprint),
+        int(args.keep_anchors),
+        bool(args.keep_transitions),
+        bool(args.prune_old_fixture_history),
+    )
+    compact_summary_path = write_runtime_history_outputs(compact_out, compacted)
+    if bool(args.compact_watch_history):
+        watch_history_path = history_path.parent / "runtime_watch_history_index_v1.json"
+        if watch_history_path.exists():
+            watch_history = read_json(watch_history_path)
+            write_json(
+                watch_history_path.with_name(f"{watch_history_path.stem}_compacted.json"),
+                {
+                    "history_version": "runtime_watch_history_index_v1_compacted",
+                    "generated_at_utc": timestamp_utc_now(),
+                    "source_runtime_watch_history_index": str(watch_history_path),
+                    "fingerprint_count": len(watch_history.get("fingerprints", [])),
+                    "summary_path": str(default_runtime_watch_history_summary_path(watch_history_path)),
+                },
+            )
+    print(str(compact_summary_path))
     return 0
 
 
@@ -3396,19 +5056,74 @@ def action_propose_rebaseline(args: Any) -> int:
     return 0
 
 
+def action_proposal_gate(args: Any) -> int:
+    current_path = normalize_manifest_path(args.runtime_current_manifest)
+    proposal_path = normalize_manifest_path(args.runtime_proposal or args.proposal_out)
+    history_path = normalize_manifest_path(args.runtime_history_index)
+    watch_current_path = normalize_manifest_path(args.runtime_watch_current or args.runtime_watch_out)
+    watch_refresh_path = normalize_manifest_path(args.runtime_watch_refresh)
+    gate_path = normalize_manifest_path(args.runtime_proposal_gate or args.proposal_gate_out)
+    if (
+        current_path is None
+        or proposal_path is None
+        or history_path is None
+        or watch_current_path is None
+        or watch_refresh_path is None
+    ):
+        raise SystemExit(
+            "--runtime-current-manifest, --runtime-proposal/--proposal-out, --runtime-history-index, "
+            "--runtime-watch-current/--runtime-watch-out, --runtime-watch-refresh, and "
+            "--runtime-proposal-gate/--proposal-gate-out are required"
+        )
+    if gate_path is None:
+        gate_path = default_runtime_proposal_gate_path(current_path)
+    current_manifest = read_json(current_path)
+    proposal = read_json(proposal_path)
+    history_index = read_json(history_path) if history_path.exists() else empty_runtime_history_index()
+    history_index["runtime_history_index_path"] = str(history_path)
+    watch_current = read_json(watch_current_path)
+    watch_current["runtime_watch_current_path"] = str(watch_current_path)
+    watch_refresh = read_json(watch_refresh_path)
+    watch_refresh["runtime_watch_refresh_path"] = str(watch_refresh_path)
+    gate = build_runtime_proposal_gate(
+        current_manifest,
+        current_path,
+        proposal,
+        proposal_path,
+        history_index,
+        watch_current,
+        watch_refresh,
+        proposal_gate_thresholds(args),
+        normalize_watch_confidence_requirement(args.min_watch_confidence),
+    )
+    write_runtime_proposal_gate_outputs(gate_path, gate)
+    print(str(gate_path))
+    return 0
+
+
 def action_approve_rebaseline(args: Any) -> int:
     current_path = normalize_manifest_path(args.runtime_current_manifest)
     proposal_path = normalize_manifest_path(args.runtime_proposal or args.proposal_out)
+    proposal_gate_path = normalize_manifest_path(args.runtime_proposal_gate or args.proposal_gate_out)
     registry_path = normalize_runtime_registry_path(args.runtime_baseline_registry)
     baseline_path = normalize_manifest_path(args.runtime_baseline_out or args.runtime_baseline_manifest)
     archive_proposal_path = normalize_manifest_path(args.archive_proposal) if args.archive_proposal else None
-    if current_path is None or proposal_path is None or registry_path is None or baseline_path is None:
+    if (
+        current_path is None
+        or proposal_path is None
+        or registry_path is None
+        or baseline_path is None
+    ):
         raise SystemExit(
-            "--runtime-current-manifest, --runtime-proposal/--proposal-out, --runtime-baseline-registry, and "
+            "--runtime-current-manifest, --runtime-proposal/--proposal-out, --runtime-proposal-gate/--proposal-gate-out, "
+            "--runtime-baseline-registry, and "
             "--runtime-baseline-out/--runtime-baseline-manifest are required"
         )
+    if proposal_gate_path is None:
+        proposal_gate_path = default_runtime_proposal_gate_path(current_path)
     current_manifest = read_json(current_path)
     proposal = read_json(proposal_path)
+    proposal_gate = read_json(proposal_gate_path)
     registry = load_runtime_registry(registry_path)
     baseline_tag = args.baseline_tag or str(proposal.get("suggested_new_baseline_tag", f"{args.phase}-runtime-approved"))
     (
@@ -3422,6 +5137,8 @@ def action_approve_rebaseline(args: Any) -> int:
         current_path,
         proposal,
         proposal_path,
+        proposal_gate,
+        proposal_gate_path,
         registry,
         registry_path,
         baseline_path,
@@ -3453,6 +5170,151 @@ def action_approve_rebaseline(args: Any) -> int:
     return 0
 
 
+def action_budget_proposal_gate(args: Any) -> int:
+    current_path = normalize_manifest_path(args.runtime_current_manifest)
+    baseline_path = normalize_manifest_path(args.runtime_baseline_manifest or args.runtime_budget_baseline_manifest)
+    watch_current_path = normalize_manifest_path(args.runtime_watch_current or args.runtime_watch_out)
+    watch_refresh_path = normalize_manifest_path(args.runtime_watch_refresh)
+    history_path = normalize_manifest_path(args.runtime_history_index)
+    proposal_path = normalize_manifest_path(args.runtime_budget_proposal or args.proposal_out)
+    gate_path = normalize_manifest_path(args.runtime_budget_proposal_gate or args.proposal_gate_out)
+    current_budget_path = normalize_manifest_path(args.runtime_budget_current)
+    if current_path is None or watch_current_path is None or watch_refresh_path is None:
+        raise SystemExit(
+            "--runtime-current-manifest, --runtime-watch-current/--runtime-watch-out, and --runtime-watch-refresh are required"
+        )
+    if current_budget_path is None:
+        current_budget_path = default_runtime_budget_current_path(current_path)
+    if proposal_path is None:
+        proposal_path = default_runtime_budget_proposal_path(current_path)
+    if gate_path is None:
+        gate_path = default_runtime_budget_proposal_gate_path(current_path)
+    current_manifest = read_json(current_path)
+    baseline_manifest = read_json(baseline_path) if baseline_path is not None and baseline_path.exists() else None
+    watch_current = read_json(watch_current_path)
+    watch_refresh = read_json(watch_refresh_path)
+    history_index = read_json(history_path) if history_path is not None and history_path.exists() else empty_runtime_history_index()
+    budget_profile = runtime_budget_profile_for_manifest(current_manifest, args.runtime_budget_config)
+    budget_current = build_runtime_budget_current(
+        current_manifest,
+        current_path,
+        baseline_manifest,
+        baseline_path if baseline_path is not None and baseline_path.exists() else None,
+        watch_current,
+        watch_refresh,
+        history_index,
+        budget_profile,
+    )
+    write_runtime_budget_current_outputs(current_budget_path, budget_current)
+    proposal = build_runtime_budget_proposal(
+        budget_current,
+        current_budget_path,
+        args.budget_tag or f"{args.phase}-runtime-budget-approved",
+    )
+    write_runtime_budget_proposal_outputs(proposal_path, proposal)
+    gate = build_runtime_budget_proposal_gate(
+        budget_current,
+        current_budget_path,
+        proposal,
+        proposal_path,
+        int(args.min_real_samples_release),
+        int(args.max_hard_breach_count),
+        normalize_watch_confidence_requirement(args.min_watch_confidence),
+    )
+    write_runtime_budget_proposal_gate_outputs(gate_path, gate)
+    print(str(gate_path))
+    return 0
+
+
+def action_budget_approve_reprofile(args: Any) -> int:
+    current_budget_path = normalize_manifest_path(args.runtime_budget_current)
+    proposal_path = normalize_manifest_path(args.runtime_budget_proposal or args.proposal_out)
+    gate_path = normalize_manifest_path(args.runtime_budget_proposal_gate or args.proposal_gate_out)
+    registry_path = normalize_runtime_budget_registry_path(args.runtime_budget_registry)
+    baseline_out_path = normalize_manifest_path(args.runtime_budget_baseline_out or args.runtime_budget_baseline_manifest)
+    archive_proposal_path = normalize_manifest_path(args.archive_proposal) if args.archive_proposal else None
+    if (
+        current_budget_path is None
+        or proposal_path is None
+        or gate_path is None
+        or registry_path is None
+        or baseline_out_path is None
+    ):
+        raise SystemExit(
+            "--runtime-budget-current, --runtime-budget-proposal, --runtime-budget-proposal-gate, "
+            "--runtime-budget-registry, and --runtime-budget-baseline-out/--runtime-budget-baseline-manifest are required"
+        )
+    runtime_budget_current = read_json(current_budget_path)
+    proposal = read_json(proposal_path)
+    proposal_gate = read_json(gate_path)
+    registry = load_runtime_budget_registry(registry_path)
+    (
+        updated_current_manifest,
+        approved_budget_baseline,
+        updated_registry,
+        approval_metadata,
+        archived_proposal,
+    ) = approve_runtime_budget_reprofile(
+        runtime_budget_current,
+        current_budget_path,
+        proposal,
+        proposal_path,
+        proposal_gate,
+        gate_path,
+        registry,
+        registry_path,
+        baseline_out_path,
+        args.budget_tag or f"{args.phase}-runtime-budget-approved",
+        bool(args.activate),
+        archive_proposal_path,
+    )
+    runtime_current_path = Path(str(runtime_budget_current.get("runtime_current_manifest_path", ""))).resolve()
+    write_runtime_manifest_outputs(runtime_current_path, updated_current_manifest)
+    write_runtime_budget_profile_outputs(baseline_out_path, approved_budget_baseline)
+    approval_metadata_path = default_runtime_approval_metadata_path(baseline_out_path)
+    write_runtime_approval_metadata_outputs(approval_metadata_path, approval_metadata)
+    write_runtime_budget_registry_outputs(registry_path, updated_registry)
+    if archive_proposal_path is not None and archived_proposal is not None:
+        write_runtime_budget_proposal_outputs(archive_proposal_path, archived_proposal)
+    print(str(baseline_out_path))
+    return 0
+
+
+def action_budget_refresh(args: Any) -> int:
+    current_path = normalize_manifest_path(args.runtime_current_manifest)
+    refresh_path = normalize_manifest_path(args.runtime_budget_refresh)
+    baseline_path = normalize_manifest_path(args.runtime_budget_baseline_manifest)
+    registry_path = normalize_runtime_budget_registry_path(args.runtime_budget_registry)
+    if current_path is None or refresh_path is None:
+        raise SystemExit("--runtime-current-manifest and --runtime-budget-refresh are required")
+    if baseline_path is None and registry_path is not None:
+        registry = load_runtime_budget_registry(registry_path)
+        baseline_path = active_runtime_budget_profile_path(registry)
+    current_manifest = read_json(current_path)
+    budget_baseline_manifest = read_json(baseline_path) if baseline_path is not None and baseline_path.exists() else None
+    refresh = build_runtime_budget_refresh(
+        current_manifest,
+        current_path,
+        budget_baseline_manifest,
+        baseline_path if baseline_path is not None and baseline_path.exists() else None,
+    )
+    write_runtime_budget_refresh_outputs(refresh_path, refresh)
+    print(str(refresh_path))
+    return 0
+
+
+def action_budget_plan_rerun(args: Any) -> int:
+    refresh_path = normalize_manifest_path(args.runtime_budget_refresh)
+    rerun_path = normalize_manifest_path(args.runtime_budget_rerun)
+    if refresh_path is None or rerun_path is None:
+        raise SystemExit("--runtime-budget-refresh and --runtime-budget-rerun are required")
+    refresh_manifest = read_json(refresh_path)
+    plan = build_runtime_budget_rerun_plan(refresh_manifest)
+    write_runtime_budget_rerun_plan_outputs(rerun_path, plan)
+    print(str(rerun_path))
+    return 0
+
+
 def main() -> int:
     args = parse_args()
     if args.action in {"write-current", "current"}:
@@ -3471,14 +5333,26 @@ def main() -> int:
         return action_history_append(args)
     if args.action in {"history-summary", "history_summary"}:
         return action_history_summary(args)
+    if args.action in {"history-compact", "history_compact"}:
+        return action_history_compact(args)
     if args.action in {"watch-campaign", "watch_campaign"}:
         return action_watch_campaign(args)
     if args.action in {"watch-refresh", "watch_refresh"}:
         return action_watch_refresh(args)
     if args.action in {"propose-rebaseline", "propose_rebaseline"}:
         return action_propose_rebaseline(args)
-    if args.action in {"approve-rebaseline", "approve_rebaseline"}:
+    if args.action in {"proposal-gate", "proposal_gate", "new-env-proposal-gate", "new_env_proposal_gate"}:
+        return action_proposal_gate(args)
+    if args.action in {"approve-rebaseline", "approve_rebaseline", "approve-new-env-baseline", "approve_new_env_baseline"}:
         return action_approve_rebaseline(args)
+    if args.action in {"budget-proposal-gate", "budget_proposal_gate"}:
+        return action_budget_proposal_gate(args)
+    if args.action in {"budget-approve-reprofile", "budget_approve_reprofile"}:
+        return action_budget_approve_reprofile(args)
+    if args.action in {"budget-refresh", "budget_refresh"}:
+        return action_budget_refresh(args)
+    if args.action in {"budget-plan-rerun", "budget_plan_rerun"}:
+        return action_budget_plan_rerun(args)
     raise SystemExit(f"unsupported action: {args.action}")
 
 

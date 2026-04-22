@@ -1,0 +1,25 @@
+{
+  "manifest_version": "runtime_known_env_retire_plan_v1",
+  "generated_at_utc": "2026-04-08T08:32:42Z",
+  "phase": "phase39",
+  "known_env_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "baseline_tag": "phase34-runtime-external-approved",
+  "fingerprint_key": "0d045149f16d138f992da5a9f56dc290a7bf24faefc87d4e5cc11ad87c7ff1af",
+  "retire_reason": "phase39-known-env-governance-review",
+  "plan_verdict": "RETAIN",
+  "recommended_action": "NO_ACTION",
+  "age_since_last_verified_days": 3.51,
+  "age_since_latest_evidence_days": 3.51,
+  "approval_timestamp_utc": "2026-04-04T20:21:59Z",
+  "latest_evidence_timestamp": "2026-04-04T20:20:44Z",
+  "latest_history_timestamp": "2026-04-04T20:20:45Z",
+  "watch_status": "CLEAR",
+  "watch_confidence": "HIGH",
+  "latest_watch_summary_path": null,
+  "rationale": [
+    "retirement planning never changes the current environment active baseline",
+    "retirement policy considers both last verified age and the latest available evidence age before recommending archive-only status"
+  ],
+  "plan_hash": "169576a9086f41b60f2ba9a2fa4fcf6b0141c75fccc508df092ce324757b1b0a"
+}

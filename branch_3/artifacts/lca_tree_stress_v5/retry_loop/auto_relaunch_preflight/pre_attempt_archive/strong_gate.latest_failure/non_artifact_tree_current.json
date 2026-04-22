@@ -1,0 +1,1885 @@
+{
+  "artifacts_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts",
+  "branch_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3",
+  "entries": {
+    ".DS_Store": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775060591580064588,
+      "size": 6148
+    },
+    ".ouroboros": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1/Library": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1/Library/Mobile Documents": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1/Library": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1/Library/Mobile Documents": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/.pycache_analysis/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/.ouroboros": {
+      "kind": "dir",
+      "mode": 493
+    },
+    ".ouroboros/ac3_timeout_cluster_localization.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775889768964232267,
+      "size": 6931
+    },
+    ".ouroboros/ac5_include_wrapper_localization.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775221715961648275,
+      "size": 6425
+    },
+    ".ouroboros/ac6_primary_axis_defense.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775221357617067103,
+      "size": 6338
+    },
+    ".ouroboros/auto_remediate_retry_abort.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775906090654946211,
+      "size": 22591
+    },
+    ".ouroboros/capture_failure_context.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775877333664350052,
+      "size": 253328
+    },
+    ".ouroboros/classify_retry_loop_outcome.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775085270179451808,
+      "size": 4344
+    },
+    ".ouroboros/failure_analysis_ac5_narrowing.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775799122796967657,
+      "size": 1764
+    },
+    ".ouroboros/failure_analysis_iteration.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775891620763982421,
+      "size": 12671
+    },
+    ".ouroboros/failure_analysis_playbook.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775863012549220719,
+      "size": 101845
+    },
+    ".ouroboros/failure_analysis_state.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775891620763403578,
+      "size": 13564
+    },
+    ".ouroboros/git_repo_health.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658734738068,
+      "size": 4956
+    },
+    ".ouroboros/interview_interview_20260324_030255.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774372013584020137,
+      "size": 5892
+    },
+    ".ouroboros/launch_retry_loop.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775902878559679390,
+      "size": 6011
+    },
+    ".ouroboros/monitor_codex_quota.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658731693423,
+      "size": 21545
+    },
+    ".ouroboros/next_retry_handoff.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775889796996413331,
+      "size": 2580
+    },
+    ".ouroboros/post_attempt_guard.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658736669357,
+      "size": 8688
+    },
+    ".ouroboros/prepare_retry_attempt_state.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775881356858659081,
+      "size": 20974
+    },
+    ".ouroboros/refresh_analysis_state.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775843116557789560,
+      "size": 46946
+    },
+    ".ouroboros/repair_git_and_push.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775271446600967647,
+      "size": 4546
+    },
+    ".ouroboros/request_soft_stop.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658730988284,
+      "size": 2646
+    },
+    ".ouroboros/restart_retry_loop_after_attempt.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775271446600353212,
+      "size": 5641
+    },
+    ".ouroboros/resume_from_pause.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658737021989,
+      "size": 3428
+    },
+    ".ouroboros/retry_artifact_io.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775836382235300725,
+      "size": 3166
+    },
+    ".ouroboros/run_next_probe.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658737217452,
+      "size": 8101
+    },
+    ".ouroboros/run_until_pass_progress40.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775749936567589878,
+      "size": 30721
+    },
+    ".ouroboros/seed_af0ff01c05e9.yaml": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775271674154169307,
+      "size": 8397
+    },
+    ".ouroboros/seed_branch3_failure_analysis.yaml": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775271674154666822,
+      "size": 11043
+    },
+    ".ouroboros/seed_branch3_failure_analysis_loop.yaml": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775271674154890162,
+      "size": 4266
+    },
+    ".ouroboros/seed_branch3_progress40_research_loop.yaml": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775271674155649351,
+      "size": 18009
+    },
+    ".ouroboros/snapshot_retry_inputs.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658732213517,
+      "size": 7287
+    },
+    ".ouroboros/snapshot_retry_runtime.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658732849363,
+      "size": 14203
+    },
+    ".ouroboros/verify_analysis_refresh.py": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775881350347363963,
+      "size": 49290
+    },
+    "README.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775828334654824393,
+      "size": 8901
+    },
+    "artifact_paths.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775906051329303425,
+      "size": 23002
+    },
+    "boj28350_bundle_archive": {
+      "kind": "dir",
+      "mode": 493
+    },
+    "boj28350_bundle_archive/ARCHIVE_INDEX.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774319110183786869,
+      "size": 945
+    },
+    "boj28350_bundle_archive/boj28350_current_state_summary.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282054000000000,
+      "size": 2324
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress10_reuse_apply_attribution_final.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 488321
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress11_preserved_piece_split_compaction.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 502678
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress12_reuse_watch_handle_scan_reduction.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 537809
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress13_retain_compaction_reduction.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 560046
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress14_kept_vector_compaction_reduction.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 586194
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress15_inplace_stable_compaction.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 616518
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress16_contiguous_run_block_copy_compaction.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 638769
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress17_run_coalescing_copy_plan_build.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 665972
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress18_run_discovery_fusion.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 687461
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress19_fused_discovery_shortcircuit_classification.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 692422
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress19_fused_discovery_shortcircuit_classification_authoritative.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 707140
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress20_transition_state_onepass_scan_core.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 712245
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress21_transition_state_branch_state_load_core.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 735060
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress22_state_load_materialization_collapse.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281992000000000,
+      "size": 757529
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress23_prev_state_seed_carry_reuse.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281978000000000,
+      "size": 777816
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress24_carry_reuse_check_hit_fastpath.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 793343
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress25_carry_hit_apply_cursor_advance.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 809583
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress26_prev_state_writeback_scalar_store.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 825574
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress27_target_resolve_route_local_pointer_pinning.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 829640
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress28_pointer_validation_rebinding.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 835629
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress29_direct_pointer_validation_rebinding.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 852080
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress30_rebind_commit_metadata_patch.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 863145
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress31_metadata_patch_slot_owner_update.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 879274
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress32_slot_owner_update_owner_index_touch.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 892891
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress33_slot_owner_patch_apply_commit.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 906241
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress34_slot_owner_field_patch_core.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 917778
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress35_compact_field_pack_normalize.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 933957
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress36_pack_encode_normalize_core.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281916000000000,
+      "size": 944375
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress37_pack_encode_normalize_detail.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 954923
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress38_canonical_normalize_zero_fill.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 964758
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress39_same_layout_zero_span_elision.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281974000000000,
+      "size": 974331
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress40_layout_signature_reuse_gate.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775172552023761172,
+      "size": 984658
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress8_profile_modes_dispatch_attribution.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 447169
+    },
+    "boj28350_bundle_archive/boj28350_literature_progress9_dispatch_publish_compaction_reconstructed.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 449121
+    },
+    "boj28350_bundle_archive/boj28350_next_session_briefing.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 18134
+    },
+    "boj28350_bundle_archive/boj28350_progress10_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 874550
+    },
+    "boj28350_bundle_archive/boj28350_progress10_reuse_apply_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 24251
+    },
+    "boj28350_bundle_archive/boj28350_progress11_preserved_piece_split_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 21792
+    },
+    "boj28350_bundle_archive/boj28350_progress11_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 42799
+    },
+    "boj28350_bundle_archive/boj28350_progress12_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 24721
+    },
+    "boj28350_bundle_archive/boj28350_progress12_reuse_watch_handle_scan_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 13723
+    },
+    "boj28350_bundle_archive/boj28350_progress13_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 369784
+    },
+    "boj28350_bundle_archive/boj28350_progress13_retain_compaction_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 14229
+    },
+    "boj28350_bundle_archive/boj28350_progress14_kept_vector_compaction_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 16586
+    },
+    "boj28350_bundle_archive/boj28350_progress14_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 28514
+    },
+    "boj28350_bundle_archive/boj28350_progress15_inplace_stable_compaction_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 13654
+    },
+    "boj28350_bundle_archive/boj28350_progress15_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 18284
+    },
+    "boj28350_bundle_archive/boj28350_progress16_contiguous_run_block_copy_compaction_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281992000000000,
+      "size": 9429
+    },
+    "boj28350_bundle_archive/boj28350_progress16_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 14933
+    },
+    "boj28350_bundle_archive/boj28350_progress17_run_coalescing_copy_plan_build_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 10025
+    },
+    "boj28350_bundle_archive/boj28350_progress18_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 899520
+    },
+    "boj28350_bundle_archive/boj28350_progress18_run_discovery_fusion_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 7782
+    },
+    "boj28350_bundle_archive/boj28350_progress19_fused_discovery_shortcircuit_classification_authoritative_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 9100
+    },
+    "boj28350_bundle_archive/boj28350_progress19_fused_discovery_shortcircuit_classification_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 5343
+    },
+    "boj28350_bundle_archive/boj28350_progress19_results_authoritative.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 531721
+    },
+    "boj28350_bundle_archive/boj28350_progress19_results_reconstructed.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 8334
+    },
+    "boj28350_bundle_archive/boj28350_progress20_interrupted_local_findings.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 1933
+    },
+    "boj28350_bundle_archive/boj28350_progress20_interrupted_local_findings.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 3449
+    },
+    "boj28350_bundle_archive/boj28350_progress20_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 4330
+    },
+    "boj28350_bundle_archive/boj28350_progress20_transition_state_onepass_scan_core_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 2867
+    },
+    "boj28350_bundle_archive/boj28350_progress21_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 4436
+    },
+    "boj28350_bundle_archive/boj28350_progress21_transition_state_branch_state_load_core_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 5083
+    },
+    "boj28350_bundle_archive/boj28350_progress22_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281992000000000,
+      "size": 594726
+    },
+    "boj28350_bundle_archive/boj28350_progress22_state_load_materialization_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281992000000000,
+      "size": 14192
+    },
+    "boj28350_bundle_archive/boj28350_progress23_interrupted_local_findings.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 1496
+    },
+    "boj28350_bundle_archive/boj28350_progress23_interrupted_local_findings.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 3278
+    },
+    "boj28350_bundle_archive/boj28350_progress23_prev_state_seed_carry_reuse_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 2889
+    },
+    "boj28350_bundle_archive/boj28350_progress23_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281980000000000,
+      "size": 49664
+    },
+    "boj28350_bundle_archive/boj28350_progress24_carry_reuse_check_hit_fastpath_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 3887
+    },
+    "boj28350_bundle_archive/boj28350_progress24_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 691291
+    },
+    "boj28350_bundle_archive/boj28350_progress25_carry_hit_apply_cursor_advance_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 4711
+    },
+    "boj28350_bundle_archive/boj28350_progress25_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 717689
+    },
+    "boj28350_bundle_archive/boj28350_progress26_prev_state_writeback_scalar_store_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 5502
+    },
+    "boj28350_bundle_archive/boj28350_progress26_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 8777
+    },
+    "boj28350_bundle_archive/boj28350_progress27_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 2685
+    },
+    "boj28350_bundle_archive/boj28350_progress27_target_resolve_route_local_pointer_pinning_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 3219
+    },
+    "boj28350_bundle_archive/boj28350_progress28_pointer_validation_rebinding_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 3905
+    },
+    "boj28350_bundle_archive/boj28350_progress28_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282052000000000,
+      "size": 277564
+    },
+    "boj28350_bundle_archive/boj28350_progress29_direct_pointer_validation_rebinding_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 3158
+    },
+    "boj28350_bundle_archive/boj28350_progress29_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 469091
+    },
+    "boj28350_bundle_archive/boj28350_progress30_rebind_commit_metadata_patch_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 3720
+    },
+    "boj28350_bundle_archive/boj28350_progress30_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 965501
+    },
+    "boj28350_bundle_archive/boj28350_progress31_metadata_patch_slot_owner_update_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 1817
+    },
+    "boj28350_bundle_archive/boj28350_progress31_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 372933
+    },
+    "boj28350_bundle_archive/boj28350_progress32_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 768897
+    },
+    "boj28350_bundle_archive/boj28350_progress32_slot_owner_update_owner_index_touch_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 3360
+    },
+    "boj28350_bundle_archive/boj28350_progress33_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 6576
+    },
+    "boj28350_bundle_archive/boj28350_progress33_slot_owner_patch_apply_commit_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 3098
+    },
+    "boj28350_bundle_archive/boj28350_progress34_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 916950
+    },
+    "boj28350_bundle_archive/boj28350_progress34_slot_owner_field_patch_core_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 3029
+    },
+    "boj28350_bundle_archive/boj28350_progress35_compact_field_pack_normalize_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 2737
+    },
+    "boj28350_bundle_archive/boj28350_progress35_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 938509
+    },
+    "boj28350_bundle_archive/boj28350_progress36_pack_encode_normalize_core_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281916000000000,
+      "size": 2405
+    },
+    "boj28350_bundle_archive/boj28350_progress36_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 1033474
+    },
+    "boj28350_bundle_archive/boj28350_progress37_pack_encode_normalize_detail_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 2401
+    },
+    "boj28350_bundle_archive/boj28350_progress37_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 980380
+    },
+    "boj28350_bundle_archive/boj28350_progress38_canonical_normalize_zero_fill_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 3040
+    },
+    "boj28350_bundle_archive/boj28350_progress38_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 999282
+    },
+    "boj28350_bundle_archive/boj28350_progress39_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281974000000000,
+      "size": 363072
+    },
+    "boj28350_bundle_archive/boj28350_progress39_same_layout_zero_span_elision_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281974000000000,
+      "size": 3001
+    },
+    "boj28350_bundle_archive/boj28350_progress40_layout_signature_reuse_gate_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 4043
+    },
+    "boj28350_bundle_archive/boj28350_progress40_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 1105495
+    },
+    "boj28350_bundle_archive/boj28350_progress8_residual_cost_report.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281982000000000,
+      "size": 12990
+    },
+    "boj28350_bundle_archive/boj28350_progress8_results_merged.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 202280
+    },
+    "boj28350_bundle_archive/boj28350_progress9_results_reconstructed.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281930000000000,
+      "size": 15382
+    },
+    "boj28350_bundle_archive/merge_progress30_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 1483
+    },
+    "boj28350_bundle_archive/merge_progress31_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 1483
+    },
+    "boj28350_bundle_archive/merge_progress32_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress33_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress34_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress35_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress36_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress37_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress38_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress39_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281916000000000,
+      "size": 1437
+    },
+    "boj28350_bundle_archive/merge_progress40_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 1593
+    },
+    "boj28350_bundle_archive/progress21_resume_note.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 866
+    },
+    "boj28350_bundle_archive/progress21_resume_release_runs.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 6922
+    },
+    "boj28350_bundle_archive/progress22_resume_note.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 503
+    },
+    "boj28350_bundle_archive/progress22_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 1286
+    },
+    "boj28350_bundle_archive/progress25_missing_attempt_note.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 901
+    },
+    "boj28350_bundle_archive/progress28_interim_update.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 988
+    },
+    "boj28350_bundle_archive/progress28_interim_update.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 972
+    },
+    "boj28350_bundle_archive/progress28_resume_note.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 548
+    },
+    "boj28350_bundle_archive/progress28_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 2494
+    },
+    "boj28350_bundle_archive/progress29_followup_attempt_note.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281924000000000,
+      "size": 1560
+    },
+    "boj28350_bundle_archive/progress29_followup_attempt_note.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 1083
+    },
+    "boj28350_bundle_archive/progress30_attempt_status.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 771
+    },
+    "boj28350_bundle_archive/progress30_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 10075
+    },
+    "boj28350_bundle_archive/progress30_current_attempt_note.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 1095
+    },
+    "boj28350_bundle_archive/progress30_detached_runner_validation.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 688
+    },
+    "boj28350_bundle_archive/progress30_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 1263
+    },
+    "boj28350_bundle_archive/progress31_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 5367
+    },
+    "boj28350_bundle_archive/progress31_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 78
+    },
+    "boj28350_bundle_archive/progress32_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 19771
+    },
+    "boj28350_bundle_archive/progress32_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 2151
+    },
+    "boj28350_bundle_archive/progress32_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 159
+    },
+    "boj28350_bundle_archive/progress33_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 5982
+    },
+    "boj28350_bundle_archive/progress33_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 2151
+    },
+    "boj28350_bundle_archive/progress33_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 159
+    },
+    "boj28350_bundle_archive/progress34_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 23589
+    },
+    "boj28350_bundle_archive/progress34_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 2151
+    },
+    "boj28350_bundle_archive/progress34_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 159
+    },
+    "boj28350_bundle_archive/progress35_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 21547
+    },
+    "boj28350_bundle_archive/progress35_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 3203
+    },
+    "boj28350_bundle_archive/progress35_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 159
+    },
+    "boj28350_bundle_archive/progress36_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 34408
+    },
+    "boj28350_bundle_archive/progress36_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 3203
+    },
+    "boj28350_bundle_archive/progress36_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 1410
+    },
+    "boj28350_bundle_archive/progress37_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 23946
+    },
+    "boj28350_bundle_archive/progress37_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 3203
+    },
+    "boj28350_bundle_archive/progress37_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 1410
+    },
+    "boj28350_bundle_archive/progress38_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 54091
+    },
+    "boj28350_bundle_archive/progress38_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 3203
+    },
+    "boj28350_bundle_archive/progress38_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 1410
+    },
+    "boj28350_bundle_archive/progress39_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281916000000000,
+      "size": 11126
+    },
+    "boj28350_bundle_archive/progress39_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281916000000000,
+      "size": 3203
+    },
+    "boj28350_bundle_archive/progress39_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281916000000000,
+      "size": 1410
+    },
+    "boj28350_bundle_archive/progress40_case_journal.jsonl": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 28595
+    },
+    "boj28350_bundle_archive/progress40_finalize_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 570
+    },
+    "boj28350_bundle_archive/progress40_resume_remaining.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 122
+    },
+    "boj28350_bundle_archive/reconcile_progress40_results.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 1578
+    },
+    "boj28350_bundle_archive/run_progress19_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281928000000000,
+      "size": 5912
+    },
+    "boj28350_bundle_archive/run_progress23_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281926000000000,
+      "size": 3889
+    },
+    "boj28350_bundle_archive/run_progress25_missing.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281978000000000,
+      "size": 4532
+    },
+    "boj28350_bundle_archive/run_progress30_case_transactional.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 7528
+    },
+    "boj28350_bundle_archive/run_progress31_case_transactional.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281922000000000,
+      "size": 10587
+    },
+    "boj28350_bundle_archive/run_progress32_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 11391
+    },
+    "boj28350_bundle_archive/run_progress33_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281920000000000,
+      "size": 11391
+    },
+    "boj28350_bundle_archive/run_progress34_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 11439
+    },
+    "boj28350_bundle_archive/run_progress35_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 11439
+    },
+    "boj28350_bundle_archive/run_progress36_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281918000000000,
+      "size": 11500
+    },
+    "boj28350_bundle_archive/run_progress37_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281976000000000,
+      "size": 11500
+    },
+    "boj28350_bundle_archive/run_progress38_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774282050000000000,
+      "size": 11500
+    },
+    "boj28350_bundle_archive/run_progress39_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281916000000000,
+      "size": 11500
+    },
+    "boj28350_bundle_archive/run_progress40_case_supervised.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281914000000000,
+      "size": 12501
+    },
+    "boj28350_bundle_archive/run_release_case.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774281978000000000,
+      "size": 3154
+    },
+    "boj28350_complete_master_document_partA_raw.md": {
+      "kind": "file",
+      "mode": 384,
+      "mtime_ns": 1774398858891475439,
+      "size": 191589
+    },
+    "boj28350_current_state_bundle.zip": {
+      "kind": "file",
+      "mode": 384,
+      "mtime_ns": 1774318376579018592,
+      "size": 5768537
+    },
+    "boj28350_integrated_technical_history.md": {
+      "kind": "file",
+      "mode": 384,
+      "mtime_ns": 1774398844533732652,
+      "size": 45263
+    },
+    "boj28350_literature_progress40_layout_signature_reuse_gate.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775892911646060311,
+      "size": 984658
+    },
+    "boj28350_literature_progress7_bcdecomp_report.md": {
+      "kind": "file",
+      "mode": 384,
+      "mtime_ns": 1774398820818325757,
+      "size": 1274
+    },
+    "boj28350_resume": {
+      "kind": "dir",
+      "mode": 493
+    },
+    "boj28350_resume.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775764459613740413,
+      "size": 11461
+    },
+    "boj28350_resume/README.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774707051846674680,
+      "size": 1930
+    },
+    "boj28350_resume/boj28350_branch_3_solver.cpp": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775901159218446743,
+      "size": 1061457
+    },
+    "boj28350_resume/current_state_summary.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775892813808524647,
+      "size": 5530
+    },
+    "boj28350_resume/next_session_briefing.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775177860766444031,
+      "size": 34158
+    },
+    "boj28350_resume/pre_rewrite_checkpoint.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775881117091014885,
+      "size": 31332
+    },
+    "boj28350_resume/pre_rewrite_synthesis_note.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775856920084524435,
+      "size": 17196
+    },
+    "boj28350_resume/progress40_derived_reference.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775856661243650263,
+      "size": 14039
+    },
+    "boj28350_resume/smoke_cases.tsv": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775744078386951836,
+      "size": 235
+    },
+    "boj28350_resume/solve": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1774603249924577342,
+      "size": 2052
+    },
+    "branch_certify_suite.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775288178057023339,
+      "size": 21649
+    },
+    "branch_gen_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774453090899962425,
+      "size": 15937
+    },
+    "branch_gen_case_local.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775169755268927262,
+      "size": 15955
+    },
+    "branch_generators": {
+      "kind": "dir",
+      "mode": 493
+    },
+    "branch_generators/__init__.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774383170042418479,
+      "size": 73
+    },
+    "branch_generators/query_patterns.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774383170043570280,
+      "size": 9124
+    },
+    "branch_generators/tree_ctx.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774383170043182134,
+      "size": 3633
+    },
+    "branch_generators/tree_shapes.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774383170042816877,
+      "size": 3741
+    },
+    "branch_generators_local": {
+      "kind": "dir",
+      "mode": 493
+    },
+    "branch_generators_local/__init__.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775169374440901426,
+      "size": 73
+    },
+    "branch_generators_local/query_patterns.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775169248134340827,
+      "size": 9124
+    },
+    "branch_generators_local/tree_ctx.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775169510863559796,
+      "size": 3633
+    },
+    "branch_generators_local/tree_shapes.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775169495582006671,
+      "size": 3741
+    },
+    "branch_outer_certify.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775269519318600559,
+      "size": 15133
+    },
+    "branch_run_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775171604989889801,
+      "size": 15375
+    },
+    "branch_validator.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774384813760361194,
+      "size": 4634
+    },
+    "branch_validator_local.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775169248131420078,
+      "size": 4634
+    },
+    "build.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775276723244128589,
+      "size": 12478
+    },
+    "build.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775171282117258046,
+      "size": 1014
+    },
+    "lca_acceptance_repeatability.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775751457155990659,
+      "size": 184
+    },
+    "lca_boj3s_gate.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775168058295350551,
+      "size": 170
+    },
+    "lca_hunt.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1774417546139759778,
+      "size": 580
+    },
+    "lca_required_repeatability.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775162447177457555,
+      "size": 182
+    },
+    "lca_smoke.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775894382196782895,
+      "size": 230428
+    },
+    "lca_smoke_repeatability.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1774405535249485492,
+      "size": 179
+    },
+    "lca_smoke_target.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1774502704960351705,
+      "size": 1659
+    },
+    "lca_strong_gate.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775162456373288425,
+      "size": 171
+    },
+    "literature_grade_proof_package.md": {
+      "kind": "file",
+      "mode": 384,
+      "mtime_ns": 1774398814687335014,
+      "size": 17807
+    },
+    "outer_suite_wrappers": {
+      "kind": "dir",
+      "mode": 493
+    },
+    "outer_suite_wrappers/README.md": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775896387187647422,
+      "size": 4666
+    },
+    "outer_suite_wrappers/lca_acceptance_repeatability.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775769198145769671,
+      "size": 39857
+    },
+    "outer_suite_wrappers/lca_boj3s_gate.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775780033573957592,
+      "size": 64508
+    },
+    "outer_suite_wrappers/lca_hunt.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1774499173036545276,
+      "size": 1671
+    },
+    "outer_suite_wrappers/lca_rebuttal_gate.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774416882508054018,
+      "size": 5625
+    },
+    "outer_suite_wrappers/lca_required_repeatability.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775769094670245432,
+      "size": 26739
+    },
+    "outer_suite_wrappers/lca_smoke.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775892937163490117,
+      "size": 165852
+    },
+    "outer_suite_wrappers/lca_smoke_repeatability.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775852583770775421,
+      "size": 36076
+    },
+    "outer_suite_wrappers/lca_smoke_target.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775093920752441459,
+      "size": 16811
+    },
+    "outer_suite_wrappers/lca_strong_gate.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1775884457849325114,
+      "size": 66143
+    },
+    "pytest.ini": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775893264468779638,
+      "size": 39
+    },
+    "run.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1774492577076210975,
+      "size": 791
+    },
+    "smoke.sh": {
+      "kind": "file",
+      "mode": 493,
+      "mtime_ns": 1774324099759158611,
+      "size": 135
+    },
+    "solver_release_env.sh": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775743666660188471,
+      "size": 9277
+    },
+    "suite_presets": {
+      "kind": "dir",
+      "mode": 493
+    },
+    "suite_presets/boj_3s_hard_gate.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775088898761757135,
+      "size": 2010
+    },
+    "suite_presets/strong_gate.json": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775088898761393308,
+      "size": 1582
+    },
+    "suite_utils.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775732236363669458,
+      "size": 10712
+    },
+    "test_boj28350_resume.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775733140952035641,
+      "size": 16462
+    },
+    "test_branch_certify_suite.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775288190933990804,
+      "size": 13649
+    },
+    "test_branch_outer_certify.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775269568771212857,
+      "size": 7581
+    },
+    "test_branch_run_case.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774721985145558581,
+      "size": 8288
+    },
+    "test_build.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775276735495711312,
+      "size": 10118
+    },
+    "test_classify_retry_loop_outcome.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774744454615693883,
+      "size": 5432
+    },
+    "test_entrypoint_artifact_locality.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775155296152185530,
+      "size": 3168
+    },
+    "test_gate_launcher_dispatchers.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775751457155853080,
+      "size": 1810
+    },
+    "test_lca_acceptance_repeatability_wrapper.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775769245731053466,
+      "size": 17159
+    },
+    "test_lca_boj3s_gate_wrapper.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775779670016895032,
+      "size": 69105
+    },
+    "test_lca_required_repeatability_wrapper.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775769232781742410,
+      "size": 31255
+    },
+    "test_lca_smoke_harness_regression.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775893576036757340,
+      "size": 30414
+    },
+    "test_lca_smoke_launcher.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775894396763125485,
+      "size": 193642
+    },
+    "test_lca_smoke_repeatability_wrapper.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775853424086442248,
+      "size": 32348
+    },
+    "test_lca_smoke_target_wrapper.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774708628819558465,
+      "size": 21241
+    },
+    "test_lca_smoke_wrapper.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775892970111574490,
+      "size": 117021
+    },
+    "test_lca_strong_gate_wrapper.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775896387188420263,
+      "size": 67678
+    },
+    "test_prepare_retry_attempt_state.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775857687263797482,
+      "size": 34601
+    },
+    "test_refresh_analysis_state.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775843072224699939,
+      "size": 34241
+    },
+    "test_retry_loop_artifact_locality.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775906067162403539,
+      "size": 74547
+    },
+    "test_snapshot_retry_inputs.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775817658738690273,
+      "size": 12433
+    },
+    "test_solver_release_env.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1775172641350179989,
+      "size": 7562
+    },
+    "test_suite_utils.py": {
+      "kind": "file",
+      "mode": 420,
+      "mtime_ns": 1774502624055188655,
+      "size": 4725
+    }
+  },
+  "schema": "branch_non_artifact_tree_state_v1"
+}

@@ -1,0 +1,8 @@
+check_key	current_result	impact	next_action
+obstruction_preservation_closes_family_chain_case	no	Payload/status preservation remains blocked, so the family-chain support-growth case is not closed.	family_chain_lift_map_refinement_phase2
+well_defined_payload_cases	current_scope_proved	Source and target payload contracts are usable in the next proof attempt.	family_chain_lift_map_refinement_phase2
+conditional_absorption	current_scope_proved	If payload preservation is later proved, the bounded family-chain theorem can absorb the target.	family_chain_lift_map_refinement_phase2
+remaining_failure_case	named_payload_preservation_blocker	Preservation failure is now a named blocker, not a hidden escape.	family_chain_lift_map_refinement_phase2
+support_reduction_operation_priority	still_high	Smaller-witness reduction remains an alternative path for non-preserved status.	prove_support_reduction_operation_sublemma
+higher_support_scan_needed_now	no	No support9+ scan should precede payload/status proof refinement.	no_scan
+final_status	higher_support_recheck_deferred_until_payload_preservation_phase2	Recheck after payload preservation or operation sublemma attempt.	family_chain_lift_map_refinement_phase2

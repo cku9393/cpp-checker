@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/usr/bin/clang++",
+    "-Ofast",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-ULOCAL",
+    "-DLOCAL",
+    "-pipe",
+    "-march=native",
+    "-flto=thin",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/boj28350_resume/boj28350_branch_3_solver.cpp",
+    "-o",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/ac5_local_diag_20260409/solve_local"
+  ],
+  "compiler": "/usr/bin/clang++",
+  "cxx_env": "",
+  "defines": [
+    "LOCAL"
+  ],
+  "dependencies": [
+    {
+      "exists": true,
+      "path": "boj28350_resume/boj28350_branch_3_solver.cpp",
+      "sha256": "6990141d06e5100449ab11e95760206cc61f4793c92218215dfe9cd62245f7bc",
+      "size_bytes": 1052480
+    }
+  ],
+  "output": "artifacts/lca_tree_stress_v5/ac5_local_diag_20260409/solve_local",
+  "requested_compiler": "",
+  "schema": "boj28350_build_metadata_v2",
+  "source": "boj28350_resume/boj28350_branch_3_solver.cpp",
+  "static_mode": "auto"
+}

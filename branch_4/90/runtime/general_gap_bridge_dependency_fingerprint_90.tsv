@@ -1,0 +1,9 @@
+metric	value
+edge_count	27
+verified_input_edges	8
+obligation_dependency_edges	2
+obligation_blocks_statement_edges	10
+candidate_next_scope_edges	7
+statement_count	3
+top_blocking_obligation	shell_bound_or_extension
+fingerprint	27|8|2|10|7|3|shell_bound_or_extension

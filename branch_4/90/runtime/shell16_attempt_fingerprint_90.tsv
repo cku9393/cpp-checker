@@ -1,0 +1,4 @@
+metric	value
+runtime_fingerprint	981:4479772858934799504
+result_classification	shell16_probe_completed_local_exact_survivors_present_no_theorem_preserving_survivors
+next_action	shell16_result_promotion_review

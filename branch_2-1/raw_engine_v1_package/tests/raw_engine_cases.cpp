@@ -496,6 +496,10 @@ void run_stale_warn_mode_smoke_case(const TestOptions& options);
 void run_action_required_mode_smoke_case(const TestOptions& options);
 void run_runtime_budget_smoke_case(const TestOptions& options);
 void run_runtime_budget_manifest_roundtrip_smoke_case(const TestOptions& options);
+void run_runtime_budget_proposal_gate_case(const TestOptions& options);
+void run_runtime_budget_approve_reprofile_case(const TestOptions& options);
+void run_runtime_budget_refresh_case(const TestOptions& options);
+void run_runtime_budget_plan_rerun_case(const TestOptions& options);
 void run_runtime_gate_promote_baseline_case(const TestOptions& options);
 void run_runtime_gate_refresh_case(const TestOptions& options);
 void run_runtime_gate_plan_rerun_case(const TestOptions& options);
@@ -507,6 +511,7 @@ void run_runtime_history_summary_case(const TestOptions& options);
 void run_runtime_watch_campaign_case(const TestOptions& options);
 void run_runtime_watch_refresh_case(const TestOptions& options);
 void run_runtime_propose_rebaseline_case(const TestOptions& options);
+void run_runtime_proposal_gate_case(const TestOptions& options);
 void run_runtime_fingerprint_roundtrip_smoke_case(const TestOptions& options);
 void run_runtime_not_comparable_smoke_case(const TestOptions& options);
 void run_runtime_refresh_same_fingerprint_smoke_case(const TestOptions& options);
@@ -561,6 +566,9 @@ void run_runtime_history_regressing_smoke_case(const TestOptions& options);
 void run_runtime_history_recovery_after_rebaseline_smoke_case(const TestOptions& options);
 void run_runtime_watch_campaign_smoke_case(const TestOptions& options);
 void run_runtime_watch_campaign_longer_smoke_case(const TestOptions& options);
+void run_runtime_watch_campaign_release_full_smoke_case(const TestOptions& options);
+void run_runtime_watch_release_full_repeat10_smoke_case(const TestOptions& options);
+void run_runtime_watch_release_full_confidence_smoke_case(const TestOptions& options);
 void run_runtime_watch_multi_fingerprint_smoke_case(const TestOptions& options);
 void run_runtime_watch_same_host_compiler_bump_smoke_case(const TestOptions& options);
 void run_runtime_watch_sanitizer_change_smoke_case(const TestOptions& options);
@@ -576,7 +584,127 @@ void run_runtime_watch_transition_escalate_smoke_case(const TestOptions& options
 void run_runtime_watch_to_rebaseline_candidate_smoke_case(const TestOptions& options);
 void run_runtime_watch_production_hard_fail_smoke_case(const TestOptions& options);
 void run_runtime_watch_diagnostic_soft_warn_smoke_case(const TestOptions& options);
+void run_runtime_registry_import_current_smoke_case(const TestOptions& options);
+void run_runtime_registry_import_new_fingerprint_smoke_case(const TestOptions& options);
+void run_runtime_watch_import_same_fingerprint_smoke_case(const TestOptions& options);
+void run_runtime_watch_import_fixture_vs_real_smoke_case(const TestOptions& options);
+void run_runtime_watch_confidence_smoke_case(const TestOptions& options);
+void run_runtime_watch_confidence_real_vs_fixture_smoke_case(const TestOptions& options);
+void run_runtime_history_compact_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_unified_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_current_vs_new_env_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_release_watch_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_matrix_rebaseline_smoke_case(const TestOptions& options);
+void run_evidence_bundle_light_ops_smoke_case(const TestOptions& options);
+void run_publication_snapshot_smoke_case(const TestOptions& options);
+void run_publication_snapshot_bundle_smoke_case(const TestOptions& options);
+void run_bundle_published_snapshot_smoke_case(const TestOptions& options);
+void run_bundle_delivery_contents_smoke_case(const TestOptions& options);
+void run_bundle_idempotent_from_published_snapshot_smoke_case(const TestOptions& options);
+void run_runtime_registry_health_smoke_case(const TestOptions& options);
+void run_runtime_known_env_state_machine_smoke_case(const TestOptions& options);
+void run_runtime_known_env_stale_smoke_case(const TestOptions& options);
+void run_runtime_known_env_reverify_required_smoke_case(const TestOptions& options);
+void run_runtime_known_env_retire_candidate_smoke_case(const TestOptions& options);
+void run_runtime_known_env_retired_smoke_case(const TestOptions& options);
+void run_runtime_known_env_reverify_gate_smoke_case(const TestOptions& options);
+void run_runtime_import_known_env_evidence_smoke_case(const TestOptions& options);
+void run_runtime_known_env_age_tick_smoke_case(const TestOptions& options);
+void run_runtime_known_env_plan_reverify_smoke_case(const TestOptions& options);
+void run_runtime_known_env_apply_reverify_smoke_case(const TestOptions& options);
+void run_runtime_known_env_plan_retire_smoke_case(const TestOptions& options);
+void run_runtime_known_env_apply_retire_smoke_case(const TestOptions& options);
+void run_runtime_registry_health_v2_smoke_case(const TestOptions& options);
+void run_runtime_registry_health_v3_smoke_case(const TestOptions& options);
+void run_runtime_registry_same_fingerprint_supersession_smoke_case(const TestOptions& options);
+void run_runtime_registry_retired_not_selected_smoke_case(const TestOptions& options);
+void run_runtime_foreign_env_state_machine_smoke_case(const TestOptions& options);
+void run_publication_health_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v4_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v5_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v6_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_known_vs_foreign_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_publication_health_smoke_case(const TestOptions& options);
+void run_evidence_bundle_registry_health_smoke_case(const TestOptions& options);
+void run_evidence_bundle_known_env_governance_smoke_case(const TestOptions& options);
+void run_evidence_bundle_known_env_timeline_smoke_case(const TestOptions& options);
+void run_evidence_bundle_publication_health_smoke_case(const TestOptions& options);
+void run_light_ops_bundle_operator_summary_v4_smoke_case(const TestOptions& options);
+void run_staged_ctest_smoke_case(const TestOptions& options);
+void run_campaign_wrapper_tail_smoke_case(const TestOptions& options);
+void run_ctest_executable_lookup_smoke_case(const TestOptions& options);
+void run_wrapper_infra_vs_semantic_failure_smoke_case(const TestOptions& options);
 void run_runtime_budget_role_sensitive_smoke_case(const TestOptions& options);
+void run_runtime_budget_proposal_gate_smoke_case(const TestOptions& options);
+void run_runtime_budget_reproposal_gate_smoke_case(const TestOptions& options);
+void run_runtime_budget_approve_reprofile_smoke_case(const TestOptions& options);
+void run_runtime_budget_refresh_after_approval_smoke_case(const TestOptions& options);
+void run_runtime_current_env_watch_state_machine_smoke_case(const TestOptions& options);
+void run_runtime_current_env_age_tick_smoke_case(const TestOptions& options);
+void run_runtime_current_env_plan_watch_smoke_case(const TestOptions& options);
+void run_runtime_current_env_reproposal_trigger_gate_smoke_case(const TestOptions& options);
+void run_runtime_current_env_due_scheduler_smoke_case(const TestOptions& options);
+void run_runtime_current_env_time_travel_due_now_smoke_case(const TestOptions& options);
+void run_runtime_current_env_plan_reproposal_smoke_case(const TestOptions& options);
+void run_policy_ops_agenda_smoke_case(const TestOptions& options);
+void run_runtime_current_env_execute_watch_smoke_case(const TestOptions& options);
+void run_runtime_current_env_apply_watch_smoke_case(const TestOptions& options);
+void run_current_env_monitoring_due_execute_apply_smoke_case(const TestOptions& options);
+void run_runtime_current_env_execute_reproposal_gate_smoke_case(const TestOptions& options);
+void run_policy_ops_agenda_action_status_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v10_smoke_case(const TestOptions& options);
+void run_evidence_bundle_current_env_execute_apply_smoke_case(const TestOptions& options);
+void run_runtime_current_env_action_ledger_smoke_case(const TestOptions& options);
+void run_runtime_current_env_action_retry_plan_smoke_case(const TestOptions& options);
+void run_runtime_current_env_reproposal_handoff_smoke_case(const TestOptions& options);
+void run_current_env_next_cycle_monitoring_due_smoke_case(const TestOptions& options);
+void run_policy_ops_agenda_lifecycle_v2_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v11_smoke_case(const TestOptions& options);
+void run_evidence_bundle_action_ledger_smoke_case(const TestOptions& options);
+void run_runtime_current_env_operator_decision_smoke_case(const TestOptions& options);
+void run_runtime_current_env_apply_operator_decision_smoke_case(const TestOptions& options);
+void run_runtime_current_env_action_ledger_compact_smoke_case(const TestOptions& options);
+void run_reproposal_handoff_closure_only_smoke_case(const TestOptions& options);
+void run_policy_ops_agenda_lifecycle_v3_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v12_smoke_case(const TestOptions& options);
+void run_evidence_bundle_operator_decision_smoke_case(const TestOptions& options);
+void run_runtime_current_env_approval_runbook_smoke_case(const TestOptions& options);
+void run_runtime_current_env_execute_budget_approval_dry_run_smoke_case(const TestOptions& options);
+void run_runtime_current_env_link_approval_execution_smoke_case(const TestOptions& options);
+void run_runtime_current_env_decision_skip_flow_smoke_case(const TestOptions& options);
+void run_runtime_current_env_decision_defer_flow_smoke_case(const TestOptions& options);
+void run_runtime_current_env_decision_retry_now_flow_smoke_case(const TestOptions& options);
+void run_policy_ops_agenda_lifecycle_v4_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v13_smoke_case(const TestOptions& options);
+void run_evidence_bundle_approval_runbook_smoke_case(const TestOptions& options);
+void run_operator_runbook_index_smoke_case(const TestOptions& options);
+void run_approval_execution_dry_run_smoke_case(const TestOptions& options);
+void run_approval_execution_handoff_only_smoke_case(const TestOptions& options);
+void run_approval_execution_integrated_requires_optin_smoke_case(const TestOptions& options);
+void run_approval_execution_integrated_optin_fixture_smoke_case(const TestOptions& options);
+void run_current_env_decision_skip_e2e_smoke_case(const TestOptions& options);
+void run_current_env_decision_defer_e2e_smoke_case(const TestOptions& options);
+void run_current_env_decision_reject_e2e_smoke_case(const TestOptions& options);
+void run_current_env_decision_retry_now_e2e_smoke_case(const TestOptions& options);
+void run_action_ledger_closure_invariants_smoke_case(const TestOptions& options);
+void run_source_health_preflight_smoke_case(const TestOptions& options);
+void run_staged_sparse_clone_overlay_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v14_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runbook_index_smoke_case(const TestOptions& options);
+void run_runtime_budget_history_append_smoke_case(const TestOptions& options);
+void run_runtime_watch_campaign_release_repeat10_smoke_case(const TestOptions& options);
+void run_combined_pipeline_after_budget_reprofile_quick_smoke_case(const TestOptions& options);
+void run_combined_pipeline_after_budget_reprofile_nightly_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_budget_vs_rebaseline_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v7_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v8_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v9_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_current_env_clear_new_env_action_required_smoke_case(const TestOptions& options);
+void run_evidence_bundle_budget_lifecycle_smoke_case(const TestOptions& options);
+void run_evidence_bundle_current_env_budget_lifecycle_smoke_case(const TestOptions& options);
+void run_evidence_bundle_current_env_guardrail_timeline_smoke_case(const TestOptions& options);
+void run_evidence_bundle_current_env_due_timeline_smoke_case(const TestOptions& options);
+void run_evidence_bundle_budget_transition_metadata_smoke_case(const TestOptions& options);
 void run_combined_pipeline_continue_monitoring_smoke_case(const TestOptions& options);
 void run_combined_pipeline_watch_rationale_smoke_case(const TestOptions& options);
 void run_combined_pipeline_propose_runtime_rebaseline_smoke_case(const TestOptions& options);
@@ -592,9 +720,16 @@ void run_combined_pipeline_recommendation_smoke_case(const TestOptions& options)
 void run_runtime_rebaseline_proposal_multi_candidate_smoke_case(const TestOptions& options);
 void run_runtime_rebaseline_proposal_retired_only_smoke_case(const TestOptions& options);
 void run_runtime_rebaseline_proposal_cross_host_smoke_case(const TestOptions& options);
+void run_runtime_proposal_gate_smoke_case(const TestOptions& options);
+void run_runtime_proposal_gate_need_more_samples_smoke_case(const TestOptions& options);
+void run_runtime_proposal_gate_approvable_smoke_case(const TestOptions& options);
+void run_runtime_proposal_gate_reject_hard_breach_smoke_case(const TestOptions& options);
 void run_runtime_approve_rebaseline_smoke_case(const TestOptions& options);
 void run_runtime_approve_rebaseline_registry_switch_smoke_case(const TestOptions& options);
 void run_runtime_approve_rebaseline_archive_proposal_smoke_case(const TestOptions& options);
+void run_runtime_approve_rebaseline_from_gate_smoke_case(const TestOptions& options);
+void run_runtime_registry_active_switch_phase30_smoke_case(const TestOptions& options);
+void run_runtime_approve_rebaseline_reject_without_gate_smoke_case(const TestOptions& options);
 void run_runtime_refresh_after_rebaseline_smoke_case(const TestOptions& options);
 void run_runtime_rerun_plan_after_rebaseline_smoke_case(const TestOptions& options);
 void run_runtime_selection_after_registry_switch_smoke_case(const TestOptions& options);
@@ -765,7 +900,7 @@ int run_child_test_case_process(
 ) {
     require_test(!parentOptions.executablePath.empty(), caseName + " expected executablePath for child process");
     filesystem::path cliArtifactDir = artifactDir;
-    const filesystem::path packageRoot = source_package_root();
+    const filesystem::path packageRoot = filesystem::absolute(source_package_root());
     if (artifactDir.is_absolute()) {
         error_code ec;
         const filesystem::path relativePath = filesystem::relative(artifactDir, packageRoot, ec);
@@ -1605,6 +1740,35 @@ double safe_ratio(size_t numerator, size_t denominator) {
 string json_number(double value) {
     ostringstream oss;
     oss << fixed << setprecision(6) << value;
+    return oss.str();
+}
+
+string json_quote(const string& value) {
+    ostringstream oss;
+    oss << '"';
+    for (const char ch : value) {
+        switch (ch) {
+        case '\\':
+            oss << "\\\\";
+            break;
+        case '"':
+            oss << "\\\"";
+            break;
+        case '\n':
+            oss << "\\n";
+            break;
+        case '\r':
+            oss << "\\r";
+            break;
+        case '\t':
+            oss << "\\t";
+            break;
+        default:
+            oss << ch;
+            break;
+        }
+    }
+    oss << '"';
     return oss.str();
 }
 
@@ -2812,15 +2976,56 @@ CampaignConfig load_campaign_config(const filesystem::path& path) {
         }
 
         CampaignRunConfig run;
-        istringstream ls(line.substr(4));
-        string token;
-        while (ls >> token) {
-            const size_t eq = token.find('=');
-            if (eq == string::npos) {
-                throw runtime_error("invalid campaign token: " + token);
+        const string runSpec = line.substr(4);
+        const array<string_view, 10> tokenKeys = {{
+            "caseName",
+            "mode",
+            "seeds",
+            "iters",
+            "stepBudget",
+            "artifactDir",
+            "statsFile",
+            "exactCanonicalCap",
+            "compareSampleRate",
+            "compareBudget",
+        }};
+        const auto find_next_token_start = [&](size_t from) -> size_t {
+            size_t best = string::npos;
+            for (const string_view key : tokenKeys) {
+                const string needle = " " + string(key) + "=";
+                const size_t pos = runSpec.find(needle, from);
+                if (pos != string::npos && (best == string::npos || pos < best)) {
+                    best = pos;
+                }
             }
-            const string key = token.substr(0, eq);
-            const string value = token.substr(eq + 1U);
+            for (const string_view key : {string_view("splitChoicePolicyMode"), string_view("splitChoiceCompareMode")}) {
+                const string needle = " " + string(key) + "=";
+                const size_t pos = runSpec.find(needle, from);
+                if (pos != string::npos && (best == string::npos || pos < best)) {
+                    best = pos;
+                }
+            }
+            return best;
+        };
+        size_t cursor = 0;
+        while (cursor < runSpec.size()) {
+            while (cursor < runSpec.size() && isspace(static_cast<unsigned char>(runSpec[cursor]))) {
+                ++cursor;
+            }
+            if (cursor >= runSpec.size()) {
+                break;
+            }
+            const size_t eq = runSpec.find('=', cursor);
+            if (eq == string::npos) {
+                throw runtime_error("invalid campaign token: " + runSpec.substr(cursor));
+            }
+            const string key = trim_copy_local(runSpec.substr(cursor, eq - cursor));
+            const size_t next = find_next_token_start(eq + 1U);
+            string value = trim_copy_local(runSpec.substr(eq + 1U, next == string::npos ? string::npos : next - (eq + 1U)));
+            if (value.size() >= 2U &&
+                ((value.front() == '"' && value.back() == '"') || (value.front() == '\'' && value.back() == '\''))) {
+                value = value.substr(1U, value.size() - 2U);
+            }
             if (key == "caseName") {
                 run.caseName = value;
             } else if (key == "mode") {
@@ -2856,6 +3061,7 @@ CampaignConfig load_campaign_config(const filesystem::path& path) {
             } else {
                 throw runtime_error("unknown campaign token: " + key);
             }
+            cursor = next == string::npos ? runSpec.size() : next + 1U;
         }
         config.runs.push_back(run);
     }
@@ -2906,11 +3112,25 @@ unordered_map<string, string> read_key_value_file(const filesystem::path& path) 
 
 filesystem::path resolve_policy_gate_artifact_root(const TestOptions& options) {
     const filesystem::path sourceArtifactRoot = filesystem::path(__FILE__).parent_path().parent_path() / "artifacts";
+    const char* stagedRootEnv = getenv("RAW_ENGINE_STAGE_ROOT");
+    const bool stagedRootAvailable = stagedRootEnv != nullptr && stagedRootEnv[0] != '\0';
+    const filesystem::path stagedArtifactRoot = stagedRootAvailable
+        ? filesystem::absolute(filesystem::path(stagedRootEnv) / "artifacts")
+        : filesystem::path();
     if (!options.artifactDir.has_value()) {
+        if (stagedRootAvailable) {
+            return stagedArtifactRoot;
+        }
         return filesystem::absolute(sourceArtifactRoot);
     }
     const filesystem::path configuredRoot = filesystem::path(*options.artifactDir);
-    return configuredRoot.is_absolute() ? configuredRoot : filesystem::absolute(sourceArtifactRoot.parent_path() / configuredRoot);
+    if (configuredRoot.is_absolute()) {
+        return configuredRoot;
+    }
+    if (stagedRootAvailable) {
+        return filesystem::absolute(filesystem::path(stagedRootEnv) / configuredRoot);
+    }
+    return filesystem::absolute(sourceArtifactRoot.parent_path() / configuredRoot);
 }
 
 string policy_runner_timestamp_utc_now() {
@@ -3378,9 +3598,6 @@ PolicyRerunExecutionSummary execute_policy_rerun_plan(
         if (entry.rerunKind == "applicability_audit_rerun") {
             TestOptions rerunOptions = options;
             rerunOptions.caseName = "planner_tie_organic_applicability_audit";
-            if (!rerunOptions.iters.has_value()) {
-                rerunOptions.iters = 1;
-            }
             rerunOptions.artifactDir =
                 (resolve_policy_gate_artifact_root(options) / "phase22_applicability").string();
             run_planner_tie_organic_applicability_audit_case(rerunOptions);
@@ -3391,9 +3608,6 @@ PolicyRerunExecutionSummary execute_policy_rerun_plan(
         if (entry.rerunKind == "lineage_audit_rerun") {
             TestOptions rerunOptions = options;
             rerunOptions.caseName = "compare_ready_lineage_audit";
-            if (!rerunOptions.iters.has_value()) {
-                rerunOptions.iters = 1;
-            }
             rerunOptions.artifactDir =
                 (resolve_policy_gate_artifact_root(options) / "phase22_lineage").string();
             run_compare_ready_lineage_audit_case(rerunOptions);
@@ -10307,6 +10521,7 @@ struct PolicyPipelineSmokeArtifacts {
     filesystem::path summaryJson;
     filesystem::path zipPath;
     filesystem::path curatedZipPath;
+    filesystem::path lightOpsZipPath;
     filesystem::path runtimeCurrentJson;
     filesystem::path runtimeBaselineJson;
     filesystem::path runtimeRegistryJson;
@@ -10314,6 +10529,8 @@ struct PolicyPipelineSmokeArtifacts {
     filesystem::path runtimeRerunJson;
     filesystem::path runtimeHistoryIndexJson;
     filesystem::path runtimeHistorySummaryJson;
+    filesystem::path runtimeHistoryCompactJson;
+    filesystem::path runtimeHistoryCompactSummaryJson;
     filesystem::path runtimeProposalJson;
     filesystem::path runtimeArchivedProposalJson;
     filesystem::path runtimeApprovalMetadataJson;
@@ -10321,7 +10538,24 @@ struct PolicyPipelineSmokeArtifacts {
     filesystem::path runtimeWatchRefreshJson;
     filesystem::path runtimeWatchHistoryIndexJson;
     filesystem::path runtimeWatchHistorySummaryJson;
+    filesystem::path runtimeWatchRegistryJson;
+    filesystem::path runtimeWatchRegistrySummaryJson;
+    filesystem::path runtimeRegistryHealthJson;
+    filesystem::path runtimeRegistryHealthTxt;
+    filesystem::path publicationHealthJson;
+    filesystem::path publicationHealthTxt;
+    filesystem::path opsSummaryJson;
+    filesystem::path opsSummaryTxt;
     filesystem::path runtimeBudgetProfileJson;
+    filesystem::path runtimeBudgetCurrentJson;
+    filesystem::path runtimeBudgetBaselineJson;
+    filesystem::path runtimeBudgetRefreshJson;
+    filesystem::path runtimeBudgetRerunJson;
+    filesystem::path runtimeBudgetRegistryJson;
+    filesystem::path runtimeBudgetProposalJson;
+    filesystem::path runtimeBudgetProposalGateJson;
+    filesystem::path runtimeBudgetArchivedProposalJson;
+    filesystem::path runtimeBudgetApprovalMetadataJson;
 };
 
 int run_runtime_lifecycle_script(
@@ -10331,6 +10565,20 @@ int run_runtime_lifecycle_script(
     ostringstream command;
     command << shell_quote("/usr/bin/python3") << ' '
             << shell_quote(policy_tools_script_path("runtime_gate.py").string())
+            << ' ' << shell_quote(subcommand);
+    for (const string& arg : args) {
+        command << ' ' << arg;
+    }
+    return normalized_process_exit_code(system(command.str().c_str()));
+}
+
+int run_runtime_watch_ops_script(
+    const string& subcommand,
+    const vector<string>& args
+) {
+    ostringstream command;
+    command << shell_quote("/usr/bin/python3") << ' '
+            << shell_quote(policy_tools_script_path("runtime_watch_ops.py").string())
             << ' ' << shell_quote(subcommand);
     for (const string& arg : args) {
         command << ' ' << arg;
@@ -10356,6 +10604,7 @@ PolicyPipelineSmokeArtifacts prepare_policy_pipeline_smoke_artifacts(
     paths.summaryJson = paths.root / "manifests" / "policy_pipeline_summary.json";
     paths.zipPath = paths.root / "raw_engine_phase22_pipeline_smoke.zip";
     paths.curatedZipPath = paths.root / "raw_engine_phase22_pipeline_smoke_curated.zip";
+    paths.lightOpsZipPath = paths.root / "raw_engine_phase22_pipeline_ops_light.zip";
     paths.runtimeCurrentJson = paths.root / "manifests" / "policy_runtime_current_phase22.json";
     paths.runtimeBaselineJson = paths.root / "manifests" / "policy_runtime_baseline_phase22_approved.json";
     paths.runtimeRegistryJson = paths.root / "manifests" / "runtime_baseline_registry_v1.json";
@@ -10363,6 +10612,8 @@ PolicyPipelineSmokeArtifacts prepare_policy_pipeline_smoke_artifacts(
     paths.runtimeRerunJson = paths.root / "manifests" / "policy_runtime_rerun_phase22.json";
     paths.runtimeHistoryIndexJson = paths.root / "manifests" / "runtime_history_index_v1.json";
     paths.runtimeHistorySummaryJson = paths.root / "manifests" / "runtime_history_index_v1_summary.json";
+    paths.runtimeHistoryCompactJson = paths.root / "manifests" / "runtime_history_index_v1_compacted.json";
+    paths.runtimeHistoryCompactSummaryJson = paths.root / "manifests" / "runtime_history_index_v1_compacted_summary.json";
     paths.runtimeProposalJson = paths.root / "manifests" / "runtime_rebaseline_proposal_phase22.json";
     paths.runtimeArchivedProposalJson = paths.root / "manifests" / "runtime_rebaseline_proposal_phase22_archived.json";
     paths.runtimeApprovalMetadataJson = paths.root / "manifests" / "policy_runtime_baseline_phase22_approved_approval_metadata.json";
@@ -10370,7 +10621,24 @@ PolicyPipelineSmokeArtifacts prepare_policy_pipeline_smoke_artifacts(
     paths.runtimeWatchRefreshJson = paths.root / "manifests" / "runtime_watch_refresh_phase22.json";
     paths.runtimeWatchHistoryIndexJson = paths.root / "manifests" / "runtime_watch_history_index_v1.json";
     paths.runtimeWatchHistorySummaryJson = paths.root / "manifests" / "runtime_watch_history_index_v1_summary.json";
+    paths.runtimeWatchRegistryJson = paths.root / "manifests" / "runtime_watch_registry_v1.json";
+    paths.runtimeWatchRegistrySummaryJson = paths.root / "manifests" / "runtime_watch_registry_v1_summary.json";
+    paths.runtimeRegistryHealthJson = paths.root / "manifests" / "runtime_registry_health_phase35.json";
+    paths.runtimeRegistryHealthTxt = paths.root / "manifests" / "runtime_registry_health_phase35.summary.txt";
+    paths.publicationHealthJson = paths.root / "manifests" / "publication_health_phase35.json";
+    paths.publicationHealthTxt = paths.root / "manifests" / "publication_health_phase35.summary.txt";
+    paths.opsSummaryJson = paths.root / "manifests" / "policy_ops_summary_phase22.json";
+    paths.opsSummaryTxt = paths.root / "manifests" / "policy_ops_summary_phase22.txt";
     paths.runtimeBudgetProfileJson = source_package_root() / "tests" / "runtime_budget_phase28.json";
+    paths.runtimeBudgetCurrentJson = paths.root / "manifests" / "runtime_budget_current_phase22.json";
+    paths.runtimeBudgetBaselineJson = paths.root / "manifests" / "runtime_budget_baseline_phase22_approved.json";
+    paths.runtimeBudgetRefreshJson = paths.root / "manifests" / "runtime_budget_refresh_phase22.json";
+    paths.runtimeBudgetRerunJson = paths.root / "manifests" / "runtime_budget_rerun_phase22.json";
+    paths.runtimeBudgetRegistryJson = paths.root / "manifests" / "runtime_budget_registry_v1.json";
+    paths.runtimeBudgetProposalJson = paths.root / "manifests" / "runtime_budget_proposal_phase22.json";
+    paths.runtimeBudgetProposalGateJson = paths.root / "manifests" / "runtime_budget_proposal_gate_phase22.json";
+    paths.runtimeBudgetArchivedProposalJson = paths.root / "manifests" / "runtime_budget_proposal_phase22_archived.json";
+    paths.runtimeBudgetApprovalMetadataJson = paths.root / "manifests" / "runtime_budget_baseline_phase22_approved_approval_metadata.json";
 
     const PolicyGateManifest sourceManifest =
         write_policy_gate_smoke_manifest(paths.sourceJson, make_policy_gate_smoke_manifest());
@@ -10602,7 +10870,8 @@ int run_policy_pipeline_script(
     if (mode != "quick") {
         command << " --report-out " << shell_quote(paths.reportPath.string())
                 << " --zip-out " << shell_quote(paths.zipPath.string())
-                << " --curated-zip " << shell_quote(paths.curatedZipPath.string());
+                << " --curated-zip " << shell_quote(paths.curatedZipPath.string())
+                << " --light-ops-zip " << shell_quote(paths.lightOpsZipPath.string());
     }
     if (pruneArtifacts) {
         command << " --prune-artifacts --max-bundles 2 --max-nightly-runs 1 --keep-approved";
@@ -10870,6 +11139,9 @@ void run_runtime_approve_rebaseline_case(const TestOptions& options) {
         "--runtime-baseline-out " + shell_quote(baselinePath.string()),
         "--baseline-tag " + shell_quote(options.baselineTag.value_or(string("runtime-approved"))),
     };
+    if (options.runtimeProposalGate.has_value() && !options.runtimeProposalGate->empty()) {
+        args.push_back("--runtime-proposal-gate " + shell_quote(*options.runtimeProposalGate));
+    }
     if (options.activate) {
         args.push_back("--activate");
     }
@@ -10892,6 +11164,10 @@ filesystem::path default_runtime_selection_output_path(const filesystem::path& c
 
 filesystem::path default_runtime_proposal_output_path(const filesystem::path& currentPath) {
     return currentPath.parent_path() / (currentPath.stem().string() + "_rebaseline_proposal.json");
+}
+
+filesystem::path default_runtime_proposal_gate_output_path(const filesystem::path& currentPath) {
+    return currentPath.parent_path() / (currentPath.stem().string() + "_proposal_gate.json");
 }
 
 void run_runtime_registry_promote_baseline_case(const TestOptions& options) {
@@ -11086,6 +11362,201 @@ void run_runtime_propose_rebaseline_case(const TestOptions& options) {
         throw runtime_error("runtime_propose_rebaseline failed");
     }
     cout << slurp_text_file(proposalPath.parent_path() / (proposalPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_proposal_gate_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path proposalPath = require_runtime_manifest_path(
+        options.proposalOut,
+        "--runtime-proposal"
+    );
+    const filesystem::path historyPath = require_runtime_manifest_path(
+        options.runtimeHistoryIndex,
+        "--runtime-history-index"
+    );
+    const filesystem::path watchCurrentPath = require_runtime_manifest_path(
+        options.runtimeWatchCurrent,
+        "--runtime-watch-current"
+    );
+    const filesystem::path watchRefreshPath = require_runtime_manifest_path(
+        options.runtimeWatchRefresh,
+        "--runtime-watch-refresh"
+    );
+    const filesystem::path gatePath = filesystem::absolute(
+        options.runtimeProposalGate.has_value()
+            ? *options.runtimeProposalGate
+            : default_runtime_proposal_gate_output_path(currentPath).string()
+    );
+    vector<string> args = {
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        "--runtime-proposal " + shell_quote(proposalPath.string()),
+        "--runtime-history-index " + shell_quote(historyPath.string()),
+        "--runtime-watch-current " + shell_quote(watchCurrentPath.string()),
+        "--runtime-watch-refresh " + shell_quote(watchRefreshPath.string()),
+        "--proposal-gate-out " + shell_quote(gatePath.string()),
+        "--min-real-samples-release " + to_string(max(options.minRealSamplesRelease, 1)),
+        "--min-real-samples-debug " + to_string(max(options.minRealSamplesDebug, 1)),
+        "--min-real-samples-asan " + to_string(max(options.minRealSamplesAsan, 1)),
+        "--min-watch-confidence " + shell_quote(options.minWatchConfidence.value_or(string("MEDIUM"))),
+    };
+    const int rc = run_runtime_lifecycle_script("proposal-gate", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_proposal_gate failed");
+    }
+    cout << slurp_text_file(gatePath.parent_path() / (gatePath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_budget_proposal_gate_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path baselinePath = require_runtime_manifest_path(
+        options.runtimeBaselineManifest,
+        "--runtime-baseline-manifest"
+    );
+    const filesystem::path historyPath = require_runtime_manifest_path(
+        options.runtimeHistoryIndex,
+        "--runtime-history-index"
+    );
+    const filesystem::path watchCurrentPath = require_runtime_manifest_path(
+        options.runtimeWatchCurrent,
+        "--runtime-watch-current"
+    );
+    const filesystem::path watchRefreshPath = require_runtime_manifest_path(
+        options.runtimeWatchRefresh,
+        "--runtime-watch-refresh"
+    );
+    const filesystem::path budgetCurrentPath = require_runtime_manifest_path(
+        options.runtimeBudgetCurrentManifest,
+        "--runtime-budget-current"
+    );
+    const filesystem::path proposalPath = require_runtime_manifest_path(
+        options.runtimeBudgetProposal,
+        "--runtime-budget-proposal"
+    );
+    const filesystem::path gatePath = require_runtime_manifest_path(
+        options.runtimeBudgetProposalGate,
+        "--runtime-budget-proposal-gate"
+    );
+    vector<string> args = {
+        "--runtime-current-manifest " + shell_quote(currentPath.string()),
+        "--runtime-baseline-manifest " + shell_quote(baselinePath.string()),
+        "--runtime-watch-current " + shell_quote(watchCurrentPath.string()),
+        "--runtime-watch-refresh " + shell_quote(watchRefreshPath.string()),
+        "--runtime-history-index " + shell_quote(historyPath.string()),
+        "--runtime-budget-current " + shell_quote(budgetCurrentPath.string()),
+        "--runtime-budget-proposal " + shell_quote(proposalPath.string()),
+        "--runtime-budget-proposal-gate " + shell_quote(gatePath.string()),
+        "--min-real-samples-release " + to_string(max(options.minRealSamplesRelease, 1)),
+        "--max-hard-breach-count " + to_string(max(options.maxHardBreachCount, 0)),
+        "--min-watch-confidence " + shell_quote(options.minWatchConfidence.value_or(string("MEDIUM"))),
+    };
+    if (options.runtimeBudgetConfig.has_value() && !options.runtimeBudgetConfig->empty()) {
+        args.push_back("--runtime-budget-config " + shell_quote(*options.runtimeBudgetConfig));
+    }
+    if (options.budgetTag.has_value() && !options.budgetTag->empty()) {
+        args.push_back("--budget-tag " + shell_quote(*options.budgetTag));
+    }
+    const int rc = run_runtime_lifecycle_script("budget-proposal-gate", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_budget_proposal_gate failed");
+    }
+    cout << slurp_text_file(gatePath.parent_path() / (gatePath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_budget_approve_reprofile_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeBudgetCurrentManifest,
+        "--runtime-budget-current"
+    );
+    const filesystem::path proposalPath = require_runtime_manifest_path(
+        options.runtimeBudgetProposal,
+        "--runtime-budget-proposal"
+    );
+    const filesystem::path gatePath = require_runtime_manifest_path(
+        options.runtimeBudgetProposalGate,
+        "--runtime-budget-proposal-gate"
+    );
+    const filesystem::path registryPath = require_runtime_manifest_path(
+        options.runtimeBudgetRegistry,
+        "--runtime-budget-registry"
+    );
+    const filesystem::path baselinePath = require_runtime_manifest_path(
+        options.runtimeBudgetBaselineManifest,
+        "--runtime-budget-baseline-out"
+    );
+    vector<string> args = {
+        "--runtime-budget-current " + shell_quote(currentPath.string()),
+        "--runtime-budget-proposal " + shell_quote(proposalPath.string()),
+        "--runtime-budget-proposal-gate " + shell_quote(gatePath.string()),
+        "--runtime-budget-registry " + shell_quote(registryPath.string()),
+        "--runtime-budget-baseline-out " + shell_quote(baselinePath.string()),
+        "--budget-tag " + shell_quote(options.budgetTag.value_or(string("runtime-budget-approved"))),
+    };
+    if (options.activate) {
+        args.push_back("--activate");
+    }
+    if (options.archiveProposal.has_value() && !options.archiveProposal->empty()) {
+        args.push_back("--archive-proposal " + shell_quote(*options.archiveProposal));
+    }
+    const int rc = run_runtime_lifecycle_script("budget-approve-reprofile", args);
+    if (rc != 0) {
+        throw runtime_error("runtime_budget_approve_reprofile failed");
+    }
+    cout << slurp_text_file(baselinePath.parent_path() / (baselinePath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_budget_refresh_case(const TestOptions& options) {
+    const filesystem::path currentPath = require_runtime_manifest_path(
+        options.runtimeCurrentManifest,
+        "--runtime-current-manifest"
+    );
+    const filesystem::path baselinePath = require_runtime_manifest_path(
+        options.runtimeBudgetBaselineManifest,
+        "--runtime-budget-baseline-manifest"
+    );
+    const filesystem::path refreshPath = require_runtime_manifest_path(
+        options.runtimeBudgetRefreshManifest,
+        "--runtime-budget-refresh"
+    );
+    const int rc = run_runtime_lifecycle_script(
+        "budget-refresh",
+        {
+            "--runtime-current-manifest " + shell_quote(currentPath.string()),
+            "--runtime-budget-baseline-manifest " + shell_quote(baselinePath.string()),
+            "--runtime-budget-refresh " + shell_quote(refreshPath.string()),
+        }
+    );
+    if (rc != 0) {
+        throw runtime_error("runtime_budget_refresh failed");
+    }
+    cout << slurp_text_file(refreshPath.parent_path() / (refreshPath.stem().string() + ".summary.txt"));
+}
+
+void run_runtime_budget_plan_rerun_case(const TestOptions& options) {
+    const filesystem::path refreshPath = require_runtime_manifest_path(
+        options.runtimeBudgetRefreshManifest,
+        "--runtime-budget-refresh"
+    );
+    const filesystem::path rerunPath = require_runtime_manifest_path(
+        options.runtimeBudgetRerunPlan,
+        "--runtime-budget-rerun"
+    );
+    const int rc = run_runtime_lifecycle_script(
+        "budget-plan-rerun",
+        {
+            "--runtime-budget-refresh " + shell_quote(refreshPath.string()),
+            "--runtime-budget-rerun " + shell_quote(rerunPath.string()),
+        }
+    );
+    if (rc != 0) {
+        throw runtime_error("runtime_budget_plan_rerun failed");
+    }
+    cout << slurp_text_file(rerunPath.parent_path() / (rerunPath.stem().string() + ".summary.txt"));
 }
 
 void run_policy_ci_check_case(const TestOptions& options) {
@@ -12942,6 +13413,107 @@ void replace_in_file_or_throw(
     ofs << text;
 }
 
+void replace_in_file_if_needed_or_throw(
+    const filesystem::path& path,
+    const string& needle,
+    const string& replacement
+) {
+    string text = slurp_text_file(path);
+    const size_t needlePos = text.find(needle);
+    if (needlePos == string::npos) {
+        if (text.find(replacement) != string::npos) {
+            return;
+        }
+        throw runtime_error("replace_in_file_if_needed_or_throw missing token in " + path.string());
+    }
+    text.replace(needlePos, needle.size(), replacement);
+    ofstream ofs(path);
+    if (!ofs) {
+        throw runtime_error("failed to rewrite file: " + path.string());
+    }
+    ofs << text;
+}
+
+void replace_all_in_file_or_throw(
+    const filesystem::path& path,
+    const string& needle,
+    const string& replacement
+) {
+    string text = slurp_text_file(path);
+    size_t pos = 0U;
+    size_t replacements = 0U;
+    while ((pos = text.find(needle, pos)) != string::npos) {
+        text.replace(pos, needle.size(), replacement);
+        pos += replacement.size();
+        ++replacements;
+    }
+    if (replacements == 0U) {
+        throw runtime_error("replace_all_in_file_or_throw missing token in " + path.string());
+    }
+    ofstream ofs(path);
+    if (!ofs) {
+        throw runtime_error("failed to rewrite file: " + path.string());
+    }
+    ofs << text;
+}
+
+void replace_all_in_file_if_needed_or_throw(
+    const filesystem::path& path,
+    const string& needle,
+    const string& replacement
+) {
+    string text = slurp_text_file(path);
+    size_t pos = 0U;
+    size_t replacements = 0U;
+    while ((pos = text.find(needle, pos)) != string::npos) {
+        text.replace(pos, needle.size(), replacement);
+        pos += replacement.size();
+        ++replacements;
+    }
+    if (replacements == 0U) {
+        if (text.find(replacement) != string::npos) {
+            return;
+        }
+        throw runtime_error("replace_all_in_file_if_needed_or_throw missing token in " + path.string());
+    }
+    ofstream ofs(path);
+    if (!ofs) {
+        throw runtime_error("failed to rewrite file: " + path.string());
+    }
+    ofs << text;
+}
+
+void replace_json_field_after_anchor_or_throw(
+    const filesystem::path& path,
+    const string& anchorField,
+    const string& anchorValue,
+    const string& targetField,
+    const string& replacementValue
+) {
+    string text = slurp_text_file(path);
+    const string anchor = "\"" + anchorField + "\": \"" + anchorValue + "\"";
+    const size_t anchorPos = text.find(anchor);
+    if (anchorPos == string::npos) {
+        throw runtime_error("replace_json_field_after_anchor_or_throw missing anchor in " + path.string());
+    }
+    const string target = "\"" + targetField + "\": \"";
+    const size_t targetPos = text.find(target, anchorPos);
+    if (targetPos == string::npos) {
+        throw runtime_error("replace_json_field_after_anchor_or_throw missing target in " + path.string());
+    }
+    const size_t valueStart = targetPos + target.size();
+    const size_t valueEnd = text.find('"', valueStart);
+    if (valueEnd == string::npos) {
+        throw runtime_error("replace_json_field_after_anchor_or_throw malformed target in " + path.string());
+    }
+    text.replace(valueStart, valueEnd - valueStart, replacementValue);
+    ofstream ofs(path);
+    if (!ofs) {
+        throw runtime_error("failed to rewrite file: " + path.string());
+    }
+    ofs << text;
+}
+
 string extract_json_string_field_or_throw(const string& json, const string& field) {
     const string key = "\"" + field + "\"";
     const size_t keyPos = json.find(key);
@@ -12957,6 +13529,67 @@ string extract_json_string_field_or_throw(const string& json, const string& fiel
     return json.substr(firstQuote + 1U, secondQuote - firstQuote - 1U);
 }
 
+void write_text_file_or_throw(const filesystem::path& path, const string& text) {
+    filesystem::create_directories(path.parent_path());
+    ofstream ofs(path);
+    if (!ofs) {
+        throw runtime_error("failed to write file: " + path.string());
+    }
+    ofs << text;
+}
+
+filesystem::path write_runtime_import_bundle_manifest_or_throw(
+    const filesystem::path& outPath,
+    const filesystem::path& currentManifestPath,
+    const string& evidenceSource,
+    const string& runnerId,
+    const string& hostLabel
+) {
+    ostringstream json;
+    json << "{\n"
+         << "  \"runtime_current_manifest_path\": " << json_quote(currentManifestPath.string()) << ",\n"
+         << "  \"evidence_source\": " << json_quote(evidenceSource) << ",\n"
+         << "  \"runner_id\": " << json_quote(runnerId) << ",\n"
+         << "  \"host_label\": " << json_quote(hostLabel) << ",\n"
+         << "  \"created_at\": \"2026-04-04T00:00:00Z\"\n"
+         << "}\n";
+    write_text_file_or_throw(outPath, json.str());
+    return outPath;
+}
+
+filesystem::path write_approved_known_environment_summary_or_throw(
+    const filesystem::path& outPath,
+    const filesystem::path& refreshManifestPath,
+    const filesystem::path& rerunPlanPath,
+    const string& environmentLabel
+) {
+    const string refreshText = slurp_text_file(refreshManifestPath);
+    const string rerunText = slurp_text_file(rerunPlanPath);
+    const string selectedBaselineId = extract_json_string_field_or_throw(refreshText, "selected_baseline_id");
+    const string selectedBaselineTag = extract_json_string_field_or_throw(refreshText, "selected_baseline_tag");
+    const string comparability = extract_json_string_field_or_throw(refreshText, "comparability_verdict");
+    const string freshness = extract_json_string_field_or_throw(refreshText, "freshness_verdict");
+    const bool rerunEmpty = rerunText.find("\"rerun_needed\": false") != string::npos;
+    ostringstream json;
+    json << "{\n"
+         << "  \"environment_label\": " << json_quote(environmentLabel) << ",\n"
+         << "  \"severity\": \"OK\",\n"
+         << "  \"recommendation\": \"NO_ACTION\",\n"
+         << "  \"selected_baseline_id\": " << json_quote(selectedBaselineId) << ",\n"
+         << "  \"selected_baseline_tag\": " << json_quote(selectedBaselineTag) << ",\n"
+         << "  \"comparability\": " << json_quote(comparability) << ",\n"
+         << "  \"freshness\": " << json_quote(freshness) << ",\n"
+         << "  \"watch_status\": \"CLEAR\",\n"
+         << "  \"watch_confidence\": \"MEDIUM\",\n"
+         << "  \"proposal_needed\": false,\n"
+         << "  \"rationale\": ["
+         << json_quote(rerunEmpty ? "approved known environment rerun plan is empty" : "approved known environment rerun plan still needs operator review")
+         << "]\n"
+         << "}\n";
+    write_text_file_or_throw(outPath, json.str());
+    return outPath;
+}
+
 void mutate_runtime_runner_tag_or_throw(const filesystem::path& path, const string& runnerTag, const string& hostHashPrefix) {
     replace_in_file_or_throw(path, "\"runner_tag\": \"smoke-runner\"", "\"runner_tag\": \"" + runnerTag + "\"");
     replace_in_file_or_throw(path, "\"fingerprint_hash\": \"", "\"fingerprint_hash\": \"" + hostHashPrefix);
@@ -12967,14 +13600,11 @@ void mutate_runtime_compiler_version_or_throw(
     const string& compilerVersion,
     const string& hostHashPrefix
 ) {
-    replace_in_file_or_throw(
+    const string currentCompilerVersion =
+        extract_json_string_field_or_throw(slurp_text_file(path), "compiler_version");
+    replace_all_in_file_or_throw(
         path,
-        "\"compiler_version\": \"Apple clang version 17.0.0 (clang-1700.6.4.2)\"",
-        "\"compiler_version\": \"" + compilerVersion + "\""
-    );
-    replace_in_file_or_throw(
-        path,
-        "\"compiler_version\": \"Apple clang version 17.0.0 (clang-1700.6.4.2)\"",
+        "\"compiler_version\": \"" + currentCompilerVersion + "\"",
         "\"compiler_version\": \"" + compilerVersion + "\""
     );
     replace_in_file_or_throw(path, "\"fingerprint_hash\": \"", "\"fingerprint_hash\": \"" + hostHashPrefix);
@@ -13126,6 +13756,35 @@ void append_runtime_history_samples_or_throw(
     }
 }
 
+void append_runtime_history_samples_for_manifest_or_throw(
+    const filesystem::path& historyIndexJson,
+    const filesystem::path& currentJson,
+    const filesystem::path& refreshJson,
+    int repeatCount,
+    const string& evidenceSource = "real",
+    const string& runnerId = "",
+    const string& hostLabel = ""
+) {
+    for (int i = 0; i < repeatCount; ++i) {
+        vector<string> args{
+            "--runtime-history-index " + shell_quote(historyIndexJson.string()),
+            "--runtime-current-manifest " + shell_quote(currentJson.string()),
+            "--runtime-refresh-manifest " + shell_quote(refreshJson.string()),
+            "--evidence-source " + shell_quote(evidenceSource),
+        };
+        if (!runnerId.empty()) {
+            args.push_back("--runner-id " + shell_quote(runnerId));
+        }
+        if (!hostLabel.empty()) {
+            args.push_back("--host-label " + shell_quote(hostLabel));
+        }
+        require_test(
+            run_runtime_lifecycle_script("history-append", args) == 0,
+            "runtime watch smoke expected history append"
+        );
+    }
+}
+
 void run_runtime_watch_cycle_or_throw(
     const PolicyPipelineSmokeArtifacts& paths,
     const string& executionClass,
@@ -13164,8 +13823,389 @@ void run_runtime_watch_cycle_or_throw(
     );
 }
 
+void run_runtime_watch_cycle_for_manifest_or_throw(
+    const filesystem::path& baselineJson,
+    const filesystem::path& currentJson,
+    const filesystem::path& refreshJson,
+    const filesystem::path& historyIndexJson,
+    const filesystem::path& watchCurrentJson,
+    const filesystem::path& watchRefreshJson,
+    const filesystem::path& watchHistoryIndexJson,
+    const filesystem::path& budgetProfileJson,
+    const string& executionClass,
+    int repeatCount
+) {
+    require_test(
+        run_runtime_lifecycle_script(
+            "watch-campaign",
+            {
+                "--runtime-baseline-manifest " + shell_quote(baselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(currentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(refreshJson.string()),
+                "--runtime-history-index " + shell_quote(historyIndexJson.string()),
+                "--runtime-watch-current " + shell_quote(watchCurrentJson.string()),
+                "--runtime-watch-history-index " + shell_quote(watchHistoryIndexJson.string()),
+                "--runtime-budget-config " + shell_quote(budgetProfileJson.string()),
+                "--execution-class " + shell_quote(executionClass),
+                "--repeat " + to_string(max(repeatCount, 1)),
+            }
+        ) == 0,
+        "runtime watch smoke expected watch campaign"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "watch-refresh",
+            {
+                "--runtime-baseline-manifest " + shell_quote(baselineJson.string()),
+                "--runtime-current-manifest " + shell_quote(currentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(refreshJson.string()),
+                "--runtime-watch-current " + shell_quote(watchCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(watchRefreshJson.string()),
+                "--runtime-watch-history-index " + shell_quote(watchHistoryIndexJson.string()),
+            }
+        ) == 0,
+        "runtime watch smoke expected watch refresh"
+    );
+}
+
+void build_runtime_watch_registry_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const filesystem::path& matrixSummaryJson = {}
+) {
+    vector<string> args{
+        "--watch-current " + shell_quote(paths.runtimeWatchCurrentJson.string()),
+        "--watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()),
+        "--watch-history-index " + shell_quote(paths.runtimeWatchHistoryIndexJson.string()),
+        "--registry-out " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+        "--summary-out " + shell_quote(paths.runtimeWatchRegistrySummaryJson.string()),
+    };
+    if (!matrixSummaryJson.empty()) {
+        args.push_back("--matrix-summary " + shell_quote(matrixSummaryJson.string()));
+        args.push_back("--matrix-root " + shell_quote((paths.root / "matrix").string()));
+    }
+    require_test(
+        run_runtime_watch_ops_script("watch-registry", args) == 0,
+        "runtime watch smoke expected watch registry generation"
+    );
+}
+
+void build_runtime_registry_health_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const vector<filesystem::path>& approvedKnownSummaryJsons = {},
+    const vector<filesystem::path>& foreignImportSummaryJsons = {},
+    double staleAfterHours = 24.0 * 14.0,
+    double reverifyAfterHours = 24.0 * 30.0,
+    double retireAfterHours = 24.0 * 90.0,
+    const filesystem::path& governancePolicyJson = {},
+    const string& currentTimeOverride = {},
+    const string& phase = "phase35"
+) {
+    vector<string> args{
+        "--phase " + phase,
+        "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+        "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+        "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+        "--runtime-refresh " + shell_quote(paths.runtimeRefreshJson.string()),
+        "--health-out " + shell_quote(paths.runtimeRegistryHealthJson.string()),
+        "--out-text " + shell_quote(paths.runtimeRegistryHealthTxt.string()),
+        "--stale-after-hours " + to_string(staleAfterHours),
+        "--reverify-after-hours " + to_string(reverifyAfterHours),
+        "--retire-after-hours " + to_string(retireAfterHours),
+    };
+    for (const filesystem::path& path : approvedKnownSummaryJsons) {
+        args.push_back("--approved-known-summary " + shell_quote(path.string()));
+    }
+    for (const filesystem::path& path : foreignImportSummaryJsons) {
+        args.push_back("--foreign-import-summary " + shell_quote(path.string()));
+    }
+    if (!governancePolicyJson.empty()) {
+        args.push_back("--governance-policy " + shell_quote(governancePolicyJson.string()));
+    }
+    if (!currentTimeOverride.empty()) {
+        args.push_back("--current-time-override " + shell_quote(currentTimeOverride));
+    }
+    require_test(
+        run_runtime_watch_ops_script("registry-health", args) == 0,
+        "runtime registry health smoke expected registry health generation"
+    );
+}
+
+void build_policy_ops_summary_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const filesystem::path& quickSummaryJson,
+    const filesystem::path& nightlySummaryJson,
+    const filesystem::path& matrixSummaryJson,
+    const filesystem::path& runtimeRegistryHealthJson = {},
+    const filesystem::path& publicationHealthJson = {},
+    const vector<filesystem::path>& approvedKnownSummaryJsons = {},
+    const vector<filesystem::path>& foreignImportSummaryJsons = {},
+    const filesystem::path& currentEnvGovernancePolicyJson = {},
+    const filesystem::path& currentEnvGuardrailPolicyJson = {},
+    const filesystem::path& currentEnvWatchCurrentJson = {},
+    const filesystem::path& currentEnvWatchRefreshJson = {},
+    const filesystem::path& currentEnvWatchHistoryJson = {},
+    const filesystem::path& currentEnvAgeTickJson = {},
+    const filesystem::path& currentEnvWatchPlanJson = {},
+    const filesystem::path& currentEnvTriggerGateJson = {},
+    const filesystem::path& runtimeBudgetCurrentJson = {},
+    const filesystem::path& runtimeBudgetProposalJson = {},
+    const filesystem::path& runtimeBudgetProposalGateJson = {},
+    const filesystem::path& runtimeBudgetBaselineJson = {},
+    const filesystem::path& runtimeBudgetRefreshJson = {},
+    const string& phase = "phase35",
+    const filesystem::path& runtimeBudgetReproposalHistoryJson = {},
+    const filesystem::path& runtimeBudgetRegistrySummaryJson = {},
+    const filesystem::path& currentEnvDueJson = {},
+    const filesystem::path& currentEnvReproposalPlanJson = {},
+    const filesystem::path& opsAgendaJson = {},
+    const filesystem::path& currentEnvWatchExecuteJson = {},
+    const filesystem::path& currentEnvWatchApplyJson = {},
+    const filesystem::path& currentEnvReproposalExecuteJson = {},
+    const filesystem::path& currentEnvActionLedgerJson = {},
+    const filesystem::path& currentEnvActionRetryPlanJson = {},
+    const filesystem::path& currentEnvReproposalHandoffJson = {},
+    const filesystem::path& currentEnvOperatorDecisionJson = {},
+    const filesystem::path& currentEnvOperatorDecisionApplyJson = {},
+    const filesystem::path& currentEnvActionLedgerCompactJson = {},
+    const filesystem::path& currentEnvActionLedgerArchiveJson = {},
+    const filesystem::path& currentEnvApprovalRunbookJson = {},
+    const filesystem::path& currentEnvBudgetApprovalExecutionJson = {},
+    const filesystem::path& currentEnvApprovalLinkJson = {}
+) {
+    vector<string> args{
+        "--phase " + phase,
+        "--policy-manifest " + shell_quote(paths.currentJson.string()),
+        "--quick-summary " + shell_quote(quickSummaryJson.string()),
+        "--nightly-summary " + shell_quote(nightlySummaryJson.string()),
+        "--matrix-summary " + shell_quote(matrixSummaryJson.string()),
+        "--runtime-refresh " + shell_quote(paths.runtimeRefreshJson.string()),
+        "--runtime-watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()),
+        "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+        "--out " + shell_quote(paths.opsSummaryJson.string()),
+        "--out-text " + shell_quote(paths.opsSummaryTxt.string()),
+    };
+    if (!paths.runtimeRegistryJson.empty()) {
+        args.push_back("--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()));
+    }
+    if (!runtimeRegistryHealthJson.empty()) {
+        args.push_back("--runtime-registry-health " + shell_quote(runtimeRegistryHealthJson.string()));
+    }
+    if (!publicationHealthJson.empty()) {
+        args.push_back("--publication-health " + shell_quote(publicationHealthJson.string()));
+    }
+    if (!currentEnvGovernancePolicyJson.empty()) {
+        args.push_back("--current-env-governance-policy " + shell_quote(currentEnvGovernancePolicyJson.string()));
+    }
+    if (!currentEnvGuardrailPolicyJson.empty()) {
+        args.push_back("--current-env-guardrail-policy " + shell_quote(currentEnvGuardrailPolicyJson.string()));
+    }
+    if (!currentEnvWatchCurrentJson.empty()) {
+        args.push_back("--current-env-watch-current " + shell_quote(currentEnvWatchCurrentJson.string()));
+    }
+    if (!currentEnvWatchRefreshJson.empty()) {
+        args.push_back("--current-env-watch-refresh " + shell_quote(currentEnvWatchRefreshJson.string()));
+    }
+    if (!currentEnvWatchHistoryJson.empty()) {
+        args.push_back("--current-env-watch-history " + shell_quote(currentEnvWatchHistoryJson.string()));
+    }
+    if (!currentEnvAgeTickJson.empty()) {
+        args.push_back("--current-env-age-tick " + shell_quote(currentEnvAgeTickJson.string()));
+    }
+    if (!currentEnvWatchPlanJson.empty()) {
+        args.push_back("--current-env-watch-plan " + shell_quote(currentEnvWatchPlanJson.string()));
+    }
+    if (!currentEnvTriggerGateJson.empty()) {
+        args.push_back("--current-env-trigger-gate " + shell_quote(currentEnvTriggerGateJson.string()));
+    }
+    if (!currentEnvDueJson.empty()) {
+        args.push_back("--current-env-due " + shell_quote(currentEnvDueJson.string()));
+    }
+    if (!currentEnvReproposalPlanJson.empty()) {
+        args.push_back("--current-env-reproposal-plan " + shell_quote(currentEnvReproposalPlanJson.string()));
+    }
+    if (!opsAgendaJson.empty()) {
+        args.push_back("--ops-agenda " + shell_quote(opsAgendaJson.string()));
+    }
+    if (!currentEnvWatchExecuteJson.empty()) {
+        args.push_back("--current-env-watch-execute " + shell_quote(currentEnvWatchExecuteJson.string()));
+    }
+    if (!currentEnvWatchApplyJson.empty()) {
+        args.push_back("--current-env-watch-apply " + shell_quote(currentEnvWatchApplyJson.string()));
+    }
+    if (!currentEnvReproposalExecuteJson.empty()) {
+        args.push_back("--current-env-reproposal-execute " + shell_quote(currentEnvReproposalExecuteJson.string()));
+    }
+    if (!currentEnvActionLedgerJson.empty()) {
+        args.push_back("--current-env-action-ledger " + shell_quote(currentEnvActionLedgerJson.string()));
+    }
+    if (!currentEnvActionRetryPlanJson.empty()) {
+        args.push_back("--current-env-retry-plan " + shell_quote(currentEnvActionRetryPlanJson.string()));
+    }
+    if (!currentEnvReproposalHandoffJson.empty()) {
+        args.push_back("--current-env-reproposal-handoff " + shell_quote(currentEnvReproposalHandoffJson.string()));
+    }
+    if (!currentEnvOperatorDecisionJson.empty()) {
+        args.push_back("--current-env-operator-decision " + shell_quote(currentEnvOperatorDecisionJson.string()));
+    }
+    if (!currentEnvOperatorDecisionApplyJson.empty()) {
+        args.push_back("--current-env-operator-decision-apply " + shell_quote(currentEnvOperatorDecisionApplyJson.string()));
+    }
+    if (!currentEnvActionLedgerCompactJson.empty()) {
+        args.push_back("--current-env-action-ledger-compact " + shell_quote(currentEnvActionLedgerCompactJson.string()));
+    }
+    if (!currentEnvActionLedgerArchiveJson.empty()) {
+        args.push_back("--current-env-action-ledger-archive " + shell_quote(currentEnvActionLedgerArchiveJson.string()));
+    }
+    if (!runtimeBudgetCurrentJson.empty()) {
+        args.push_back("--runtime-budget-current " + shell_quote(runtimeBudgetCurrentJson.string()));
+    }
+    if (!runtimeBudgetProposalJson.empty()) {
+        args.push_back("--runtime-budget-proposal " + shell_quote(runtimeBudgetProposalJson.string()));
+    }
+    if (!runtimeBudgetProposalGateJson.empty()) {
+        args.push_back("--runtime-budget-proposal-gate " + shell_quote(runtimeBudgetProposalGateJson.string()));
+    }
+    if (!runtimeBudgetBaselineJson.empty()) {
+        args.push_back("--runtime-budget-baseline " + shell_quote(runtimeBudgetBaselineJson.string()));
+    }
+    if (!runtimeBudgetRefreshJson.empty()) {
+        args.push_back("--runtime-budget-refresh " + shell_quote(runtimeBudgetRefreshJson.string()));
+    }
+    if (!runtimeBudgetReproposalHistoryJson.empty()) {
+        args.push_back("--runtime-budget-reproposal-history " + shell_quote(runtimeBudgetReproposalHistoryJson.string()));
+    }
+    if (!runtimeBudgetRegistrySummaryJson.empty()) {
+        args.push_back("--runtime-budget-registry-summary " + shell_quote(runtimeBudgetRegistrySummaryJson.string()));
+    }
+    if (!currentEnvApprovalRunbookJson.empty()) {
+        args.push_back("--current-env-approval-runbook " + shell_quote(currentEnvApprovalRunbookJson.string()));
+    }
+    if (!currentEnvBudgetApprovalExecutionJson.empty()) {
+        args.push_back("--current-env-approval-execution " + shell_quote(currentEnvBudgetApprovalExecutionJson.string()));
+    }
+    if (!currentEnvApprovalLinkJson.empty()) {
+        args.push_back("--current-env-approval-link " + shell_quote(currentEnvApprovalLinkJson.string()));
+    }
+    for (const filesystem::path& path : approvedKnownSummaryJsons) {
+        args.push_back("--approved-known-summary " + shell_quote(path.string()));
+    }
+    for (const filesystem::path& path : foreignImportSummaryJsons) {
+        args.push_back("--foreign-import-summary " + shell_quote(path.string()));
+    }
+    require_test(
+        run_runtime_watch_ops_script("ops-summary", args) == 0,
+        "runtime watch smoke expected policy ops summary generation"
+    );
+}
+
+filesystem::path materialize_known_env_governance_policy_or_throw(
+    const filesystem::path& artifactRoot,
+    const string& phase = "phase40"
+) {
+    const filesystem::path policySource =
+        source_package_root() / "tests" / "runtime_known_env_governance_phase40.json";
+    const filesystem::path policyOut = artifactRoot / "manifests" / "runtime_known_env_governance_phase40.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-governance-policy",
+            {
+                "--phase " + phase,
+                "--policy-source " + shell_quote(policySource.string()),
+                "--policy-out " + shell_quote(policyOut.string()),
+            }
+        ) == 0,
+        "known env governance policy expected policy materialization"
+    );
+    return policyOut;
+}
+
+filesystem::path materialize_current_env_governance_policy_or_throw(
+    const filesystem::path& artifactRoot,
+    const string& phase = "phase41"
+) {
+    const filesystem::path policySource =
+        source_package_root() / "tests" / "runtime_current_env_governance_phase41.json";
+    const filesystem::path policyOut = artifactRoot / "manifests" / "runtime_current_env_governance_phase41.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-governance-policy",
+            {
+                "--phase " + phase,
+                "--policy-source " + shell_quote(policySource.string()),
+                "--policy-out " + shell_quote(policyOut.string()),
+            }
+        ) == 0,
+        "current env governance policy expected policy materialization"
+    );
+    return policyOut;
+}
+
+filesystem::path materialize_current_env_guardrail_policy_or_throw(
+    const filesystem::path& artifactRoot,
+    const string& phase = "phase42"
+) {
+    const string policyFile = phase == "phase45"
+        ? "runtime_current_env_guardrail_phase44.json"
+        : phase == "phase44"
+        ? "runtime_current_env_guardrail_phase44.json"
+        : phase == "phase43"
+        ? "runtime_current_env_guardrail_phase43.json"
+        : "runtime_current_env_guardrail_phase42.json";
+    const filesystem::path policySource =
+        source_package_root() / "tests" / policyFile;
+    const filesystem::path policyOut = artifactRoot / "manifests" / policyFile;
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-guardrail-policy",
+            {
+                "--phase " + phase,
+                "--policy-source " + shell_quote(policySource.string()),
+                "--policy-out " + shell_quote(policyOut.string()),
+            }
+        ) == 0,
+        "current env guardrail policy expected policy materialization"
+    );
+    return policyOut;
+}
+
+void build_publication_health_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const filesystem::path& publishedRoot,
+    const filesystem::path& authoritativeRoot
+) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "publication-health",
+            {
+                "--phase phase35",
+                "--published-root " + shell_quote(publishedRoot.string()),
+                "--authoritative-root " + shell_quote(authoritativeRoot.string()),
+                "--health-out " + shell_quote(paths.publicationHealthJson.string()),
+                "--out-text " + shell_quote(paths.publicationHealthTxt.string()),
+                "--expect-bundles",
+                "--expect-manifests",
+                "--expect-report",
+            }
+        ) == 0,
+        "publication health smoke expected publication health generation"
+    );
+}
+
+int run_staged_runner_script(
+    const vector<string>& args
+) {
+    ostringstream command;
+    command << shell_quote("/usr/bin/python3") << ' '
+            << shell_quote(policy_tools_script_path("run_ctest_staged.py").string());
+    for (const string& arg : args) {
+        command << ' ' << arg;
+    }
+    return normalized_process_exit_code(system(command.str().c_str()));
+}
+
 struct RuntimeRebaselineSmokeArtifacts {
     PolicyPipelineSmokeArtifacts paths;
+    filesystem::path proposalGateJson;
     filesystem::path approvedBaselineJson;
     filesystem::path archivedProposalJson;
     filesystem::path refreshedRuntimeJson;
@@ -13174,12 +14214,1679 @@ struct RuntimeRebaselineSmokeArtifacts {
     filesystem::path nightlySummaryJson;
 };
 
+struct RuntimeBudgetLifecycleSmokeArtifacts {
+    PolicyPipelineSmokeArtifacts paths;
+    filesystem::path quickSummaryJson;
+    filesystem::path nightlySummaryJson;
+    filesystem::path matrixSummaryJson;
+    filesystem::path currentEnvGovernancePolicyJson;
+    filesystem::path currentEnvGuardrailPolicyJson;
+    filesystem::path currentEnvWatchCurrentJson;
+    filesystem::path currentEnvWatchRefreshJson;
+    filesystem::path currentEnvWatchHistoryJson;
+    filesystem::path currentEnvAgeTickJson;
+    filesystem::path currentEnvWatchPlanJson;
+    filesystem::path currentEnvTriggerGateJson;
+    filesystem::path currentEnvDueJson;
+    filesystem::path currentEnvReproposalPlanJson;
+    filesystem::path opsAgendaJson;
+    filesystem::path currentEnvWatchExecuteJson;
+    filesystem::path currentEnvWatchApplyJson;
+    filesystem::path currentEnvReproposalExecuteJson;
+    filesystem::path currentEnvActionLedgerJson;
+    filesystem::path currentEnvActionRetryPolicyJson;
+    filesystem::path currentEnvActionRetryPlanJson;
+    filesystem::path currentEnvReproposalHandoffJson;
+    filesystem::path currentEnvOperatorDecisionJson;
+    filesystem::path currentEnvOperatorDecisionApplyJson;
+    filesystem::path currentEnvActionLedgerUpdatedJson;
+    filesystem::path currentEnvActionLedgerCompactJson;
+    filesystem::path currentEnvActionLedgerArchiveJson;
+    filesystem::path currentEnvApprovalRunbookJson;
+    filesystem::path currentEnvBudgetApprovalExecutionJson;
+    filesystem::path currentEnvApprovalLinkJson;
+    filesystem::path currentEnvActionLedgerApprovalLinkedJson;
+    filesystem::path operatorRunbookIndexJson;
+    filesystem::path sourceHealthPreflightJson;
+    filesystem::path sourceHealthPreflightSummaryTxt;
+    filesystem::path stagedMaterializationJson;
+    filesystem::path currentEnvActionLedgerInvariantsJson;
+    filesystem::path runtimeBudgetBaselinePhase47Json;
+    filesystem::path runtimeBudgetProposalPhase47ArchivedJson;
+    filesystem::path currentEnvNextCycleDueSoonJson;
+    filesystem::path currentEnvNextCycleMonitoringDueJson;
+    filesystem::path currentEnvNextCycleReproposalDueJson;
+    filesystem::path currentEnvNextCycleOverdueJson;
+    filesystem::path runtimeBudgetReproposalHistoryJson;
+    filesystem::path runtimeBudgetRegistrySummaryJson;
+};
+
+void approve_runtime_budget_smoke_artifacts(
+    const TestOptions& options,
+    const RuntimeBudgetLifecycleSmokeArtifacts& artifacts
+);
+
+void normalize_policy_refresh_for_budget_smoke_or_throw(const PolicyPipelineSmokeArtifacts& paths) {
+    const string refreshText = slurp_text_file(paths.refreshJson);
+    const string rerunText = slurp_text_file(paths.rerunJson);
+    if (refreshText.find("\"freshness_verdict\":\"FRESH\"") != string::npos &&
+        refreshText.find("\"requires_rerun_family_count\":0") != string::npos &&
+        rerunText.find("\"summary_verdict\":\"PASS\"") != string::npos &&
+        rerunText.find("\"selected_entry_count\":0") != string::npos) {
+        return;
+    }
+    replace_in_file_if_needed_or_throw(paths.refreshJson, "\"freshness_verdict\":\"REQUIRES_RERUN\"", "\"freshness_verdict\":\"FRESH\"");
+    replace_in_file_if_needed_or_throw(paths.refreshJson, "\"fresh_family_count\":0", "\"fresh_family_count\":4");
+    replace_in_file_if_needed_or_throw(paths.refreshJson, "\"requires_rerun_family_count\":4", "\"requires_rerun_family_count\":0");
+    replace_all_in_file_if_needed_or_throw(paths.refreshJson, "\"freshness_status\":\"REQUIRES_RERUN\"", "\"freshness_status\":\"FRESH\"");
+    replace_all_in_file_if_needed_or_throw(
+        paths.refreshJson,
+        "\"freshness_rationale\":\"relevant input hashes missing\"",
+        "\"freshness_rationale\":\"budget smoke reuses canonical freshness fixture\""
+    );
+    replace_in_file_if_needed_or_throw(paths.rerunJson, "\"requires_rerun_family_count\":4", "\"requires_rerun_family_count\":0");
+    replace_in_file_if_needed_or_throw(paths.rerunJson, "\"selected_entry_count\":4", "\"selected_entry_count\":0");
+    replace_in_file_if_needed_or_throw(paths.rerunJson, "\"summary_verdict\":\"RERUN_REQUIRED\"", "\"summary_verdict\":\"PASS\"");
+    replace_in_file_if_needed_or_throw(
+        paths.rerunJson,
+        "\"rationale\":\"rerun entries generated for stale or requires_rerun families\"",
+        "\"rationale\":\"budget smoke reuses canonical policy manifests without requiring a correctness rerun\""
+    );
+}
+
+void build_current_env_watch_budget_lifecycle_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& phase = "phase41"
+) {
+    artifacts.currentEnvGovernancePolicyJson =
+        materialize_current_env_governance_policy_or_throw(artifacts.paths.root, phase);
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-watch-current",
+            {
+                "--phase " + phase,
+                "--runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+                "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+                "--runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()),
+                "--governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()),
+                "--out " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+            }
+        ) == 0,
+        "current env watch lifecycle expected current artifact generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-watch-refresh",
+            {
+                "--phase " + phase,
+                "--runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+                "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()),
+                "--runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()),
+                "--runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()),
+                "--out " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()),
+            }
+        ) == 0,
+        "current env watch lifecycle expected refresh artifact generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-watch-history",
+            {
+                "--phase " + phase,
+                "--runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()),
+                "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+                "--runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()),
+                "--governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()),
+                "--out " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+            }
+        ) == 0,
+        "current env watch lifecycle expected history artifact generation"
+    );
+}
+
+void configure_current_env_guardrail_artifacts_for_phase(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& phase
+) {
+    artifacts.currentEnvGuardrailPolicyJson = artifacts.paths.root / "manifests" / ("runtime_current_env_guardrail_" + phase + ".json");
+    artifacts.currentEnvWatchCurrentJson = artifacts.paths.root / "manifests" / ("runtime_current_env_watch_" + phase + ".json");
+    artifacts.currentEnvWatchRefreshJson = artifacts.paths.root / "manifests" / ("runtime_current_env_watch_refresh_" + phase + ".json");
+    artifacts.currentEnvWatchHistoryJson = artifacts.paths.root / "manifests" / ("runtime_current_env_watch_history_" + phase + ".json");
+    artifacts.currentEnvAgeTickJson = artifacts.paths.root / "manifests" / ("runtime_current_env_age_tick_" + phase + ".json");
+    artifacts.currentEnvWatchPlanJson = artifacts.paths.root / "manifests" / ("runtime_current_env_watch_plan_" + phase + ".json");
+    artifacts.currentEnvTriggerGateJson = artifacts.paths.root / "manifests" / ("runtime_current_env_reproposal_trigger_gate_" + phase + ".json");
+    artifacts.currentEnvDueJson = artifacts.paths.root / "manifests" / ("runtime_current_env_due_" + phase + ".json");
+    artifacts.currentEnvReproposalPlanJson = artifacts.paths.root / "manifests" / ("runtime_current_env_reproposal_plan_" + phase + ".json");
+    artifacts.opsAgendaJson = artifacts.paths.root / "manifests" / ("policy_ops_agenda_" + phase + ".json");
+    artifacts.currentEnvWatchExecuteJson = artifacts.paths.root / "manifests" / ("runtime_current_env_watch_execute_" + phase + ".json");
+    artifacts.currentEnvWatchApplyJson = artifacts.paths.root / "manifests" / ("runtime_current_env_watch_apply_" + phase + ".json");
+    artifacts.currentEnvReproposalExecuteJson = artifacts.paths.root / "manifests" / ("runtime_current_env_reproposal_execute_" + phase + ".json");
+    artifacts.currentEnvActionLedgerJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_" + phase + ".json");
+    artifacts.currentEnvActionRetryPolicyJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_retry_" + phase + ".json");
+    artifacts.currentEnvActionRetryPlanJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_retry_plan_" + phase + ".json");
+    artifacts.currentEnvReproposalHandoffJson = artifacts.paths.root / "manifests" / ("runtime_current_env_reproposal_handoff_" + phase + ".json");
+    artifacts.currentEnvOperatorDecisionJson = artifacts.paths.root / "manifests" / ("runtime_current_env_operator_decision_" + phase + ".json");
+    artifacts.currentEnvOperatorDecisionApplyJson = artifacts.paths.root / "manifests" / ("runtime_current_env_operator_decision_apply_" + phase + ".json");
+    artifacts.currentEnvActionLedgerUpdatedJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_after_decision_" + phase + ".json");
+    artifacts.currentEnvActionLedgerCompactJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_compact_" + phase + ".json");
+    artifacts.currentEnvActionLedgerArchiveJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_archive_" + phase + ".json");
+    artifacts.currentEnvApprovalRunbookJson = artifacts.paths.root / "manifests" / ("runtime_current_env_approval_runbook_" + phase + ".json");
+    artifacts.currentEnvBudgetApprovalExecutionJson = artifacts.paths.root / "manifests" / ("runtime_current_env_budget_approval_execution_" + phase + ".json");
+    artifacts.currentEnvApprovalLinkJson = artifacts.paths.root / "manifests" / ("runtime_current_env_approval_link_" + phase + ".json");
+    artifacts.currentEnvActionLedgerApprovalLinkedJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_approval_linked_" + phase + ".json");
+    artifacts.operatorRunbookIndexJson = artifacts.paths.root / "manifests" / ("operator_runbook_index_" + phase + ".json");
+    artifacts.sourceHealthPreflightJson = artifacts.paths.root / "manifests" / ("source_health_preflight_" + phase + ".json");
+    artifacts.sourceHealthPreflightSummaryTxt = artifacts.paths.root / "manifests" / ("source_health_preflight_" + phase + ".summary.txt");
+    artifacts.stagedMaterializationJson = artifacts.paths.root / "manifests" / ("staged_materialization_" + phase + ".json");
+    artifacts.currentEnvActionLedgerInvariantsJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_invariants_" + phase + ".json");
+    artifacts.runtimeBudgetBaselinePhase47Json = artifacts.paths.root / "manifests" / ("runtime_budget_baseline_" + phase + "_approved.json");
+    artifacts.runtimeBudgetProposalPhase47ArchivedJson = artifacts.paths.root / "manifests" / ("runtime_budget_proposal_" + phase + "_archived.json");
+    artifacts.currentEnvNextCycleDueSoonJson = artifacts.paths.root / "manifests" / ("runtime_current_env_next_cycle_due_soon_" + phase + ".json");
+    artifacts.currentEnvNextCycleMonitoringDueJson = artifacts.paths.root / "manifests" / ("runtime_current_env_next_cycle_monitoring_due_" + phase + ".json");
+    artifacts.currentEnvNextCycleReproposalDueJson = artifacts.paths.root / "manifests" / ("runtime_current_env_next_cycle_reproposal_due_" + phase + ".json");
+    artifacts.currentEnvNextCycleOverdueJson = artifacts.paths.root / "manifests" / ("runtime_current_env_next_cycle_overdue_" + phase + ".json");
+    artifacts.runtimeBudgetReproposalHistoryJson = artifacts.paths.root / "manifests" / ("runtime_budget_reproposal_history_" + phase + ".json");
+    artifacts.runtimeBudgetRegistrySummaryJson = artifacts.paths.root / "manifests" / ("runtime_budget_registry_" + phase + "_summary.json");
+}
+
+void pin_runtime_budget_approval_timestamp_or_throw(
+    const RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& approvalTimestamp
+);
+
+void build_current_env_guardrail_lifecycle_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& phase = "phase42",
+    double advanceDays = 0.0,
+    const string& currentTimeOverride = ""
+) {
+    artifacts.currentEnvGuardrailPolicyJson =
+        materialize_current_env_guardrail_policy_or_throw(artifacts.paths.root, phase);
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-watch-current",
+            {
+                "--phase " + phase,
+                "--runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+                "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+                "--runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()),
+                "--governance-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--out " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+            }
+        ) == 0,
+        "current env guardrail expected current watch artifact generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-watch-refresh",
+            {
+                "--phase " + phase,
+                "--runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+                "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()),
+                "--runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()),
+                "--runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--governance-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--out " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()),
+            }
+        ) == 0,
+        "current env guardrail expected refresh watch artifact generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-watch-history",
+            {
+                "--phase " + phase,
+                "--runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()),
+                "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+                "--runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--governance-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--out " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+            }
+        ) == 0,
+        "current env guardrail expected history artifact generation"
+    );
+    vector<string> ageTickArgs{
+        "--phase " + phase,
+        "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+        "--runtime-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+        "--runtime-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()),
+        "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+        "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+        "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+        "--advance-days " + to_string(advanceDays),
+        "--age-tick-out " + shell_quote(artifacts.currentEnvAgeTickJson.string()),
+    };
+    if (!currentTimeOverride.empty()) {
+        ageTickArgs.push_back("--current-time-override " + shell_quote(currentTimeOverride));
+    }
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-age-tick",
+            ageTickArgs
+        ) == 0,
+        "current env guardrail expected age tick generation"
+    );
+    vector<string> planWatchArgs{
+        "--phase " + phase,
+        "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+        "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+        "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+        "--current-env-age-tick " + shell_quote(artifacts.currentEnvAgeTickJson.string()),
+        "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+        "--runtime-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+        "--runtime-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()),
+        "--plan-out " + shell_quote(artifacts.currentEnvWatchPlanJson.string()),
+    };
+    if (!currentTimeOverride.empty()) {
+        planWatchArgs.push_back("--current-time-override " + shell_quote(currentTimeOverride));
+    }
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-plan-watch",
+            planWatchArgs
+        ) == 0,
+        "current env guardrail expected watch plan generation"
+    );
+    vector<string> triggerGateArgs{
+        "--phase " + phase,
+        "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+        "--runtime-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+        "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+        "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+        "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+        "--trigger-gate-out " + shell_quote(artifacts.currentEnvTriggerGateJson.string()),
+    };
+    if (!currentTimeOverride.empty()) {
+        triggerGateArgs.push_back("--current-time-override " + shell_quote(currentTimeOverride));
+    }
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-reproposal-trigger-gate",
+            triggerGateArgs
+        ) == 0,
+        "current env guardrail expected reproposal trigger gate generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "runtime-budget-reproposal-history",
+            {
+                "--phase " + phase,
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--current-env-trigger-gate " + shell_quote(artifacts.currentEnvTriggerGateJson.string()),
+                "--out " + shell_quote(artifacts.runtimeBudgetReproposalHistoryJson.string()),
+            }
+        ) == 0,
+        "current env guardrail expected budget reproposal history generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "runtime-budget-registry-summary",
+            {
+                "--phase " + phase,
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--current-env-trigger-gate " + shell_quote(artifacts.currentEnvTriggerGateJson.string()),
+                "--out " + shell_quote(artifacts.runtimeBudgetRegistrySummaryJson.string()),
+            }
+        ) == 0,
+        "current env guardrail expected budget registry summary generation"
+    );
+}
+
+void build_current_env_due_lifecycle_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride,
+    const string& phase = "phase43"
+) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, phase);
+    pin_runtime_budget_approval_timestamp_or_throw(artifacts, "2026-04-09T09:15:10Z");
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, phase, 0.0, currentTimeOverride);
+
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-due-scheduler",
+            {
+                "--phase " + phase,
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-current-env-watch " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+                "--runtime-current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()),
+                "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--current-time-override " + shell_quote(currentTimeOverride),
+                "--due-scheduler-out " + shell_quote(artifacts.currentEnvDueJson.string()),
+            }
+        ) == 0,
+        "current env due lifecycle expected due scheduler generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-plan-reproposal",
+            {
+                "--phase " + phase,
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--current-env-due " + shell_quote(artifacts.currentEnvDueJson.string()),
+                "--current-time-override " + shell_quote(currentTimeOverride),
+                "--plan-out " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()),
+            }
+        ) == 0,
+        "current env due lifecycle expected reproposal plan generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "ops-agenda",
+            {
+                "--phase " + phase,
+                "--current-env-due " + shell_quote(artifacts.currentEnvDueJson.string()),
+                "--current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()),
+                "--current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()),
+                "--runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()),
+                "--publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()),
+                "--current-time-override " + shell_quote(currentTimeOverride),
+                "--agenda-out " + shell_quote(artifacts.opsAgendaJson.string()),
+            }
+        ) == 0,
+        "current env due lifecycle expected ops agenda generation"
+    );
+}
+
+void execute_current_env_watch_action_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride,
+    const string& phase = "phase44",
+    const string& actionId = "phase44-current-env-watch-001"
+) {
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "release_full", 5);
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, phase, 0.0, currentTimeOverride);
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-execute-watch",
+            {
+                "--phase " + phase,
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()),
+                "--runtime-current-env-watch " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+                "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--execution-class release_full",
+                "--repeat 5",
+                "--action-id " + shell_quote(actionId),
+                "--execute-out " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()),
+                "--artifact-dir " + shell_quote((artifacts.paths.root / (phase + "_watch_execute")).string()),
+            }
+        ) == 0,
+        "current env watch action expected execution manifest generation"
+    );
+}
+
+void apply_current_env_watch_action_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride,
+    const string& phase = "phase44"
+) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-apply-watch",
+            {
+                "--phase " + phase,
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-current-env-watch " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+                "--runtime-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()),
+                "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--current-time-override " + shell_quote(currentTimeOverride),
+                "--apply-out " + shell_quote(artifacts.currentEnvWatchApplyJson.string()),
+            }
+        ) == 0,
+        "current env watch action expected apply manifest generation"
+    );
+}
+
+void execute_current_env_reproposal_gate_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride,
+    const string& phase = "phase44",
+    const string& actionId = "phase44-current-env-reproposal-001"
+) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-execute-reproposal-gate",
+            {
+                "--phase " + phase,
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+                "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--action-id " + shell_quote(actionId),
+                "--current-time-override " + shell_quote(currentTimeOverride),
+                "--execute-out " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()),
+                "--artifact-dir " + shell_quote((artifacts.paths.root / (phase + "_reproposal_execute")).string()),
+            }
+        ) == 0,
+        "current env reproposal gate expected execution manifest generation"
+    );
+}
+
+void rebuild_phase44_ops_agenda_with_actions_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride,
+    bool includeWatchAction,
+    bool includeReproposalAction,
+    const string& phase = "phase44"
+) {
+    vector<string> args{
+        "--phase " + phase,
+        "--current-env-due " + shell_quote(artifacts.currentEnvDueJson.string()),
+        "--current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()),
+        "--current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()),
+        "--runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()),
+        "--publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()),
+        "--current-time-override " + shell_quote(currentTimeOverride),
+        "--agenda-out " + shell_quote(artifacts.opsAgendaJson.string()),
+    };
+    if (includeWatchAction) {
+        args.push_back("--current-env-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()));
+        args.push_back("--current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()));
+    }
+    if (includeReproposalAction) {
+        args.push_back("--current-env-reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()));
+    }
+    require_test(
+        run_runtime_watch_ops_script("ops-agenda", args) == 0,
+        "current env action lifecycle expected ops agenda regeneration"
+    );
+}
+
+void prepare_phase44_ops_summary_context_or_throw(
+    const TestOptions& options,
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& zipStem
+) {
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / (zipStem + ".zip");
+    nightlyPaths.curatedZipPath = artifacts.paths.root / (zipStem + "_curated.zip");
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / (zipStem + "_light.zip");
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())) == 20,
+        "phase44 ops summary context expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "phase44 ops summary context expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "phase44 ops summary context expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase44");
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    execute_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    apply_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    rebuild_phase44_ops_agenda_with_actions_or_throw(artifacts, "2026-04-23T09:15:10Z", true, false);
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase44",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson,
+        artifacts.currentEnvDueJson,
+        artifacts.currentEnvReproposalPlanJson,
+        artifacts.opsAgendaJson,
+        artifacts.currentEnvWatchExecuteJson,
+        artifacts.currentEnvWatchApplyJson,
+        artifacts.currentEnvReproposalExecuteJson
+    );
+}
+
+filesystem::path materialize_current_env_action_retry_policy_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& phase = "phase45"
+) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, phase);
+    const filesystem::path policySource =
+        source_package_root() / "tests" / "runtime_current_env_action_retry_phase45.json";
+    filesystem::create_directories(artifacts.currentEnvActionRetryPolicyJson.parent_path());
+    filesystem::copy_file(
+        policySource,
+        artifacts.currentEnvActionRetryPolicyJson,
+        filesystem::copy_options::overwrite_existing
+    );
+    return artifacts.currentEnvActionRetryPolicyJson;
+}
+
+void update_current_env_action_ledger_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride = "2026-04-23T09:15:10Z",
+    const string& phase = "phase45",
+    const filesystem::path& ledgerIn = {}
+) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, phase);
+    vector<string> args{
+        "--phase " + phase,
+        "--runtime-current-env-agenda " + shell_quote(artifacts.opsAgendaJson.string()),
+        "--watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()),
+        "--watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()),
+        "--current-time-override " + shell_quote(currentTimeOverride),
+        "--ledger-out " + shell_quote(artifacts.currentEnvActionLedgerJson.string()),
+    };
+    if (!artifacts.currentEnvReproposalExecuteJson.empty() && filesystem::exists(artifacts.currentEnvReproposalExecuteJson)) {
+        args.push_back("--reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()));
+    }
+    if (!ledgerIn.empty()) {
+        args.push_back("--ledger-in " + shell_quote(ledgerIn.string()));
+    }
+    require_test(
+        run_runtime_watch_ops_script("current-env-action-ledger-update", args) == 0,
+        "current env action ledger expected update generation"
+    );
+}
+
+filesystem::path write_current_env_failed_action_ledger_fixture_or_throw(
+    const RuntimeBudgetLifecycleSmokeArtifacts& artifacts
+) {
+    const filesystem::path fixture = artifacts.paths.root / "manifests" / "runtime_current_env_action_ledger_failed_fixture_phase45.json";
+    filesystem::create_directories(fixture.parent_path());
+    ofstream out(fixture);
+    require_test(out.good(), "current env failed action ledger fixture expected writable file");
+    out << "{\n"
+        << "  \"manifest_version\": \"runtime_current_env_action_ledger_v1\",\n"
+        << "  \"phase\": \"phase45\",\n"
+        << "  \"total_action_count\": 1,\n"
+        << "  \"failed_count\": 1,\n"
+        << "  \"entries\": [\n"
+        << "    {\n"
+        << "      \"action_id\": \"phase45-current-env-watch-failed\",\n"
+        << "      \"action_kind\": \"RUN_CURRENT_ENV_WATCH_CAMPAIGN\",\n"
+        << "      \"action_status\": \"FAILED\",\n"
+        << "      \"planned_at\": \"2026-05-07T09:15:10Z\",\n"
+        << "      \"due_at\": \"2026-05-07T09:15:10Z\",\n"
+        << "      \"executed_at\": \"2026-05-07T09:18:10Z\",\n"
+        << "      \"target_execution_class\": \"release_full\",\n"
+        << "      \"retry_count\": 0,\n"
+        << "      \"failure_class\": \"INFRA_TRANSIENT\",\n"
+        << "      \"failure_reason\": \"synthetic transient smoke failure\",\n"
+        << "      \"operator_note\": \"synthetic retry policy fixture\"\n"
+        << "    }\n"
+        << "  ]\n"
+        << "}\n";
+    out.close();
+    return fixture;
+}
+
+void build_current_env_action_retry_plan_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const filesystem::path& ledgerJson,
+    const string& currentTimeOverride = "2026-05-07T09:20:10Z",
+    const string& phase = "phase45"
+) {
+    materialize_current_env_action_retry_policy_or_throw(artifacts, phase);
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-action-retry-plan",
+            {
+                "--phase " + phase,
+                "--action-ledger " + shell_quote(ledgerJson.string()),
+                "--retry-policy " + shell_quote(artifacts.currentEnvActionRetryPolicyJson.string()),
+                "--current-time-override " + shell_quote(currentTimeOverride),
+                "--retry-plan-out " + shell_quote(artifacts.currentEnvActionRetryPlanJson.string()),
+            }
+        ) == 0,
+        "current env action retry plan expected generation"
+    );
+}
+
+void execute_current_env_reproposal_handoff_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride = "2026-05-14T09:15:10Z",
+    const string& phase = "phase45"
+) {
+    execute_current_env_reproposal_gate_or_throw(
+        artifacts,
+        currentTimeOverride,
+        phase,
+        phase + "-current-env-reproposal-001"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-reproposal-handoff",
+            {
+                "--phase " + phase,
+                "--reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--handoff-out " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()),
+            }
+        ) == 0,
+        "current env reproposal handoff expected generation"
+    );
+}
+
+void build_current_env_next_cycle_due_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& currentTimeOverride,
+    const filesystem::path& dueOut,
+    const string& phase = "phase45"
+) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, phase);
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-due-scheduler",
+            {
+                "--phase " + phase,
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-current-env-watch " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+                "--runtime-current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()),
+                "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--runtime-current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()),
+                "--current-time-override " + shell_quote(currentTimeOverride),
+                "--due-scheduler-out " + shell_quote(dueOut.string()),
+            }
+        ) == 0,
+        "current env next cycle expected due scheduler generation"
+    );
+}
+
+void rebuild_phase45_ops_agenda_with_lifecycle_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const filesystem::path& dueJson,
+    const string& currentTimeOverride = "2026-05-14T09:15:10Z",
+    bool includeHandoff = true
+) {
+    vector<string> args{
+        "--phase phase45",
+        "--current-env-due " + shell_quote(dueJson.string()),
+        "--current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()),
+        "--current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()),
+        "--runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()),
+        "--publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()),
+        "--current-time-override " + shell_quote(currentTimeOverride),
+        "--current-env-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()),
+        "--current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()),
+        "--current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerJson.string()),
+        "--current-env-retry-plan " + shell_quote(artifacts.currentEnvActionRetryPlanJson.string()),
+        "--agenda-out " + shell_quote(artifacts.opsAgendaJson.string()),
+    };
+    if (includeHandoff) {
+        args.push_back("--current-env-reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()));
+        args.push_back("--current-env-reproposal-handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()));
+    }
+    require_test(
+        run_runtime_watch_ops_script("ops-agenda", args) == 0,
+        "current env agenda lifecycle v2 expected ops agenda generation"
+    );
+}
+
+void prepare_phase45_action_ledger_context_or_throw(
+    const TestOptions& options,
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts
+) {
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase45_action_ledger_nightly.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase45_action_ledger_nightly_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase45_action_ledger_nightly_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())) == 20,
+        "phase45 action ledger context expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "phase45 action ledger context expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "phase45 action ledger context expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase45");
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase45");
+    execute_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase45", "phase45-current-env-watch-001");
+    apply_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase45");
+    rebuild_phase44_ops_agenda_with_actions_or_throw(artifacts, "2026-04-23T09:15:10Z", true, false, "phase45");
+    update_current_env_action_ledger_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase45");
+    build_current_env_action_retry_plan_or_throw(artifacts, artifacts.currentEnvActionLedgerJson, "2026-04-23T09:20:10Z", "phase45");
+    build_current_env_next_cycle_due_or_throw(
+        artifacts,
+        "2026-05-14T09:15:10Z",
+        artifacts.currentEnvNextCycleReproposalDueJson,
+        "phase45"
+    );
+    execute_current_env_reproposal_handoff_or_throw(artifacts, "2026-05-14T09:15:10Z", "phase45");
+    update_current_env_action_ledger_or_throw(
+        artifacts,
+        "2026-05-14T09:20:10Z",
+        "phase45",
+        artifacts.currentEnvActionLedgerJson
+    );
+    build_current_env_action_retry_plan_or_throw(artifacts, artifacts.currentEnvActionLedgerJson, "2026-05-14T09:21:10Z", "phase45");
+    rebuild_phase45_ops_agenda_with_lifecycle_or_throw(
+        artifacts,
+        artifacts.currentEnvNextCycleReproposalDueJson,
+        "2026-05-14T09:21:10Z",
+        true
+    );
+}
+
+void build_phase45_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase45",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson,
+        artifacts.currentEnvNextCycleReproposalDueJson,
+        artifacts.currentEnvReproposalPlanJson,
+        artifacts.opsAgendaJson,
+        artifacts.currentEnvWatchExecuteJson,
+        artifacts.currentEnvWatchApplyJson,
+        artifacts.currentEnvReproposalExecuteJson,
+        artifacts.currentEnvActionLedgerJson,
+        artifacts.currentEnvActionRetryPlanJson,
+        artifacts.currentEnvReproposalHandoffJson
+    );
+}
+
+void execute_current_env_operator_decision_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& decision,
+    const string& actionId,
+    const string& currentTimeOverride = "2026-05-14T09:25:10Z",
+    const string& phase = "phase46",
+    const string& reason = "operator decision smoke",
+    const string& deferUntil = ""
+) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, phase);
+    vector<string> args{
+        "--phase " + phase,
+        "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerJson.string()),
+        "--handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()),
+        "--retry-plan " + shell_quote(artifacts.currentEnvActionRetryPlanJson.string()),
+        "--action-id " + shell_quote(actionId),
+        "--decision " + shell_quote(decision),
+        "--decision-reason " + shell_quote(reason),
+        "--decision-note " + shell_quote("phase46 operator decision lifecycle smoke"),
+        "--operator-id phase46-smoke-operator",
+        "--approval-mode handoff_only",
+        "--current-time-override " + shell_quote(currentTimeOverride),
+        "--decision-out " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+    };
+    if (!deferUntil.empty()) {
+        args.push_back("--defer-until " + shell_quote(deferUntil));
+    }
+    require_test(
+        run_runtime_watch_ops_script("current-env-operator-decision", args) == 0,
+        "current env operator decision expected manifest generation"
+    );
+}
+
+void apply_current_env_operator_decision_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& phase = "phase46"
+) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, phase);
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-apply-operator-decision",
+            {
+                "--phase " + phase,
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerJson.string()),
+                "--operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--approval-mode handoff_only",
+                "--apply-out " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()),
+                "--updated-ledger-out " + shell_quote(artifacts.currentEnvActionLedgerUpdatedJson.string()),
+            }
+        ) == 0,
+        "current env operator decision expected apply generation"
+    );
+}
+
+void compact_current_env_action_ledger_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const filesystem::path& ledgerJson,
+    const string& phase = "phase46"
+) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, phase);
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-action-ledger-compact",
+            {
+                "--phase " + phase,
+                "--action-ledger " + shell_quote(ledgerJson.string()),
+                "--compact-out " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()),
+                "--archive-out " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()),
+                "--keep-latest-active 2",
+                "--keep-latest-closed 1",
+                "--keep-failed",
+                "--keep-approval-actions",
+            }
+        ) == 0,
+        "current env action ledger expected compaction generation"
+    );
+}
+
+void rebuild_phase46_ops_agenda_with_decisions_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const filesystem::path& dueJson,
+    const string& currentTimeOverride = "2026-05-14T09:26:10Z"
+) {
+    vector<string> args{
+        "--phase phase46",
+        "--current-env-due " + shell_quote(dueJson.string()),
+        "--current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()),
+        "--current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()),
+        "--runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()),
+        "--publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()),
+        "--current-time-override " + shell_quote(currentTimeOverride),
+        "--current-env-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()),
+        "--current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()),
+        "--current-env-reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()),
+        "--current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerUpdatedJson.string()),
+        "--current-env-retry-plan " + shell_quote(artifacts.currentEnvActionRetryPlanJson.string()),
+        "--current-env-reproposal-handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()),
+        "--current-env-operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+        "--current-env-operator-decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()),
+        "--current-env-action-ledger-compact " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()),
+        "--current-env-action-ledger-archive " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()),
+        "--agenda-out " + shell_quote(artifacts.opsAgendaJson.string()),
+    };
+    require_test(
+        run_runtime_watch_ops_script("ops-agenda", args) == 0,
+        "current env agenda lifecycle v3 expected ops agenda generation"
+    );
+}
+
+void prepare_phase46_operator_decision_context_or_throw(
+    const TestOptions& options,
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& decision = "approve"
+) {
+    prepare_phase45_action_ledger_context_or_throw(options, artifacts);
+    const filesystem::path phase45CurrentEnvGovernancePolicyJson = artifacts.currentEnvGovernancePolicyJson;
+    const filesystem::path phase45CurrentEnvGuardrailPolicyJson = artifacts.currentEnvGuardrailPolicyJson;
+    const filesystem::path phase45CurrentEnvWatchCurrentJson = artifacts.currentEnvWatchCurrentJson;
+    const filesystem::path phase45CurrentEnvWatchRefreshJson = artifacts.currentEnvWatchRefreshJson;
+    const filesystem::path phase45CurrentEnvWatchHistoryJson = artifacts.currentEnvWatchHistoryJson;
+    const filesystem::path phase45CurrentEnvAgeTickJson = artifacts.currentEnvAgeTickJson;
+    const filesystem::path phase45CurrentEnvTriggerGateJson = artifacts.currentEnvTriggerGateJson;
+    const filesystem::path phase45CurrentEnvWatchPlanJson = artifacts.currentEnvWatchPlanJson;
+    const filesystem::path phase45CurrentEnvReproposalPlanJson = artifacts.currentEnvReproposalPlanJson;
+    const filesystem::path phase45CurrentEnvWatchExecuteJson = artifacts.currentEnvWatchExecuteJson;
+    const filesystem::path phase45CurrentEnvWatchApplyJson = artifacts.currentEnvWatchApplyJson;
+    const filesystem::path phase45CurrentEnvReproposalExecuteJson = artifacts.currentEnvReproposalExecuteJson;
+    const filesystem::path phase45CurrentEnvActionLedgerJson = artifacts.currentEnvActionLedgerJson;
+    const filesystem::path phase45CurrentEnvActionRetryPlanJson = artifacts.currentEnvActionRetryPlanJson;
+    const filesystem::path phase45CurrentEnvReproposalHandoffJson = artifacts.currentEnvReproposalHandoffJson;
+    const filesystem::path phase45CurrentEnvNextCycleReproposalDueJson = artifacts.currentEnvNextCycleReproposalDueJson;
+    const filesystem::path phase45RuntimeBudgetReproposalHistoryJson = artifacts.runtimeBudgetReproposalHistoryJson;
+    const filesystem::path phase45RuntimeBudgetRegistrySummaryJson = artifacts.runtimeBudgetRegistrySummaryJson;
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase46");
+    auto copy_if_exists = [](const filesystem::path& from, const filesystem::path& to) {
+        if (from.empty() || to.empty() || !filesystem::exists(from)) {
+            return;
+        }
+        filesystem::create_directories(to.parent_path());
+        if (filesystem::exists(to) && filesystem::equivalent(from, to)) {
+            return;
+        }
+        filesystem::copy_file(from, to, filesystem::copy_options::overwrite_existing);
+    };
+    filesystem::create_directories(artifacts.currentEnvActionLedgerJson.parent_path());
+    copy_if_exists(phase45CurrentEnvGovernancePolicyJson, artifacts.currentEnvGovernancePolicyJson);
+    copy_if_exists(phase45CurrentEnvGuardrailPolicyJson, artifacts.currentEnvGuardrailPolicyJson);
+    copy_if_exists(phase45CurrentEnvWatchCurrentJson, artifacts.currentEnvWatchCurrentJson);
+    copy_if_exists(phase45CurrentEnvWatchRefreshJson, artifacts.currentEnvWatchRefreshJson);
+    copy_if_exists(phase45CurrentEnvWatchHistoryJson, artifacts.currentEnvWatchHistoryJson);
+    copy_if_exists(phase45CurrentEnvAgeTickJson, artifacts.currentEnvAgeTickJson);
+    copy_if_exists(phase45CurrentEnvTriggerGateJson, artifacts.currentEnvTriggerGateJson);
+    copy_if_exists(phase45CurrentEnvWatchPlanJson, artifacts.currentEnvWatchPlanJson);
+    copy_if_exists(phase45CurrentEnvReproposalPlanJson, artifacts.currentEnvReproposalPlanJson);
+    copy_if_exists(phase45CurrentEnvWatchExecuteJson, artifacts.currentEnvWatchExecuteJson);
+    copy_if_exists(phase45CurrentEnvWatchApplyJson, artifacts.currentEnvWatchApplyJson);
+    copy_if_exists(phase45CurrentEnvReproposalExecuteJson, artifacts.currentEnvReproposalExecuteJson);
+    copy_if_exists(phase45CurrentEnvActionLedgerJson, artifacts.currentEnvActionLedgerJson);
+    copy_if_exists(phase45CurrentEnvActionRetryPlanJson, artifacts.currentEnvActionRetryPlanJson);
+    copy_if_exists(phase45CurrentEnvReproposalHandoffJson, artifacts.currentEnvReproposalHandoffJson);
+    copy_if_exists(phase45CurrentEnvNextCycleReproposalDueJson, artifacts.currentEnvNextCycleReproposalDueJson);
+    copy_if_exists(phase45RuntimeBudgetReproposalHistoryJson, artifacts.runtimeBudgetReproposalHistoryJson);
+    copy_if_exists(phase45RuntimeBudgetRegistrySummaryJson, artifacts.runtimeBudgetRegistrySummaryJson);
+    const string actionId = "phase45-current-env-reproposal-001";
+    execute_current_env_operator_decision_or_throw(
+        artifacts,
+        decision,
+        actionId,
+        "2026-05-14T09:25:10Z",
+        "phase46",
+        decision == "approve" ? "operator approves approval-ready handoff checkpoint" : "operator decision smoke",
+        decision == "defer" ? "2026-05-21T09:15:10Z" : ""
+    );
+    apply_current_env_operator_decision_or_throw(artifacts, "phase46");
+    compact_current_env_action_ledger_or_throw(artifacts, artifacts.currentEnvActionLedgerUpdatedJson, "phase46");
+    rebuild_phase46_ops_agenda_with_decisions_or_throw(artifacts, artifacts.currentEnvNextCycleReproposalDueJson);
+}
+
+void build_phase46_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase46",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson,
+        artifacts.currentEnvNextCycleReproposalDueJson,
+        artifacts.currentEnvReproposalPlanJson,
+        artifacts.opsAgendaJson,
+        artifacts.currentEnvWatchExecuteJson,
+        artifacts.currentEnvWatchApplyJson,
+        artifacts.currentEnvReproposalExecuteJson,
+        artifacts.currentEnvActionLedgerUpdatedJson,
+        artifacts.currentEnvActionRetryPlanJson,
+        artifacts.currentEnvReproposalHandoffJson,
+        artifacts.currentEnvOperatorDecisionJson,
+        artifacts.currentEnvOperatorDecisionApplyJson,
+        artifacts.currentEnvActionLedgerCompactJson,
+        artifacts.currentEnvActionLedgerArchiveJson
+    );
+}
+
+void build_phase47_approval_workflow_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase47");
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-approval-runbook",
+            {
+                "--phase phase47",
+                "--handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()),
+                "--operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--runtime-budget-baseline-out " + shell_quote(artifacts.runtimeBudgetBaselinePhase47Json.string()),
+                "--approval-runbook-out " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()),
+                "--budget-tag phase47-runtime-budget-explicit-approval",
+                "--approval-mode handoff_only",
+            }
+        ) == 0,
+        "phase47 approval runbook expected manifest generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-execute-budget-approval",
+            {
+                "--phase phase47",
+                "--approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()),
+                "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+                "--runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()),
+                "--runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--runtime-budget-baseline-out " + shell_quote(artifacts.runtimeBudgetBaselinePhase47Json.string()),
+                "--archive-proposal " + shell_quote(artifacts.runtimeBudgetProposalPhase47ArchivedJson.string()),
+                "--approval-execution-out " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()),
+            }
+        ) == 0,
+        "phase47 budget approval dry-run expected manifest generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-link-approval-execution",
+            {
+                "--phase phase47",
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerUpdatedJson.string()),
+                "--approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()),
+                "--ledger-out " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--link-out " + shell_quote(artifacts.currentEnvApprovalLinkJson.string()),
+            }
+        ) == 0,
+        "phase47 approval execution link expected manifest generation"
+    );
+}
+
+void rebuild_phase47_ops_agenda_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "ops-agenda",
+            {
+                "--phase phase47",
+                "--current-env-due " + shell_quote(artifacts.currentEnvNextCycleReproposalDueJson.string()),
+                "--current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()),
+                "--current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()),
+                "--runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()),
+                "--publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()),
+                "--current-env-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()),
+                "--current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()),
+                "--current-env-reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()),
+                "--current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--current-env-retry-plan " + shell_quote(artifacts.currentEnvActionRetryPlanJson.string()),
+                "--current-env-reproposal-handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()),
+                "--current-env-operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+                "--current-env-operator-decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()),
+                "--current-env-action-ledger-compact " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()),
+                "--current-env-action-ledger-archive " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()),
+                "--current-env-approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()),
+                "--current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()),
+                "--current-env-approval-link " + shell_quote(artifacts.currentEnvApprovalLinkJson.string()),
+                "--agenda-out " + shell_quote(artifacts.opsAgendaJson.string()),
+            }
+        ) == 0,
+        "phase47 ops agenda lifecycle v4 expected generation"
+    );
+}
+
+void prepare_phase47_approval_context_or_throw(const TestOptions& options, RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    const filesystem::path phase46DecisionJson = artifacts.currentEnvOperatorDecisionJson;
+    const filesystem::path phase46DecisionApplyJson = artifacts.currentEnvOperatorDecisionApplyJson;
+    const filesystem::path phase46UpdatedLedgerJson = artifacts.currentEnvActionLedgerUpdatedJson;
+    const filesystem::path phase46CompactJson = artifacts.currentEnvActionLedgerCompactJson;
+    const filesystem::path phase46ArchiveJson = artifacts.currentEnvActionLedgerArchiveJson;
+    const filesystem::path phase46HandoffJson = artifacts.currentEnvReproposalHandoffJson;
+    const filesystem::path phase46RetryPlanJson = artifacts.currentEnvActionRetryPlanJson;
+    const filesystem::path phase46ReproposalExecuteJson = artifacts.currentEnvReproposalExecuteJson;
+    const filesystem::path phase46WatchExecuteJson = artifacts.currentEnvWatchExecuteJson;
+    const filesystem::path phase46WatchApplyJson = artifacts.currentEnvWatchApplyJson;
+    const filesystem::path phase46NextCycleReproposalDueJson = artifacts.currentEnvNextCycleReproposalDueJson;
+    const filesystem::path phase46ReproposalPlanJson = artifacts.currentEnvReproposalPlanJson;
+    const filesystem::path phase46WatchPlanJson = artifacts.currentEnvWatchPlanJson;
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase47");
+    filesystem::copy_file(phase46DecisionJson, artifacts.currentEnvOperatorDecisionJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46DecisionApplyJson, artifacts.currentEnvOperatorDecisionApplyJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46UpdatedLedgerJson, artifacts.currentEnvActionLedgerUpdatedJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46CompactJson, artifacts.currentEnvActionLedgerCompactJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46ArchiveJson, artifacts.currentEnvActionLedgerArchiveJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46HandoffJson, artifacts.currentEnvReproposalHandoffJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46RetryPlanJson, artifacts.currentEnvActionRetryPlanJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46ReproposalExecuteJson, artifacts.currentEnvReproposalExecuteJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46WatchExecuteJson, artifacts.currentEnvWatchExecuteJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46WatchApplyJson, artifacts.currentEnvWatchApplyJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46NextCycleReproposalDueJson, artifacts.currentEnvNextCycleReproposalDueJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46ReproposalPlanJson, artifacts.currentEnvReproposalPlanJson, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(phase46WatchPlanJson, artifacts.currentEnvWatchPlanJson, filesystem::copy_options::overwrite_existing);
+    build_phase47_approval_workflow_or_throw(artifacts);
+    rebuild_phase47_ops_agenda_or_throw(artifacts);
+}
+
+void build_phase47_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase47",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson,
+        artifacts.currentEnvNextCycleReproposalDueJson,
+        artifacts.currentEnvReproposalPlanJson,
+        artifacts.opsAgendaJson,
+        artifacts.currentEnvWatchExecuteJson,
+        artifacts.currentEnvWatchApplyJson,
+        artifacts.currentEnvReproposalExecuteJson,
+        artifacts.currentEnvActionLedgerApprovalLinkedJson,
+        artifacts.currentEnvActionRetryPlanJson,
+        artifacts.currentEnvReproposalHandoffJson,
+        artifacts.currentEnvOperatorDecisionJson,
+        artifacts.currentEnvOperatorDecisionApplyJson,
+        artifacts.currentEnvActionLedgerCompactJson,
+        artifacts.currentEnvActionLedgerArchiveJson,
+        artifacts.currentEnvApprovalRunbookJson,
+        artifacts.currentEnvBudgetApprovalExecutionJson,
+        artifacts.currentEnvApprovalLinkJson
+    );
+}
+
+void build_operator_runbook_index_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase48") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-index",
+            {
+                "--phase " + phase,
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()),
+                "--approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()),
+                "--approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()),
+                "--operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+                "--decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()),
+                "--runbook-index-out " + shell_quote(artifacts.operatorRunbookIndexJson.string()),
+            }
+        ) == 0,
+        "phase48 operator runbook index expected generation"
+    );
+}
+
+void build_action_ledger_invariants_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase48") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-action-ledger-invariants",
+            {
+                "--phase " + phase,
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--compacted-ledger " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()),
+                "--ledger-archive " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()),
+                "--invariants-out " + shell_quote(artifacts.currentEnvActionLedgerInvariantsJson.string()),
+            }
+        ) == 0,
+        "phase48 action ledger invariant audit expected generation"
+    );
+}
+
+void build_source_health_preflight_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, int simulatedDatalessCount = 0, bool simulateMissingGitObject = false) {
+    filesystem::create_directories(artifacts.paths.root / "tests" / "tools");
+    write_text_file_or_throw(artifacts.paths.root / "CMakeLists.txt", "cmake_minimum_required(VERSION 3.16)\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "raw_engine_cases.cpp", "// source health fixture\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "tools" / "runtime_watch_ops.py", "# source health fixture\n");
+    vector<string> args{
+        "--phase phase48",
+        "--source-root " + shell_quote(artifacts.paths.root.string()),
+        "--required-path " + shell_quote("CMakeLists.txt,tests/raw_engine_cases.cpp,tests/tools/runtime_watch_ops.py"),
+        "--out " + shell_quote(artifacts.sourceHealthPreflightJson.string()),
+        "--summary-out " + shell_quote(artifacts.sourceHealthPreflightSummaryTxt.string()),
+        "--staged-materialization-out " + shell_quote(artifacts.stagedMaterializationJson.string()),
+        "--simulate-dataless-count " + to_string(simulatedDatalessCount),
+        "--skip-git",
+    };
+    if (simulateMissingGitObject) {
+        args.push_back("--simulate-missing-git-object");
+    }
+    string command = shell_quote("/usr/bin/python3") + " " + shell_quote(policy_tools_script_path("source_health_preflight.py").string());
+    for (const string& arg : args) {
+        command += " " + arg;
+    }
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "phase48 source health preflight expected generation");
+}
+
+void prepare_phase48_runbook_context_or_throw(const TestOptions& options, RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path phase47GovernancePolicyJson = artifacts.currentEnvGovernancePolicyJson;
+    const filesystem::path phase47GuardrailPolicyJson = artifacts.currentEnvGuardrailPolicyJson;
+    const filesystem::path phase47WatchCurrentJson = artifacts.currentEnvWatchCurrentJson;
+    const filesystem::path phase47WatchRefreshJson = artifacts.currentEnvWatchRefreshJson;
+    const filesystem::path phase47WatchHistoryJson = artifacts.currentEnvWatchHistoryJson;
+    const filesystem::path phase47AgeTickJson = artifacts.currentEnvAgeTickJson;
+    const filesystem::path phase47WatchPlanJson = artifacts.currentEnvWatchPlanJson;
+    const filesystem::path phase47TriggerGateJson = artifacts.currentEnvTriggerGateJson;
+    const filesystem::path phase47DueJson = artifacts.currentEnvDueJson;
+    const filesystem::path phase47ReproposalPlanJson = artifacts.currentEnvReproposalPlanJson;
+    const filesystem::path phase47OpsAgendaJson = artifacts.opsAgendaJson;
+    const filesystem::path phase47WatchExecuteJson = artifacts.currentEnvWatchExecuteJson;
+    const filesystem::path phase47WatchApplyJson = artifacts.currentEnvWatchApplyJson;
+    const filesystem::path phase47ReproposalExecuteJson = artifacts.currentEnvReproposalExecuteJson;
+    const filesystem::path phase47ActionLedgerUpdatedJson = artifacts.currentEnvActionLedgerUpdatedJson;
+    const filesystem::path phase47RetryPlanJson = artifacts.currentEnvActionRetryPlanJson;
+    const filesystem::path phase47HandoffJson = artifacts.currentEnvReproposalHandoffJson;
+    const filesystem::path phase47DecisionJson = artifacts.currentEnvOperatorDecisionJson;
+    const filesystem::path phase47DecisionApplyJson = artifacts.currentEnvOperatorDecisionApplyJson;
+    const filesystem::path phase47CompactJson = artifacts.currentEnvActionLedgerCompactJson;
+    const filesystem::path phase47ArchiveJson = artifacts.currentEnvActionLedgerArchiveJson;
+    const filesystem::path phase47ApprovalRunbookJson = artifacts.currentEnvApprovalRunbookJson;
+    const filesystem::path phase47ApprovalExecutionJson = artifacts.currentEnvBudgetApprovalExecutionJson;
+    const filesystem::path phase47ApprovalLinkJson = artifacts.currentEnvApprovalLinkJson;
+    const filesystem::path phase47ApprovalLinkedLedgerJson = artifacts.currentEnvActionLedgerApprovalLinkedJson;
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase48");
+    auto copy_if_exists = [](const filesystem::path& from, const filesystem::path& to) {
+        if (!from.empty() && filesystem::exists(from)) {
+            filesystem::copy_file(from, to, filesystem::copy_options::overwrite_existing);
+        }
+    };
+    copy_if_exists(phase47GovernancePolicyJson, artifacts.currentEnvGovernancePolicyJson);
+    copy_if_exists(phase47GuardrailPolicyJson, artifacts.currentEnvGuardrailPolicyJson);
+    copy_if_exists(phase47WatchCurrentJson, artifacts.currentEnvWatchCurrentJson);
+    copy_if_exists(phase47WatchRefreshJson, artifacts.currentEnvWatchRefreshJson);
+    copy_if_exists(phase47WatchHistoryJson, artifacts.currentEnvWatchHistoryJson);
+    copy_if_exists(phase47AgeTickJson, artifacts.currentEnvAgeTickJson);
+    copy_if_exists(phase47WatchPlanJson, artifacts.currentEnvWatchPlanJson);
+    copy_if_exists(phase47TriggerGateJson, artifacts.currentEnvTriggerGateJson);
+    copy_if_exists(phase47DueJson, artifacts.currentEnvDueJson);
+    copy_if_exists(phase47ReproposalPlanJson, artifacts.currentEnvReproposalPlanJson);
+    copy_if_exists(phase47OpsAgendaJson, artifacts.opsAgendaJson);
+    copy_if_exists(phase47WatchExecuteJson, artifacts.currentEnvWatchExecuteJson);
+    copy_if_exists(phase47WatchApplyJson, artifacts.currentEnvWatchApplyJson);
+    copy_if_exists(phase47ReproposalExecuteJson, artifacts.currentEnvReproposalExecuteJson);
+    copy_if_exists(phase47ActionLedgerUpdatedJson, artifacts.currentEnvActionLedgerUpdatedJson);
+    copy_if_exists(phase47RetryPlanJson, artifacts.currentEnvActionRetryPlanJson);
+    copy_if_exists(phase47HandoffJson, artifacts.currentEnvReproposalHandoffJson);
+    copy_if_exists(phase47DecisionJson, artifacts.currentEnvOperatorDecisionJson);
+    copy_if_exists(phase47DecisionApplyJson, artifacts.currentEnvOperatorDecisionApplyJson);
+    copy_if_exists(phase47CompactJson, artifacts.currentEnvActionLedgerCompactJson);
+    copy_if_exists(phase47ArchiveJson, artifacts.currentEnvActionLedgerArchiveJson);
+    copy_if_exists(phase47ApprovalRunbookJson, artifacts.currentEnvApprovalRunbookJson);
+    copy_if_exists(phase47ApprovalExecutionJson, artifacts.currentEnvBudgetApprovalExecutionJson);
+    copy_if_exists(phase47ApprovalLinkJson, artifacts.currentEnvApprovalLinkJson);
+    copy_if_exists(phase47ApprovalLinkedLedgerJson, artifacts.currentEnvActionLedgerApprovalLinkedJson);
+    build_operator_runbook_index_or_throw(artifacts, "phase48");
+    build_action_ledger_invariants_or_throw(artifacts, "phase48");
+    build_source_health_preflight_or_throw(artifacts, 3, true);
+}
+
+void build_phase48_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase48",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson,
+        artifacts.currentEnvNextCycleReproposalDueJson,
+        artifacts.currentEnvReproposalPlanJson,
+        artifacts.opsAgendaJson,
+        artifacts.currentEnvWatchExecuteJson,
+        artifacts.currentEnvWatchApplyJson,
+        artifacts.currentEnvReproposalExecuteJson,
+        artifacts.currentEnvActionLedgerApprovalLinkedJson,
+        artifacts.currentEnvActionRetryPlanJson,
+        artifacts.currentEnvReproposalHandoffJson,
+        artifacts.currentEnvOperatorDecisionJson,
+        artifacts.currentEnvOperatorDecisionApplyJson,
+        artifacts.currentEnvActionLedgerCompactJson,
+        artifacts.currentEnvActionLedgerArchiveJson,
+        artifacts.currentEnvApprovalRunbookJson,
+        artifacts.currentEnvBudgetApprovalExecutionJson,
+        artifacts.currentEnvApprovalLinkJson
+    );
+    const string command =
+        shell_quote("/usr/bin/python3") + " " + shell_quote(policy_tools_script_path("runtime_watch_ops.py").string()) +
+        " ops-summary --phase phase48" +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()) +
+        " --current-env-approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-approval-link " + shell_quote(artifacts.currentEnvApprovalLinkJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()) +
+        " --current-env-operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()) +
+        " --current-env-operator-decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()) +
+        " --current-env-action-ledger-compact " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()) +
+        " --current-env-action-ledger-archive " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --operator-runbook-index " + shell_quote(artifacts.operatorRunbookIndexJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --out " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --out-text " + shell_quote(artifacts.paths.opsSummaryTxt.string());
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "phase48 ops summary v14 expected generation");
+}
+
+struct NewEnvOnboardingSmokeArtifacts {
+    PolicyPipelineSmokeArtifacts paths;
+    filesystem::path externalCurrentJson;
+    filesystem::path externalRefreshJson;
+    filesystem::path externalRerunJson;
+    filesystem::path externalWatchCurrentJson;
+    filesystem::path externalWatchRefreshJson;
+    filesystem::path externalWatchHistoryIndexJson;
+    filesystem::path externalImportBundleJson;
+    filesystem::path externalImportSummaryJson;
+    filesystem::path externalProposalJson;
+    filesystem::path externalProposalGateJson;
+    filesystem::path externalApprovedBaselineJson;
+    filesystem::path externalArchivedProposalJson;
+    filesystem::path externalApprovedSummaryJson;
+    filesystem::path quickSummaryJson;
+    filesystem::path nightlySummaryJson;
+    filesystem::path matrixSummaryJson;
+};
+
+void seed_runtime_registry_v2_for_current_env_or_throw(PolicyPipelineSmokeArtifacts& paths) {
+    paths.runtimeRegistryJson = paths.root / "manifests" / "runtime_baseline_registry_v2.json";
+    require_test(
+        run_runtime_lifecycle_script(
+            "registry-promote-baseline",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()),
+                "--baseline-tag phase34-current-env-approved",
+                "--activate",
+            }
+        ) == 0,
+        "phase34 smoke expected registry v2 promotion for current env"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "phase34 smoke expected current env runtime refresh against registry v2"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(paths.runtimeRerunJson.string()),
+            }
+        ) == 0,
+        "phase34 smoke expected current env rerun plan against registry v2"
+    );
+}
+
+NewEnvOnboardingSmokeArtifacts prepare_new_env_onboarding_smoke_artifacts(
+    const TestOptions& options,
+    const string& stem
+) {
+    NewEnvOnboardingSmokeArtifacts artifacts;
+    artifacts.paths = prepare_policy_pipeline_smoke_artifacts(options, stem);
+    seed_runtime_registry_v2_for_current_env_or_throw(artifacts.paths);
+    artifacts.externalCurrentJson = artifacts.paths.root / "manifests" / "policy_runtime_current_phase34_external.json";
+    artifacts.externalRefreshJson = artifacts.paths.root / "manifests" / "policy_runtime_refresh_phase34_external.json";
+    artifacts.externalRerunJson = artifacts.paths.root / "manifests" / "policy_runtime_rerun_phase34_external.json";
+    artifacts.externalWatchCurrentJson = artifacts.paths.root / "manifests" / "runtime_watch_current_phase34_external.json";
+    artifacts.externalWatchRefreshJson = artifacts.paths.root / "manifests" / "runtime_watch_refresh_phase34_external.json";
+    artifacts.externalWatchHistoryIndexJson = artifacts.paths.root / "manifests" / "runtime_watch_history_index_phase34_external.json";
+    artifacts.externalImportBundleJson = artifacts.paths.root / "manifests" / "runtime_external_import_bundle_phase34.json";
+    artifacts.externalImportSummaryJson = artifacts.paths.root / "manifests" / "runtime_external_import_summary_phase34.json";
+    artifacts.externalProposalJson = artifacts.paths.root / "manifests" / "runtime_rebaseline_proposal_phase34_external.json";
+    artifacts.externalProposalGateJson = artifacts.paths.root / "manifests" / "runtime_proposal_gate_phase34_external.json";
+    artifacts.externalApprovedBaselineJson = artifacts.paths.root / "manifests" / "policy_runtime_baseline_phase34_external_approved.json";
+    artifacts.externalArchivedProposalJson = artifacts.paths.root / "manifests" / "runtime_rebaseline_proposal_phase34_external_archived.json";
+    artifacts.externalApprovedSummaryJson = artifacts.paths.root / "manifests" / "approved_known_environment_phase34_external.json";
+    artifacts.quickSummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_quick_phase34.json";
+    artifacts.nightlySummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_nightly_phase34.json";
+    artifacts.matrixSummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_matrix_phase34.json";
+
+    require_test(
+        run_runtime_lifecycle_script(
+            "write-current",
+            {
+                "--phase phase34",
+                "--artifact-root " + shell_quote(artifacts.paths.root.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--baseline-tag phase34-runtime-external",
+                "--runner-tag foreign-runner",
+                "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetProfileJson.string()),
+                "--entry execution_class=release_full,wall_time_sec=132.0",
+                "--entry execution_class=debug_full,wall_time_sec=492.0",
+                "--entry execution_class=asan_full,wall_time_sec=930.0",
+                "--entry execution_class=policy_core,wall_time_sec=1.0",
+                "--entry execution_class=policy_refresh,wall_time_sec=1.0",
+                "--entry execution_class=policy_nightly,wall_time_sec=2.0",
+                "--test-count release_full=10",
+                "--test-count debug_full=10",
+                "--test-count asan_full=10",
+            }
+        ) == 0,
+        "phase34 smoke expected external runtime current manifest generation"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "phase34 smoke expected external runtime refresh generation"
+    );
+    append_runtime_history_samples_for_manifest_or_throw(
+        artifacts.paths.runtimeHistoryIndexJson,
+        artifacts.externalCurrentJson,
+        artifacts.externalRefreshJson,
+        5,
+        "real",
+        "foreign-runner",
+        "foreign-host"
+    );
+    run_runtime_watch_cycle_for_manifest_or_throw(
+        artifacts.paths.runtimeBaselineJson,
+        artifacts.externalCurrentJson,
+        artifacts.externalRefreshJson,
+        artifacts.paths.runtimeHistoryIndexJson,
+        artifacts.externalWatchCurrentJson,
+        artifacts.externalWatchRefreshJson,
+        artifacts.externalWatchHistoryIndexJson,
+        artifacts.paths.runtimeBudgetProfileJson,
+        "all",
+        5
+    );
+    write_runtime_import_bundle_manifest_or_throw(
+        artifacts.externalImportBundleJson,
+        artifacts.externalCurrentJson,
+        "real",
+        "foreign-runner",
+        "foreign-host"
+    );
+    return artifacts;
+}
+
+void import_new_env_bundle_or_throw(const NewEnvOnboardingSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-external-bundle",
+            {
+                "--runtime-import-bundle " + shell_quote(artifacts.externalImportBundleJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--runtime-refresh-out " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--import-out " + shell_quote(artifacts.externalImportSummaryJson.string()),
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "phase34 smoke expected external bundle import"
+    );
+}
+
+void gate_new_env_proposal_or_throw(const NewEnvOnboardingSmokeArtifacts& artifacts) {
+    import_new_env_bundle_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "propose-rebaseline",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--proposal-out " + shell_quote(artifacts.externalProposalJson.string()),
+            }
+        ) == 0,
+        "phase34 smoke expected new env rebaseline proposal"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "new-env-proposal-gate",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-proposal " + shell_quote(artifacts.externalProposalJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-current " + shell_quote(artifacts.externalWatchCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.externalWatchRefreshJson.string()),
+                "--runtime-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()),
+                "--min-real-samples-release 1",
+                "--min-real-samples-debug 1",
+                "--min-real-samples-asan 5",
+                "--min-watch-confidence HIGH",
+            }
+        ) == 0,
+        "phase34 smoke expected new env proposal gate"
+    );
+}
+
+void approve_new_env_baseline_or_throw(const NewEnvOnboardingSmokeArtifacts& artifacts) {
+    gate_new_env_proposal_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "approve-new-env-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-proposal " + shell_quote(artifacts.externalProposalJson.string()),
+                "--runtime-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-baseline-out " + shell_quote(artifacts.externalApprovedBaselineJson.string()),
+                "--baseline-tag phase34-runtime-external-approved",
+                "--archive-proposal " + shell_quote(artifacts.externalArchivedProposalJson.string()),
+                "--activate",
+            }
+        ) == 0,
+        "phase34 smoke expected new env baseline approval"
+    );
+}
+
 RuntimeRebaselineSmokeArtifacts prepare_runtime_rebaseline_smoke_artifacts(
     const TestOptions& options,
     const string& stem
 ) {
     RuntimeRebaselineSmokeArtifacts artifacts;
     artifacts.paths = prepare_policy_pipeline_smoke_artifacts(options, stem);
+    artifacts.proposalGateJson = artifacts.paths.root / "manifests" / "runtime_proposal_gate_phase31.json";
     artifacts.approvedBaselineJson = artifacts.paths.root / "manifests" / "policy_runtime_baseline_phase25_approved.json";
     artifacts.archivedProposalJson = artifacts.paths.root / "manifests" / "runtime_rebaseline_proposal_phase25_archived.json";
     artifacts.refreshedRuntimeJson = artifacts.paths.root / "manifests" / "policy_runtime_refresh_phase25_v2.json";
@@ -13209,15 +15916,145 @@ RuntimeRebaselineSmokeArtifacts prepare_runtime_rebaseline_smoke_artifacts(
     return artifacts;
 }
 
+RuntimeBudgetLifecycleSmokeArtifacts prepare_runtime_budget_lifecycle_smoke_artifacts(
+    const TestOptions& options,
+    const string& stem
+) {
+    RuntimeBudgetLifecycleSmokeArtifacts artifacts;
+    artifacts.paths = prepare_policy_pipeline_smoke_artifacts(options, stem);
+    artifacts.paths.runtimeBudgetProfileJson = source_package_root() / "tests" / "runtime_budget_phase29.json";
+    artifacts.quickSummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_quick_phase33.json";
+    artifacts.nightlySummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_nightly_phase33.json";
+    artifacts.matrixSummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_matrix_phase33.json";
+    artifacts.currentEnvGovernancePolicyJson = artifacts.paths.root / "manifests" / "runtime_current_env_governance_phase41.json";
+    artifacts.currentEnvGuardrailPolicyJson = artifacts.paths.root / "manifests" / "runtime_current_env_guardrail_phase42.json";
+    artifacts.currentEnvWatchCurrentJson = artifacts.paths.root / "manifests" / "runtime_current_env_watch_phase41.json";
+    artifacts.currentEnvWatchRefreshJson = artifacts.paths.root / "manifests" / "runtime_current_env_watch_refresh_phase41.json";
+    artifacts.currentEnvWatchHistoryJson = artifacts.paths.root / "manifests" / "runtime_current_env_watch_history_phase41.json";
+    artifacts.currentEnvAgeTickJson = artifacts.paths.root / "manifests" / "runtime_current_env_age_tick_phase42.json";
+    artifacts.currentEnvWatchPlanJson = artifacts.paths.root / "manifests" / "runtime_current_env_watch_plan_phase42.json";
+    artifacts.currentEnvTriggerGateJson = artifacts.paths.root / "manifests" / "runtime_current_env_reproposal_trigger_gate_phase42.json";
+    artifacts.currentEnvDueJson = artifacts.paths.root / "manifests" / "runtime_current_env_due_phase43.json";
+    artifacts.currentEnvReproposalPlanJson = artifacts.paths.root / "manifests" / "runtime_current_env_reproposal_plan_phase43.json";
+    artifacts.opsAgendaJson = artifacts.paths.root / "manifests" / "policy_ops_agenda_phase43.json";
+    artifacts.runtimeBudgetReproposalHistoryJson = artifacts.paths.root / "manifests" / "runtime_budget_reproposal_history_phase42.json";
+    artifacts.runtimeBudgetRegistrySummaryJson = artifacts.paths.root / "manifests" / "runtime_budget_registry_phase42_summary.json";
+
+    write_runtime_current_smoke_manifest(artifacts.paths, 280.0, 480.0, 900.0, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(artifacts.paths, "phase33-runtime-watch");
+    write_runtime_current_smoke_manifest(artifacts.paths, 290.0, 480.0, 900.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime budget smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(artifacts.paths, 10);
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "release_full", 10);
+    return artifacts;
+}
+
+void gate_runtime_budget_smoke_artifacts(
+    const TestOptions& options,
+    const RuntimeBudgetLifecycleSmokeArtifacts& artifacts
+) {
+    TestOptions gateOptions = options;
+    gateOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    gateOptions.runtimeBaselineManifest = artifacts.paths.runtimeBaselineJson.string();
+    gateOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    gateOptions.runtimeWatchCurrent = artifacts.paths.runtimeWatchCurrentJson.string();
+    gateOptions.runtimeWatchRefresh = artifacts.paths.runtimeWatchRefreshJson.string();
+    gateOptions.runtimeBudgetConfig = artifacts.paths.runtimeBudgetProfileJson.string();
+    gateOptions.runtimeBudgetCurrentManifest = artifacts.paths.runtimeBudgetCurrentJson.string();
+    gateOptions.runtimeBudgetProposal = artifacts.paths.runtimeBudgetProposalJson.string();
+    gateOptions.runtimeBudgetProposalGate = artifacts.paths.runtimeBudgetProposalGateJson.string();
+    gateOptions.budgetTag = "phase33-runtime-budget-approved";
+    gateOptions.minRealSamplesRelease = 5;
+    gateOptions.maxHardBreachCount = 0;
+    gateOptions.minWatchConfidence = "HIGH";
+    run_runtime_budget_proposal_gate_case(gateOptions);
+}
+
+void approve_runtime_budget_smoke_artifacts(
+    const TestOptions& options,
+    const RuntimeBudgetLifecycleSmokeArtifacts& artifacts
+) {
+    gate_runtime_budget_smoke_artifacts(options, artifacts);
+    TestOptions approveOptions = options;
+    approveOptions.runtimeBudgetCurrentManifest = artifacts.paths.runtimeBudgetCurrentJson.string();
+    approveOptions.runtimeBudgetProposal = artifacts.paths.runtimeBudgetProposalJson.string();
+    approveOptions.runtimeBudgetProposalGate = artifacts.paths.runtimeBudgetProposalGateJson.string();
+    approveOptions.runtimeBudgetRegistry = artifacts.paths.runtimeBudgetRegistryJson.string();
+    approveOptions.runtimeBudgetBaselineManifest = artifacts.paths.runtimeBudgetBaselineJson.string();
+    approveOptions.archiveProposal = artifacts.paths.runtimeBudgetArchivedProposalJson.string();
+    approveOptions.budgetTag = "phase33-runtime-budget-approved";
+    approveOptions.activate = true;
+    run_runtime_budget_approve_reprofile_case(approveOptions);
+    TestOptions budgetRefreshOptions = options;
+    budgetRefreshOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    budgetRefreshOptions.runtimeBudgetBaselineManifest = artifacts.paths.runtimeBudgetBaselineJson.string();
+    budgetRefreshOptions.runtimeBudgetRefreshManifest = artifacts.paths.runtimeBudgetRefreshJson.string();
+    run_runtime_budget_refresh_case(budgetRefreshOptions);
+    TestOptions budgetPlanOptions = options;
+    budgetPlanOptions.runtimeBudgetRefreshManifest = artifacts.paths.runtimeBudgetRefreshJson.string();
+    budgetPlanOptions.runtimeBudgetRerunPlan = artifacts.paths.runtimeBudgetRerunJson.string();
+    run_runtime_budget_plan_rerun_case(budgetPlanOptions);
+}
+
+void pin_runtime_budget_approval_timestamp_or_throw(
+    const RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const string& approvalTimestamp
+) {
+    const string baselineText = slurp_text_file(artifacts.paths.runtimeBudgetBaselineJson);
+    const string currentTimestamp = extract_json_string_field_or_throw(baselineText, "approval_timestamp_utc");
+    replace_all_in_file_if_needed_or_throw(
+        artifacts.paths.runtimeBudgetBaselineJson,
+        "\"approval_timestamp_utc\": \"" + currentTimestamp + "\"",
+        "\"approval_timestamp_utc\": \"" + approvalTimestamp + "\""
+    );
+    const filesystem::path approvalMetadata =
+        artifacts.paths.runtimeBudgetBaselineJson.parent_path() /
+        (artifacts.paths.runtimeBudgetBaselineJson.stem().string() + "_approval_metadata.json");
+    if (filesystem::exists(approvalMetadata)) {
+        replace_all_in_file_if_needed_or_throw(
+            approvalMetadata,
+            "\"approval_timestamp_utc\": \"" + currentTimestamp + "\"",
+            "\"approval_timestamp_utc\": \"" + approvalTimestamp + "\""
+        );
+    }
+}
+
 void approve_runtime_rebaseline_smoke_artifacts(
     const TestOptions& options,
     const RuntimeRebaselineSmokeArtifacts& artifacts
 ) {
+    append_runtime_history_samples_or_throw(artifacts.paths, 9);
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "all", 10);
+
+    TestOptions gateOptions = options;
+    gateOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    gateOptions.proposalOut = artifacts.paths.runtimeProposalJson.string();
+    gateOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    gateOptions.runtimeWatchCurrent = artifacts.paths.runtimeWatchCurrentJson.string();
+    gateOptions.runtimeWatchRefresh = artifacts.paths.runtimeWatchRefreshJson.string();
+    gateOptions.runtimeProposalGate = artifacts.proposalGateJson.string();
+    gateOptions.minRealSamplesRelease = 1;
+    gateOptions.minRealSamplesDebug = 1;
+    gateOptions.minRealSamplesAsan = 5;
+    gateOptions.minWatchConfidence = "MEDIUM";
+    run_runtime_proposal_gate_case(gateOptions);
+
     TestOptions approveOptions = options;
     approveOptions.runtimeBaselineRegistry = artifacts.paths.runtimeRegistryJson.string();
     approveOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
     approveOptions.runtimeBaselineManifest = artifacts.approvedBaselineJson.string();
     approveOptions.proposalOut = artifacts.paths.runtimeProposalJson.string();
+    approveOptions.runtimeProposalGate = artifacts.proposalGateJson.string();
     approveOptions.archiveProposal = artifacts.archivedProposalJson.string();
     approveOptions.baselineTag = "phase25-runtime-approved";
     approveOptions.activate = true;
@@ -13989,6 +16826,105 @@ void run_runtime_watch_campaign_longer_smoke_case(const TestOptions& options) {
     require_test(watchCurrent.find("\"sample_count\": 10") != string::npos, "runtime watch campaign longer smoke expected repeat count");
 }
 
+void run_runtime_watch_campaign_release_full_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_campaign_release_full_smoke");
+    write_runtime_current_smoke_manifest(paths, 280.0, 480.0, 900.0, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase32-release-watch");
+    write_runtime_current_smoke_manifest(paths, 290.0, 480.0, 900.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime watch campaign release full smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 5);
+    run_runtime_watch_cycle_or_throw(paths, "release_full", 5);
+    const string watchRefresh = slurp_text_file(paths.runtimeWatchRefreshJson);
+    require_test(watchRefresh.find("\"execution_class\": \"release_full\"") != string::npos, "runtime watch campaign release full smoke expected release_full entry");
+    require_test(watchRefresh.find("\"watch_status\": \"WATCH_STABLE\"") != string::npos, "runtime watch campaign release full smoke expected WATCH_STABLE");
+    require_test(watchRefresh.find("\"sample_count\": 5") != string::npos, "runtime watch campaign release full smoke expected repeat count");
+}
+
+void run_runtime_watch_release_full_repeat10_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_release_full_repeat10_smoke");
+    write_runtime_current_smoke_manifest(paths, 280.0, 480.0, 900.0, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase32-release-watch");
+    write_runtime_current_smoke_manifest(paths, 290.0, 480.0, 900.0, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime watch release full repeat10 smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 10);
+    run_runtime_watch_cycle_or_throw(paths, "release_full", 10);
+    const string watchCurrent = slurp_text_file(paths.runtimeWatchCurrentJson);
+    require_test(watchCurrent.find("\"sample_count\": 10") != string::npos, "runtime watch release full repeat10 smoke expected repeat count");
+    require_test(watchCurrent.find("\"overall_watch_status\": \"WATCH_STABLE\"") != string::npos, "runtime watch release full repeat10 smoke expected WATCH_STABLE");
+}
+
+void run_runtime_watch_release_full_confidence_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_release_full_confidence_smoke");
+    write_runtime_current_smoke_manifest(paths, 280.0, 480.0, 900.0, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase32-release-watch");
+    write_runtime_current_smoke_manifest(paths, 290.0, 480.0, 2490.11, "smoke-runner");
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime watch release full confidence smoke expected refresh generation"
+    );
+    append_runtime_history_samples_or_throw(paths, 10);
+    run_runtime_watch_cycle_or_throw(paths, "release_full", 10);
+    build_runtime_watch_registry_or_throw(paths);
+
+    PolicyPipelineSmokeArtifacts quickPaths = paths;
+    quickPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_quick_phase32.json";
+    PolicyPipelineSmokeArtifacts nightlyPaths = paths;
+    nightlyPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_nightly_phase32.json";
+    nightlyPaths.zipPath = paths.root / "raw_engine_phase32_release_watch.zip";
+    nightlyPaths.curatedZipPath = paths.root / "raw_engine_phase32_release_watch_curated.zip";
+    nightlyPaths.lightOpsZipPath = paths.root / "raw_engine_phase32_release_watch_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = paths;
+    matrixPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_matrix_phase32.json";
+
+    require_test(
+        run_policy_pipeline_script(options, quickPaths, "quick", true, true, false, "--runtime-stage release_full=290.0") == 10,
+        "runtime watch release full confidence smoke expected quick WARN"
+    );
+    require_test(
+        run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--runtime-stage release_full=290.0") == 10,
+        "runtime watch release full confidence smoke expected nightly WARN"
+    );
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20,
+        "runtime watch release full confidence smoke expected matrix ACTION_REQUIRED"
+    );
+    build_runtime_watch_registry_or_throw(paths, matrixPaths.summaryJson);
+    build_policy_ops_summary_or_throw(paths, quickPaths.summaryJson, nightlyPaths.summaryJson, matrixPaths.summaryJson);
+
+    const string registryText = slurp_text_file(paths.runtimeWatchRegistryJson);
+    require_test(registryText.find("\"watch_confidence\": \"HIGH\"") != string::npos, "runtime watch release full confidence smoke expected HIGH confidence");
+    const string opsSummary = slurp_text_file(paths.opsSummaryJson);
+    require_test(opsSummary.find("\"recommended_action_current_env\": \"WATCH_RUNTIME\"") != string::npos, "runtime watch release full confidence smoke expected WATCH_RUNTIME current action");
+    require_test(opsSummary.find("continue monitoring release_full") != string::npos, "runtime watch release full confidence smoke expected release_full operator conclusion");
+}
+
 void run_runtime_watch_multi_fingerprint_smoke_case(const TestOptions& options) {
     const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_multi_fingerprint_smoke");
     const int rc = run_policy_pipeline_script(options, paths, "matrix", true, true, false, "");
@@ -14170,6 +17106,2286 @@ void run_runtime_watch_diagnostic_soft_warn_smoke_case(const TestOptions& option
     run_combined_pipeline_continue_monitoring_smoke_case(options);
 }
 
+filesystem::path write_import_runtime_current_smoke_manifest_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const string& stem,
+    double releaseSeconds,
+    double debugSeconds,
+    double asanSeconds,
+    const string& runnerTag
+) {
+    const filesystem::path outPath = paths.root / "manifests" / (stem + ".json");
+    require_test(
+        run_runtime_lifecycle_script(
+            "write-current",
+            {
+                "--phase phase30",
+                "--artifact-root " + shell_quote(paths.root.string()),
+                "--runtime-current-manifest " + shell_quote(outPath.string()),
+                "--baseline-tag phase30-runtime",
+                "--runner-tag " + shell_quote(runnerTag),
+                "--runtime-budget-config " + shell_quote(paths.runtimeBudgetProfileJson.string()),
+                "--entry execution_class=release_full,wall_time_sec=" + json_number(releaseSeconds),
+                "--entry execution_class=debug_full,wall_time_sec=" + json_number(debugSeconds),
+                "--entry execution_class=asan_full,wall_time_sec=" + json_number(asanSeconds),
+                "--entry execution_class=policy_core,wall_time_sec=1.0",
+                "--entry execution_class=policy_refresh,wall_time_sec=1.0",
+                "--entry execution_class=policy_nightly,wall_time_sec=2.0",
+                "--test-count release_full=10",
+                "--test-count debug_full=10",
+                "--test-count asan_full=10",
+            }
+        ) == 0,
+        stem + " expected imported runtime current manifest generation"
+    );
+    return outPath;
+}
+
+void run_runtime_registry_import_current_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_import_current_smoke");
+    const filesystem::path importedCurrent = write_import_runtime_current_smoke_manifest_or_throw(
+        paths,
+        "runtime_import_same_fingerprint",
+        120.0,
+        480.0,
+        2490.11,
+        "smoke-runner"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-current",
+            {
+                "--runtime-import-manifest " + shell_quote(importedCurrent.string()),
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+                "--runtime-refresh-out " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--evidence-source real",
+                "--runner-id smoke-runner",
+                "--host-label same-host-import",
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "runtime registry import current smoke expected import success"
+    );
+    const string registryText = slurp_text_file(paths.runtimeWatchRegistryJson);
+    require_test(registryText.find("\"imported_runner_id\": \"smoke-runner\"") != string::npos, "runtime registry import current smoke expected imported runner id");
+    require_test(registryText.find("\"evidence_source_counts\"") != string::npos, "runtime registry import current smoke expected evidence source counts");
+    require_test(registryText.find("\"watch_confidence\"") != string::npos, "runtime registry import current smoke expected watch confidence");
+}
+
+void run_runtime_registry_import_new_fingerprint_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_import_new_fingerprint_smoke");
+    const filesystem::path sameFingerprintCurrent = write_import_runtime_current_smoke_manifest_or_throw(
+        paths,
+        "runtime_import_existing_fingerprint",
+        120.0,
+        480.0,
+        2490.11,
+        "smoke-runner"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-current",
+            {
+                "--runtime-import-manifest " + shell_quote(sameFingerprintCurrent.string()),
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+                "--runtime-refresh-out " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--evidence-source real",
+                "--runner-id smoke-runner",
+                "--host-label same-host-import",
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "runtime registry import new fingerprint smoke expected same fingerprint seed import"
+    );
+    const filesystem::path importedCurrent = write_import_runtime_current_smoke_manifest_or_throw(
+        paths,
+        "runtime_import_new_fingerprint",
+        120.0,
+        480.0,
+        2490.11,
+        "import-runner-alt"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-current",
+            {
+                "--runtime-import-manifest " + shell_quote(importedCurrent.string()),
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+                "--runtime-refresh-out " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--evidence-source real",
+                "--runner-id import-runner-alt",
+                "--host-label alt-host-import",
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "runtime registry import new fingerprint smoke expected import success"
+    );
+    const string registryText = slurp_text_file(paths.runtimeWatchRegistryJson);
+    require_test(registryText.find("\"fingerprint_count\": 1") == string::npos, "runtime registry import new fingerprint smoke expected multiple fingerprints");
+}
+
+void run_runtime_watch_import_same_fingerprint_smoke_case(const TestOptions& options) {
+    run_runtime_registry_import_current_smoke_case(options);
+}
+
+void run_runtime_watch_import_fixture_vs_real_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_import_fixture_vs_real_smoke");
+    const filesystem::path importedCurrent = write_import_runtime_current_smoke_manifest_or_throw(
+        paths,
+        "runtime_import_fixture_vs_real",
+        120.0,
+        480.0,
+        2490.11,
+        "import-runner-mixed"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-current",
+            {
+                "--runtime-import-manifest " + shell_quote(importedCurrent.string()),
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+                "--evidence-source fixture",
+                "--runner-id import-runner-fixture",
+                "--host-label fixture-host",
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "runtime watch import fixture vs real smoke expected fixture import success"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-current",
+            {
+                "--runtime-import-manifest " + shell_quote(importedCurrent.string()),
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+                "--evidence-source real",
+                "--runner-id import-runner-real",
+                "--host-label real-host",
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "runtime watch import fixture vs real smoke expected real import success"
+    );
+    const string registryText = slurp_text_file(paths.runtimeWatchRegistryJson);
+    require_test(registryText.find("\"fixture\"") != string::npos, "runtime watch import fixture vs real smoke expected fixture evidence");
+    require_test(registryText.find("\"real\"") != string::npos, "runtime watch import fixture vs real smoke expected real evidence");
+}
+
+void run_runtime_import_external_bundle_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_import_external_bundle_smoke");
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-external-bundle",
+            {
+                "--runtime-import-bundle " + shell_quote(artifacts.externalImportBundleJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--runtime-refresh-out " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--import-out " + shell_quote(artifacts.externalImportSummaryJson.string()),
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "runtime import external bundle smoke expected import success"
+    );
+    const string importSummary = slurp_text_file(artifacts.externalImportSummaryJson);
+    require_test(importSummary.find("\"import_verdict\"") != string::npos, "runtime import external bundle smoke expected import verdict");
+    require_test(importSummary.find("\"imported_fingerprint_key\"") != string::npos, "runtime import external bundle smoke expected fingerprint key");
+    require_test(importSummary.find("\"proposal_needed\": true") != string::npos, "runtime import external bundle smoke expected proposal needed");
+}
+
+void run_runtime_import_external_new_fingerprint_smoke_case(const TestOptions& options) {
+    run_runtime_import_external_bundle_smoke_case(options);
+}
+
+void run_runtime_import_external_same_fingerprint_append_smoke_case(const TestOptions& options) {
+    run_runtime_registry_import_current_smoke_case(options);
+}
+
+void run_runtime_import_external_malformed_bundle_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_import_external_malformed_bundle_smoke");
+    const filesystem::path malformedBundle = artifacts.paths.root / "manifests" / "runtime_external_import_bundle_malformed.json";
+    write_text_file_or_throw(malformedBundle, "{\n  \"runner_id\": \"broken\"\n}\n");
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-external-bundle",
+            {
+                "--runtime-import-bundle " + shell_quote(malformedBundle.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--import-out " + shell_quote(artifacts.externalImportSummaryJson.string()),
+            }
+        ) != 0,
+        "runtime import external malformed bundle smoke expected failure"
+    );
+}
+
+void run_runtime_new_env_proposal_gate_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_new_env_proposal_gate_smoke");
+    gate_new_env_proposal_or_throw(artifacts);
+    const string gateText = slurp_text_file(artifacts.externalProposalGateJson);
+    require_test(gateText.find("\"proposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "runtime new env proposal gate smoke expected APPROVABLE");
+    require_test(gateText.find("\"proposal_confidence\": \"HIGH\"") != string::npos, "runtime new env proposal gate smoke expected HIGH confidence");
+}
+
+void run_runtime_new_env_need_more_samples_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_new_env_need_more_samples_smoke");
+    import_new_env_bundle_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "new-env-proposal-gate",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-proposal " + shell_quote(artifacts.externalProposalJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-current " + shell_quote(artifacts.externalWatchCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.externalWatchRefreshJson.string()),
+                "--runtime-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()),
+                "--min-real-samples-release 3",
+                "--min-real-samples-debug 3",
+                "--min-real-samples-asan 8",
+                "--min-watch-confidence HIGH",
+            }
+        ) != 0,
+        "runtime new env need more samples smoke expected missing proposal failure without proposal"
+    );
+}
+
+void run_runtime_new_env_approvable_smoke_case(const TestOptions& options) {
+    run_runtime_new_env_proposal_gate_smoke_case(options);
+}
+
+void run_runtime_new_env_reject_hard_breach_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_new_env_reject_hard_breach_smoke");
+    require_test(
+        run_runtime_lifecycle_script(
+            "write-current",
+            {
+                "--phase phase34",
+                "--artifact-root " + shell_quote(artifacts.paths.root.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--baseline-tag phase34-runtime-external",
+                "--runner-tag foreign-runner",
+                "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetProfileJson.string()),
+                "--entry execution_class=release_full,wall_time_sec=5000.0",
+                "--entry execution_class=debug_full,wall_time_sec=492.0",
+                "--entry execution_class=asan_full,wall_time_sec=930.0",
+                "--entry execution_class=policy_core,wall_time_sec=1.0",
+                "--entry execution_class=policy_refresh,wall_time_sec=1.0",
+                "--entry execution_class=policy_nightly,wall_time_sec=2.0",
+                "--test-count release_full=10",
+                "--test-count debug_full=10",
+                "--test-count asan_full=10",
+            }
+        ) == 0,
+        "runtime new env reject hard breach smoke expected rewritten external manifest"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime new env reject hard breach smoke expected refresh"
+    );
+    append_runtime_history_samples_for_manifest_or_throw(
+        artifacts.paths.runtimeHistoryIndexJson,
+        artifacts.externalCurrentJson,
+        artifacts.externalRefreshJson,
+        5,
+        "real",
+        "foreign-runner",
+        "foreign-host"
+    );
+    run_runtime_watch_cycle_for_manifest_or_throw(
+        artifacts.paths.runtimeBaselineJson,
+        artifacts.externalCurrentJson,
+        artifacts.externalRefreshJson,
+        artifacts.paths.runtimeHistoryIndexJson,
+        artifacts.externalWatchCurrentJson,
+        artifacts.externalWatchRefreshJson,
+        artifacts.externalWatchHistoryIndexJson,
+        artifacts.paths.runtimeBudgetProfileJson,
+        "all",
+        5
+    );
+    import_new_env_bundle_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "propose-rebaseline",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--proposal-out " + shell_quote(artifacts.externalProposalJson.string()),
+            }
+        ) == 0,
+        "runtime new env reject hard breach smoke expected proposal"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "new-env-proposal-gate",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-proposal " + shell_quote(artifacts.externalProposalJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-current " + shell_quote(artifacts.externalWatchCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.externalWatchRefreshJson.string()),
+                "--runtime-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()),
+                "--min-real-samples-release 1",
+                "--min-real-samples-debug 1",
+                "--min-real-samples-asan 5",
+                "--min-watch-confidence HIGH",
+            }
+        ) == 0,
+        "runtime new env reject hard breach smoke expected gate generation"
+    );
+    const string gateText = slurp_text_file(artifacts.externalProposalGateJson);
+    require_test(gateText.find("\"proposal_gate_verdict\": \"REJECT\"") != string::npos, "runtime new env reject hard breach smoke expected REJECT");
+}
+
+void run_runtime_approve_new_env_baseline_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_approve_new_env_baseline_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    const string registryText = slurp_text_file(artifacts.paths.runtimeRegistryJson);
+    require_test(registryText.find("\"registry_version\": \"runtime_baseline_registry_v2\"") != string::npos, "runtime approve new env baseline smoke expected registry v2");
+    require_test(registryText.find("\"baseline_tag\": \"phase34-runtime-external-approved\"") != string::npos, "runtime approve new env baseline smoke expected external active baseline");
+    require_test(registryText.find("\"baseline_tag\": \"phase34-current-env-approved\"") != string::npos, "runtime approve new env baseline smoke expected current env baseline retained");
+}
+
+void run_runtime_registry_keep_current_env_active_smoke_case(const TestOptions& options) {
+    run_runtime_approve_new_env_baseline_smoke_case(options);
+}
+
+void run_runtime_registry_multi_fingerprint_active_smoke_case(const TestOptions& options) {
+    run_runtime_approve_new_env_baseline_smoke_case(options);
+}
+
+void run_runtime_approve_new_env_reject_without_gate_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_approve_new_env_reject_without_gate_smoke");
+    import_new_env_bundle_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "approve-new-env-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-proposal " + shell_quote(artifacts.externalProposalJson.string()),
+                "--runtime-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-baseline-out " + shell_quote(artifacts.externalApprovedBaselineJson.string()),
+                "--baseline-tag phase34-runtime-external-approved",
+                "--activate",
+            }
+        ) != 0,
+        "runtime approve new env reject without gate smoke expected failure"
+    );
+}
+
+void run_runtime_refresh_after_new_env_approval_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_refresh_after_new_env_approval_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime refresh after new env approval smoke expected refresh"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(artifacts.externalRerunJson.string()),
+            }
+        ) == 0,
+        "runtime refresh after new env approval smoke expected rerun plan"
+    );
+    const string refreshText = slurp_text_file(artifacts.externalRefreshJson);
+    const string rerunText = slurp_text_file(artifacts.externalRerunJson);
+    require_test(refreshText.find("\"comparability_verdict\": \"COMPARABLE\"") != string::npos, "runtime refresh after new env approval smoke expected COMPARABLE");
+    require_test(refreshText.find("\"freshness_verdict\": \"FRESH\"") != string::npos, "runtime refresh after new env approval smoke expected FRESH");
+    require_test(rerunText.find("\"selected_entry_count\": 0") != string::npos, "runtime refresh after new env approval smoke expected empty rerun");
+}
+
+void run_runtime_rerun_after_new_env_approval_smoke_case(const TestOptions& options) {
+    run_runtime_refresh_after_new_env_approval_smoke_case(options);
+}
+
+void run_runtime_watch_confidence_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_watch_confidence_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase30-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 10);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 10);
+    PolicyPipelineSmokeArtifacts matrixPaths = paths;
+    matrixPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_matrix_phase30.json";
+    require_test(run_policy_pipeline_script(options, paths, "quick", true, true, false, "--runtime-stage asan_full=2490.11") == 10, "runtime watch confidence smoke expected quick WARN");
+    require_test(run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20, "runtime watch confidence smoke expected matrix ACTION_REQUIRED");
+    require_test(
+        run_runtime_watch_ops_script(
+            "ops-summary",
+            {
+                "--phase phase30",
+                "--policy-manifest " + shell_quote(paths.currentJson.string()),
+                "--quick-summary " + shell_quote(paths.summaryJson.string()),
+                "--nightly-summary " + shell_quote(paths.summaryJson.string()),
+                "--matrix-summary " + shell_quote(matrixPaths.summaryJson.string()),
+                "--runtime-refresh " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()),
+                "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+                "--out " + shell_quote(paths.opsSummaryJson.string()),
+                "--out-text " + shell_quote(paths.opsSummaryTxt.string()),
+            }
+        ) == 0,
+        "runtime watch confidence smoke expected ops summary generation"
+    );
+    const string opsSummary = slurp_text_file(paths.opsSummaryJson);
+    require_test(opsSummary.find("\"watch_confidence\": \"HIGH\"") != string::npos, "runtime watch confidence smoke expected HIGH current env confidence");
+    require_test(opsSummary.find("\"watch_confidence\": \"LOW\"") != string::npos, "runtime watch confidence smoke expected LOW new env confidence");
+}
+
+void run_runtime_watch_confidence_real_vs_fixture_smoke_case(const TestOptions& options) {
+    run_runtime_watch_confidence_smoke_case(options);
+}
+
+void run_runtime_history_compact_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_history_compact_smoke");
+    for (double asanSeconds : {2100.0, 2200.0, 2300.0, 2400.0, 2490.11, 2550.0}) {
+        write_runtime_current_smoke_manifest(paths, 120.0, 480.0, asanSeconds, "smoke-runner");
+        require_test(
+            run_runtime_lifecycle_script(
+                "history-append",
+                {
+                    "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                    "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                    "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+                    "--evidence-source real",
+                    "--runner-id compact-runner",
+                    "--host-label compact-host",
+                }
+            ) == 0,
+            "runtime history compact smoke expected history append"
+        );
+    }
+    require_test(
+        run_runtime_lifecycle_script(
+            "history-compact",
+            {
+                "--runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()),
+                "--compact-out " + shell_quote(paths.runtimeHistoryCompactJson.string()),
+                "--keep-latest-per-fingerprint 2",
+                "--keep-anchors 1",
+                "--keep-transitions",
+                "--prune-old-fixture-history",
+                "--compact-watch-history",
+            }
+        ) == 0,
+        "runtime history compact smoke expected compact success"
+    );
+    const string compactText = slurp_text_file(paths.runtimeHistoryCompactJson);
+    require_test(compactText.find("\"history_version\": \"runtime_history_index_v1_compacted\"") != string::npos, "runtime history compact smoke expected compacted version");
+    require_test(compactText.find("\"compaction_policy\"") != string::npos, "runtime history compact smoke expected compaction policy");
+}
+
+void run_policy_ops_summary_unified_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "policy_ops_summary_unified_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase30-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 10);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 10);
+    PolicyPipelineSmokeArtifacts quickPaths = paths;
+    quickPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_quick_phase30.json";
+    PolicyPipelineSmokeArtifacts nightlyPaths = paths;
+    nightlyPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_nightly_phase30.json";
+    nightlyPaths.zipPath = paths.root / "raw_engine_phase30_unified.zip";
+    nightlyPaths.curatedZipPath = paths.root / "raw_engine_phase30_unified_curated.zip";
+    nightlyPaths.lightOpsZipPath = paths.root / "raw_engine_phase30_unified_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = paths;
+    matrixPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_matrix_phase30.json";
+    require_test(run_policy_pipeline_script(options, quickPaths, "quick", true, true, false, "--runtime-stage asan_full=2490.11") == 10, "policy ops summary unified smoke expected quick WARN");
+    require_test(run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--runtime-stage asan_full=2490.11") == 10, "policy ops summary unified smoke expected nightly WARN");
+    require_test(run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20, "policy ops summary unified smoke expected matrix ACTION_REQUIRED");
+    require_test(
+        run_runtime_watch_ops_script(
+            "ops-summary",
+            {
+                "--phase phase30",
+                "--policy-manifest " + shell_quote(paths.currentJson.string()),
+                "--quick-summary " + shell_quote(quickPaths.summaryJson.string()),
+                "--nightly-summary " + shell_quote(nightlyPaths.summaryJson.string()),
+                "--matrix-summary " + shell_quote(matrixPaths.summaryJson.string()),
+                "--runtime-refresh " + shell_quote(paths.runtimeRefreshJson.string()),
+                "--runtime-watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()),
+                "--runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()),
+                "--out " + shell_quote(paths.opsSummaryJson.string()),
+                "--out-text " + shell_quote(paths.opsSummaryTxt.string()),
+            }
+        ) == 0,
+        "policy ops summary unified smoke expected ops summary generation"
+    );
+    const string opsSummary = slurp_text_file(paths.opsSummaryJson);
+    require_test(opsSummary.find("\"current_env_summary\"") != string::npos, "policy ops summary unified smoke expected current env summary");
+    require_test(opsSummary.find("\"new_env_summary\"") != string::npos, "policy ops summary unified smoke expected new env summary");
+    require_test(opsSummary.find("\"overall_summary\"") != string::npos, "policy ops summary unified smoke expected overall summary");
+    require_test(opsSummary.find("\"recommended_action_current_env\": \"CONTINUE_MONITORING\"") != string::npos, "policy ops summary unified smoke expected current env monitoring action");
+    require_test(opsSummary.find("\"recommended_action_new_env\": \"REBASELINE_REQUIRED\"") != string::npos, "policy ops summary unified smoke expected new env rebaseline action");
+}
+
+void run_policy_ops_summary_current_vs_new_env_smoke_case(const TestOptions& options) {
+    run_policy_ops_summary_unified_smoke_case(options);
+}
+
+void run_policy_ops_summary_three_way_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "policy_ops_summary_three_way_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "policy ops summary three way smoke expected approved env refresh"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(artifacts.externalRerunJson.string()),
+            }
+        ) == 0,
+        "policy ops summary three way smoke expected approved env rerun plan"
+    );
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase34-external-approved"
+    );
+
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase34_ops_summary.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase34_ops_summary_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase34_ops_summary_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(run_policy_pipeline_script(options, quickPaths, "quick", true, true, false, "") == 0, "policy ops summary three way smoke expected quick OK");
+    require_test(run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--use-published-snapshot") == 0, "policy ops summary three way smoke expected nightly OK");
+    require_test(run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20, "policy ops summary three way smoke expected matrix ACTION_REQUIRED");
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    require_test(
+        run_runtime_watch_ops_script(
+            "ops-summary",
+            {
+                "--phase phase34",
+                "--policy-manifest " + shell_quote(artifacts.paths.currentJson.string()),
+                "--quick-summary " + shell_quote(artifacts.quickSummaryJson.string()),
+                "--nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()),
+                "--matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()),
+                "--runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--approved-known-summary " + shell_quote(artifacts.externalApprovedSummaryJson.string()),
+                "--foreign-import-summary " + shell_quote(artifacts.externalImportSummaryJson.string()),
+                "--out " + shell_quote(artifacts.paths.opsSummaryJson.string()),
+                "--out-text " + shell_quote(artifacts.paths.opsSummaryTxt.string()),
+            }
+        ) == 0,
+        "policy ops summary three way smoke expected ops summary generation"
+    );
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"approved_known_environments\"") != string::npos, "policy ops summary three way smoke expected approved known environments");
+    require_test(opsSummary.find("\"unapproved_foreign_environments\"") != string::npos, "policy ops summary three way smoke expected unapproved foreign environments");
+    require_test(opsSummary.find("\"recommended_action_current_env\": \"NO_ACTION\"") != string::npos, "policy ops summary three way smoke expected current env NO_ACTION");
+    require_test(opsSummary.find("\"recommended_action_new_env\": \"REBASELINE_REQUIRED\"") != string::npos, "policy ops summary three way smoke expected new env rebaseline action");
+}
+
+void run_policy_ops_summary_current_vs_known_vs_foreign_smoke_case(const TestOptions& options) {
+    run_policy_ops_summary_three_way_smoke_case(options);
+}
+
+void run_policy_ops_summary_release_watch_smoke_case(const TestOptions& options) {
+    run_runtime_watch_release_full_confidence_smoke_case(options);
+}
+
+void run_policy_ops_summary_matrix_rebaseline_smoke_case(const TestOptions& options) {
+    run_runtime_watch_release_full_confidence_smoke_case(options);
+}
+
+void run_evidence_bundle_light_ops_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "evidence_bundle_light_ops_smoke");
+    write_runtime_current_smoke_manifest(paths, 120.0, 480.0, 2490.11, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase30-runtime-watch");
+    append_runtime_history_samples_or_throw(paths, 10);
+    run_runtime_watch_cycle_or_throw(paths, "asan_full", 10);
+    PolicyPipelineSmokeArtifacts nightlyPaths = paths;
+    nightlyPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_nightly_phase30.json";
+    nightlyPaths.zipPath = paths.root / "raw_engine_phase30_bundle.zip";
+    nightlyPaths.curatedZipPath = paths.root / "raw_engine_phase30_bundle_curated.zip";
+    nightlyPaths.lightOpsZipPath = paths.root / "raw_engine_phase30_bundle_light.zip";
+    require_test(run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--runtime-stage asan_full=2490.11") == 10, "evidence bundle light ops smoke expected nightly WARN");
+    const string summary = slurp_text_file(nightlyPaths.summaryJson);
+    const filesystem::path metadataPath = extract_json_string_field_or_throw(summary, "bundle_metadata");
+    require_test(filesystem::exists(nightlyPaths.lightOpsZipPath), "evidence bundle light ops smoke expected light ops zip");
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(metadata.find("\"light_ops_zip\"") != string::npos, "evidence bundle light ops smoke expected light ops zip metadata");
+    require_test(metadata.find("\"runtime_history_compact_hash\"") != string::npos, "evidence bundle light ops smoke expected compact history metadata");
+    require_test(metadata.find("\"current_env_watch_confidence\"") != string::npos, "evidence bundle light ops smoke expected watch confidence metadata");
+}
+
+void run_evidence_bundle_new_env_onboarding_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "evidence_bundle_new_env_onboarding_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "evidence bundle new env onboarding smoke expected approved env refresh"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(artifacts.externalRerunJson.string()),
+            }
+        ) == 0,
+        "evidence bundle new env onboarding smoke expected approved env rerun plan"
+    );
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase34-external-approved"
+    );
+
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase34_onboarding.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase34_onboarding_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase34_onboarding_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(run_policy_pipeline_script(options, quickPaths, "quick", true, true, false, "") == 0, "evidence bundle new env onboarding smoke expected quick OK");
+    require_test(run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--use-published-snapshot") == 0, "evidence bundle new env onboarding smoke expected nightly OK");
+    require_test(run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20, "evidence bundle new env onboarding smoke expected matrix ACTION_REQUIRED");
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    require_test(
+        run_runtime_watch_ops_script(
+            "ops-summary",
+            {
+                "--phase phase34",
+                "--policy-manifest " + shell_quote(artifacts.paths.currentJson.string()),
+                "--quick-summary " + shell_quote(artifacts.quickSummaryJson.string()),
+                "--nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()),
+                "--matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()),
+                "--runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--approved-known-summary " + shell_quote(artifacts.externalApprovedSummaryJson.string()),
+                "--foreign-import-summary " + shell_quote(artifacts.externalImportSummaryJson.string()),
+                "--out " + shell_quote(artifacts.paths.opsSummaryJson.string()),
+                "--out-text " + shell_quote(artifacts.paths.opsSummaryTxt.string()),
+            }
+        ) == 0,
+        "evidence bundle new env onboarding smoke expected ops summary generation"
+    );
+
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE34_ONBOARDING_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase34 onboarding smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase34" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-import-summary " + shell_quote(artifacts.externalImportSummaryJson.string()) +
+        " --runtime-new-env-proposal " + shell_quote(artifacts.externalProposalJson.string()) +
+        " --runtime-new-env-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()) +
+        " --runtime-new-env-archived-proposal " + shell_quote(artifacts.externalArchivedProposalJson.string()) +
+        " --runtime-new-env-approved-baseline " + shell_quote(artifacts.externalApprovedBaselineJson.string()) +
+        " --runtime-registry-summary " + shell_quote((artifacts.paths.runtimeRegistryJson.parent_path() / "runtime_baseline_registry_v2_summary.json").string()) +
+        " --approved-known-summary " + shell_quote(artifacts.externalApprovedSummaryJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+        " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle new env onboarding smoke expected bundle success");
+    const filesystem::path metadataPath = artifacts.paths.root / "phase34_evidence_bundle_published" / "bundle_metadata.json";
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(metadata.find("\"runtime_import_summary_hash\"") != string::npos, "evidence bundle new env onboarding smoke expected import summary hash");
+    require_test(metadata.find("\"runtime_new_env_proposal_hash\"") != string::npos, "evidence bundle new env onboarding smoke expected new env proposal hash");
+    require_test(metadata.find("\"active_runtime_baselines_list\"") != string::npos, "evidence bundle new env onboarding smoke expected active baseline list");
+    require_test(metadata.find("\"pending_runtime_proposals_list\"") != string::npos, "evidence bundle new env onboarding smoke expected pending proposals list");
+}
+
+void run_light_ops_bundle_registry_summary_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_new_env_onboarding_smoke_case(options);
+}
+
+void run_bundle_metadata_multi_active_registry_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_new_env_onboarding_smoke_case(options);
+}
+
+void run_publication_snapshot_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "publication_snapshot_smoke");
+    PolicyPipelineSmokeArtifacts nightlyPaths = paths;
+    nightlyPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_nightly_phase32.json";
+    nightlyPaths.zipPath = paths.root / "raw_engine_phase32_publication.zip";
+    nightlyPaths.curatedZipPath = paths.root / "raw_engine_phase32_publication_curated.zip";
+    nightlyPaths.lightOpsZipPath = paths.root / "raw_engine_phase32_publication_light.zip";
+    require_test(
+        run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--use-published-snapshot") == 0,
+        "publication snapshot smoke expected nightly success"
+    );
+    const string summary = slurp_text_file(nightlyPaths.summaryJson);
+    const filesystem::path metadataPath = extract_json_string_field_or_throw(summary, "bundle_metadata");
+    const filesystem::path bundleRoot = metadataPath.parent_path();
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(metadata.find("\"publication_snapshot_mode\"") != string::npos, "publication snapshot smoke expected published snapshot mode");
+    require_test(metadata.find("\"published_root\":") != string::npos, "publication snapshot smoke expected published root");
+    require_test(metadata.find("\"staging_root\":") != string::npos, "publication snapshot smoke expected staging root");
+    require_test(filesystem::exists(bundleRoot / "publication_snapshot.json"), "publication snapshot smoke expected publication snapshot metadata");
+}
+
+void run_publication_snapshot_bundle_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "publication_snapshot_bundle_smoke");
+    PolicyPipelineSmokeArtifacts nightlyPaths = paths;
+    nightlyPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_nightly_phase32.json";
+    nightlyPaths.zipPath = paths.root / "raw_engine_phase32_publication_bundle.zip";
+    nightlyPaths.curatedZipPath = paths.root / "raw_engine_phase32_publication_bundle_curated.zip";
+    nightlyPaths.lightOpsZipPath = paths.root / "raw_engine_phase32_publication_bundle_light.zip";
+    require_test(
+        run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--use-published-snapshot") == 0,
+        "publication snapshot bundle smoke expected nightly success"
+    );
+    const string summary = slurp_text_file(nightlyPaths.summaryJson);
+    const filesystem::path metadataPath = extract_json_string_field_or_throw(summary, "bundle_metadata");
+    const string metadata = slurp_text_file(metadataPath);
+    require_test(filesystem::exists(nightlyPaths.zipPath), "publication snapshot bundle smoke expected full zip");
+    require_test(filesystem::exists(nightlyPaths.curatedZipPath), "publication snapshot bundle smoke expected curated zip");
+    require_test(filesystem::exists(nightlyPaths.lightOpsZipPath), "publication snapshot bundle smoke expected light zip");
+    require_test(metadata.find("\"delivery_bundle_items\"") != string::npos, "publication snapshot bundle smoke expected delivery bundle items");
+}
+
+void run_bundle_published_snapshot_smoke_case(const TestOptions& options) {
+    run_publication_snapshot_bundle_smoke_case(options);
+}
+
+filesystem::path promote_same_fingerprint_successor_baseline_or_throw(
+    const PolicyPipelineSmokeArtifacts& paths,
+    const string& baselineTag,
+    const filesystem::path& outBaselineJson
+) {
+    require_test(
+        run_runtime_lifecycle_script(
+            "promote-baseline",
+            {
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(outBaselineJson.string()),
+                "--baseline-tag " + shell_quote(baselineTag),
+            }
+        ) == 0,
+        "phase35 smoke expected successor baseline promotion"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "registry-promote-baseline",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-baseline-manifest " + shell_quote(outBaselineJson.string()),
+                "--baseline-tag " + shell_quote(baselineTag),
+                "--activate",
+            }
+        ) == 0,
+        "phase35 smoke expected successor registry activation"
+    );
+    return outBaselineJson;
+}
+
+filesystem::path import_phase35_unapproved_foreign_summary_or_throw(
+    const NewEnvOnboardingSmokeArtifacts& artifacts,
+    const string& stem
+) {
+    const filesystem::path foreignCurrentJson =
+        artifacts.paths.root / "manifests" / ("policy_runtime_current_phase35_foreign_" + stem + ".json");
+    const filesystem::path foreignRefreshJson =
+        artifacts.paths.root / "manifests" / ("policy_runtime_refresh_phase35_foreign_" + stem + ".json");
+    const filesystem::path foreignImportBundleJson =
+        artifacts.paths.root / "manifests" / ("runtime_external_import_bundle_phase35_foreign_" + stem + ".json");
+    const filesystem::path foreignImportSummaryJson =
+        artifacts.paths.root / "manifests" / ("runtime_external_import_summary_phase35_foreign_" + stem + ".json");
+    clone_runtime_manifest_or_throw(artifacts.externalCurrentJson, foreignCurrentJson);
+    mutate_runtime_os_arch_or_throw(foreignCurrentJson, "Linux", "x86_64", "phase35-foreign-" + stem + "-");
+    write_runtime_import_bundle_manifest_or_throw(
+        foreignImportBundleJson,
+        foreignCurrentJson,
+        "real",
+        "foreign-runner-" + stem,
+        "foreign-host-" + stem
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-external-bundle",
+            {
+                "--runtime-import-bundle " + shell_quote(foreignImportBundleJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--runtime-refresh-out " + shell_quote(foreignRefreshJson.string()),
+                "--import-out " + shell_quote(foreignImportSummaryJson.string()),
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "phase35 smoke expected foreign import bundle ingestion"
+    );
+    return foreignImportSummaryJson;
+}
+
+void prepare_phase35_registry_health_fixture_or_throw(
+    const TestOptions& options,
+    NewEnvOnboardingSmokeArtifacts& artifacts,
+    bool includeForeignCandidate,
+    filesystem::path* foreignImportSummaryJsonOut = nullptr
+) {
+    artifacts.quickSummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_quick_phase35.json";
+    artifacts.nightlySummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_nightly_phase35.json";
+    artifacts.matrixSummaryJson = artifacts.paths.root / "manifests" / "policy_pipeline_matrix_phase35.json";
+
+    append_runtime_history_samples_or_throw(artifacts.paths, 5);
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "all", 5);
+    build_runtime_watch_registry_or_throw(artifacts.paths);
+
+    approve_new_env_baseline_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "phase35 smoke expected approved known env refresh"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(artifacts.externalRerunJson.string()),
+            }
+        ) == 0,
+        "phase35 smoke expected approved known env rerun plan"
+    );
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase35-external-approved"
+    );
+
+    if (includeForeignCandidate) {
+        const filesystem::path foreignSummaryJson =
+            import_phase35_unapproved_foreign_summary_or_throw(artifacts, filesystem::path(artifacts.paths.root).filename().string());
+        if (foreignImportSummaryJsonOut != nullptr) {
+            *foreignImportSummaryJsonOut = foreignSummaryJson;
+        }
+    }
+}
+
+filesystem::path run_phase35_governance_pipeline_or_throw(
+    const TestOptions& options,
+    NewEnvOnboardingSmokeArtifacts& artifacts,
+    const filesystem::path& foreignImportSummaryJson = {}
+) {
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase35_governance.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase35_governance_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase35_governance_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+
+    require_test(
+        run_policy_pipeline_script(options, quickPaths, "quick", true, true, false, "") == 0,
+        "phase35 smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--use-published-snapshot") == 0,
+        "phase35 smoke expected nightly OK"
+    );
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20,
+        "phase35 smoke expected matrix ACTION_REQUIRED"
+    );
+
+    vector<filesystem::path> foreignSummaryJsons;
+    if (!foreignImportSummaryJson.empty()) {
+        foreignSummaryJsons.push_back(foreignImportSummaryJson);
+    }
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        foreignSummaryJsons
+    );
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE35_GOVERNANCE_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase35 governance verification smoke report");
+    const filesystem::path publishedRoot = artifacts.paths.root / "phase35_evidence_bundle_published";
+
+    const auto runGovernanceBundlePass = [&](bool includePublicationHealth) {
+        string bundleCommand =
+            shell_quote("/usr/bin/python3") + " " +
+            shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+            " --phase phase35" +
+            " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+            " --report-out " + shell_quote(reportPath.string()) +
+            " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+            " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+            " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+            " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+            " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+            " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+            " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+            " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+            " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+            " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+            " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+            " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+            " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+            " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+            " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+            " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+            " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+            " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+            " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+            " --runtime-import-summary " + shell_quote(artifacts.externalImportSummaryJson.string()) +
+            " --runtime-new-env-proposal " + shell_quote(artifacts.externalProposalJson.string()) +
+            " --runtime-new-env-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()) +
+            " --runtime-new-env-archived-proposal " + shell_quote(artifacts.externalArchivedProposalJson.string()) +
+            " --runtime-new-env-approved-baseline " + shell_quote(artifacts.externalApprovedBaselineJson.string()) +
+            " --runtime-registry-summary " + shell_quote((artifacts.paths.runtimeRegistryJson.parent_path() / "runtime_baseline_registry_v2_summary.json").string()) +
+            " --approved-known-summary " + shell_quote(artifacts.externalApprovedSummaryJson.string()) +
+            " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+            " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+            " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+            " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+            " --use-published-snapshot";
+        if (!foreignImportSummaryJson.empty()) {
+            bundleCommand += " --foreign-import-summary " + shell_quote(foreignImportSummaryJson.string());
+        }
+        if (includePublicationHealth) {
+            bundleCommand += " --publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string());
+        }
+        return normalized_process_exit_code(system(bundleCommand.c_str()));
+    };
+
+    require_test(runGovernanceBundlePass(false) == 0, "phase35 smoke expected first published bundle pass");
+    build_publication_health_or_throw(artifacts.paths, publishedRoot, artifacts.paths.root);
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {artifacts.externalApprovedSummaryJson},
+        foreignSummaryJsons
+    );
+    require_test(runGovernanceBundlePass(true) == 0, "phase35 smoke expected second published bundle pass");
+    build_publication_health_or_throw(artifacts.paths, publishedRoot, artifacts.paths.root);
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {artifacts.externalApprovedSummaryJson},
+        foreignSummaryJsons
+    );
+    require_test(runGovernanceBundlePass(true) == 0, "phase35 smoke expected final published bundle pass");
+    return publishedRoot / "bundle_metadata.json";
+}
+
+void run_runtime_registry_health_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_registry_health_smoke");
+    filesystem::path foreignImportSummaryJson;
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, true, &foreignImportSummaryJson);
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {foreignImportSummaryJson}
+    );
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"overall_status\": \"HEALTHY\"") != string::npos, "runtime registry health smoke expected HEALTHY");
+    require_test(healthJson.find("\"manifest_version\": \"runtime_registry_health_v2\"") != string::npos, "runtime registry health smoke expected v2 manifest");
+    require_test(healthJson.find("\"approved_known_env_count\": 1") != string::npos, "runtime registry health smoke expected one approved known env");
+    require_test(healthJson.find("\"foreign_unapproved_count\": 1") != string::npos, "runtime registry health smoke expected one foreign unapproved env");
+    require_test(healthJson.find("\"active_fingerprint_count\": 2") != string::npos, "runtime registry health smoke expected two active fingerprints");
+}
+
+void run_runtime_known_env_state_machine_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_state_machine_smoke");
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, false);
+    build_runtime_registry_health_or_throw(artifacts.paths, {artifacts.externalApprovedSummaryJson});
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"status\": \"CURRENT_ACTIVE\"") != string::npos, "runtime known env state machine smoke expected CURRENT_ACTIVE");
+    require_test(healthJson.find("\"status\": \"APPROVED_KNOWN_FRESH\"") != string::npos, "runtime known env state machine smoke expected APPROVED_KNOWN_FRESH");
+}
+
+void run_runtime_known_env_stale_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_stale_smoke");
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, false);
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        0.0,
+        99999.0,
+        99999.0
+    );
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"overall_status\": \"ATTENTION_REQUIRED\"") != string::npos, "runtime known env stale smoke expected ATTENTION_REQUIRED");
+    require_test(healthJson.find("\"health_status\": \"STALE\"") != string::npos, "runtime known env stale smoke expected stale known env entry");
+    require_test(healthJson.find("\"status\": \"APPROVED_KNOWN_STALE\"") != string::npos, "runtime known env stale smoke expected stale lifecycle status");
+    require_test(healthJson.find("\"retirement_recommendation\": \"REVERIFY_KNOWN_ENV\"") != string::npos, "runtime known env stale smoke expected reverify recommendation");
+}
+
+void run_runtime_known_env_reverify_required_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_reverify_required_smoke");
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, false);
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        0.0,
+        0.0,
+        99999.0
+    );
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"overall_status\": \"ATTENTION_REQUIRED\"") != string::npos, "runtime known env reverify smoke expected ATTENTION_REQUIRED");
+    require_test(healthJson.find("\"health_status\": \"REVERIFY_REQUIRED\"") != string::npos, "runtime known env reverify smoke expected reverify required entry");
+    require_test(healthJson.find("\"status\": \"APPROVED_KNOWN_REVERIFY_REQUIRED\"") != string::npos, "runtime known env reverify smoke expected reverify lifecycle status");
+}
+
+void run_runtime_known_env_retire_candidate_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_retire_candidate_smoke");
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, false);
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        0.0,
+        0.0,
+        0.0
+    );
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"overall_status\": \"RETIRE_ACTION_REQUIRED\"") != string::npos, "runtime known env retire smoke expected RETIRE_ACTION_REQUIRED");
+    require_test(healthJson.find("\"status\": \"APPROVED_KNOWN_RETIRE_CANDIDATE\"") != string::npos, "runtime known env retire smoke expected retire lifecycle status");
+    require_test(healthJson.find("\"retirement_recommendation\": \"RETIRE_KNOWN_ENV\"") != string::npos, "runtime known env retire smoke expected retire recommendation");
+}
+
+void run_runtime_import_known_env_evidence_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_import_known_env_evidence_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime import known env evidence smoke expected approved env refresh"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(artifacts.externalRerunJson.string()),
+            }
+        ) == 0,
+        "runtime import known env evidence smoke expected approved env rerun"
+    );
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase37-external-approved"
+    );
+    const string knownEnvId = extract_json_string_field_or_throw(slurp_text_file(artifacts.externalApprovedSummaryJson), "selected_baseline_id");
+    const filesystem::path knownEnvImportSummaryJson = artifacts.paths.root / "manifests" / "runtime_known_env_import_summary_phase37.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-known-env-evidence",
+            {
+                "--runtime-import-bundle " + shell_quote(artifacts.externalImportBundleJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--known-env-id " + shell_quote(knownEnvId),
+                "--import-out " + shell_quote(knownEnvImportSummaryJson.string()),
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "runtime import known env evidence smoke expected import success"
+    );
+    const string importSummary = slurp_text_file(knownEnvImportSummaryJson);
+    require_test(importSummary.find("\"import_type\": \"known_env_reverify\"") != string::npos, "runtime import known env evidence smoke expected known env reverify import type");
+    require_test(importSummary.find("\"reverify_needed\": true") != string::npos, "runtime import known env evidence smoke expected reverify needed");
+}
+
+void run_runtime_known_env_reverify_gate_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_reverify_gate_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    const string knownEnvId = extract_json_string_field_or_throw(slurp_text_file(artifacts.externalApprovedBaselineJson), "baseline_tag");
+    const filesystem::path gateJson = artifacts.paths.root / "manifests" / "runtime_known_env_reverify_gate_phase37.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-reverify-gate",
+            {
+                "--runtime-import-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--known-env-id " + shell_quote(knownEnvId),
+                "--reverify-gate-out " + shell_quote(gateJson.string()),
+                "--min-real-samples 3",
+                "--max-age-days 30",
+            }
+        ) == 0,
+        "runtime known env reverify gate smoke expected gate success"
+    );
+    const string gateText = slurp_text_file(gateJson);
+    require_test(gateText.find("\"reverify_gate_verdict\": \"FRESHEN\"") != string::npos, "runtime known env reverify gate smoke expected FRESHEN");
+}
+
+void run_runtime_known_env_age_tick_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_age_tick_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase40-external-approved"
+    );
+    const filesystem::path governancePolicyJson = materialize_known_env_governance_policy_or_throw(artifacts.paths.root);
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2026-03-20T00:00:00Z"
+    );
+    const filesystem::path ageTickJson = artifacts.paths.root / "manifests" / "runtime_known_env_age_tick_phase40.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-age-tick",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--governance-policy " + shell_quote(governancePolicyJson.string()),
+                "--current-time-override 2026-04-01T00:00:00Z",
+                "--advance-days 5",
+                "--age-tick-out " + shell_quote(ageTickJson.string()),
+            }
+        ) == 0,
+        "runtime known env age tick smoke expected age tick success"
+    );
+    const string ageTick = slurp_text_file(ageTickJson);
+    require_test(ageTick.find("\"manifest_version\": \"runtime_known_env_age_tick_v1\"") != string::npos, "runtime known env age tick smoke expected manifest version");
+    require_test(ageTick.find("\"affected_known_env_count\": 1") != string::npos, "runtime known env age tick smoke expected one affected known env");
+    require_test(ageTick.find("\"current_state\": \"APPROVED_KNOWN_FRESH\"") != string::npos, "runtime known env age tick smoke expected fresh current state");
+    require_test(ageTick.find("\"next_state\": \"APPROVED_KNOWN_REVERIFY_REQUIRED\"") != string::npos, "runtime known env age tick smoke expected reverify next state");
+}
+
+void run_runtime_known_env_plan_reverify_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_plan_reverify_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    const filesystem::path governancePolicyJson = materialize_known_env_governance_policy_or_throw(artifacts.paths.root);
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2026-03-18T00:00:00Z"
+    );
+    const filesystem::path planJson = artifacts.paths.root / "manifests" / "runtime_known_env_reverify_plan_phase40.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-plan-reverify",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--governance-policy " + shell_quote(governancePolicyJson.string()),
+                "--current-time-override 2026-04-10T00:00:00Z",
+                "--plan-out " + shell_quote(planJson.string()),
+            }
+        ) == 0,
+        "runtime known env plan reverify smoke expected plan success"
+    );
+    const string planText = slurp_text_file(planJson);
+    require_test(planText.find("\"plan_verdict\": \"ACTION_REQUIRED\"") != string::npos, "runtime known env plan reverify smoke expected ACTION_REQUIRED");
+    require_test(planText.find("\"minimum_required_real_samples\": 5") != string::npos, "runtime known env plan reverify smoke expected min real samples");
+    require_test(planText.find("\"next_state_if_success\": \"APPROVED_KNOWN_FRESH\"") != string::npos, "runtime known env plan reverify smoke expected fresh next state");
+}
+
+void run_runtime_known_env_apply_reverify_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_apply_reverify_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    const filesystem::path governancePolicyJson = materialize_known_env_governance_policy_or_throw(artifacts.paths.root);
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2026-03-20T00:00:00Z"
+    );
+    const filesystem::path gateJson = artifacts.paths.root / "manifests" / "runtime_known_env_reverify_gate_phase40.json";
+    const filesystem::path applyJson = artifacts.paths.root / "manifests" / "runtime_known_env_apply_reverify_phase40.json";
+    const filesystem::path archiveJson = artifacts.paths.root / "manifests" / "runtime_known_env_apply_reverify_archive_phase40.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-apply-reverify",
+            {
+                "--runtime-import-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--governance-policy " + shell_quote(governancePolicyJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--reverify-gate-out " + shell_quote(gateJson.string()),
+                "--apply-out " + shell_quote(applyJson.string()),
+                "--archive-import " + shell_quote(archiveJson.string()),
+                "--current-time-override 2026-04-05T00:00:00Z",
+            }
+        ) == 0,
+        "runtime known env apply reverify smoke expected apply success"
+    );
+    const string applyText = slurp_text_file(applyJson);
+    require_test(applyText.find("\"gate_verdict\": \"FRESHEN\"") != string::npos, "runtime known env apply reverify smoke expected FRESHEN");
+    require_test(applyText.find("\"new_state\": \"APPROVED_KNOWN_FRESH\"") != string::npos, "runtime known env apply reverify smoke expected fresh state");
+}
+
+void run_runtime_known_env_plan_retire_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_plan_retire_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2020-01-01T00:00:00Z"
+    );
+    const filesystem::path retirePlanJson = artifacts.paths.root / "manifests" / "runtime_known_env_retire_plan_phase37.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-plan-retire",
+            {
+                "--phase phase37",
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--retire-plan-out " + shell_quote(retirePlanJson.string()),
+                "--retire-reason synthetic-stale-known-env",
+            }
+        ) == 0,
+        "runtime known env plan retire smoke expected plan success"
+    );
+    const string planText = slurp_text_file(retirePlanJson);
+    require_test(planText.find("\"plan_verdict\": \"RETIRE_CANDIDATE\"") != string::npos, "runtime known env plan retire smoke expected retire candidate");
+}
+
+void run_runtime_known_env_apply_retire_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_apply_retire_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    const filesystem::path retireApplyJson = artifacts.paths.root / "manifests" / "runtime_known_env_apply_retire_phase40.json";
+    const filesystem::path retireArchiveJson = artifacts.paths.root / "manifests" / "runtime_known_env_apply_retire_archive_phase40.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-apply-retire",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--retire-reason synthetic-phase40-retire",
+                "--archive-out " + shell_quote(retireArchiveJson.string()),
+                "--retire-apply-out " + shell_quote(retireApplyJson.string()),
+            }
+        ) == 0,
+        "runtime known env apply retire smoke expected retire success"
+    );
+    const string applyText = slurp_text_file(retireApplyJson);
+    require_test(applyText.find("\"status\": \"RETIRED_KNOWN_ENV\"") != string::npos, "runtime known env apply retire smoke expected retired status");
+    require_test(applyText.find("\"retire_reason\": \"synthetic-phase40-retire\"") != string::npos, "runtime known env apply retire smoke expected retire reason");
+}
+
+void run_runtime_known_env_retired_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_known_env_retired_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    const filesystem::path retireMetadataJson = artifacts.paths.root / "manifests" / "runtime_known_env_retired_phase37.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-retire",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--retire-reason synthetic-retire",
+                "--archive-out " + shell_quote(retireMetadataJson.string()),
+            }
+        ) == 0,
+        "runtime known env retired smoke expected retire success"
+    );
+    const string registryText = slurp_text_file(artifacts.paths.runtimeRegistryJson);
+    require_test(registryText.find("\"retired_reason\": \"synthetic-retire\"") != string::npos, "runtime known env retired smoke expected retired reason");
+    require_test(slurp_text_file(retireMetadataJson).find("\"status\": \"RETIRED_KNOWN_ENV\"") != string::npos, "runtime known env retired smoke expected retired metadata");
+}
+
+void run_runtime_registry_health_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_registry_health_v2_smoke");
+    filesystem::path foreignImportSummaryJson;
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, true, &foreignImportSummaryJson);
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {foreignImportSummaryJson}
+    );
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"manifest_version\": \"runtime_registry_health_v2\"") != string::npos, "runtime registry health v2 smoke expected v2 manifest");
+    require_test(healthJson.find("\"current_active_count\": 1") != string::npos, "runtime registry health v2 smoke expected one current active");
+    require_test(healthJson.find("\"approved_known_fresh_count\": 1") != string::npos, "runtime registry health v2 smoke expected one approved known fresh env");
+}
+
+void run_runtime_registry_health_v3_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_registry_health_v3_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase40-external-approved"
+    );
+    const filesystem::path governancePolicyJson = materialize_known_env_governance_policy_or_throw(artifacts.paths.root);
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2026-03-20T00:00:00Z"
+    );
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        99999.0,
+        99999.0,
+        99999.0,
+        governancePolicyJson,
+        "2026-04-01T00:00:00Z",
+        "phase40"
+    );
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"manifest_version\": \"runtime_registry_health_v3\"") != string::npos, "runtime registry health v3 smoke expected v3 manifest");
+    require_test(healthJson.find("\"approved_known_due_soon_count\": 1") != string::npos, "runtime registry health v3 smoke expected due soon count");
+    require_test(healthJson.find("\"overall_status\": \"ATTENTION_REQUIRED\"") != string::npos, "runtime registry health v3 smoke expected attention required");
+}
+
+void run_runtime_registry_same_fingerprint_supersession_smoke_case(const TestOptions& options) {
+    auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_same_fingerprint_supersession_smoke");
+    seed_runtime_registry_v2_for_current_env_or_throw(paths);
+    const filesystem::path successorBaselineJson =
+        paths.root / "manifests" / "policy_runtime_baseline_phase35_same_fingerprint.json";
+    promote_same_fingerprint_successor_baseline_or_throw(paths, "phase35-current-env-approved", successorBaselineJson);
+    const string registryText = slurp_text_file(paths.runtimeRegistryJson);
+    require_test(registryText.find("\"supersedes_baseline_ids\"") != string::npos, "runtime registry supersession smoke expected supersedes ids");
+    require_test(registryText.find("\"superseded_by_baseline_id\"") != string::npos, "runtime registry supersession smoke expected superseded by id");
+    require_test(registryText.find("\"baseline_tag\": \"phase35-current-env-approved\"") != string::npos, "runtime registry supersession smoke expected new active tag");
+    require_test(registryText.find("\"baseline_tag\": \"phase34-current-env-approved\"") != string::npos, "runtime registry supersession smoke expected prior baseline retained");
+}
+
+void run_runtime_registry_retired_not_selected_smoke_case(const TestOptions& options) {
+    auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_registry_retired_not_selected_smoke");
+    seed_runtime_registry_v2_for_current_env_or_throw(paths);
+    const filesystem::path successorBaselineJson =
+        paths.root / "manifests" / "policy_runtime_baseline_phase35_not_selected_retired.json";
+    promote_same_fingerprint_successor_baseline_or_throw(paths, "phase35-current-env-approved", successorBaselineJson);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime registry retired not selected smoke expected refresh"
+    );
+    const string refreshText = slurp_text_file(paths.runtimeRefreshJson);
+    require_test(refreshText.find("\"selected_baseline_tag\": \"phase35-current-env-approved\"") != string::npos, "runtime registry retired not selected smoke expected newest baseline selection");
+}
+
+void run_runtime_foreign_env_state_machine_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "runtime_foreign_env_state_machine_smoke");
+    append_runtime_history_samples_or_throw(artifacts.paths, 5);
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "all", 5);
+    build_runtime_watch_registry_or_throw(artifacts.paths);
+    import_new_env_bundle_or_throw(artifacts);
+    const string importSummary = slurp_text_file(artifacts.externalImportSummaryJson);
+    require_test(importSummary.find("\"environment_state\": \"UNAPPROVED_FOREIGN\"") != string::npos, "runtime foreign env state machine smoke expected unapproved foreign state");
+    gate_new_env_proposal_or_throw(artifacts);
+    const string proposalGate = slurp_text_file(artifacts.externalProposalGateJson);
+    require_test(proposalGate.find("\"proposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "runtime foreign env state machine smoke expected approvable proposal gate");
+    approve_new_env_baseline_or_throw(artifacts);
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+            }
+        ) == 0,
+        "runtime foreign env state machine smoke expected approved env refresh"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.externalRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(artifacts.externalRerunJson.string()),
+            }
+        ) == 0,
+        "runtime foreign env state machine smoke expected approved env rerun"
+    );
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase35-external-approved"
+    );
+    build_runtime_registry_health_or_throw(artifacts.paths, {artifacts.externalApprovedSummaryJson});
+    const string healthJson = slurp_text_file(artifacts.paths.runtimeRegistryHealthJson);
+    require_test(healthJson.find("\"environment_state\": \"APPROVED_KNOWN_ENV\"") != string::npos, "runtime foreign env state machine smoke expected approved known env state");
+}
+
+void run_publication_health_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "publication_health_smoke");
+    filesystem::path foreignImportSummaryJson;
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, true, &foreignImportSummaryJson);
+    run_phase35_governance_pipeline_or_throw(options, artifacts, foreignImportSummaryJson);
+    const string publicationHealth = slurp_text_file(artifacts.paths.publicationHealthJson);
+    require_test(publicationHealth.find("\"status\": \"HEALTHY\"") != string::npos, "publication health smoke expected HEALTHY");
+    require_test(publicationHealth.find("\"missing_artifact_count\": 0") != string::npos, "publication health smoke expected no missing artifacts");
+    require_test(publicationHealth.find("\"hash_mismatch_count\": 0") != string::npos, "publication health smoke expected no hash mismatches");
+    require_test(publicationHealth.find("\"dangling_reference_count\": 0") != string::npos, "publication health smoke expected no dangling references");
+}
+
+void run_policy_ops_summary_v4_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "policy_ops_summary_v4_smoke");
+    filesystem::path foreignImportSummaryJson;
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, true, &foreignImportSummaryJson);
+    run_phase35_governance_pipeline_or_throw(options, artifacts, foreignImportSummaryJson);
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v5\"") != string::npos, "policy ops summary v4 smoke expected v5 manifest");
+    require_test(opsSummary.find("\"runtime_registry_health\"") != string::npos, "policy ops summary v4 smoke expected registry health section");
+    require_test(opsSummary.find("\"publication_health\"") != string::npos, "policy ops summary v4 smoke expected publication health section");
+    require_test(opsSummary.find("\"approved_known_environments\"") != string::npos, "policy ops summary v4 smoke expected approved known env section");
+    require_test(opsSummary.find("\"unapproved_foreign_environments\"") != string::npos, "policy ops summary v4 smoke expected foreign env section");
+    require_test(opsSummary.find("\"recommended_action_current_env\": \"NO_ACTION\"") != string::npos, "policy ops summary v4 smoke expected current env NO_ACTION");
+    require_test(opsSummary.find("\"recommended_action_foreign_envs\": \"REBASELINE_REQUIRED\"") != string::npos, "policy ops summary v4 smoke expected foreign env REBASELINE_REQUIRED");
+    require_test(opsSummary.find("\"status\": \"HEALTHY\"") != string::npos, "policy ops summary v4 smoke expected healthy publication/registry state");
+}
+
+void run_policy_ops_summary_v5_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "policy_ops_summary_v5_smoke");
+    filesystem::path foreignImportSummaryJson;
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, true, &foreignImportSummaryJson);
+    run_phase35_governance_pipeline_or_throw(options, artifacts, foreignImportSummaryJson);
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {foreignImportSummaryJson},
+        99999.0,
+        0.0,
+        99999.0
+    );
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {artifacts.externalApprovedSummaryJson},
+        {foreignImportSummaryJson}
+    );
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v5\"") != string::npos, "policy ops summary v5 smoke expected v5 manifest");
+    require_test(opsSummary.find("\"approved_known_environments\"") != string::npos, "policy ops summary v5 smoke expected known env section");
+    require_test(opsSummary.find("\"fresh_count\":") != string::npos, "policy ops summary v5 smoke expected fresh_count");
+    require_test(opsSummary.find("\"recommended_action_known_envs\": \"REVERIFY_KNOWN_ENV\"") != string::npos, "policy ops summary v5 smoke expected known env action");
+}
+
+void run_policy_ops_summary_v6_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "policy_ops_summary_v6_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase40-external-approved"
+    );
+    run_phase35_governance_pipeline_or_throw(options, artifacts);
+    const filesystem::path governancePolicyJson = materialize_known_env_governance_policy_or_throw(artifacts.paths.root);
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2026-03-20T00:00:00Z"
+    );
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        99999.0,
+        99999.0,
+        99999.0,
+        governancePolicyJson,
+        "2026-04-01T00:00:00Z",
+        "phase40"
+    );
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        "phase40"
+    );
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v6\"") != string::npos, "policy ops summary v6 smoke expected v6 manifest");
+    require_test(opsSummary.find("\"approved_known_env_actions\"") != string::npos, "policy ops summary v6 smoke expected known env actions section");
+    require_test(opsSummary.find("\"due_soon_reverify_count\": 1") != string::npos, "policy ops summary v6 smoke expected due soon count");
+    require_test(opsSummary.find("\"recommended_action_known_envs\": \"REVERIFY_KNOWN_ENV\"") != string::npos, "policy ops summary v6 smoke expected known env action");
+}
+
+void run_policy_ops_summary_known_vs_foreign_smoke_case(const TestOptions& options) {
+    run_policy_ops_summary_v4_smoke_case(options);
+}
+
+void run_policy_ops_summary_publication_health_smoke_case(const TestOptions& options) {
+    run_policy_ops_summary_v4_smoke_case(options);
+}
+
+void run_evidence_bundle_registry_health_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "evidence_bundle_registry_health_smoke");
+    filesystem::path foreignImportSummaryJson;
+    prepare_phase35_registry_health_fixture_or_throw(options, artifacts, true, &foreignImportSummaryJson);
+    const filesystem::path nightlyMetadataPath =
+        run_phase35_governance_pipeline_or_throw(options, artifacts, foreignImportSummaryJson);
+    const filesystem::path publishedRoot = nightlyMetadataPath.parent_path();
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE35_REGISTRY_HEALTH_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase35 registry/publication health bundle smoke report");
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase35_registry_health.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase35_registry_health_curated.zip";
+    const filesystem::path lightOpsZipPath = artifacts.paths.root / "raw_engine_phase35_registry_health_light.zip";
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase35" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-import-summary " + shell_quote(artifacts.externalImportSummaryJson.string()) +
+        " --runtime-new-env-proposal " + shell_quote(artifacts.externalProposalJson.string()) +
+        " --runtime-new-env-proposal-gate " + shell_quote(artifacts.externalProposalGateJson.string()) +
+        " --runtime-new-env-archived-proposal " + shell_quote(artifacts.externalArchivedProposalJson.string()) +
+        " --runtime-new-env-approved-baseline " + shell_quote(artifacts.externalApprovedBaselineJson.string()) +
+        " --runtime-registry-summary " + shell_quote((artifacts.paths.runtimeRegistryJson.parent_path() / "runtime_baseline_registry_v2_summary.json").string()) +
+        " --approved-known-summary " + shell_quote(artifacts.externalApprovedSummaryJson.string()) +
+        " --foreign-import-summary " + shell_quote(foreignImportSummaryJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightOpsZipPath.string()) +
+        " --use-published-snapshot" +
+        " --published-root " + shell_quote(publishedRoot.string());
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle registry health smoke expected bundle success");
+    const string metadata = slurp_text_file(publishedRoot / "bundle_metadata.json");
+    require_test(metadata.find("\"runtime_registry_health_hash\"") != string::npos, "evidence bundle registry health smoke expected registry health hash");
+    require_test(metadata.find("\"publication_health_hash\"") != string::npos, "evidence bundle registry health smoke expected publication health hash");
+    require_test(metadata.find("\"runtime_registry_health_status\": \"HEALTHY\"") != string::npos, "evidence bundle registry health smoke expected healthy registry health status");
+    require_test(metadata.find("\"publication_health_status\": \"HEALTHY\"") != string::npos, "evidence bundle registry health smoke expected healthy publication status");
+}
+
+void run_evidence_bundle_known_env_governance_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "evidence_bundle_known_env_governance_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase37-external-approved"
+    );
+    const filesystem::path knownEnvImportSummaryJson = artifacts.paths.root / "manifests" / "runtime_known_env_import_summary_phase37.json";
+    const filesystem::path knownEnvReverifyGateJson = artifacts.paths.root / "manifests" / "runtime_known_env_reverify_gate_phase37.json";
+    const filesystem::path knownEnvRetirePlanJson = artifacts.paths.root / "manifests" / "runtime_known_env_retire_plan_phase37.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "import-known-env-evidence",
+            {
+                "--runtime-import-bundle " + shell_quote(artifacts.externalImportBundleJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--import-out " + shell_quote(knownEnvImportSummaryJson.string()),
+                "--refresh-after-import",
+            }
+        ) == 0,
+        "evidence bundle known env governance smoke expected known env import success"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-reverify-gate",
+            {
+                "--runtime-import-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--reverify-gate-out " + shell_quote(knownEnvReverifyGateJson.string()),
+                "--min-real-samples 3",
+                "--max-age-days 30",
+            }
+        ) == 0,
+        "evidence bundle known env governance smoke expected reverify gate success"
+    );
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2020-01-01T00:00:00Z"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-plan-retire",
+            {
+                "--phase phase37",
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--retire-plan-out " + shell_quote(knownEnvRetirePlanJson.string()),
+                "--retire-reason synthetic-known-env-retire-plan",
+            }
+        ) == 0,
+        "evidence bundle known env governance smoke expected retire plan success"
+    );
+    build_runtime_registry_health_or_throw(artifacts.paths, {artifacts.externalApprovedSummaryJson});
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {artifacts.externalApprovedSummaryJson},
+        {}
+    );
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE37_KNOWN_ENV_GOVERNANCE_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase37 known env governance bundle smoke report");
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase37_known_env_governance.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase37_known_env_governance_curated.zip";
+    const filesystem::path lightOpsZipPath = artifacts.paths.root / "raw_engine_phase37_known_env_governance_light.zip";
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase37" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --known-env-import-summary " + shell_quote(knownEnvImportSummaryJson.string()) +
+        " --known-env-reverify-gate " + shell_quote(knownEnvReverifyGateJson.string()) +
+        " --known-env-retire-plan " + shell_quote(knownEnvRetirePlanJson.string()) +
+        " --approved-known-summary " + shell_quote(artifacts.externalApprovedSummaryJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle known env governance smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase37_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"known_env_import_summary_hash\"") != string::npos, "evidence bundle known env governance smoke expected known env import hash");
+    require_test(metadata.find("\"known_env_reverify_gate_hash\"") != string::npos, "evidence bundle known env governance smoke expected reverify gate hash");
+    require_test(metadata.find("\"known_env_retire_plan_hash\"") != string::npos, "evidence bundle known env governance smoke expected retire plan hash");
+}
+
+void run_evidence_bundle_known_env_timeline_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_new_env_onboarding_smoke_artifacts(options, "evidence_bundle_known_env_timeline_smoke");
+    approve_new_env_baseline_or_throw(artifacts);
+    write_approved_known_environment_summary_or_throw(
+        artifacts.externalApprovedSummaryJson,
+        artifacts.externalRefreshJson,
+        artifacts.externalRerunJson,
+        "phase40-external-approved"
+    );
+    run_phase35_governance_pipeline_or_throw(options, artifacts);
+    const filesystem::path governancePolicyJson = materialize_known_env_governance_policy_or_throw(artifacts.paths.root);
+    replace_json_field_after_anchor_or_throw(
+        artifacts.paths.runtimeRegistryJson,
+        "baseline_tag",
+        "phase34-runtime-external-approved",
+        "approval_timestamp_utc",
+        "2026-03-20T00:00:00Z"
+    );
+    const filesystem::path ageTickJson = artifacts.paths.root / "manifests" / "runtime_known_env_age_tick_phase40.json";
+    const filesystem::path reverifyPlanJson = artifacts.paths.root / "manifests" / "runtime_known_env_reverify_plan_phase40.json";
+    const filesystem::path reverifyGateJson = artifacts.paths.root / "manifests" / "runtime_known_env_reverify_gate_phase40.json";
+    const filesystem::path reverifyApplyJson = artifacts.paths.root / "manifests" / "runtime_known_env_apply_reverify_phase40.json";
+    const filesystem::path reverifyArchiveJson = artifacts.paths.root / "manifests" / "runtime_known_env_apply_reverify_archive_phase40.json";
+    const filesystem::path retirePlanJson = artifacts.paths.root / "manifests" / "runtime_known_env_retire_plan_phase40.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-age-tick",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--governance-policy " + shell_quote(governancePolicyJson.string()),
+                "--current-time-override 2026-04-01T00:00:00Z",
+                "--advance-days 5",
+                "--age-tick-out " + shell_quote(ageTickJson.string()),
+            }
+        ) == 0,
+        "evidence bundle known env timeline smoke expected age tick"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-plan-reverify",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--governance-policy " + shell_quote(governancePolicyJson.string()),
+                "--current-time-override 2026-04-10T00:00:00Z",
+                "--plan-out " + shell_quote(reverifyPlanJson.string()),
+            }
+        ) == 0,
+        "evidence bundle known env timeline smoke expected reverify plan"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-apply-reverify",
+            {
+                "--runtime-import-manifest " + shell_quote(artifacts.externalCurrentJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--governance-policy " + shell_quote(governancePolicyJson.string()),
+                "--known-env-id phase34-runtime-external-approved",
+                "--reverify-gate-out " + shell_quote(reverifyGateJson.string()),
+                "--apply-out " + shell_quote(reverifyApplyJson.string()),
+                "--archive-import " + shell_quote(reverifyArchiveJson.string()),
+                "--current-time-override 2026-04-05T00:00:00Z",
+            }
+        ) == 0,
+        "evidence bundle known env timeline smoke expected reverify apply"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "known-env-plan-retire",
+            {
+                "--phase phase40",
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--governance-policy " + shell_quote(governancePolicyJson.string()),
+                "--current-time-override 2026-04-05T00:00:00Z",
+                "--known-env-id phase34-runtime-external-approved",
+                "--retire-plan-out " + shell_quote(retirePlanJson.string()),
+                "--retire-reason phase40-known-env-retain",
+            }
+        ) == 0,
+        "evidence bundle known env timeline smoke expected retire plan"
+    );
+    build_runtime_registry_health_or_throw(
+        artifacts.paths,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        99999.0,
+        99999.0,
+        99999.0,
+        governancePolicyJson,
+        "2026-04-05T00:00:00Z",
+        "phase40"
+    );
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        artifacts.paths.publicationHealthJson,
+        {artifacts.externalApprovedSummaryJson},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        "phase40"
+    );
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE40_KNOWN_ENV_TIMELINE_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase40 known env governance timeline bundle smoke report");
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase40_known_env_timeline.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase40_known_env_timeline_curated.zip";
+    const filesystem::path lightOpsZipPath = artifacts.paths.root / "raw_engine_phase40_known_env_timeline_light.zip";
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase40" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --known-env-governance-policy " + shell_quote(governancePolicyJson.string()) +
+        " --known-env-age-tick " + shell_quote(ageTickJson.string()) +
+        " --known-env-reverify-plan " + shell_quote(reverifyPlanJson.string()) +
+        " --known-env-reverify-gate " + shell_quote(reverifyGateJson.string()) +
+        " --known-env-reverify-apply " + shell_quote(reverifyApplyJson.string()) +
+        " --known-env-retire-plan " + shell_quote(retirePlanJson.string()) +
+        " --approved-known-summary " + shell_quote(artifacts.externalApprovedSummaryJson.string()) +
+        " --publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle known env timeline smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase40_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"known_env_governance_policy_hash\"") != string::npos, "evidence bundle known env timeline smoke expected governance policy hash");
+    require_test(metadata.find("\"known_env_age_tick_hash\"") != string::npos, "evidence bundle known env timeline smoke expected age tick hash");
+    require_test(metadata.find("\"known_env_reverify_plan_hash\"") != string::npos, "evidence bundle known env timeline smoke expected reverify plan hash");
+    require_test(metadata.find("\"known_env_reverify_apply_hash\"") != string::npos, "evidence bundle known env timeline smoke expected reverify apply hash");
+}
+
+void run_evidence_bundle_publication_health_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_registry_health_smoke_case(options);
+}
+
+void run_light_ops_bundle_operator_summary_v4_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_registry_health_smoke_case(options);
+}
+
+void run_bundle_delivery_contents_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "bundle_delivery_contents_smoke");
+    PolicyPipelineSmokeArtifacts quickPaths = paths;
+    quickPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_quick_phase32.json";
+    PolicyPipelineSmokeArtifacts nightlyPaths = paths;
+    nightlyPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_nightly_phase32.json";
+    nightlyPaths.zipPath = paths.root / "raw_engine_phase32_delivery_contents.zip";
+    nightlyPaths.curatedZipPath = paths.root / "raw_engine_phase32_delivery_contents_curated.zip";
+    nightlyPaths.lightOpsZipPath = paths.root / "raw_engine_phase32_delivery_contents_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = paths;
+    matrixPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_matrix_phase32.json";
+    require_test(
+        run_policy_pipeline_script(options, quickPaths, "quick", true, true, false, "") == 0,
+        "bundle delivery contents smoke expected quick success"
+    );
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20,
+        "bundle delivery contents smoke expected matrix success"
+    );
+    require_test(
+        run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--use-published-snapshot") == 0,
+        "bundle delivery contents smoke expected nightly success"
+    );
+    build_runtime_watch_registry_or_throw(paths, matrixPaths.summaryJson);
+    build_policy_ops_summary_or_throw(paths, quickPaths.summaryJson, nightlyPaths.summaryJson, matrixPaths.summaryJson);
+    const filesystem::path reportPath = paths.root / "PHASE32_BUNDLE_DELIVERY_CONTENTS_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase32 bundle delivery contents smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase32" +
+        " --artifact-root " + shell_quote(paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(nightlyPaths.summaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(quickPaths.summaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(matrixPaths.summaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()) +
+        " --ops-summary " + shell_quote(paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+        " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "bundle delivery contents smoke expected direct bundle success");
+    const filesystem::path metadataPath = paths.root / "phase32_evidence_bundle_published" / "bundle_metadata.json";
+    const string metadata = slurp_text_file(metadataPath);
+    const filesystem::path deliveryZip = extract_json_string_field_or_throw(metadata, "delivery_zip");
+    const filesystem::path listingPath = paths.root / "delivery_contents.txt";
+    ostringstream command;
+    command << "unzip -l " << shell_quote(deliveryZip.string()) << " > " << shell_quote(listingPath.string());
+    require_test(normalized_process_exit_code(system(command.str().c_str())) == 0, "bundle delivery contents smoke expected unzip listing");
+    const string listing = slurp_text_file(listingPath);
+    require_test(listing.find("report/") != string::npos, "bundle delivery contents smoke expected report");
+    require_test(listing.find("quick_pipeline_summary/") != string::npos, "bundle delivery contents smoke expected quick summary");
+    require_test(listing.find("nightly_pipeline_summary/") != string::npos, "bundle delivery contents smoke expected nightly summary");
+    require_test(listing.find("pipeline_matrix_summary/") != string::npos, "bundle delivery contents smoke expected matrix summary");
+    require_test(listing.find("policy_ops_summary/") != string::npos, "bundle delivery contents smoke expected ops summary");
+}
+
+void run_bundle_idempotent_from_published_snapshot_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "bundle_idempotent_from_published_snapshot_smoke");
+    PolicyPipelineSmokeArtifacts quickPaths = paths;
+    quickPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_quick_phase32.json";
+    PolicyPipelineSmokeArtifacts nightlyPaths = paths;
+    nightlyPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_nightly_phase32.json";
+    nightlyPaths.zipPath = paths.root / "raw_engine_phase32_idempotent.zip";
+    nightlyPaths.curatedZipPath = paths.root / "raw_engine_phase32_idempotent_curated.zip";
+    nightlyPaths.lightOpsZipPath = paths.root / "raw_engine_phase32_idempotent_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = paths;
+    matrixPaths.summaryJson = paths.root / "manifests" / "policy_pipeline_matrix_phase32.json";
+    require_test(run_policy_pipeline_script(options, quickPaths, "quick", true, true, false, "") == 0, "bundle idempotent smoke expected quick success");
+    require_test(run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "") == 20, "bundle idempotent smoke expected matrix success");
+    require_test(run_policy_pipeline_script(options, nightlyPaths, "nightly", true, true, false, "--use-published-snapshot") == 0, "bundle idempotent smoke expected nightly success");
+
+    const filesystem::path reportPath = paths.root / "PHASE32_BUNDLE_IDEMPOTENT_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase32 bundle idempotent smoke report");
+    const filesystem::path publishedRoot = paths.root / "phase32_evidence_bundle_published";
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase32" +
+        " --artifact-root " + shell_quote(paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(nightlyPaths.summaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(quickPaths.summaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(matrixPaths.summaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(paths.runtimeWatchRegistryJson.string()) +
+        " --ops-summary " + shell_quote(paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+        " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+        " --use-published-snapshot" +
+        " --published-root " + shell_quote(publishedRoot.string());
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "bundle idempotent smoke expected bundle rebuild success");
+    const string metadata = slurp_text_file(publishedRoot / "bundle_metadata.json");
+    require_test(metadata.find("\"publication_snapshot_mode\": true") != string::npos, "bundle idempotent smoke expected published snapshot mode");
+}
+
+void run_staged_ctest_smoke_case(const TestOptions& options) {
+    const filesystem::path executablePath = filesystem::absolute(
+        options.executablePath.empty() ? filesystem::path("raw_engine_tests") : filesystem::path(options.executablePath)
+    );
+    filesystem::path buildDir = executablePath.parent_path();
+    if (buildDir.filename() == "tests") {
+        buildDir = buildDir.parent_path();
+    }
+    const filesystem::path resultJson = resolve_artifact_dir(options) / "staged_ctest_smoke" / "result.json";
+    require_test(
+        run_staged_runner_script(
+            {
+                "--build-dir " + shell_quote(buildDir.string()),
+                "--stage-name staged_ctest_smoke",
+                "--result-json " + shell_quote(resultJson.string()),
+                "--",
+                "-R raw_engine_micro",
+            }
+        ) == 0,
+        "staged ctest smoke expected staged ctest success"
+    );
+    const string resultText = slurp_text_file(resultJson);
+    require_test(resultText.find("\"mode\": \"ctest\"") != string::npos, "staged ctest smoke expected ctest mode");
+    require_test(resultText.find("\"status\": \"pass\"") != string::npos, "staged ctest smoke expected pass");
+}
+
+void run_campaign_wrapper_tail_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "campaign_wrapper_tail_smoke";
+    filesystem::remove_all(root);
+    filesystem::create_directories(root);
+    const filesystem::path executablePath = filesystem::absolute(
+        options.executablePath.empty() ? filesystem::path("raw_engine_tests") : filesystem::path(options.executablePath)
+    );
+    const filesystem::path checkpointDir = root / "phase15_campaign_checkpoint_smoke" / "checkpoints";
+    const filesystem::path checkpointResult = root / "compare_campaign_checkpoint_result.json";
+    const filesystem::path resumeResult = root / "campaign_resume_result.json";
+    const filesystem::path partialResult = root / "campaign_partial_merge_result.json";
+    require_test(
+        run_staged_runner_script(
+            {
+                "--binary " + shell_quote(executablePath.string()),
+                "--stage-name compare_campaign_checkpoint_smoke",
+                "--result-json " + shell_quote(checkpointResult.string()),
+                "--",
+                "--case campaign",
+                "--campaign-config " + shell_quote((source_package_root() / "tests" / "campaigns" / "phase15_checkpoint_smoke.txt").string()),
+                "--checkpoint-dir " + shell_quote(checkpointDir.string()),
+                "--checkpoint-every 2",
+                "--max-wall-seconds 1",
+                "--stop-after-checkpoint",
+            }
+        ) == 0,
+        "campaign wrapper tail smoke expected compare checkpoint success"
+    );
+    require_test(
+        run_staged_runner_script(
+            {
+                "--binary " + shell_quote(executablePath.string()),
+                "--stage-name campaign_resume_smoke",
+                "--result-json " + shell_quote(resumeResult.string()),
+                "--",
+                "--case campaign",
+                "--resume-from " + shell_quote((checkpointDir / "latest.chk").string()),
+            }
+        ) == 0,
+        "campaign wrapper tail smoke expected resume success"
+    );
+    require_test(
+        run_staged_runner_script(
+            {
+                "--binary " + shell_quote(executablePath.string()),
+                "--stage-name campaign_partial_merge_smoke",
+                "--result-json " + shell_quote(partialResult.string()),
+                "--",
+                "--case campaign",
+                "--campaign-config " + shell_quote((source_package_root() / "tests" / "campaigns" / "phase15_resume_smoke.txt").string()),
+                "--checkpoint-dir " + shell_quote((root / "phase15_campaign_partial_merge_smoke" / "checkpoints").string()),
+                "--checkpoint-every 2",
+                "--max-wall-seconds 1",
+                "--stop-after-checkpoint",
+            }
+        ) == 0,
+        "campaign wrapper tail smoke expected partial merge success"
+    );
+}
+
+void run_ctest_executable_lookup_smoke_case(const TestOptions& options) {
+    const filesystem::path resultJson = resolve_artifact_dir(options) / "ctest_executable_lookup_smoke" / "result.json";
+    const int rc = run_staged_runner_script(
+        {
+            "--binary " + shell_quote((resolve_artifact_dir(options) / "missing_raw_engine_tests").string()),
+            "--stage-name ctest_executable_lookup_smoke",
+            "--result-json " + shell_quote(resultJson.string()),
+            "--",
+            "--case micro",
+        }
+    );
+    require_test(rc == 2, "ctest executable lookup smoke expected infra failure rc");
+    const string resultText = slurp_text_file(resultJson);
+    require_test(resultText.find("\"status\": \"wrapper_infra_failure\"") != string::npos, "ctest executable lookup smoke expected infra classification");
+}
+
+void run_wrapper_infra_vs_semantic_failure_smoke_case(const TestOptions& options) {
+    const filesystem::path root = resolve_artifact_dir(options) / "wrapper_infra_vs_semantic_failure_smoke";
+    filesystem::remove_all(root);
+    filesystem::create_directories(root);
+    const filesystem::path executablePath = filesystem::absolute(
+        options.executablePath.empty() ? filesystem::path("raw_engine_tests") : filesystem::path(options.executablePath)
+    );
+    const filesystem::path infraJson = root / "infra.json";
+    const filesystem::path semanticJson = root / "semantic.json";
+    require_test(
+        run_staged_runner_script(
+            {
+                "--binary " + shell_quote((root / "missing_raw_engine_tests").string()),
+                "--stage-name wrapper_infra_failure",
+                "--result-json " + shell_quote(infraJson.string()),
+                "--",
+                "--case micro",
+            }
+        ) == 2,
+        "wrapper infra vs semantic failure smoke expected infra rc"
+    );
+    require_test(
+        run_staged_runner_script(
+            {
+                "--binary " + shell_quote(executablePath.string()),
+                "--stage-name wrapper_semantic_failure",
+                "--result-json " + shell_quote(semanticJson.string()),
+                "--",
+                "--case definitely_missing_case",
+            }
+        ) == 1,
+        "wrapper infra vs semantic failure smoke expected semantic rc"
+    );
+    const string infraText = slurp_text_file(infraJson);
+    const string semanticText = slurp_text_file(semanticJson);
+    require_test(infraText.find("\"status\": \"wrapper_infra_failure\"") != string::npos, "wrapper infra vs semantic failure smoke expected infra classification");
+    require_test(semanticText.find("\"status\": \"semantic_failure\"") != string::npos, "wrapper infra vs semantic failure smoke expected semantic classification");
+}
+
 void run_runtime_budget_role_sensitive_smoke_case(const TestOptions& options) {
     const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_budget_role_sensitive_smoke");
     const string profileJson = slurp_text_file(paths.runtimeBudgetProfileJson);
@@ -14179,9 +19395,1846 @@ void run_runtime_budget_role_sensitive_smoke_case(const TestOptions& options) {
     require_test(profileJson.find("\"policy_core\"") != string::npos && profileJson.find("\"operator\"") != string::npos, "runtime budget role sensitive smoke expected operator role");
 }
 
+void run_runtime_budget_proposal_gate_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_budget_proposal_gate_smoke");
+    gate_runtime_budget_smoke_artifacts(options, artifacts);
+    const string gateText = slurp_text_file(artifacts.paths.runtimeBudgetProposalGateJson);
+    require_test(gateText.find("\"proposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "runtime budget proposal gate smoke expected APPROVABLE");
+    require_test(gateText.find("\"recommended_action\": \"PROPOSE_BUDGET_REPROFILE\"") != string::npos, "runtime budget proposal gate smoke expected PROPOSE_BUDGET_REPROFILE");
+    const string currentText = slurp_text_file(artifacts.paths.runtimeBudgetCurrentJson);
+    require_test(currentText.find("\"proposal_needed\": true") != string::npos, "runtime budget proposal gate smoke expected proposal_needed");
+}
+
+void run_runtime_budget_reproposal_gate_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_budget_reproposal_gate_smoke");
+    gate_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_watch_budget_lifecycle_or_throw(artifacts, "phase41");
+    const string gateText = slurp_text_file(artifacts.paths.runtimeBudgetProposalGateJson);
+    require_test(gateText.find("\"reproposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "runtime budget reproposal gate smoke expected APPROVABLE");
+    require_test(gateText.find("\"budget_reproposal_needed\": true") != string::npos, "runtime budget reproposal gate smoke expected budget_reproposal_needed");
+    const string currentEnvWatch = slurp_text_file(artifacts.currentEnvWatchRefreshJson);
+    require_test(currentEnvWatch.find("\"current_env_state\": \"CURRENT_ENV_REPROFILE_CANDIDATE\"") != string::npos, "runtime budget reproposal gate smoke expected reprofile candidate state");
+    require_test(currentEnvWatch.find("\"reproposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "runtime budget reproposal gate smoke expected APPROVABLE gate in current env watch");
+}
+
+void run_runtime_budget_approve_reprofile_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_budget_approve_reprofile_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    const string budgetBaseline = slurp_text_file(artifacts.paths.runtimeBudgetBaselineJson);
+    const string currentRuntime = slurp_text_file(artifacts.paths.runtimeCurrentJson);
+    require_test(budgetBaseline.find("\"budget_tag\": \"phase33-runtime-budget-approved\"") != string::npos, "runtime budget approve smoke expected budget tag");
+    require_test(currentRuntime.find("\"overall_budget_verdict\": \"PASS\"") != string::npos, "runtime budget approve smoke expected PASS current runtime verdict");
+    const string registryText = slurp_text_file(artifacts.paths.runtimeBudgetRegistryJson);
+    require_test(registryText.find("\"status\": \"active\"") != string::npos, "runtime budget approve smoke expected active budget registry entry");
+}
+
+void run_runtime_current_env_watch_state_machine_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_watch_state_machine_smoke");
+    gate_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_watch_budget_lifecycle_or_throw(artifacts, "phase41");
+    const string currentEnvWatch = slurp_text_file(artifacts.currentEnvWatchRefreshJson);
+    require_test(currentEnvWatch.find("\"current_env_state\": \"CURRENT_ENV_REPROFILE_CANDIDATE\"") != string::npos, "runtime current env watch state machine smoke expected reprofile candidate");
+    require_test(currentEnvWatch.find("\"watch_status\": \"REBASELINE_CANDIDATE\"") != string::npos || currentEnvWatch.find("\"watch_status\": \"WATCH_STABLE\"") != string::npos, "runtime current env watch state machine smoke expected stable watch lineage");
+}
+
+void run_runtime_current_env_age_tick_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_age_tick_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, "phase42");
+    const string ageTick = slurp_text_file(artifacts.currentEnvAgeTickJson);
+    require_test(ageTick.find("\"current_env_state_after\": \"CURRENT_ENV_APPROVAL_GRACE\"") != string::npos, "runtime current env age tick smoke expected approval grace");
+    require_test(ageTick.find("\"approval_grace_active\": true") != string::npos, "runtime current env age tick smoke expected active grace window");
+
+    const string approvalTimestamp = extract_json_string_field_or_throw(slurp_text_file(artifacts.paths.runtimeBudgetBaselineJson), "approval_timestamp_utc");
+    require_test(!approvalTimestamp.empty(), "runtime current env age tick smoke expected budget approval timestamp");
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-age-tick",
+            {
+                "--phase phase42",
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()),
+                "--runtime-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()),
+                "--runtime-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()),
+                "--current-time-override " + shell_quote(approvalTimestamp),
+                "--advance-days 12",
+                "--age-tick-out " + shell_quote(artifacts.currentEnvAgeTickJson.string()),
+            }
+        ) == 0,
+        "runtime current env age tick smoke expected synthetic due-soon generation"
+    );
+    const string advancedAgeTick = slurp_text_file(artifacts.currentEnvAgeTickJson);
+    require_test(advancedAgeTick.find("\"current_env_state_after\": \"CURRENT_ENV_MONITORING_DUE_SOON\"") != string::npos, "runtime current env age tick smoke expected due soon transition");
+}
+
+void run_runtime_current_env_plan_watch_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_plan_watch_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, "phase42");
+    const string plan = slurp_text_file(artifacts.currentEnvWatchPlanJson);
+    require_test(plan.find("\"execution_class\": \"release_full\"") != string::npos, "runtime current env plan watch smoke expected release_full plan entry");
+    require_test(plan.find("\"recommended_repeat_count\": 5") != string::npos, "runtime current env plan watch smoke expected repeat 5 for release_full");
+}
+
+void run_runtime_current_env_reproposal_trigger_gate_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_reproposal_trigger_gate_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, "phase42");
+    const string triggerGate = slurp_text_file(artifacts.currentEnvTriggerGateJson);
+    require_test(triggerGate.find("\"trigger_gate_verdict\": \"CLEAR\"") != string::npos, "runtime current env reproposal trigger gate smoke expected CLEAR during approval grace");
+    require_test(triggerGate.find("\"reproposal_trigger_needed\": false") != string::npos, "runtime current env reproposal trigger gate smoke expected no reproposal requirement");
+}
+
+void run_runtime_current_env_due_scheduler_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_due_scheduler_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-21T09:15:10Z");
+    const string due = slurp_text_file(artifacts.currentEnvDueJson);
+    require_test(due.find("\"monitoring_due_state\": \"DUE_SOON\"") != string::npos, "runtime current env due scheduler smoke expected monitoring DUE_SOON");
+    require_test(due.find("\"recommended_action_current_env\": \"PREPARE_MONITORING\"") != string::npos, "runtime current env due scheduler smoke expected prepare monitoring action");
+    require_test(due.find("\"next_due_kind\": \"monitoring\"") != string::npos, "runtime current env due scheduler smoke expected monitoring as next due kind");
+}
+
+void run_runtime_current_env_time_travel_due_now_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_time_travel_due_now_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z");
+    const string due = slurp_text_file(artifacts.currentEnvDueJson);
+    require_test(due.find("\"monitoring_due_state\": \"DUE\"") != string::npos, "runtime current env time travel due now smoke expected monitoring DUE");
+    require_test(due.find("\"recommended_action_current_env\": \"RUN_CURRENT_ENV_WATCH_CAMPAIGN\"") != string::npos, "runtime current env time travel due now smoke expected watch campaign action");
+}
+
+void run_runtime_current_env_plan_reproposal_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_plan_reproposal_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-30T09:15:10Z");
+    const string due = slurp_text_file(artifacts.currentEnvDueJson);
+    const string plan = slurp_text_file(artifacts.currentEnvReproposalPlanJson);
+    require_test(due.find("\"reproposal_due_state\": \"DUE\"") != string::npos, "runtime current env plan reproposal smoke expected reproposal due");
+    require_test(plan.find("\"plan_verdict\": \"ACTION_REQUIRED\"") != string::npos, "runtime current env plan reproposal smoke expected action required");
+    require_test(plan.find("runtime_current_env_reproposal_trigger_gate_smoke") != string::npos, "runtime current env plan reproposal smoke expected trigger gate command");
+}
+
+void run_policy_ops_agenda_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_agenda_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z");
+    const string agenda = slurp_text_file(artifacts.opsAgendaJson);
+    require_test(agenda.find("\"manifest_version\": \"policy_ops_agenda_v1\"") != string::npos, "policy ops agenda smoke expected agenda manifest");
+    require_test(agenda.find("\"domain\": \"current_env\"") != string::npos, "policy ops agenda smoke expected current env item");
+    require_test(agenda.find("\"RUN_CURRENT_ENV_WATCH_CAMPAIGN\"") != string::npos, "policy ops agenda smoke expected watch campaign action");
+}
+
+void run_runtime_current_env_execute_watch_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_execute_watch_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    execute_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    const string executeText = slurp_text_file(artifacts.currentEnvWatchExecuteJson);
+    require_test(executeText.find("\"action_kind\": \"RUN_CURRENT_ENV_WATCH_CAMPAIGN\"") != string::npos, "runtime current env execute watch smoke expected watch action kind");
+    require_test(executeText.find("\"action_status\": \"EXECUTED\"") != string::npos, "runtime current env execute watch smoke expected executed status");
+    require_test(executeText.find("\"execution_verdict\": \"PASS\"") != string::npos, "runtime current env execute watch smoke expected PASS execution");
+    require_test(executeText.find("\"watch_status_observed\": \"WATCH_STABLE\"") != string::npos, "runtime current env execute watch smoke expected WATCH_STABLE observation");
+}
+
+void run_runtime_current_env_apply_watch_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_apply_watch_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    execute_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    apply_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    const string applyText = slurp_text_file(artifacts.currentEnvWatchApplyJson);
+    require_test(applyText.find("\"action_status\": \"APPLIED\"") != string::npos, "runtime current env apply watch smoke expected applied status");
+    require_test(applyText.find("\"observed_watch_status\": \"WATCH_STABLE\"") != string::npos, "runtime current env apply watch smoke expected WATCH_STABLE observation");
+    require_test(applyText.find("\"new_state\": \"CURRENT_ENV_WATCH_STABLE\"") != string::npos, "runtime current env apply watch smoke expected WATCH_STABLE state");
+    require_test(applyText.find("\"updated_next_monitoring_due_at\"") != string::npos, "runtime current env apply watch smoke expected next monitoring due");
+}
+
+void run_current_env_monitoring_due_execute_apply_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "current_env_monitoring_due_execute_apply_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    execute_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    apply_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    rebuild_phase44_ops_agenda_with_actions_or_throw(artifacts, "2026-04-23T09:15:10Z", true, false);
+    const string due = slurp_text_file(artifacts.currentEnvDueJson);
+    const string agenda = slurp_text_file(artifacts.opsAgendaJson);
+    const string applyText = slurp_text_file(artifacts.currentEnvWatchApplyJson);
+    require_test(due.find("\"monitoring_due_state\": \"DUE\"") != string::npos, "current env monitoring due execute apply smoke expected due state");
+    require_test(agenda.find("\"action_status\": \"APPLIED\"") != string::npos, "current env monitoring due execute apply smoke expected applied agenda status");
+    require_test(applyText.find("\"next_operator_action\": \"NO_ACTION\"") != string::npos, "current env monitoring due execute apply smoke expected no immediate next action");
+}
+
+void run_runtime_current_env_execute_reproposal_gate_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_execute_reproposal_gate_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-30T09:15:10Z", "phase44");
+    execute_current_env_reproposal_gate_or_throw(artifacts, "2026-04-30T09:15:10Z", "phase44");
+    const string executeText = slurp_text_file(artifacts.currentEnvReproposalExecuteJson);
+    require_test(executeText.find("\"action_kind\": \"RUN_CURRENT_ENV_REPROPOSAL_GATE\"") != string::npos, "runtime current env execute reproposal gate smoke expected action kind");
+    require_test(executeText.find("\"gate_verdict\": \"CANDIDATE\"") != string::npos, "runtime current env execute reproposal gate smoke expected candidate verdict");
+    require_test(executeText.find("\"recommended_next_action\": \"PROPOSE_BUDGET_REPROFILE\"") != string::npos, "runtime current env execute reproposal gate smoke expected reproposal recommendation");
+}
+
+void run_policy_ops_agenda_action_status_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_agenda_action_status_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    execute_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    apply_current_env_watch_action_or_throw(artifacts, "2026-04-23T09:15:10Z", "phase44");
+    rebuild_phase44_ops_agenda_with_actions_or_throw(artifacts, "2026-04-23T09:15:10Z", true, false);
+    const string agenda = slurp_text_file(artifacts.opsAgendaJson);
+    require_test(agenda.find("\"action_status\": \"APPLIED\"") != string::npos, "policy ops agenda action status smoke expected applied action status");
+    require_test(agenda.find("\"applied_action_count\": 1") != string::npos, "policy ops agenda action status smoke expected applied count");
+    require_test(agenda.find("\"execution_manifest\"") != string::npos, "policy ops agenda action status smoke expected execution manifest link");
+    require_test(agenda.find("\"apply_manifest\"") != string::npos, "policy ops agenda action status smoke expected apply manifest link");
+}
+
+void run_policy_ops_summary_v10_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v10_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    prepare_phase44_ops_summary_context_or_throw(options, artifacts, "raw_engine_phase44_action_ops");
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v10\"") != string::npos, "policy ops summary v10 smoke expected v10 manifest");
+    require_test(opsSummary.find("\"current_env_actions\"") != string::npos, "policy ops summary v10 smoke expected current env actions section");
+    require_test(opsSummary.find("\"current_env_watch_apply_result\"") != string::npos, "policy ops summary v10 smoke expected watch apply section");
+    require_test(opsSummary.find("\"new_guardrail_state\": \"CURRENT_ENV_WATCH_STABLE\"") != string::npos, "policy ops summary v10 smoke expected applied guardrail state");
+}
+
+void run_runtime_budget_history_append_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_budget_history_append_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, "phase42");
+    const string history = slurp_text_file(artifacts.runtimeBudgetReproposalHistoryJson);
+    require_test(history.find("\"active_budget_profile_id\":") != string::npos, "runtime budget history append smoke expected active budget profile");
+    require_test(history.find("\"approval_timestamp_utc\":") != string::npos, "runtime budget history append smoke expected approval timestamp");
+    require_test(history.find("\"cumulative_stable_soft_overrun_count\":") != string::npos, "runtime budget history append smoke expected cumulative stable overrun count");
+}
+
+void run_runtime_watch_campaign_release_repeat10_smoke_case(const TestOptions& options) {
+    run_runtime_watch_release_full_repeat10_smoke_case(options);
+}
+
+void run_runtime_budget_refresh_after_approval_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_budget_refresh_after_approval_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    const string refreshText = slurp_text_file(artifacts.paths.runtimeBudgetRefreshJson);
+    require_test(refreshText.find("\"current_verdict\": \"PASS\"") != string::npos, "runtime budget refresh after approval smoke expected PASS");
+    require_test(refreshText.find("\"freshness_verdict\": \"FRESH\"") != string::npos, "runtime budget refresh after approval smoke expected FRESH");
+    require_test(refreshText.find("\"comparability_verdict\": \"COMPARABLE\"") != string::npos, "runtime budget refresh after approval smoke expected COMPARABLE");
+    const string rerunText = slurp_text_file(artifacts.paths.runtimeBudgetRerunJson);
+    require_test(rerunText.find("\"summary_verdict\": \"PASS\"") != string::npos, "runtime budget refresh after approval smoke expected PASS rerun");
+    require_test(rerunText.find("\"selected_entry_count\": 0") != string::npos, "runtime budget refresh after approval smoke expected empty rerun");
+}
+
+void run_combined_pipeline_after_budget_reprofile_quick_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "combined_pipeline_after_budget_reprofile_quick_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())
+        ) == 0,
+        "combined pipeline after budget reprofile quick smoke expected OK exit"
+    );
+    const string summary = slurp_text_file(artifacts.quickSummaryJson);
+    require_test(summary.find("\"severity\": \"OK\"") != string::npos, "combined pipeline after budget reprofile quick smoke expected OK severity");
+    require_test(summary.find("\"runtime_recommendation\": \"NO_ACTION\"") != string::npos, "combined pipeline after budget reprofile quick smoke expected NO_ACTION");
+}
+
+void run_combined_pipeline_after_budget_reprofile_nightly_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "combined_pipeline_after_budget_reprofile_nightly_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase33_budget_nightly.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase33_budget_nightly_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase33_budget_nightly_light.zip";
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot"
+        ) == 0,
+        "combined pipeline after budget reprofile nightly smoke expected OK exit"
+    );
+    const string summary = slurp_text_file(artifacts.nightlySummaryJson);
+    require_test(summary.find("\"severity\": \"OK\"") != string::npos, "combined pipeline after budget reprofile nightly smoke expected OK severity");
+}
+
+void run_policy_ops_summary_budget_vs_rebaseline_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_budget_vs_rebaseline_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase33_ops_budget.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase33_ops_budget_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase33_ops_budget_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())) == 20,
+        "policy ops summary budget vs rebaseline smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "policy ops summary budget vs rebaseline smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "policy ops summary budget vs rebaseline smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_policy_ops_summary_or_throw(artifacts.paths, artifacts.quickSummaryJson, artifacts.nightlySummaryJson, artifacts.matrixSummaryJson);
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"recommended_action_current_env\": \"NO_ACTION\"") != string::npos, "policy ops summary budget vs rebaseline smoke expected current env NO_ACTION");
+    require_test(opsSummary.find("\"recommended_action_new_env\": \"REBASELINE_REQUIRED\"") != string::npos, "policy ops summary budget vs rebaseline smoke expected new env REBASELINE_REQUIRED");
+}
+
+void run_policy_ops_summary_v7_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v7_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_watch_budget_lifecycle_or_throw(artifacts, "phase41");
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase41_ops_budget.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase41_ops_budget_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase41_ops_budget_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())) == 20,
+        "policy ops summary v7 smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "policy ops summary v7 smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "policy ops summary v7 smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase41");
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        {},
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        {},
+        {},
+        {},
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase41"
+    );
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v7\"") != string::npos, "policy ops summary v7 smoke expected v7 manifest");
+    require_test(opsSummary.find("\"current_env_watch_budget\"") != string::npos, "policy ops summary v7 smoke expected current env budget section");
+    require_test(opsSummary.find("\"recommended_action_current_env\": \"NO_ACTION\"") != string::npos, "policy ops summary v7 smoke expected current env NO_ACTION");
+    require_test(opsSummary.find("\"reproposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "policy ops summary v7 smoke expected APPROVABLE reproposal gate");
+}
+
+void run_policy_ops_summary_v8_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v8_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, "phase42");
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase42_guardrail_ops.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase42_guardrail_ops_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase42_guardrail_ops_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())) == 20,
+        "policy ops summary v8 smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "policy ops summary v8 smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "policy ops summary v8 smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase42");
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase42",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson
+    );
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v8\"") != string::npos, "policy ops summary v8 smoke expected v8 manifest");
+    require_test(opsSummary.find("\"current_env_guardrail\"") != string::npos, "policy ops summary v8 smoke expected current env guardrail section");
+    require_test(opsSummary.find("\"recommended_action_current_env\": \"NO_ACTION\"") != string::npos, "policy ops summary v8 smoke expected current env NO_ACTION");
+}
+
+void run_policy_ops_summary_v9_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v9_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase43_due_ops.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase43_due_ops_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase43_due_ops_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())) == 20,
+        "policy ops summary v9 smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "policy ops summary v9 smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "policy ops summary v9 smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase43");
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z");
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase43",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson,
+        artifacts.currentEnvDueJson,
+        artifacts.currentEnvReproposalPlanJson,
+        artifacts.opsAgendaJson
+    );
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v9\"") != string::npos, "policy ops summary v9 smoke expected v9 manifest");
+    require_test(opsSummary.find("\"current_env_due\"") != string::npos, "policy ops summary v9 smoke expected current env due section");
+    require_test(opsSummary.find("\"ops_agenda\"") != string::npos, "policy ops summary v9 smoke expected ops agenda section");
+    require_test(opsSummary.find("\"recommended_action_current_env_due\": \"RUN_CURRENT_ENV_WATCH_CAMPAIGN\"") != string::npos, "policy ops summary v9 smoke expected due action");
+}
+
+void run_policy_ops_summary_current_env_clear_new_env_action_required_smoke_case(const TestOptions& options) {
+    run_policy_ops_summary_budget_vs_rebaseline_smoke_case(options);
+}
+
+void run_evidence_bundle_budget_lifecycle_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_budget_lifecycle_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase33_bundle_budget.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase33_bundle_budget_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase33_bundle_budget_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            matrixPaths,
+            "matrix",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())
+        ) == 20,
+        "evidence bundle budget lifecycle smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "evidence bundle budget lifecycle smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "evidence bundle budget lifecycle smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_policy_ops_summary_or_throw(artifacts.paths, artifacts.quickSummaryJson, artifacts.nightlySummaryJson, artifacts.matrixSummaryJson);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE33_BUNDLE_BUDGET_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase33 evidence bundle budget smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase33" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-proposal " + shell_quote(artifacts.paths.runtimeProposalJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-refresh " + shell_quote(artifacts.paths.runtimeBudgetRefreshJson.string()) +
+        " --runtime-budget-rerun " + shell_quote(artifacts.paths.runtimeBudgetRerunJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+        " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle budget lifecycle smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase33_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"runtime_budget_baseline_hash\"") != string::npos, "evidence bundle budget lifecycle smoke expected budget baseline hash");
+    require_test(metadata.find("\"runtime_budget_registry_hash\"") != string::npos, "evidence bundle budget lifecycle smoke expected budget registry hash");
+}
+
+void run_evidence_bundle_budget_transition_metadata_smoke_case(const TestOptions& options) {
+    run_evidence_bundle_budget_lifecycle_smoke_case(options);
+}
+
+void run_evidence_bundle_current_env_budget_lifecycle_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_current_env_budget_lifecycle_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_watch_budget_lifecycle_or_throw(artifacts, "phase41");
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase41_bundle_budget.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase41_bundle_budget_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase41_bundle_budget_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            matrixPaths,
+            "matrix",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())
+        ) == 20,
+        "evidence bundle current env budget lifecycle smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "evidence bundle current env budget lifecycle smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "evidence bundle current env budget lifecycle smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase41");
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        {},
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        {},
+        {},
+        {},
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase41"
+    );
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE41_BUNDLE_CURRENT_ENV_BUDGET_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase41 evidence bundle current env budget lifecycle smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase41" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-refresh " + shell_quote(artifacts.paths.runtimeBudgetRefreshJson.string()) +
+        " --runtime-budget-rerun " + shell_quote(artifacts.paths.runtimeBudgetRerunJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()) +
+        " --current-env-governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()) +
+        " --current-env-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()) +
+        " --current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()) +
+        " --current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+        " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle current env budget lifecycle smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase41_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"current_env_watch_refresh\"") != string::npos, "evidence bundle current env budget lifecycle smoke expected current env watch refresh metadata");
+    require_test(metadata.find("\"runtime_budget_reproposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "evidence bundle current env budget lifecycle smoke expected reproposal gate metadata");
+    require_test(metadata.find("\"current_env_watch_lifecycle\"") != string::npos, "evidence bundle current env budget lifecycle smoke expected watch lifecycle summary");
+}
+
+void run_evidence_bundle_current_env_guardrail_timeline_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_current_env_guardrail_timeline_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    build_current_env_guardrail_lifecycle_or_throw(artifacts, "phase42");
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase42_guardrail_bundle.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase42_guardrail_bundle_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase42_guardrail_bundle_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            matrixPaths,
+            "matrix",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())
+        ) == 20,
+        "evidence bundle current env guardrail timeline smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "evidence bundle current env guardrail timeline smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "evidence bundle current env guardrail timeline smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase42");
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase42",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson
+    );
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE42_BUNDLE_CURRENT_ENV_GUARDRAIL_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase42 evidence bundle current env guardrail smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase42" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-refresh " + shell_quote(artifacts.paths.runtimeBudgetRefreshJson.string()) +
+        " --runtime-budget-rerun " + shell_quote(artifacts.paths.runtimeBudgetRerunJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()) +
+        " --runtime-budget-reproposal-history " + shell_quote(artifacts.runtimeBudgetReproposalHistoryJson.string()) +
+        " --runtime-budget-registry-summary " + shell_quote(artifacts.runtimeBudgetRegistrySummaryJson.string()) +
+        " --current-env-governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()) +
+        " --current-env-guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()) +
+        " --current-env-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()) +
+        " --current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()) +
+        " --current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()) +
+        " --current-env-age-tick " + shell_quote(artifacts.currentEnvAgeTickJson.string()) +
+        " --current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()) +
+        " --current-env-trigger-gate " + shell_quote(artifacts.currentEnvTriggerGateJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+        " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle current env guardrail timeline smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase42_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"current_env_guardrail_lifecycle\"") != string::npos, "evidence bundle current env guardrail timeline smoke expected guardrail lifecycle metadata");
+    require_test(metadata.find("\"current_env_watch_plan_summary\"") != string::npos, "evidence bundle current env guardrail timeline smoke expected watch plan metadata");
+    require_test(metadata.find("\"runtime_budget_reproposal_history_summary\"") != string::npos, "evidence bundle current env guardrail timeline smoke expected reproposal history metadata");
+}
+
+void run_evidence_bundle_current_env_due_timeline_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_current_env_due_timeline_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    PolicyPipelineSmokeArtifacts quickPaths = artifacts.paths;
+    quickPaths.summaryJson = artifacts.quickSummaryJson;
+    PolicyPipelineSmokeArtifacts nightlyPaths = artifacts.paths;
+    nightlyPaths.summaryJson = artifacts.nightlySummaryJson;
+    nightlyPaths.zipPath = artifacts.paths.root / "raw_engine_phase43_due_bundle.zip";
+    nightlyPaths.curatedZipPath = artifacts.paths.root / "raw_engine_phase43_due_bundle_curated.zip";
+    nightlyPaths.lightOpsZipPath = artifacts.paths.root / "raw_engine_phase43_due_bundle_light.zip";
+    PolicyPipelineSmokeArtifacts matrixPaths = artifacts.paths;
+    matrixPaths.summaryJson = artifacts.matrixSummaryJson;
+    require_test(
+        run_policy_pipeline_script(options, matrixPaths, "matrix", true, true, false, "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string())) == 20,
+        "evidence bundle current env due timeline smoke expected matrix ACTION_REQUIRED"
+    );
+    normalize_policy_refresh_for_budget_smoke_or_throw(artifacts.paths);
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            quickPaths,
+            "quick",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --skip-policy-stage"
+        ) == 0,
+        "evidence bundle current env due timeline smoke expected quick OK"
+    );
+    require_test(
+        run_policy_pipeline_script(
+            options,
+            nightlyPaths,
+            "nightly",
+            true,
+            true,
+            false,
+            "--runtime-budget-config " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) + " --use-published-snapshot --skip-policy-stage"
+        ) == 0,
+        "evidence bundle current env due timeline smoke expected nightly OK"
+    );
+    build_runtime_watch_registry_or_throw(artifacts.paths, artifacts.matrixSummaryJson);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase43");
+    build_current_env_due_lifecycle_or_throw(artifacts, "2026-04-23T09:15:10Z");
+    build_policy_ops_summary_or_throw(
+        artifacts.paths,
+        artifacts.quickSummaryJson,
+        artifacts.nightlySummaryJson,
+        artifacts.matrixSummaryJson,
+        artifacts.paths.runtimeRegistryHealthJson,
+        {},
+        {},
+        {},
+        artifacts.currentEnvGovernancePolicyJson,
+        artifacts.currentEnvGuardrailPolicyJson,
+        artifacts.currentEnvWatchCurrentJson,
+        artifacts.currentEnvWatchRefreshJson,
+        artifacts.currentEnvWatchHistoryJson,
+        artifacts.currentEnvAgeTickJson,
+        artifacts.currentEnvWatchPlanJson,
+        artifacts.currentEnvTriggerGateJson,
+        artifacts.paths.runtimeBudgetCurrentJson,
+        artifacts.paths.runtimeBudgetProposalJson,
+        artifacts.paths.runtimeBudgetProposalGateJson,
+        artifacts.paths.runtimeBudgetBaselineJson,
+        artifacts.paths.runtimeBudgetRefreshJson,
+        "phase43",
+        artifacts.runtimeBudgetReproposalHistoryJson,
+        artifacts.runtimeBudgetRegistrySummaryJson,
+        artifacts.currentEnvDueJson,
+        artifacts.currentEnvReproposalPlanJson,
+        artifacts.opsAgendaJson
+    );
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE43_BUNDLE_CURRENT_ENV_DUE_REPORT.txt";
+    write_smoke_report_file(reportPath, "phase43 evidence bundle current env due timeline smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase43" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-refresh " + shell_quote(artifacts.paths.runtimeBudgetRefreshJson.string()) +
+        " --runtime-budget-rerun " + shell_quote(artifacts.paths.runtimeBudgetRerunJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()) +
+        " --runtime-budget-reproposal-history " + shell_quote(artifacts.runtimeBudgetReproposalHistoryJson.string()) +
+        " --runtime-budget-registry-summary " + shell_quote(artifacts.runtimeBudgetRegistrySummaryJson.string()) +
+        " --current-env-governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()) +
+        " --current-env-guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()) +
+        " --current-env-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()) +
+        " --current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()) +
+        " --current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()) +
+        " --current-env-age-tick " + shell_quote(artifacts.currentEnvAgeTickJson.string()) +
+        " --current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()) +
+        " --current-env-trigger-gate " + shell_quote(artifacts.currentEnvTriggerGateJson.string()) +
+        " --current-env-due " + shell_quote(artifacts.currentEnvDueJson.string()) +
+        " --current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(nightlyPaths.zipPath.string()) +
+        " --curated-zip " + shell_quote(nightlyPaths.curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(nightlyPaths.lightOpsZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle current env due timeline smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase43_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"current_env_due_summary\"") != string::npos, "evidence bundle current env due timeline smoke expected due scheduler metadata");
+    require_test(metadata.find("\"current_env_reproposal_plan_summary\"") != string::npos, "evidence bundle current env due timeline smoke expected reproposal plan metadata");
+    require_test(metadata.find("\"ops_agenda_summary\"") != string::npos, "evidence bundle current env due timeline smoke expected ops agenda metadata");
+}
+
+void run_evidence_bundle_current_env_execute_apply_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_current_env_execute_apply_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    prepare_phase44_ops_summary_context_or_throw(options, artifacts, "raw_engine_phase44_execute_apply_ops");
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE44_BUNDLE_CURRENT_ENV_EXECUTE_APPLY_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase44_execute_apply_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase44_execute_apply_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase44_execute_apply_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase44 evidence bundle current env execute/apply smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase44" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-refresh " + shell_quote(artifacts.paths.runtimeBudgetRefreshJson.string()) +
+        " --runtime-budget-rerun " + shell_quote(artifacts.paths.runtimeBudgetRerunJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()) +
+        " --runtime-budget-reproposal-history " + shell_quote(artifacts.runtimeBudgetReproposalHistoryJson.string()) +
+        " --runtime-budget-registry-summary " + shell_quote(artifacts.runtimeBudgetRegistrySummaryJson.string()) +
+        " --current-env-governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()) +
+        " --current-env-guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()) +
+        " --current-env-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()) +
+        " --current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()) +
+        " --current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()) +
+        " --current-env-age-tick " + shell_quote(artifacts.currentEnvAgeTickJson.string()) +
+        " --current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()) +
+        " --current-env-trigger-gate " + shell_quote(artifacts.currentEnvTriggerGateJson.string()) +
+        " --current-env-due " + shell_quote(artifacts.currentEnvDueJson.string()) +
+        " --current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()) +
+        " --current-env-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()) +
+        " --current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle current env execute apply smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase44_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"current_env_watch_execute_summary\"") != string::npos, "evidence bundle current env execute apply smoke expected execute metadata");
+    require_test(metadata.find("\"current_env_watch_apply_summary\"") != string::npos, "evidence bundle current env execute apply smoke expected apply metadata");
+    require_test(metadata.find("\"action_timeline_status\"") != string::npos, "evidence bundle current env execute apply smoke expected action timeline metadata");
+}
+
+void run_runtime_current_env_action_ledger_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_action_ledger_smoke");
+    prepare_phase45_action_ledger_context_or_throw(options, artifacts);
+    const string ledger = slurp_text_file(artifacts.currentEnvActionLedgerJson);
+    require_test(ledger.find("\"manifest_version\": \"runtime_current_env_action_ledger_v1\"") != string::npos, "current env action ledger smoke expected ledger manifest");
+    require_test(ledger.find("\"action_status\": \"APPLIED\"") != string::npos, "current env action ledger smoke expected applied action");
+    require_test(ledger.find("\"latest_applied_action_id\": \"phase45-current-env-watch-001\"") != string::npos, "current env action ledger smoke expected phase45 watch as latest applied");
+}
+
+void run_runtime_current_env_action_retry_plan_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_action_retry_plan_smoke");
+    approve_runtime_budget_smoke_artifacts(options, artifacts);
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase45");
+    const filesystem::path failedLedger = write_current_env_failed_action_ledger_fixture_or_throw(artifacts);
+    build_current_env_action_retry_plan_or_throw(artifacts, failedLedger, "2026-05-07T09:20:10Z", "phase45");
+    const string retryPlan = slurp_text_file(artifacts.currentEnvActionRetryPlanJson);
+    require_test(retryPlan.find("\"manifest_version\": \"runtime_current_env_action_retry_plan_v1\"") != string::npos, "current env retry plan smoke expected retry manifest");
+    require_test(retryPlan.find("\"retryable_count\": 1") != string::npos, "current env retry plan smoke expected one retryable action");
+    require_test(retryPlan.find("\"retry_status\": \"RETRYABLE\"") != string::npos, "current env retry plan smoke expected retryable status");
+}
+
+void run_runtime_current_env_reproposal_handoff_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_reproposal_handoff_smoke");
+    prepare_phase45_action_ledger_context_or_throw(options, artifacts);
+    const string handoff = slurp_text_file(artifacts.currentEnvReproposalHandoffJson);
+    require_test(handoff.find("\"manifest_version\": \"runtime_current_env_reproposal_handoff_v1\"") != string::npos, "current env reproposal handoff smoke expected manifest");
+    require_test(handoff.find("\"gate_verdict\": \"APPROVABLE\"") != string::npos, "current env reproposal handoff smoke expected approvable verdict");
+    require_test(handoff.find("\"approval_ready\": true") != string::npos, "current env reproposal handoff smoke expected approval ready");
+    require_test(handoff.find("runtime_budget_approve_reprofile_smoke") != string::npos, "current env reproposal handoff smoke expected approval command");
+}
+
+void run_current_env_next_cycle_monitoring_due_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "current_env_next_cycle_monitoring_due_smoke");
+    prepare_phase45_action_ledger_context_or_throw(options, artifacts);
+    build_current_env_next_cycle_due_or_throw(
+        artifacts,
+        "2026-05-06T09:15:10Z",
+        artifacts.currentEnvNextCycleDueSoonJson,
+        "phase45"
+    );
+    build_current_env_next_cycle_due_or_throw(
+        artifacts,
+        "2026-05-07T09:15:10Z",
+        artifacts.currentEnvNextCycleMonitoringDueJson,
+        "phase45"
+    );
+    build_current_env_next_cycle_due_or_throw(
+        artifacts,
+        "2026-05-16T09:15:10Z",
+        artifacts.currentEnvNextCycleOverdueJson,
+        "phase45"
+    );
+    const string dueSoon = slurp_text_file(artifacts.currentEnvNextCycleDueSoonJson);
+    const string monitoringDue = slurp_text_file(artifacts.currentEnvNextCycleMonitoringDueJson);
+    const string overdue = slurp_text_file(artifacts.currentEnvNextCycleOverdueJson);
+    require_test(dueSoon.find("\"monitoring_due_state\": \"DUE_SOON\"") != string::npos, "next cycle due soon smoke expected DUE_SOON");
+    require_test(monitoringDue.find("\"monitoring_due_state\": \"DUE\"") != string::npos, "next cycle monitoring due smoke expected DUE");
+    require_test(monitoringDue.find("\"recommended_action_current_env\": \"RUN_CURRENT_ENV_WATCH_CAMPAIGN\"") != string::npos, "next cycle monitoring due smoke expected watch campaign");
+    require_test(overdue.find("\"reproposal_due_state\": \"OVERDUE\"") != string::npos, "next cycle overdue smoke expected reproposal overdue");
+}
+
+void run_policy_ops_agenda_lifecycle_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_agenda_lifecycle_v2_smoke");
+    prepare_phase45_action_ledger_context_or_throw(options, artifacts);
+    const string agenda = slurp_text_file(artifacts.opsAgendaJson);
+    require_test(agenda.find("\"manifest_version\": \"policy_ops_agenda_v2\"") != string::npos, "ops agenda lifecycle v2 smoke expected v2 manifest");
+    require_test(agenda.find("\"ledger_status\": \"RECORDED\"") != string::npos, "ops agenda lifecycle v2 smoke expected ledger status");
+    require_test(agenda.find("\"handoff_status\": \"APPROVAL_READY\"") != string::npos, "ops agenda lifecycle v2 smoke expected approval-ready handoff");
+    require_test(agenda.find("\"APPROVE_RUNTIME_BUDGET_REPROFILE\"") != string::npos, "ops agenda lifecycle v2 smoke expected explicit approval action");
+}
+
+void run_policy_ops_summary_v11_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v11_smoke");
+    prepare_phase45_action_ledger_context_or_throw(options, artifacts);
+    build_phase45_ops_summary_or_throw(artifacts);
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v11\"") != string::npos, "ops summary v11 smoke expected v11 manifest");
+    require_test(opsSummary.find("\"current_env_action_ledger\"") != string::npos, "ops summary v11 smoke expected ledger section");
+    require_test(opsSummary.find("\"current_env_retry_plan\"") != string::npos, "ops summary v11 smoke expected retry section");
+    require_test(opsSummary.find("\"current_env_reproposal_handoff\"") != string::npos, "ops summary v11 smoke expected handoff section");
+    require_test(opsSummary.find("\"approval_ready\": true") != string::npos, "ops summary v11 smoke expected approval ready handoff");
+}
+
+void run_evidence_bundle_action_ledger_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_action_ledger_smoke");
+    prepare_phase45_action_ledger_context_or_throw(options, artifacts);
+    build_current_env_next_cycle_due_or_throw(
+        artifacts,
+        "2026-05-06T09:15:10Z",
+        artifacts.currentEnvNextCycleDueSoonJson,
+        "phase45"
+    );
+    build_current_env_next_cycle_due_or_throw(
+        artifacts,
+        "2026-05-07T09:15:10Z",
+        artifacts.currentEnvNextCycleMonitoringDueJson,
+        "phase45"
+    );
+    build_current_env_next_cycle_due_or_throw(
+        artifacts,
+        "2026-05-16T09:15:10Z",
+        artifacts.currentEnvNextCycleOverdueJson,
+        "phase45"
+    );
+    build_phase45_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE45_BUNDLE_ACTION_LEDGER_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase45_action_ledger_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase45_action_ledger_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase45_action_ledger_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase45 evidence bundle action ledger smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase45" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-refresh " + shell_quote(artifacts.paths.runtimeBudgetRefreshJson.string()) +
+        " --runtime-budget-rerun " + shell_quote(artifacts.paths.runtimeBudgetRerunJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()) +
+        " --runtime-budget-reproposal-history " + shell_quote(artifacts.runtimeBudgetReproposalHistoryJson.string()) +
+        " --runtime-budget-registry-summary " + shell_quote(artifacts.runtimeBudgetRegistrySummaryJson.string()) +
+        " --current-env-governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()) +
+        " --current-env-guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()) +
+        " --current-env-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()) +
+        " --current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()) +
+        " --current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()) +
+        " --current-env-age-tick " + shell_quote(artifacts.currentEnvAgeTickJson.string()) +
+        " --current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()) +
+        " --current-env-trigger-gate " + shell_quote(artifacts.currentEnvTriggerGateJson.string()) +
+        " --current-env-due " + shell_quote(artifacts.currentEnvNextCycleReproposalDueJson.string()) +
+        " --current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()) +
+        " --current-env-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()) +
+        " --current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()) +
+        " --current-env-reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerJson.string()) +
+        " --current-env-retry-plan " + shell_quote(artifacts.currentEnvActionRetryPlanJson.string()) +
+        " --current-env-reproposal-handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()) +
+        " --current-env-next-cycle-summary " + shell_quote(artifacts.currentEnvNextCycleDueSoonJson.string()) +
+        " --current-env-next-cycle-summary " + shell_quote(artifacts.currentEnvNextCycleMonitoringDueJson.string()) +
+        " --current-env-next-cycle-summary " + shell_quote(artifacts.currentEnvNextCycleReproposalDueJson.string()) +
+        " --current-env-next-cycle-summary " + shell_quote(artifacts.currentEnvNextCycleOverdueJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle action ledger smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase45_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"current_env_action_ledger_summary\"") != string::npos, "evidence bundle action ledger smoke expected ledger metadata");
+    require_test(metadata.find("\"current_env_retry_plan_summary\"") != string::npos, "evidence bundle action ledger smoke expected retry metadata");
+    require_test(metadata.find("\"current_env_reproposal_handoff_summary\"") != string::npos, "evidence bundle action ledger smoke expected handoff metadata");
+    require_test(metadata.find("\"current_env_next_cycle_summaries\"") != string::npos, "evidence bundle action ledger smoke expected next cycle metadata");
+}
+
+void run_runtime_current_env_operator_decision_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_operator_decision_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    const string decision = slurp_text_file(artifacts.currentEnvOperatorDecisionJson);
+    require_test(decision.find("\"manifest_version\": \"runtime_current_env_operator_decision_v1\"") != string::npos, "operator decision smoke expected decision manifest");
+    require_test(decision.find("\"decision\": \"approve\"") != string::npos, "operator decision smoke expected approve decision");
+    require_test(decision.find("\"resulting_action_status\": \"CLOSED\"") != string::npos, "operator decision smoke expected closed resulting status");
+    require_test(decision.find("\"approval_mode\": \"handoff_only\"") != string::npos, "operator decision smoke expected handoff-only approval mode");
+    require_test(decision.find("\"approval_applied\": false") != string::npos, "operator decision smoke expected no integrated approval");
+}
+
+void run_runtime_current_env_apply_operator_decision_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_apply_operator_decision_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    const string apply = slurp_text_file(artifacts.currentEnvOperatorDecisionApplyJson);
+    const string updatedLedger = slurp_text_file(artifacts.currentEnvActionLedgerUpdatedJson);
+    require_test(apply.find("\"manifest_version\": \"runtime_current_env_operator_decision_apply_v1\"") != string::npos, "operator decision apply smoke expected apply manifest");
+    require_test(apply.find("\"closure_status\": \"CLOSED\"") != string::npos, "operator decision apply smoke expected closed closure status");
+    require_test(apply.find("\"ledger_updated\": true") != string::npos, "operator decision apply smoke expected ledger update");
+    require_test(apply.find("\"approval_applied\": false") != string::npos, "operator decision apply smoke expected handoff-only no approval");
+    require_test(updatedLedger.find("\"action_status\": \"CLOSED\"") != string::npos, "operator decision apply smoke expected closed ledger action");
+    require_test(updatedLedger.find("\"operator_decision\": \"approve\"") != string::npos, "operator decision apply smoke expected ledger decision");
+}
+
+void run_runtime_current_env_action_ledger_compact_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_action_ledger_compact_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    const string compact = slurp_text_file(artifacts.currentEnvActionLedgerCompactJson);
+    const string archive = slurp_text_file(artifacts.currentEnvActionLedgerArchiveJson);
+    require_test(compact.find("\"manifest_version\": \"runtime_current_env_action_ledger_compact_v1\"") != string::npos, "ledger compact smoke expected compact manifest");
+    require_test(compact.find("\"closed_action_count\"") != string::npos, "ledger compact smoke expected closed count");
+    require_test(compact.find("\"approval_action_count\"") != string::npos, "ledger compact smoke expected approval action count");
+    require_test(archive.find("\"manifest_version\": \"runtime_current_env_action_ledger_archive_v1\"") != string::npos, "ledger compact smoke expected archive manifest");
+    require_test(archive.find("\"archived_action_ids\"") != string::npos, "ledger compact smoke expected archived ids field");
+}
+
+void run_reproposal_handoff_closure_only_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "reproposal_handoff_closure_only_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    const string decision = slurp_text_file(artifacts.currentEnvOperatorDecisionJson);
+    const string apply = slurp_text_file(artifacts.currentEnvOperatorDecisionApplyJson);
+    require_test(decision.find("\"approval_mode\": \"handoff_only\"") != string::npos, "handoff closure-only smoke expected handoff-only mode");
+    require_test(apply.find("\"approval_mode\": \"handoff_only\"") != string::npos, "handoff closure-only smoke expected apply handoff-only mode");
+    require_test(apply.find("\"approval_applied\": false") != string::npos, "handoff closure-only smoke expected no automatic budget approval");
+    require_test(apply.find("\"APPROVE_RUNTIME_BUDGET_REPROFILE\"") != string::npos || apply.find("runtime_budget_approve_reprofile_smoke") != string::npos, "handoff closure-only smoke expected explicit approval next action");
+}
+
+void run_policy_ops_agenda_lifecycle_v3_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_agenda_lifecycle_v3_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    const string agenda = slurp_text_file(artifacts.opsAgendaJson);
+    require_test(agenda.find("\"manifest_version\": \"policy_ops_agenda_v3\"") != string::npos, "ops agenda lifecycle v3 smoke expected v3 manifest");
+    require_test(agenda.find("\"decision_status\": \"APPLIED\"") != string::npos, "ops agenda lifecycle v3 smoke expected applied decision status");
+    require_test(agenda.find("\"closure_status\": \"CLOSED\"") != string::npos, "ops agenda lifecycle v3 smoke expected closed status");
+    require_test(agenda.find("\"ledger_compaction_status\": \"COMPACTED\"") != string::npos, "ops agenda lifecycle v3 smoke expected compacted ledger status");
+}
+
+void run_policy_ops_summary_v12_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v12_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    build_phase46_ops_summary_or_throw(artifacts);
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v12\"") != string::npos, "ops summary v12 smoke expected v12 manifest");
+    require_test(opsSummary.find("\"current_env_operator_decisions\"") != string::npos, "ops summary v12 smoke expected operator decisions section");
+    require_test(opsSummary.find("\"current_env_action_closure\"") != string::npos, "ops summary v12 smoke expected closure section");
+    require_test(opsSummary.find("\"latest_decision\": \"approve\"") != string::npos, "ops summary v12 smoke expected approve decision");
+    require_test(opsSummary.find("\"compaction_status\": \"COMPACTED\"") != string::npos, "ops summary v12 smoke expected compacted closure status");
+}
+
+void run_evidence_bundle_operator_decision_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_operator_decision_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts);
+    build_phase46_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE46_BUNDLE_OPERATOR_DECISION_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase46_operator_decision_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase46_operator_decision_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase46_operator_decision_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase46 evidence bundle operator decision smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase46" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --baseline-manifest " + shell_quote(artifacts.paths.baselineJson.string()) +
+        " --current-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --refresh-manifest " + shell_quote(artifacts.paths.refreshJson.string()) +
+        " --rerun-plan " + shell_quote(artifacts.paths.rerunJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-baseline-manifest " + shell_quote(artifacts.paths.runtimeBaselineJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-refresh " + shell_quote(artifacts.paths.runtimeBudgetRefreshJson.string()) +
+        " --runtime-budget-rerun " + shell_quote(artifacts.paths.runtimeBudgetRerunJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()) +
+        " --runtime-budget-reproposal-history " + shell_quote(artifacts.runtimeBudgetReproposalHistoryJson.string()) +
+        " --runtime-budget-registry-summary " + shell_quote(artifacts.runtimeBudgetRegistrySummaryJson.string()) +
+        " --current-env-governance-policy " + shell_quote(artifacts.currentEnvGovernancePolicyJson.string()) +
+        " --current-env-guardrail-policy " + shell_quote(artifacts.currentEnvGuardrailPolicyJson.string()) +
+        " --current-env-watch-current " + shell_quote(artifacts.currentEnvWatchCurrentJson.string()) +
+        " --current-env-watch-refresh " + shell_quote(artifacts.currentEnvWatchRefreshJson.string()) +
+        " --current-env-watch-history " + shell_quote(artifacts.currentEnvWatchHistoryJson.string()) +
+        " --current-env-age-tick " + shell_quote(artifacts.currentEnvAgeTickJson.string()) +
+        " --current-env-watch-plan " + shell_quote(artifacts.currentEnvWatchPlanJson.string()) +
+        " --current-env-trigger-gate " + shell_quote(artifacts.currentEnvTriggerGateJson.string()) +
+        " --current-env-due " + shell_quote(artifacts.currentEnvNextCycleReproposalDueJson.string()) +
+        " --current-env-reproposal-plan " + shell_quote(artifacts.currentEnvReproposalPlanJson.string()) +
+        " --current-env-watch-execute " + shell_quote(artifacts.currentEnvWatchExecuteJson.string()) +
+        " --current-env-watch-apply " + shell_quote(artifacts.currentEnvWatchApplyJson.string()) +
+        " --current-env-reproposal-execute " + shell_quote(artifacts.currentEnvReproposalExecuteJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerUpdatedJson.string()) +
+        " --current-env-retry-plan " + shell_quote(artifacts.currentEnvActionRetryPlanJson.string()) +
+        " --current-env-reproposal-handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()) +
+        " --current-env-operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()) +
+        " --current-env-operator-decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()) +
+        " --current-env-action-ledger-compact " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()) +
+        " --current-env-action-ledger-archive " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()) +
+        " --current-env-next-cycle-summary " + shell_quote(artifacts.currentEnvNextCycleReproposalDueJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle operator decision smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase46_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"current_env_operator_decision_summary\"") != string::npos, "evidence bundle operator decision smoke expected decision metadata");
+    require_test(metadata.find("\"current_env_operator_decision_apply_summary\"") != string::npos, "evidence bundle operator decision smoke expected decision apply metadata");
+    require_test(metadata.find("\"current_env_action_ledger_compact_summary\"") != string::npos, "evidence bundle operator decision smoke expected compact metadata");
+    require_test(metadata.find("\"operator_decision_apply_closure_status\": \"CLOSED\"") != string::npos, "evidence bundle operator decision smoke expected closed closure metadata");
+}
+
+void run_runtime_current_env_approval_runbook_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_approval_runbook_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const string runbook = slurp_text_file(artifacts.currentEnvApprovalRunbookJson);
+    require_test(runbook.find("\"manifest_version\": \"runtime_current_env_approval_runbook_v1\"") != string::npos, "approval runbook smoke expected manifest");
+    require_test(runbook.find("\"approval_ready\": true") != string::npos, "approval runbook smoke expected ready runbook");
+    require_test(runbook.find("\"approval_mode\": \"handoff_only\"") != string::npos, "approval runbook smoke expected handoff-only mode");
+    require_test(runbook.find("budget-approve-reprofile") != string::npos, "approval runbook smoke expected explicit approval command");
+}
+
+void run_runtime_current_env_execute_budget_approval_dry_run_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_execute_budget_approval_dry_run_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const string execution = slurp_text_file(artifacts.currentEnvBudgetApprovalExecutionJson);
+    require_test(execution.find("\"manifest_version\": \"runtime_current_env_budget_approval_execution_v1\"") != string::npos, "budget approval execution smoke expected manifest");
+    require_test(execution.find("\"approval_status\": \"DRY_RUN\"") != string::npos, "budget approval execution smoke expected dry run");
+    require_test(execution.find("\"registry_updated\": false") != string::npos, "budget approval execution smoke expected no registry update");
+    require_test(execution.find("\"baseline_written\": false") != string::npos, "budget approval execution smoke expected no baseline write");
+}
+
+void run_runtime_current_env_link_approval_execution_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_link_approval_execution_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const string link = slurp_text_file(artifacts.currentEnvApprovalLinkJson);
+    const string linkedLedger = slurp_text_file(artifacts.currentEnvActionLedgerApprovalLinkedJson);
+    require_test(link.find("\"manifest_version\": \"runtime_current_env_approval_link_v1\"") != string::npos, "approval link smoke expected manifest");
+    require_test(link.find("\"approval_status\": \"DRY_RUN\"") != string::npos, "approval link smoke expected dry run status");
+    require_test(link.find("\"approval_preflight_only\": true") != string::npos, "approval link smoke expected preflight-only record");
+    require_test(linkedLedger.find("\"approval_execution_id\"") != string::npos, "approval link smoke expected linked ledger execution id");
+}
+
+void run_runtime_current_env_decision_skip_flow_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_decision_skip_flow_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts, "skip");
+    const string decision = slurp_text_file(artifacts.currentEnvOperatorDecisionJson);
+    const string apply = slurp_text_file(artifacts.currentEnvOperatorDecisionApplyJson);
+    require_test(decision.find("\"decision\": \"skip\"") != string::npos, "skip flow expected skip decision");
+    require_test(decision.find("\"resulting_action_status\": \"SKIPPED\"") != string::npos, "skip flow expected skipped status");
+    require_test(apply.find("\"closure_status\": \"CLOSED\"") != string::npos, "skip flow expected closed apply");
+}
+
+void run_runtime_current_env_decision_defer_flow_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_decision_defer_flow_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts, "defer");
+    const string decision = slurp_text_file(artifacts.currentEnvOperatorDecisionJson);
+    const string apply = slurp_text_file(artifacts.currentEnvOperatorDecisionApplyJson);
+    require_test(decision.find("\"decision\": \"defer\"") != string::npos, "defer flow expected defer decision");
+    require_test(decision.find("\"defer_until\": \"2026-05-21T09:15:10Z\"") != string::npos, "defer flow expected defer timestamp");
+    require_test(apply.find("\"closure_status\": \"DEFERRED\"") != string::npos, "defer flow expected deferred apply");
+}
+
+void run_runtime_current_env_decision_retry_now_flow_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_current_env_decision_retry_now_flow_smoke");
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase47");
+    const filesystem::path failedLedger = artifacts.paths.root / "manifests" / "runtime_current_env_failed_action_ledger_phase47.json";
+    const filesystem::path retryPlan = artifacts.paths.root / "manifests" / "runtime_current_env_retryable_action_plan_phase47.json";
+    write_text_file_or_throw(
+        failedLedger,
+        "{\n"
+        "  \"manifest_version\": \"runtime_current_env_action_ledger_v1\",\n"
+        "  \"phase\": \"phase47\",\n"
+        "  \"entries\": [ { \"action_id\": \"phase47-failed-watch-001\", \"action_kind\": \"RUN_CURRENT_ENV_WATCH_CAMPAIGN\", \"action_status\": \"FAILED\", \"retry_count\": 0, \"failure_class\": \"transient_infrastructure\" } ]\n"
+        "}\n"
+    );
+    write_text_file_or_throw(
+        retryPlan,
+        "{\n"
+        "  \"manifest_version\": \"runtime_current_env_action_retry_plan_v1\",\n"
+        "  \"phase\": \"phase47\",\n"
+        "  \"retryable_count\": 1,\n"
+        "  \"escalation_count\": 0,\n"
+        "  \"entries\": [ { \"action_id\": \"phase47-failed-watch-001\", \"action_kind\": \"RUN_CURRENT_ENV_WATCH_CAMPAIGN\", \"retryable\": true, \"retry_count\": 0 } ]\n"
+        "}\n"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-operator-decision",
+            {
+                "--phase phase47",
+                "--action-ledger " + shell_quote(failedLedger.string()),
+                "--retry-plan " + shell_quote(retryPlan.string()),
+                "--action-id phase47-failed-watch-001",
+                "--decision retry_now",
+                "--decision-reason " + shell_quote("operator retries transient failed watch action"),
+                "--operator-id phase47-smoke-operator",
+                "--current-time-override 2026-05-14T10:00:00Z",
+                "--decision-out " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+            }
+        ) == 0,
+        "retry_now flow expected decision generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-apply-operator-decision",
+            {
+                "--phase phase47",
+                "--action-ledger " + shell_quote(failedLedger.string()),
+                "--operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+                "--apply-out " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()),
+                "--updated-ledger-out " + shell_quote(artifacts.currentEnvActionLedgerUpdatedJson.string()),
+            }
+        ) == 0,
+        "retry_now flow expected apply generation"
+    );
+    const string decision = slurp_text_file(artifacts.currentEnvOperatorDecisionJson);
+    const string updatedLedger = slurp_text_file(artifacts.currentEnvActionLedgerUpdatedJson);
+    require_test(decision.find("\"decision\": \"retry_now\"") != string::npos, "retry_now flow expected retry decision");
+    require_test(decision.find("\"resulting_action_status\": \"RETRY_PENDING\"") != string::npos, "retry_now flow expected retry-pending status");
+    require_test(updatedLedger.find("\"retry_count\": 1") != string::npos, "retry_now flow expected incremented retry count");
+}
+
+void run_policy_ops_agenda_lifecycle_v4_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_agenda_lifecycle_v4_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const string agenda = slurp_text_file(artifacts.opsAgendaJson);
+    require_test(agenda.find("\"manifest_version\": \"policy_ops_agenda_v4\"") != string::npos, "ops agenda lifecycle v4 smoke expected v4 manifest");
+    require_test(agenda.find("\"approval_runbook_status\": \"READY\"") != string::npos, "ops agenda lifecycle v4 smoke expected ready runbook");
+    require_test(agenda.find("\"approval_execution_status\": \"DRY_RUN\"") != string::npos, "ops agenda lifecycle v4 smoke expected dry-run execution");
+}
+
+void run_policy_ops_summary_v13_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v13_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    build_phase47_ops_summary_or_throw(artifacts);
+    const string opsSummary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(opsSummary.find("\"manifest_version\": \"policy_ops_summary_v13\"") != string::npos, "ops summary v13 smoke expected v13 manifest");
+    require_test(opsSummary.find("\"current_env_approval_runbook\"") != string::npos, "ops summary v13 smoke expected approval runbook section");
+    require_test(opsSummary.find("\"approval_status\": \"DRY_RUN\"") != string::npos, "ops summary v13 smoke expected dry-run approval status");
+    require_test(opsSummary.find("\"approval_preflight_only\": true") != string::npos, "ops summary v13 smoke expected preflight-only link");
+}
+
+void run_evidence_bundle_approval_runbook_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_approval_runbook_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    build_phase47_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE47_BUNDLE_APPROVAL_RUNBOOK_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase47_approval_runbook_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase47_approval_runbook_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase47_approval_runbook_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase47 evidence bundle approval runbook smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase47" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()) +
+        " --runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()) +
+        " --runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()) +
+        " --runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()) +
+        " --current-env-reproposal-handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()) +
+        " --current-env-operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()) +
+        " --current-env-operator-decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()) +
+        " --current-env-approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-approval-link " + shell_quote(artifacts.currentEnvApprovalLinkJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle approval runbook smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase47_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"current_env_approval_runbook_summary\"") != string::npos, "approval runbook bundle expected runbook metadata");
+    require_test(metadata.find("\"current_env_approval_execution_summary\"") != string::npos, "approval runbook bundle expected execution metadata");
+    require_test(metadata.find("\"approval_execution_status\": \"DRY_RUN\"") != string::npos, "approval runbook bundle expected dry-run metadata");
+}
+
+filesystem::path write_integrated_approval_runbook_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase) {
+    const filesystem::path integratedRunbook = artifacts.paths.root / "manifests" / ("runtime_current_env_approval_runbook_integrated_" + phase + ".json");
+    require_test(
+        run_runtime_watch_ops_script(
+            "current-env-approval-runbook",
+            {
+                "--phase " + phase,
+                "--handoff " + shell_quote(artifacts.currentEnvReproposalHandoffJson.string()),
+                "--operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--runtime-budget-baseline-out " + shell_quote(artifacts.runtimeBudgetBaselinePhase47Json.string()),
+                "--approval-runbook-out " + shell_quote(integratedRunbook.string()),
+                "--budget-tag phase48-runtime-budget-integrated-optin-fixture",
+                "--approval-mode integrated",
+            }
+        ) == 0,
+        "integrated approval runbook fixture expected generation"
+    );
+    return integratedRunbook;
+}
+
+filesystem::path execute_budget_approval_mode_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const filesystem::path& runbook,
+    const string& mode,
+    bool allowIntegrated
+) {
+    const filesystem::path out = artifacts.paths.root / "manifests" / ("runtime_current_env_budget_approval_execution_" + mode + ".json");
+    vector<string> args{
+        "--phase phase48",
+        "--approval-runbook " + shell_quote(runbook.string()),
+        "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
+        "--runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()),
+        "--runtime-budget-proposal-gate " + shell_quote(artifacts.paths.runtimeBudgetProposalGateJson.string()),
+        "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+        "--runtime-budget-baseline-out " + shell_quote(artifacts.runtimeBudgetBaselinePhase47Json.string()),
+        "--archive-proposal " + shell_quote(artifacts.runtimeBudgetProposalPhase47ArchivedJson.string()),
+        "--approval-execution-mode " + mode,
+        "--approval-execution-out " + shell_quote(out.string()),
+    };
+    if (allowIntegrated) {
+        args.push_back("--allow-integrated-approval");
+    }
+    require_test(run_runtime_watch_ops_script("current-env-execute-budget-approval", args) == 0, "approval execution mode matrix expected generation");
+    return out;
+}
+
+void run_operator_runbook_index_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_index_smoke");
+    prepare_phase48_runbook_context_or_throw(options, artifacts);
+    const string index = slurp_text_file(artifacts.operatorRunbookIndexJson);
+    require_test(index.find("\"manifest_version\": \"operator_runbook_index_v1\"") != string::npos, "runbook index smoke expected manifest");
+    require_test(index.find("\"runbook_type\": \"approval\"") != string::npos, "runbook index smoke expected approval entry");
+    require_test(index.find("\"safety_level\": \"handoff_only\"") != string::npos, "runbook index smoke expected handoff-only safety");
+    require_test(index.find("\"mutates_registry\": false") != string::npos, "runbook index smoke expected no registry mutation");
+}
+
+void run_approval_execution_dry_run_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "approval_execution_dry_run_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, artifacts.currentEnvApprovalRunbookJson, "dry_run", false);
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"approval_execution_mode\": \"dry_run\"") != string::npos, "dry_run smoke expected execution mode");
+    require_test(execution.find("\"approval_status\": \"DRY_RUN\"") != string::npos, "dry_run smoke expected dry-run status");
+    require_test(execution.find("\"registry_updated\": false") != string::npos, "dry_run smoke expected no registry update");
+}
+
+void run_approval_execution_handoff_only_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "approval_execution_handoff_only_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, artifacts.currentEnvApprovalRunbookJson, "handoff_only", false);
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"approval_execution_mode\": \"handoff_only\"") != string::npos, "handoff_only smoke expected execution mode");
+    require_test(execution.find("\"approval_status\": \"DRY_RUN\"") != string::npos, "handoff_only smoke expected dry-run audit");
+    require_test(execution.find("\"baseline_written\": false") != string::npos, "handoff_only smoke expected no baseline write");
+}
+
+void run_approval_execution_integrated_requires_optin_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "approval_execution_integrated_requires_optin_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path integratedRunbook = write_integrated_approval_runbook_or_throw(artifacts, "phase48");
+    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, integratedRunbook, "integrated_opt_in", false);
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"approval_status\": \"BLOCKED\"") != string::npos, "integrated without opt-in expected blocked");
+    require_test(execution.find("integrated approval requires explicit opt-in") != string::npos, "integrated without opt-in expected blocker");
+}
+
+void run_approval_execution_integrated_optin_fixture_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "approval_execution_integrated_optin_fixture_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path integratedRunbook = write_integrated_approval_runbook_or_throw(artifacts, "phase48");
+    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, integratedRunbook, "integrated_opt_in", true);
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"approval_status\": \"APPLIED\"") != string::npos, "integrated opt-in fixture expected applied");
+    require_test(execution.find("\"registry_updated\": true") != string::npos, "integrated opt-in fixture expected registry update marker");
+    require_test(execution.find("\"baseline_written\": true") != string::npos, "integrated opt-in fixture expected baseline write marker");
+}
+
+void run_decision_variant_e2e_smoke_case(const TestOptions& options, const string& decision) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "current_env_decision_" + decision + "_e2e_smoke");
+    prepare_phase46_operator_decision_context_or_throw(options, artifacts, decision);
+    build_phase46_ops_summary_or_throw(artifacts);
+    const string apply = slurp_text_file(artifacts.currentEnvOperatorDecisionApplyJson);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(apply.find("\"decision_valid\": true") != string::npos, "decision e2e expected valid decision apply");
+    require_test(summary.find("\"current_env_operator_decisions\"") != string::npos, "decision e2e expected ops summary decision section");
+    if (decision == "skip") {
+        require_test(apply.find("\"new_status\": \"SKIPPED\"") != string::npos, "skip e2e expected skipped status");
+        require_test(apply.find("\"closure_status\": \"CLOSED\"") != string::npos, "skip e2e expected closed closure");
+    } else if (decision == "defer") {
+        require_test(apply.find("\"new_status\": \"DEFERRED\"") != string::npos, "defer e2e expected deferred status");
+        require_test(apply.find("\"closure_status\": \"DEFERRED\"") != string::npos, "defer e2e expected deferred closure");
+    } else if (decision == "reject") {
+        require_test(apply.find("\"new_status\": \"REJECTED\"") != string::npos, "reject e2e expected rejected status");
+        require_test(apply.find("\"closure_status\": \"REJECTED\"") != string::npos, "reject e2e expected rejected closure");
+    }
+}
+
+void run_current_env_decision_skip_e2e_smoke_case(const TestOptions& options) {
+    run_decision_variant_e2e_smoke_case(options, "skip");
+}
+
+void run_current_env_decision_defer_e2e_smoke_case(const TestOptions& options) {
+    run_decision_variant_e2e_smoke_case(options, "defer");
+}
+
+void run_current_env_decision_reject_e2e_smoke_case(const TestOptions& options) {
+    run_decision_variant_e2e_smoke_case(options, "reject");
+}
+
+void run_current_env_decision_retry_now_e2e_smoke_case(const TestOptions& options) {
+    run_runtime_current_env_decision_retry_now_flow_smoke_case(options);
+}
+
+void run_action_ledger_closure_invariants_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "action_ledger_closure_invariants_smoke");
+    prepare_phase48_runbook_context_or_throw(options, artifacts);
+    const string invariants = slurp_text_file(artifacts.currentEnvActionLedgerInvariantsJson);
+    require_test(invariants.find("\"manifest_version\": \"runtime_current_env_action_ledger_closure_invariants_v1\"") != string::npos, "ledger invariants smoke expected manifest");
+    require_test(invariants.find("\"invariant_verdict\": \"PASS\"") != string::npos, "ledger invariants smoke expected PASS");
+}
+
+void run_source_health_preflight_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "source_health_preflight_smoke");
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase48");
+    build_source_health_preflight_or_throw(artifacts, 0, false);
+    const string preflight = slurp_text_file(artifacts.sourceHealthPreflightJson);
+    require_test(preflight.find("\"manifest_version\": \"source_health_preflight_v1\"") != string::npos, "source health smoke expected manifest");
+    require_test(preflight.find("\"recommendation\": \"DIRECT_OK\"") != string::npos, "source health smoke expected direct ok fixture");
+}
+
+void run_staged_sparse_clone_overlay_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_sparse_clone_overlay_smoke");
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase48");
+    build_source_health_preflight_or_throw(artifacts, 3, true);
+    const string preflight = slurp_text_file(artifacts.sourceHealthPreflightJson);
+    const string staged = slurp_text_file(artifacts.stagedMaterializationJson);
+    require_test(preflight.find("\"recommendation\": \"SPARSE_CLONE_REQUIRED\"") != string::npos, "sparse overlay smoke expected sparse clone recommendation");
+    require_test(staged.find("\"staged_materialization_mode\": \"staged_sparse_clone_overlay\"") != string::npos, "sparse overlay smoke expected staged sparse mode");
+    require_test(staged.find("\"materialization_verdict\": \"PASS\"") != string::npos, "sparse overlay smoke expected materialization pass");
+}
+
+void run_policy_ops_summary_v14_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v14_smoke");
+    prepare_phase48_runbook_context_or_throw(options, artifacts);
+    build_phase48_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"manifest_version\": \"policy_ops_summary_v14\"") != string::npos, "ops summary v14 smoke expected v14 manifest");
+    require_test(summary.find("\"current_env_operator_runbooks\"") != string::npos, "ops summary v14 smoke expected runbook section");
+    require_test(summary.find("\"source_health\"") != string::npos, "ops summary v14 smoke expected source health section");
+    require_test(summary.find("\"staged_materialization\"") != string::npos, "ops summary v14 smoke expected staged materialization section");
+}
+
+void run_evidence_bundle_runbook_index_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_runbook_index_smoke");
+    prepare_phase48_runbook_context_or_throw(options, artifacts);
+    build_phase48_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE48_BUNDLE_RUNBOOK_INDEX_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase48_runbook_index_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase48_runbook_index_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase48_runbook_index_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase48 evidence bundle runbook index smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase48" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --current-env-approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-approval-link " + shell_quote(artifacts.currentEnvApprovalLinkJson.string()) +
+        " --operator-runbook-index " + shell_quote(artifacts.operatorRunbookIndexJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle runbook index smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase48_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"operator_runbook_index_summary\"") != string::npos, "runbook index bundle expected runbook metadata");
+    require_test(metadata.find("\"source_health_preflight_summary\"") != string::npos, "runbook index bundle expected source health metadata");
+    require_test(metadata.find("\"staged_materialization_summary\"") != string::npos, "runbook index bundle expected staged materialization metadata");
+}
+
 void run_runtime_recommendation_watch_smoke_case(const TestOptions& options) {
     const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_recommendation_watch_smoke");
-    for (double releaseSeconds : {170.0, 90.0, 145.0, 118.0}) {
+    write_runtime_current_smoke_manifest(paths, 280.0, 480.0, 900.0, "smoke-runner");
+    promote_runtime_smoke_baseline_or_throw(paths, "phase33-runtime-watch");
+    for (double releaseSeconds : {280.0, 285.0, 290.0}) {
         write_runtime_current_smoke_manifest(paths, releaseSeconds, 480.0, 900.0, "smoke-runner");
         require_test(
             run_runtime_lifecycle_script(
@@ -14195,7 +21248,16 @@ void run_runtime_recommendation_watch_smoke_case(const TestOptions& options) {
             "runtime recommendation watch smoke expected history append"
         );
     }
-    const int rc = run_policy_pipeline_script(options, paths, "quick", true, true, false, "");
+    run_runtime_watch_cycle_or_throw(paths, "release_full", 3);
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-stage release_full=300.0"
+    );
     require_test(rc == 10, "runtime recommendation watch smoke expected WARN exit");
     const string summary = slurp_text_file(paths.summaryJson);
     require_test(summary.find("\"runtime_recommendation\": \"WATCH_RUNTIME\"") != string::npos, "runtime recommendation watch smoke expected WATCH_RUNTIME");
@@ -14526,6 +21588,99 @@ void run_runtime_rebaseline_proposal_cross_host_smoke_case(const TestOptions& op
     require_test(proposalText.find("\"comparability_verdict\": \"REBASELINE_REQUIRED\"") != string::npos, "runtime proposal cross host smoke expected REBASELINE_REQUIRED");
 }
 
+void run_runtime_proposal_gate_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_proposal_gate_smoke");
+    append_runtime_history_samples_or_throw(artifacts.paths, 4);
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "all", 5);
+    TestOptions gateOptions = options;
+    gateOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    gateOptions.proposalOut = artifacts.paths.runtimeProposalJson.string();
+    gateOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    gateOptions.runtimeWatchCurrent = artifacts.paths.runtimeWatchCurrentJson.string();
+    gateOptions.runtimeWatchRefresh = artifacts.paths.runtimeWatchRefreshJson.string();
+    gateOptions.runtimeProposalGate = artifacts.proposalGateJson.string();
+    gateOptions.minRealSamplesRelease = 1;
+    gateOptions.minRealSamplesDebug = 1;
+    gateOptions.minRealSamplesAsan = 5;
+    gateOptions.minWatchConfidence = "MEDIUM";
+    run_runtime_proposal_gate_case(gateOptions);
+    const string gateText = slurp_text_file(artifacts.proposalGateJson);
+    require_test(gateText.find("\"proposal_gate_verdict\"") != string::npos, "runtime proposal gate smoke expected verdict");
+    require_test(gateText.find("\"per_execution_class_evidence\"") != string::npos, "runtime proposal gate smoke expected per execution class evidence");
+}
+
+void run_runtime_proposal_gate_need_more_samples_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_proposal_gate_need_more_samples_smoke");
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "all", 3);
+    TestOptions gateOptions = options;
+    gateOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    gateOptions.proposalOut = artifacts.paths.runtimeProposalJson.string();
+    gateOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    gateOptions.runtimeWatchCurrent = artifacts.paths.runtimeWatchCurrentJson.string();
+    gateOptions.runtimeWatchRefresh = artifacts.paths.runtimeWatchRefreshJson.string();
+    gateOptions.runtimeProposalGate = artifacts.proposalGateJson.string();
+    gateOptions.minRealSamplesRelease = 1;
+    gateOptions.minRealSamplesDebug = 1;
+    gateOptions.minRealSamplesAsan = 25;
+    gateOptions.minWatchConfidence = "HIGH";
+    run_runtime_proposal_gate_case(gateOptions);
+    const string gateText = slurp_text_file(artifacts.proposalGateJson);
+    require_test(gateText.find("\"proposal_gate_verdict\": \"NEED_MORE_SAMPLES\"") != string::npos, "runtime proposal gate need more samples smoke expected NEED_MORE_SAMPLES");
+}
+
+void run_runtime_proposal_gate_approvable_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_proposal_gate_approvable_smoke");
+    append_runtime_history_samples_or_throw(artifacts.paths, 9);
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "all", 10);
+    TestOptions gateOptions = options;
+    gateOptions.runtimeCurrentManifest = artifacts.paths.runtimeCurrentJson.string();
+    gateOptions.proposalOut = artifacts.paths.runtimeProposalJson.string();
+    gateOptions.runtimeHistoryIndex = artifacts.paths.runtimeHistoryIndexJson.string();
+    gateOptions.runtimeWatchCurrent = artifacts.paths.runtimeWatchCurrentJson.string();
+    gateOptions.runtimeWatchRefresh = artifacts.paths.runtimeWatchRefreshJson.string();
+    gateOptions.runtimeProposalGate = artifacts.proposalGateJson.string();
+    gateOptions.minRealSamplesRelease = 1;
+    gateOptions.minRealSamplesDebug = 1;
+    gateOptions.minRealSamplesAsan = 5;
+    gateOptions.minWatchConfidence = "MEDIUM";
+    run_runtime_proposal_gate_case(gateOptions);
+    const string gateText = slurp_text_file(artifacts.proposalGateJson);
+    require_test(gateText.find("\"proposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "runtime proposal gate approvable smoke expected APPROVABLE");
+}
+
+void run_runtime_proposal_gate_reject_hard_breach_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "runtime_proposal_gate_reject_hard_breach_smoke");
+    write_runtime_current_smoke_manifest(paths, 1200.0, 480.0, 900.0, "runner-hard-breach");
+    TestOptions refreshOptions = options;
+    refreshOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    refreshOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    refreshOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    run_runtime_gate_refresh_case(refreshOptions);
+    TestOptions proposalOptions = options;
+    proposalOptions.runtimeBaselineRegistry = paths.runtimeRegistryJson.string();
+    proposalOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    proposalOptions.runtimeRefreshManifest = paths.runtimeRefreshJson.string();
+    proposalOptions.runtimeHistoryIndex = paths.runtimeHistoryIndexJson.string();
+    proposalOptions.proposalOut = paths.runtimeProposalJson.string();
+    run_runtime_propose_rebaseline_case(proposalOptions);
+    append_runtime_history_samples_or_throw(paths, 4);
+    run_runtime_watch_cycle_or_throw(paths, "all", 5);
+    TestOptions gateOptions = options;
+    gateOptions.runtimeCurrentManifest = paths.runtimeCurrentJson.string();
+    gateOptions.proposalOut = paths.runtimeProposalJson.string();
+    gateOptions.runtimeHistoryIndex = paths.runtimeHistoryIndexJson.string();
+    gateOptions.runtimeWatchCurrent = paths.runtimeWatchCurrentJson.string();
+    gateOptions.runtimeWatchRefresh = paths.runtimeWatchRefreshJson.string();
+    gateOptions.runtimeProposalGate = (paths.root / "manifests" / "runtime_proposal_gate_phase31.json").string();
+    gateOptions.minRealSamplesRelease = 1;
+    gateOptions.minRealSamplesDebug = 1;
+    gateOptions.minRealSamplesAsan = 1;
+    gateOptions.minWatchConfidence = "LOW";
+    run_runtime_proposal_gate_case(gateOptions);
+    const string gateText = slurp_text_file(*gateOptions.runtimeProposalGate);
+    require_test(gateText.find("\"proposal_gate_verdict\": \"REJECT\"") != string::npos, "runtime proposal gate reject hard breach smoke expected REJECT");
+}
+
 void run_runtime_approve_rebaseline_smoke_case(const TestOptions& options) {
     const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_approve_rebaseline_smoke");
     approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
@@ -14553,17 +21708,20 @@ void run_runtime_approve_rebaseline_registry_switch_smoke_case(const TestOptions
     const string previousBaselineId = extract_json_string_field_or_throw(beforeRegistry, "baseline_id");
     approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
     const string registryText = slurp_text_file(artifacts.paths.runtimeRegistryJson);
+    const filesystem::path approvalMetadataPath =
+        artifacts.approvedBaselineJson.parent_path() / (artifacts.approvedBaselineJson.stem().string() + "_approval_metadata.json");
+    const string approvalMetadata = slurp_text_file(approvalMetadataPath);
     require_test(
         registryText.find("\"baseline_tag\": \"phase25-runtime-approved\"") != string::npos,
         "runtime approve rebaseline registry switch smoke expected new active baseline tag"
     );
     require_test(
-        registryText.find("\"status\": \"retired\"") != string::npos,
-        "runtime approve rebaseline registry switch smoke expected retired previous baseline"
+        registryText.find("\"status\": \"active\"") != string::npos,
+        "runtime approve rebaseline registry switch smoke expected active baseline entries"
     );
     require_test(
-        registryText.find("superseded by") != string::npos,
-        "runtime approve rebaseline registry switch smoke expected superseded reason"
+        approvalMetadata.find("\"previous_active_baseline_id_for_same_fingerprint\": null") != string::npos,
+        "runtime approve rebaseline registry switch smoke expected independent lineage activation"
     );
     require_test(
         registryText.find(previousBaselineId) != string::npos,
@@ -14583,6 +21741,43 @@ void run_runtime_approve_rebaseline_archive_proposal_smoke_case(const TestOption
         archivedProposal.find("\"approved_runtime_baseline_tag\": \"phase25-runtime-approved\"") != string::npos,
         "runtime approve rebaseline archive smoke expected approved baseline tag"
     );
+}
+
+void run_runtime_approve_rebaseline_from_gate_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_approve_rebaseline_from_gate_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    const filesystem::path approvalMetadataPath =
+        artifacts.approvedBaselineJson.parent_path() / (artifacts.approvedBaselineJson.stem().string() + "_approval_metadata.json");
+    const string approvalMetadata = slurp_text_file(approvalMetadataPath);
+    require_test(approvalMetadata.find("\"approved_from_proposal_gate\"") != string::npos, "runtime approve rebaseline from gate smoke expected proposal gate path");
+    require_test(approvalMetadata.find("\"approved_from_proposal_gate_verdict\": \"APPROVABLE\"") != string::npos, "runtime approve rebaseline from gate smoke expected APPROVABLE verdict");
+}
+
+void run_runtime_registry_active_switch_phase30_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_registry_active_switch_phase30_smoke");
+    approve_runtime_rebaseline_smoke_artifacts(options, artifacts);
+    const string registryText = slurp_text_file(artifacts.paths.runtimeRegistryJson);
+    require_test(registryText.find("\"status\": \"active\"") != string::npos, "runtime registry active switch phase30 smoke expected active entry");
+    require_test(
+        registryText.find("\"previous_active_baseline_id\": null") != string::npos,
+        "runtime registry active switch phase30 smoke expected new fingerprint to keep prior active entries"
+    );
+}
+
+void run_runtime_approve_rebaseline_reject_without_gate_smoke_case(const TestOptions& options) {
+    const auto artifacts = prepare_runtime_rebaseline_smoke_artifacts(options, "runtime_approve_rebaseline_reject_without_gate_smoke");
+    vector<string> args = {
+        "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+        "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+        "--proposal-out " + shell_quote(artifacts.paths.runtimeProposalJson.string()),
+        "--runtime-baseline-out " + shell_quote(artifacts.approvedBaselineJson.string()),
+        "--baseline-tag phase25-runtime-approved",
+        "--activate",
+        "--require-acceptable-status",
+        "--archive-proposal " + shell_quote(artifacts.archivedProposalJson.string()),
+    };
+    const int rc = run_runtime_lifecycle_script("approve-rebaseline", args);
+    require_test(rc != 0, "runtime approve rebaseline reject without gate smoke expected failure");
 }
 
 void run_runtime_refresh_after_rebaseline_smoke_case(const TestOptions& options) {
@@ -15224,8 +22419,9 @@ filesystem::path localized_phase16_resume_gate_smoke_config_path(const TestOptio
     string configText = slurp_text_file(phase16_resume_gate_smoke_config_path());
     const string needle = "artifacts/phase16_resume_gate_smoke";
     const filesystem::path replacementRoot = filesystem::absolute(localRoot / "campaign_artifacts" / "phase16_resume_gate_smoke");
+    const filesystem::path packageRoot = filesystem::absolute(source_package_root());
     error_code ec;
-    filesystem::path replacementPath = filesystem::relative(replacementRoot, source_package_root(), ec);
+    filesystem::path replacementPath = filesystem::relative(replacementRoot, packageRoot, ec);
     if (ec || replacementPath.empty() || *replacementPath.begin() == "..") {
         replacementPath = replacementRoot;
     }
@@ -15312,15 +22508,21 @@ void run_campaign_phase16_manifest_compatibility_smoke_case(const TestOptions& o
     seedRun.caseName = "campaign";
     seedRun.campaignConfig = filesystem::absolute(configPath).string();
     seedRun.checkpointDir = checkpointDir.string();
-    seedRun.checkpointEvery = 4U;
-    seedRun.targetComparedStates = 4U;
-    seedRun.targetEligibleStates = 4U;
-    seedRun.targetLineageSamples = 4U;
+    // Force at least one checkpoint chunk before any gate-based early exit so
+    // manifest compatibility mismatches are validated against real prior state.
+    seedRun.checkpointEvery = 1U;
+    seedRun.targetComparedStates = 32U;
+    seedRun.targetEligibleStates = 32U;
+    seedRun.targetLineageSamples = 32U;
     seedRun.maxPartialRuns = 3U;
     seedRun.stopWhenGatePasses = true;
     seedRun.targetApplicabilityConfidence = 0.95;
     seedRun.stopAfterCheckpoint = true;
     run_campaign_case(seedRun);
+    require_test(
+        !load_campaign_checkpoint_chunks(checkpointDir).empty(),
+        "phase16 manifest compatibility smoke expected checkpoint chunks after seed run"
+    );
 
     const auto expect_manifest_mismatch =
         [&](const string& expectedField, const function<void(TestOptions&)>& mutate) {
@@ -16075,6 +23277,22 @@ void run_named_case(const TestOptions& options) {
         run_policy_nightly_refresh_case(options);
         return;
     }
+    if (options.caseName == "runtime_budget_proposal_gate") {
+        run_runtime_budget_proposal_gate_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_approve_reprofile") {
+        run_runtime_budget_approve_reprofile_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_refresh") {
+        run_runtime_budget_refresh_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_plan_rerun") {
+        run_runtime_budget_plan_rerun_case(options);
+        return;
+    }
     if (options.caseName == "policy_gate_manifest_smoke") {
         run_policy_gate_manifest_smoke_case(options);
         return;
@@ -16275,6 +23493,10 @@ void run_named_case(const TestOptions& options) {
         run_runtime_propose_rebaseline_case(options);
         return;
     }
+    if (options.caseName == "runtime_proposal_gate") {
+        run_runtime_proposal_gate_case(options);
+        return;
+    }
     if (options.caseName == "runtime_fingerprint_roundtrip_smoke") {
         run_runtime_fingerprint_roundtrip_smoke_case(options);
         return;
@@ -16331,23 +23553,59 @@ void run_named_case(const TestOptions& options) {
         run_runtime_approve_rebaseline_case(options);
         return;
     }
+    if (options.caseName == "runtime_proposal_gate_smoke") {
+        run_runtime_proposal_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_proposal_gate_need_more_samples_smoke") {
+        run_runtime_proposal_gate_need_more_samples_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_proposal_gate_approvable_smoke") {
+        run_runtime_proposal_gate_approvable_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_proposal_gate_reject_hard_breach_smoke") {
+        run_runtime_proposal_gate_reject_hard_breach_smoke_case(options);
+        return;
+    }
     if (options.caseName == "runtime_approve_rebaseline_smoke") {
         run_runtime_approve_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_rebaseline_from_gate_smoke") {
+        run_runtime_approve_rebaseline_from_gate_smoke_case(options);
         return;
     }
     if (options.caseName == "runtime_approve_rebaseline_registry_switch_smoke") {
         run_runtime_approve_rebaseline_registry_switch_smoke_case(options);
         return;
     }
+    if (options.caseName == "runtime_registry_active_switch_phase30_smoke") {
+        run_runtime_registry_active_switch_phase30_smoke_case(options);
+        return;
+    }
     if (options.caseName == "runtime_approve_rebaseline_archive_proposal_smoke") {
         run_runtime_approve_rebaseline_archive_proposal_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_rebaseline_reject_without_gate_smoke") {
+        run_runtime_approve_rebaseline_reject_without_gate_smoke_case(options);
         return;
     }
     if (options.caseName == "runtime_refresh_after_rebaseline_smoke") {
         run_runtime_refresh_after_rebaseline_smoke_case(options);
         return;
     }
+    if (options.caseName == "runtime_refresh_after_phase30_approval_smoke") {
+        run_runtime_refresh_after_rebaseline_smoke_case(options);
+        return;
+    }
     if (options.caseName == "runtime_rerun_plan_after_rebaseline_smoke") {
+        run_runtime_rerun_plan_after_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rerun_plan_after_phase30_approval_smoke") {
         run_runtime_rerun_plan_after_rebaseline_smoke_case(options);
         return;
     }
@@ -16359,7 +23617,15 @@ void run_named_case(const TestOptions& options) {
         run_combined_pipeline_after_rebaseline_quick_smoke_case(options);
         return;
     }
+    if (options.caseName == "combined_pipeline_after_phase30_rebaseline_quick_smoke") {
+        run_combined_pipeline_after_rebaseline_quick_smoke_case(options);
+        return;
+    }
     if (options.caseName == "combined_pipeline_after_rebaseline_nightly_smoke") {
+        run_combined_pipeline_after_rebaseline_nightly_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_after_phase30_rebaseline_nightly_smoke") {
         run_combined_pipeline_after_rebaseline_nightly_smoke_case(options);
         return;
     }
@@ -16367,7 +23633,15 @@ void run_named_case(const TestOptions& options) {
         run_runtime_history_append_after_rebaseline_smoke_case(options);
         return;
     }
+    if (options.caseName == "runtime_history_append_after_phase30_rebaseline_smoke") {
+        run_runtime_history_append_after_rebaseline_smoke_case(options);
+        return;
+    }
     if (options.caseName == "runtime_registry_history_transition_smoke") {
+        run_runtime_registry_history_transition_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_history_transition_phase30_smoke") {
         run_runtime_registry_history_transition_smoke_case(options);
         return;
     }
@@ -16375,7 +23649,15 @@ void run_named_case(const TestOptions& options) {
         run_evidence_bundle_contains_rebaseline_transition_smoke_case(options);
         return;
     }
+    if (options.caseName == "evidence_bundle_phase30_transition_smoke") {
+        run_evidence_bundle_contains_rebaseline_transition_smoke_case(options);
+        return;
+    }
     if (options.caseName == "evidence_bundle_runtime_transition_metadata_smoke") {
+        run_evidence_bundle_runtime_transition_metadata_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_phase30_metadata_smoke") {
         run_evidence_bundle_runtime_transition_metadata_smoke_case(options);
         return;
     }
@@ -16515,8 +23797,24 @@ void run_named_case(const TestOptions& options) {
         run_runtime_watch_campaign_smoke_case(options);
         return;
     }
+    if (options.caseName == "runtime_watch_campaign_phase30_repeated_smoke") {
+        run_runtime_watch_campaign_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_campaign_release_full_smoke") {
+        run_runtime_watch_campaign_release_full_smoke_case(options);
+        return;
+    }
     if (options.caseName == "runtime_watch_campaign_longer_smoke") {
         run_runtime_watch_campaign_longer_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_campaign_phase30_repeat10_smoke") {
+        run_runtime_watch_campaign_longer_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_release_full_repeat10_smoke") {
+        run_runtime_watch_release_full_repeat10_smoke_case(options);
         return;
     }
     if (options.caseName == "runtime_watch_multi_fingerprint_smoke") {
@@ -16579,8 +23877,572 @@ void run_named_case(const TestOptions& options) {
         run_runtime_watch_diagnostic_soft_warn_smoke_case(options);
         return;
     }
+    if (options.caseName == "runtime_registry_import_current_smoke") {
+        run_runtime_registry_import_current_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_import_new_fingerprint_smoke") {
+        run_runtime_registry_import_new_fingerprint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_import_same_fingerprint_smoke") {
+        run_runtime_watch_import_same_fingerprint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_import_fixture_vs_real_smoke") {
+        run_runtime_watch_import_fixture_vs_real_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_import_external_bundle_smoke") {
+        run_runtime_import_external_bundle_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_import_external_new_fingerprint_smoke") {
+        run_runtime_import_external_new_fingerprint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_import_external_same_fingerprint_append_smoke") {
+        run_runtime_import_external_same_fingerprint_append_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_import_external_malformed_bundle_smoke") {
+        run_runtime_import_external_malformed_bundle_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_new_env_proposal_gate_smoke") {
+        run_runtime_new_env_proposal_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_new_env_need_more_samples_smoke") {
+        run_runtime_new_env_need_more_samples_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_new_env_approvable_smoke") {
+        run_runtime_new_env_approvable_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_new_env_reject_hard_breach_smoke") {
+        run_runtime_new_env_reject_hard_breach_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_new_env_baseline_smoke") {
+        run_runtime_approve_new_env_baseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_keep_current_env_active_smoke") {
+        run_runtime_registry_keep_current_env_active_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_multi_fingerprint_active_smoke") {
+        run_runtime_registry_multi_fingerprint_active_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_approve_new_env_reject_without_gate_smoke") {
+        run_runtime_approve_new_env_reject_without_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_refresh_after_new_env_approval_smoke") {
+        run_runtime_refresh_after_new_env_approval_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rerun_after_new_env_approval_smoke") {
+        run_runtime_rerun_after_new_env_approval_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_confidence_smoke") {
+        run_runtime_watch_confidence_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_release_full_confidence_smoke") {
+        run_runtime_watch_release_full_confidence_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_history_append_phase30_smoke") {
+        run_runtime_history_append_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_confidence_real_vs_fixture_smoke") {
+        run_runtime_watch_confidence_real_vs_fixture_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_history_compact_smoke") {
+        run_runtime_history_compact_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_unified_smoke") {
+        run_policy_ops_summary_unified_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_current_vs_new_env_smoke") {
+        run_policy_ops_summary_current_vs_new_env_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_three_way_smoke") {
+        run_policy_ops_summary_three_way_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_current_vs_known_vs_foreign_smoke") {
+        run_policy_ops_summary_current_vs_known_vs_foreign_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_release_watch_smoke") {
+        run_policy_ops_summary_release_watch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_matrix_rebaseline_smoke") {
+        run_policy_ops_summary_matrix_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_light_ops_smoke") {
+        run_evidence_bundle_light_ops_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_new_env_onboarding_smoke") {
+        run_evidence_bundle_new_env_onboarding_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "light_ops_bundle_registry_summary_smoke") {
+        run_light_ops_bundle_registry_summary_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "bundle_metadata_multi_active_registry_smoke") {
+        run_bundle_metadata_multi_active_registry_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_health_smoke") {
+        run_runtime_registry_health_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_stale_smoke") {
+        run_runtime_known_env_stale_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_reverify_required_smoke") {
+        run_runtime_known_env_reverify_required_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_retire_candidate_smoke") {
+        run_runtime_known_env_retire_candidate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_state_machine_smoke") {
+        run_runtime_known_env_state_machine_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_import_known_env_evidence_smoke") {
+        run_runtime_import_known_env_evidence_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_age_tick_smoke") {
+        run_runtime_known_env_age_tick_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_plan_reverify_smoke") {
+        run_runtime_known_env_plan_reverify_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_reverify_gate_smoke") {
+        run_runtime_known_env_reverify_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_apply_reverify_smoke") {
+        run_runtime_known_env_apply_reverify_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_plan_retire_smoke") {
+        run_runtime_known_env_plan_retire_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_apply_retire_smoke") {
+        run_runtime_known_env_apply_retire_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_known_env_retired_smoke") {
+        run_runtime_known_env_retired_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_health_v2_smoke") {
+        run_runtime_registry_health_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_health_v3_smoke") {
+        run_runtime_registry_health_v3_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_same_fingerprint_supersession_smoke") {
+        run_runtime_registry_same_fingerprint_supersession_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_retired_not_selected_smoke") {
+        run_runtime_registry_retired_not_selected_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_foreign_env_state_machine_smoke") {
+        run_runtime_foreign_env_state_machine_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "publication_health_smoke") {
+        run_publication_health_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v4_smoke") {
+        run_policy_ops_summary_v4_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v5_smoke") {
+        run_policy_ops_summary_v5_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v6_smoke") {
+        run_policy_ops_summary_v6_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_known_vs_foreign_smoke") {
+        run_policy_ops_summary_known_vs_foreign_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_publication_health_smoke") {
+        run_policy_ops_summary_publication_health_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_registry_health_smoke") {
+        run_evidence_bundle_registry_health_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_known_env_governance_smoke") {
+        run_evidence_bundle_known_env_governance_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_known_env_timeline_smoke") {
+        run_evidence_bundle_known_env_timeline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_publication_health_smoke") {
+        run_evidence_bundle_publication_health_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "light_ops_bundle_operator_summary_v4_smoke") {
+        run_light_ops_bundle_operator_summary_v4_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "publication_snapshot_smoke") {
+        run_publication_snapshot_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "publication_snapshot_bundle_smoke") {
+        run_publication_snapshot_bundle_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "bundle_published_snapshot_smoke") {
+        run_bundle_published_snapshot_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "bundle_delivery_contents_smoke") {
+        run_bundle_delivery_contents_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "bundle_idempotent_from_published_snapshot_smoke") {
+        run_bundle_idempotent_from_published_snapshot_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_ctest_smoke") {
+        run_staged_ctest_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "campaign_wrapper_tail_smoke") {
+        run_campaign_wrapper_tail_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "ctest_executable_lookup_smoke") {
+        run_ctest_executable_lookup_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "wrapper_infra_vs_semantic_failure_smoke") {
+        run_wrapper_infra_vs_semantic_failure_smoke_case(options);
+        return;
+    }
     if (options.caseName == "runtime_budget_role_sensitive_smoke") {
         run_runtime_budget_role_sensitive_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_proposal_gate_smoke") {
+        run_runtime_budget_proposal_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_reproposal_gate_smoke") {
+        run_runtime_budget_reproposal_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_approve_reprofile_smoke") {
+        run_runtime_budget_approve_reprofile_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_refresh_after_approval_smoke") {
+        run_runtime_budget_refresh_after_approval_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_watch_state_machine_smoke") {
+        run_runtime_current_env_watch_state_machine_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_age_tick_smoke") {
+        run_runtime_current_env_age_tick_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_plan_watch_smoke") {
+        run_runtime_current_env_plan_watch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_reproposal_trigger_gate_smoke") {
+        run_runtime_current_env_reproposal_trigger_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_due_scheduler_smoke") {
+        run_runtime_current_env_due_scheduler_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_time_travel_due_now_smoke") {
+        run_runtime_current_env_time_travel_due_now_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_plan_reproposal_smoke") {
+        run_runtime_current_env_plan_reproposal_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_agenda_smoke") {
+        run_policy_ops_agenda_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_execute_watch_smoke") {
+        run_runtime_current_env_execute_watch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_apply_watch_smoke") {
+        run_runtime_current_env_apply_watch_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "current_env_monitoring_due_execute_apply_smoke") {
+        run_current_env_monitoring_due_execute_apply_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_execute_reproposal_gate_smoke") {
+        run_runtime_current_env_execute_reproposal_gate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_agenda_action_status_smoke") {
+        run_policy_ops_agenda_action_status_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_budget_history_append_smoke") {
+        run_runtime_budget_history_append_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_watch_campaign_release_repeat10_smoke") {
+        run_runtime_watch_campaign_release_repeat10_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_after_budget_reprofile_quick_smoke") {
+        run_combined_pipeline_after_budget_reprofile_quick_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "combined_pipeline_after_budget_reprofile_nightly_smoke") {
+        run_combined_pipeline_after_budget_reprofile_nightly_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_budget_vs_rebaseline_smoke") {
+        run_policy_ops_summary_budget_vs_rebaseline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_current_env_clear_new_env_action_required_smoke") {
+        run_policy_ops_summary_current_env_clear_new_env_action_required_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v7_smoke") {
+        run_policy_ops_summary_v7_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v8_smoke") {
+        run_policy_ops_summary_v8_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v9_smoke") {
+        run_policy_ops_summary_v9_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v10_smoke") {
+        run_policy_ops_summary_v10_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_action_ledger_smoke") {
+        run_runtime_current_env_action_ledger_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_action_retry_plan_smoke") {
+        run_runtime_current_env_action_retry_plan_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_reproposal_handoff_smoke") {
+        run_runtime_current_env_reproposal_handoff_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "current_env_next_cycle_monitoring_due_smoke") {
+        run_current_env_next_cycle_monitoring_due_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_agenda_lifecycle_v2_smoke") {
+        run_policy_ops_agenda_lifecycle_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v11_smoke") {
+        run_policy_ops_summary_v11_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_budget_lifecycle_smoke") {
+        run_evidence_bundle_budget_lifecycle_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_budget_transition_metadata_smoke") {
+        run_evidence_bundle_budget_transition_metadata_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_current_env_budget_lifecycle_smoke") {
+        run_evidence_bundle_current_env_budget_lifecycle_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_current_env_guardrail_timeline_smoke") {
+        run_evidence_bundle_current_env_guardrail_timeline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_current_env_due_timeline_smoke") {
+        run_evidence_bundle_current_env_due_timeline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_current_env_execute_apply_smoke") {
+        run_evidence_bundle_current_env_execute_apply_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_action_ledger_smoke") {
+        run_evidence_bundle_action_ledger_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_operator_decision_smoke") {
+        run_runtime_current_env_operator_decision_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_apply_operator_decision_smoke") {
+        run_runtime_current_env_apply_operator_decision_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_action_ledger_compact_smoke") {
+        run_runtime_current_env_action_ledger_compact_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "reproposal_handoff_closure_only_smoke") {
+        run_reproposal_handoff_closure_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_agenda_lifecycle_v3_smoke") {
+        run_policy_ops_agenda_lifecycle_v3_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v12_smoke") {
+        run_policy_ops_summary_v12_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_operator_decision_smoke") {
+        run_evidence_bundle_operator_decision_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_approval_runbook_smoke") {
+        run_runtime_current_env_approval_runbook_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_execute_budget_approval_dry_run_smoke") {
+        run_runtime_current_env_execute_budget_approval_dry_run_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_link_approval_execution_smoke") {
+        run_runtime_current_env_link_approval_execution_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_decision_skip_flow_smoke") {
+        run_runtime_current_env_decision_skip_flow_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_decision_defer_flow_smoke") {
+        run_runtime_current_env_decision_defer_flow_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_current_env_decision_retry_now_flow_smoke") {
+        run_runtime_current_env_decision_retry_now_flow_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_agenda_lifecycle_v4_smoke") {
+        run_policy_ops_agenda_lifecycle_v4_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v13_smoke") {
+        run_policy_ops_summary_v13_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_approval_runbook_smoke") {
+        run_evidence_bundle_approval_runbook_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_index_smoke") {
+        run_operator_runbook_index_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "approval_execution_dry_run_smoke") {
+        run_approval_execution_dry_run_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "approval_execution_handoff_only_smoke") {
+        run_approval_execution_handoff_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "approval_execution_integrated_requires_optin_smoke") {
+        run_approval_execution_integrated_requires_optin_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "approval_execution_integrated_optin_fixture_smoke") {
+        run_approval_execution_integrated_optin_fixture_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "current_env_decision_skip_e2e_smoke") {
+        run_current_env_decision_skip_e2e_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "current_env_decision_defer_e2e_smoke") {
+        run_current_env_decision_defer_e2e_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "current_env_decision_reject_e2e_smoke") {
+        run_current_env_decision_reject_e2e_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "current_env_decision_retry_now_e2e_smoke") {
+        run_current_env_decision_retry_now_e2e_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "action_ledger_closure_invariants_smoke") {
+        run_action_ledger_closure_invariants_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "source_health_preflight_smoke") {
+        run_source_health_preflight_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_sparse_clone_overlay_smoke") {
+        run_staged_sparse_clone_overlay_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v14_smoke") {
+        run_policy_ops_summary_v14_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runbook_index_smoke") {
+        run_evidence_bundle_runbook_index_smoke_case(options);
         return;
     }
     if (options.caseName == "runtime_recommendation_watch_smoke") {

@@ -1,0 +1,18 @@
+{
+  "schema": "branch_run_case_solver_env_snapshot_v1",
+  "solver": {
+    "exists": true,
+    "mtime_ns": 1775732254919487267,
+    "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/boj28350_resume/build/solve",
+    "sha256": "1b993da3f1485260e7ce9a8b1ef99dd8995db65cf53bd15cce4d421955aa43a3",
+    "size_bytes": 403008
+  },
+  "tracked_env": {
+    "DENSE_PROFILE_OUTDIR": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/fresh_subac2/caterpillar_512_L1_Q1",
+    "DENSE_SHADOW_CASE_MODE": "caterpillar_rect_dense",
+    "DENSE_SHADOW_CASE_N": "512",
+    "DENSE_SHADOW_CASE_SEED": "1",
+    "DENSE_SHADOW_CASE_SHUFFLE_LABELS": "1",
+    "DENSE_SHADOW_CASE_SHUFFLE_QUERIES": "1"
+  }
+}

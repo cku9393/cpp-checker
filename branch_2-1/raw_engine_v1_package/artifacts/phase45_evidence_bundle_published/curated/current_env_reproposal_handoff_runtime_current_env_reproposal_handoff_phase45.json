@@ -1,0 +1,31 @@
+{
+  "manifest_version": "runtime_current_env_reproposal_handoff_v1",
+  "phase": "phase45",
+  "generated_at_utc": "2026-04-21T00:27:08Z",
+  "action_id": "phase44-current-env-reproposal-001",
+  "raw_gate_verdict": "CANDIDATE",
+  "gate_verdict": "APPROVABLE",
+  "gate_confidence": "HIGH",
+  "reproposal_needed": true,
+  "produced_reproposal_manifest": null,
+  "produced_reproposal_gate_manifest": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/runtime_current_env_execute_reproposal_gate_smoke/phase44_reproposal_execute/phase44-current-env-reproposal-001_produced_reproposal_gate_manifest.json",
+  "approval_ready": true,
+  "approval_blockers": [],
+  "recommended_approval_command": "./raw_engine_tests --case runtime_budget_approve_reprofile_smoke",
+  "required_operator_checks": [
+    "confirm same-fingerprint runtime current manifest",
+    "confirm active runtime budget registry target",
+    "confirm no semantic/correctness gate failure",
+    "archive reproposal evidence before activation"
+  ],
+  "next_action_kind": "APPROVE_RUNTIME_BUDGET_REPROFILE",
+  "active_budget_profile_id": "phase41-runtime-budget-approved-profile",
+  "runtime_fingerprint_key": null,
+  "handoff_status": "APPROVAL_READY",
+  "rationale": [
+    "stable release_full overrun reached the scheduled reproposal due point",
+    "post-approval cooldown has expired and stable release_full overrun remains reproducible",
+    "reproposal gate is approval-ready but approval remains an explicit operator step"
+  ],
+  "handoff_hash": "478f3a05b7ea3411fd948d53b5be55f0d3002559352b6a8781e9047eabcdc905"
+}

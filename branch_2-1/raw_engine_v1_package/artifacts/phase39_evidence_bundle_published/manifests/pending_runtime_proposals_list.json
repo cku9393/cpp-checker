@@ -1,0 +1,13 @@
+{
+  "manifest_version": "pending_runtime_proposals_list_v1",
+  "generated_at_utc": "2026-04-08T11:47:41Z",
+  "entries": [
+    {
+      "proposal_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase39.json",
+      "proposal_needed": false,
+      "selected_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+      "selected_baseline_tag": "phase30-runtime-approved",
+      "proposal_gate_verdict": null
+    }
+  ]
+}

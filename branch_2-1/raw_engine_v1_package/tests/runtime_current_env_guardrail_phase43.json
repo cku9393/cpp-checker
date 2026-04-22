@@ -1,0 +1,50 @@
+{
+  "manifest_version": "runtime_current_env_guardrail_policy_v2",
+  "policy_id": "phase43-current-env-guardrail",
+  "phase": "phase43",
+  "post_approval_grace_days": 7,
+  "post_approval_min_real_samples_before_rewatch": 5,
+  "watch_due_after_days": 14,
+  "watch_due_soon_window_days": 3,
+  "stable_soft_overrun_trigger_count": 5,
+  "stable_soft_overrun_trigger_ratio": 0.25,
+  "hard_over_budget_trigger_count": 1,
+  "reproposal_candidate_after_days": 21,
+  "reproposal_cooldown_days": 14,
+  "min_real_samples_for_reproposal": 5,
+  "min_watch_confidence_for_reproposal": "HIGH",
+  "max_bounded_jitter_percent_for_reproposal": 15.0,
+  "profile_switch_history_retention_days": 180,
+  "current_env_execution_classes": [
+    "release_full",
+    "debug_full",
+    "asan_full",
+    "policy_core",
+    "policy_refresh",
+    "policy_nightly"
+  ],
+  "reprofile_candidate_threshold": 5,
+  "watch_stable_threshold": 3,
+  "watch_escalate_hard_breach_count": 1,
+  "min_watch_confidence_for_reprofile": "HIGH",
+  "max_hard_breach_count_for_reproposal": 0,
+  "bounded_jitter_percent": 15.0,
+  "production_critical_execution_classes": [
+    "release_full"
+  ],
+  "diagnostic_guard_execution_classes": [
+    "debug_full",
+    "asan_full"
+  ],
+  "current_env_roles": {
+    "production_critical": {
+      "prefer_reprofile_candidate": true
+    },
+    "diagnostic": {
+      "prefer_reprofile_candidate": false
+    },
+    "operator": {
+      "prefer_reprofile_candidate": false
+    }
+  }
+}

@@ -1,0 +1,88 @@
+PHASE45 STABILIZATION REPORT
+Date: 2026-04-21
+
+Scope:
+- Added current-env action ledger governance for planned/executed/applied/skipped/failed/superseded actions.
+- Added retry/failure policy for current-env actions.
+- Added reproposal-gate-to-budget-approval handoff artifact.
+- Added synthetic next-cycle due manifests for 2026-05-06, 2026-05-07, 2026-05-14, and 2026-05-16.
+- Added ops agenda lifecycle v2 and policy ops summary v11 wiring.
+- Extended evidence/light-ops bundle metadata with action ledger, retry plan, handoff, and next-cycle state.
+- No src primitive/planner semantics were changed.
+
+Root cause and resolution:
+- Direct authoritative-tree verification was blocked because several iCloud/FileProvider source files were compressed,dataless and local git object access was unhealthy.
+- `brctl download` did not reliably materialize the blocked source files.
+- A fresh sparse remote clone was created under `/tmp/cpp-checker-phase45-sparse`, phase45 local changes and readable authoritative support files were overlaid, and selected core source hashes were checked against the prior source snapshot before build/test.
+- The authoritative iCloud tree remains the source of phase45 edits and artifacts, but long build/test execution was performed only in the non-iCloud staged sparse tree.
+
+Changed/added files:
+- tests/tools/runtime_watch_ops.py
+- tests/tools/build_evidence_bundle.py
+- tests/runtime_current_env_action_retry_phase45.json
+- tests/raw_engine_cases.cpp
+- tests/CMakeLists.txt
+- README.md
+- PHASE45_STABILIZATION_REPORT_20260421.txt
+- artifacts/manifests/verification_phase45_full_ctest.json
+- artifacts/manifests/ctest_inventory_release_phase45.json
+- artifacts/manifests/ctest_inventory_debug_phase45.json
+- artifacts/manifests/ctest_inventory_asan_ubsan_phase45.json
+
+Key phase45 artifacts:
+- artifacts/manifests/runtime_current_env_action_ledger_phase45.json
+- artifacts/manifests/runtime_current_env_action_retry_plan_phase45.json
+- artifacts/manifests/runtime_current_env_reproposal_handoff_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_due_soon_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_monitoring_due_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_reproposal_due_phase45.json
+- artifacts/manifests/runtime_current_env_next_cycle_overdue_phase45.json
+- artifacts/manifests/policy_ops_agenda_phase45.json
+- artifacts/manifests/policy_ops_summary_phase45.json
+
+Observed phase45 governance results:
+- Action ledger: phase44 watch execute/apply lineage is recorded as an applied action, with action status and next due metadata.
+- Retry plan: generated; the happy path has no retryable failed action.
+- Reproposal handoff: generated; budget approval remains a separate explicit operator step.
+- Ops agenda lifecycle v2: links ledger/retry/handoff status back into operator actions.
+- Ops summary v11: reports current-env ledger counts, retry counts, handoff readiness, approved known env status, foreign env status, publication health, and final operator action.
+
+Next-cycle synthetic validation:
+- 2026-05-06T09:15:10Z: monitoring due soon.
+- 2026-05-07T09:15:10Z: monitoring due.
+- 2026-05-14T09:15:10Z: reproposal due.
+- 2026-05-16T09:15:10Z: reproposal overdue.
+
+Explicit smoke execution:
+- runtime_current_env_action_ledger_smoke: PASS.
+- runtime_current_env_action_retry_plan_smoke: PASS.
+- runtime_current_env_reproposal_handoff_smoke: PASS.
+- current_env_next_cycle_monitoring_due_smoke: PASS.
+- policy_ops_agenda_lifecycle_v2_smoke: PASS.
+- policy_ops_summary_v11_smoke: PASS.
+- evidence_bundle_action_ledger_smoke: PASS.
+- corpus_replay_smoke: PASS.
+
+Full staged verification:
+- Release full CTest: 370/370 PASS, fail=0, not_run=0, wall_time=585.68s.
+- Debug full CTest: 370/370 PASS, fail=0, not_run=0, wall_time=1142.65s.
+- ASan/UBSan isolated full CTest: 370/370 PASS, fail=0, not_run=0, wall_time=2714.48s.
+- Phase45 CTest discovery includes the new action ledger, retry, handoff, next-cycle, agenda lifecycle, ops summary v11, and evidence bundle action ledger smoke registrations.
+- Verification manifest: artifacts/manifests/verification_phase45_full_ctest.json.
+
+Evidence bundle:
+- Full, curated, and light ops phase45 bundles were generated.
+- Bundle metadata includes action ledger, retry plan, reproposal handoff, next-cycle synthetic validation, ops agenda lifecycle v2, and ops summary v11 artifacts.
+- Light ops bundle includes the operator-facing action ledger/retry/handoff summary path.
+
+Semantic result:
+- No semantic mismatch was observed.
+- No new regression was added.
+- production split-choice default remains exact_shadow.
+- exact_full remains debug/nightly compare-only.
+- compare_ready remains diagnostic-only and was not promoted to production evidence.
+
+Remaining risk:
+- The authoritative iCloud-backed tree still contains dataless placeholders; avoid direct long build/test there.
+- Future closeouts should continue using immutable source snapshot or fresh non-iCloud staged clone before full verification.
+- Reproposal gate execution is connected to a handoff artifact, but budget approval intentionally remains an explicit operator action.

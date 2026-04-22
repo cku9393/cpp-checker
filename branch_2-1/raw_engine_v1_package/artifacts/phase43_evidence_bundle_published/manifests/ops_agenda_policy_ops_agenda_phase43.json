@@ -1,0 +1,62 @@
+{
+  "manifest_version": "policy_ops_agenda_v1",
+  "phase": "phase43",
+  "generated_at_utc": "2026-04-20T09:28:59Z",
+  "now_utc": "2026-04-23T09:15:10Z",
+  "item_count": 3,
+  "action_required_count": 2,
+  "blocking_action_count": 1,
+  "current_env_action_count": 1,
+  "approved_known_env_action_count": 0,
+  "foreign_env_action_count": 1,
+  "highest_priority_domain": "current_env",
+  "highest_priority_action": "RUN_CURRENT_ENV_WATCH_CAMPAIGN",
+  "items": [
+    {
+      "item_id": "phase43-agenda-001",
+      "domain": "current_env",
+      "severity": "ACTION_REQUIRED",
+      "action_kind": "RUN_CURRENT_ENV_WATCH_CAMPAIGN",
+      "due_state": "DUE",
+      "due_at": "2026-04-23T09:15:10Z",
+      "overdue_days": 0.0,
+      "target_id": "current-env",
+      "recommended_command": "./raw_engine_tests --case runtime_watch_campaign --execution-class release_full --repeat 5",
+      "blocking": true,
+      "rationale": [
+        "stable runtime watch provenance is retained after approval"
+      ]
+    },
+    {
+      "item_id": "phase43-agenda-002",
+      "domain": "foreign_env",
+      "severity": "ACTION_REQUIRED",
+      "action_kind": "RUN_FOREIGN_ENV_ONBOARDING",
+      "due_state": "OPEN",
+      "due_at": null,
+      "overdue_days": 0.0,
+      "target_id": "foreign-envs",
+      "recommended_command": "./raw_engine_tests --case runtime_new_env_proposal_gate_smoke",
+      "blocking": false,
+      "rationale": [
+        "foreign/unapproved environments remain separated from current-env maintenance"
+      ]
+    },
+    {
+      "item_id": "phase43-agenda-003",
+      "domain": "approved_known_env",
+      "severity": "OK",
+      "action_kind": "NO_ACTION",
+      "due_state": "NOT_DUE",
+      "due_at": null,
+      "overdue_days": 0.0,
+      "target_id": "approved-known-envs",
+      "recommended_command": "",
+      "blocking": false,
+      "rationale": [
+        "approved known environment governance has no immediate action"
+      ]
+    }
+  ],
+  "ops_agenda_hash": "70def1100fefeb7dec917b057af8d984ab3ee0284aba591f4497e0d784e6fa33"
+}

@@ -1,0 +1,16 @@
+metric	value
+decision_round	perimeter_priority_decision_90
+inventory_only_row_count	4
+freshize_now_count	0
+keep_inventory_only_nonblocking_count	4
+defer_after_family_chain_count	0
+top_level_fresh_before	16
+top_level_imported_before	0
+top_level_mixed_before	0
+top_level_archival_only_before	3
+top_level_fresh_after	16
+top_level_imported_after	0
+top_level_mixed_after	0
+top_level_archival_only_after	3
+support8_lock_expected	unchanged
+next_priority	family_chain_lower_imported_layers

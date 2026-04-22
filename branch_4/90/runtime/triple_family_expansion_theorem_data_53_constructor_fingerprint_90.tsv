@@ -1,0 +1,10 @@
+metric	value
+constructor_name	load_current_triple_family_expansion_theorem_data_53_runtime_artifact_
+authoritative_source	current_runtime_triple_family_expansion_theorem_data_53_cache
+pass1_builder_used	0
+cache_loaded	1
+cache_load_path	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime/triple_family_expansion_theorem_data_53_payload_90.tsv
+upstream_pair52_fallback_hit	0
+fallback_reachable	1
+fallback_hit	0
+runtime_fingerprint	fresh|current_runtime_triple_family_expansion_theorem_data_53_cache|load_current_triple_family_expansion_theorem_data_53_runtime_artifact_|0|1|35|2110|2110|282|0|0|0|11888:3562593626991170520|53|regions=35|raw=2110|canonical=2110|deduplicated=282|local=0|plus=0|theorem=0|counts_and_consumer_visible_fingerprint_equal|2729415:14502595494155092201|1|0|0||Current authoritative path loaded a validated runtime triple-family expansion theorem data 53 artifact; upstream pair52 stayed fresh with fallback_hit=0.

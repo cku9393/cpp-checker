@@ -1,0 +1,150 @@
+{
+  "manifest_version": "runtime_budget_registry_summary_v1",
+  "phase": "phase42",
+  "generated_at_utc": "2026-04-13T15:40:32Z",
+  "active_budget_profile_id": "phase41-runtime-budget-approved-profile",
+  "active_budget_profile_tag": "phase41-runtime-budget-approved",
+  "previous_active_budget_profile_id": "phase33-runtime-budget-approved-profile",
+  "approval_timestamp_utc": "2026-04-09T09:15:10Z",
+  "active_entry_count": 1,
+  "retired_entry_count": 2,
+  "trigger_gate_verdict": "CLEAR",
+  "next_monitoring_due_at": "2026-04-23T09:15:10Z",
+  "post_approval_grace_until": "2026-04-16T09:15:10Z",
+  "entries": [
+    {
+      "profile_id": "phase33-runtime-budget-approved-profile",
+      "version": 4,
+      "budget_tag": "phase33-runtime-budget-approved",
+      "approval_timestamp_utc": "2026-04-01T10:10:55Z",
+      "runtime_budget_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_budget_baseline_phase33_approved.json",
+      "runtime_budget_manifest_hash": "66cbdb196993a406834e3dd3a3b7ea15ae26472275597952fcb2dfa8987232b8",
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "local-macos-appleclang17",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "host_fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a",
+      "toolchain_fingerprint_hash": "fe28aa4f84449b51b55eae9c4c9fbb0910ef269d1ab13970f6e37bfbf3e054f3",
+      "execution_classes_covered": [
+        "asan_full",
+        "debug_full",
+        "policy_core",
+        "policy_nightly",
+        "policy_refresh",
+        "release_full"
+      ],
+      "role_counts": {
+        "diagnostic": 1,
+        "production_critical": 2,
+        "operator": 3
+      },
+      "source_runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase30.json",
+      "source_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+      "status": "retired",
+      "retired_timestamp_utc": "2026-04-01T10:51:56Z",
+      "retired_reason": "superseded by phase33-runtime-budget-approved-profile"
+    },
+    {
+      "profile_id": "phase33-runtime-budget-approved-profile",
+      "version": 4,
+      "budget_tag": "phase33-runtime-budget-approved",
+      "approval_timestamp_utc": "2026-04-01T10:51:56Z",
+      "runtime_budget_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_budget_baseline_phase33_approved.json",
+      "runtime_budget_manifest_hash": "e39d6c8a062c0ebae585b59d268ce66293479bd915bfe490326924318da36102",
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "local-macos-appleclang17",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "host_fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a",
+      "toolchain_fingerprint_hash": "fe28aa4f84449b51b55eae9c4c9fbb0910ef269d1ab13970f6e37bfbf3e054f3",
+      "execution_classes_covered": [
+        "asan_full",
+        "debug_full",
+        "policy_core",
+        "policy_nightly",
+        "policy_refresh",
+        "release_full"
+      ],
+      "role_counts": {
+        "diagnostic": 1,
+        "production_critical": 2,
+        "operator": 3
+      },
+      "source_runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase30.json",
+      "source_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+      "status": "retired",
+      "retired_timestamp_utc": "2026-04-09T09:15:10Z",
+      "retired_reason": "superseded by phase41-runtime-budget-approved-profile"
+    },
+    {
+      "profile_id": "phase41-runtime-budget-approved-profile",
+      "version": 4,
+      "budget_tag": "phase41-runtime-budget-approved",
+      "approval_timestamp_utc": "2026-04-09T09:15:10Z",
+      "runtime_budget_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_budget_baseline_phase41_approved.json",
+      "runtime_budget_manifest_hash": "6506b8fc14ec337637a54dccdb3fa0aa2dc7048b007e4c8134b3ea75027f5e8a",
+      "runtime_budget_profile_id": "phase41-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "local-macos-appleclang17",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "host_fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a",
+      "toolchain_fingerprint_hash": "fe28aa4f84449b51b55eae9c4c9fbb0910ef269d1ab13970f6e37bfbf3e054f3",
+      "execution_classes_covered": [
+        "asan_full",
+        "debug_full",
+        "policy_core",
+        "policy_nightly",
+        "policy_refresh",
+        "release_full"
+      ],
+      "role_counts": {
+        "diagnostic": 1,
+        "production_critical": 2,
+        "operator": 3
+      },
+      "source_runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase30.json",
+      "source_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+      "status": "active"
+    }
+  ],
+  "runtime_budget_registry_summary_hash": "41f540f7352ea3f28a592e273ecd193c3157bae811811c519a08c737d0ceb98b"
+}

@@ -1,0 +1,7 @@
+proposal_gate_version=runtime_budget_proposal_gate_v1
+budget_proposal_needed=1
+proposal_gate_verdict=APPROVABLE
+proposal_confidence=HIGH
+recommended_action=PROPOSE_BUDGET_REPROFILE
+runtime_budget_gate_entry=execution_class=release_full real_sample_count=11 watch_confidence=HIGH stable_overrun_count=10
+rationale=release_full stable soft-budget overrun is sufficiently backed by repeated same-fingerprint evidence

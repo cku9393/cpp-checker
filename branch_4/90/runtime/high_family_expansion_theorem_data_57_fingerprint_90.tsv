@@ -1,0 +1,17 @@
+metric	value
+item_key	high_family_expansion_theorem_data_57
+current_provenance_label	fresh_current_runtime_generated
+current_source_fingerprint	2729415:14502595494155092201
+payload_fingerprint	317:16323892766005099572
+imported_comparison_fingerprint	57|regions=8|sextuple=7|septuple=1|raw=1926|canonical=1926|deduplicated=294|local=0|plus=0|theorem=0
+imported_equality_result	counts_and_consumer_visible_fingerprint_equal
+sextuple_region_count	7
+septuple_region_count	1
+region_count	8
+raw_candidates	1926
+canonical_candidates	1926
+deduplicated_candidates	294
+local_exact_survivors	0
+plus_one_survivors	0
+theorem_preserving_survivors	0
+runtime_fingerprint	fresh|current_runtime_high_family_expansion_theorem_data_57_cache|load_current_high_family_expansion_theorem_data_57_runtime_artifact_|0|1|8|7|1|1926|1926|294|0|0|0|317:16323892766005099572|57|regions=8|sextuple=7|septuple=1|raw=1926|canonical=1926|deduplicated=294|local=0|plus=0|theorem=0|counts_and_consumer_visible_fingerprint_equal|2729415:14502595494155092201|1|0|0|0|0|0|0|0||Current authoritative path loaded a validated runtime high-family aggregate 57 artifact; upstream septuple57, sextuple57, quintuple57, quad55, triple53, and pair52 stayed fresh with fallback_hit=0.

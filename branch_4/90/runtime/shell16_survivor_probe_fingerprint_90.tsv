@@ -1,0 +1,5 @@
+metric	value
+local_exact_survivors	2
+plus_one_survivors	0
+theorem_preserving_survivors	0
+survivor_fingerprint	support8_antecedent16_frontier:num=8 antecedents=[(1,2->1) (2,3->1) (2,3->2) (2,3->4) (2,4->2) (2,4->4) (3,4->1) (3,4->5)] => (2,3->3);support8_antecedent16_frontier:num=8 antecedents=[(1,2->1) (2,3->1) (2,3->2) (2,3->4) (2,4->2) (2,4->4) (3,4->1) (3,4->5)] => (2,4->1)||

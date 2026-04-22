@@ -1,0 +1,5 @@
+item_key	decision	generation_attempted	current_builder	cache_path_available	fallback_hit	result	rationale
+antecedent_plus_eight_frontier	keep_inventory_only_nonblocking	0	scan_antecedent_shell11_frontier_	1	0	not_run	current round decided this is a nonblocking inventory-only perimeter row
+support8_antecedent11_frontier	keep_inventory_only_nonblocking	0	scan_antecedent_shell11_frontier_	1	0	not_run	current round decided this is a nonblocking inventory-only perimeter row
+antecedent_plus_nine_frontier	keep_inventory_only_nonblocking	0	scan_antecedent_shell12_frontier_	1	0	not_run	current round decided this is a nonblocking inventory-only perimeter row
+support8_antecedent12_frontier	keep_inventory_only_nonblocking	0	scan_antecedent_shell12_frontier_	1	0	not_run	current round decided this is a nonblocking inventory-only perimeter row

@@ -1,0 +1,12 @@
+metric	value
+reduction_obligation_count	10
+derivable_now_count	4
+proof_sketch_ready_count	5
+needs_tail_monotonicity_count	1
+blocked_count	1
+tail_monotonicity_dependent_count	1
+shell16_dependent_count	1
+higher_support_dependent_count	1
+boj_constructivity_dependent_count	0
+top_blocker	tail_absorption_or_escape
+fingerprint	10|4|5|1|1|1|1|1|0|tail_absorption_or_escape

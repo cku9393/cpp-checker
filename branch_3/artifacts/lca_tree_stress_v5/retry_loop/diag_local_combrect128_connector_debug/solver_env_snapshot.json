@@ -1,0 +1,23 @@
+{
+  "schema": "branch_run_case_solver_env_snapshot_v1",
+  "solver": {
+    "exists": true,
+    "mtime_ns": 1775765938785065911,
+    "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/diag_local_build/solve_local",
+    "sha256": "f00b062913e4916d62d263f14c186018cb37f86200f2ffd28b8dfbad2be114a7",
+    "size_bytes": 629240
+  },
+  "tracked_env": {
+    "DENSE_PROFILE_OUTDIR": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/diag_local_combrect128_connector_debug",
+    "DENSE_SHADOW_CASE_MODE": "comb_rect_dense",
+    "DENSE_SHADOW_CASE_N": "128",
+    "DENSE_SHADOW_CASE_SEED": "1",
+    "DENSE_SHADOW_CASE_SHUFFLE_LABELS": "1",
+    "DENSE_SHADOW_CASE_SHUFFLE_QUERIES": "1",
+    "ENABLE_DELTA_CONNECTOR_HIT": "1",
+    "ENABLE_DELTA_PRESERVED_HIT": "0",
+    "PROFILE_MODE": "PROFILE_SAMPLED",
+    "PROFILE_SAMPLE_STRIDE": "1",
+    "PROFILE_SAMPLE_WARMUP": "0"
+  }
+}

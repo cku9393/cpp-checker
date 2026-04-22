@@ -1,0 +1,28 @@
+{
+  "analysis_seed_file": ".ouroboros/seed_branch3_failure_analysis.yaml",
+  "artifacts": {
+    "control_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/retry_loop_control.json",
+    "diagnostics_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/diagnostics_manifest.tsv",
+    "iteration_evidence_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/iteration_evidence.txt",
+    "published_control_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/retry_loop_control.json",
+    "standard_gap_json_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke/standard_gap.json",
+    "status_report_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/latest_status_report.md",
+    "status_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_latest_status/summary.txt",
+    "structured_context_path": ""
+  },
+  "direct_command": "cd /Users/free_1/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3 && zsh .ouroboros/run_until_pass_progress40.sh .ouroboros/seed_branch3_progress40_research_loop.yaml .ouroboros/seed_branch3_failure_analysis.yaml",
+  "hint": "after inspecting the smoke failure handoff, relaunch the branch-local retry loop so the next solver iteration starts with fresh same-worktree artifacts",
+  "launch_command": "cd /Users/free_1/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3 && zsh .ouroboros/launch_retry_loop.sh smoke_latest_status_retry_loop.log .ouroboros/seed_branch3_progress40_research_loop.yaml .ouroboros/seed_branch3_failure_analysis.yaml",
+  "log_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/retry_loop/smoke_latest_status_retry_loop.log",
+  "next_gate_command": "./lca_strong_gate.sh",
+  "normalized_outcome": "harness_infrastructure_failure",
+  "outcome_summary": "inner wrapper dispatch monitor failed with exit code 1",
+  "preferred_command": "cd /Users/free_1/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3 && zsh .ouroboros/launch_retry_loop.sh smoke_latest_status_retry_loop.log .ouroboros/seed_branch3_progress40_research_loop.yaml .ouroboros/seed_branch3_failure_analysis.yaml",
+  "public_status": "FAIL",
+  "retry_loop_action": "resume_progress40_retry_loop",
+  "script": "./lca_smoke.sh",
+  "should_resume_retry_loop": true,
+  "smoke_retry_command": "./lca_smoke.sh",
+  "smoke_retry_hint": "fix the launcher/preflight failure at stage dispatch_monitor, inspect /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/failure_summary.txt | /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/latest_failure_report.md | /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/preflight_manifest.tsv | /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/smoke_launcher_latest_failure/failure_reason.txt, then rerun ./lca_smoke.sh",
+  "solver_seed_file": ".ouroboros/seed_branch3_progress40_research_loop.yaml"
+}

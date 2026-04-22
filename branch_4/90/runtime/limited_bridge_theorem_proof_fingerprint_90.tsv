@@ -1,0 +1,7 @@
+metric	value
+proof_step_count	12
+proved_step_count	11
+gap_step_count	0
+out_of_scope_named_step_count	1
+status	limited_bridge_theorem_proved_under_current_scope
+fingerprint	12|11|0|1|limited_bridge_theorem_proved_under_current_scope|no_full_general_claim

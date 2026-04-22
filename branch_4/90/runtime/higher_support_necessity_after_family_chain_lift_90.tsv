@@ -1,0 +1,4 @@
+check_key	statement	current_status	evidence_path	next_action	caveat
+family_chain_lift_refined	The lift-map refinement round produced recognizer/classification/refined map artifacts.	refinement_done	branch_4/90/runtime/family_chain_lift_map_refinement_fingerprint_90.tsv	family_chain_lift_obstruction_preservation_proof	Preservation still open.
+higher_support_recheck_deferred	Higher-support recheck should wait for obstruction-preservation attempt.	deferred	branch_4/90/runtime/higher_support_necessity_after_lift_map_refinement_90.tsv	family_chain_lift_obstruction_preservation_proof	No support9+ scan.
+overall_status	This checkpoint is superseded by the lift-map refinement status.	superseded_by_lift_map_refinement_preservation_open	branch_4/90/runtime/family_chain_lift_status_fingerprint_90.tsv	family_chain_lift_obstruction_preservation_proof	Full general theorem remains unproved.

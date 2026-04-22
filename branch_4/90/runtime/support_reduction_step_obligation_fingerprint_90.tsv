@@ -1,0 +1,9 @@
+metric	value
+support_reduction_obligation_count	10
+selected_statement	support_growth_partition
+proved_under_current_scope_obligations	3
+proof_sketch_ready_obligations	4
+needs_family_chain_lift_obligations	1
+needs_higher_support_bound_obligations	1
+needs_new_support_reduction_sublemma_obligations	2
+fingerprint	10:3:4:1:1:2:support_growth_partition

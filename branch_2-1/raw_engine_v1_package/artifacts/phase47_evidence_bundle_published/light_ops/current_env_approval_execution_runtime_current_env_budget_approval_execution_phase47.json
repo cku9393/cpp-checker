@@ -1,0 +1,29 @@
+{
+  "manifest_version": "runtime_current_env_budget_approval_execution_v1",
+  "phase": "phase47",
+  "generated_at_utc": "2026-04-22T00:19:33Z",
+  "runbook_id": "phase47-approval-runbook-f6dc7b6f7a13",
+  "action_id": "phase44-current-env-reproposal-001",
+  "decision_id": "phase46-operator-decision-7543a6ec0f6f",
+  "approval_execution_id": "phase47-budget-approval-efd299bc2585",
+  "approval_mode": "handoff_only",
+  "approval_status": "DRY_RUN",
+  "approval_ready": true,
+  "approval_blockers": [],
+  "previous_active_budget_profile_id": "phase41-runtime-budget-approved-profile",
+  "new_active_budget_profile_id": "phase47-runtime-budget-explicit-approval",
+  "registry_updated": false,
+  "baseline_written": false,
+  "proposal_archived": true,
+  "runtime_budget_baseline_out": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_budget_baseline_phase47_approved.json",
+  "archive_proposal": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_budget_proposal_phase47_archived.json",
+  "approval_metadata_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_budget_baseline_phase47_approved_approval_metadata.json",
+  "verification_needed": false,
+  "next_operator_action": "RUN_RUNTIME_BUDGET_APPROVAL_COMMAND",
+  "rationale": [
+    "approval execution audit wraps the explicit budget approval step without making handoff_only mutate registry state",
+    "handoff_only approval execution is a preflight/dry-run audit by default"
+  ],
+  "approval_execution_hash": "f02f0bb9864ccd8ca0b851ea68180ee85653312d88e267613ac4d0a709dc3b6a",
+  "approval_execution_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_current_env_budget_approval_execution_phase47.json"
+}

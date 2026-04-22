@@ -1,0 +1,6 @@
+metric	value
+builder_constructor_name	scan_shell16_frontier_non_promoting_attempt_
+cache_load_constructor_name	load_current_shell16_runtime_artifact_
+authoritative_source	current_runtime_shell16_non_promoting_scan
+fallback_hit	0
+runtime_fingerprint	981:4479772858934799504

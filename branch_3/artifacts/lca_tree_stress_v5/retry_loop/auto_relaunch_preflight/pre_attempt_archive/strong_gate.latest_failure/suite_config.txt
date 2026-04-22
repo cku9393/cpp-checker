@@ -1,0 +1,24 @@
+gate=lca_strong_gate
+wrapper=./outer_suite_wrappers/lca_strong_gate.sh
+plan_schema=lca_strong_gate_suite_plan_v1
+config_schema=lca_strong_gate_suite_config_v1
+selected_preset_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_presets/strong_gate.json
+selected_preset_source=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_presets/strong_gate.json
+selected_preset_source_materialized=
+effective_preset_source=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_presets/strong_gate.json
+selected_preset_sha256=c3b27051eebe668b9e43bb70480faadecc92b52fccc4e8889b0b6cea127a1e2d
+preset_name=strong_gate
+stage_filter=
+limit_scale=1
+stage_count=3
+case_count=1036
+case_path_policy=runs/{stage}/{mode}/n{n}/seed{seed}_L{shuffle_labels}_Q{shuffle_queries}
+case_cache_policy={mode}/n{n}/seed{seed}_L{shuffle_labels}_Q{shuffle_queries}
+workdir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.run.9zuwOa
+output_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/strong_gate
+case_run_tmp_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.run.9zuwOa/.case_runs_tmp
+case_cache_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.run.9zuwOa/.case_cache
+case_cache_tmp_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.run.9zuwOa/.case_cache_tmp
+runtime_tmpdir=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.tmp/lca_strong_gate.env.NSdFkI
+timeout_contract=stage.timeout*limit_scale
+solver_env_contract=DENSE_PROFILE_OUTDIR=work_case_dir;DENSE_SHADOW_CASE_MODE;DENSE_SHADOW_CASE_N;DENSE_SHADOW_CASE_SEED;DENSE_SHADOW_CASE_SHUFFLE_LABELS;DENSE_SHADOW_CASE_SHUFFLE_QUERIES

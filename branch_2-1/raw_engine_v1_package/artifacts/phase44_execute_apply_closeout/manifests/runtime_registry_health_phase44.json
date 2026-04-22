@@ -1,0 +1,203 @@
+{
+  "manifest_version": "runtime_registry_health_v2",
+  "phase": "phase44",
+  "generated_at_utc": "2026-04-20T12:56:13Z",
+  "runtime_baseline_registry_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_baseline_registry_v1.json",
+  "overall_status": "HEALTHY",
+  "governance_policy": null,
+  "governance_reference_time_utc": "2026-04-20T12:56:13Z",
+  "stale_after_hours": 336.0,
+  "reverify_after_hours": 720.0,
+  "retire_after_hours": 2160.0,
+  "current_environment": {
+    "environment_state": "CURRENT_ENV",
+    "health_status": "HEALTHY",
+    "fingerprint_key": "936b44e1c291ab764aacfa166336709395562d42f37854e3eb6bef122c141ddd",
+    "baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+    "baseline_tag": "phase33-runtime-watch",
+    "active_baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+    "active_baseline_tag": "phase33-runtime-watch",
+    "last_seen_timestamp": "2026-04-20T12:56:12Z",
+    "last_seen_age_hours": 0.0,
+    "latest_current_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_current_phase22.json",
+    "latest_refresh_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_refresh_phase22.json",
+    "comparability_verdict": "COMPARABLE",
+    "freshness_verdict": "FRESH",
+    "budget_verdict": "PASS",
+    "watch_status": "CLEAR",
+    "watch_confidence": "HIGH",
+    "watch_reason": "asan_full is within budget and recent same-fingerprint samples are clear",
+    "latest_watch_summary_path": null,
+    "evidence_source_counts": {
+      "real": 60
+    },
+    "real_sample_count": 60,
+    "fixture_sample_count": 0,
+    "retired_baseline_count": 1,
+    "stale_candidate": false,
+    "reverify_required": false,
+    "retirement_recommendation": "NO_ACTION",
+    "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+    "runtime_baseline_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+    "lineage_history": [
+      {
+        "baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+        "baseline_tag": "phase33-runtime-watch",
+        "status": "active",
+        "approval_timestamp_utc": "2026-04-20T12:56:08Z",
+        "previous_active_baseline_id": "phase22-runtime-approved-393d9c23-20260420_125608",
+        "supersedes_baseline_ids": [
+          "phase22-runtime-approved-393d9c23-20260420_125608"
+        ],
+        "superseded_by_baseline_id": null,
+        "retired_reason": null
+      },
+      {
+        "baseline_id": "phase22-runtime-approved-393d9c23-20260420_125608",
+        "baseline_tag": "phase22-runtime-approved",
+        "status": "retired",
+        "approval_timestamp_utc": "2026-04-20T12:56:08Z",
+        "previous_active_baseline_id": null,
+        "supersedes_baseline_ids": [],
+        "superseded_by_baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+        "retired_reason": "superseded by phase33-runtime-watch-393d9c23-20260420_125608"
+      }
+    ],
+    "status": "CURRENT_ACTIVE",
+    "state": "CURRENT_ACTIVE",
+    "approval_timestamp_utc": "2026-04-20T12:56:08Z",
+    "last_verified_timestamp": "2026-04-20T12:56:08Z",
+    "last_runtime_import_timestamp": "2026-04-20T12:56:12Z",
+    "last_refresh_timestamp": "2026-04-20T12:56:12Z",
+    "age_since_last_verified_days": 0.0,
+    "stale_after_days": 14,
+    "retire_after_days": 90,
+    "retire_candidate": false,
+    "counts_as_current_env": true,
+    "counts_as_approved_known_env": false
+  },
+  "approved_known_environments": {
+    "environment_count": 0,
+    "fresh_count": 0,
+    "healthy_count": 0,
+    "due_soon_count": 0,
+    "stale_count": 0,
+    "reverify_required_count": 0,
+    "retire_candidate_count": 0,
+    "entries": []
+  },
+  "unapproved_foreign_environments": {
+    "environment_count": 0,
+    "entries": []
+  },
+  "active_lineages": [
+    {
+      "environment_state": "CURRENT_ENV",
+      "health_status": "HEALTHY",
+      "fingerprint_key": "936b44e1c291ab764aacfa166336709395562d42f37854e3eb6bef122c141ddd",
+      "baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+      "baseline_tag": "phase33-runtime-watch",
+      "active_baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+      "active_baseline_tag": "phase33-runtime-watch",
+      "last_seen_timestamp": "2026-04-20T12:56:12Z",
+      "last_seen_age_hours": 0.0,
+      "latest_current_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_current_phase22.json",
+      "latest_refresh_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_refresh_phase22.json",
+      "comparability_verdict": "COMPARABLE",
+      "freshness_verdict": "FRESH",
+      "budget_verdict": "PASS",
+      "watch_status": "CLEAR",
+      "watch_confidence": "HIGH",
+      "watch_reason": "asan_full is within budget and recent same-fingerprint samples are clear",
+      "latest_watch_summary_path": null,
+      "evidence_source_counts": {
+        "real": 60
+      },
+      "real_sample_count": 60,
+      "fixture_sample_count": 0,
+      "retired_baseline_count": 1,
+      "stale_candidate": false,
+      "reverify_required": false,
+      "retirement_recommendation": "NO_ACTION",
+      "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+      "runtime_baseline_manifest_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_baseline_phase22_approved.json",
+      "lineage_history": [
+        {
+          "baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+          "baseline_tag": "phase33-runtime-watch",
+          "status": "active",
+          "approval_timestamp_utc": "2026-04-20T12:56:08Z",
+          "previous_active_baseline_id": "phase22-runtime-approved-393d9c23-20260420_125608",
+          "supersedes_baseline_ids": [
+            "phase22-runtime-approved-393d9c23-20260420_125608"
+          ],
+          "superseded_by_baseline_id": null,
+          "retired_reason": null
+        },
+        {
+          "baseline_id": "phase22-runtime-approved-393d9c23-20260420_125608",
+          "baseline_tag": "phase22-runtime-approved",
+          "status": "retired",
+          "approval_timestamp_utc": "2026-04-20T12:56:08Z",
+          "previous_active_baseline_id": null,
+          "supersedes_baseline_ids": [],
+          "superseded_by_baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608",
+          "retired_reason": "superseded by phase33-runtime-watch-393d9c23-20260420_125608"
+        }
+      ],
+      "status": "CURRENT_ACTIVE",
+      "state": "CURRENT_ACTIVE",
+      "approval_timestamp_utc": "2026-04-20T12:56:08Z",
+      "last_verified_timestamp": "2026-04-20T12:56:08Z",
+      "last_runtime_import_timestamp": "2026-04-20T12:56:12Z",
+      "last_refresh_timestamp": "2026-04-20T12:56:12Z",
+      "age_since_last_verified_days": 0.0,
+      "stale_after_days": 14,
+      "retire_after_days": 90,
+      "retire_candidate": false,
+      "counts_as_current_env": true,
+      "counts_as_approved_known_env": false
+    }
+  ],
+  "aggregate": {
+    "current_active_count": 1,
+    "active_fingerprint_count": 1,
+    "approved_known_fresh_count": 0,
+    "approved_known_reverify_required_count": 0,
+    "approved_known_due_soon_count": 0,
+    "approved_known_stale_count": 0,
+    "retired_count": 1,
+    "healthy_active_count": 1,
+    "healthy_known_env_count": 0,
+    "stale_known_env_count": 0,
+    "stale_active_count": 0,
+    "reverify_required_count": 0,
+    "governance_action_required_count": 0,
+    "retire_candidate_count": 0,
+    "retired_entry_count": 1,
+    "orphaned_entry_count": 0,
+    "foreign_unapproved_count": 0,
+    "approved_known_env_count": 0
+  },
+  "retired_lineage_history": {
+    "entry_count": 1,
+    "entries": [
+      {
+        "environment_state": "RETIRED_KNOWN_ENV",
+        "status": "RETIRED_KNOWN_ENV",
+        "state": "RETIRED_KNOWN_ENV",
+        "baseline_id": "phase22-runtime-approved-393d9c23-20260420_125608",
+        "baseline_tag": "phase22-runtime-approved",
+        "fingerprint_key": "936b44e1c291ab764aacfa166336709395562d42f37854e3eb6bef122c141ddd",
+        "retired_reason": "superseded by phase33-runtime-watch-393d9c23-20260420_125608",
+        "superseded_by_baseline_id": "phase33-runtime-watch-393d9c23-20260420_125608"
+      }
+    ]
+  },
+  "approved_known_summary_count": 0,
+  "foreign_import_summary_count": 0,
+  "health_hash": "36f58262183e7482af14304d2ba18f46e665bda0a0b7810fec0b621ee10b821d",
+  "runtime_history_index_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_history_index_v1.json",
+  "runtime_watch_registry_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/runtime_watch_registry_v1.json",
+  "runtime_refresh_path": "/private/tmp/raw_engine_phase44_build_release/tests/artifacts/evidence_bundle_current_env_execute_apply_smoke/manifests/policy_runtime_refresh_phase22.json"
+}

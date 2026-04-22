@@ -1,0 +1,19 @@
+{
+  "phase": "phase47",
+  "mode": "release",
+  "discovered_test_count": 386,
+  "executed_test_count": 386,
+  "not_run_count": 0,
+  "phase47_registered_smokes": [
+    "raw_engine_runtime_current_env_approval_runbook_smoke",
+    "raw_engine_runtime_current_env_execute_budget_approval_dry_run_smoke",
+    "raw_engine_runtime_current_env_link_approval_execution_smoke",
+    "raw_engine_runtime_current_env_decision_skip_flow_smoke",
+    "raw_engine_runtime_current_env_decision_defer_flow_smoke",
+    "raw_engine_runtime_current_env_decision_retry_now_flow_smoke",
+    "raw_engine_policy_ops_agenda_lifecycle_v4_smoke",
+    "raw_engine_policy_ops_summary_v13_smoke",
+    "raw_engine_evidence_bundle_approval_runbook_smoke"
+  ],
+  "inventory_verdict": "PASS"
+}
