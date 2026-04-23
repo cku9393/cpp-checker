@@ -1,9 +1,9 @@
 # General Gap Theorem Readiness Audit 90
 
-## readiness after lift-map refinement phase2
+## readiness label
 
-`ready_for_family_chain_lift_phase3_if_needed`.
+`ready_for_canonical_compression_status_preservation`.
 
-The limited bridge theorem is still proved under current scope. Phase2 made payload refinement relation and source-target correspondence first-class, but layer projection payload preservation, canonical lift soundness, counterexample-status preservation, and operation-specific smaller-witness construction remain open. The full general theorem is not proved.
+The full general theorem is not proved. Project-to-active status is proof-ready with inactive-support status locality open. Coordinate contraction status is proof-ready with equivalent-coordinate status congruence open. Remaining operation status blockers are canonical compression and family-chain absorption.
 
 Runtime audit: `branch_4/90/runtime/general_gap_theorem_readiness_audit_90.tsv`.

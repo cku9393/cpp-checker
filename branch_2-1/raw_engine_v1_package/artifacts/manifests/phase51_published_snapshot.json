@@ -1,0 +1,36 @@
+{
+  "manifest_version": "published_snapshot_v1",
+  "phase_tag": "phase51",
+  "generated_at_utc": "2026-04-23T06:08:23Z",
+  "source_snapshot_hash": "bab7c97e8ea2d244c96a63191ff76da3853b856b00f4745f5b815835d58ab3bc",
+  "staged_mirror_hash": "bab7c97e8ea2d244c96a63191ff76da3853b856b00f4745f5b815835d58ab3bc",
+  "verification_release_hash": "7dc1aa42948008bff40fe6351b73de353c43baf0c3c1c2709d23726116f46bdc",
+  "verification_debug_hash": "aa933f6c992201cff90edab72e522b2d8b1071dfc331e9affe116c16c3b82a6f",
+  "verification_asan_hash": "679a5bc37044c00ec680bd9eb5f7d008050839804057f8751c09c28b5278012c",
+  "published_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase51_evidence_bundle_published",
+  "copied_artifact_list": [
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE51_STABILIZATION_REPORT.txt",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_stabilization.zip",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_stabilization_curated.zip",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_ops_light.zip",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_delivery.zip",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/source_snapshot_manifest_phase51.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/staged_mirror_manifest_phase51.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/staged_mirror_verify_phase51.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/verification_phase51_release.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/verification_phase51_debug.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/verification_phase51_asan.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_inventory_release_phase51.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_inventory_debug_phase51.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_inventory_asan_phase51.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/publication_health_phase51.json"
+  ],
+  "publication_health_verdict": "HEALTHY",
+  "copied_report": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE51_STABILIZATION_REPORT.txt",
+  "copied_bundles": {
+    "full": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_stabilization.zip",
+    "curated": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_stabilization_curated.zip",
+    "light": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_ops_light.zip",
+    "delivery": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase51_delivery.zip"
+  }
+}

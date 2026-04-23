@@ -54,6 +54,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--runtime-registry-health", default=None)
     parser.add_argument("--publication-health", default=None)
     parser.add_argument("--source-snapshot-manifest", default=None)
+    parser.add_argument("--include-source-health", action="store_true")
+    parser.add_argument("--source-health-preflight", default=None)
+    parser.add_argument("--source-health-action-plan", default=None)
+    parser.add_argument("--staged-materialization", default=None)
+    parser.add_argument("--source-root", default=None)
+    parser.add_argument("--source-health-simulate-dataless-count", type=int, default=0)
+    parser.add_argument("--source-health-simulate-missing-git-object", action="store_true")
     parser.add_argument("--staged-mirror-manifest", default=None)
     parser.add_argument("--staged-mirror-verify", default=None)
     parser.add_argument("--ctest-inventory-release", default=None)
@@ -239,6 +246,18 @@ def default_publication_health_path(artifact_root: Path, phase: str) -> Path:
 
 def default_source_snapshot_manifest_path(artifact_root: Path, phase: str) -> Path:
     return artifact_root / "manifests" / f"source_snapshot_manifest_{phase}.json"
+
+
+def default_source_health_preflight_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"source_health_preflight_{phase}.json"
+
+
+def default_source_health_action_plan_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"source_health_action_plan_{phase}.json"
+
+
+def default_staged_materialization_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"staged_materialization_{phase}.json"
 
 
 def default_staged_mirror_manifest_path(artifact_root: Path, phase: str) -> Path:
@@ -740,7 +759,10 @@ def pipeline_summary_text(summary: dict[str, Any]) -> str:
         + f" runtime_watch_fingerprint_count={summary.get('runtime_watch_fingerprint_count', '')}"
         + f" runtime_rebaseline_proposal_needed={int(bool(summary.get('runtime_rebaseline_proposal_needed', False)))}"
         + f" current_env_watch_confidence={summary.get('current_env_watch_confidence', '')}"
-        + f" new_env_watch_confidence={summary.get('new_env_watch_confidence', '')}",
+        + f" new_env_watch_confidence={summary.get('new_env_watch_confidence', '')}"
+        + f" source_health_status={summary.get('source_health_status', '')}"
+        + f" source_health_recommendation={summary.get('source_health_recommendation', '')}"
+        + f" materialization_mode={summary.get('materialization_mode', '')}",
         f"recommended_next_action={summary.get('recommended_next_action', '')}",
     ]
     for key in (
@@ -761,6 +783,8 @@ def pipeline_summary_text(summary: dict[str, Any]) -> str:
         "runtime_watch_refresh",
         "runtime_watch_history_index",
         "runtime_watch_history_summary",
+        "source_health_preflight",
+        "staged_materialization",
     ):
         if summary.get(key):
             lines.append(f"{key}={summary[key]}")
@@ -788,17 +812,26 @@ def enrich_summary_with_operator_artifacts(
     ops_summary_path: Path | None,
     runtime_registry_health_path: Path | None = None,
     publication_health_path: Path | None = None,
+    source_health_preflight_path: Path | None = None,
+    source_health_action_plan_path: Path | None = None,
+    staged_materialization_path: Path | None = None,
 ) -> dict[str, Any]:
     enriched = dict(summary)
     enriched["runtime_watch_registry"] = None if runtime_watch_registry_path is None else str(runtime_watch_registry_path)
     enriched["policy_ops_summary"] = None if ops_summary_path is None else str(ops_summary_path)
     enriched["runtime_registry_health"] = None if runtime_registry_health_path is None else str(runtime_registry_health_path)
     enriched["publication_health"] = None if publication_health_path is None else str(publication_health_path)
+    enriched["source_health_preflight"] = None if source_health_preflight_path is None else str(source_health_preflight_path)
+    enriched["source_health_action_plan"] = None if source_health_action_plan_path is None else str(source_health_action_plan_path)
+    enriched["staged_materialization"] = None if staged_materialization_path is None else str(staged_materialization_path)
 
     runtime_watch_registry = load_json_if_exists(runtime_watch_registry_path)
     ops_summary = load_json_if_exists(ops_summary_path)
     runtime_registry_health = load_json_if_exists(runtime_registry_health_path)
     publication_health = load_json_if_exists(publication_health_path)
+    source_health_preflight = load_json_if_exists(source_health_preflight_path)
+    source_health_action_plan = load_json_if_exists(source_health_action_plan_path)
+    staged_materialization = load_json_if_exists(staged_materialization_path)
     final_operator_summary = ops_summary.get("final_operator_summary", {})
 
     enriched["runtime_watch_registry_entry_count"] = int(runtime_watch_registry.get("entry_count", 0))
@@ -815,6 +848,15 @@ def enrich_summary_with_operator_artifacts(
     enriched["verification_lane_status"] = ops_summary.get("verification_lane", {}).get("status")
     enriched["verification_not_run_count"] = ops_summary.get("verification_lane", {}).get("verification_not_run_count", 0)
     enriched["verification_action"] = ops_summary.get("final_operator_actions", {}).get("recommended_action_verification")
+    enriched["source_health_status"] = source_health_preflight.get("status")
+    enriched["source_health_recommendation"] = source_health_preflight.get("recommendation")
+    enriched["source_health_dataless_placeholder_count"] = source_health_preflight.get("dataless_placeholder_count", 0)
+    enriched["source_health_missing_head_object"] = source_health_preflight.get("git_object_health", {}).get("missing_head_object")
+    enriched["source_health_action_plan_hash"] = source_health_action_plan.get("plan_hash")
+    enriched["direct_build_blocked"] = bool(source_health_action_plan.get("direct_build_blocked", False))
+    enriched["staged_build_allowed"] = bool(source_health_action_plan.get("staged_build_allowed", False))
+    enriched["source_health_plan_recommended_action"] = source_health_action_plan.get("recommended_action")
+    enriched["materialization_mode"] = staged_materialization.get("staged_materialization_mode") or source_health_preflight.get("staged_materialization", {}).get("staged_materialization_mode")
     return enriched
 
 
@@ -837,6 +879,8 @@ def materialize_operator_artifacts(
     runtime_registry_health_path: Path,
     publication_health_path: Path | None,
     source_snapshot_manifest_path: Path | None = None,
+    source_health_preflight_path: Path | None = None,
+    staged_materialization_path: Path | None = None,
     staged_mirror_verify_path: Path | None = None,
     verification_release_path: Path | None = None,
     verification_debug_path: Path | None = None,
@@ -942,6 +986,8 @@ def materialize_operator_artifacts(
                 *(["--runtime-registry-health", str(runtime_registry_health_path)] if runtime_registry_health_path is not None else []),
                 *(["--publication-health", str(publication_health_path)] if publication_health_path is not None and publication_health_path.exists() else []),
                 *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path is not None and source_snapshot_manifest_path.exists() else []),
+                *(["--source-health-preflight", str(source_health_preflight_path)] if source_health_preflight_path is not None and source_health_preflight_path.exists() else []),
+                *(["--staged-materialization", str(staged_materialization_path)] if staged_materialization_path is not None and staged_materialization_path.exists() else []),
                 *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path is not None and staged_mirror_verify_path.exists() else []),
                 *(["--verification-release", str(verification_release_path)] if verification_release_path is not None and verification_release_path.exists() else []),
                 *(["--verification-debug", str(verification_debug_path)] if verification_debug_path is not None and verification_debug_path.exists() else []),
@@ -1324,6 +1370,18 @@ def main() -> int:
         args.source_snapshot_manifest,
         default_source_snapshot_manifest_path(artifact_root, pipeline_phase),
     )
+    source_health_preflight_path = manifest_json_path(
+        args.source_health_preflight,
+        default_source_health_preflight_path(artifact_root, pipeline_phase),
+    )
+    source_health_action_plan_path = manifest_json_path(
+        args.source_health_action_plan,
+        default_source_health_action_plan_path(artifact_root, pipeline_phase),
+    )
+    staged_materialization_path = manifest_json_path(
+        args.staged_materialization,
+        default_staged_materialization_path(artifact_root, pipeline_phase),
+    )
     staged_mirror_manifest_path = manifest_json_path(
         args.staged_mirror_manifest,
         default_staged_mirror_manifest_path(artifact_root, pipeline_phase),
@@ -1398,6 +1456,43 @@ def main() -> int:
             synthetic_flags.extend(["--synthetic-applicability-drift", args.synthetic_applicability_drift])
         if args.synthetic_diagnostic_promotion:
             synthetic_flags.extend(["--synthetic-diagnostic-promotion", args.synthetic_diagnostic_promotion])
+
+        if args.include_source_health:
+            source_health_command = [
+                python_bin,
+                str(repo_root / "tests" / "tools" / "source_health_preflight.py"),
+                "--phase",
+                pipeline_phase,
+                "--source-root",
+                str(Path(args.source_root).resolve() if args.source_root else repo_root),
+                "--required-path",
+                "CMakeLists.txt,README.md,tests/raw_engine_cases.cpp,tests/tools/runtime_watch_ops.py",
+                "--out",
+                str(source_health_preflight_path),
+                "--summary-out",
+                str(source_health_preflight_path.with_suffix(".summary.txt")),
+                "--staged-materialization-out",
+                str(staged_materialization_path),
+            ]
+            if int(args.source_health_simulate_dataless_count or 0) > 0:
+                source_health_command.extend(["--simulate-dataless-count", str(args.source_health_simulate_dataless_count)])
+            if args.source_health_simulate_missing_git_object:
+                source_health_command.append("--simulate-missing-git-object")
+            stages.append(run_command("source_health_preflight", source_health_command, repo_root))
+            source_health_plan_command = [
+                python_bin,
+                str(watch_ops_script),
+                "source-health-plan",
+                "--phase",
+                pipeline_phase,
+                "--source-health",
+                str(source_health_preflight_path),
+                "--staged-materialization",
+                str(staged_materialization_path),
+                "--plan-out",
+                str(source_health_action_plan_path),
+            ]
+            stages.append(run_command("source_health_action_plan", source_health_plan_command, repo_root))
 
         if args.mode in {"quick", "rebaseline_candidate", "matrix"}:
             policy_ci_command = [
@@ -1940,6 +2035,9 @@ def main() -> int:
             ops_summary_path,
             runtime_registry_health_path,
             publication_health_path if publication_health_path.exists() else None,
+            source_health_preflight_path if source_health_preflight_path.exists() else None,
+            source_health_action_plan_path if source_health_action_plan_path.exists() else None,
+            staged_materialization_path if staged_materialization_path.exists() else None,
         )
         write_pipeline_summary(summary_path, summary)
 
@@ -1962,6 +2060,8 @@ def main() -> int:
                 runtime_registry_health_path=runtime_registry_health_path,
                 publication_health_path=publication_health_path,
                 source_snapshot_manifest_path=source_snapshot_manifest_path,
+                source_health_preflight_path=source_health_preflight_path,
+                staged_materialization_path=staged_materialization_path,
                 staged_mirror_verify_path=staged_mirror_verify_path,
                 verification_release_path=verification_release_path,
                 verification_debug_path=verification_debug_path,
@@ -2014,6 +2114,9 @@ def main() -> int:
             ops_summary_path,
             runtime_registry_health_path,
             publication_health_path if publication_health_path.exists() else None,
+            source_health_preflight_path if source_health_preflight_path.exists() else None,
+            source_health_action_plan_path if source_health_action_plan_path.exists() else None,
+            staged_materialization_path if staged_materialization_path.exists() else None,
         )
         write_pipeline_summary(summary_path, summary)
 
@@ -2106,6 +2209,9 @@ def main() -> int:
                             *(["--published-snapshot-manifest", str(published_snapshot_manifest_path)] if published_snapshot_manifest_path.exists() else []),
                             *(["--verification-closeout", str(verification_closeout_path)] if verification_closeout_path.exists() else []),
                             *(["--publication-health", str(publication_health_path)] if publication_health_path.exists() else []),
+                            *(["--source-health-preflight", str(source_health_preflight_path)] if source_health_preflight_path.exists() else []),
+                            *(["--source-health-action-plan", str(source_health_action_plan_path)] if source_health_action_plan_path.exists() else []),
+                            *(["--staged-materialization", str(staged_materialization_path)] if staged_materialization_path.exists() else []),
                             "--ops-summary",
                             str(ops_summary_path),
                             *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
@@ -2285,6 +2391,9 @@ def main() -> int:
                             "--runtime-watch-registry",
                             str(runtime_watch_registry_path),
                             *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path.exists() else []),
+                            *(["--source-health-preflight", str(source_health_preflight_path)] if source_health_preflight_path.exists() else []),
+                            *(["--source-health-action-plan", str(source_health_action_plan_path)] if source_health_action_plan_path.exists() else []),
+                            *(["--staged-materialization", str(staged_materialization_path)] if staged_materialization_path.exists() else []),
                             *(["--staged-mirror-manifest", str(staged_mirror_manifest_path)] if staged_mirror_manifest_path.exists() else []),
                             *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path.exists() else []),
                             *(["--ctest-inventory-release", str(ctest_inventory_release_path)] if ctest_inventory_release_path.exists() else []),
@@ -2374,6 +2483,9 @@ def main() -> int:
                 ops_summary_path,
                 runtime_registry_health_path,
                 publication_health_path if publication_health_path.exists() else None,
+                source_health_preflight_path if source_health_preflight_path.exists() else None,
+                source_health_action_plan_path if source_health_action_plan_path.exists() else None,
+                staged_materialization_path if staged_materialization_path.exists() else None,
             )
             write_pipeline_summary(summary_path, summary)
 

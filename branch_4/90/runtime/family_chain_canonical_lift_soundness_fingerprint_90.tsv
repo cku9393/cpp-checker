@@ -1,0 +1,7 @@
+metric	value
+canonical_component_count	13
+proof_ready_components	10
+proof_sketch_components	2
+blocked_components	1
+final_status	proof_ready_skeleton_canonical_lift_open
+fingerprint	canonical_lift|13|10|2|1|proof_ready_skeleton_canonical_lift_open

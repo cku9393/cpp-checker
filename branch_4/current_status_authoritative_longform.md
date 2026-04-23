@@ -242,20 +242,25 @@
 
 Family-chain lower-layer imported caveat는 닫혔다. 이후 bridge formalization과 shell16 preflight가 끝났고, 현재 shell16 first-boundary attempt도 no-promotion guard 아래 실행됐다.
 
-현재 다음 exact target은 `family_chain_lift_phase3_if_needed`다.
+현재 다음 exact target은 `canonical_compression_status_preservation`다.
 
 - shell16 readiness: `preflight_contract_ready_no_scan`
-- higher-support necessity: `needs_theoretical_bound_first`
-- support-bound lemma status: `proof_ready_skeleton_phase2_relation_ready_operation_open`
-- support reduction step status: `partition_ready_phase2_relation_ready_smaller_witness_operation_open`
-- family-chain lift status: `partial_lift_phase2_relation_ready_status_open`
+- higher-support necessity: `higher_support_deferred_after_contract_equivalent_status_congruence_open`
+- support-bound lemma status: `proof_ready_skeleton_project_contraction_status_proof_ready_remaining_operations_open`
+- support reduction step status: `partition_ready_project_contraction_status_proof_ready_remaining_operations_open`
+- family-chain lift status: `partial_lift_project_contraction_status_proof_ready_remaining_operations_open`
 - refined lift map status: `refined_lift_map_defined_for_recognized_sources_preservation_open`
-- obstruction preservation status: `partial_preservation_phase2_relation_ready_status_open`
-- phase2 skeleton status: `partial_phase2_proved_escape_open`
-- general gap theorem readiness: `ready_for_family_chain_lift_phase3_if_needed`
+- obstruction preservation status: `partial_preservation_project_contraction_status_proof_ready_remaining_operations_open`
+- phase2 skeleton status: `partial_phase2_project_contraction_status_proof_ready_remaining_operations_open`
+- phase3 skeleton status: `partial_phase3_project_contraction_status_proof_ready_remaining_operations_open`
+- previous operation skeleton status: `proof_ready_skeleton_selected_delete_redundant_coordinate`
+- previous project-to-active skeleton status: `partial_project_to_active_status_proof_ready_locality_open`
+- previous coordinate-contraction skeleton status: `partial_contract_equivalent_status_proof_ready_congruence_open`
+- selected operation skeleton status: `proof_ready_skeleton_contract_equivalent_status_congruence_open`
+- general gap theorem readiness: `ready_for_canonical_compression_status_preservation`
 - BOJ solver bridge readiness: `ready_for_problem_bridge_formalization`
 - archive/provenance cleanup: `worth_cleaning_later`
-- recommendation order: `family_chain_lift_phase3_if_needed`, `prove_support_reduction_operation_sublemma`, `higher_support_necessity_recheck`
+- recommendation order: `canonical_compression_status_preservation`, `family_chain_absorption_status_preservation`, `project_to_active_status_locality_refinement`
 
 이는 support8 lock recovery 문제가 아니라 다음 범위 선택 문제다. General theorem은 아직 proved가 아니고, BOJ solver도 아직 구현 전이다.
 
@@ -279,4 +284,4 @@ Family-chain lower-layer imported caveat는 닫혔다. 이후 bridge formalizati
 - shell16 local exact / plus-one / theorem-preserving survivors: `2 / 0 / 0`
 - shell16 fingerprint: `981:4479772858934799504`
 
-`tail_monotonicity_bridge`는 checked support8 tail range 안의 witness를 current tail theorem과 tail obstruction chain으로 닫고, checked range 밖 first extension witness를 shell16 attempt로 보냈다. shell16 promotion review는 local exact survivors `2`와 plus-one/theorem-preserving survivors `0/0`을 분리했고, local exact pair를 current theorem-preserving escape에는 nonblocking으로 판정했다. Limited bridge theorem은 current scope에서 증명됐고, support-bound round는 support `>8` witness를 support8 reduction 또는 `higher_support_escape`로 분리하는 skeleton을 formalize했다. support-reduction round는 이를 `support_growth_partition`으로 세분화했다. Family-chain lift round는 target package freshness/applicability를 partial로 닫았고, lift-map refinement는 recognized source-form map을 정의했다. obstruction-preservation attempt는 payload well-definedness와 conditional absorption을 current-scope proved로 올렸고, 이번 phase2는 payload refinement relation/source-target correspondence/smaller-witness construction contract를 first-class로 formalize했다. Layer projection semantic preservation and operation-specific smaller-witness construction remain open. Full general theorem proof는 아니며, 다음 exact target은 `family_chain_lift_phase3_if_needed`다.
+`tail_monotonicity_bridge`는 checked support8 tail range 안의 witness를 current tail theorem과 tail obstruction chain으로 닫고, checked range 밖 first extension witness를 shell16 attempt로 보냈다. shell16 promotion review는 local exact survivors `2`와 plus-one/theorem-preserving survivors `0/0`을 분리했고, local exact pair를 current theorem-preserving escape에는 nonblocking으로 판정했다. Limited bridge theorem은 current scope에서 증명됐고, support-bound round는 support `>8` witness를 support8 reduction 또는 named escape로 분리하는 skeleton을 formalize했다. support-reduction round는 이를 `support_growth_partition`으로 세분화했다. Operation-sublemma rounds now keep routes through `family_chain_absorption_reduction`, and the current status-congruence bridge classifies operation outcomes as preserved, reduced, refuted, absorbed, named blocker, or higher-support escape. The higher-support recheck did not run support9+, the project-to-active status round made active projection status proof-ready with inactive-support status locality open, and the coordinate-contraction status round made quotient status proof-ready with equivalent-coordinate status congruence open. Full general theorem proof는 아니며, 다음 exact target은 `canonical_compression_status_preservation`다.

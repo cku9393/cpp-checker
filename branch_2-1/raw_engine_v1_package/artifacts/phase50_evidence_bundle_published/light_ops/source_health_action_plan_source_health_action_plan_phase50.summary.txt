@@ -1,0 +1,40 @@
+{
+  "manifest_version": "source_health_action_plan_v1",
+  "phase": "phase50",
+  "generated_at_utc": "2026-04-22T14:22:37Z",
+  "plan_verdict": "PASS",
+  "source_health_status": "ATTENTION_REQUIRED",
+  "source_health_recommendation": "SPARSE_CLONE_REQUIRED",
+  "direct_build_blocked": true,
+  "staged_build_allowed": true,
+  "recommended_action": "USE_STAGED_SPARSE_CLONE_OVERLAY",
+  "materialization_mode": "staged_sparse_clone_overlay",
+  "issue_count": 2,
+  "entries": [
+    {
+      "issue_kind": "dataless_placeholder",
+      "severity": "ACTION_REQUIRED",
+      "recommended_action": "USE_STAGED_SPARSE_CLONE_OVERLAY",
+      "recommended_command": "python tests/tools/run_policy_pipeline.py --include-source-health --pipeline-phase phase50 ...",
+      "blocking_for_direct_build": true,
+      "blocking_for_staged_build": false,
+      "expected_resolution": "materialize authoritative source through staged_sparse_clone_overlay before long verification",
+      "rationale": "dataless placeholders make direct long build/test invalid"
+    },
+    {
+      "issue_kind": "missing_git_object",
+      "severity": "WARN",
+      "recommended_action": "AVOID_AUTHORITATIVE_GIT_OBJECT_DEPENDENCE",
+      "recommended_command": "git fetch origin main --filter=blob:none",
+      "blocking_for_direct_build": true,
+      "blocking_for_staged_build": false,
+      "expected_resolution": "use sparse clone overlay or refresh git objects before direct git operations",
+      "rationale": "HEAD object is unavailable in the authoritative iCloud tree"
+    }
+  ],
+  "rationale": [
+    "source-health action planning is infra/operator guidance, not a correctness failure",
+    "direct long build/test is invalid when source-health requires staged sparse materialization"
+  ],
+  "plan_hash": "b2347acb42688d08be38bd119c2df78827f403649de592207d4d9224c21048e1"
+}

@@ -1,0 +1,9 @@
+metric	value
+notation_file	branch_4/90/family_chain_absorption_notation_90.md
+runtime_notation	branch_4/90/runtime/family_chain_absorption_notation_90.tsv
+component_count	16
+final_notation_status	family_chain_absorption_notation_contract_ready
+separates_absorption_from_lift	1
+separates_absorption_from_theorem_applicability	1
+separates_contradiction_from_smaller_witness	1
+keeps_higher_support_escape_visible	1

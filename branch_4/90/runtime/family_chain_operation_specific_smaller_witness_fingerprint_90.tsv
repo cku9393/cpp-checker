@@ -1,0 +1,8 @@
+metric	value
+operation_count	8
+proved_after_valid_reduction	2
+proof_sketch_operations	4
+needs_new_sublemma_operations	1
+classified_escape_operations	1
+final_status	partial_delete_project_contraction_compression_absorption_ready_status_open
+fingerprint	operation_specific_smaller_witness|9|5|4|2|2|partial_delete_project_contraction_compression_absorption_ready_status_open

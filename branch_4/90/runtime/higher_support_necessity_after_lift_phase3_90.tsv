@@ -1,0 +1,7 @@
+check_key	current_result	impact	next_action
+phase3_closes_payload_counterexample_blocker	partial	Projection/canonical obligations are proof-ready and delete-redundant plus project-to-active routes are ready under preconditions, but remaining operation/status preservation is not proved.	prove_next_support_reduction_operation_sublemma
+remaining_failure_case	named_remaining_operation_specific_smaller_witness_blocker	The most actionable remaining blocker is the next operation-specific construction and preservation.	prove_next_support_reduction_operation_sublemma
+higher_support_escape_remaining	yes	Higher-support remains an escape class but should not be scanned before operation sublemma work.	higher_support_necessity_recheck
+support_reduction_operation_priority	highest	Smaller-witness construction still depends on remaining support-reduction operation proofs.	prove_next_support_reduction_operation_sublemma
+limited_to_broader_plan_ready	no	Broader plan remains blocked by operation/status/higher-support obligations.	after_operation_sublemma
+final_status	higher_support_recheck_deferred_until_remaining_operation_sublemmas	Recheck higher-support after remaining operation-specific smaller-witness proof attempts or when all declared operations are exhausted.	prove_next_support_reduction_operation_sublemma

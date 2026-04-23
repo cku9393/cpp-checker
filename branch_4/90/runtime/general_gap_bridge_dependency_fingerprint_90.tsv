@@ -1,9 +1,9 @@
 metric	value
-edge_count	27
-verified_input_edges	8
+edge_count	19
+verified_input_edges	11
 obligation_dependency_edges	2
-obligation_blocks_statement_edges	10
-candidate_next_scope_edges	7
+obligation_blocks_statement_edges	2
+candidate_next_scope_edges	4
 statement_count	3
-top_blocking_obligation	shell_bound_or_extension
-fingerprint	27|8|2|10|7|3|shell_bound_or_extension
+top_blocking_obligation	support_bound_justification
+fingerprint	19|11|2|2|4|3|support_bound_justification

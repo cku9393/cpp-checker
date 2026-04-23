@@ -1,0 +1,18 @@
+{
+  "copied_file_count": 106,
+  "dataless_remaining_count": 0,
+  "generated_at_epoch": 1776865767.536917,
+  "hash_mismatch_count": 0,
+  "ignored_generated_file_policy": "build dirs and generated artifacts excluded from source snapshot; authoritative campaign/evidence overlay came from sparse clone",
+  "manifest_version": "staged_mirror_manifest_phase49_v2",
+  "materialization_verdict": "PASS",
+  "materialize_verdict": "PASS",
+  "missing_file_count": 0,
+  "overlay_file_count": 33,
+  "overlay_hash": "e4ddcaaab9867f9933f711eea458c0b3ef5f65026b8aad6211e573b34519cca9",
+  "phase": "phase49",
+  "source_snapshot_hash": "1c666fa2acd19546e497e507c2fcde3e9cdf431cb36f6bfb1ef06365f710ce8d",
+  "staged_materialization_mode": "staged_sparse_clone_overlay",
+  "staged_mirror_hash": "1c666fa2acd19546e497e507c2fcde3e9cdf431cb36f6bfb1ef06365f710ce8d",
+  "staged_root": "/tmp/raw_engine_phase49_stage"
+}

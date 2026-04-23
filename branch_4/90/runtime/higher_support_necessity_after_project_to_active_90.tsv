@@ -1,0 +1,9 @@
+check_key	current_result	impact	next_action
+project_to_active_reduces_smaller_witness_blocker	partially	Inactive-support strict-subset case now has support-size decrease proved under operation precondition.	prove_next_support_reduction_operation_sublemma
+inactive_support_case_closed	partially	Measure decrease and output well-definedness are closed under active-support containment, but normal-form/payload/status preservation remains proof-sketch or blocked.	prove_next_support_reduction_operation_sublemma
+all_support_active_case_higher_support_escape	no	All-support-active is only a no-op for this operation; contraction, motif compression, and family-chain absorption may still apply.	prove_next_support_reduction_operation_sublemma
+other_operations_needed	yes	Coordinate contraction, canonical motif compression, and family-chain absorption reduction remain operation-specific blockers.	prove_next_support_reduction_operation_sublemma
+next_operation_candidate	contract_equivalent_support_coordinates	This is the most direct next operation after active projection because active coordinates can still be equivalent.	prove_next_support_reduction_operation_sublemma
+higher_support_recheck_now	no	No support9+ scan should precede remaining operation attempts.	prove_next_support_reduction_operation_sublemma
+limited_to_broader_plan_ready	no	Broader plan still depends on remaining operation or higher-support recheck outcomes.	after_remaining_operation_or_higher_support
+final_status	higher_support_recheck_deferred_until_remaining_operation_sublemmas	Recheck after contraction/compression/absorption operation attempts or when all declared operations are exhausted.	prove_next_support_reduction_operation_sublemma

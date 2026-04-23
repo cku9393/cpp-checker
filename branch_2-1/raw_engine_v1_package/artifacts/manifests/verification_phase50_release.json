@@ -1,0 +1,29 @@
+{
+  "manifest_version": "staged_verification_v1",
+  "generated_at_utc": "2026-04-22T14:54:11Z",
+  "mode": "release",
+  "staged_root": "/private/tmp/raw_engine_phase50_stage",
+  "build_dir": "/private/tmp/raw_engine_phase50_stage/build-release",
+  "ctest_command": [
+    "ctest",
+    "--test-dir",
+    "/private/tmp/raw_engine_phase50_stage/build-release",
+    "--output-on-failure",
+    "--force-new-ctest-process",
+    "-j",
+    "2"
+  ],
+  "pass_count": 450,
+  "fail_count": 0,
+  "not_run_count": 0,
+  "total_test_count": 450,
+  "total_wall_time_seconds": 1803.82,
+  "staged_source_snapshot_hash": "8f9ddfbc20f9113a9d2104a5fded2f9361280777d02e540771c1a3ff91714ec8",
+  "ctest_inventory_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_inventory_release_phase50.json",
+  "ctest_inventory_hash": "ab0b7bb08abd837abeb576df4f8185cd86dff1a397d865313ec93d9f2347d227",
+  "ctest_inventory_verdict": "PASS",
+  "published_root": null,
+  "execution_verdict": "PASS",
+  "stdout_tail": "gine_policy_ops_summary_publication_health_smoke\n433/450 Test #307: raw_engine_policy_ops_summary_publication_health_smoke ..........................   Passed   12.00 sec\n        Start 308: raw_engine_evidence_bundle_registry_health_smoke\n434/450 Test #308: raw_engine_evidence_bundle_registry_health_smoke ................................   Passed   13.92 sec\n        Start 309: raw_engine_evidence_bundle_known_env_governance_smoke\n435/450 Test #309: raw_engine_evidence_bundle_known_env_governance_smoke ...........................   Passed    2.97 sec\n        Start 312: raw_engine_evidence_bundle_current_env_guardrail_timeline_smoke\n436/450 Test #312: raw_engine_evidence_bundle_current_env_guardrail_timeline_smoke .................   Passed    9.35 sec\n        Start 313: raw_engine_evidence_bundle_current_env_due_timeline_smoke\n437/450 Test #313: raw_engine_evidence_bundle_current_env_due_timeline_smoke .......................   Passed    9.74 sec\n        Start 314: raw_engine_evidence_bundle_current_env_execute_apply_smoke\n438/450 Test #314: raw_engine_evidence_bundle_current_env_execute_apply_smoke ......................   Passed   12.43 sec\n        Start 315: raw_engine_evidence_bundle_action_ledger_smoke\n439/450 Test #315: raw_engine_evidence_bundle_action_ledger_smoke ..................................   Passed   12.56 sec\n        Start 352: raw_engine_evidence_bundle_publication_health_smoke\n440/450 Test #352: raw_engine_evidence_bundle_publication_health_smoke .............................   Passed    9.34 sec\n        Start 353: raw_engine_light_ops_bundle_operator_summary_v4_smoke\n441/450 Test #353: raw_engine_light_ops_bundle_operator_summary_v4_smoke ...........................   Passed    9.68 sec\n        Start 357: raw_engine_policy_roundtrip_smoke\n442/450 Test #357: raw_engine_policy_roundtrip_smoke ...............................................   Passed    2.88 sec\n        Start 369: raw_engine_evidence_bundle_multi_fingerprint_watch_smoke\n443/450 Test #369: raw_engine_evidence_bundle_multi_fingerprint_watch_smoke ........................   Passed    3.35 sec\n        Start 371: raw_engine_evidence_bundle_light_ops_smoke\n444/450 Test #371: raw_engine_evidence_bundle_light_ops_smoke ......................................   Passed    3.24 sec\n        Start 373: raw_engine_campaign_manifest_parallel_smoke\n445/450 Test #373: raw_engine_campaign_manifest_parallel_smoke .....................................   Passed   18.14 sec\n        Start 375: raw_engine_policy_pipeline_parallel_smoke\n446/450 Test #375: raw_engine_policy_pipeline_parallel_smoke .......................................   Passed    6.24 sec\n        Start 376: raw_engine_transient_repro_smoke\n447/450 Test #376: raw_engine_transient_repro_smoke ................................................   Passed   28.10 sec\n        Start 436: raw_engine_artifact_retention_smoke\n448/450 Test #436: raw_engine_artifact_retention_smoke .............................................   Passed    0.01 sec\n        Start 449: raw_engine_campaign_resume_smoke\n449/450 Test #449: raw_engine_campaign_resume_smoke ................................................   Passed    0.94 sec\n        Start 450: raw_engine_campaign_partial_merge_smoke\n450/450 Test #450: raw_engine_campaign_partial_merge_smoke .........................................   Passed    0.51 sec\n\n100% tests passed, 0 tests failed out of 450\n\nLabel Time Summary:\nasan_slow          = 261.88 sec*proc (12 tests)\ncompare            = 1476.97 sec*proc (203 tests)\ncore               =  67.35 sec*proc (80 tests)\nexhaustive         = 233.54 sec*proc (13 tests)\nfuzz               =   4.25 sec*proc (8 tests)\nnightly            = 304.36 sec*proc (21 tests)\npolicy_core        =  29.15 sec*proc (23 tests)\npolicy_nightly     =  12.03 sec*proc (7 tests)\npolicy_refresh     = 126.07 sec*proc (81 tests)\npolicy_sentinel    =  76.87 sec*proc (69 tests)\nslow               = 178.41 sec*proc (36 tests)\n\nTotal Test time (real) = 1723.15 sec\n",
+  "stderr_tail": ""
+}

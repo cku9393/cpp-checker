@@ -1,0 +1,8 @@
+check_key	current_result	impact	next_action
+selected_operation_closes_smaller_witness_blocker	partially	Delete-redundant is proof-ready under redundancy and project-to-active has strict support-size decrease under active-subset precondition, but other operations remain open.	prove_next_support_reduction_operation_sublemma
+other_operations_needed	yes	Coordinate contraction, canonical motif compression, and family-chain absorption reduction are still needed for broader operation-specific construction.	prove_next_support_reduction_operation_sublemma
+operation_failure_higher_support_escape	yes	Failure of all declared operations still routes to higher-support escape, but selected operation non-application alone is not enough.	higher_support_necessity_recheck
+continue_operation_proof	yes	The operation track has sharper concrete blockers than higher-support expansion.	prove_next_support_reduction_operation_sublemma
+higher_support_recheck_now	no	No support9+ scan should precede remaining operation sublemma attempts.	prove_next_support_reduction_operation_sublemma
+limited_to_broader_plan_ready	no	Broader plan still depends on more operation proofs or higher-support recheck.	after_next_operation_or_higher_support
+final_status	higher_support_recheck_deferred_until_remaining_operation_sublemmas	Recheck after remaining operation-specific proof attempts or when all declared operations are exhausted.	prove_next_support_reduction_operation_sublemma

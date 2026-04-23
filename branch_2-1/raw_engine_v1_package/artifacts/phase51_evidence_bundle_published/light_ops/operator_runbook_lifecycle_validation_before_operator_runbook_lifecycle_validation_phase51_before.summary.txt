@@ -1,0 +1,45 @@
+{
+  "manifest_version": "operator_runbook_lifecycle_validation_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-23T01:59:01Z",
+  "validation_verdict": "ACTION_REQUIRED",
+  "missing_input_count": 11,
+  "stale_input_count": 0,
+  "superseded_runbook_count": 0,
+  "archived_runbook_count": 0,
+  "replayable_runbook_count": 0,
+  "non_replayable_runbook_count": 4,
+  "mutation_risk_count": 0,
+  "integrated_opt_in_blocked_count": 0,
+  "stale_but_safe_count": 0,
+  "affected_action_ids": [
+    "phase47-approval-runbook-590fa6da5236",
+    "phase49-runbook-75c36b408d7e",
+    "phase49-runbook-a847d70a05f8",
+    "phase49-runbook-approve-21a551dae88c"
+  ],
+  "missing_inputs": [
+    "phase49-runbook-75c36b408d7e:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+    "phase49-runbook-75c36b408d7e:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+    "phase49-runbook-75c36b408d7e:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+    "phase49-runbook-a847d70a05f8:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+    "phase49-runbook-a847d70a05f8:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+    "phase49-runbook-a847d70a05f8:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+    "phase47-approval-runbook-590fa6da5236:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+    "phase47-approval-runbook-590fa6da5236:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+    "phase47-approval-runbook-590fa6da5236:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+    "phase49-runbook-approve-21a551dae88c:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+    "phase49-runbook-approve-21a551dae88c:/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+  ],
+  "stale_inputs": [],
+  "superseded_runbook_ids": [],
+  "archived_runbook_ids": [],
+  "mutation_risk_runbook_ids": [],
+  "integrated_opt_in_blocked_runbook_ids": [],
+  "stale_but_safe_runbook_ids": [],
+  "rationale": [
+    "active executable runbooks with missing critical inputs require operator action",
+    "stale or archived resolved runbooks are retained as non-blocking history unless they can mutate state"
+  ],
+  "validation_hash": "fe0853136f0fddfcb05ed842ef5b6898e0b8be074b75fea98c9f3aba63f42962"
+}

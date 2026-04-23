@@ -1,0 +1,20 @@
+{
+  "manifest_version": "staged_materialization_transaction_v1",
+  "phase": "phase49",
+  "generated_at_utc": "2026-04-22T13:49:46Z",
+  "transaction_id": "phase49-materialization-bae1741ce389",
+  "materialization_mode": "staged_sparse_clone_overlay",
+  "source_health_hash": "a7f563ec4466050ce3fa10fafcab2929b59617d5cb08c86226d6afdf4c634895",
+  "sparse_clone_ref": "origin/main sparse checkout /tmp/raw_engine_phase49_sparse_ref",
+  "overlay_file_count": 33,
+  "overlay_hash": "e4ddcaaab9867f9933f711eea458c0b3ef5f65026b8aad6211e573b34519cca9",
+  "dataless_remaining_count": 0,
+  "source_snapshot_hash": "1c666fa2acd19546e497e507c2fcde3e9cdf431cb36f6bfb1ef06365f710ce8d",
+  "staged_mirror_hash": "1c666fa2acd19546e497e507c2fcde3e9cdf431cb36f6bfb1ef06365f710ce8d",
+  "transaction_verdict": "PASS",
+  "rollback_cleanup_performed": true,
+  "cleanup_paths": [
+    "/private/tmp/raw_engine_phase49_stage"
+  ],
+  "transaction_hash": "ca306cc9d8312148630e52f4c87164adc3fee8b9e6a64c0891247b3ff899f1d5"
+}

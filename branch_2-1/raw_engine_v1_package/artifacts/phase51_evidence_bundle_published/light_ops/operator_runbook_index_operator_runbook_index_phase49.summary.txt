@@ -1,0 +1,9 @@
+manifest_version=operator_runbook_index_v1
+phase=phase49
+runbook_count=4
+pending_runbook_count=1
+executable_runbook_count=4
+integrated_opt_in_required_count=0
+approval_runbook_count=2
+retry_runbook_count=0
+empty_verdict=NOT_EMPTY

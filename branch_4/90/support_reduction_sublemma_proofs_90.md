@@ -1,7 +1,7 @@
 # Support Reduction Sublemma Proofs 90
 
-## updated after obstruction-preservation attempt
+## status after higher-support recheck
 
-The family-chain branch remains blocked by payload/status preservation. The non-family-chain support-reduction operation proofs are still separate next-action candidates.
+The support-reduction sublemma set remains partial. Higher-support necessity is deferred; direct blockers are operation-specific counterexample-status preservation/congruence and residual family-chain absorption measure.
 
-Runtime table: `branch_4/90/runtime/support_reduction_sublemma_proofs_90.tsv`.
+Runtime proofs: `branch_4/90/runtime/support_reduction_sublemma_proofs_90.tsv`.

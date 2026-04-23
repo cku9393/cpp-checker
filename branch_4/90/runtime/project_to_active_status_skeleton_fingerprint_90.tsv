@@ -1,0 +1,8 @@
+metric	value
+lemma_name	project_to_active_status_preserved_reduced_or_escape
+skeleton_status	proof_ready_skeleton_project_to_active_status_locality_open
+proved_under_current_scope_sublemma_count	3
+proof_sketch_only_sublemma_count	4
+blocked_sublemma_count	1
+missing_core	inactive-support counterexample-status locality
+next_blocker	contract_equivalent_status_preservation

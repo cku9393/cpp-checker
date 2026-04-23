@@ -1,0 +1,8 @@
+metric	value
+candidate_count	5
+proved_under_current_scope_as_recheck_count	1
+proof_sketch_ready_count	1
+blocked_until_true_escape_count	1
+candidate_not_proved_count	2
+would_require_scan_now_count	0
+next_action	prove_next_support_reduction_operation_sublemma

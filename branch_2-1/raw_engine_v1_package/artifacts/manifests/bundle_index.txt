@@ -1,0 +1,6 @@
+latest_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase49_stabilization.zip
+latest_delivery_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase49_delivery.zip
+latest_curated_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/raw_engine_phase49_stabilization_curated.zip
+bundle_count=38
+delivery_bundle_count=32
+curated_bundle_count=36

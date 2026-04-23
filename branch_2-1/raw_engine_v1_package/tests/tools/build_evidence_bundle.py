@@ -168,7 +168,25 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--current-env-approval-execution", default=None, help="Optional current environment budget approval execution audit path.")
     parser.add_argument("--current-env-approval-link", default=None, help="Optional current environment approval execution ledger link path.")
     parser.add_argument("--operator-runbook-index", default=None, help="Optional operator runbook index path.")
+    parser.add_argument("--operator-runbook-catalog", default=None, help="Optional operator runbook catalog/history path.")
+    parser.add_argument("--operator-decision-metadata-audit", default=None, help="Optional operator decision metadata audit path.")
+    parser.add_argument("--operator-runbook-replay", default=None, help="Optional operator runbook replay manifest path.")
+    parser.add_argument("--operator-runbook-retention-policy", default=None, help="Optional operator runbook retention policy path.")
+    parser.add_argument("--operator-runbook-pruned-catalog", default=None, help="Optional pruned operator runbook catalog path.")
+    parser.add_argument("--operator-runbook-archive", default=None, help="Optional operator runbook archive path.")
+    parser.add_argument("--operator-runbook-prune-summary", default=None, help="Optional operator runbook prune summary path.")
+    parser.add_argument("--operator-runbook-lifecycle-validation", default=None, help="Optional operator runbook lifecycle validation path.")
+    parser.add_argument("--operator-runbook-pointer-audit", default=None, help="Optional operator runbook pointer audit path.")
+    parser.add_argument("--operator-runbook-provenance-migration", default=None, help="Optional operator runbook provenance migration report path.")
+    parser.add_argument("--operator-runbook-migrated-catalog", default=None, help="Optional migrated operator runbook catalog path.")
+    parser.add_argument("--operator-runbook-migrated-ledger", default=None, help="Optional migrated current-env action ledger path.")
+    parser.add_argument("--operator-runbook-lifecycle-validation-before", default=None, help="Optional pre-migration operator runbook lifecycle validation path.")
+    parser.add_argument("--operator-runbook-lifecycle-validation-after", default=None, help="Optional post-migration operator runbook lifecycle validation path.")
+    parser.add_argument("--operator-artifact-path-policy-lint", default=None, help="Optional operator artifact path policy lint result path.")
+    parser.add_argument("--integrated-approval-mutation-audit", default=None, help="Optional integrated approval mutation audit path.")
+    parser.add_argument("--staged-materialization-transaction", default=None, help="Optional staged materialization transaction log path.")
     parser.add_argument("--source-health-preflight", default=None, help="Optional source health preflight path.")
+    parser.add_argument("--source-health-action-plan", default=None, help="Optional source health action plan path.")
     parser.add_argument("--staged-materialization", default=None, help="Optional staged materialization v2 manifest path.")
     parser.add_argument(
         "--current-env-next-cycle-summary",
@@ -434,8 +452,26 @@ def build_delivery_entries(
     current_env_approval_execution: Path | None,
     current_env_approval_link: Path | None,
     operator_runbook_index: Path | None,
+    operator_runbook_catalog: Path | None,
+    operator_decision_metadata_audit: Path | None,
+    operator_runbook_replay: Path | None,
+    operator_runbook_retention_policy: Path | None,
+    operator_runbook_pruned_catalog: Path | None,
+    operator_runbook_archive: Path | None,
+    operator_runbook_prune_summary: Path | None,
+    operator_runbook_lifecycle_validation: Path | None,
+    operator_runbook_pointer_audit: Path | None,
+    operator_runbook_provenance_migration: Path | None,
+    operator_runbook_migrated_catalog: Path | None,
+    operator_runbook_migrated_ledger: Path | None,
+    operator_runbook_lifecycle_validation_before: Path | None,
+    operator_runbook_lifecycle_validation_after: Path | None,
+    operator_artifact_path_policy_lint: Path | None,
+    integrated_approval_mutation_audit: Path | None,
     source_health_preflight: Path | None,
+    source_health_action_plan: Path | None,
     staged_materialization: Path | None,
+    staged_materialization_transaction: Path | None,
     bundle_metadata: Path,
     zip_out: Path,
     curated_zip: Path | None,
@@ -494,8 +530,26 @@ def build_delivery_entries(
         ("current_env_approval_execution", current_env_approval_execution),
         ("current_env_approval_link", current_env_approval_link),
         ("operator_runbook_index", operator_runbook_index),
+        ("operator_runbook_catalog", operator_runbook_catalog),
+        ("operator_decision_metadata_audit", operator_decision_metadata_audit),
+        ("operator_runbook_replay", operator_runbook_replay),
+        ("operator_runbook_retention_policy", operator_runbook_retention_policy),
+        ("operator_runbook_pruned_catalog", operator_runbook_pruned_catalog),
+        ("operator_runbook_archive", operator_runbook_archive),
+        ("operator_runbook_prune_summary", operator_runbook_prune_summary),
+        ("operator_runbook_lifecycle_validation", operator_runbook_lifecycle_validation),
+        ("operator_runbook_pointer_audit", operator_runbook_pointer_audit),
+        ("operator_runbook_provenance_migration", operator_runbook_provenance_migration),
+        ("operator_runbook_migrated_catalog", operator_runbook_migrated_catalog),
+        ("operator_runbook_migrated_ledger", operator_runbook_migrated_ledger),
+        ("operator_runbook_lifecycle_validation_before", operator_runbook_lifecycle_validation_before),
+        ("operator_runbook_lifecycle_validation_after", operator_runbook_lifecycle_validation_after),
+        ("operator_artifact_path_policy_lint", operator_artifact_path_policy_lint),
+        ("integrated_approval_mutation_audit", integrated_approval_mutation_audit),
         ("source_health_preflight", source_health_preflight),
+        ("source_health_action_plan", source_health_action_plan),
         ("staged_materialization", staged_materialization),
+        ("staged_materialization_transaction", staged_materialization_transaction),
         ("bundle_metadata", bundle_metadata),
         ("bundle_zip", zip_out),
         ("curated_zip", curated_zip),
@@ -1064,8 +1118,62 @@ def main() -> int:
     operator_runbook_index = resolve_manifest_json(
         Path(args.operator_runbook_index).resolve() if args.operator_runbook_index else None
     )
+    operator_runbook_catalog = resolve_manifest_json(
+        Path(args.operator_runbook_catalog).resolve() if args.operator_runbook_catalog else None
+    )
+    operator_decision_metadata_audit = resolve_manifest_json(
+        Path(args.operator_decision_metadata_audit).resolve() if args.operator_decision_metadata_audit else None
+    )
+    operator_runbook_replay = resolve_manifest_json(
+        Path(args.operator_runbook_replay).resolve() if args.operator_runbook_replay else None
+    )
+    operator_runbook_retention_policy = resolve_manifest_json(
+        Path(args.operator_runbook_retention_policy).resolve() if args.operator_runbook_retention_policy else None
+    )
+    operator_runbook_pruned_catalog = resolve_manifest_json(
+        Path(args.operator_runbook_pruned_catalog).resolve() if args.operator_runbook_pruned_catalog else None
+    )
+    operator_runbook_archive = resolve_manifest_json(
+        Path(args.operator_runbook_archive).resolve() if args.operator_runbook_archive else None
+    )
+    operator_runbook_prune_summary = resolve_manifest_json(
+        Path(args.operator_runbook_prune_summary).resolve() if args.operator_runbook_prune_summary else None
+    )
+    operator_runbook_lifecycle_validation = resolve_manifest_json(
+        Path(args.operator_runbook_lifecycle_validation).resolve() if args.operator_runbook_lifecycle_validation else None
+    )
+    operator_runbook_pointer_audit = resolve_manifest_json(
+        Path(args.operator_runbook_pointer_audit).resolve() if args.operator_runbook_pointer_audit else None
+    )
+    operator_runbook_provenance_migration = resolve_manifest_json(
+        Path(args.operator_runbook_provenance_migration).resolve() if args.operator_runbook_provenance_migration else None
+    )
+    operator_runbook_migrated_catalog = resolve_manifest_json(
+        Path(args.operator_runbook_migrated_catalog).resolve() if args.operator_runbook_migrated_catalog else None
+    )
+    operator_runbook_migrated_ledger = resolve_manifest_json(
+        Path(args.operator_runbook_migrated_ledger).resolve() if args.operator_runbook_migrated_ledger else None
+    )
+    operator_runbook_lifecycle_validation_before = resolve_manifest_json(
+        Path(args.operator_runbook_lifecycle_validation_before).resolve() if args.operator_runbook_lifecycle_validation_before else None
+    )
+    operator_runbook_lifecycle_validation_after = resolve_manifest_json(
+        Path(args.operator_runbook_lifecycle_validation_after).resolve() if args.operator_runbook_lifecycle_validation_after else None
+    )
+    operator_artifact_path_policy_lint = resolve_manifest_json(
+        Path(args.operator_artifact_path_policy_lint).resolve() if args.operator_artifact_path_policy_lint else None
+    )
+    integrated_approval_mutation_audit = resolve_manifest_json(
+        Path(args.integrated_approval_mutation_audit).resolve() if args.integrated_approval_mutation_audit else None
+    )
+    staged_materialization_transaction = resolve_manifest_json(
+        Path(args.staged_materialization_transaction).resolve() if args.staged_materialization_transaction else None
+    )
     source_health_preflight = resolve_manifest_json(
         Path(args.source_health_preflight).resolve() if args.source_health_preflight else None
+    )
+    source_health_action_plan = resolve_manifest_json(
+        Path(args.source_health_action_plan).resolve() if args.source_health_action_plan else None
     )
     staged_materialization = resolve_manifest_json(
         Path(args.staged_materialization).resolve() if args.staged_materialization else None
@@ -1220,7 +1328,25 @@ def main() -> int:
     current_env_approval_execution_data = read_json_if_exists(current_env_approval_execution)
     current_env_approval_link_data = read_json_if_exists(current_env_approval_link)
     operator_runbook_index_data = read_json_if_exists(operator_runbook_index)
+    operator_runbook_catalog_data = read_json_if_exists(operator_runbook_catalog)
+    operator_decision_metadata_audit_data = read_json_if_exists(operator_decision_metadata_audit)
+    operator_runbook_replay_data = read_json_if_exists(operator_runbook_replay)
+    operator_runbook_retention_policy_data = read_json_if_exists(operator_runbook_retention_policy)
+    operator_runbook_pruned_catalog_data = read_json_if_exists(operator_runbook_pruned_catalog)
+    operator_runbook_archive_data = read_json_if_exists(operator_runbook_archive)
+    operator_runbook_prune_summary_data = read_json_if_exists(operator_runbook_prune_summary)
+    operator_runbook_lifecycle_validation_data = read_json_if_exists(operator_runbook_lifecycle_validation)
+    operator_runbook_pointer_audit_data = read_json_if_exists(operator_runbook_pointer_audit)
+    operator_runbook_provenance_migration_data = read_json_if_exists(operator_runbook_provenance_migration)
+    operator_runbook_migrated_catalog_data = read_json_if_exists(operator_runbook_migrated_catalog)
+    operator_runbook_migrated_ledger_data = read_json_if_exists(operator_runbook_migrated_ledger)
+    operator_runbook_lifecycle_validation_before_data = read_json_if_exists(operator_runbook_lifecycle_validation_before)
+    operator_runbook_lifecycle_validation_after_data = read_json_if_exists(operator_runbook_lifecycle_validation_after)
+    operator_artifact_path_policy_lint_data = read_json_if_exists(operator_artifact_path_policy_lint)
+    integrated_approval_mutation_audit_data = read_json_if_exists(integrated_approval_mutation_audit)
+    staged_materialization_transaction_data = read_json_if_exists(staged_materialization_transaction)
     source_health_preflight_data = read_json_if_exists(source_health_preflight)
+    source_health_action_plan_data = read_json_if_exists(source_health_action_plan)
     staged_materialization_data = read_json_if_exists(staged_materialization)
     current_env_next_cycle_summary_data = [read_json_if_exists(path) for path in current_env_next_cycle_summaries]
     runtime_registry_summary_data = read_json_if_exists(runtime_registry_summary)
@@ -1538,8 +1664,41 @@ def main() -> int:
         copied["manifests"].extend(copy_manifest_bundle(current_env_approval_link, manifests_dir, "current_env_approval_link_"))
     if operator_runbook_index is not None:
         copied["manifests"].extend(copy_manifest_bundle(operator_runbook_index, manifests_dir, "operator_runbook_index_"))
+    if operator_runbook_catalog is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_runbook_catalog, manifests_dir, "operator_runbook_catalog_"))
+    if operator_decision_metadata_audit is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_decision_metadata_audit, manifests_dir, "operator_decision_metadata_audit_"))
+    if operator_runbook_replay is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_runbook_replay, manifests_dir, "operator_runbook_replay_"))
+    if operator_runbook_retention_policy is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_runbook_retention_policy, manifests_dir, "operator_runbook_retention_policy_"))
+    if operator_runbook_pruned_catalog is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_runbook_pruned_catalog, manifests_dir, "operator_runbook_pruned_catalog_"))
+    if operator_runbook_archive is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_runbook_archive, manifests_dir, "operator_runbook_archive_"))
+    if operator_runbook_prune_summary is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_runbook_prune_summary, manifests_dir, "operator_runbook_prune_summary_"))
+    if operator_runbook_lifecycle_validation is not None:
+        copied["manifests"].extend(copy_manifest_bundle(operator_runbook_lifecycle_validation, manifests_dir, "operator_runbook_lifecycle_validation_"))
+    for path, prefix in (
+        (operator_runbook_pointer_audit, "operator_runbook_pointer_audit_"),
+        (operator_runbook_provenance_migration, "operator_runbook_provenance_migration_"),
+        (operator_runbook_migrated_catalog, "operator_runbook_migrated_catalog_"),
+        (operator_runbook_migrated_ledger, "operator_runbook_migrated_ledger_"),
+        (operator_runbook_lifecycle_validation_before, "operator_runbook_lifecycle_validation_before_"),
+        (operator_runbook_lifecycle_validation_after, "operator_runbook_lifecycle_validation_after_"),
+        (operator_artifact_path_policy_lint, "operator_artifact_path_policy_lint_"),
+    ):
+        if path is not None:
+            copied["manifests"].extend(copy_manifest_bundle(path, manifests_dir, prefix))
+    if integrated_approval_mutation_audit is not None:
+        copied["manifests"].extend(copy_manifest_bundle(integrated_approval_mutation_audit, manifests_dir, "integrated_approval_mutation_audit_"))
+    if staged_materialization_transaction is not None:
+        copied["manifests"].extend(copy_manifest_bundle(staged_materialization_transaction, manifests_dir, "staged_materialization_transaction_"))
     if source_health_preflight is not None:
         copied["manifests"].extend(copy_manifest_bundle(source_health_preflight, manifests_dir, "source_health_preflight_"))
+    if source_health_action_plan is not None:
+        copied["manifests"].extend(copy_manifest_bundle(source_health_action_plan, manifests_dir, "source_health_action_plan_"))
     if staged_materialization is not None:
         copied["manifests"].extend(copy_manifest_bundle(staged_materialization, manifests_dir, "staged_materialization_"))
     for current_env_next_cycle_summary in current_env_next_cycle_summaries:
@@ -1754,8 +1913,41 @@ def main() -> int:
         copied["curated"].extend(copy_manifest_bundle(current_env_approval_link, curated_dir, "current_env_approval_link_"))
     if operator_runbook_index is not None:
         copied["curated"].extend(copy_manifest_bundle(operator_runbook_index, curated_dir, "operator_runbook_index_"))
+    if operator_runbook_catalog is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_runbook_catalog, curated_dir, "operator_runbook_catalog_"))
+    if operator_decision_metadata_audit is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_decision_metadata_audit, curated_dir, "operator_decision_metadata_audit_"))
+    if operator_runbook_replay is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_runbook_replay, curated_dir, "operator_runbook_replay_"))
+    if operator_runbook_retention_policy is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_runbook_retention_policy, curated_dir, "operator_runbook_retention_policy_"))
+    if operator_runbook_pruned_catalog is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_runbook_pruned_catalog, curated_dir, "operator_runbook_pruned_catalog_"))
+    if operator_runbook_archive is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_runbook_archive, curated_dir, "operator_runbook_archive_"))
+    if operator_runbook_prune_summary is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_runbook_prune_summary, curated_dir, "operator_runbook_prune_summary_"))
+    if operator_runbook_lifecycle_validation is not None:
+        copied["curated"].extend(copy_manifest_bundle(operator_runbook_lifecycle_validation, curated_dir, "operator_runbook_lifecycle_validation_"))
+    for path, prefix in (
+        (operator_runbook_pointer_audit, "operator_runbook_pointer_audit_"),
+        (operator_runbook_provenance_migration, "operator_runbook_provenance_migration_"),
+        (operator_runbook_migrated_catalog, "operator_runbook_migrated_catalog_"),
+        (operator_runbook_migrated_ledger, "operator_runbook_migrated_ledger_"),
+        (operator_runbook_lifecycle_validation_before, "operator_runbook_lifecycle_validation_before_"),
+        (operator_runbook_lifecycle_validation_after, "operator_runbook_lifecycle_validation_after_"),
+        (operator_artifact_path_policy_lint, "operator_artifact_path_policy_lint_"),
+    ):
+        if path is not None:
+            copied["curated"].extend(copy_manifest_bundle(path, curated_dir, prefix))
+    if integrated_approval_mutation_audit is not None:
+        copied["curated"].extend(copy_manifest_bundle(integrated_approval_mutation_audit, curated_dir, "integrated_approval_mutation_audit_"))
+    if staged_materialization_transaction is not None:
+        copied["curated"].extend(copy_manifest_bundle(staged_materialization_transaction, curated_dir, "staged_materialization_transaction_"))
     if source_health_preflight is not None:
         copied["curated"].extend(copy_manifest_bundle(source_health_preflight, curated_dir, "source_health_preflight_"))
+    if source_health_action_plan is not None:
+        copied["curated"].extend(copy_manifest_bundle(source_health_action_plan, curated_dir, "source_health_action_plan_"))
     if staged_materialization is not None:
         copied["curated"].extend(copy_manifest_bundle(staged_materialization, curated_dir, "staged_materialization_"))
     for current_env_next_cycle_summary in current_env_next_cycle_summaries:
@@ -1954,8 +2146,41 @@ def main() -> int:
         copied["light_ops"].extend(copy_manifest_bundle(current_env_approval_link, light_ops_dir, "current_env_approval_link_"))
     if operator_runbook_index is not None:
         copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_index, light_ops_dir, "operator_runbook_index_"))
+    if operator_runbook_catalog is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_catalog, light_ops_dir, "operator_runbook_catalog_"))
+    if operator_decision_metadata_audit is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_decision_metadata_audit, light_ops_dir, "operator_decision_metadata_audit_"))
+    if operator_runbook_replay is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_replay, light_ops_dir, "operator_runbook_replay_"))
+    if operator_runbook_retention_policy is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_retention_policy, light_ops_dir, "operator_runbook_retention_policy_"))
+    if operator_runbook_pruned_catalog is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_pruned_catalog, light_ops_dir, "operator_runbook_pruned_catalog_"))
+    if operator_runbook_archive is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_archive, light_ops_dir, "operator_runbook_archive_"))
+    if operator_runbook_prune_summary is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_prune_summary, light_ops_dir, "operator_runbook_prune_summary_"))
+    if operator_runbook_lifecycle_validation is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(operator_runbook_lifecycle_validation, light_ops_dir, "operator_runbook_lifecycle_validation_"))
+    for path, prefix in (
+        (operator_runbook_pointer_audit, "operator_runbook_pointer_audit_"),
+        (operator_runbook_provenance_migration, "operator_runbook_provenance_migration_"),
+        (operator_runbook_migrated_catalog, "operator_runbook_migrated_catalog_"),
+        (operator_runbook_migrated_ledger, "operator_runbook_migrated_ledger_"),
+        (operator_runbook_lifecycle_validation_before, "operator_runbook_lifecycle_validation_before_"),
+        (operator_runbook_lifecycle_validation_after, "operator_runbook_lifecycle_validation_after_"),
+        (operator_artifact_path_policy_lint, "operator_artifact_path_policy_lint_"),
+    ):
+        if path is not None:
+            copied["light_ops"].extend(copy_manifest_bundle(path, light_ops_dir, prefix))
+    if integrated_approval_mutation_audit is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(integrated_approval_mutation_audit, light_ops_dir, "integrated_approval_mutation_audit_"))
+    if staged_materialization_transaction is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(staged_materialization_transaction, light_ops_dir, "staged_materialization_transaction_"))
     if source_health_preflight is not None:
         copied["light_ops"].extend(copy_manifest_bundle(source_health_preflight, light_ops_dir, "source_health_preflight_"))
+    if source_health_action_plan is not None:
+        copied["light_ops"].extend(copy_manifest_bundle(source_health_action_plan, light_ops_dir, "source_health_action_plan_"))
     if staged_materialization is not None:
         copied["light_ops"].extend(copy_manifest_bundle(staged_materialization, light_ops_dir, "staged_materialization_"))
     for current_env_next_cycle_summary in current_env_next_cycle_summaries:
@@ -2141,7 +2366,25 @@ def main() -> int:
         "current_env_approval_execution": str(current_env_approval_execution) if current_env_approval_execution is not None else None,
         "current_env_approval_link": str(current_env_approval_link) if current_env_approval_link is not None else None,
         "operator_runbook_index": str(operator_runbook_index) if operator_runbook_index is not None else None,
+        "operator_runbook_catalog": str(operator_runbook_catalog) if operator_runbook_catalog is not None else None,
+        "operator_decision_metadata_audit": str(operator_decision_metadata_audit) if operator_decision_metadata_audit is not None else None,
+        "operator_runbook_replay": str(operator_runbook_replay) if operator_runbook_replay is not None else None,
+        "operator_runbook_retention_policy": str(operator_runbook_retention_policy) if operator_runbook_retention_policy is not None else None,
+        "operator_runbook_pruned_catalog": str(operator_runbook_pruned_catalog) if operator_runbook_pruned_catalog is not None else None,
+        "operator_runbook_archive": str(operator_runbook_archive) if operator_runbook_archive is not None else None,
+        "operator_runbook_prune_summary": str(operator_runbook_prune_summary) if operator_runbook_prune_summary is not None else None,
+        "operator_runbook_lifecycle_validation": str(operator_runbook_lifecycle_validation) if operator_runbook_lifecycle_validation is not None else None,
+        "operator_runbook_pointer_audit": str(operator_runbook_pointer_audit) if operator_runbook_pointer_audit is not None else None,
+        "operator_runbook_provenance_migration": str(operator_runbook_provenance_migration) if operator_runbook_provenance_migration is not None else None,
+        "operator_runbook_migrated_catalog": str(operator_runbook_migrated_catalog) if operator_runbook_migrated_catalog is not None else None,
+        "operator_runbook_migrated_ledger": str(operator_runbook_migrated_ledger) if operator_runbook_migrated_ledger is not None else None,
+        "operator_runbook_lifecycle_validation_before": str(operator_runbook_lifecycle_validation_before) if operator_runbook_lifecycle_validation_before is not None else None,
+        "operator_runbook_lifecycle_validation_after": str(operator_runbook_lifecycle_validation_after) if operator_runbook_lifecycle_validation_after is not None else None,
+        "operator_artifact_path_policy_lint": str(operator_artifact_path_policy_lint) if operator_artifact_path_policy_lint is not None else None,
+        "integrated_approval_mutation_audit": str(integrated_approval_mutation_audit) if integrated_approval_mutation_audit is not None else None,
+        "staged_materialization_transaction": str(staged_materialization_transaction) if staged_materialization_transaction is not None else None,
         "source_health_preflight": str(source_health_preflight) if source_health_preflight is not None else None,
+        "source_health_action_plan": str(source_health_action_plan) if source_health_action_plan is not None else None,
         "staged_materialization": str(staged_materialization) if staged_materialization is not None else None,
         "current_env_next_cycle_summaries": [str(path) for path in current_env_next_cycle_summaries],
         "runtime_registry_summary": str(runtime_registry_summary) if runtime_registry_summary is not None else None,
@@ -2250,7 +2493,25 @@ def main() -> int:
         "current_env_approval_execution_hash": sha256_file(current_env_approval_execution),
         "current_env_approval_link_hash": sha256_file(current_env_approval_link),
         "operator_runbook_index_hash": sha256_file(operator_runbook_index),
+        "operator_runbook_catalog_hash": sha256_file(operator_runbook_catalog),
+        "operator_decision_metadata_audit_hash": sha256_file(operator_decision_metadata_audit),
+        "operator_runbook_replay_hash": sha256_file(operator_runbook_replay),
+        "operator_runbook_retention_policy_hash": sha256_file(operator_runbook_retention_policy),
+        "operator_runbook_pruned_catalog_hash": sha256_file(operator_runbook_pruned_catalog),
+        "operator_runbook_archive_hash": sha256_file(operator_runbook_archive),
+        "operator_runbook_prune_summary_hash": sha256_file(operator_runbook_prune_summary),
+        "operator_runbook_lifecycle_validation_hash": sha256_file(operator_runbook_lifecycle_validation),
+        "operator_runbook_pointer_audit_hash": sha256_file(operator_runbook_pointer_audit),
+        "operator_runbook_provenance_migration_hash": sha256_file(operator_runbook_provenance_migration),
+        "operator_runbook_migrated_catalog_hash": sha256_file(operator_runbook_migrated_catalog),
+        "operator_runbook_migrated_ledger_hash": sha256_file(operator_runbook_migrated_ledger),
+        "operator_runbook_lifecycle_validation_before_hash": sha256_file(operator_runbook_lifecycle_validation_before),
+        "operator_runbook_lifecycle_validation_after_hash": sha256_file(operator_runbook_lifecycle_validation_after),
+        "operator_artifact_path_policy_lint_hash": sha256_file(operator_artifact_path_policy_lint),
+        "integrated_approval_mutation_audit_hash": sha256_file(integrated_approval_mutation_audit),
+        "staged_materialization_transaction_hash": sha256_file(staged_materialization_transaction),
         "source_health_preflight_hash": sha256_file(source_health_preflight),
+        "source_health_action_plan_hash": sha256_file(source_health_action_plan),
         "staged_materialization_hash": sha256_file(staged_materialization),
         "current_env_next_cycle_summary_hashes": [sha256_file(path) for path in current_env_next_cycle_summaries],
         "runtime_registry_summary_hash": sha256_file(runtime_registry_summary),
@@ -2354,8 +2615,26 @@ def main() -> int:
         "current_env_approval_execution_summary": current_env_approval_execution_data,
         "current_env_approval_link_summary": current_env_approval_link_data,
         "operator_runbook_index_summary": operator_runbook_index_data,
+        "operator_runbook_catalog_summary": operator_runbook_catalog_data,
+        "operator_decision_metadata_audit_summary": operator_decision_metadata_audit_data,
+        "operator_runbook_replay_summary": operator_runbook_replay_data,
+        "operator_runbook_retention_policy_summary": operator_runbook_retention_policy_data,
+        "operator_runbook_pruned_catalog_summary": operator_runbook_pruned_catalog_data,
+        "operator_runbook_archive_summary": operator_runbook_archive_data,
+        "operator_runbook_prune_summary": operator_runbook_prune_summary_data,
+        "operator_runbook_lifecycle_validation_summary": operator_runbook_lifecycle_validation_data,
+        "operator_runbook_pointer_audit_summary": operator_runbook_pointer_audit_data,
+        "operator_runbook_provenance_migration_summary": operator_runbook_provenance_migration_data,
+        "operator_runbook_migrated_catalog_summary": operator_runbook_migrated_catalog_data,
+        "operator_runbook_migrated_ledger_summary": operator_runbook_migrated_ledger_data,
+        "operator_runbook_lifecycle_validation_before_summary": operator_runbook_lifecycle_validation_before_data,
+        "operator_runbook_lifecycle_validation_after_summary": operator_runbook_lifecycle_validation_after_data,
+        "operator_artifact_path_policy_lint_summary": operator_artifact_path_policy_lint_data,
+        "integrated_approval_mutation_audit_summary": integrated_approval_mutation_audit_data,
         "source_health_preflight_summary": source_health_preflight_data,
+        "source_health_action_plan_summary": source_health_action_plan_data,
         "staged_materialization_summary": staged_materialization_data,
+        "staged_materialization_transaction_summary": staged_materialization_transaction_data,
         "current_env_next_cycle_summaries": current_env_next_cycle_summary_data,
         "runtime_registry_compact_summary": runtime_registry_summary_data,
         "runtime_budget_current_summary": runtime_budget_current_data,
@@ -2476,8 +2755,19 @@ def main() -> int:
             "approval_link_ledger_updated": current_env_approval_link_data.get("ledger_updated", False),
             "operator_runbook_count": operator_runbook_index_data.get("runbook_count", 0),
             "operator_runbook_executable_count": operator_runbook_index_data.get("executable_runbook_count", 0),
+            "operator_runbook_catalog_active_count": operator_runbook_catalog_data.get("active_runbook_count", 0),
+            "operator_runbook_catalog_resolved_count": operator_runbook_catalog_data.get("resolved_runbook_count", 0),
+            "operator_decision_metadata_audit_verdict": operator_decision_metadata_audit_data.get("audit_verdict"),
+            "operator_runbook_replay_verdict": operator_runbook_replay_data.get("replay_verdict"),
+            "operator_runbook_prune_verdict": operator_runbook_prune_summary_data.get("prune_verdict"),
+            "operator_runbook_lifecycle_validation_verdict": operator_runbook_lifecycle_validation_data.get("validation_verdict"),
+            "integrated_approval_mutation_audit_verdict": integrated_approval_mutation_audit_data.get("audit_verdict"),
+            "staged_materialization_transaction_verdict": staged_materialization_transaction_data.get("transaction_verdict"),
             "source_health_status": source_health_preflight_data.get("status"),
             "source_health_recommendation": source_health_preflight_data.get("recommendation"),
+            "source_health_plan_recommended_action": source_health_action_plan_data.get("recommended_action"),
+            "source_health_plan_direct_build_blocked": source_health_action_plan_data.get("direct_build_blocked"),
+            "source_health_plan_staged_build_allowed": source_health_action_plan_data.get("staged_build_allowed"),
             "staged_materialization_mode": staged_materialization_data.get("staged_materialization_mode"),
             "staged_materialization_verdict": staged_materialization_data.get("materialization_verdict"),
             "ledger_compact_archived_action_count": current_env_action_ledger_compact_data.get("archived_action_count", 0),
@@ -2632,10 +2922,37 @@ def main() -> int:
                 current_env_due,
                 current_env_reproposal_plan,
                 ops_agenda,
+                current_env_watch_execute,
+                current_env_watch_apply,
+                current_env_reproposal_execute,
+                current_env_action_ledger,
+                current_env_retry_plan,
+                current_env_reproposal_handoff,
+                current_env_operator_decision,
+                current_env_operator_decision_apply,
+                current_env_action_ledger_compact,
+                current_env_action_ledger_archive,
+                current_env_approval_runbook,
+                current_env_approval_execution,
+                current_env_approval_link,
+                operator_runbook_index,
+                operator_runbook_catalog,
+                operator_decision_metadata_audit,
+                operator_runbook_replay,
+                operator_runbook_retention_policy,
+                operator_runbook_pruned_catalog,
+                operator_runbook_archive,
+                operator_runbook_prune_summary,
+                operator_runbook_lifecycle_validation,
+                integrated_approval_mutation_audit,
                 runtime_watch_current,
                 runtime_watch_refresh,
                 runtime_watch_history_index,
                 runtime_watch_registry,
+                source_health_preflight,
+                source_health_action_plan,
+                staged_materialization,
+                staged_materialization_transaction,
                 source_snapshot_manifest,
                 staged_mirror_manifest,
                 staged_mirror_verify,
@@ -2695,10 +3012,30 @@ def main() -> int:
                 current_env_due,
                 current_env_reproposal_plan,
                 ops_agenda,
+                current_env_watch_execute,
+                current_env_watch_apply,
+                current_env_reproposal_execute,
+                current_env_action_ledger,
+                current_env_retry_plan,
+                current_env_reproposal_handoff,
+                current_env_operator_decision,
+                current_env_operator_decision_apply,
+                current_env_action_ledger_compact,
+                current_env_action_ledger_archive,
+                current_env_approval_runbook,
+                current_env_approval_execution,
+                current_env_approval_link,
+                operator_runbook_index,
+                operator_runbook_catalog,
+                operator_decision_metadata_audit,
+                operator_runbook_replay,
                 runtime_watch_current,
                 runtime_watch_refresh,
                 runtime_watch_history_index,
                 runtime_watch_registry,
+                source_health_preflight,
+                staged_materialization,
+                staged_materialization_transaction,
                 source_snapshot_manifest,
                 staged_mirror_manifest,
                 staged_mirror_verify,
@@ -2860,8 +3197,26 @@ def main() -> int:
         current_env_approval_execution,
         current_env_approval_link,
         operator_runbook_index,
+        operator_runbook_catalog,
+        operator_decision_metadata_audit,
+        operator_runbook_replay,
+        operator_runbook_retention_policy,
+        operator_runbook_pruned_catalog,
+        operator_runbook_archive,
+        operator_runbook_prune_summary,
+        operator_runbook_lifecycle_validation,
+        operator_runbook_pointer_audit,
+        operator_runbook_provenance_migration,
+        operator_runbook_migrated_catalog,
+        operator_runbook_migrated_ledger,
+        operator_runbook_lifecycle_validation_before,
+        operator_runbook_lifecycle_validation_after,
+        operator_artifact_path_policy_lint,
+        integrated_approval_mutation_audit,
         source_health_preflight,
+        source_health_action_plan,
         staged_materialization,
+        staged_materialization_transaction,
         bundle_root / "bundle_metadata.json",
         zip_out,
         curated_zip,

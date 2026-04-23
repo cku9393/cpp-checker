@@ -1,0 +1,9 @@
+check_key	current_result	impact	next_action
+coordinate_contraction_reduces_smaller_witness_blocker	partially	Nontrivial accepted equivalence class now has quotient construction and support-size decrease proved under operation precondition.	prove_next_support_reduction_operation_sublemma
+nontrivial_equivalent_class_case_closed	partially	Measure decrease, quotient coordinate, and output well-definedness are closed under congruence preconditions, but normal-form/payload/canonical/status preservation remain proof-sketch or blocked.	prove_next_support_reduction_operation_sublemma
+all_singleton_class_case_higher_support_escape	no	All-singleton is only a no-op for this operation; canonical motif compression and family-chain absorption may still apply.	prove_next_support_reduction_operation_sublemma
+other_operations_needed	yes	Canonical motif compression and family-chain absorption reduction remain operation-specific blockers.	prove_next_support_reduction_operation_sublemma
+next_operation_candidate	canonical_motif_compression	This is the most direct next operation after coordinate contraction because all remaining coordinates may be active and inequivalent but still canonical-rank compressible.	prove_next_support_reduction_operation_sublemma
+higher_support_recheck_now	no	No support9+ scan should precede remaining operation attempts.	prove_next_support_reduction_operation_sublemma
+limited_to_broader_plan_ready	no	Broader plan still depends on remaining operation or higher-support recheck outcomes.	after_remaining_operation_or_higher_support
+final_status	higher_support_recheck_deferred_until_remaining_operation_sublemmas	Recheck after canonical compression/family absorption operation attempts or when all declared operations are exhausted.	prove_next_support_reduction_operation_sublemma

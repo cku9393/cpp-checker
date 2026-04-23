@@ -1,0 +1,7 @@
+manifest_version=staged_mirror_verify_phase49_v1
+phase=phase49
+source_vs_staged_equality_verdict=PASS
+missing_file_count=0
+hash_mismatch_count=0
+dataless_remaining_count=0
+publication_eligibility=ELIGIBLE

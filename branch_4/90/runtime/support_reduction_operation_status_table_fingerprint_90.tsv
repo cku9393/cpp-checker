@@ -1,0 +1,8 @@
+metric	value
+operation_table_status	operation_status_table_project_contraction_proof_ready_remaining_status_open
+operation_count	8
+currently_reducible_or_downstream_closed_count	3
+operation_proof_ready_open_count	2
+operation_proof_open_count	2
+higher_support_deferred_count	1
+next_blocker	canonical_compression_status_preservation

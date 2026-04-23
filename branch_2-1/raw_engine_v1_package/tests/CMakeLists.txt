@@ -1135,6 +1135,118 @@ add_test(
     COMMAND raw_engine_tests --case evidence_bundle_runbook_index_smoke
 )
 add_test(
+    NAME raw_engine_operator_runbook_catalog_smoke
+    COMMAND raw_engine_tests --case operator_runbook_catalog_smoke
+)
+add_test(
+    NAME raw_engine_operator_decision_metadata_audit_smoke
+    COMMAND raw_engine_tests --case operator_decision_metadata_audit_smoke
+)
+add_test(
+    NAME raw_engine_integrated_approval_requires_confirmation_smoke
+    COMMAND raw_engine_tests --case integrated_approval_requires_confirmation_smoke
+)
+add_test(
+    NAME raw_engine_integrated_approval_rejects_without_preflight_smoke
+    COMMAND raw_engine_tests --case integrated_approval_rejects_without_preflight_smoke
+)
+add_test(
+    NAME raw_engine_handoff_only_never_mutates_registry_smoke
+    COMMAND raw_engine_tests --case handoff_only_never_mutates_registry_smoke
+)
+add_test(
+    NAME raw_engine_dry_run_never_mutates_registry_smoke
+    COMMAND raw_engine_tests --case dry_run_never_mutates_registry_smoke
+)
+add_test(
+    NAME raw_engine_integrated_approval_transaction_metadata_smoke
+    COMMAND raw_engine_tests --case integrated_approval_transaction_metadata_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_replay_smoke
+    COMMAND raw_engine_tests --case operator_runbook_replay_smoke
+)
+add_test(
+    NAME raw_engine_pipeline_source_health_stage_smoke
+    COMMAND raw_engine_tests --case pipeline_source_health_stage_smoke
+)
+add_test(
+    NAME raw_engine_staged_materialization_transaction_smoke
+    COMMAND raw_engine_tests --case staged_materialization_transaction_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v15_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v15_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_runbook_catalog_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_runbook_catalog_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_catalog_prune_smoke
+    COMMAND raw_engine_tests --case operator_runbook_catalog_prune_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_validate_lifecycle_smoke
+    COMMAND raw_engine_tests --case operator_runbook_validate_lifecycle_smoke
+)
+add_test(
+    NAME raw_engine_integrated_approval_mutation_audit_dry_run_smoke
+    COMMAND raw_engine_tests --case integrated_approval_mutation_audit_dry_run_smoke
+)
+add_test(
+    NAME raw_engine_integrated_approval_mutation_audit_handoff_only_smoke
+    COMMAND raw_engine_tests --case integrated_approval_mutation_audit_handoff_only_smoke
+)
+add_test(
+    NAME raw_engine_source_health_plan_smoke
+    COMMAND raw_engine_tests --case source_health_plan_smoke
+)
+add_test(
+    NAME raw_engine_pipeline_source_health_required_stage_smoke
+    COMMAND raw_engine_tests --case pipeline_source_health_required_stage_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v16_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v16_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_runbook_retention_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_runbook_retention_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_pointer_audit_smoke
+    COMMAND raw_engine_tests --case operator_runbook_pointer_audit_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_provenance_migrate_smoke
+    COMMAND raw_engine_tests --case operator_runbook_provenance_migrate_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_lifecycle_after_migration_smoke
+    COMMAND raw_engine_tests --case operator_runbook_lifecycle_after_migration_smoke
+)
+add_test(
+    NAME raw_engine_operator_artifact_path_policy_lint_smoke
+    COMMAND raw_engine_tests --case operator_artifact_path_policy_lint_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_catalog_prune_after_migration_smoke
+    COMMAND raw_engine_tests --case operator_runbook_catalog_prune_after_migration_smoke
+)
+add_test(
+    NAME raw_engine_operator_runbook_replay_after_migration_smoke
+    COMMAND raw_engine_tests --case operator_runbook_replay_after_migration_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v17_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v17_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_provenance_migration_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_provenance_migration_smoke
+)
+add_test(
     NAME raw_engine_evidence_bundle_publication_health_smoke
     COMMAND raw_engine_tests --case evidence_bundle_publication_health_smoke
 )
@@ -1684,6 +1796,18 @@ raw_engine_label_tests(compare
     raw_engine_staged_sparse_clone_overlay_smoke
     raw_engine_policy_ops_summary_v14_smoke
     raw_engine_evidence_bundle_runbook_index_smoke
+    raw_engine_operator_runbook_catalog_smoke
+    raw_engine_operator_decision_metadata_audit_smoke
+    raw_engine_integrated_approval_requires_confirmation_smoke
+    raw_engine_integrated_approval_rejects_without_preflight_smoke
+    raw_engine_handoff_only_never_mutates_registry_smoke
+    raw_engine_dry_run_never_mutates_registry_smoke
+    raw_engine_integrated_approval_transaction_metadata_smoke
+    raw_engine_operator_runbook_replay_smoke
+    raw_engine_pipeline_source_health_stage_smoke
+    raw_engine_staged_materialization_transaction_smoke
+    raw_engine_policy_ops_summary_v15_smoke
+    raw_engine_evidence_bundle_runbook_catalog_smoke
     raw_engine_policy_ops_summary_current_env_clear_new_env_action_required_smoke
     raw_engine_evidence_bundle_budget_lifecycle_smoke
     raw_engine_evidence_bundle_budget_transition_metadata_smoke

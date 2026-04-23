@@ -215,6 +215,21 @@ DEFAULT_CURRENT_ENV_ACTION_RETRY_POLICY = {
     "failed_action_escalation_threshold": 2,
 }
 
+DEFAULT_OPERATOR_RUNBOOK_RETENTION_POLICY = {
+    "manifest_version": "operator_runbook_retention_policy_v1",
+    "policy_id": "phase50-operator-runbook-retention",
+    "phase": "phase50",
+    "keep_active_runbooks": True,
+    "keep_failed_runbooks": True,
+    "keep_retry_pending_runbooks": True,
+    "keep_integrated_approval_runbooks": True,
+    "keep_latest_resolved_per_type": 2,
+    "archive_resolved_after_days": 30,
+    "prune_archived_after_days": 180,
+    "keep_runbook_with_open_ledger_pointer": True,
+    "keep_runbook_with_approval_transaction": True,
+}
+
 
 def atomic_write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -2597,6 +2612,9 @@ def build_current_env_execute_budget_approval(
     archive_proposal: str,
     approval_execution_mode: str = APPROVAL_EXECUTION_MODE_HANDOFF_ONLY,
     integrated_opt_in: bool = False,
+    approval_confirmation_token: str = "",
+    dry_run_preflight: dict[str, Any] | None = None,
+    require_preflight_success: bool = False,
 ) -> dict[str, Any]:
     approval_ready = bool(approval_runbook.get("approval_ready", False))
     approval_mode = str(approval_runbook.get("approval_mode") or "handoff_only")
@@ -2623,11 +2641,29 @@ def build_current_env_execute_budget_approval(
     elif approval_execution_mode == APPROVAL_EXECUTION_MODE_INTEGRATED_OPT_IN and approval_mode != "integrated":
         status = APPROVAL_STATUS_BLOCKED
         blockers.append("integrated_opt_in execution requires an integrated approval runbook")
-    elif approval_execution_mode == APPROVAL_EXECUTION_MODE_INTEGRATED_OPT_IN and integrated_opt_in:
-        status = APPROVAL_STATUS_APPLIED
     elif approval_execution_mode == APPROVAL_EXECUTION_MODE_INTEGRATED_OPT_IN and not integrated_opt_in:
         status = APPROVAL_STATUS_BLOCKED
         blockers.append("integrated approval requires explicit opt-in")
+    elif approval_execution_mode == APPROVAL_EXECUTION_MODE_INTEGRATED_OPT_IN:
+        expected_prefix = "confirm-integrated-approval:"
+        confirmation_ok = str(approval_confirmation_token or "").startswith(expected_prefix)
+        preflight_success = bool(
+            dry_run_preflight
+            and str(dry_run_preflight.get("approval_status", "")) == APPROVAL_STATUS_DRY_RUN
+            and not bool(dry_run_preflight.get("registry_updated", False))
+            and not bool(dry_run_preflight.get("baseline_written", False))
+        )
+        if not confirmation_ok:
+            status = APPROVAL_STATUS_BLOCKED
+            blockers.append("integrated approval requires explicit safety confirmation token")
+        elif require_preflight_success and not preflight_success:
+            status = APPROVAL_STATUS_BLOCKED
+            blockers.append("integrated approval requires successful dry-run preflight")
+        elif not preflight_success:
+            status = APPROVAL_STATUS_BLOCKED
+            blockers.append("integrated approval requires dry-run preflight manifest")
+        else:
+            status = APPROVAL_STATUS_APPLIED
     else:
         status = APPROVAL_STATUS_DRY_RUN
     previous_profile = (
@@ -2640,6 +2676,26 @@ def build_current_env_execute_budget_approval(
     baseline_written = status == APPROVAL_STATUS_APPLIED
     proposal_archived = status in {APPROVAL_STATUS_APPLIED, APPROVAL_STATUS_DRY_RUN}
     metadata_path = str(Path(runtime_budget_baseline_out).with_name(Path(runtime_budget_baseline_out).stem + "_approval_metadata.json"))
+    registry_before_hash = sha256_text(json.dumps(runtime_budget_registry, sort_keys=True))
+    registry_after_payload = dict(runtime_budget_registry)
+    if registry_updated:
+        registry_after_payload["active_profile_id"] = new_profile
+        registry_after_payload["active_budget_profile_id"] = new_profile
+        registry_after_payload["previous_active_budget_profile_id"] = previous_profile
+        registry_after_payload["approval_transaction_marker"] = True
+    registry_after_hash = sha256_text(json.dumps(registry_after_payload, sort_keys=True))
+    baseline_payload = {
+        "manifest_version": "runtime_budget_baseline_integrated_approval_marker_v1",
+        "phase": phase,
+        "approved_from_runbook_id": approval_runbook.get("runbook_id"),
+        "previous_active_budget_profile_id": previous_profile,
+        "new_active_budget_profile_id": new_profile,
+        "runtime_budget_current_hash": sha256_text(json.dumps(runtime_budget_current, sort_keys=True)),
+        "runtime_budget_proposal_hash": sha256_text(json.dumps(runtime_budget_proposal, sort_keys=True)),
+        "runtime_budget_proposal_gate_hash": sha256_text(json.dumps(runtime_budget_proposal_gate, sort_keys=True)),
+    }
+    baseline_written_hash = sha256_text(json.dumps(baseline_payload, sort_keys=True)) if baseline_written else None
+    confirmation_hash = sha256_text(str(approval_confirmation_token)) if approval_confirmation_token else None
     payload = {
         "manifest_version": "runtime_current_env_budget_approval_execution_v1",
         "phase": phase,
@@ -2651,11 +2707,29 @@ def build_current_env_execute_budget_approval(
         "approval_mode": approval_mode,
         "approval_execution_mode": approval_execution_mode,
         "allow_integrated_approval": bool(integrated_opt_in),
+        "approval_confirmation_token_present": bool(approval_confirmation_token),
+        "approval_confirmation_token_hash": confirmation_hash,
+        "require_preflight_success": bool(require_preflight_success),
+        "dry_run_preflight_success": bool(
+            dry_run_preflight
+            and str(dry_run_preflight.get("approval_status", "")) == APPROVAL_STATUS_DRY_RUN
+            and not bool(dry_run_preflight.get("registry_updated", False))
+            and not bool(dry_run_preflight.get("baseline_written", False))
+        ),
         "approval_status": status,
         "approval_ready": approval_ready,
         "approval_blockers": sorted(set(blockers)),
         "previous_active_budget_profile_id": previous_profile,
         "new_active_budget_profile_id": new_profile,
+        "registry_before_hash": registry_before_hash,
+        "registry_after_hash": registry_after_hash,
+        "baseline_written_hash": baseline_written_hash,
+        "approval_transaction_id": f"{phase}-approval-tx-{sha256_text(str(approval_runbook.get('runbook_id')) + str(new_profile) + str(confirmation_hash))[:12]}"
+        if status == APPROVAL_STATUS_APPLIED
+        else None,
+        "rollback_hint": "restore runtime budget registry to registry_before_hash and remove emitted budget baseline if post-approval verification fails"
+        if status == APPROVAL_STATUS_APPLIED
+        else "no rollback needed; dry_run/handoff_only did not mutate registry or baseline",
         "registry_updated": registry_updated,
         "baseline_written": baseline_written,
         "proposal_archived": proposal_archived,
@@ -2848,7 +2922,8 @@ def build_operator_runbook_index(
             "related_manifests": {
                 "action_ledger": action_ledger.get("ledger_manifest_path"),
                 "ops_agenda": ops_agenda.get("agenda_manifest_path"),
-                "approval_runbook": approval_runbook.get("runbook_manifest_path"),
+                "approval_runbook": approval_runbook.get("runbook_manifest_path")
+                or approval_runbook.get("approval_runbook_manifest_path"),
                 "approval_execution": approval_execution.get("approval_execution_manifest_path"),
                 "operator_decision": operator_decision.get("decision_manifest_path"),
                 "decision_apply": decision_apply.get("decision_apply_manifest_path"),
@@ -2896,6 +2971,1204 @@ def build_operator_runbook_index(
         "entries": entries,
     }
     payload["runbook_index_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def read_related_manifest(path_value: Any) -> dict[str, Any]:
+    value = str(path_value or "").strip()
+    if not value:
+        return {}
+    path = Path(value)
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
+def build_operator_runbook_catalog(
+    *,
+    phase: str,
+    runbook_index: dict[str, Any],
+    catalog_in: dict[str, Any],
+    current_time_override: str | None = None,
+) -> dict[str, Any]:
+    now = current_time_override or runtime_gate.timestamp_utc_now()
+    existing_entries = {
+        str(entry.get("runbook_id") or ""): dict(entry)
+        for entry in catalog_in.get("entries", [])
+        if isinstance(entry, dict) and str(entry.get("runbook_id") or "")
+    }
+    entries: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index_entry in runbook_index.get("entries", []):
+        if not isinstance(index_entry, dict):
+            continue
+        runbook_id = str(index_entry.get("runbook_id") or "")
+        if not runbook_id:
+            continue
+        seen.add(runbook_id)
+        related = dict(index_entry.get("related_manifests", {}))
+        decision_manifest = read_related_manifest(related.get("operator_decision"))
+        decision_apply_manifest = read_related_manifest(related.get("decision_apply"))
+        approval_execution_manifest = read_related_manifest(related.get("approval_execution"))
+        prior = existing_entries.get(runbook_id, {})
+        current_status = str(index_entry.get("current_status") or prior.get("current_status") or ACTION_STATUS_PLANNED)
+        latest_closure = (
+            decision_apply_manifest.get("closure_status")
+            or prior.get("latest_closure_status")
+            or CLOSURE_STATUS_OPEN
+        )
+        runbook_type = str(index_entry.get("runbook_type") or prior.get("runbook_type") or "")
+        retained_reason = bool(
+            decision_manifest.get("decision_reason")
+            or decision_manifest.get("decision_note")
+            or prior.get("retained_reason_metadata", False)
+        )
+        retained_defer = bool(
+            decision_manifest.get("defer_until")
+            or decision_apply_manifest.get("defer_until")
+            or prior.get("retained_defer_metadata", False)
+        )
+        retained_retry = bool(
+            decision_apply_manifest.get("retry_action_id")
+            or decision_apply_manifest.get("next_retry_action_id")
+            or int(decision_apply_manifest.get("retry_count", 0) or 0) > 0
+            or prior.get("retained_retry_metadata", False)
+        )
+        entry = {
+            "runbook_id": runbook_id,
+            "action_id": index_entry.get("action_id"),
+            "runbook_type": runbook_type,
+            "first_seen_at": prior.get("first_seen_at") or now,
+            "last_seen_at": now,
+            "phase_first_seen": prior.get("phase_first_seen") or phase,
+            "phase_last_seen": phase,
+            "current_status": current_status,
+            "execution_count": int(prior.get("execution_count", 0))
+            + (1 if related.get("approval_execution") or approval_execution_manifest else 0),
+            "decision_count": int(prior.get("decision_count", 0)) + (1 if decision_manifest else 0),
+            "apply_count": int(prior.get("apply_count", 0)) + (1 if decision_apply_manifest else 0),
+            "close_count": int(prior.get("close_count", 0))
+            + (1 if current_status in {ACTION_STATUS_CLOSED, ACTION_STATUS_SKIPPED, ACTION_STATUS_REJECTED} or latest_closure in {CLOSURE_STATUS_CLOSED, CLOSURE_STATUS_REJECTED, CLOSURE_STATUS_APPROVAL_APPLIED} else 0),
+            "failure_count": int(prior.get("failure_count", 0)) + (1 if current_status == ACTION_STATUS_FAILED else 0),
+            "latest_decision_id": decision_manifest.get("decision_id") or prior.get("latest_decision_id"),
+            "latest_execution_manifest": related.get("approval_execution") or prior.get("latest_execution_manifest"),
+            "latest_apply_manifest": related.get("decision_apply") or prior.get("latest_apply_manifest"),
+            "latest_closure_status": latest_closure,
+            "safety_level": index_entry.get("safety_level") or prior.get("safety_level") or "dry_run",
+            "integrated_opt_in_required": bool(index_entry.get("safety_level") == "integrated_opt_in" or prior.get("integrated_opt_in_required", False)),
+            "mutates_registry": bool(index_entry.get("mutates_registry", False)),
+            "retained_reason_metadata": retained_reason,
+            "retained_defer_metadata": retained_defer,
+            "retained_retry_metadata": retained_retry,
+            "retained_approval_pointers": bool(
+                related.get("approval_runbook")
+                and (related.get("approval_execution") or approval_execution_manifest)
+            )
+            or bool(
+                runbook_type == "approval"
+                and (related.get("approval_execution") or (related.get("operator_decision") and related.get("decision_apply")))
+            )
+            or bool(prior.get("retained_approval_pointers", False)),
+            "related_manifests": related,
+            "history": list(prior.get("history", []))
+            + [
+                {
+                    "phase": phase,
+                    "seen_at": now,
+                    "current_status": current_status,
+                    "closure_status": latest_closure,
+                    "decision_id": decision_manifest.get("decision_id"),
+                    "execution_manifest": related.get("approval_execution"),
+                    "apply_manifest": related.get("decision_apply"),
+                }
+            ],
+        }
+        entries.append(entry)
+    for runbook_id, prior in existing_entries.items():
+        if runbook_id in seen:
+            continue
+        entry = dict(prior)
+        entry["last_seen_at"] = entry.get("last_seen_at") or now
+        entries.append(entry)
+    active_statuses = {ACTION_STATUS_PLANNED, ACTION_STATUS_EXECUTED, ACTION_STATUS_FAILED, ACTION_STATUS_DEFERRED, ACTION_STATUS_RETRY_PENDING}
+    active_entries = [entry for entry in entries if str(entry.get("current_status")) in active_statuses]
+    resolved_entries = [entry for entry in entries if entry not in active_entries]
+    payload = {
+        "manifest_version": "operator_runbook_catalog_v1",
+        "phase": phase,
+        "generated_at_utc": now,
+        "catalog_entry_count": len(entries),
+        "active_runbook_count": len(active_entries),
+        "resolved_runbook_count": len(resolved_entries),
+        "integrated_opt_in_required_count": sum(1 for entry in entries if bool(entry.get("integrated_opt_in_required", False))),
+        "replayable_runbook_count": sum(1 for entry in entries if bool(entry.get("related_manifests", {}))),
+        "entries": entries,
+    }
+    payload["catalog_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def normalize_operator_runbook_retention_policy(raw_policy: dict[str, Any] | None, *, phase: str) -> dict[str, Any]:
+    policy = json.loads(json.dumps(DEFAULT_OPERATOR_RUNBOOK_RETENTION_POLICY))
+    if raw_policy:
+        for key, value in raw_policy.items():
+            policy[key] = value
+    policy["phase"] = phase
+    policy["generated_at_utc"] = runtime_gate.timestamp_utc_now()
+    policy["policy_hash"] = sha256_text(json.dumps(policy, sort_keys=True))
+    return policy
+
+
+def runbook_is_active(entry: dict[str, Any]) -> bool:
+    status = str(entry.get("current_status") or entry.get("action_status") or "")
+    closure = str(entry.get("latest_closure_status") or entry.get("closure_status") or "")
+    return status in {ACTION_STATUS_PLANNED, ACTION_STATUS_EXECUTED, ACTION_STATUS_FAILED, ACTION_STATUS_DEFERRED, ACTION_STATUS_RETRY_PENDING} or closure in {
+        CLOSURE_STATUS_OPEN,
+        CLOSURE_STATUS_DEFERRED,
+        CLOSURE_STATUS_RETRY_PENDING,
+    }
+
+
+def ledger_actions_by_id(action_ledger: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    return {
+        str(entry.get("action_id") or ""): entry
+        for entry in action_ledger.get("entries", [])
+        if isinstance(entry, dict) and str(entry.get("action_id") or "")
+    }
+
+
+def build_operator_runbook_catalog_prune(
+    *,
+    phase: str,
+    runbook_catalog: dict[str, Any],
+    action_ledger: dict[str, Any],
+    retention_policy: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    now = parse_timestamp_utc(runtime_gate.timestamp_utc_now()) or datetime.now(timezone.utc)
+    policy = normalize_operator_runbook_retention_policy(retention_policy, phase=phase)
+    ledger_by_id = ledger_actions_by_id(action_ledger)
+    keep_latest_per_type = int(policy.get("keep_latest_resolved_per_type", 0) or 0)
+    archive_after_days = float(policy.get("archive_resolved_after_days", 0) or 0)
+    prune_after_days = float(policy.get("prune_archived_after_days", 0) or 0)
+    entries = [entry for entry in runbook_catalog.get("entries", []) if isinstance(entry, dict)]
+
+    resolved_by_type: dict[str, list[dict[str, Any]]] = {}
+    for entry in entries:
+        if not runbook_is_active(entry):
+            resolved_by_type.setdefault(str(entry.get("runbook_type") or "unknown"), []).append(entry)
+    latest_resolved_ids: set[str] = set()
+    for group in resolved_by_type.values():
+        sorted_group = sorted(group, key=lambda item: str(item.get("last_seen_at") or item.get("first_seen_at") or ""), reverse=True)
+        latest_resolved_ids.update(str(item.get("runbook_id") or "") for item in sorted_group[:keep_latest_per_type])
+
+    retained: list[dict[str, Any]] = []
+    archived: list[dict[str, Any]] = []
+    pruned_ids: list[str] = []
+    blocked_prune_ids: list[str] = []
+    counts = {
+        "active_retained_count": 0,
+        "failed_retained_count": 0,
+        "retry_pending_retained_count": 0,
+        "approval_retained_count": 0,
+        "resolved_retained_count": 0,
+    }
+    for entry in entries:
+        runbook_id = str(entry.get("runbook_id") or "")
+        action_id = str(entry.get("action_id") or "")
+        status = str(entry.get("current_status") or "")
+        runbook_type = str(entry.get("runbook_type") or "")
+        ledger_entry = ledger_by_id.get(action_id, {})
+        open_ledger_pointer = bool(ledger_entry) and str(ledger_entry.get("closure_status") or CLOSURE_STATUS_OPEN) not in {
+            CLOSURE_STATUS_CLOSED,
+            CLOSURE_STATUS_REJECTED,
+            CLOSURE_STATUS_APPROVAL_APPLIED,
+        }
+        approval_transaction = bool(
+            entry.get("retained_approval_pointers")
+            or ledger_entry.get("approval_execution_id")
+            or ledger_entry.get("approval_transaction_id")
+            or runbook_type == "approval"
+        )
+        active = runbook_is_active(entry)
+        failed = status == ACTION_STATUS_FAILED or int(entry.get("failure_count", 0) or 0) > 0
+        retry_pending = status == ACTION_STATUS_RETRY_PENDING or str(ledger_entry.get("action_status") or "") == ACTION_STATUS_RETRY_PENDING
+        integrated = bool(entry.get("integrated_opt_in_required", False))
+        entry_age = age_days(str(entry.get("last_seen_at") or entry.get("first_seen_at") or ""), now=now)
+        entry_age = 0.0 if entry_age is None else float(entry_age)
+
+        keep = False
+        keep_reason: list[str] = []
+        if active and bool(policy.get("keep_active_runbooks", True)):
+            keep = True
+            keep_reason.append("active runbook retained")
+            counts["active_retained_count"] += 1
+        if failed and bool(policy.get("keep_failed_runbooks", True)):
+            keep = True
+            keep_reason.append("failed runbook retained")
+            counts["failed_retained_count"] += 1
+        if retry_pending and bool(policy.get("keep_retry_pending_runbooks", True)):
+            keep = True
+            keep_reason.append("retry-pending runbook retained")
+            counts["retry_pending_retained_count"] += 1
+        if integrated and bool(policy.get("keep_integrated_approval_runbooks", True)):
+            keep = True
+            keep_reason.append("integrated approval runbook retained")
+        if approval_transaction and bool(policy.get("keep_runbook_with_approval_transaction", True)):
+            keep = True
+            keep_reason.append("approval transaction or handoff pointer retained")
+            counts["approval_retained_count"] += 1
+        if open_ledger_pointer and bool(policy.get("keep_runbook_with_open_ledger_pointer", True)):
+            keep = True
+            keep_reason.append("open ledger pointer blocks pruning")
+            blocked_prune_ids.append(runbook_id)
+        if runbook_id in latest_resolved_ids:
+            keep = True
+            keep_reason.append("latest resolved runbook retained by type")
+            counts["resolved_retained_count"] += 1
+
+        updated = dict(entry)
+        updated["retention_decision"] = "retain" if keep else "archive" if entry_age >= archive_after_days else "retain"
+        updated["retention_reason"] = sorted(set(keep_reason)) if keep_reason else ["resolved runbook is below archive age threshold"]
+        if keep or entry_age < archive_after_days:
+            retained.append(updated)
+        elif entry_age >= archive_after_days + prune_after_days and not approval_transaction:
+            pruned_ids.append(runbook_id)
+        else:
+            archived_entry = dict(updated)
+            archived_entry["archived_at"] = runtime_gate.timestamp_utc_now()
+            archived.append(archived_entry)
+
+    pruned_catalog = dict(runbook_catalog)
+    pruned_catalog["manifest_version"] = "operator_runbook_catalog_pruned_v1"
+    pruned_catalog["phase"] = phase
+    pruned_catalog["generated_at_utc"] = runtime_gate.timestamp_utc_now()
+    pruned_catalog["entries"] = retained
+    pruned_catalog["catalog_entry_count"] = len(retained)
+    pruned_catalog["active_runbook_count"] = sum(1 for entry in retained if runbook_is_active(entry))
+    pruned_catalog["resolved_runbook_count"] = len(retained) - int(pruned_catalog["active_runbook_count"])
+    pruned_catalog["catalog_hash"] = sha256_text(json.dumps(pruned_catalog, sort_keys=True))
+
+    archive = {
+        "manifest_version": "operator_runbook_archive_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "archived_count": len(archived),
+        "pruned_count": len(pruned_ids),
+        "entries": archived,
+        "pruned_runbook_ids": sorted(pruned_ids),
+    }
+    archive["archive_hash"] = sha256_text(json.dumps(archive, sort_keys=True))
+
+    summary = {
+        "manifest_version": "operator_runbook_prune_summary_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        **counts,
+        "archived_count": len(archived),
+        "pruned_count": len(pruned_ids),
+        "blocked_prune_count": len(set(blocked_prune_ids)),
+        "blocked_prune_runbook_ids": sorted(set(blocked_prune_ids)),
+        "prune_verdict": "PASS",
+        "retention_policy_hash": policy.get("policy_hash"),
+        "pruned_catalog_hash": pruned_catalog.get("catalog_hash"),
+        "archive_hash": archive.get("archive_hash"),
+        "rationale": [
+            "active, failed, retry-pending, approval-related, and open-ledger runbooks are retained",
+            "eligible resolved runbooks move to an archive manifest before pruning",
+        ],
+    }
+    summary["prune_summary_hash"] = sha256_text(json.dumps(summary, sort_keys=True))
+    return pruned_catalog, archive, summary
+
+
+def build_operator_runbook_lifecycle_validation(
+    *,
+    phase: str,
+    runbook_catalog: dict[str, Any],
+    action_ledger: dict[str, Any],
+    current_manifest_root: Path,
+) -> dict[str, Any]:
+    ledger_by_id = ledger_actions_by_id(action_ledger)
+    missing_inputs: list[str] = []
+    stale_inputs: list[str] = []
+    superseded_ids: list[str] = []
+    archived_ids: list[str] = []
+    replayable_ids: list[str] = []
+    non_replayable_ids: list[str] = []
+    mutation_risk_ids: list[str] = []
+    integrated_blocked_ids: list[str] = []
+    stale_but_safe_ids: list[str] = []
+    entries = [entry for entry in runbook_catalog.get("entries", []) if isinstance(entry, dict)]
+    root = current_manifest_root.resolve()
+
+    def resolve_lifecycle_pointer(raw_value: str) -> Path:
+        path = Path(raw_value)
+        if path.is_absolute():
+            return path
+        return root / path
+
+    for entry in entries:
+        runbook_id = str(entry.get("runbook_id") or entry.get("action_id") or "")
+        action_id = str(entry.get("action_id") or "")
+        status = str(entry.get("current_status") or "")
+        active = runbook_is_active(entry)
+        related = dict(entry.get("related_manifests", {}))
+        related_paths = [str(value) for value in related.values() if str(value or "").strip()]
+        missing_for_entry = []
+        stale_for_entry = []
+        for value in related_paths:
+            path = resolve_lifecycle_pointer(value)
+            if not path.exists():
+                missing_for_entry.append(value)
+                continue
+            try:
+                path.resolve().relative_to(root)
+            except ValueError:
+                stale_for_entry.append(value)
+        if status == ACTION_STATUS_SUPERSEDED or entry.get("superseded_by"):
+            superseded_ids.append(runbook_id)
+        if str(entry.get("retention_decision") or "") == "archive" or bool(entry.get("archived_at")):
+            archived_ids.append(runbook_id)
+        mutates = bool(entry.get("mutates_registry", False))
+        integrated = bool(entry.get("integrated_opt_in_required", False)) or str(entry.get("safety_level") or "") == "integrated_opt_in"
+        has_guardrail = integrated and not bool(entry.get("executable", True))
+        if mutates and not has_guardrail:
+            mutation_risk_ids.append(runbook_id)
+        if integrated and has_guardrail:
+            integrated_blocked_ids.append(runbook_id)
+        if active and missing_for_entry:
+            missing_inputs.extend(f"{runbook_id}:{path}" for path in missing_for_entry)
+        elif missing_for_entry:
+            stale_but_safe_ids.append(runbook_id)
+        if active and stale_for_entry:
+            stale_inputs.extend(f"{runbook_id}:{path}" for path in stale_for_entry)
+        elif stale_for_entry:
+            stale_but_safe_ids.append(runbook_id)
+        ledger_entry = ledger_by_id.get(action_id, {})
+        replayable = bool(related_paths) and not (active and missing_for_entry)
+        if ledger_entry and str(ledger_entry.get("action_status") or "") == ACTION_STATUS_SUPERSEDED:
+            superseded_ids.append(runbook_id)
+            replayable = False
+        if replayable:
+            replayable_ids.append(runbook_id)
+        else:
+            non_replayable_ids.append(runbook_id)
+
+    if missing_inputs or mutation_risk_ids:
+        verdict = "ACTION_REQUIRED"
+    elif stale_inputs or superseded_ids or stale_but_safe_ids:
+        verdict = "WARN"
+    else:
+        verdict = "PASS"
+    payload = {
+        "manifest_version": "operator_runbook_lifecycle_validation_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "validation_verdict": verdict,
+        "missing_input_count": len(missing_inputs),
+        "stale_input_count": len(stale_inputs),
+        "superseded_runbook_count": len(set(superseded_ids)),
+        "archived_runbook_count": len(set(archived_ids)),
+        "replayable_runbook_count": len(set(replayable_ids)),
+        "non_replayable_runbook_count": len(set(non_replayable_ids)),
+        "mutation_risk_count": len(set(mutation_risk_ids)),
+        "integrated_opt_in_blocked_count": len(set(integrated_blocked_ids)),
+        "stale_but_safe_count": len(set(stale_but_safe_ids)),
+        "affected_action_ids": sorted(set([item.split(":", 1)[0] for item in missing_inputs + stale_inputs] + mutation_risk_ids)),
+        "missing_inputs": missing_inputs,
+        "stale_inputs": stale_inputs,
+        "superseded_runbook_ids": sorted(set(superseded_ids)),
+        "archived_runbook_ids": sorted(set(archived_ids)),
+        "mutation_risk_runbook_ids": sorted(set(mutation_risk_ids)),
+        "integrated_opt_in_blocked_runbook_ids": sorted(set(integrated_blocked_ids)),
+        "stale_but_safe_runbook_ids": sorted(set(stale_but_safe_ids)),
+        "rationale": [
+            "active executable runbooks with missing critical inputs require operator action",
+            "stale or archived resolved runbooks are retained as non-blocking history unless they can mutate state",
+        ],
+    }
+    payload["validation_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+PATH_FIELD_HINTS = (
+    "path",
+    "manifest",
+    "bundle",
+    "zip",
+    "report",
+    "ledger",
+    "catalog",
+    "summary",
+    "baseline",
+    "registry",
+    "runbook",
+    "execution",
+    "apply",
+)
+
+
+def looks_like_artifact_pointer(value: str) -> bool:
+    text = value.strip()
+    if not text or text.startswith(("http://", "https://")):
+        return False
+    if "\n" in text:
+        return False
+    if text.startswith(("/", "artifacts/", "manifests/")):
+        return True
+    if "/" in text and any(text.endswith(suffix) for suffix in (".json", ".txt", ".zip", ".log")):
+        return True
+    return False
+
+
+def pointer_field_is_path_like(field_path: str, value: str) -> bool:
+    lower = field_path.lower()
+    if not looks_like_artifact_pointer(value):
+        return False
+    if "related_manifests" in lower:
+        return True
+    return any(hint in lower for hint in PATH_FIELD_HINTS)
+
+
+def iter_artifact_pointers(obj: Any, *, prefix: str = "") -> list[tuple[str, str]]:
+    pointers: list[tuple[str, str]] = []
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            child_prefix = f"{prefix}.{key}" if prefix else str(key)
+            if isinstance(value, str) and pointer_field_is_path_like(child_prefix, value):
+                pointers.append((child_prefix, value))
+            elif isinstance(value, (dict, list)):
+                pointers.extend(iter_artifact_pointers(value, prefix=child_prefix))
+    elif isinstance(obj, list):
+        for index, value in enumerate(obj):
+            child_prefix = f"{prefix}[{index}]"
+            if isinstance(value, str) and pointer_field_is_path_like(child_prefix, value):
+                pointers.append((child_prefix, value))
+            elif isinstance(value, (dict, list)):
+                pointers.extend(iter_artifact_pointers(value, prefix=child_prefix))
+    return pointers
+
+
+def classify_pointer_path(value: str, *, published_root: Path, artifact_root: Path) -> tuple[str, bool]:
+    path = Path(value)
+    if value.startswith(("/private/tmp/", "/tmp/")):
+        return "absolute_tmp", path.exists()
+    if path.is_absolute():
+        exists = path.exists()
+        try:
+            path.resolve().relative_to(published_root.resolve())
+            return "published_abs", exists
+        except ValueError:
+            pass
+        try:
+            path.resolve().relative_to(artifact_root.resolve())
+            return "authoritative_abs", exists
+        except ValueError:
+            pass
+        return ("authoritative_abs" if exists else "missing"), exists
+    if value.startswith(("manifests/", "reports/", "curated/", "light_ops/")):
+        return "bundle_relative", (artifact_root / value).exists() or (published_root / value).exists()
+    if value.startswith("artifacts/"):
+        return "artifact_root_relative", Path(value).exists()
+    return "unknown", (artifact_root / value).exists() or (published_root / value).exists()
+
+
+def candidate_rewrite_paths(value: str, *, published_root: Path, artifact_root: Path) -> list[dict[str, Any]]:
+    path = Path(value)
+    basename = path.name
+    candidates: list[dict[str, Any]] = []
+    if not basename:
+        return candidates
+    candidate_specs = [
+        ("artifact_root", artifact_root / "manifests" / basename, f"manifests/{basename}"),
+        ("artifact_root", artifact_root / basename, basename),
+        ("published_root", published_root / "manifests" / basename, f"manifests/{basename}"),
+    ]
+    for root_kind, candidate, rewrite in candidate_specs:
+        if candidate.exists():
+            candidates.append(
+                {
+                    "root_kind": root_kind,
+                    "candidate_path": rewrite,
+                    "rewrite_path": rewrite,
+                    "candidate_hash": sha256_file(candidate),
+                }
+            )
+    if published_root.exists():
+        for candidate in sorted(published_root.rglob(basename))[:3]:
+            rewrite = str(candidate.relative_to(published_root))
+            if not any(item["rewrite_path"] == rewrite and item["root_kind"] == "published_root" for item in candidates):
+                candidates.append(
+                    {
+                        "root_kind": "published_root",
+                        "candidate_path": rewrite,
+                        "rewrite_path": rewrite,
+                        "candidate_hash": sha256_file(candidate),
+                    }
+                )
+    return candidates
+
+
+def ledger_entry_is_active(entry: dict[str, Any]) -> bool:
+    status = str(entry.get("action_status") or "")
+    closure = str(entry.get("closure_status") or "")
+    return status in {ACTION_STATUS_PLANNED, ACTION_STATUS_EXECUTED, ACTION_STATUS_FAILED, ACTION_STATUS_DEFERRED, ACTION_STATUS_RETRY_PENDING} or closure in {
+        CLOSURE_STATUS_OPEN,
+        CLOSURE_STATUS_DEFERRED,
+        CLOSURE_STATUS_RETRY_PENDING,
+    }
+
+
+def build_operator_runbook_pointer_audit(
+    *,
+    phase: str,
+    runbook_catalog: dict[str, Any],
+    action_ledger: dict[str, Any],
+    published_root: Path,
+    artifact_root: Path,
+) -> dict[str, Any]:
+    ledger_by_id = ledger_actions_by_id(action_ledger)
+    audit_entries: list[dict[str, Any]] = []
+
+    def add_pointer_entry(
+        *,
+        source_kind: str,
+        source_id: str,
+        action_id: str,
+        pointer_field: str,
+        original_path: str,
+        active: bool,
+    ) -> None:
+        path_kind, exists_now = classify_pointer_path(original_path, published_root=published_root, artifact_root=artifact_root)
+        candidates = candidate_rewrite_paths(original_path, published_root=published_root, artifact_root=artifact_root)
+        selected = candidates[0]["rewrite_path"] if candidates else None
+        can_rewrite = bool(selected)
+        archive_waiver_allowed = (not active) and (not can_rewrite)
+        severity = "INFO"
+        rationale = "pointer is already resolvable"
+        if path_kind == "absolute_tmp":
+            severity = "WARN" if can_rewrite or archive_waiver_allowed else "ACTION_REQUIRED"
+            rationale = "ephemeral /tmp pointer must be rewritten or waived if closed historical provenance"
+        if not exists_now and not can_rewrite:
+            severity = "ACTION_REQUIRED" if active else "WARN"
+            rationale = "active missing pointer blocks lifecycle validation" if active else "closed historical pointer can be waived with retained summary/hash"
+        if active and not can_rewrite and not exists_now:
+            severity = "FAIL"
+        audit_entries.append(
+            {
+                "source_kind": source_kind,
+                "runbook_id": source_id if source_kind == "runbook_catalog" else None,
+                "action_id": action_id,
+                "pointer_field": pointer_field,
+                "original_path": original_path,
+                "path_kind": path_kind,
+                "exists_now": exists_now,
+                "expected_artifact_kind": Path(original_path).name or "unknown",
+                "can_rewrite": can_rewrite,
+                "candidate_rewrite_paths": candidates,
+                "selected_rewrite_path": selected,
+                "archive_waiver_allowed": archive_waiver_allowed,
+                "severity": severity,
+                "rationale": rationale,
+            }
+        )
+
+    for entry in [item for item in runbook_catalog.get("entries", []) if isinstance(item, dict)]:
+        runbook_id = str(entry.get("runbook_id") or entry.get("action_id") or "")
+        action_id = str(entry.get("action_id") or "")
+        active = runbook_is_active(entry)
+        for field_path, value in iter_artifact_pointers(entry):
+            add_pointer_entry(
+                source_kind="runbook_catalog",
+                source_id=runbook_id,
+                action_id=action_id,
+                pointer_field=f"entries[{runbook_id}].{field_path}",
+                original_path=value,
+                active=active,
+            )
+    for entry in [item for item in action_ledger.get("entries", []) if isinstance(item, dict)]:
+        action_id = str(entry.get("action_id") or "")
+        active = ledger_entry_is_active(entry)
+        linked_runbook = next(
+            (str(item.get("runbook_id") or "") for item in runbook_catalog.get("entries", []) if str(item.get("action_id") or "") == action_id),
+            "",
+        )
+        for field_path, value in iter_artifact_pointers(entry):
+            add_pointer_entry(
+                source_kind="action_ledger",
+                source_id=linked_runbook,
+                action_id=action_id,
+                pointer_field=f"entries[{action_id}].{field_path}",
+                original_path=value,
+                active=active,
+            )
+
+    severity_order = {"INFO": 0, "WARN": 1, "ACTION_REQUIRED": 2, "FAIL": 3}
+    highest = max((severity_order.get(str(item.get("severity")), 0) for item in audit_entries), default=0)
+    audit_verdict = "PASS"
+    if highest >= 3:
+        audit_verdict = "FAIL"
+    elif highest >= 2:
+        audit_verdict = "ACTION_REQUIRED"
+    elif highest >= 1:
+        audit_verdict = "WARN"
+    payload = {
+        "manifest_version": "operator_runbook_pointer_audit_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "audit_verdict": audit_verdict,
+        "pointer_count": len(audit_entries),
+        "absolute_tmp_pointer_count": sum(1 for item in audit_entries if item.get("path_kind") == "absolute_tmp"),
+        "rewritable_pointer_count": sum(1 for item in audit_entries if item.get("can_rewrite")),
+        "waivable_archived_pointer_count": sum(1 for item in audit_entries if item.get("archive_waiver_allowed")),
+        "unresolved_active_pointer_count": sum(1 for item in audit_entries if item.get("severity") == "FAIL"),
+        "entries": audit_entries,
+        "rationale": [
+            "ephemeral /tmp pointers are provenance debt and must not remain in active runbook inputs",
+            "closed historical pointers may be waived only when the operational summary/hash is retained",
+        ],
+    }
+    payload["audit_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def rewrite_artifact_pointers(obj: Any, rewrite_map: dict[str, str]) -> Any:
+    if isinstance(obj, dict):
+        return {key: rewrite_artifact_pointers(value, rewrite_map) for key, value in obj.items()}
+    if isinstance(obj, list):
+        return [rewrite_artifact_pointers(value, rewrite_map) for value in obj]
+    if isinstance(obj, str) and obj in rewrite_map:
+        return rewrite_map[obj]
+    return obj
+
+
+def build_operator_runbook_provenance_migration(
+    *,
+    phase: str,
+    runbook_catalog: dict[str, Any],
+    action_ledger: dict[str, Any],
+    pointer_audit: dict[str, Any],
+    allow_archived_waiver: bool,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    source_catalog_hash = runbook_catalog.get("catalog_hash") or sha256_text(json.dumps(runbook_catalog, sort_keys=True))
+    source_ledger_hash = action_ledger.get("ledger_hash") or sha256_text(json.dumps(action_ledger, sort_keys=True))
+    rewrite_map: dict[str, str] = {}
+    records: list[dict[str, Any]] = []
+    waived = 0
+    unresolved_active = 0
+    unresolved_archived = 0
+
+    for entry in [item for item in pointer_audit.get("entries", []) if isinstance(item, dict)]:
+        original = str(entry.get("original_path") or "")
+        selected = str(entry.get("selected_rewrite_path") or "")
+        record = dict(entry)
+        if selected:
+            rewrite_map[original] = selected
+            record["migration_action"] = "rewrite"
+        elif bool(entry.get("archive_waiver_allowed")) and allow_archived_waiver:
+            waived += 1
+            waiver_token = f"waived_archived_pointer:{sha256_text(original)[:16]}"
+            rewrite_map[original] = waiver_token
+            record["migration_action"] = "waive_archived"
+            record["waiver_token"] = waiver_token
+            record["waiver_reason"] = "closed historical pointer retained only as provenance summary"
+        elif str(entry.get("severity")) == "FAIL":
+            unresolved_active += 1
+            record["migration_action"] = "unresolved_active"
+        else:
+            unresolved_archived += 1
+            record["migration_action"] = "unresolved_archived"
+        records.append(record)
+
+    migrated_catalog = rewrite_artifact_pointers(runbook_catalog, rewrite_map)
+    migrated_ledger = rewrite_artifact_pointers(action_ledger, rewrite_map)
+    migrated_catalog["manifest_version"] = "operator_runbook_catalog_migrated_v1"
+    migrated_catalog["phase"] = phase
+    migrated_catalog["generated_at_utc"] = runtime_gate.timestamp_utc_now()
+    migrated_catalog["source_catalog_hash"] = source_catalog_hash
+    migrated_catalog["provenance_migration_applied"] = True
+    migrated_catalog["rewritten_pointer_count"] = len(set(rewrite_map))
+    migrated_catalog["waived_archived_pointer_count"] = waived
+    migrated_catalog["catalog_hash"] = sha256_text(json.dumps(migrated_catalog, sort_keys=True))
+
+    migrated_ledger["manifest_version"] = "runtime_current_env_action_ledger_migrated_v1"
+    migrated_ledger["phase"] = phase
+    migrated_ledger["generated_at_utc"] = runtime_gate.timestamp_utc_now()
+    migrated_ledger["source_ledger_hash"] = source_ledger_hash
+    migrated_ledger["provenance_migration_applied"] = True
+    migrated_ledger["rewritten_pointer_count"] = len(set(rewrite_map))
+    migrated_ledger["waived_archived_pointer_count"] = waived
+    migrated_ledger["ledger_hash"] = sha256_text(json.dumps(migrated_ledger, sort_keys=True))
+
+    if unresolved_active:
+        verdict = "FAIL"
+    elif unresolved_archived:
+        verdict = "ACTION_REQUIRED"
+    elif waived:
+        verdict = "PASS_WITH_WAIVERS"
+    else:
+        verdict = "PASS"
+    report = {
+        "manifest_version": "operator_runbook_provenance_migration_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "migration_id": f"{phase}-runbook-provenance-migration",
+        "source_catalog_hash": source_catalog_hash,
+        "source_ledger_hash": source_ledger_hash,
+        "migrated_catalog_hash": migrated_catalog.get("catalog_hash"),
+        "migrated_ledger_hash": migrated_ledger.get("ledger_hash"),
+        "rewritten_pointer_count": len(set(rewrite_map)),
+        "waived_archived_pointer_count": waived,
+        "unresolved_active_pointer_count": unresolved_active,
+        "unresolved_archived_pointer_count": unresolved_archived,
+        "migration_verdict": verdict,
+        "per_pointer": records,
+        "rationale": [
+            "rewritable pointers are normalized to artifact-root or published-root relative paths",
+            "closed historical pointers without a surviving artifact can be waived only with allow-archived-waiver",
+        ],
+    }
+    report["migration_hash"] = sha256_text(json.dumps(report, sort_keys=True))
+    return migrated_catalog, migrated_ledger, report
+
+
+def original_provenance_field(field_path: str) -> bool:
+    lower = field_path.lower()
+    return any(
+        token in lower
+        for token in (
+            "original_path",
+            "candidate_path",
+            "source_path",
+            "source_root",
+            "authoritative_root",
+            "published_root",
+            "staged_root",
+        )
+    )
+
+
+def build_operator_artifact_path_policy_lint(
+    *,
+    phase: str,
+    manifest_root: Path,
+    published_root: Path,
+) -> dict[str, Any]:
+    def phase51_policy_target(path: Path) -> bool:
+        name = path.name
+        if name == "bundle_metadata.json":
+            return True
+        if phase not in name:
+            return False
+        if "migrated" in name or "provenance_migration" in name or "pointer_audit" in name:
+            return True
+        if "lifecycle_validation" in name and ("_after" in name or "after_migration" in name):
+            return True
+        if "path_policy_lint" in name or "policy_ops_summary" in name:
+            return True
+        return False
+
+    if manifest_root.is_file():
+        files = [manifest_root]
+    else:
+        files = [
+            path
+            for path in sorted(manifest_root.rglob("*.json"))
+            if phase51_policy_target(path)
+        ]
+    if manifest_root.is_file():
+        artifact_base = manifest_root.parent.parent if manifest_root.parent.name == "manifests" else manifest_root.parent
+        manifest_dir = manifest_root.parent
+    else:
+        artifact_base = manifest_root.parent if manifest_root.name == "manifests" else manifest_root
+        manifest_dir = manifest_root
+    forbidden: list[dict[str, Any]] = []
+    dangling: list[dict[str, Any]] = []
+    allowed_external = 0
+    scanned = 0
+    for path in files:
+        try:
+            payload = read_json(path)
+        except Exception:
+            continue
+        scanned += 1
+        for field_path, value in iter_artifact_pointers(payload):
+            if value.startswith(("/private/tmp/", "/tmp/")):
+                if original_provenance_field(field_path):
+                    allowed_external += 1
+                else:
+                    forbidden.append({"manifest": str(path), "field": field_path, "path": value, "reason": "ephemeral tmp path"})
+                continue
+            pointer = Path(value)
+            if pointer.is_absolute():
+                try:
+                    pointer.resolve().relative_to(manifest_root.resolve())
+                    continue
+                except ValueError:
+                    pass
+                try:
+                    pointer.resolve().relative_to(published_root.resolve())
+                    continue
+                except ValueError:
+                    pass
+                if original_provenance_field(field_path):
+                    allowed_external += 1
+                else:
+                    forbidden.append({"manifest": str(path), "field": field_path, "path": value, "reason": "absolute path outside allowed roots"})
+                continue
+            if value.startswith("artifacts/"):
+                candidate = Path(value)
+            elif value.startswith("manifests/"):
+                candidate = artifact_base / value
+            else:
+                candidate = manifest_dir / value
+            if not candidate.exists() and not (published_root / value).exists():
+                dangling.append({"manifest": str(path), "field": field_path, "path": value, "reason": "relative path does not resolve"})
+    verdict = "PASS"
+    if forbidden:
+        verdict = "FAIL"
+    elif dangling:
+        verdict = "ACTION_REQUIRED"
+    payload = {
+        "manifest_version": "operator_artifact_path_policy_lint_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "lint_verdict": verdict,
+        "scanned_manifest_count": scanned,
+        "forbidden_path_count": len(forbidden),
+        "dangling_path_count": len(dangling),
+        "allowed_external_reference_count": allowed_external,
+        "forbidden_paths": forbidden,
+        "dangling_paths": dangling,
+        "rationale": [
+            "active operator artifacts must use bundle-relative, artifact-root-relative, or published-root-relative pointers",
+            "ephemeral tmp paths are allowed only inside explicit provenance original_path/source_path fields",
+        ],
+    }
+    payload["lint_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_integrated_approval_mutation_audit(
+    *,
+    phase: str,
+    approval_execution: dict[str, Any],
+    runtime_budget_registry: dict[str, Any],
+    runtime_budget_baseline: dict[str, Any],
+) -> dict[str, Any]:
+    mode = str(approval_execution.get("approval_execution_mode") or approval_execution.get("approval_mode") or APPROVAL_EXECUTION_MODE_HANDOFF_ONLY)
+    allow_integrated = bool(approval_execution.get("allow_integrated_approval", False))
+    token_present = bool(approval_execution.get("approval_confirmation_token_present", False))
+    preflight_success = bool(approval_execution.get("dry_run_preflight_success", False))
+    registry_before_hash = approval_execution.get("registry_before_hash") or sha256_text(json.dumps(runtime_budget_registry, sort_keys=True))
+    registry_after_hash = approval_execution.get("registry_after_hash") or registry_before_hash
+    baseline_before_hash = sha256_text(json.dumps(runtime_budget_baseline, sort_keys=True)) if runtime_budget_baseline else None
+    baseline_after_hash = approval_execution.get("baseline_written_hash") or baseline_before_hash
+    mutation_expected = mode == APPROVAL_EXECUTION_MODE_INTEGRATED_OPT_IN and str(approval_execution.get("approval_status") or "") == APPROVAL_STATUS_APPLIED
+    mutation_observed = bool(approval_execution.get("registry_updated", False) or approval_execution.get("baseline_written", False) or registry_before_hash != registry_after_hash or baseline_before_hash != baseline_after_hash)
+    unexpected_mutations: list[str] = []
+    if mode in {APPROVAL_EXECUTION_MODE_DRY_RUN, APPROVAL_EXECUTION_MODE_HANDOFF_ONLY} and mutation_observed:
+        unexpected_mutations.append("dry_run/handoff_only must not mutate registry or baseline")
+    if mode == APPROVAL_EXECUTION_MODE_INTEGRATED_OPT_IN:
+        if not allow_integrated:
+            unexpected_mutations.append("integrated approval missing explicit opt-in")
+        if not token_present:
+            unexpected_mutations.append("integrated approval missing confirmation token")
+        if not preflight_success and mutation_expected:
+            unexpected_mutations.append("integrated approval mutation missing successful dry-run preflight")
+        if mutation_observed and not approval_execution.get("approval_transaction_id"):
+            unexpected_mutations.append("registry/baseline mutation missing approval transaction metadata")
+    payload = {
+        "manifest_version": "integrated_approval_mutation_audit_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "approval_execution_id": approval_execution.get("approval_execution_id"),
+        "approval_mode": approval_execution.get("approval_mode"),
+        "approval_execution_mode": mode,
+        "allow_integrated_approval": allow_integrated,
+        "confirmation_token_present": token_present,
+        "preflight_success": preflight_success,
+        "registry_before_hash": registry_before_hash,
+        "registry_after_hash": registry_after_hash,
+        "baseline_before_hash": baseline_before_hash,
+        "baseline_after_hash": baseline_after_hash,
+        "mutation_expected": mutation_expected,
+        "mutation_observed": mutation_observed,
+        "unexpected_mutation_count": len(unexpected_mutations),
+        "unexpected_mutations": unexpected_mutations,
+        "rollback_hint": approval_execution.get("rollback_hint") or "no rollback needed unless mutation audit fails",
+        "audit_verdict": "PASS" if not unexpected_mutations else "FAIL",
+    }
+    payload["audit_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_source_health_action_plan(
+    *,
+    phase: str,
+    source_health: dict[str, Any],
+    staged_materialization: dict[str, Any],
+) -> dict[str, Any]:
+    entries: list[dict[str, Any]] = []
+    dataless_count = int(source_health.get("dataless_placeholder_count", 0) or 0)
+    unreadable_count = int(source_health.get("unreadable_source_file_count", 0) or 0)
+    missing_git_object = bool(source_health.get("git_object_health", {}).get("missing_head_object", False))
+    required_fixtures_present = bool(source_health.get("required_fixtures_present", True))
+    staged_verdict = str(staged_materialization.get("materialization_verdict") or source_health.get("staged_materialization", {}).get("materialization_verdict") or "")
+    staged_mode = str(staged_materialization.get("staged_materialization_mode") or source_health.get("staged_materialization", {}).get("staged_materialization_mode") or "")
+
+    def add_entry(issue_kind: str, severity: str, action: str, command: str, direct_blocked: bool, staged_blocked: bool, expected: str, rationale: str) -> None:
+        entries.append(
+            {
+                "issue_kind": issue_kind,
+                "severity": severity,
+                "recommended_action": action,
+                "recommended_command": command,
+                "blocking_for_direct_build": direct_blocked,
+                "blocking_for_staged_build": staged_blocked,
+                "expected_resolution": expected,
+                "rationale": rationale,
+            }
+        )
+
+    if dataless_count > 0:
+        add_entry(
+            "dataless_placeholder",
+            "ACTION_REQUIRED",
+            "USE_STAGED_SPARSE_CLONE_OVERLAY",
+            "python tests/tools/run_policy_pipeline.py --include-source-health --pipeline-phase phase50 ...",
+            True,
+            False,
+            "materialize authoritative source through staged_sparse_clone_overlay before long verification",
+            "dataless placeholders make direct long build/test invalid",
+        )
+    if missing_git_object:
+        add_entry(
+            "missing_git_object",
+            "WARN",
+            "AVOID_AUTHORITATIVE_GIT_OBJECT_DEPENDENCE",
+            "git fetch origin main --filter=blob:none",
+            True,
+            False,
+            "use sparse clone overlay or refresh git objects before direct git operations",
+            "HEAD object is unavailable in the authoritative iCloud tree",
+        )
+    if unreadable_count > 0:
+        add_entry(
+            "unreadable_source",
+            "ACTION_REQUIRED",
+            "SPARSE_CLONE_REQUIRED",
+            "git clone --filter=blob:none --sparse <repo> /tmp/raw_engine_sparse_ref",
+            True,
+            True,
+            "restore readable source files before verification",
+            "required source files are unreadable",
+        )
+    if not required_fixtures_present:
+        add_entry(
+            "missing_fixture",
+            "FAIL",
+            "RESTORE_REQUIRED_FIXTURES",
+            "git checkout origin/main -- tests/campaigns tests/fixtures",
+            True,
+            True,
+            "required fixtures must exist before staged verification",
+            "missing fixtures block both direct and staged verification",
+        )
+    if staged_mode and staged_verdict and staged_verdict != "PASS":
+        add_entry(
+            "stale_overlay",
+            "ACTION_REQUIRED",
+            "REFRESH_STAGED_OVERLAY",
+            "python tests/tools/source_health_preflight.py --staged-materialization-out <path> ...",
+            True,
+            True,
+            "rerun staged materialization transaction",
+            "staged materialization verdict is not PASS",
+        )
+    direct_blocked = any(bool(entry.get("blocking_for_direct_build", False)) for entry in entries)
+    staged_blocked = any(bool(entry.get("blocking_for_staged_build", False)) for entry in entries)
+    recommended_action = "NO_ACTION"
+    if staged_blocked:
+        recommended_action = "RESTORE_SOURCE_OR_FIXTURES"
+    elif direct_blocked:
+        recommended_action = "USE_STAGED_SPARSE_CLONE_OVERLAY"
+    payload = {
+        "manifest_version": "source_health_action_plan_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "plan_verdict": "PASS" if not staged_blocked else "ACTION_REQUIRED",
+        "source_health_status": source_health.get("status", "NOT_RUN"),
+        "source_health_recommendation": source_health.get("recommendation", "NOT_RUN"),
+        "direct_build_blocked": direct_blocked,
+        "staged_build_allowed": not staged_blocked,
+        "recommended_action": recommended_action,
+        "materialization_mode": staged_mode,
+        "issue_count": len(entries),
+        "entries": entries,
+        "rationale": [
+            "source-health action planning is infra/operator guidance, not a correctness failure",
+            "direct long build/test is invalid when source-health requires staged sparse materialization",
+        ],
+    }
+    payload["plan_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_decision_metadata_audit(
+    *,
+    phase: str,
+    action_ledger: dict[str, Any],
+    runbook_catalog: dict[str, Any],
+) -> dict[str, Any]:
+    missing_reason: list[str] = []
+    missing_defer_until: list[str] = []
+    missing_retry_link: list[str] = []
+    missing_approval_pointer: list[str] = []
+    affected: set[str] = set()
+    for entry in runbook_catalog.get("entries", []):
+        if not isinstance(entry, dict):
+            continue
+        action_id = str(entry.get("action_id") or entry.get("runbook_id") or "")
+        runbook_type = str(entry.get("runbook_type") or "")
+        if runbook_type in {"skip", "reject"} and not bool(entry.get("retained_reason_metadata", False)):
+            missing_reason.append(action_id)
+            affected.add(action_id)
+        if runbook_type == "defer":
+            if not bool(entry.get("retained_reason_metadata", False)):
+                missing_reason.append(action_id)
+                affected.add(action_id)
+            if not bool(entry.get("retained_defer_metadata", False)):
+                missing_defer_until.append(action_id)
+                affected.add(action_id)
+        if runbook_type == "retry" and not bool(entry.get("retained_retry_metadata", False)):
+            missing_retry_link.append(action_id)
+            affected.add(action_id)
+        if runbook_type == "approval" and not bool(entry.get("retained_approval_pointers", False)):
+            missing_approval_pointer.append(action_id)
+            affected.add(action_id)
+    for entry in action_ledger.get("entries", []):
+        if not isinstance(entry, dict):
+            continue
+        action_id = str(entry.get("action_id") or "")
+        status = str(entry.get("action_status") or "")
+        if status == ACTION_STATUS_DEFERRED and not str(entry.get("defer_until") or "").strip():
+            missing_defer_until.append(action_id)
+            affected.add(action_id)
+        if status == ACTION_STATUS_RETRY_PENDING and not (entry.get("retry_action_id") or entry.get("next_action_id") or int(entry.get("retry_count", 0) or 0) > 0):
+            missing_retry_link.append(action_id)
+            affected.add(action_id)
+    payload = {
+        "manifest_version": "operator_decision_metadata_audit_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "audit_verdict": "PASS"
+        if not (missing_reason or missing_defer_until or missing_retry_link or missing_approval_pointer)
+        else "FAIL",
+        "missing_reason_count": len(missing_reason),
+        "missing_defer_until_count": len(missing_defer_until),
+        "missing_retry_link_count": len(missing_retry_link),
+        "missing_approval_pointer_count": len(missing_approval_pointer),
+        "affected_action_ids": sorted(affected),
+        "missing_reason_action_ids": sorted(set(missing_reason)),
+        "missing_defer_until_action_ids": sorted(set(missing_defer_until)),
+        "missing_retry_link_action_ids": sorted(set(missing_retry_link)),
+        "missing_approval_pointer_action_ids": sorted(set(missing_approval_pointer)),
+    }
+    payload["audit_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_runbook_replay(
+    *,
+    phase: str,
+    runbook: dict[str, Any],
+    action_ledger: dict[str, Any],
+    runtime_current_manifest: dict[str, Any],
+    runtime_budget_registry: dict[str, Any],
+    replay_mode: str,
+) -> dict[str, Any]:
+    entries = runbook.get("entries") if isinstance(runbook.get("entries"), list) else [runbook]
+    replay_entries: list[dict[str, Any]] = []
+    missing_input_count = 0
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        required = list(entry.get("required_inputs", []))
+        abstract_missing = [
+            value
+            for value in required
+            if str(value).strip()
+            and str(value).startswith("/")
+            and not Path(str(value)).exists()
+        ]
+        missing_input_count += len(abstract_missing)
+        safety_level = str(entry.get("safety_level") or ("integrated_opt_in" if entry.get("approval_mode") == "integrated" else "handoff_only"))
+        replay_entries.append(
+            {
+                "runbook_id": entry.get("runbook_id"),
+                "action_id": entry.get("action_id"),
+                "runbook_type": entry.get("runbook_type") or runbook_type_for_action(str(entry.get("action_kind") or "")),
+                "command_still_valid": bool(entry.get("recommended_command") or replay_mode == "validate_only") and not abstract_missing,
+                "would_mutate_registry": bool(entry.get("mutates_registry", False)),
+                "requires_operator_confirmation": safety_level == "integrated_opt_in",
+                "missing_inputs": abstract_missing,
+                "ledger_present": bool(action_ledger),
+                "runtime_current_present": bool(runtime_current_manifest),
+                "runtime_budget_registry_present": bool(runtime_budget_registry),
+            }
+        )
+    payload = {
+        "manifest_version": "operator_runbook_replay_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "replay_mode": replay_mode,
+        "replay_verdict": "PASS" if missing_input_count == 0 and all(bool(entry.get("command_still_valid")) for entry in replay_entries) else "FAIL",
+        "missing_input_count": missing_input_count,
+        "stale_input_count": 0,
+        "command_still_valid": all(bool(entry.get("command_still_valid")) for entry in replay_entries),
+        "would_mutate_registry": any(bool(entry.get("would_mutate_registry")) for entry in replay_entries),
+        "requires_operator_confirmation": any(bool(entry.get("requires_operator_confirmation")) for entry in replay_entries),
+        "entries": replay_entries,
+        "rationale": [
+            "runbook replay validates operator command metadata without mutating registry state",
+        ],
+    }
+    payload["replay_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_staged_materialization_transaction(
+    *,
+    phase: str,
+    source_health: dict[str, Any],
+    staged_materialization: dict[str, Any],
+    cleanup_path_values: list[str],
+) -> dict[str, Any]:
+    source_health_hash = source_health.get("preflight_hash") or sha256_text(json.dumps(source_health, sort_keys=True))
+    materialization_hash = staged_materialization.get("materialization_hash") or sha256_text(json.dumps(staged_materialization, sort_keys=True))
+    cleanup_paths = [str(Path(value).resolve()) for value in cleanup_path_values if str(value).strip()]
+    payload = {
+        "manifest_version": "staged_materialization_transaction_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "transaction_id": f"{phase}-materialization-{sha256_text(str(source_health_hash) + str(materialization_hash))[:12]}",
+        "materialization_mode": staged_materialization.get("staged_materialization_mode"),
+        "source_health_hash": source_health_hash,
+        "sparse_clone_ref": staged_materialization.get("sparse_clone_ref"),
+        "overlay_file_count": int(staged_materialization.get("overlay_file_count", 0) or 0),
+        "overlay_hash": staged_materialization.get("overlay_hash"),
+        "dataless_remaining_count": int(staged_materialization.get("dataless_remaining_count", 0) or 0),
+        "source_snapshot_hash": staged_materialization.get("source_snapshot_hash"),
+        "staged_mirror_hash": staged_materialization.get("staged_mirror_hash") or staged_materialization.get("materialization_hash"),
+        "transaction_verdict": "PASS" if staged_materialization.get("materialization_verdict") in {"PASS", "HEALTHY", None} else "FAIL",
+        "rollback_cleanup_performed": bool(cleanup_paths),
+        "cleanup_paths": cleanup_paths,
+    }
+    payload["transaction_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
     return payload
 
 
@@ -6024,6 +7297,11 @@ def build_ops_summary_text(summary: dict[str, Any]) -> str:
     current_env_action_closure = summary.get("current_env_action_closure", {})
     current_env_operator_runbooks = summary.get("current_env_operator_runbooks", {})
     current_env_decision_variants = summary.get("current_env_decision_variants", {})
+    operator_runbook_catalog = summary.get("operator_runbook_catalog", {})
+    operator_decision_metadata_audit = summary.get("operator_decision_metadata_audit", {})
+    approval_execution_guardrail = summary.get("approval_execution_guardrail", {})
+    operator_runbook_replay = summary.get("operator_runbook_replay", {})
+    staged_materialization_transaction = summary.get("staged_materialization_transaction", {})
     source_health = summary.get("source_health", {})
     staged_materialization = summary.get("staged_materialization", {})
     ops_agenda = summary.get("ops_agenda", {})
@@ -6095,11 +7373,19 @@ def build_ops_summary_text(summary: dict[str, Any]) -> str:
         f"current_env_decision_variant_defer_covered={int(bool(current_env_decision_variants.get('defer_covered', False)))}",
         f"current_env_decision_variant_reject_covered={int(bool(current_env_decision_variants.get('reject_covered', False)))}",
         f"current_env_decision_variant_retry_now_covered={int(bool(current_env_decision_variants.get('retry_now_covered', False)))}",
+        f"operator_runbook_catalog_active_count={operator_runbook_catalog.get('active_runbook_count', 0)}",
+        f"operator_runbook_catalog_resolved_count={operator_runbook_catalog.get('resolved_runbook_count', 0)}",
+        f"operator_runbook_catalog_integrated_opt_in_required_count={operator_runbook_catalog.get('integrated_opt_in_required_count', 0)}",
+        f"operator_decision_metadata_audit_verdict={operator_decision_metadata_audit.get('audit_verdict', '')}",
+        f"operator_runbook_replay_verdict={operator_runbook_replay.get('replay_verdict', '')}",
+        f"approval_guardrail_accidental_mutation_guard={approval_execution_guardrail.get('accidental_mutation_guard', '')}",
+        f"approval_guardrail_handoff_only_default={int(bool(approval_execution_guardrail.get('handoff_only_default', False)))}",
         f"source_health_status={source_health.get('status', '')}",
         f"source_health_recommendation={source_health.get('recommendation', '')}",
         f"source_health_dataless_placeholder_count={source_health.get('dataless_placeholder_count', 0)}",
         f"staged_materialization_mode={staged_materialization.get('staged_materialization_mode', '')}",
         f"staged_materialization_verdict={staged_materialization.get('materialization_verdict', '')}",
+        f"staged_materialization_transaction_verdict={staged_materialization_transaction.get('transaction_verdict', '')}",
         f"current_env_watch_apply_new_state={current_env_watch_apply.get('new_guardrail_state', '')}",
         f"current_env_watch_apply_next_monitoring_due_at={current_env_watch_apply.get('next_monitoring_due_at', '')}",
         f"current_env_watch_apply_next_reproposal_due_at={current_env_watch_apply.get('next_reproposal_due_at', '')}",
@@ -6309,6 +7595,24 @@ def action_ops_summary(args: argparse.Namespace) -> int:
     current_env_approval_execution = read_json(resolve_json_path(getattr(args, "current_env_approval_execution", None)))
     current_env_approval_link = read_json(resolve_json_path(getattr(args, "current_env_approval_link", None)))
     operator_runbook_index = read_json(resolve_json_path(getattr(args, "operator_runbook_index", None)))
+    operator_runbook_catalog = read_json(resolve_json_path(getattr(args, "operator_runbook_catalog", None)))
+    operator_decision_metadata_audit = read_json(resolve_json_path(getattr(args, "operator_decision_metadata_audit", None)))
+    operator_runbook_replay = read_json(resolve_json_path(getattr(args, "operator_runbook_replay", None)))
+    operator_runbook_retention_policy = read_json(resolve_json_path(getattr(args, "operator_runbook_retention_policy", None)))
+    operator_runbook_pruned_catalog = read_json(resolve_json_path(getattr(args, "operator_runbook_pruned_catalog", None)))
+    operator_runbook_archive = read_json(resolve_json_path(getattr(args, "operator_runbook_archive", None)))
+    operator_runbook_prune_summary = read_json(resolve_json_path(getattr(args, "operator_runbook_prune_summary", None)))
+    operator_runbook_lifecycle_validation = read_json(resolve_json_path(getattr(args, "operator_runbook_lifecycle_validation", None)))
+    operator_runbook_pointer_audit = read_json(resolve_json_path(getattr(args, "operator_runbook_pointer_audit", None)))
+    operator_runbook_provenance_migration = read_json(resolve_json_path(getattr(args, "operator_runbook_provenance_migration", None)))
+    operator_runbook_migrated_catalog = read_json(resolve_json_path(getattr(args, "operator_runbook_migrated_catalog", None)))
+    operator_runbook_migrated_ledger = read_json(resolve_json_path(getattr(args, "operator_runbook_migrated_ledger", None)))
+    operator_runbook_lifecycle_validation_before = read_json(resolve_json_path(getattr(args, "operator_runbook_lifecycle_validation_before", None)))
+    operator_runbook_lifecycle_validation_after = read_json(resolve_json_path(getattr(args, "operator_runbook_lifecycle_validation_after", None)))
+    operator_artifact_path_policy_lint = read_json(resolve_json_path(getattr(args, "operator_artifact_path_policy_lint", None)))
+    integrated_approval_mutation_audit = read_json(resolve_json_path(getattr(args, "integrated_approval_mutation_audit", None)))
+    source_health_action_plan = read_json(resolve_json_path(getattr(args, "source_health_action_plan", None)))
+    staged_materialization_transaction = read_json(resolve_json_path(getattr(args, "staged_materialization_transaction", None)))
     source_health_preflight = read_json(resolve_json_path(getattr(args, "source_health_preflight", None)))
     staged_materialization = read_json(resolve_json_path(getattr(args, "staged_materialization", None)))
     runtime_budget_current = read_json(resolve_json_path(getattr(args, "runtime_budget_current", None)))
@@ -6415,6 +7719,180 @@ def action_ops_summary(args: argparse.Namespace) -> int:
         payload.setdefault("final_operator_actions", {})["operator_runbook_executable_count"] = runbook_section.get("executable_runbook_count", 0)
         payload.setdefault("final_operator_summary", {})["source_health_status"] = source_health_section.get("status")
         payload.setdefault("final_operator_summary", {})["operator_runbook_count"] = operator_runbook_index.get("runbook_count", 0)
+        payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    if operator_runbook_catalog or operator_decision_metadata_audit or operator_runbook_replay or staged_materialization_transaction:
+        payload["manifest_version"] = "policy_ops_summary_v15"
+        payload["operator_runbook_catalog"] = {
+            "active_runbook_count": operator_runbook_catalog.get("active_runbook_count", 0),
+            "resolved_runbook_count": operator_runbook_catalog.get("resolved_runbook_count", 0),
+            "integrated_opt_in_required_count": operator_runbook_catalog.get("integrated_opt_in_required_count", 0),
+            "metadata_audit_verdict": operator_decision_metadata_audit.get("audit_verdict", "NOT_RUN"),
+            "replayable_runbook_count": operator_runbook_catalog.get("replayable_runbook_count", 0),
+            "catalog_hash": operator_runbook_catalog.get("catalog_hash"),
+        }
+        payload["operator_decision_metadata_audit"] = {
+            "audit_verdict": operator_decision_metadata_audit.get("audit_verdict", "NOT_RUN"),
+            "missing_reason_count": operator_decision_metadata_audit.get("missing_reason_count", 0),
+            "missing_defer_until_count": operator_decision_metadata_audit.get("missing_defer_until_count", 0),
+            "missing_retry_link_count": operator_decision_metadata_audit.get("missing_retry_link_count", 0),
+            "missing_approval_pointer_count": operator_decision_metadata_audit.get("missing_approval_pointer_count", 0),
+            "affected_action_ids": operator_decision_metadata_audit.get("affected_action_ids", []),
+        }
+        payload["operator_runbook_replay"] = {
+            "replay_verdict": operator_runbook_replay.get("replay_verdict", "NOT_RUN"),
+            "missing_input_count": operator_runbook_replay.get("missing_input_count", 0),
+            "command_still_valid": operator_runbook_replay.get("command_still_valid"),
+            "requires_operator_confirmation": operator_runbook_replay.get("requires_operator_confirmation"),
+            "would_mutate_registry": operator_runbook_replay.get("would_mutate_registry"),
+        }
+        approval_guardrail = {
+            "integrated_default_enabled": False,
+            "handoff_only_default": True,
+            "accidental_mutation_guard": "PASS"
+            if not bool(current_env_approval_execution.get("registry_updated", False))
+            or str(current_env_approval_execution.get("approval_execution_mode", "")) == APPROVAL_EXECUTION_MODE_INTEGRATED_OPT_IN
+            else "FAIL",
+            "approval_execution_mode": current_env_approval_execution.get("approval_execution_mode"),
+            "approval_status": current_env_approval_execution.get("approval_status"),
+            "confirmation_token_present": current_env_approval_execution.get("approval_confirmation_token_present", False),
+            "dry_run_preflight_success": current_env_approval_execution.get("dry_run_preflight_success", False),
+            "registry_before_hash": current_env_approval_execution.get("registry_before_hash"),
+            "registry_after_hash": current_env_approval_execution.get("registry_after_hash"),
+            "approval_transaction_id": current_env_approval_execution.get("approval_transaction_id"),
+        }
+        payload["approval_execution_guardrail"] = approval_guardrail
+        payload["staged_materialization_transaction"] = {
+            "transaction_id": staged_materialization_transaction.get("transaction_id"),
+            "transaction_verdict": staged_materialization_transaction.get("transaction_verdict", "NOT_RUN"),
+            "materialization_mode": staged_materialization_transaction.get("materialization_mode"),
+            "source_health_hash": staged_materialization_transaction.get("source_health_hash"),
+            "rollback_cleanup_performed": staged_materialization_transaction.get("rollback_cleanup_performed", False),
+        }
+        payload.setdefault("final_operator_actions", {})["operator_metadata_audit"] = operator_decision_metadata_audit.get("audit_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_actions", {})["approval_guardrail"] = approval_guardrail.get("accidental_mutation_guard")
+        payload.setdefault("final_operator_summary", {})["runbook_catalog_active_count"] = operator_runbook_catalog.get("active_runbook_count", 0)
+        payload.setdefault("final_operator_summary", {})["decision_metadata_audit_verdict"] = operator_decision_metadata_audit.get("audit_verdict", "NOT_RUN")
+        payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    if operator_runbook_prune_summary or operator_runbook_lifecycle_validation or integrated_approval_mutation_audit or source_health_action_plan:
+        payload["manifest_version"] = "policy_ops_summary_v16"
+        payload["operator_runbook_retention"] = {
+            "policy_id": operator_runbook_retention_policy.get("policy_id"),
+            "prune_verdict": operator_runbook_prune_summary.get("prune_verdict", "NOT_RUN"),
+            "active_retained_count": operator_runbook_prune_summary.get("active_retained_count", 0),
+            "failed_retained_count": operator_runbook_prune_summary.get("failed_retained_count", 0),
+            "retry_pending_retained_count": operator_runbook_prune_summary.get("retry_pending_retained_count", 0),
+            "approval_retained_count": operator_runbook_prune_summary.get("approval_retained_count", 0),
+            "resolved_retained_count": operator_runbook_prune_summary.get("resolved_retained_count", 0),
+            "archived_count": operator_runbook_prune_summary.get("archived_count", 0),
+            "pruned_count": operator_runbook_prune_summary.get("pruned_count", 0),
+            "blocked_prune_count": operator_runbook_prune_summary.get("blocked_prune_count", 0),
+            "pruned_catalog_entry_count": operator_runbook_pruned_catalog.get("catalog_entry_count", 0),
+            "archive_entry_count": operator_runbook_archive.get("archived_count", 0),
+        }
+        payload["operator_runbook_lifecycle_validation"] = {
+            "validation_verdict": operator_runbook_lifecycle_validation.get("validation_verdict", "NOT_RUN"),
+            "missing_input_count": operator_runbook_lifecycle_validation.get("missing_input_count", 0),
+            "stale_input_count": operator_runbook_lifecycle_validation.get("stale_input_count", 0),
+            "superseded_runbook_count": operator_runbook_lifecycle_validation.get("superseded_runbook_count", 0),
+            "archived_runbook_count": operator_runbook_lifecycle_validation.get("archived_runbook_count", 0),
+            "replayable_runbook_count": operator_runbook_lifecycle_validation.get("replayable_runbook_count", 0),
+            "non_replayable_runbook_count": operator_runbook_lifecycle_validation.get("non_replayable_runbook_count", 0),
+            "mutation_risk_count": operator_runbook_lifecycle_validation.get("mutation_risk_count", 0),
+            "integrated_opt_in_blocked_count": operator_runbook_lifecycle_validation.get("integrated_opt_in_blocked_count", 0),
+            "stale_but_safe_count": operator_runbook_lifecycle_validation.get("stale_but_safe_count", 0),
+        }
+        payload["integrated_approval_mutation_audit"] = {
+            "audit_verdict": integrated_approval_mutation_audit.get("audit_verdict", "NOT_RUN"),
+            "approval_execution_id": integrated_approval_mutation_audit.get("approval_execution_id"),
+            "approval_execution_mode": integrated_approval_mutation_audit.get("approval_execution_mode"),
+            "mutation_expected": integrated_approval_mutation_audit.get("mutation_expected", False),
+            "mutation_observed": integrated_approval_mutation_audit.get("mutation_observed", False),
+            "unexpected_mutation_count": integrated_approval_mutation_audit.get("unexpected_mutation_count", 0),
+            "registry_before_hash": integrated_approval_mutation_audit.get("registry_before_hash"),
+            "registry_after_hash": integrated_approval_mutation_audit.get("registry_after_hash"),
+            "rollback_hint": integrated_approval_mutation_audit.get("rollback_hint"),
+        }
+        payload["source_health_action_plan"] = {
+            "plan_verdict": source_health_action_plan.get("plan_verdict", "NOT_RUN"),
+            "direct_build_blocked": source_health_action_plan.get("direct_build_blocked", False),
+            "staged_build_allowed": source_health_action_plan.get("staged_build_allowed", False),
+            "recommended_action": source_health_action_plan.get("recommended_action", "NOT_RUN"),
+            "issue_count": source_health_action_plan.get("issue_count", 0),
+            "materialization_mode": source_health_action_plan.get("materialization_mode"),
+        }
+        verification_lane = dict(payload.get("verification_lane", {}))
+        if source_health_action_plan:
+            verification_lane["source_health_action_plan_hash"] = source_health_action_plan.get("plan_hash")
+            verification_lane["direct_build_allowed"] = not bool(source_health_action_plan.get("direct_build_blocked", False))
+            verification_lane["staged_build_allowed"] = bool(source_health_action_plan.get("staged_build_allowed", False))
+            verification_lane["materialization_mode"] = source_health_action_plan.get("materialization_mode") or verification_lane.get("materialization_mode")
+        payload["verification_lane"] = verification_lane
+        payload.setdefault("final_operator_actions", {})["operator_runbook_retention"] = operator_runbook_prune_summary.get("prune_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_actions", {})["runbook_lifecycle_validation"] = operator_runbook_lifecycle_validation.get("validation_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_actions", {})["approval_mutation_audit"] = integrated_approval_mutation_audit.get("audit_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_actions", {})["source_health_action_plan"] = source_health_action_plan.get("recommended_action", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["runbook_retention_prune_verdict"] = operator_runbook_prune_summary.get("prune_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["runbook_lifecycle_validation_verdict"] = operator_runbook_lifecycle_validation.get("validation_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["integrated_approval_mutation_audit_verdict"] = integrated_approval_mutation_audit.get("audit_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["source_health_action_plan"] = source_health_action_plan.get("recommended_action", "NOT_RUN")
+        payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    if (
+        operator_runbook_pointer_audit
+        or operator_runbook_provenance_migration
+        or operator_artifact_path_policy_lint
+        or operator_runbook_lifecycle_validation_after
+    ):
+        payload["manifest_version"] = "policy_ops_summary_v17"
+        before = operator_runbook_lifecycle_validation_before or operator_runbook_lifecycle_validation
+        after = operator_runbook_lifecycle_validation_after or operator_runbook_lifecycle_validation
+        payload["operator_runbook_pointer_audit"] = {
+            "audit_verdict": operator_runbook_pointer_audit.get("audit_verdict", "NOT_RUN"),
+            "pointer_count": operator_runbook_pointer_audit.get("pointer_count", 0),
+            "absolute_tmp_pointer_count": operator_runbook_pointer_audit.get("absolute_tmp_pointer_count", 0),
+            "rewritable_pointer_count": operator_runbook_pointer_audit.get("rewritable_pointer_count", 0),
+            "waivable_archived_pointer_count": operator_runbook_pointer_audit.get("waivable_archived_pointer_count", 0),
+            "unresolved_active_pointer_count": operator_runbook_pointer_audit.get("unresolved_active_pointer_count", 0),
+        }
+        payload["operator_runbook_provenance_migration"] = {
+            "migration_verdict": operator_runbook_provenance_migration.get("migration_verdict", "NOT_RUN"),
+            "rewritten_pointer_count": operator_runbook_provenance_migration.get("rewritten_pointer_count", 0),
+            "waived_archived_pointer_count": operator_runbook_provenance_migration.get("waived_archived_pointer_count", 0),
+            "unresolved_active_pointer_count": operator_runbook_provenance_migration.get("unresolved_active_pointer_count", 0),
+            "unresolved_archived_pointer_count": operator_runbook_provenance_migration.get("unresolved_archived_pointer_count", 0),
+            "source_catalog_hash": operator_runbook_provenance_migration.get("source_catalog_hash"),
+            "migrated_catalog_hash": operator_runbook_provenance_migration.get("migrated_catalog_hash"),
+            "source_ledger_hash": operator_runbook_provenance_migration.get("source_ledger_hash"),
+            "migrated_ledger_hash": operator_runbook_provenance_migration.get("migrated_ledger_hash"),
+        }
+        payload["operator_runbook_lifecycle_validation"] = {
+            "before_validation_verdict": before.get("validation_verdict", "NOT_RUN"),
+            "before_missing_input_count": before.get("missing_input_count", 0),
+            "after_validation_verdict": after.get("validation_verdict", "NOT_RUN"),
+            "after_missing_input_count": after.get("missing_input_count", 0),
+            "after_stale_input_count": after.get("stale_input_count", 0),
+            "after_mutation_risk_count": after.get("mutation_risk_count", 0),
+            "migrated_catalog_entry_count": operator_runbook_migrated_catalog.get("catalog_entry_count", 0),
+            "migrated_ledger_entry_count": operator_runbook_migrated_ledger.get("total_action_count", 0),
+        }
+        payload["operator_artifact_path_policy_lint"] = {
+            "lint_verdict": operator_artifact_path_policy_lint.get("lint_verdict", "NOT_RUN"),
+            "forbidden_path_count": operator_artifact_path_policy_lint.get("forbidden_path_count", 0),
+            "dangling_path_count": operator_artifact_path_policy_lint.get("dangling_path_count", 0),
+            "allowed_external_reference_count": operator_artifact_path_policy_lint.get("allowed_external_reference_count", 0),
+            "scanned_manifest_count": operator_artifact_path_policy_lint.get("scanned_manifest_count", 0),
+        }
+        active_unresolved = int(operator_runbook_provenance_migration.get("unresolved_active_pointer_count", 0) or 0)
+        waived_archived = int(operator_runbook_provenance_migration.get("waived_archived_pointer_count", 0) or 0)
+        path_lint_forbidden = int(operator_artifact_path_policy_lint.get("forbidden_path_count", 0) or 0)
+        final_action = "NO_ACTION"
+        if active_unresolved > 0 or path_lint_forbidden > 0:
+            final_action = "ACTION_REQUIRED"
+        elif waived_archived > 0:
+            final_action = "REVIEW_ARCHIVE_WAIVERS"
+        payload.setdefault("final_operator_actions", {})["runbook_provenance_migration"] = final_action
+        payload.setdefault("final_operator_actions", {})["path_policy_lint"] = operator_artifact_path_policy_lint.get("lint_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["runbook_provenance_migration_verdict"] = operator_runbook_provenance_migration.get("migration_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["path_policy_lint_verdict"] = operator_artifact_path_policy_lint.get("lint_verdict", "NOT_RUN")
         payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
     write_json(out_path, payload)
     atomic_write_text(text_out, build_ops_summary_text(payload))
@@ -8029,6 +9507,8 @@ def action_current_env_approval_runbook(args: argparse.Namespace) -> int:
         budget_tag=str(args.budget_tag),
         approval_mode=str(args.approval_mode),
     )
+    payload["runbook_manifest_path"] = str(out_path)
+    payload["approval_runbook_manifest_path"] = str(out_path)
     write_json(out_path, payload)
     atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
     print(str(out_path))
@@ -8051,6 +9531,7 @@ def action_current_env_execute_budget_approval(args: argparse.Namespace) -> int:
         or out_path is None
     ):
         raise SystemExit("--approval-runbook, budget manifests, registry, and --approval-execution-out are required")
+    dry_run_preflight_path = resolve_json_path(getattr(args, "dry_run_preflight", None))
     payload = build_current_env_execute_budget_approval(
         phase=str(args.phase),
         approval_runbook=read_json(runbook_path),
@@ -8062,6 +9543,9 @@ def action_current_env_execute_budget_approval(args: argparse.Namespace) -> int:
         archive_proposal=str(Path(args.archive_proposal).resolve()),
         approval_execution_mode=str(getattr(args, "approval_execution_mode", APPROVAL_EXECUTION_MODE_HANDOFF_ONLY)),
         integrated_opt_in=bool(getattr(args, "integrated_opt_in", False)),
+        approval_confirmation_token=str(getattr(args, "approval_confirmation_token", "") or ""),
+        dry_run_preflight=read_json(dry_run_preflight_path) if dry_run_preflight_path is not None and dry_run_preflight_path.exists() else None,
+        require_preflight_success=bool(getattr(args, "require_preflight_success", False)),
     )
     payload["approval_execution_manifest_path"] = str(out_path)
     payload["approval_execution_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
@@ -8122,6 +9606,207 @@ def action_operator_runbook_index(args: argparse.Namespace) -> int:
         f"empty_verdict={payload.get('empty_verdict')}",
     ]
     atomic_write_text(out_path.with_suffix(".summary.txt"), "\n".join(summary_lines) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_runbook_catalog_update(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.runbook_catalog_out)
+    if out_path is None:
+        raise SystemExit("--runbook-catalog-out is required")
+    payload = build_operator_runbook_catalog(
+        phase=str(args.phase_tag),
+        runbook_index=read_json(resolve_json_path(args.runbook_index)),
+        catalog_in=read_json(resolve_json_path(getattr(args, "runbook_catalog_in", None))),
+        current_time_override=getattr(args, "current_time_override", None),
+    )
+    write_json(out_path, payload)
+    summary_lines = [
+        f"manifest_version={payload.get('manifest_version')}",
+        f"phase={payload.get('phase')}",
+        f"catalog_entry_count={payload.get('catalog_entry_count', 0)}",
+        f"active_runbook_count={payload.get('active_runbook_count', 0)}",
+        f"resolved_runbook_count={payload.get('resolved_runbook_count', 0)}",
+        f"integrated_opt_in_required_count={payload.get('integrated_opt_in_required_count', 0)}",
+        f"replayable_runbook_count={payload.get('replayable_runbook_count', 0)}",
+    ]
+    atomic_write_text(out_path.with_suffix(".summary.txt"), "\n".join(summary_lines) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_runbook_catalog_prune(args: argparse.Namespace) -> int:
+    pruned_out = resolve_json_path(args.pruned_catalog_out)
+    archive_out = resolve_json_path(args.archive_out)
+    summary_out = resolve_json_path(args.prune_summary_out)
+    if pruned_out is None or archive_out is None or summary_out is None:
+        raise SystemExit("--pruned-catalog-out, --archive-out, and --prune-summary-out are required")
+    policy_path = resolve_json_path(getattr(args, "retention_policy", None))
+    raw_policy = read_json(policy_path)
+    policy = normalize_operator_runbook_retention_policy(raw_policy, phase=str(args.phase))
+    if policy_path is not None:
+        write_json(policy_path, policy)
+    pruned_catalog, archive, summary = build_operator_runbook_catalog_prune(
+        phase=str(args.phase),
+        runbook_catalog=read_json(resolve_json_path(args.runbook_catalog)),
+        action_ledger=read_json(resolve_json_path(args.action_ledger)),
+        retention_policy=policy,
+    )
+    write_json(pruned_out, pruned_catalog)
+    write_json(archive_out, archive)
+    write_json(summary_out, summary)
+    atomic_write_text(summary_out.with_suffix(".summary.txt"), json.dumps(summary, indent=2) + "\n")
+    print(str(summary_out))
+    return 0
+
+
+def action_operator_runbook_validate_lifecycle(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.validation_out)
+    if out_path is None:
+        raise SystemExit("--validation-out is required")
+    payload = build_operator_runbook_lifecycle_validation(
+        phase=str(args.phase),
+        runbook_catalog=read_json(resolve_json_path(args.runbook_catalog)),
+        action_ledger=read_json(resolve_json_path(args.action_ledger)),
+        current_manifest_root=Path(args.current_manifest_root).resolve(),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_runbook_pointer_audit(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.audit_out)
+    if out_path is None:
+        raise SystemExit("--audit-out is required")
+    payload = build_operator_runbook_pointer_audit(
+        phase=str(args.phase),
+        runbook_catalog=read_json(resolve_json_path(args.runbook_catalog)),
+        action_ledger=read_json(resolve_json_path(args.action_ledger)),
+        published_root=Path(args.published_root).resolve(),
+        artifact_root=Path(args.artifact_root).resolve(),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_runbook_provenance_migrate(args: argparse.Namespace) -> int:
+    migrated_catalog_out = resolve_json_path(args.migrated_catalog_out)
+    migrated_ledger_out = resolve_json_path(args.migrated_ledger_out)
+    migration_report_out = resolve_json_path(args.migration_report_out)
+    if migrated_catalog_out is None or migrated_ledger_out is None or migration_report_out is None:
+        raise SystemExit("--migrated-catalog-out, --migrated-ledger-out, and --migration-report-out are required")
+    migrated_catalog, migrated_ledger, report = build_operator_runbook_provenance_migration(
+        phase=str(args.phase),
+        runbook_catalog=read_json(resolve_json_path(args.runbook_catalog)),
+        action_ledger=read_json(resolve_json_path(args.action_ledger)),
+        pointer_audit=read_json(resolve_json_path(args.pointer_audit)),
+        allow_archived_waiver=bool(args.allow_archived_waiver),
+    )
+    write_json(migrated_catalog_out, migrated_catalog)
+    write_json(migrated_ledger_out, migrated_ledger)
+    write_json(migration_report_out, report)
+    atomic_write_text(migration_report_out.with_suffix(".summary.txt"), json.dumps(report, indent=2) + "\n")
+    print(str(migration_report_out))
+    return 0
+
+
+def action_operator_artifact_path_policy_lint(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.lint_out)
+    if out_path is None:
+        raise SystemExit("--lint-out is required")
+    payload = build_operator_artifact_path_policy_lint(
+        phase=str(args.phase),
+        manifest_root=Path(args.manifest_root).resolve(),
+        published_root=Path(args.published_root).resolve(),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_integrated_approval_mutation_audit(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.audit_out)
+    if out_path is None:
+        raise SystemExit("--audit-out is required")
+    payload = build_integrated_approval_mutation_audit(
+        phase=str(args.phase),
+        approval_execution=read_json(resolve_json_path(args.approval_execution)),
+        runtime_budget_registry=read_json(resolve_json_path(args.runtime_budget_registry)),
+        runtime_budget_baseline=read_json(resolve_json_path(args.runtime_budget_baseline)),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_decision_metadata_audit(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.audit_out)
+    if out_path is None:
+        raise SystemExit("--audit-out is required")
+    payload = build_operator_decision_metadata_audit(
+        phase=str(args.phase),
+        action_ledger=read_json(resolve_json_path(args.action_ledger)),
+        runbook_catalog=read_json(resolve_json_path(args.runbook_catalog)),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_runbook_replay(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.replay_out)
+    if out_path is None:
+        raise SystemExit("--replay-out is required")
+    payload = build_operator_runbook_replay(
+        phase=str(args.phase),
+        runbook=read_json(resolve_json_path(args.runbook)),
+        action_ledger=read_json(resolve_json_path(getattr(args, "action_ledger", None))),
+        runtime_current_manifest=read_json(resolve_json_path(getattr(args, "runtime_current_manifest", None))),
+        runtime_budget_registry=read_json(resolve_json_path(getattr(args, "runtime_budget_registry", None))),
+        replay_mode=str(args.replay_mode),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_source_health_plan(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.plan_out)
+    if out_path is None:
+        raise SystemExit("--plan-out is required")
+    source_health = read_json(resolve_json_path(args.source_health))
+    staged_materialization = read_json(resolve_json_path(getattr(args, "staged_materialization", None)))
+    payload = build_source_health_action_plan(
+        phase=str(args.phase),
+        source_health=source_health,
+        staged_materialization=staged_materialization,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_staged_materialization_transaction(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.transaction_out)
+    if out_path is None:
+        raise SystemExit("--transaction-out is required")
+    payload = build_staged_materialization_transaction(
+        phase=str(args.phase),
+        source_health=read_json(resolve_json_path(args.source_health_preflight)),
+        staged_materialization=read_json(resolve_json_path(args.staged_materialization)),
+        cleanup_path_values=list(args.cleanup_path or []),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
     print(str(out_path))
     return 0
 
@@ -8767,6 +10452,9 @@ def parse_args() -> argparse.Namespace:
     )
     approval_execute_parser.add_argument("--integrated-opt-in", action="store_true")
     approval_execute_parser.add_argument("--allow-integrated-approval", dest="integrated_opt_in", action="store_true")
+    approval_execute_parser.add_argument("--approval-confirmation-token", default="")
+    approval_execute_parser.add_argument("--dry-run-preflight", default=None)
+    approval_execute_parser.add_argument("--require-preflight-success", action="store_true")
 
     approval_link_parser = subparsers.add_parser("current-env-link-approval-execution")
     approval_link_parser.add_argument("--phase", required=True)
@@ -8784,6 +10472,89 @@ def parse_args() -> argparse.Namespace:
     runbook_index_parser.add_argument("--operator-decision", default=None)
     runbook_index_parser.add_argument("--decision-apply", default=None)
     runbook_index_parser.add_argument("--runbook-index-out", required=True)
+
+    runbook_catalog_parser = subparsers.add_parser("operator-runbook-catalog-update")
+    runbook_catalog_parser.add_argument("--runbook-index", required=True)
+    runbook_catalog_parser.add_argument("--runbook-catalog-in", default=None)
+    runbook_catalog_parser.add_argument("--runbook-catalog-out", required=True)
+    runbook_catalog_parser.add_argument("--phase-tag", required=True)
+    runbook_catalog_parser.add_argument("--current-time-override", default=None)
+
+    runbook_prune_parser = subparsers.add_parser("operator-runbook-catalog-prune")
+    runbook_prune_parser.add_argument("--phase", required=True)
+    runbook_prune_parser.add_argument("--runbook-catalog", required=True)
+    runbook_prune_parser.add_argument("--action-ledger", required=True)
+    runbook_prune_parser.add_argument("--retention-policy", required=True)
+    runbook_prune_parser.add_argument("--pruned-catalog-out", required=True)
+    runbook_prune_parser.add_argument("--archive-out", required=True)
+    runbook_prune_parser.add_argument("--prune-summary-out", required=True)
+
+    runbook_lifecycle_parser = subparsers.add_parser("operator-runbook-validate-lifecycle")
+    runbook_lifecycle_parser.add_argument("--phase", required=True)
+    runbook_lifecycle_parser.add_argument("--runbook-catalog", required=True)
+    runbook_lifecycle_parser.add_argument("--action-ledger", required=True)
+    runbook_lifecycle_parser.add_argument("--current-manifest-root", required=True)
+    runbook_lifecycle_parser.add_argument("--validation-out", required=True)
+
+    pointer_audit_parser = subparsers.add_parser("operator-runbook-pointer-audit")
+    pointer_audit_parser.add_argument("--phase", required=True)
+    pointer_audit_parser.add_argument("--runbook-catalog", required=True)
+    pointer_audit_parser.add_argument("--action-ledger", required=True)
+    pointer_audit_parser.add_argument("--published-root", required=True)
+    pointer_audit_parser.add_argument("--artifact-root", required=True)
+    pointer_audit_parser.add_argument("--audit-out", required=True)
+
+    provenance_migrate_parser = subparsers.add_parser("operator-runbook-provenance-migrate")
+    provenance_migrate_parser.add_argument("--phase", required=True)
+    provenance_migrate_parser.add_argument("--runbook-catalog", required=True)
+    provenance_migrate_parser.add_argument("--action-ledger", required=True)
+    provenance_migrate_parser.add_argument("--pointer-audit", required=True)
+    provenance_migrate_parser.add_argument("--published-root", required=True)
+    provenance_migrate_parser.add_argument("--migrated-catalog-out", required=True)
+    provenance_migrate_parser.add_argument("--migrated-ledger-out", required=True)
+    provenance_migrate_parser.add_argument("--migration-report-out", required=True)
+    provenance_migrate_parser.add_argument("--allow-archived-waiver", action="store_true")
+
+    path_policy_lint_parser = subparsers.add_parser("operator-artifact-path-policy-lint")
+    path_policy_lint_parser.add_argument("--phase", required=True)
+    path_policy_lint_parser.add_argument("--manifest-root", required=True)
+    path_policy_lint_parser.add_argument("--published-root", required=True)
+    path_policy_lint_parser.add_argument("--lint-out", required=True)
+
+    decision_metadata_audit_parser = subparsers.add_parser("operator-decision-metadata-audit")
+    decision_metadata_audit_parser.add_argument("--phase", required=True)
+    decision_metadata_audit_parser.add_argument("--action-ledger", required=True)
+    decision_metadata_audit_parser.add_argument("--runbook-catalog", required=True)
+    decision_metadata_audit_parser.add_argument("--audit-out", required=True)
+
+    runbook_replay_parser = subparsers.add_parser("operator-runbook-replay")
+    runbook_replay_parser.add_argument("--phase", required=True)
+    runbook_replay_parser.add_argument("--runbook", required=True)
+    runbook_replay_parser.add_argument("--action-ledger", default=None)
+    runbook_replay_parser.add_argument("--runtime-current-manifest", default=None)
+    runbook_replay_parser.add_argument("--runtime-budget-registry", default=None)
+    runbook_replay_parser.add_argument("--replay-mode", default="dry_run", choices=["dry_run", "validate_only"])
+    runbook_replay_parser.add_argument("--replay-out", required=True)
+
+    mutation_audit_parser = subparsers.add_parser("integrated-approval-mutation-audit")
+    mutation_audit_parser.add_argument("--phase", required=True)
+    mutation_audit_parser.add_argument("--approval-execution", required=True)
+    mutation_audit_parser.add_argument("--runtime-budget-registry", required=True)
+    mutation_audit_parser.add_argument("--runtime-budget-baseline", required=True)
+    mutation_audit_parser.add_argument("--audit-out", required=True)
+
+    source_health_plan_parser = subparsers.add_parser("source-health-plan")
+    source_health_plan_parser.add_argument("--phase", required=True)
+    source_health_plan_parser.add_argument("--source-health", required=True)
+    source_health_plan_parser.add_argument("--staged-materialization", default=None)
+    source_health_plan_parser.add_argument("--plan-out", required=True)
+
+    materialization_tx_parser = subparsers.add_parser("staged-materialization-transaction")
+    materialization_tx_parser.add_argument("--phase", required=True)
+    materialization_tx_parser.add_argument("--source-health-preflight", required=True)
+    materialization_tx_parser.add_argument("--staged-materialization", required=True)
+    materialization_tx_parser.add_argument("--transaction-out", required=True)
+    materialization_tx_parser.add_argument("--cleanup-path", action="append", default=[])
 
     ledger_invariants_parser = subparsers.add_parser("current-env-action-ledger-invariants")
     ledger_invariants_parser.add_argument("--phase", required=True)
@@ -8952,6 +10723,24 @@ def parse_args() -> argparse.Namespace:
     ops_parser.add_argument("--current-env-approval-execution", default=None)
     ops_parser.add_argument("--current-env-approval-link", default=None)
     ops_parser.add_argument("--operator-runbook-index", default=None)
+    ops_parser.add_argument("--operator-runbook-catalog", default=None)
+    ops_parser.add_argument("--operator-decision-metadata-audit", default=None)
+    ops_parser.add_argument("--operator-runbook-replay", default=None)
+    ops_parser.add_argument("--operator-runbook-retention-policy", default=None)
+    ops_parser.add_argument("--operator-runbook-pruned-catalog", default=None)
+    ops_parser.add_argument("--operator-runbook-archive", default=None)
+    ops_parser.add_argument("--operator-runbook-prune-summary", default=None)
+    ops_parser.add_argument("--operator-runbook-lifecycle-validation", default=None)
+    ops_parser.add_argument("--operator-runbook-pointer-audit", default=None)
+    ops_parser.add_argument("--operator-runbook-provenance-migration", default=None)
+    ops_parser.add_argument("--operator-runbook-migrated-catalog", default=None)
+    ops_parser.add_argument("--operator-runbook-migrated-ledger", default=None)
+    ops_parser.add_argument("--operator-runbook-lifecycle-validation-before", default=None)
+    ops_parser.add_argument("--operator-runbook-lifecycle-validation-after", default=None)
+    ops_parser.add_argument("--operator-artifact-path-policy-lint", default=None)
+    ops_parser.add_argument("--integrated-approval-mutation-audit", default=None)
+    ops_parser.add_argument("--source-health-action-plan", default=None)
+    ops_parser.add_argument("--staged-materialization-transaction", default=None)
     ops_parser.add_argument("--source-health-preflight", default=None)
     ops_parser.add_argument("--staged-materialization", default=None)
     ops_parser.add_argument("--runtime-budget-current", default=None)
@@ -9028,6 +10817,28 @@ def main() -> int:
         return action_current_env_link_approval_execution(args)
     if args.command == "operator-runbook-index":
         return action_operator_runbook_index(args)
+    if args.command == "operator-runbook-catalog-update":
+        return action_operator_runbook_catalog_update(args)
+    if args.command == "operator-runbook-catalog-prune":
+        return action_operator_runbook_catalog_prune(args)
+    if args.command == "operator-runbook-validate-lifecycle":
+        return action_operator_runbook_validate_lifecycle(args)
+    if args.command == "operator-runbook-pointer-audit":
+        return action_operator_runbook_pointer_audit(args)
+    if args.command == "operator-runbook-provenance-migrate":
+        return action_operator_runbook_provenance_migrate(args)
+    if args.command == "operator-artifact-path-policy-lint":
+        return action_operator_artifact_path_policy_lint(args)
+    if args.command == "operator-decision-metadata-audit":
+        return action_operator_decision_metadata_audit(args)
+    if args.command == "operator-runbook-replay":
+        return action_operator_runbook_replay(args)
+    if args.command == "integrated-approval-mutation-audit":
+        return action_integrated_approval_mutation_audit(args)
+    if args.command == "source-health-plan":
+        return action_source_health_plan(args)
+    if args.command == "staged-materialization-transaction":
+        return action_staged_materialization_transaction(args)
     if args.command == "current-env-action-ledger-invariants":
         return action_current_env_action_ledger_invariants(args)
     if args.command == "ops-agenda":

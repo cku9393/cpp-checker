@@ -1,0 +1,23 @@
+{
+  "manifest_version": "operator_runbook_prune_summary_v1",
+  "phase": "phase50",
+  "generated_at_utc": "2026-04-22T14:21:44Z",
+  "active_retained_count": 4,
+  "failed_retained_count": 0,
+  "retry_pending_retained_count": 0,
+  "approval_retained_count": 2,
+  "resolved_retained_count": 0,
+  "archived_count": 0,
+  "pruned_count": 0,
+  "blocked_prune_count": 0,
+  "blocked_prune_runbook_ids": [],
+  "prune_verdict": "PASS",
+  "retention_policy_hash": "76b31c257f64927d54bbb333fc174b8f76bc20c74df92470abd14b73060caf87",
+  "pruned_catalog_hash": "aa00995ee3353458ec9c7ca546ef0acd05d794196dc91bd34bc04f521bee8055",
+  "archive_hash": "3d5f82d69e61ac2bb5e3e7189acb4915de02e2f96b2982e3b9f7b3550b2f4674",
+  "rationale": [
+    "active, failed, retry-pending, approval-related, and open-ledger runbooks are retained",
+    "eligible resolved runbooks move to an archive manifest before pruning"
+  ],
+  "prune_summary_hash": "20f9c493f083bb61c82d08685c44a511019b7141f7258e38d6785fbce0bd0b78"
+}

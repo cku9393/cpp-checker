@@ -1,0 +1,7 @@
+metric	value
+notation_status	active_support_notation_contract_ready
+component_count	13
+distinguishes_redundant_support	1
+distinguishes_contraction_and_compression	1
+failure_escape_named	1
+fingerprint	active_support_notation|13|redundant_distinct|projection_ready

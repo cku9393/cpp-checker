@@ -5,5 +5,5 @@ partially_satisfied_obligations	4
 shell16_dependent_obligations	3
 higher_support_dependent_obligations	1
 boj_constructivity_dependent_obligations	1
-top_unresolved_obligation	family_chain_lift_phase3_if_needed
-fingerprint	10|1|4|0|3|1|1|family_chain_lift_phase3_if_needed
+top_unresolved_obligation	prove_next_support_reduction_operation_sublemma
+fingerprint	10|1|4|0|3|1|1|prove_next_support_reduction_operation_sublemma

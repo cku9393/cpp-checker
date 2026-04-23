@@ -1,0 +1,27 @@
+{
+  "authoritative_overlay_subset": {
+    "execution_verdict": "PASS",
+    "fail_count": 0,
+    "log_path": "/tmp/raw_engine_phase49_asan_authoritative_overlay_subset_clean.log",
+    "pass_count": 6,
+    "reason": "real campaign/evidence overlay from sparse clone replaced dataless-safe placeholders after full run; affected subset was rerun clean",
+    "total_wall_time_sec": 960.7
+  },
+  "build_dir": "/tmp/raw_engine_phase49_stage/build-asan",
+  "ctest_command": "ctest --test-dir /tmp/raw_engine_phase49_stage/build-asan --output-on-failure --force-new-ctest-process -j4 --output-junit /tmp/raw_engine_phase49_stage/artifacts/manifests/ctest_asan_phase49.junit.xml",
+  "discovered_test_count": 412,
+  "execution_verdict": "PASS",
+  "fail_count": 0,
+  "junit_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_asan_phase49.junit.xml",
+  "log_path": "/tmp/raw_engine_phase49_asan_full.log",
+  "manifest_version": "verification_phase49_asan_v1",
+  "mode": "asan",
+  "not_run_count": 0,
+  "pass_count": 412,
+  "phase": "phase49",
+  "staged_mirror_hash": "1c666fa2acd19546e497e507c2fcde3e9cdf431cb36f6bfb1ef06365f710ce8d",
+  "staged_source_snapshot_hash": "1c666fa2acd19546e497e507c2fcde3e9cdf431cb36f6bfb1ef06365f710ce8d",
+  "total_wall_time_sec": 4286.48,
+  "zero_missing_expected_verdict": "PASS",
+  "zero_not_run_verdict": "PASS"
+}

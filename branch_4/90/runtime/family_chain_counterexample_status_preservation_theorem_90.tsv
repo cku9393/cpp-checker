@@ -1,0 +1,8 @@
+theorem_component	assumptions	conclusion	uses_payload_refinement	uses_canonical_lift_soundness	uses_smaller_witness_construction	proof_status	missing_sublemma	failure_effect
+payload_refinement_to_obstruction	payload refinement and canonical compatibility	obstruction payload meaning is preserved	1	1	0	proof_sketch_ready	obstruction-preservation semantic theorem	status_preservation_blocker
+obstruction_to_counterexample	obstruction payload meaning is preserved	counterexample status is preserved	1	1	0	blocked_by_status_preservation	status preservation theorem	status_preservation_open
+status_preserved_case	payload refinement preserves status	target lifted object contradicts source counterexample	1	1	0	blocked_by_status_preservation	counterexample preservation theorem	status_preservation_open
+status_reduced_case	status not preserved but smaller witness constructed	minimality is contradicted	1	possible	1	blocked_by_smaller_witness	operation-specific smaller-witness construction	smaller_witness_operation_open
+preserved_reduced_disjointness	preserved and reduced branches defined	case split is disjoint	1	possible	1	proof_sketch_ready	disjointness proof after construction	no_hidden_case_open
+hidden_third_case	no preservation and no reduced witness	exactly named escape remains	0	0	0	proved_under_current_scope_as_escape	none for classification	higher_support_escape_open
+final_status	projection/canonical work is prerequisite	status theorem not proved	1	1	1	blocked_by_status_preservation	status preservation or smaller-witness construction	broader_general_blocker

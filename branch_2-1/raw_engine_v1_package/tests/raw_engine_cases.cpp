@@ -691,6 +691,34 @@ void run_source_health_preflight_smoke_case(const TestOptions& options);
 void run_staged_sparse_clone_overlay_smoke_case(const TestOptions& options);
 void run_policy_ops_summary_v14_smoke_case(const TestOptions& options);
 void run_evidence_bundle_runbook_index_smoke_case(const TestOptions& options);
+void run_operator_runbook_catalog_smoke_case(const TestOptions& options);
+void run_operator_decision_metadata_audit_smoke_case(const TestOptions& options);
+void run_integrated_approval_requires_confirmation_smoke_case(const TestOptions& options);
+void run_integrated_approval_rejects_without_preflight_smoke_case(const TestOptions& options);
+void run_handoff_only_never_mutates_registry_smoke_case(const TestOptions& options);
+void run_dry_run_never_mutates_registry_smoke_case(const TestOptions& options);
+void run_integrated_approval_transaction_metadata_smoke_case(const TestOptions& options);
+void run_operator_runbook_replay_smoke_case(const TestOptions& options);
+void run_pipeline_source_health_stage_smoke_case(const TestOptions& options);
+void run_staged_materialization_transaction_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v15_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runbook_catalog_smoke_case(const TestOptions& options);
+void run_operator_runbook_catalog_prune_smoke_case(const TestOptions& options);
+void run_operator_runbook_validate_lifecycle_smoke_case(const TestOptions& options);
+void run_integrated_approval_mutation_audit_dry_run_smoke_case(const TestOptions& options);
+void run_integrated_approval_mutation_audit_handoff_only_smoke_case(const TestOptions& options);
+void run_source_health_plan_smoke_case(const TestOptions& options);
+void run_pipeline_source_health_required_stage_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v16_smoke_case(const TestOptions& options);
+void run_evidence_bundle_runbook_retention_smoke_case(const TestOptions& options);
+void run_operator_runbook_pointer_audit_smoke_case(const TestOptions& options);
+void run_operator_runbook_provenance_migrate_smoke_case(const TestOptions& options);
+void run_operator_runbook_lifecycle_after_migration_smoke_case(const TestOptions& options);
+void run_operator_artifact_path_policy_lint_smoke_case(const TestOptions& options);
+void run_operator_runbook_catalog_prune_after_migration_smoke_case(const TestOptions& options);
+void run_operator_runbook_replay_after_migration_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v17_smoke_case(const TestOptions& options);
+void run_evidence_bundle_provenance_migration_smoke_case(const TestOptions& options);
 void run_runtime_budget_history_append_smoke_case(const TestOptions& options);
 void run_runtime_watch_campaign_release_repeat10_smoke_case(const TestOptions& options);
 void run_combined_pipeline_after_budget_reprofile_quick_smoke_case(const TestOptions& options);
@@ -14247,9 +14275,27 @@ struct RuntimeBudgetLifecycleSmokeArtifacts {
     filesystem::path currentEnvApprovalLinkJson;
     filesystem::path currentEnvActionLedgerApprovalLinkedJson;
     filesystem::path operatorRunbookIndexJson;
+    filesystem::path operatorRunbookCatalogJson;
+    filesystem::path operatorDecisionMetadataAuditJson;
+    filesystem::path operatorRunbookReplayJson;
+    filesystem::path operatorRunbookRetentionPolicyJson;
+    filesystem::path operatorRunbookPrunedCatalogJson;
+    filesystem::path operatorRunbookArchiveJson;
+    filesystem::path operatorRunbookPruneSummaryJson;
+    filesystem::path operatorRunbookLifecycleValidationJson;
+    filesystem::path operatorRunbookPointerAuditJson;
+    filesystem::path operatorRunbookProvenanceMigrationJson;
+    filesystem::path operatorRunbookMigratedCatalogJson;
+    filesystem::path operatorRunbookMigratedLedgerJson;
+    filesystem::path operatorRunbookLifecycleValidationBeforeJson;
+    filesystem::path operatorRunbookLifecycleValidationAfterJson;
+    filesystem::path operatorArtifactPathPolicyLintJson;
+    filesystem::path integratedApprovalMutationAuditJson;
     filesystem::path sourceHealthPreflightJson;
     filesystem::path sourceHealthPreflightSummaryTxt;
+    filesystem::path sourceHealthActionPlanJson;
     filesystem::path stagedMaterializationJson;
+    filesystem::path stagedMaterializationTransactionJson;
     filesystem::path currentEnvActionLedgerInvariantsJson;
     filesystem::path runtimeBudgetBaselinePhase47Json;
     filesystem::path runtimeBudgetProposalPhase47ArchivedJson;
@@ -14378,9 +14424,27 @@ void configure_current_env_guardrail_artifacts_for_phase(
     artifacts.currentEnvApprovalLinkJson = artifacts.paths.root / "manifests" / ("runtime_current_env_approval_link_" + phase + ".json");
     artifacts.currentEnvActionLedgerApprovalLinkedJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_approval_linked_" + phase + ".json");
     artifacts.operatorRunbookIndexJson = artifacts.paths.root / "manifests" / ("operator_runbook_index_" + phase + ".json");
+    artifacts.operatorRunbookCatalogJson = artifacts.paths.root / "manifests" / ("operator_runbook_catalog_" + phase + ".json");
+    artifacts.operatorDecisionMetadataAuditJson = artifacts.paths.root / "manifests" / ("operator_decision_metadata_audit_" + phase + ".json");
+    artifacts.operatorRunbookReplayJson = artifacts.paths.root / "manifests" / ("operator_runbook_replay_" + phase + ".json");
+    artifacts.operatorRunbookRetentionPolicyJson = artifacts.paths.root / "manifests" / ("operator_runbook_retention_policy_" + phase + ".json");
+    artifacts.operatorRunbookPrunedCatalogJson = artifacts.paths.root / "manifests" / ("operator_runbook_pruned_catalog_" + phase + ".json");
+    artifacts.operatorRunbookArchiveJson = artifacts.paths.root / "manifests" / ("operator_runbook_archive_" + phase + ".json");
+    artifacts.operatorRunbookPruneSummaryJson = artifacts.paths.root / "manifests" / ("operator_runbook_prune_summary_" + phase + ".json");
+    artifacts.operatorRunbookLifecycleValidationJson = artifacts.paths.root / "manifests" / ("operator_runbook_lifecycle_validation_" + phase + ".json");
+    artifacts.operatorRunbookPointerAuditJson = artifacts.paths.root / "manifests" / ("operator_runbook_pointer_audit_" + phase + ".json");
+    artifacts.operatorRunbookProvenanceMigrationJson = artifacts.paths.root / "manifests" / ("operator_runbook_provenance_migration_" + phase + ".json");
+    artifacts.operatorRunbookMigratedCatalogJson = artifacts.paths.root / "manifests" / ("operator_runbook_catalog_" + phase + "_migrated.json");
+    artifacts.operatorRunbookMigratedLedgerJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_" + phase + "_migrated.json");
+    artifacts.operatorRunbookLifecycleValidationBeforeJson = artifacts.paths.root / "manifests" / ("operator_runbook_lifecycle_validation_" + phase + "_before.json");
+    artifacts.operatorRunbookLifecycleValidationAfterJson = artifacts.paths.root / "manifests" / ("operator_runbook_lifecycle_validation_" + phase + "_after.json");
+    artifacts.operatorArtifactPathPolicyLintJson = artifacts.paths.root / "manifests" / ("operator_artifact_path_policy_lint_" + phase + ".json");
+    artifacts.integratedApprovalMutationAuditJson = artifacts.paths.root / "manifests" / ("integrated_approval_mutation_audit_" + phase + ".json");
     artifacts.sourceHealthPreflightJson = artifacts.paths.root / "manifests" / ("source_health_preflight_" + phase + ".json");
     artifacts.sourceHealthPreflightSummaryTxt = artifacts.paths.root / "manifests" / ("source_health_preflight_" + phase + ".summary.txt");
+    artifacts.sourceHealthActionPlanJson = artifacts.paths.root / "manifests" / ("source_health_action_plan_" + phase + ".json");
     artifacts.stagedMaterializationJson = artifacts.paths.root / "manifests" / ("staged_materialization_" + phase + ".json");
+    artifacts.stagedMaterializationTransactionJson = artifacts.paths.root / "manifests" / ("staged_materialization_transaction_" + phase + ".json");
     artifacts.currentEnvActionLedgerInvariantsJson = artifacts.paths.root / "manifests" / ("runtime_current_env_action_ledger_invariants_" + phase + ".json");
     artifacts.runtimeBudgetBaselinePhase47Json = artifacts.paths.root / "manifests" / ("runtime_budget_baseline_" + phase + "_approved.json");
     artifacts.runtimeBudgetProposalPhase47ArchivedJson = artifacts.paths.root / "manifests" / ("runtime_budget_proposal_" + phase + "_archived.json");
@@ -15501,13 +15565,18 @@ void build_action_ledger_invariants_or_throw(RuntimeBudgetLifecycleSmokeArtifact
     );
 }
 
-void build_source_health_preflight_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, int simulatedDatalessCount = 0, bool simulateMissingGitObject = false) {
+void build_source_health_preflight_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    int simulatedDatalessCount = 0,
+    bool simulateMissingGitObject = false,
+    const string& phase = "phase48"
+) {
     filesystem::create_directories(artifacts.paths.root / "tests" / "tools");
     write_text_file_or_throw(artifacts.paths.root / "CMakeLists.txt", "cmake_minimum_required(VERSION 3.16)\n");
     write_text_file_or_throw(artifacts.paths.root / "tests" / "raw_engine_cases.cpp", "// source health fixture\n");
     write_text_file_or_throw(artifacts.paths.root / "tests" / "tools" / "runtime_watch_ops.py", "# source health fixture\n");
     vector<string> args{
-        "--phase phase48",
+        "--phase " + phase,
         "--source-root " + shell_quote(artifacts.paths.root.string()),
         "--required-path " + shell_quote("CMakeLists.txt,tests/raw_engine_cases.cpp,tests/tools/runtime_watch_ops.py"),
         "--out " + shell_quote(artifacts.sourceHealthPreflightJson.string()),
@@ -21044,11 +21113,15 @@ filesystem::path execute_budget_approval_mode_or_throw(
     RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
     const filesystem::path& runbook,
     const string& mode,
-    bool allowIntegrated
+    bool allowIntegrated,
+    const filesystem::path& dryRunPreflight = {},
+    const string& confirmationToken = "",
+    bool requirePreflightSuccess = false,
+    const string& phase = "phase48"
 ) {
     const filesystem::path out = artifacts.paths.root / "manifests" / ("runtime_current_env_budget_approval_execution_" + mode + ".json");
     vector<string> args{
-        "--phase phase48",
+        "--phase " + phase,
         "--approval-runbook " + shell_quote(runbook.string()),
         "--runtime-budget-current " + shell_quote(artifacts.paths.runtimeBudgetCurrentJson.string()),
         "--runtime-budget-proposal " + shell_quote(artifacts.paths.runtimeBudgetProposalJson.string()),
@@ -21061,6 +21134,15 @@ filesystem::path execute_budget_approval_mode_or_throw(
     };
     if (allowIntegrated) {
         args.push_back("--allow-integrated-approval");
+    }
+    if (!dryRunPreflight.empty()) {
+        args.push_back("--dry-run-preflight " + shell_quote(dryRunPreflight.string()));
+    }
+    if (!confirmationToken.empty()) {
+        args.push_back("--approval-confirmation-token " + shell_quote(confirmationToken));
+    }
+    if (requirePreflightSuccess) {
+        args.push_back("--require-preflight-success");
     }
     require_test(run_runtime_watch_ops_script("current-env-execute-budget-approval", args) == 0, "approval execution mode matrix expected generation");
     return out;
@@ -21110,7 +21192,16 @@ void run_approval_execution_integrated_optin_fixture_smoke_case(const TestOption
     auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "approval_execution_integrated_optin_fixture_smoke");
     prepare_phase47_approval_context_or_throw(options, artifacts);
     const filesystem::path integratedRunbook = write_integrated_approval_runbook_or_throw(artifacts, "phase48");
-    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, integratedRunbook, "integrated_opt_in", true);
+    const filesystem::path preflight = execute_budget_approval_mode_or_throw(artifacts, integratedRunbook, "dry_run", false);
+    const filesystem::path out = execute_budget_approval_mode_or_throw(
+        artifacts,
+        integratedRunbook,
+        "integrated_opt_in",
+        true,
+        preflight,
+        "confirm-integrated-approval:phase48-smoke",
+        true
+    );
     const string execution = slurp_text_file(out);
     require_test(execution.find("\"approval_status\": \"APPLIED\"") != string::npos, "integrated opt-in fixture expected applied");
     require_test(execution.find("\"registry_updated\": true") != string::npos, "integrated opt-in fixture expected registry update marker");
@@ -21228,6 +21319,938 @@ void run_evidence_bundle_runbook_index_smoke_case(const TestOptions& options) {
     require_test(metadata.find("\"operator_runbook_index_summary\"") != string::npos, "runbook index bundle expected runbook metadata");
     require_test(metadata.find("\"source_health_preflight_summary\"") != string::npos, "runbook index bundle expected source health metadata");
     require_test(metadata.find("\"staged_materialization_summary\"") != string::npos, "runbook index bundle expected staged materialization metadata");
+}
+
+void build_operator_runbook_catalog_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase49") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-catalog-update",
+            {
+                "--runbook-index " + shell_quote(artifacts.operatorRunbookIndexJson.string()),
+                "--runbook-catalog-out " + shell_quote(artifacts.operatorRunbookCatalogJson.string()),
+                "--phase-tag " + phase,
+                "--current-time-override 2026-05-16T09:15:10Z",
+            }
+        ) == 0,
+        "phase49 operator runbook catalog expected generation"
+    );
+}
+
+void build_operator_decision_metadata_audit_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase49") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-decision-metadata-audit",
+            {
+                "--phase " + phase,
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--runbook-catalog " + shell_quote(artifacts.operatorRunbookCatalogJson.string()),
+                "--audit-out " + shell_quote(artifacts.operatorDecisionMetadataAuditJson.string()),
+            }
+        ) == 0,
+        "phase49 operator decision metadata audit expected generation"
+    );
+}
+
+void build_operator_runbook_replay_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase49") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-replay",
+            {
+                "--phase " + phase,
+                "--runbook " + shell_quote(artifacts.operatorRunbookIndexJson.string()),
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--replay-mode dry_run",
+                "--replay-out " + shell_quote(artifacts.operatorRunbookReplayJson.string()),
+            }
+        ) == 0,
+        "phase49 operator runbook replay expected generation"
+    );
+}
+
+void build_staged_materialization_transaction_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase49") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "staged-materialization-transaction",
+            {
+                "--phase " + phase,
+                "--source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()),
+                "--staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()),
+                "--transaction-out " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()),
+                "--cleanup-path " + shell_quote((artifacts.paths.root / "staged_cleanup_fixture").string()),
+            }
+        ) == 0,
+        "phase49 staged materialization transaction expected generation"
+    );
+}
+
+void prepare_phase49_runbook_catalog_context_or_throw(const TestOptions& options, RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    prepare_phase48_runbook_context_or_throw(options, artifacts);
+    const filesystem::path phase48Governance = artifacts.currentEnvGovernancePolicyJson;
+    const filesystem::path phase48Guardrail = artifacts.currentEnvGuardrailPolicyJson;
+    const filesystem::path phase48WatchCurrent = artifacts.currentEnvWatchCurrentJson;
+    const filesystem::path phase48WatchRefresh = artifacts.currentEnvWatchRefreshJson;
+    const filesystem::path phase48WatchHistory = artifacts.currentEnvWatchHistoryJson;
+    const filesystem::path phase48AgeTick = artifacts.currentEnvAgeTickJson;
+    const filesystem::path phase48WatchPlan = artifacts.currentEnvWatchPlanJson;
+    const filesystem::path phase48TriggerGate = artifacts.currentEnvTriggerGateJson;
+    const filesystem::path phase48Due = artifacts.currentEnvDueJson;
+    const filesystem::path phase48ReproposalPlan = artifacts.currentEnvReproposalPlanJson;
+    const filesystem::path phase48OpsAgenda = artifacts.opsAgendaJson;
+    const filesystem::path phase48WatchExecute = artifacts.currentEnvWatchExecuteJson;
+    const filesystem::path phase48WatchApply = artifacts.currentEnvWatchApplyJson;
+    const filesystem::path phase48ReproposalExecute = artifacts.currentEnvReproposalExecuteJson;
+    const filesystem::path phase48Ledger = artifacts.currentEnvActionLedgerApprovalLinkedJson;
+    const filesystem::path phase48RetryPlan = artifacts.currentEnvActionRetryPlanJson;
+    const filesystem::path phase48Handoff = artifacts.currentEnvReproposalHandoffJson;
+    const filesystem::path phase48Decision = artifacts.currentEnvOperatorDecisionJson;
+    const filesystem::path phase48DecisionApply = artifacts.currentEnvOperatorDecisionApplyJson;
+    const filesystem::path phase48Compact = artifacts.currentEnvActionLedgerCompactJson;
+    const filesystem::path phase48Archive = artifacts.currentEnvActionLedgerArchiveJson;
+    const filesystem::path phase48ApprovalRunbook = artifacts.currentEnvApprovalRunbookJson;
+    const filesystem::path phase48ApprovalExecution = artifacts.currentEnvBudgetApprovalExecutionJson;
+    const filesystem::path phase48ApprovalLink = artifacts.currentEnvApprovalLinkJson;
+    const filesystem::path phase48SourceHealth = artifacts.sourceHealthPreflightJson;
+    const filesystem::path phase48SourceHealthSummary = artifacts.sourceHealthPreflightSummaryTxt;
+    const filesystem::path phase48StagedMaterialization = artifacts.stagedMaterializationJson;
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase49");
+    auto copy_if_exists = [](const filesystem::path& from, const filesystem::path& to) {
+        if (!from.empty() && filesystem::exists(from)) {
+            filesystem::create_directories(to.parent_path());
+            filesystem::copy_file(from, to, filesystem::copy_options::overwrite_existing);
+        }
+    };
+    copy_if_exists(phase48Governance, artifacts.currentEnvGovernancePolicyJson);
+    copy_if_exists(phase48Guardrail, artifacts.currentEnvGuardrailPolicyJson);
+    copy_if_exists(phase48WatchCurrent, artifacts.currentEnvWatchCurrentJson);
+    copy_if_exists(phase48WatchRefresh, artifacts.currentEnvWatchRefreshJson);
+    copy_if_exists(phase48WatchHistory, artifacts.currentEnvWatchHistoryJson);
+    copy_if_exists(phase48AgeTick, artifacts.currentEnvAgeTickJson);
+    copy_if_exists(phase48WatchPlan, artifacts.currentEnvWatchPlanJson);
+    copy_if_exists(phase48TriggerGate, artifacts.currentEnvTriggerGateJson);
+    copy_if_exists(phase48Due, artifacts.currentEnvDueJson);
+    copy_if_exists(phase48ReproposalPlan, artifacts.currentEnvReproposalPlanJson);
+    copy_if_exists(phase48OpsAgenda, artifacts.opsAgendaJson);
+    copy_if_exists(phase48WatchExecute, artifacts.currentEnvWatchExecuteJson);
+    copy_if_exists(phase48WatchApply, artifacts.currentEnvWatchApplyJson);
+    copy_if_exists(phase48ReproposalExecute, artifacts.currentEnvReproposalExecuteJson);
+    copy_if_exists(phase48Ledger, artifacts.currentEnvActionLedgerApprovalLinkedJson);
+    copy_if_exists(phase48Ledger, artifacts.currentEnvActionLedgerJson);
+    copy_if_exists(phase48RetryPlan, artifacts.currentEnvActionRetryPlanJson);
+    copy_if_exists(phase48Handoff, artifacts.currentEnvReproposalHandoffJson);
+    copy_if_exists(phase48Decision, artifacts.currentEnvOperatorDecisionJson);
+    copy_if_exists(phase48DecisionApply, artifacts.currentEnvOperatorDecisionApplyJson);
+    copy_if_exists(phase48Compact, artifacts.currentEnvActionLedgerCompactJson);
+    copy_if_exists(phase48Archive, artifacts.currentEnvActionLedgerArchiveJson);
+    copy_if_exists(phase48ApprovalRunbook, artifacts.currentEnvApprovalRunbookJson);
+    copy_if_exists(phase48ApprovalExecution, artifacts.currentEnvBudgetApprovalExecutionJson);
+    copy_if_exists(phase48ApprovalLink, artifacts.currentEnvApprovalLinkJson);
+    copy_if_exists(phase48SourceHealth, artifacts.sourceHealthPreflightJson);
+    copy_if_exists(phase48SourceHealthSummary, artifacts.sourceHealthPreflightSummaryTxt);
+    copy_if_exists(phase48StagedMaterialization, artifacts.stagedMaterializationJson);
+    build_operator_runbook_index_or_throw(artifacts, "phase49");
+    build_operator_runbook_catalog_or_throw(artifacts, "phase49");
+    build_operator_decision_metadata_audit_or_throw(artifacts, "phase49");
+    build_operator_runbook_replay_or_throw(artifacts, "phase49");
+    build_staged_materialization_transaction_or_throw(artifacts, "phase49");
+}
+
+void build_phase49_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    const string command =
+        shell_quote("/usr/bin/python3") + " " + shell_quote(policy_tools_script_path("runtime_watch_ops.py").string()) +
+        " ops-summary --phase phase49" +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()) +
+        " --current-env-approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-approval-link " + shell_quote(artifacts.currentEnvApprovalLinkJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()) +
+        " --current-env-operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()) +
+        " --current-env-operator-decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()) +
+        " --current-env-action-ledger-compact " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()) +
+        " --current-env-action-ledger-archive " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --operator-runbook-index " + shell_quote(artifacts.operatorRunbookIndexJson.string()) +
+        " --operator-runbook-catalog " + shell_quote(artifacts.operatorRunbookCatalogJson.string()) +
+        " --operator-decision-metadata-audit " + shell_quote(artifacts.operatorDecisionMetadataAuditJson.string()) +
+        " --operator-runbook-replay " + shell_quote(artifacts.operatorRunbookReplayJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --staged-materialization-transaction " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()) +
+        " --out " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --out-text " + shell_quote(artifacts.paths.opsSummaryTxt.string());
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "phase49 ops summary v15 expected generation");
+}
+
+void run_operator_runbook_catalog_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_catalog_smoke");
+    prepare_phase49_runbook_catalog_context_or_throw(options, artifacts);
+    const string catalog = slurp_text_file(artifacts.operatorRunbookCatalogJson);
+    require_test(catalog.find("\"manifest_version\": \"operator_runbook_catalog_v1\"") != string::npos, "runbook catalog smoke expected manifest");
+    require_test(catalog.find("\"catalog_entry_count\"") != string::npos, "runbook catalog smoke expected catalog count");
+    require_test(catalog.find("\"resolved_runbook_count\"") != string::npos, "runbook catalog smoke expected resolved runbook count");
+    require_test(catalog.find("\"retained_approval_pointers\": true") != string::npos, "runbook catalog smoke expected retained approval pointers");
+}
+
+void run_operator_decision_metadata_audit_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_decision_metadata_audit_smoke");
+    prepare_phase49_runbook_catalog_context_or_throw(options, artifacts);
+    const string audit = slurp_text_file(artifacts.operatorDecisionMetadataAuditJson);
+    require_test(audit.find("\"audit_verdict\": \"PASS\"") != string::npos, "decision metadata audit smoke expected PASS");
+    require_test(audit.find("\"missing_approval_pointer_count\": 0") != string::npos, "decision metadata audit smoke expected retained approval pointers");
+}
+
+void run_integrated_approval_requires_confirmation_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "integrated_approval_requires_confirmation_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path integratedRunbook = write_integrated_approval_runbook_or_throw(artifacts, "phase49");
+    const filesystem::path preflight = execute_budget_approval_mode_or_throw(artifacts, integratedRunbook, "dry_run", false, {}, "", false, "phase49");
+    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, integratedRunbook, "integrated_opt_in", true, preflight, "", true, "phase49");
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"approval_status\": \"BLOCKED\"") != string::npos, "integrated confirmation guard expected blocked");
+    require_test(execution.find("explicit safety confirmation token") != string::npos, "integrated confirmation guard expected token blocker");
+}
+
+void run_integrated_approval_rejects_without_preflight_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "integrated_approval_rejects_without_preflight_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path integratedRunbook = write_integrated_approval_runbook_or_throw(artifacts, "phase49");
+    const filesystem::path out = execute_budget_approval_mode_or_throw(
+        artifacts,
+        integratedRunbook,
+        "integrated_opt_in",
+        true,
+        {},
+        "confirm-integrated-approval:missing-preflight",
+        true,
+        "phase49"
+    );
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"approval_status\": \"BLOCKED\"") != string::npos, "integrated preflight guard expected blocked");
+    require_test(execution.find("successful dry-run preflight") != string::npos, "integrated preflight guard expected preflight blocker");
+}
+
+void run_handoff_only_never_mutates_registry_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "handoff_only_never_mutates_registry_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, artifacts.currentEnvApprovalRunbookJson, "handoff_only", false);
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"registry_updated\": false") != string::npos, "handoff_only guard expected no registry mutation");
+    require_test(execution.find("\"baseline_written\": false") != string::npos, "handoff_only guard expected no baseline write");
+}
+
+void run_dry_run_never_mutates_registry_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "dry_run_never_mutates_registry_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path out = execute_budget_approval_mode_or_throw(artifacts, artifacts.currentEnvApprovalRunbookJson, "dry_run", false);
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"registry_updated\": false") != string::npos, "dry_run guard expected no registry mutation");
+    require_test(execution.find("\"approval_status\": \"DRY_RUN\"") != string::npos, "dry_run guard expected dry-run status");
+}
+
+void run_integrated_approval_transaction_metadata_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "integrated_approval_transaction_metadata_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path integratedRunbook = write_integrated_approval_runbook_or_throw(artifacts, "phase49");
+    const filesystem::path preflight = execute_budget_approval_mode_or_throw(artifacts, integratedRunbook, "dry_run", false, {}, "", false, "phase49");
+    const filesystem::path out = execute_budget_approval_mode_or_throw(
+        artifacts,
+        integratedRunbook,
+        "integrated_opt_in",
+        true,
+        preflight,
+        "confirm-integrated-approval:transaction-smoke",
+        true,
+        "phase49"
+    );
+    const string execution = slurp_text_file(out);
+    require_test(execution.find("\"approval_status\": \"APPLIED\"") != string::npos, "integrated transaction smoke expected applied marker");
+    require_test(execution.find("\"approval_transaction_id\": \"phase49-approval-tx-") != string::npos, "integrated transaction smoke expected transaction id");
+    require_test(execution.find("\"registry_before_hash\"") != string::npos, "integrated transaction smoke expected before hash");
+    require_test(execution.find("\"registry_after_hash\"") != string::npos, "integrated transaction smoke expected after hash");
+    require_test(execution.find("\"rollback_hint\"") != string::npos, "integrated transaction smoke expected rollback hint");
+}
+
+void run_operator_runbook_replay_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_replay_smoke");
+    prepare_phase49_runbook_catalog_context_or_throw(options, artifacts);
+    const string replay = slurp_text_file(artifacts.operatorRunbookReplayJson);
+    require_test(replay.find("\"manifest_version\": \"operator_runbook_replay_v1\"") != string::npos, "runbook replay smoke expected manifest");
+    require_test(replay.find("\"replay_verdict\": \"PASS\"") != string::npos, "runbook replay smoke expected PASS");
+    require_test(replay.find("\"command_still_valid\": true") != string::npos, "runbook replay smoke expected valid command");
+}
+
+void run_pipeline_source_health_stage_smoke_case(const TestOptions& options) {
+    auto paths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_source_health_stage_smoke");
+    const filesystem::path sourceHealth = paths.root / "manifests" / "source_health_preflight_phase49.json";
+    const filesystem::path stagedMaterialization = paths.root / "manifests" / "staged_materialization_phase49.json";
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--pipeline-phase phase49 --include-source-health --source-root " + shell_quote(paths.root.string()) +
+            " --source-health-preflight " + shell_quote(sourceHealth.string()) +
+            " --staged-materialization " + shell_quote(stagedMaterialization.string()) +
+            " --source-health-simulate-dataless-count 2 --source-health-simulate-missing-git-object"
+    );
+    require_test(rc == 0, "pipeline source health stage smoke expected quick OK");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"source_health_recommendation\": \"SPARSE_CLONE_REQUIRED\"") != string::npos, "pipeline source health smoke expected sparse recommendation");
+    require_test(summary.find("\"materialization_mode\": \"staged_sparse_clone_overlay\"") != string::npos, "pipeline source health smoke expected staged sparse mode");
+}
+
+void run_staged_materialization_transaction_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_materialization_transaction_smoke");
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase49");
+    build_source_health_preflight_or_throw(artifacts, 3, true, "phase49");
+    build_staged_materialization_transaction_or_throw(artifacts, "phase49");
+    const string tx = slurp_text_file(artifacts.stagedMaterializationTransactionJson);
+    require_test(tx.find("\"manifest_version\": \"staged_materialization_transaction_v1\"") != string::npos, "staged transaction smoke expected manifest");
+    require_test(tx.find("\"transaction_verdict\": \"PASS\"") != string::npos, "staged transaction smoke expected PASS");
+    require_test(tx.find("\"rollback_cleanup_performed\": true") != string::npos, "staged transaction smoke expected cleanup marker");
+}
+
+void run_policy_ops_summary_v15_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v15_smoke");
+    prepare_phase49_runbook_catalog_context_or_throw(options, artifacts);
+    build_phase49_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"manifest_version\": \"policy_ops_summary_v15\"") != string::npos, "ops summary v15 smoke expected v15 manifest");
+    require_test(summary.find("\"operator_runbook_catalog\"") != string::npos, "ops summary v15 smoke expected catalog section");
+    require_test(summary.find("\"approval_execution_guardrail\"") != string::npos, "ops summary v15 smoke expected approval guardrail section");
+    require_test(summary.find("\"accidental_mutation_guard\": \"PASS\"") != string::npos, "ops summary v15 smoke expected mutation guard pass");
+}
+
+void run_evidence_bundle_runbook_catalog_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_runbook_catalog_smoke");
+    prepare_phase49_runbook_catalog_context_or_throw(options, artifacts);
+    build_phase49_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE49_BUNDLE_RUNBOOK_CATALOG_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase49_runbook_catalog_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase49_runbook_catalog_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase49_runbook_catalog_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase49 evidence bundle runbook catalog smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase49" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --current-env-approval-runbook " + shell_quote(artifacts.currentEnvApprovalRunbookJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-approval-link " + shell_quote(artifacts.currentEnvApprovalLinkJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()) +
+        " --current-env-operator-decision " + shell_quote(artifacts.currentEnvOperatorDecisionJson.string()) +
+        " --current-env-operator-decision-apply " + shell_quote(artifacts.currentEnvOperatorDecisionApplyJson.string()) +
+        " --current-env-action-ledger-compact " + shell_quote(artifacts.currentEnvActionLedgerCompactJson.string()) +
+        " --current-env-action-ledger-archive " + shell_quote(artifacts.currentEnvActionLedgerArchiveJson.string()) +
+        " --operator-runbook-index " + shell_quote(artifacts.operatorRunbookIndexJson.string()) +
+        " --operator-runbook-catalog " + shell_quote(artifacts.operatorRunbookCatalogJson.string()) +
+        " --operator-decision-metadata-audit " + shell_quote(artifacts.operatorDecisionMetadataAuditJson.string()) +
+        " --operator-runbook-replay " + shell_quote(artifacts.operatorRunbookReplayJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --staged-materialization-transaction " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()) +
+        " --ops-agenda " + shell_quote(artifacts.opsAgendaJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle runbook catalog smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase49_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"operator_runbook_catalog_summary\"") != string::npos, "runbook catalog bundle expected catalog metadata");
+    require_test(metadata.find("\"operator_decision_metadata_audit_summary\"") != string::npos, "runbook catalog bundle expected audit metadata");
+    require_test(metadata.find("\"operator_runbook_replay_summary\"") != string::npos, "runbook catalog bundle expected replay metadata");
+    require_test(metadata.find("\"staged_materialization_transaction_summary\"") != string::npos, "runbook catalog bundle expected staged transaction metadata");
+}
+
+void build_operator_runbook_catalog_prune_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase50") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-catalog-prune",
+            {
+                "--phase " + phase,
+                "--runbook-catalog " + shell_quote(artifacts.operatorRunbookCatalogJson.string()),
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--retention-policy " + shell_quote(artifacts.operatorRunbookRetentionPolicyJson.string()),
+                "--pruned-catalog-out " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()),
+                "--archive-out " + shell_quote(artifacts.operatorRunbookArchiveJson.string()),
+                "--prune-summary-out " + shell_quote(artifacts.operatorRunbookPruneSummaryJson.string()),
+            }
+        ) == 0,
+        "phase50 operator runbook catalog prune expected generation"
+    );
+}
+
+void build_operator_runbook_lifecycle_validation_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase50") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-validate-lifecycle",
+            {
+                "--phase " + phase,
+                "--runbook-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()),
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--current-manifest-root " + shell_quote(artifacts.paths.root.string()),
+                "--validation-out " + shell_quote(artifacts.operatorRunbookLifecycleValidationJson.string()),
+            }
+        ) == 0,
+        "phase50 operator runbook lifecycle validation expected generation"
+    );
+}
+
+void build_integrated_approval_mutation_audit_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const filesystem::path& approvalExecution,
+    const string& phase = "phase50"
+) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "integrated-approval-mutation-audit",
+            {
+                "--phase " + phase,
+                "--approval-execution " + shell_quote(approvalExecution.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--runtime-budget-baseline " + shell_quote(artifacts.paths.runtimeBudgetBaselineJson.string()),
+                "--audit-out " + shell_quote(artifacts.integratedApprovalMutationAuditJson.string()),
+            }
+        ) == 0,
+        "phase50 integrated approval mutation audit expected generation"
+    );
+}
+
+void build_source_health_plan_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase50") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "source-health-plan",
+            {
+                "--phase " + phase,
+                "--source-health " + shell_quote(artifacts.sourceHealthPreflightJson.string()),
+                "--staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()),
+                "--plan-out " + shell_quote(artifacts.sourceHealthActionPlanJson.string()),
+            }
+        ) == 0,
+        "phase50 source health action plan expected generation"
+    );
+}
+
+void inject_phase51_private_tmp_pointer_debt_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    const string privateTmpRoot = "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke";
+    replace_all_in_file_if_needed_or_throw(artifacts.operatorRunbookCatalogJson, artifacts.paths.root.string(), privateTmpRoot);
+    replace_all_in_file_if_needed_or_throw(artifacts.currentEnvActionLedgerApprovalLinkedJson, artifacts.paths.root.string(), privateTmpRoot);
+    replace_all_in_file_if_needed_or_throw(artifacts.currentEnvActionLedgerJson, artifacts.paths.root.string(), privateTmpRoot);
+}
+
+void build_operator_runbook_lifecycle_validation_to_or_throw(
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts,
+    const filesystem::path& runbookCatalog,
+    const filesystem::path& actionLedger,
+    const filesystem::path& outPath,
+    const string& phase
+) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-validate-lifecycle",
+            {
+                "--phase " + phase,
+                "--runbook-catalog " + shell_quote(runbookCatalog.string()),
+                "--action-ledger " + shell_quote(actionLedger.string()),
+                "--current-manifest-root " + shell_quote(artifacts.paths.root.string()),
+                "--validation-out " + shell_quote(outPath.string()),
+            }
+        ) == 0,
+        "operator runbook lifecycle validation expected generation"
+    );
+}
+
+void build_operator_runbook_pointer_audit_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase51") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-pointer-audit",
+            {
+                "--phase " + phase,
+                "--runbook-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()),
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--published-root " + shell_quote((artifacts.paths.root / (phase + "_evidence_bundle_published")).string()),
+                "--artifact-root " + shell_quote(artifacts.paths.root.string()),
+                "--audit-out " + shell_quote(artifacts.operatorRunbookPointerAuditJson.string()),
+            }
+        ) == 0,
+        "phase51 operator runbook pointer audit expected generation"
+    );
+}
+
+void build_operator_runbook_provenance_migration_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase51") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-provenance-migrate",
+            {
+                "--phase " + phase,
+                "--runbook-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()),
+                "--action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()),
+                "--pointer-audit " + shell_quote(artifacts.operatorRunbookPointerAuditJson.string()),
+                "--published-root " + shell_quote((artifacts.paths.root / (phase + "_evidence_bundle_published")).string()),
+                "--migrated-catalog-out " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()),
+                "--migrated-ledger-out " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()),
+                "--migration-report-out " + shell_quote(artifacts.operatorRunbookProvenanceMigrationJson.string()),
+                "--allow-archived-waiver",
+            }
+        ) == 0,
+        "phase51 operator runbook provenance migration expected generation"
+    );
+}
+
+void build_operator_artifact_path_policy_lint_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& phase = "phase51") {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-artifact-path-policy-lint",
+            {
+                "--phase " + phase,
+                "--manifest-root " + shell_quote((artifacts.paths.root / "manifests").string()),
+                "--published-root " + shell_quote((artifacts.paths.root / (phase + "_evidence_bundle_published")).string()),
+                "--lint-out " + shell_quote(artifacts.operatorArtifactPathPolicyLintJson.string()),
+            }
+        ) == 0,
+        "phase51 operator artifact path policy lint expected generation"
+    );
+}
+
+void prepare_phase51_provenance_context_or_throw(const TestOptions& options, RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    prepare_phase49_runbook_catalog_context_or_throw(options, artifacts);
+    const filesystem::path phase49Catalog = artifacts.operatorRunbookCatalogJson;
+    const filesystem::path phase49Ledger = artifacts.currentEnvActionLedgerApprovalLinkedJson;
+    const filesystem::path phase49ApprovalExecution = artifacts.currentEnvBudgetApprovalExecutionJson;
+    const filesystem::path phase49SourceHealth = artifacts.sourceHealthPreflightJson;
+    const filesystem::path phase49SourceHealthSummary = artifacts.sourceHealthPreflightSummaryTxt;
+    const filesystem::path phase49StagedMaterialization = artifacts.stagedMaterializationJson;
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase51");
+    auto copy_if_exists = [](const filesystem::path& from, const filesystem::path& to) {
+        if (!from.empty() && filesystem::exists(from)) {
+            filesystem::create_directories(to.parent_path());
+            filesystem::copy_file(from, to, filesystem::copy_options::overwrite_existing);
+        }
+    };
+    copy_if_exists(phase49Catalog, artifacts.operatorRunbookCatalogJson);
+    copy_if_exists(phase49Ledger, artifacts.currentEnvActionLedgerApprovalLinkedJson);
+    copy_if_exists(phase49Ledger, artifacts.currentEnvActionLedgerJson);
+    copy_if_exists(phase49ApprovalExecution, artifacts.currentEnvBudgetApprovalExecutionJson);
+    copy_if_exists(phase49SourceHealth, artifacts.sourceHealthPreflightJson);
+    copy_if_exists(phase49SourceHealthSummary, artifacts.sourceHealthPreflightSummaryTxt);
+    copy_if_exists(phase49StagedMaterialization, artifacts.stagedMaterializationJson);
+    inject_phase51_private_tmp_pointer_debt_or_throw(artifacts);
+    build_operator_runbook_catalog_prune_or_throw(artifacts, "phase51");
+    build_operator_runbook_lifecycle_validation_to_or_throw(
+        artifacts,
+        artifacts.operatorRunbookPrunedCatalogJson,
+        artifacts.currentEnvActionLedgerApprovalLinkedJson,
+        artifacts.operatorRunbookLifecycleValidationBeforeJson,
+        "phase51"
+    );
+    build_operator_runbook_pointer_audit_or_throw(artifacts, "phase51");
+    build_operator_runbook_provenance_migration_or_throw(artifacts, "phase51");
+    build_operator_runbook_lifecycle_validation_to_or_throw(
+        artifacts,
+        artifacts.operatorRunbookMigratedCatalogJson,
+        artifacts.operatorRunbookMigratedLedgerJson,
+        artifacts.operatorRunbookLifecycleValidationAfterJson,
+        "phase51"
+    );
+    filesystem::copy_file(artifacts.operatorRunbookLifecycleValidationAfterJson, artifacts.operatorRunbookLifecycleValidationJson, filesystem::copy_options::overwrite_existing);
+    build_integrated_approval_mutation_audit_or_throw(artifacts, artifacts.currentEnvBudgetApprovalExecutionJson, "phase51");
+    build_source_health_plan_or_throw(artifacts, "phase51");
+    build_operator_artifact_path_policy_lint_or_throw(artifacts, "phase51");
+}
+
+void prepare_phase50_runbook_retention_context_or_throw(const TestOptions& options, RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    prepare_phase49_runbook_catalog_context_or_throw(options, artifacts);
+    const filesystem::path phase49Catalog = artifacts.operatorRunbookCatalogJson;
+    const filesystem::path phase49Ledger = artifacts.currentEnvActionLedgerApprovalLinkedJson;
+    const filesystem::path phase49ApprovalExecution = artifacts.currentEnvBudgetApprovalExecutionJson;
+    const filesystem::path phase49SourceHealth = artifacts.sourceHealthPreflightJson;
+    const filesystem::path phase49SourceHealthSummary = artifacts.sourceHealthPreflightSummaryTxt;
+    const filesystem::path phase49StagedMaterialization = artifacts.stagedMaterializationJson;
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase50");
+    auto copy_if_exists = [](const filesystem::path& from, const filesystem::path& to) {
+        if (!from.empty() && filesystem::exists(from)) {
+            filesystem::create_directories(to.parent_path());
+            filesystem::copy_file(from, to, filesystem::copy_options::overwrite_existing);
+        }
+    };
+    copy_if_exists(phase49Catalog, artifacts.operatorRunbookCatalogJson);
+    copy_if_exists(phase49Ledger, artifacts.currentEnvActionLedgerApprovalLinkedJson);
+    copy_if_exists(phase49Ledger, artifacts.currentEnvActionLedgerJson);
+    copy_if_exists(phase49ApprovalExecution, artifacts.currentEnvBudgetApprovalExecutionJson);
+    copy_if_exists(phase49SourceHealth, artifacts.sourceHealthPreflightJson);
+    copy_if_exists(phase49SourceHealthSummary, artifacts.sourceHealthPreflightSummaryTxt);
+    copy_if_exists(phase49StagedMaterialization, artifacts.stagedMaterializationJson);
+    build_operator_runbook_catalog_prune_or_throw(artifacts, "phase50");
+    build_operator_runbook_lifecycle_validation_or_throw(artifacts, "phase50");
+    build_integrated_approval_mutation_audit_or_throw(artifacts, artifacts.currentEnvBudgetApprovalExecutionJson, "phase50");
+    build_source_health_plan_or_throw(artifacts, "phase50");
+}
+
+void build_phase50_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    const string command =
+        shell_quote("/usr/bin/python3") + " " + shell_quote(policy_tools_script_path("runtime_watch_ops.py").string()) +
+        " ops-summary --phase phase50" +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()) +
+        " --operator-runbook-catalog " + shell_quote(artifacts.operatorRunbookCatalogJson.string()) +
+        " --operator-decision-metadata-audit " + shell_quote(artifacts.operatorDecisionMetadataAuditJson.string()) +
+        " --operator-runbook-replay " + shell_quote(artifacts.operatorRunbookReplayJson.string()) +
+        " --operator-runbook-retention-policy " + shell_quote(artifacts.operatorRunbookRetentionPolicyJson.string()) +
+        " --operator-runbook-pruned-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()) +
+        " --operator-runbook-archive " + shell_quote(artifacts.operatorRunbookArchiveJson.string()) +
+        " --operator-runbook-prune-summary " + shell_quote(artifacts.operatorRunbookPruneSummaryJson.string()) +
+        " --operator-runbook-lifecycle-validation " + shell_quote(artifacts.operatorRunbookLifecycleValidationJson.string()) +
+        " --integrated-approval-mutation-audit " + shell_quote(artifacts.integratedApprovalMutationAuditJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --source-health-action-plan " + shell_quote(artifacts.sourceHealthActionPlanJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --out " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --out-text " + shell_quote(artifacts.paths.opsSummaryTxt.string());
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "phase50 ops summary v16 expected generation");
+}
+
+void run_operator_runbook_catalog_prune_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_catalog_prune_smoke");
+    prepare_phase50_runbook_retention_context_or_throw(options, artifacts);
+    const string summary = slurp_text_file(artifacts.operatorRunbookPruneSummaryJson);
+    require_test(summary.find("\"manifest_version\": \"operator_runbook_prune_summary_v1\"") != string::npos, "runbook prune smoke expected summary manifest");
+    require_test(summary.find("\"prune_verdict\": \"PASS\"") != string::npos, "runbook prune smoke expected PASS");
+    require_test(summary.find("\"approval_retained_count\"") != string::npos, "runbook prune smoke expected approval retention count");
+}
+
+void run_operator_runbook_validate_lifecycle_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_validate_lifecycle_smoke");
+    prepare_phase50_runbook_retention_context_or_throw(options, artifacts);
+    const string validation = slurp_text_file(artifacts.operatorRunbookLifecycleValidationJson);
+    require_test(validation.find("\"manifest_version\": \"operator_runbook_lifecycle_validation_v1\"") != string::npos, "runbook lifecycle smoke expected validation manifest");
+    require_test(validation.find("\"validation_verdict\": \"PASS\"") != string::npos || validation.find("\"validation_verdict\": \"WARN\"") != string::npos, "runbook lifecycle smoke expected PASS or WARN");
+    require_test(validation.find("\"mutation_risk_count\": 0") != string::npos, "runbook lifecycle smoke expected no mutation risk");
+}
+
+void run_integrated_approval_mutation_audit_dry_run_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "integrated_approval_mutation_audit_dry_run_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path dryRunExecution = execute_budget_approval_mode_or_throw(artifacts, artifacts.currentEnvApprovalRunbookJson, "dry_run", false, {}, "", false, "phase50");
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase50");
+    build_integrated_approval_mutation_audit_or_throw(artifacts, dryRunExecution, "phase50");
+    const string audit = slurp_text_file(artifacts.integratedApprovalMutationAuditJson);
+    require_test(audit.find("\"audit_verdict\": \"PASS\"") != string::npos, "dry-run mutation audit expected PASS");
+    require_test(audit.find("\"mutation_observed\": false") != string::npos, "dry-run mutation audit expected no mutation");
+}
+
+void run_integrated_approval_mutation_audit_handoff_only_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "integrated_approval_mutation_audit_handoff_only_smoke");
+    prepare_phase47_approval_context_or_throw(options, artifacts);
+    const filesystem::path handoffExecution = execute_budget_approval_mode_or_throw(artifacts, artifacts.currentEnvApprovalRunbookJson, "handoff_only", false, {}, "", false, "phase50");
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase50");
+    build_integrated_approval_mutation_audit_or_throw(artifacts, handoffExecution, "phase50");
+    const string audit = slurp_text_file(artifacts.integratedApprovalMutationAuditJson);
+    require_test(audit.find("\"audit_verdict\": \"PASS\"") != string::npos, "handoff-only mutation audit expected PASS");
+    require_test(audit.find("\"mutation_expected\": false") != string::npos, "handoff-only mutation audit expected no mutation expectation");
+}
+
+void run_source_health_plan_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "source_health_plan_smoke");
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase50");
+    build_source_health_preflight_or_throw(artifacts, 3, true, "phase50");
+    build_source_health_plan_or_throw(artifacts, "phase50");
+    const string plan = slurp_text_file(artifacts.sourceHealthActionPlanJson);
+    require_test(plan.find("\"manifest_version\": \"source_health_action_plan_v1\"") != string::npos, "source health plan smoke expected manifest");
+    require_test(plan.find("\"direct_build_blocked\": true") != string::npos, "source health plan smoke expected direct build blocked");
+    require_test(plan.find("\"recommended_action\": \"USE_STAGED_SPARSE_CLONE_OVERLAY\"") != string::npos, "source health plan smoke expected sparse overlay action");
+}
+
+void run_pipeline_source_health_required_stage_smoke_case(const TestOptions& options) {
+    auto paths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_source_health_required_stage_smoke");
+    const filesystem::path sourceHealth = paths.root / "manifests" / "source_health_preflight_phase50.json";
+    const filesystem::path sourcePlan = paths.root / "manifests" / "source_health_action_plan_phase50.json";
+    const filesystem::path stagedMaterialization = paths.root / "manifests" / "staged_materialization_phase50.json";
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--pipeline-phase phase50 --include-source-health --source-root " + shell_quote(paths.root.string()) +
+            " --source-health-preflight " + shell_quote(sourceHealth.string()) +
+            " --source-health-action-plan " + shell_quote(sourcePlan.string()) +
+            " --staged-materialization " + shell_quote(stagedMaterialization.string()) +
+            " --source-health-simulate-dataless-count 2 --source-health-simulate-missing-git-object"
+    );
+    require_test(rc == 0, "pipeline source health required stage smoke expected quick OK");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"source_health_action_plan\"") != string::npos, "pipeline source health required stage expected action plan path");
+    require_test(summary.find("\"direct_build_blocked\": true") != string::npos, "pipeline source health required stage expected direct build blocked");
+    require_test(summary.find("source_health_action_plan") != string::npos, "pipeline source health required stage expected action plan stage");
+}
+
+void run_policy_ops_summary_v16_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v16_smoke");
+    prepare_phase50_runbook_retention_context_or_throw(options, artifacts);
+    build_phase50_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"manifest_version\": \"policy_ops_summary_v16\"") != string::npos, "ops summary v16 smoke expected v16 manifest");
+    require_test(summary.find("\"operator_runbook_retention\"") != string::npos, "ops summary v16 smoke expected retention section");
+    require_test(summary.find("\"operator_runbook_lifecycle_validation\"") != string::npos, "ops summary v16 smoke expected lifecycle validation section");
+    require_test(summary.find("\"integrated_approval_mutation_audit\"") != string::npos, "ops summary v16 smoke expected mutation audit section");
+    require_test(summary.find("\"source_health_action_plan\"") != string::npos, "ops summary v16 smoke expected source health action plan section");
+}
+
+void run_evidence_bundle_runbook_retention_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_runbook_retention_smoke");
+    prepare_phase50_runbook_retention_context_or_throw(options, artifacts);
+    build_phase50_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE50_BUNDLE_RUNBOOK_RETENTION_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase50_runbook_retention_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase50_runbook_retention_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase50_runbook_retention_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase50 evidence bundle runbook retention smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase50" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.currentEnvActionLedgerApprovalLinkedJson.string()) +
+        " --operator-runbook-catalog " + shell_quote(artifacts.operatorRunbookCatalogJson.string()) +
+        " --operator-runbook-retention-policy " + shell_quote(artifacts.operatorRunbookRetentionPolicyJson.string()) +
+        " --operator-runbook-pruned-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()) +
+        " --operator-runbook-archive " + shell_quote(artifacts.operatorRunbookArchiveJson.string()) +
+        " --operator-runbook-prune-summary " + shell_quote(artifacts.operatorRunbookPruneSummaryJson.string()) +
+        " --operator-runbook-lifecycle-validation " + shell_quote(artifacts.operatorRunbookLifecycleValidationJson.string()) +
+        " --integrated-approval-mutation-audit " + shell_quote(artifacts.integratedApprovalMutationAuditJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --source-health-action-plan " + shell_quote(artifacts.sourceHealthActionPlanJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle runbook retention smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase50_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"operator_runbook_prune_summary\"") != string::npos, "runbook retention bundle expected prune summary metadata");
+    require_test(metadata.find("\"operator_runbook_lifecycle_validation_summary\"") != string::npos, "runbook retention bundle expected lifecycle validation metadata");
+    require_test(metadata.find("\"integrated_approval_mutation_audit_summary\"") != string::npos, "runbook retention bundle expected mutation audit metadata");
+    require_test(metadata.find("\"source_health_action_plan_summary\"") != string::npos, "runbook retention bundle expected source health plan metadata");
+}
+
+void build_phase51_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    const string command =
+        shell_quote("/usr/bin/python3") + " " + shell_quote(policy_tools_script_path("runtime_watch_ops.py").string()) +
+        " ops-summary --phase phase51" +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --publication-health " + shell_quote(artifacts.paths.publicationHealthJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()) +
+        " --operator-runbook-catalog " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()) +
+        " --operator-decision-metadata-audit " + shell_quote(artifacts.operatorDecisionMetadataAuditJson.string()) +
+        " --operator-runbook-replay " + shell_quote(artifacts.operatorRunbookReplayJson.string()) +
+        " --operator-runbook-retention-policy " + shell_quote(artifacts.operatorRunbookRetentionPolicyJson.string()) +
+        " --operator-runbook-pruned-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()) +
+        " --operator-runbook-archive " + shell_quote(artifacts.operatorRunbookArchiveJson.string()) +
+        " --operator-runbook-prune-summary " + shell_quote(artifacts.operatorRunbookPruneSummaryJson.string()) +
+        " --operator-runbook-lifecycle-validation " + shell_quote(artifacts.operatorRunbookLifecycleValidationJson.string()) +
+        " --operator-runbook-pointer-audit " + shell_quote(artifacts.operatorRunbookPointerAuditJson.string()) +
+        " --operator-runbook-provenance-migration " + shell_quote(artifacts.operatorRunbookProvenanceMigrationJson.string()) +
+        " --operator-runbook-migrated-catalog " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()) +
+        " --operator-runbook-migrated-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()) +
+        " --operator-runbook-lifecycle-validation-before " + shell_quote(artifacts.operatorRunbookLifecycleValidationBeforeJson.string()) +
+        " --operator-runbook-lifecycle-validation-after " + shell_quote(artifacts.operatorRunbookLifecycleValidationAfterJson.string()) +
+        " --operator-artifact-path-policy-lint " + shell_quote(artifacts.operatorArtifactPathPolicyLintJson.string()) +
+        " --integrated-approval-mutation-audit " + shell_quote(artifacts.integratedApprovalMutationAuditJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --source-health-action-plan " + shell_quote(artifacts.sourceHealthActionPlanJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --out " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --out-text " + shell_quote(artifacts.paths.opsSummaryTxt.string());
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "phase51 ops summary v17 expected generation");
+}
+
+void run_operator_runbook_pointer_audit_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_pointer_audit_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    const string audit = slurp_text_file(artifacts.operatorRunbookPointerAuditJson);
+    require_test(audit.find("\"manifest_version\": \"operator_runbook_pointer_audit_v1\"") != string::npos, "pointer audit smoke expected manifest");
+    require_test(audit.find("\"absolute_tmp_pointer_count\"") != string::npos, "pointer audit smoke expected tmp count");
+    require_test(audit.find("\"can_rewrite\": true") != string::npos, "pointer audit smoke expected rewritable private tmp pointer");
+}
+
+void run_operator_runbook_provenance_migrate_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_provenance_migrate_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    const string migration = slurp_text_file(artifacts.operatorRunbookProvenanceMigrationJson);
+    require_test(migration.find("\"manifest_version\": \"operator_runbook_provenance_migration_v1\"") != string::npos, "provenance migrate smoke expected manifest");
+    require_test(migration.find("\"migration_verdict\": \"PASS\"") != string::npos || migration.find("\"migration_verdict\": \"PASS_WITH_WAIVERS\"") != string::npos, "provenance migrate smoke expected pass verdict");
+    require_test(migration.find("\"unresolved_active_pointer_count\": 0") != string::npos, "provenance migrate smoke expected no active unresolved pointer");
+}
+
+void run_operator_runbook_lifecycle_after_migration_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_lifecycle_after_migration_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    const string before = slurp_text_file(artifacts.operatorRunbookLifecycleValidationBeforeJson);
+    const string after = slurp_text_file(artifacts.operatorRunbookLifecycleValidationAfterJson);
+    require_test(before.find("\"validation_verdict\": \"ACTION_REQUIRED\"") != string::npos, "lifecycle before migration expected ACTION_REQUIRED");
+    require_test(after.find("\"validation_verdict\": \"PASS\"") != string::npos || after.find("\"validation_verdict\": \"WARN\"") != string::npos, "lifecycle after migration expected pass/warn");
+    require_test(after.find("\"missing_input_count\": 0") != string::npos, "lifecycle after migration expected zero missing inputs");
+}
+
+void run_operator_artifact_path_policy_lint_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_artifact_path_policy_lint_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    const string lint = slurp_text_file(artifacts.operatorArtifactPathPolicyLintJson);
+    require_test(lint.find("\"manifest_version\": \"operator_artifact_path_policy_lint_v1\"") != string::npos, "path policy lint smoke expected manifest");
+    require_test(lint.find("\"lint_verdict\": \"PASS\"") != string::npos, "path policy lint smoke expected PASS");
+    require_test(lint.find("\"forbidden_path_count\": 0") != string::npos, "path policy lint smoke expected zero forbidden paths");
+}
+
+void run_operator_runbook_catalog_prune_after_migration_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_catalog_prune_after_migration_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    const filesystem::path prunedAfter = artifacts.paths.root / "manifests" / "operator_runbook_pruned_catalog_phase51_after_migration.json";
+    const filesystem::path archiveAfter = artifacts.paths.root / "manifests" / "operator_runbook_archive_phase51_after_migration.json";
+    const filesystem::path summaryAfter = artifacts.paths.root / "manifests" / "operator_runbook_prune_summary_phase51_after_migration.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-catalog-prune",
+            {
+                "--phase phase51",
+                "--runbook-catalog " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()),
+                "--action-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()),
+                "--retention-policy " + shell_quote(artifacts.operatorRunbookRetentionPolicyJson.string()),
+                "--pruned-catalog-out " + shell_quote(prunedAfter.string()),
+                "--archive-out " + shell_quote(archiveAfter.string()),
+                "--prune-summary-out " + shell_quote(summaryAfter.string()),
+            }
+        ) == 0,
+        "prune after migration smoke expected generation"
+    );
+    const string summary = slurp_text_file(summaryAfter);
+    require_test(summary.find("\"prune_verdict\": \"PASS\"") != string::npos, "prune after migration expected PASS");
+}
+
+void run_operator_runbook_replay_after_migration_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_runbook_replay_after_migration_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    const filesystem::path replayAfter = artifacts.paths.root / "manifests" / "operator_runbook_replay_phase51_after_migration.json";
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-runbook-replay",
+            {
+                "--phase phase51",
+                "--runbook " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()),
+                "--action-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-budget-registry " + shell_quote(artifacts.paths.runtimeBudgetRegistryJson.string()),
+                "--replay-mode validate_only",
+                "--replay-out " + shell_quote(replayAfter.string()),
+            }
+        ) == 0,
+        "runbook replay after migration smoke expected generation"
+    );
+    const string replay = slurp_text_file(replayAfter);
+    require_test(replay.find("\"replay_verdict\": \"PASS\"") != string::npos, "runbook replay after migration expected PASS");
+}
+
+void run_policy_ops_summary_v17_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v17_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    build_phase51_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"manifest_version\": \"policy_ops_summary_v17\"") != string::npos, "ops summary v17 smoke expected v17 manifest");
+    require_test(summary.find("\"operator_runbook_pointer_audit\"") != string::npos, "ops summary v17 expected pointer audit section");
+    require_test(summary.find("\"operator_runbook_provenance_migration\"") != string::npos, "ops summary v17 expected migration section");
+    require_test(summary.find("\"operator_artifact_path_policy_lint\"") != string::npos, "ops summary v17 expected path lint section");
+}
+
+void run_evidence_bundle_provenance_migration_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_provenance_migration_smoke");
+    prepare_phase51_provenance_context_or_throw(options, artifacts);
+    build_phase51_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / "PHASE51_BUNDLE_PROVENANCE_MIGRATION_REPORT.txt";
+    const filesystem::path zipPath = artifacts.paths.root / "raw_engine_phase51_provenance_migration_bundle.zip";
+    const filesystem::path curatedZipPath = artifacts.paths.root / "raw_engine_phase51_provenance_migration_bundle_curated.zip";
+    const filesystem::path lightZipPath = artifacts.paths.root / "raw_engine_phase51_provenance_migration_bundle_light.zip";
+    write_smoke_report_file(reportPath, "phase51 evidence bundle provenance migration smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase51" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --current-env-approval-execution " + shell_quote(artifacts.currentEnvBudgetApprovalExecutionJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()) +
+        " --operator-runbook-catalog " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()) +
+        " --operator-runbook-pointer-audit " + shell_quote(artifacts.operatorRunbookPointerAuditJson.string()) +
+        " --operator-runbook-provenance-migration " + shell_quote(artifacts.operatorRunbookProvenanceMigrationJson.string()) +
+        " --operator-runbook-migrated-catalog " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()) +
+        " --operator-runbook-migrated-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()) +
+        " --operator-runbook-lifecycle-validation-before " + shell_quote(artifacts.operatorRunbookLifecycleValidationBeforeJson.string()) +
+        " --operator-runbook-lifecycle-validation-after " + shell_quote(artifacts.operatorRunbookLifecycleValidationAfterJson.string()) +
+        " --operator-artifact-path-policy-lint " + shell_quote(artifacts.operatorArtifactPathPolicyLintJson.string()) +
+        " --operator-runbook-retention-policy " + shell_quote(artifacts.operatorRunbookRetentionPolicyJson.string()) +
+        " --operator-runbook-pruned-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()) +
+        " --operator-runbook-archive " + shell_quote(artifacts.operatorRunbookArchiveJson.string()) +
+        " --operator-runbook-prune-summary " + shell_quote(artifacts.operatorRunbookPruneSummaryJson.string()) +
+        " --operator-runbook-lifecycle-validation " + shell_quote(artifacts.operatorRunbookLifecycleValidationJson.string()) +
+        " --integrated-approval-mutation-audit " + shell_quote(artifacts.integratedApprovalMutationAuditJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --source-health-action-plan " + shell_quote(artifacts.sourceHealthActionPlanJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "evidence bundle provenance migration smoke expected bundle success");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase51_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"operator_runbook_pointer_audit_summary\"") != string::npos, "provenance migration bundle expected pointer audit metadata");
+    require_test(metadata.find("\"operator_runbook_provenance_migration_summary\"") != string::npos, "provenance migration bundle expected migration metadata");
+    require_test(metadata.find("\"operator_artifact_path_policy_lint_summary\"") != string::npos, "provenance migration bundle expected path lint metadata");
 }
 
 void run_runtime_recommendation_watch_smoke_case(const TestOptions& options) {
@@ -24443,6 +25466,118 @@ void run_named_case(const TestOptions& options) {
     }
     if (options.caseName == "evidence_bundle_runbook_index_smoke") {
         run_evidence_bundle_runbook_index_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_catalog_smoke") {
+        run_operator_runbook_catalog_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_decision_metadata_audit_smoke") {
+        run_operator_decision_metadata_audit_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "integrated_approval_requires_confirmation_smoke") {
+        run_integrated_approval_requires_confirmation_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "integrated_approval_rejects_without_preflight_smoke") {
+        run_integrated_approval_rejects_without_preflight_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "handoff_only_never_mutates_registry_smoke") {
+        run_handoff_only_never_mutates_registry_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "dry_run_never_mutates_registry_smoke") {
+        run_dry_run_never_mutates_registry_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "integrated_approval_transaction_metadata_smoke") {
+        run_integrated_approval_transaction_metadata_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_replay_smoke") {
+        run_operator_runbook_replay_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "pipeline_source_health_stage_smoke") {
+        run_pipeline_source_health_stage_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_materialization_transaction_smoke") {
+        run_staged_materialization_transaction_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v15_smoke") {
+        run_policy_ops_summary_v15_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runbook_catalog_smoke") {
+        run_evidence_bundle_runbook_catalog_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_catalog_prune_smoke") {
+        run_operator_runbook_catalog_prune_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_validate_lifecycle_smoke") {
+        run_operator_runbook_validate_lifecycle_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "integrated_approval_mutation_audit_dry_run_smoke") {
+        run_integrated_approval_mutation_audit_dry_run_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "integrated_approval_mutation_audit_handoff_only_smoke") {
+        run_integrated_approval_mutation_audit_handoff_only_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "source_health_plan_smoke") {
+        run_source_health_plan_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "pipeline_source_health_required_stage_smoke") {
+        run_pipeline_source_health_required_stage_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v16_smoke") {
+        run_policy_ops_summary_v16_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runbook_retention_smoke") {
+        run_evidence_bundle_runbook_retention_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_pointer_audit_smoke") {
+        run_operator_runbook_pointer_audit_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_provenance_migrate_smoke") {
+        run_operator_runbook_provenance_migrate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_lifecycle_after_migration_smoke") {
+        run_operator_runbook_lifecycle_after_migration_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_artifact_path_policy_lint_smoke") {
+        run_operator_artifact_path_policy_lint_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_catalog_prune_after_migration_smoke") {
+        run_operator_runbook_catalog_prune_after_migration_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_runbook_replay_after_migration_smoke") {
+        run_operator_runbook_replay_after_migration_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v17_smoke") {
+        run_policy_ops_summary_v17_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_provenance_migration_smoke") {
+        run_evidence_bundle_provenance_migration_smoke_case(options);
         return;
     }
     if (options.caseName == "runtime_recommendation_watch_smoke") {

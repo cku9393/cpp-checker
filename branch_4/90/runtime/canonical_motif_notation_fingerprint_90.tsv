@@ -1,0 +1,7 @@
+metric	value
+notation_status	canonical_motif_notation_contract_ready
+component_count	16
+coordinate_contraction_distinguished	1
+family_chain_absorption_distinguished	1
+counterexample_status	blocked_by_counterexample_status
+fingerprint	canonical_motif_notation|16|distinguish_contraction_absorption|status_open

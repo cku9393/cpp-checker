@@ -1,0 +1,8 @@
+metric	value
+notation_status	equivalent_support_coordinate_notation_contract_ready
+component_count	14
+distinguishes_redundancy	1
+distinguishes_active_projection	1
+distinguishes_canonical_motif_compression	1
+counterexample_status_congruence_open	1
+fingerprint	equivalent_support_coordinate_notation|14|redundancy_distinct|status_open

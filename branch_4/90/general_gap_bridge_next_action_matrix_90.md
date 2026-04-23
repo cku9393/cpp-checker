@@ -1,26 +1,17 @@
 # General Gap Bridge Next Action Matrix 90
 
-## recommendation after lift-map refinement phase2
+## current recommendation
 
-Top recommendation: `family_chain_lift_phase3_if_needed`.
+Top recommendation: `canonical_compression_status_preservation`.
 
-Second recommendation: `prove_support_reduction_operation_sublemma`.
+The coordinate-contraction status round made quotient status proof-ready with equivalent-coordinate status congruence open. It did not prove coordinate contraction fully. The next operation-specific blocker is canonical compression status preservation/reduction.
 
-Third recommendation: `higher_support_necessity_recheck`.
+Recommended order:
 
-## scoring
+1. `canonical_compression_status_preservation`
+2. `family_chain_absorption_status_preservation`
+3. `project_to_active_status_locality_refinement`
 
-| action | readiness | proof value | engineering cost | risk | dependency clarity | expected progress | order | final recommendation |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| `family_chain_lift_phase3_if_needed` | 80 | 89 | 70 | 72 | 90 | 88 | 1 | `family_chain_lift_phase3_if_needed` |
-| `prove_support_reduction_operation_sublemma` | 78 | 88 | 76 | 76 | 86 | 86 | 2 | `prove_support_reduction_operation_sublemma` |
-| `higher_support_necessity_recheck` | 72 | 84 | 58 | 64 | 88 | 80 | 3 | `higher_support_necessity_recheck` |
-| `limited_to_broader_generalization_plan` | 65 | 80 | 55 | 60 | 82 | 71 | 4 | `limited_to_broader_generalization_plan` |
-| `support_bound_completion` | 60 | 78 | 62 | 68 | 78 | 69 | 5 | `support_bound_completion` |
-| `boj_problem_bridge_formalization` | 42 | 60 | 50 | 50 | 58 | 52 | 6 | `boj_problem_bridge_formalization` |
+No support9+ scan is recommended now.
 
-## rationale
-
-Phase2 made the payload refinement relation and source-target correspondence first-class and proved recognized correspondence totality. It did not prove layer projection payload preservation, canonical lift soundness, or counterexample-status preservation. The sharp next target is therefore `family_chain_lift_phase3_if_needed`.
-
-This remains a bridge/planning state, not a full general theorem.
+Runtime matrix: `branch_4/90/runtime/general_gap_bridge_next_action_matrix_90.tsv`.

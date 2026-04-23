@@ -1,0 +1,22 @@
+{
+  "manifest_version": "integrated_approval_mutation_audit_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-23T01:59:03Z",
+  "approval_execution_id": "phase47-budget-approval-efd299bc2585",
+  "approval_mode": "handoff_only",
+  "approval_execution_mode": "handoff_only",
+  "allow_integrated_approval": false,
+  "confirmation_token_present": false,
+  "preflight_success": false,
+  "registry_before_hash": "d7052f19fd2e88adc8ba34cd2a57f52e7bc97370d6afb897fdabce1f52a55c1f",
+  "registry_after_hash": "d7052f19fd2e88adc8ba34cd2a57f52e7bc97370d6afb897fdabce1f52a55c1f",
+  "baseline_before_hash": "325581bc9168e8fa3645d2382efdbe85df550b6400c919909ed25ecefef57170",
+  "baseline_after_hash": "325581bc9168e8fa3645d2382efdbe85df550b6400c919909ed25ecefef57170",
+  "mutation_expected": false,
+  "mutation_observed": false,
+  "unexpected_mutation_count": 0,
+  "unexpected_mutations": [],
+  "rollback_hint": "no rollback needed unless mutation audit fails",
+  "audit_verdict": "PASS",
+  "audit_hash": "fc4f4a124a92584ba505d9caaa3158190a7c721cca4546415100756167b53c3d"
+}

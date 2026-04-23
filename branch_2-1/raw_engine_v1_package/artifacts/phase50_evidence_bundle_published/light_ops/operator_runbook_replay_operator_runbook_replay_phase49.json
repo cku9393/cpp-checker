@@ -1,0 +1,30 @@
+{
+  "manifest_version": "operator_runbook_replay_v1",
+  "phase": "phase49",
+  "generated_at_utc": "2026-04-22T13:24:00Z",
+  "replay_mode": "dry_run",
+  "replay_verdict": "PASS",
+  "missing_input_count": 0,
+  "stale_input_count": 0,
+  "command_still_valid": true,
+  "would_mutate_registry": false,
+  "requires_operator_confirmation": false,
+  "entries": [
+    {
+      "runbook_id": "phase47-approval-runbook-590fa6da5236",
+      "action_id": "phase45-current-env-reproposal-001",
+      "runbook_type": "watch",
+      "command_still_valid": true,
+      "would_mutate_registry": false,
+      "requires_operator_confirmation": false,
+      "missing_inputs": [],
+      "ledger_present": true,
+      "runtime_current_present": false,
+      "runtime_budget_registry_present": false
+    }
+  ],
+  "rationale": [
+    "runbook replay validates operator command metadata without mutating registry state"
+  ],
+  "replay_hash": "d448db227271784fe4e72ff42024b9ca5ce21dc0c192acbcc1f4a8b269942674"
+}

@@ -1,23 +1,18 @@
 # Higher Support Necessity Audit 90
 
-## verdict
+## current verdict
 
-- necessity label: `needs_theoretical_bound_first`
+- necessity label: `higher_support_deferred_due_to_operation_proofs_open`
 - support9+ implementation in this round: `0`
+- support9+ scan in this round: `0`
 
 ## audited points
 
-1. The support8 result is sufficient for the current support8 / shell15 / tail / completion-lock proof-system claim.
+1. The support8 result is sufficient only for the current support8 / shell15 / tail / completion-lock proof-system claim.
 2. The current runtime does not prove that support9+ is necessary for the broader general theorem.
-3. No theoretical bound currently closes all support outside support8.
-4. The remaining possible support8-outside issue is not a current support8 blocker; it is a broader theorem bridge question.
-5. Higher-support expansion should not precede bridge formalization unless the bridge identifies it as necessary.
-6. Required theorem-data shape would include support9+ analogues of candidate universes, frontier scans, shell/tail certificates, and provenance audits.
-7. The current engine has parameterized components, but the authoritative lock is support8-specific.
-8. Fresh constructor/cache/audit patterns are reusable in principle, but not currently installed for support9+.
-9. Expected runtime/memory risk is high.
-10. Minimal proof obligation before opening support9+ is a bound lemma or bridge contract explaining why support8 is insufficient.
+3. The higher-support recheck after status-congruence shows operation-specific status proofs and residual absorption measure dominate current support `>8` residuals.
+4. A theoretical higher-support bound becomes relevant only if a true irreducible support `>8` escape remains after operation proofs close.
 
 ## decision
 
-Do not start higher-support expansion now. Formalize the general gap bridge first.
+Do not start higher-support expansion now. Continue with `prove_next_support_reduction_operation_sublemma`.

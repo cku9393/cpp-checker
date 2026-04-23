@@ -1,0 +1,55 @@
+{
+  "manifest_version": "runtime_watch_registry_summary_v2",
+  "generated_at_utc": "2026-04-22T14:22:38Z",
+  "entry_count": 46,
+  "fingerprint_count": 9,
+  "status_counts": {
+    "CLEAR": 11,
+    "REBASELINE_REQUIRED": 34,
+    "WATCH_STABLE": 1
+  },
+  "recommendation_counts": {
+    "NO_ACTION": 11,
+    "REBASELINE_REQUIRED": 34,
+    "WATCH_RUNTIME": 1
+  },
+  "comparability_counts": {
+    "None": 46
+  },
+  "role_counts": {
+    "diagnostic": 7,
+    "production_critical": 14,
+    "operator": 25
+  },
+  "source_counts": {
+    "real": 742,
+    "fixture": 1020
+  },
+  "evidence_source_counts": {
+    "real": 742,
+    "fixture": 1020
+  },
+  "confidence_counts": {
+    "HIGH": 11,
+    "MEDIUM": 8,
+    "LOW": 27
+  },
+  "active_lineage_count": 9,
+  "real_lineage_count": 5,
+  "latest_real_sample_timestamp": "2026-04-22T14:22:38Z",
+  "latest_fixture_sample_timestamp": "2026-04-09T09:24:18Z",
+  "history_transition_count": 24,
+  "history_transition_summary": {
+    "WATCH->WATCH_STABLE": 4,
+    "WATCH_STABLE->REBASELINE_REQUIRED": 1,
+    "REBASELINE_REQUIRED->WATCH": 1,
+    "WATCH_STABLE->WATCH": 2,
+    "WATCH->CLEAR": 2,
+    "CLEAR->WATCH_ESCALATE": 2,
+    "WATCH_ESCALATE->CLEAR": 2,
+    "CLEAR->WATCH": 2,
+    "CLEAR->WATCH_STABLE": 4,
+    "WATCH_STABLE->CLEAR": 4
+  },
+  "strongest_watch_status": "REBASELINE_REQUIRED"
+}

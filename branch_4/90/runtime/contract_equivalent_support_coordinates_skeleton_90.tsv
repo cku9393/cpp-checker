@@ -1,0 +1,26 @@
+metric	value
+operation_lemma_name	contract_equivalent_support_coordinates_smaller_witness
+selected_operation	contract_equivalent_support_coordinates
+exact_statement	If a normal support witness has a nontrivial accepted coordinate-equivalence class and quotient congruence preconditions hold, quotienting the class and normalizing gives a smaller witness candidate under the selected support measure.
+assumption_count	10
+conclusion	Under accepted nontrivial equivalence, quotient construction is well-defined and support_size strictly decreases; semantic preservation remains conditional and counterexample-status preservation remains open.
+coordinate_equivalence_definition	accepted relation combining syntactic role, payload role, canonical motif role, and counterexample-status role congruence
+input_witness_form	normal support witness W with finite support set S and support_size greater than 8
+quotient_contraction_construction	W_contract = normalize(pushforward(W,q)) for q:S->S/~
+support_measure_decrease	support_size k to number_of_equivalence_classes < k when a nontrivial class exists
+normal_form_preservation	proof_sketch_ready
+payload_refinement_preservation	proof_sketch_ready
+counterexample_status_preservation_or_reduction	proof_ready_skeleton_contract_equivalent_status_congruence_open
+canonicalization_compatibility	proof_sketch_ready
+family_chain_source_form_preservation	proof_sketch_ready
+failure_to_escape_case	all singleton -> no-op and next operation; invalid equivalence -> named blocker; failed congruence -> payload/status/canonical blocker; all operations fail -> higher-support escape
+relation_to_delete_redundant_operation	delete_redundant removes an unused coordinate; contraction merges active equivalent coordinates
+relation_to_project_to_active_operation	project_to_active removes inactive complement; contraction applies after all remaining coordinates may still be active
+coordinate_contraction_obligation_count	14
+proved_under_current_scope_sublemma_count	6
+proof_sketch_only_sublemma_count	4
+blocked_sublemma_count	1
+missing_steps	equivalent-coordinate counterexample-status congruence;normal-form preservation under quotient;payload congruence proof;canonical quotient commutation;family-chain source-form quotient preservation;remaining canonical motif compression and family-chain absorption operations
+exact_caveat	Does not prove every support>8 witness has equivalent coordinates and does not prove all support-reduction operations.
+final_status	partial_contract_equivalent_status_proof_ready_congruence_open
+next_blocker	canonical_compression_status_preservation

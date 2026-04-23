@@ -1,0 +1,8 @@
+metric	value
+inventory_status	support_gt8_escape_inventory_reclassified_operation_open
+row_count	10
+currently_reducible_rows	3
+reducible_if_operation_proof_closes_rows	5
+true_higher_support_candidate_rows	1
+unknown_due_to_operation_or_recognizer_rows	1
+next_action	prove_next_support_reduction_operation_sublemma

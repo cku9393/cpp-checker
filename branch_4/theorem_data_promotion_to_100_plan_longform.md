@@ -139,12 +139,12 @@ lower-frontier inventory-only shell11/shell12 pair `4`개는 계속 분리해 �
 Theorem-data promotion 자체는 current support8 top-level과 family-chain lower-layer 축에서 닫혔다. 다음 scope는 `general_gap_bridge_formalization`으로 둔다.
 
 - shell16은 `preflight_contract_ready_no_scan`
-- higher-support는 `needs_theoretical_bound_first`
+- higher-support는 `higher_support_deferred_after_contract_equivalent_status_congruence_open`
 - broader general gap theorem은 `ready_for_bridge_formalization`
 - BOJ solver bridge는 `ready_for_problem_bridge_formalization`
 - archive cleanup은 `worth_cleaning_later`
 
-Bridge formalization 이후 proof-obligation 관점의 `prove_minimal_counterexample_reduction`은 proof-ready skeleton까지 진행됐고, `tail_monotonicity_bridge`는 checked tail witness를 current tail package로 닫는 조건을 고정했다. `shell16_result_promotion_review`는 candidate/raw/canonical/outside-bounded `4/8/4/4`, local exact/plus-one/theorem-preserving survivors `2/0/0`을 class별로 검토했다. Limited proof attempt는 selected limited support8/shell16-boundary bridge theorem을 current scope에서 증명했고, support-bound round는 support8 handled case와 `higher_support_escape`를 분리했다. support-reduction round는 support `>8` branch를 reducible / family-chain-lift-needed / irreducible higher-support escape로 partition했다. Family-chain lift round는 target package readiness만 partial로 닫았고, lift-map refinement는 recognized source-form map을 proof-ready contract로 끌어올렸다. obstruction-preservation round는 payload semantics와 counterexample-status semantics를 first-class로 formalize했다. 이번 phase2 round는 payload refinement relation/source-target correspondence/smaller-witness construction contract를 first-class로 만들었지만, semantic layerwise preservation과 status preservation은 아직 proof completed가 아니다. Full theorem-data/general promotion은 아니다. 다음 target은 `family_chain_lift_phase3_if_needed`다.
+Bridge formalization 이후 proof-obligation 관점의 `prove_minimal_counterexample_reduction`은 proof-ready skeleton까지 진행됐고, limited bridge theorem은 current scope에서 증명됐다. support-bound/support-reduction/family-chain rounds now keep operation routes through `family_chain_absorption_reduction`. The current `status_preservation_congruence_bridge` formalizes the common status language and operation table, classifying preserved/reduced/refuted/absorbed/escaped outcomes while leaving operation-specific status proofs and residual absorption measure open. The higher-support recheck did not run support9+, the project-to-active status round made active projection status proof-ready with inactive-support status locality still open, and the coordinate-contraction status round made quotient status proof-ready with equivalent-coordinate status congruence open. Full theorem-data/general promotion은 아니다. 다음 target은 `canonical_compression_status_preservation`다.
 
 ### 단계 3. archival only 보존
 

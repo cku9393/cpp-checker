@@ -1,0 +1,10 @@
+{
+  "manifest_version": "operator_runbook_archive_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-23T01:59:02Z",
+  "archived_count": 0,
+  "pruned_count": 0,
+  "entries": [],
+  "pruned_runbook_ids": [],
+  "archive_hash": "9ad5caff28d7008cd10b46a3e6f76ac4dfec91af33595ef55d69935d17b6596a"
+}

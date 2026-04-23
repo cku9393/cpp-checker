@@ -1,0 +1,140 @@
+PHASE51 Stabilization Report
+============================
+
+Scope
+-----
+- Authoritative source: split tree in raw_engine_v1_package.
+- Production split-choice policy remains exact_shadow.
+- exact_full remains debug/nightly/compare evidence only.
+- No src primitive or planner semantic changes were made.
+
+Changed / Added Files
+---------------------
+- README.md
+- tests/CMakeLists.txt
+- tests/raw_engine_cases.cpp
+- tests/tools/build_evidence_bundle.py
+- tests/tools/runtime_watch_ops.py
+- artifacts/manifests/operator_runbook_pointer_audit_phase51.json
+- artifacts/manifests/operator_runbook_provenance_migration_phase51.json
+- artifacts/manifests/operator_runbook_catalog_phase51_migrated.json
+- artifacts/manifests/runtime_current_env_action_ledger_phase51_migrated.json
+- artifacts/manifests/operator_runbook_lifecycle_validation_phase51_before.json
+- artifacts/manifests/operator_runbook_lifecycle_validation_phase51_after.json
+- artifacts/manifests/operator_artifact_path_policy_lint_phase51.json
+- artifacts/manifests/operator_runbook_prune_summary_phase51_after_migration.json
+- artifacts/manifests/operator_runbook_replay_phase51_after_migration.json
+
+Stale Pointer Audit
+-------------------
+- Audit manifest: artifacts/manifests/operator_runbook_pointer_audit_phase51.json
+- Verdict: WARN
+- absolute_tmp_pointer_count: 30
+- unresolved_active_pointer_count: 0
+- The stale provenance was isolated to historical /private/tmp runbook/catalog lineage. Active runbooks did not retain unresolved critical pointers.
+
+Provenance Migration
+--------------------
+- Migration manifest: artifacts/manifests/operator_runbook_provenance_migration_phase51.json
+- Verdict: PASS_WITH_WAIVERS
+- rewritten_pointer_count: 5
+- waived_archived_pointer_count: 2
+- unresolved_active_pointer_count: 0
+- unresolved_archived_pointer_count: 0
+- Migrated outputs:
+  - artifacts/manifests/operator_runbook_catalog_phase51_migrated.json
+  - artifacts/manifests/runtime_current_env_action_ledger_phase51_migrated.json
+
+Lifecycle Validation
+--------------------
+- Before migration: ACTION_REQUIRED
+- Before missing_input_count: 11
+- Before mutation_risk_count: 0
+- After migration: PASS
+- After missing_input_count: 0
+- After mutation_risk_count: 0
+- Archived historical pointer waivers are recorded in the migration report; active missing pointers are not waived.
+
+Path Policy Lint
+----------------
+- Lint manifest: artifacts/manifests/operator_artifact_path_policy_lint_phase51.json
+- Verdict: PASS
+- forbidden_path_count: 0
+- dangling_path_count: 0
+- New policy rejects ephemeral /private/tmp pointers in operator artifacts unless converted to bundle/artifact/published-root references or explicitly preserved only as waiver provenance in the migration report.
+
+Retention / Pruning / Replay After Migration
+--------------------------------------------
+- Prune manifest: artifacts/manifests/operator_runbook_prune_summary_phase51_after_migration.json
+- Prune verdict: PASS
+- active_retained_count: 4
+- archived_count: 0
+- Replay manifest: artifacts/manifests/operator_runbook_replay_phase51_after_migration.json
+- Replay verdict: PASS
+- replay missing_input_count: 0
+
+Ops Summary v17
+---------------
+- Ops summary: artifacts/manifests/policy_ops_summary_phase51.json
+- Includes pointer audit, provenance migration, lifecycle validation before/after, path policy lint, mutation audit, source-health action plan, staged materialization, verification lane, publication health, and final operator actions.
+- Publication health in summary: HEALTHY / NO_ACTION.
+- Verification lane in summary: CLOSEOUT_PASS / NO_ACTION.
+
+Evidence Bundle Provenance Cleanup
+----------------------------------
+- Bundle generation includes:
+  - pointer audit
+  - provenance migration report
+  - migrated runbook catalog
+  - migrated action ledger
+  - lifecycle validation before/after
+  - path policy lint
+  - retention/prune after migration
+  - replay after migration
+  - ops summary v17
+  - verification manifests
+  - publication health
+  - verification closeout
+- Bundle outputs:
+  - raw_engine_phase51_stabilization.zip
+  - raw_engine_phase51_stabilization_curated.zip
+  - raw_engine_phase51_ops_light.zip
+  - raw_engine_phase51_delivery.zip
+- Published root: artifacts/phase51_evidence_bundle_published
+- Publication health: HEALTHY, missing_artifact_count=0, hash_mismatch_count=0, dangling_reference_count=0
+- Verification closeout: CLOSEOUT_PASS, verification_not_run_count=0
+
+Verification
+------------
+- Release staged CTest: PASS 458/458, not_run=0
+- Debug staged CTest: PASS 458/458, not_run=0
+- ASan/UBSan staged CTest: PASS 458/458, not_run=0
+- Explicit smokes:
+  - operator_runbook_pointer_audit_smoke: PASS
+  - operator_runbook_provenance_migrate_smoke: PASS
+  - operator_runbook_lifecycle_after_migration_smoke: PASS
+  - operator_artifact_path_policy_lint_smoke: PASS
+  - operator_runbook_catalog_prune_after_migration_smoke: PASS
+  - operator_runbook_replay_after_migration_smoke: PASS
+  - policy_ops_summary_v17_smoke: PASS
+  - evidence_bundle_provenance_migration_smoke: PASS
+  - corpus_replay_smoke: PASS
+
+Semantic Counterexamples / Regressions
+--------------------------------------
+- New semantic counterexamples: none.
+- New regressions: none.
+- No FailureSignature dump/reduce/regression flow was triggered.
+
+Final Policy Decision
+---------------------
+- exact_shadow remains the production split-choice default.
+- compare_ready remains diagnostic-only.
+- exact_full remains tests/debug/nightly compare evidence only.
+- Primitive/planner semantics were not modified.
+
+Remaining Risks
+---------------
+- Historical waived archived pointers are now documented, but long-term archive retention still depends on bundle retention policy.
+- Source-health remains an infrastructure concern for the iCloud authoritative tree; staged/sparse verification remains the official long-run path.
+- Path policy lint must stay enabled for future runbook/catalog/ledger artifacts to prevent new ephemeral absolute path debt.

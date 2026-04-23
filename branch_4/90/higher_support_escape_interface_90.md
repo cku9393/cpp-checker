@@ -1,19 +1,9 @@
 # Higher-Support Escape Interface 90
 
-## status after lift-map refinement phase2
+## status after coordinate-contraction status round
 
-`higher_support_escape_interface_phase2_relation_open`.
+`higher_support_deferred_after_contract_equivalent_status_congruence_open`.
 
-The interface now distinguishes:
-
-- recognized family-chain payload-preservation-open cases;
-- phase2 layerwise refinement proof-open cases;
-- smaller-witness operation-construction blockers;
-- payload mismatch/canonicalization blockers;
-- status-preservation blockers;
-- support-reduction operation blockers;
-- genuinely unrecognized/higher-support cases.
-
-No support9+ scan is performed or implied.
+The interface keeps support `>8` failures named. Project-to-active status failure is a precise inactive-support status-locality/normal-form blocker, and coordinate-contraction status failure is now a precise equivalent-coordinate status-congruence blocker. Neither is an immediate higher-support reason. True higher-support escape remains deferred until operation proofs close.
 
 Runtime interface: `branch_4/90/runtime/higher_support_escape_interface_90.tsv`.

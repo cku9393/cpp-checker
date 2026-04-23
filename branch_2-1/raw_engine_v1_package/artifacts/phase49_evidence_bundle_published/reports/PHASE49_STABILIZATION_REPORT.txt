@@ -1,0 +1,45 @@
+PHASE49 Stabilization Report
+
+Scope
+- Source: raw_engine_v1_package split tree remains the authoritative design source.
+- Semantics: no src primitive/planner semantic change was made.
+- Production split-choice policy remains exact_shadow.
+
+Changed files
+- README.md
+- tests/CMakeLists.txt
+- tests/raw_engine_cases.cpp
+- tests/tools/runtime_watch_ops.py
+- tests/tools/run_policy_pipeline.py
+- tests/tools/build_evidence_bundle.py
+
+Phase49 design additions
+- Operator runbook index was promoted into a catalog/history lifecycle.
+- Decision metadata audit verifies skip/defer/reject/retry_now/approval metadata retention across ledger/catalog/history.
+- Integrated approval guardrail now requires explicit opt-in, confirmation token, approval_ready, approve decision, and dry-run preflight success; dry_run and handoff_only never mutate registry/baseline.
+- Runbook replay/dry-run validates runbook input freshness and mutation risk.
+- Source-health preflight is included as a first-class pipeline stage and separates iCloud/source-health infra action from correctness failure.
+- staged_sparse_clone_overlay materialization now emits a transaction log.
+
+Verification results
+- Release staged full CTest: PASS, 442/442, not_run=0.
+- Debug staged full CTest: PASS, 412/412, not_run=0.
+- ASan/UBSan isolated staged full CTest: PASS, 412/412, not_run=0.
+- After replacing dataless-safe campaign placeholders with real sparse-clone campaign/evidence files, affected campaign/policy subset reruns passed in Release, Debug, and ASan/UBSan.
+
+Operational results
+- operator_decision_metadata_audit_phase49: PASS.
+- operator_runbook_replay_phase49: PASS.
+- staged_materialization_transaction_phase49: PASS.
+- policy_ops_summary_phase49: v15 generated with runbook catalog, metadata audit, approval guardrail, source health, and staged materialization transaction sections.
+- Source health preflight: ATTENTION_REQUIRED / SPARSE_CLONE_REQUIRED due iCloud dataless placeholders and local git object health, not a correctness failure.
+
+Semantic counterexamples and regressions
+- New semantic counterexample: none.
+- New regression tests: Phase49 operator catalog/audit/replay/source-health/materialization smokes were added.
+- exact_shadow final verdict: keep exact_shadow as production default; exact_full remains compare/debug/nightly evidence only.
+
+Remaining risks
+- integrated_opt_in approval remains non-default and should require explicit operator confirmation in real production use.
+- iCloud authoritative tree remains unsuitable for long direct build/test; staged sparse materialization is the official verification path.
+- Pipeline quick source-health stage correctly reports source-health ATTENTION_REQUIRED when direct authoritative source is dataless; this is infra/operator action, not semantic failure.

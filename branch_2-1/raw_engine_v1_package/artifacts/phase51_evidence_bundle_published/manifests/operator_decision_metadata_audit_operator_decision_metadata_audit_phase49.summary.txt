@@ -1,0 +1,7 @@
+manifest_version=operator_decision_metadata_audit_v1
+phase=phase49
+audit_verdict=PASS
+missing_reason_count=0
+missing_defer_until_count=0
+missing_retry_link_count=0
+missing_approval_pointer_count=0

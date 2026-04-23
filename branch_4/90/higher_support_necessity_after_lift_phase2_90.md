@@ -6,10 +6,14 @@ Higher-support recheck remains deferred. Phase2 made the payload relation and so
 
 ## decision
 
-Next target:
+Original phase2 next target:
 
 `family_chain_lift_phase3_if_needed`
 
-Reason: phase2 reduced the previous blocker to layer projection payload-preservation and canonical/status semantic sublemmas. A higher-support scan would still be premature because the recognized-source proof obligations are sharper than the higher-support boundary.
+Superseded current next target:
+
+`prove_support_reduction_operation_sublemma`
+
+Reason: phase2 reduced the previous blocker to layer projection payload-preservation and canonical/status semantic sublemmas. Phase3 then made projection and canonical lift proof-ready skeletons and left operation-specific smaller-witness construction as the sharper blocker. A higher-support scan remains premature.
 
 Runtime table: `branch_4/90/runtime/higher_support_necessity_after_lift_phase2_90.tsv`.

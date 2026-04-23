@@ -1,0 +1,17 @@
+{
+  "manifest_version": "operator_artifact_path_policy_lint_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-23T01:59:02Z",
+  "lint_verdict": "PASS",
+  "scanned_manifest_count": 5,
+  "forbidden_path_count": 0,
+  "dangling_path_count": 0,
+  "allowed_external_reference_count": 60,
+  "forbidden_paths": [],
+  "dangling_paths": [],
+  "rationale": [
+    "active operator artifacts must use bundle-relative, artifact-root-relative, or published-root-relative pointers",
+    "ephemeral tmp paths are allowed only inside explicit provenance original_path/source_path fields"
+  ],
+  "lint_hash": "806acf8687af5ef2471117d8e08dc48b81b4b2b3488408d0017fcf0fe1384ef4"
+}

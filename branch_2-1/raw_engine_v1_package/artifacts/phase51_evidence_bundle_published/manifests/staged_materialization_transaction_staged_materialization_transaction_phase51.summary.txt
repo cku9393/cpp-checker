@@ -1,0 +1,20 @@
+{
+  "manifest_version": "staged_materialization_transaction_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-23T01:59:11Z",
+  "transaction_id": "phase51-materialization-f896c05f132b",
+  "materialization_mode": "staged_sparse_clone_overlay",
+  "source_health_hash": "1aa3e16a51d67ad2e115428b2e4fb1eae18359c13edfbbb65d2ba2c56f593ea9",
+  "sparse_clone_ref": "c0057425a8a924e661ff322ea86f459209686799",
+  "overlay_file_count": 3,
+  "overlay_hash": "ee937dfddf63550caa4c8e3e71dca92afbe88529e1033333fa27d563cf67d96d",
+  "dataless_remaining_count": 0,
+  "source_snapshot_hash": "220c1b0e169fd0b711b97b6de25c546b3112dab62a147a00a384a759ba35067b",
+  "staged_mirror_hash": "f2cb76c9e1e22f02c5067da0b68e55d2fec7a12a5b4de17f2bf014bf73657872",
+  "transaction_verdict": "PASS",
+  "rollback_cleanup_performed": true,
+  "cleanup_paths": [
+    "/private/tmp/raw_engine_phase51_stage"
+  ],
+  "transaction_hash": "b28d46e1d2a90f4da4bd2d2895996a60dcfa03a590dcce9d53ca7162953bf02f"
+}
