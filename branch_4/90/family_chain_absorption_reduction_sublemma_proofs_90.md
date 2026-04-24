@@ -2,12 +2,17 @@
 
 ## proof attempt summary
 
-The current round proves the trigger/fresh-package/self-verification/failure-classification parts under current scope. It makes theorem applicability, contradiction, smaller-witness construction, and payload transfer proof-sketch ready under explicit assumptions. Strict measure decrease for the residual smaller-witness branch and counterexample-status preservation/reduction remain blocked.
+The absorption reduction round proved the trigger/fresh-package/self-verification/failure-classification parts under current scope. The status round now separates lifted-target refutation from direct source-counterexample refutation and isolates residual measure decrease as its own blocker.
+
+Strict measure decrease for the residual smaller-witness branch and source-target payload/status alignment remain open.
 
 Counts:
 
-- `proved_under_current_scope`: `4`
-- `proof_sketch_only`: `4`
-- `blocked`: `2`
+- reduction-round `proved_under_current_scope`: `4`
+- reduction-round `proof_sketch_only`: `4`
+- reduction-round `blocked`: `2`
+- status-round `proved_under_current_scope`: `3`
+- status-round `proof_sketch_only`: `4`
+- status-round `blocked`: `2`
 
 Runtime table: `branch_4/90/runtime/family_chain_absorption_reduction_sublemma_proofs_90.tsv`.

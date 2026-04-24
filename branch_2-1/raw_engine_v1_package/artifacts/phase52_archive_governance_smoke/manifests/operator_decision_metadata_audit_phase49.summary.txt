@@ -1,0 +1,16 @@
+{
+  "manifest_version": "operator_decision_metadata_audit_v1",
+  "phase": "phase49",
+  "generated_at_utc": "2026-04-24T03:13:17Z",
+  "audit_verdict": "PASS",
+  "missing_reason_count": 0,
+  "missing_defer_until_count": 0,
+  "missing_retry_link_count": 0,
+  "missing_approval_pointer_count": 0,
+  "affected_action_ids": [],
+  "missing_reason_action_ids": [],
+  "missing_defer_until_action_ids": [],
+  "missing_retry_link_action_ids": [],
+  "missing_approval_pointer_action_ids": [],
+  "audit_hash": "15a033f337cbbacbd5ad1bb92e3cd4475e08848191b514b11b51d00bffbcedd3"
+}

@@ -57,6 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--include-source-health", action="store_true")
     parser.add_argument("--source-health-preflight", default=None)
     parser.add_argument("--source-health-action-plan", default=None)
+    parser.add_argument("--verification-preflight-gate", default=None)
     parser.add_argument("--staged-materialization", default=None)
     parser.add_argument("--source-root", default=None)
     parser.add_argument("--source-health-simulate-dataless-count", type=int, default=0)
@@ -258,6 +259,10 @@ def default_source_health_action_plan_path(artifact_root: Path, phase: str) -> P
 
 def default_staged_materialization_path(artifact_root: Path, phase: str) -> Path:
     return artifact_root / "manifests" / f"staged_materialization_{phase}.json"
+
+
+def default_verification_preflight_gate_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"verification_preflight_gate_{phase}.json"
 
 
 def default_staged_mirror_manifest_path(artifact_root: Path, phase: str) -> Path:
@@ -814,6 +819,7 @@ def enrich_summary_with_operator_artifacts(
     publication_health_path: Path | None = None,
     source_health_preflight_path: Path | None = None,
     source_health_action_plan_path: Path | None = None,
+    verification_preflight_gate_path: Path | None = None,
     staged_materialization_path: Path | None = None,
 ) -> dict[str, Any]:
     enriched = dict(summary)
@@ -823,6 +829,7 @@ def enrich_summary_with_operator_artifacts(
     enriched["publication_health"] = None if publication_health_path is None else str(publication_health_path)
     enriched["source_health_preflight"] = None if source_health_preflight_path is None else str(source_health_preflight_path)
     enriched["source_health_action_plan"] = None if source_health_action_plan_path is None else str(source_health_action_plan_path)
+    enriched["verification_preflight_gate"] = None if verification_preflight_gate_path is None else str(verification_preflight_gate_path)
     enriched["staged_materialization"] = None if staged_materialization_path is None else str(staged_materialization_path)
 
     runtime_watch_registry = load_json_if_exists(runtime_watch_registry_path)
@@ -831,6 +838,7 @@ def enrich_summary_with_operator_artifacts(
     publication_health = load_json_if_exists(publication_health_path)
     source_health_preflight = load_json_if_exists(source_health_preflight_path)
     source_health_action_plan = load_json_if_exists(source_health_action_plan_path)
+    verification_preflight_gate = load_json_if_exists(verification_preflight_gate_path)
     staged_materialization = load_json_if_exists(staged_materialization_path)
     final_operator_summary = ops_summary.get("final_operator_summary", {})
 
@@ -848,6 +856,10 @@ def enrich_summary_with_operator_artifacts(
     enriched["verification_lane_status"] = ops_summary.get("verification_lane", {}).get("status")
     enriched["verification_not_run_count"] = ops_summary.get("verification_lane", {}).get("verification_not_run_count", 0)
     enriched["verification_action"] = ops_summary.get("final_operator_actions", {}).get("recommended_action_verification")
+    enriched["verification_preflight_gate_verdict"] = verification_preflight_gate.get("preflight_gate_verdict")
+    enriched["verification_preflight_direct_build_allowed"] = verification_preflight_gate.get("direct_build_allowed")
+    enriched["verification_preflight_staged_build_allowed"] = verification_preflight_gate.get("staged_build_allowed")
+    enriched["verification_preflight_sparse_clone_required"] = verification_preflight_gate.get("sparse_clone_required")
     enriched["source_health_status"] = source_health_preflight.get("status")
     enriched["source_health_recommendation"] = source_health_preflight.get("recommendation")
     enriched["source_health_dataless_placeholder_count"] = source_health_preflight.get("dataless_placeholder_count", 0)
@@ -1378,6 +1390,10 @@ def main() -> int:
         args.source_health_action_plan,
         default_source_health_action_plan_path(artifact_root, pipeline_phase),
     )
+    verification_preflight_gate_path = manifest_json_path(
+        args.verification_preflight_gate,
+        default_verification_preflight_gate_path(artifact_root, pipeline_phase),
+    )
     staged_materialization_path = manifest_json_path(
         args.staged_materialization,
         default_staged_materialization_path(artifact_root, pipeline_phase),
@@ -1493,6 +1509,20 @@ def main() -> int:
                 str(source_health_action_plan_path),
             ]
             stages.append(run_command("source_health_action_plan", source_health_plan_command, repo_root))
+            verification_preflight_command = [
+                python_bin,
+                str(watch_ops_script),
+                "verification-preflight-gate",
+                "--phase",
+                pipeline_phase,
+                "--source-health",
+                str(source_health_preflight_path),
+                "--staged-materialization",
+                str(staged_materialization_path),
+                "--preflight-gate-out",
+                str(verification_preflight_gate_path),
+            ]
+            stages.append(run_command("verification_preflight_gate", verification_preflight_command, repo_root))
 
         if args.mode in {"quick", "rebaseline_candidate", "matrix"}:
             policy_ci_command = [
@@ -2037,6 +2067,7 @@ def main() -> int:
             publication_health_path if publication_health_path.exists() else None,
             source_health_preflight_path if source_health_preflight_path.exists() else None,
             source_health_action_plan_path if source_health_action_plan_path.exists() else None,
+            verification_preflight_gate_path if verification_preflight_gate_path.exists() else None,
             staged_materialization_path if staged_materialization_path.exists() else None,
         )
         write_pipeline_summary(summary_path, summary)
@@ -2116,6 +2147,7 @@ def main() -> int:
             publication_health_path if publication_health_path.exists() else None,
             source_health_preflight_path if source_health_preflight_path.exists() else None,
             source_health_action_plan_path if source_health_action_plan_path.exists() else None,
+            verification_preflight_gate_path if verification_preflight_gate_path.exists() else None,
             staged_materialization_path if staged_materialization_path.exists() else None,
         )
         write_pipeline_summary(summary_path, summary)
@@ -2485,6 +2517,7 @@ def main() -> int:
                 publication_health_path if publication_health_path.exists() else None,
                 source_health_preflight_path if source_health_preflight_path.exists() else None,
                 source_health_action_plan_path if source_health_action_plan_path.exists() else None,
+                verification_preflight_gate_path if verification_preflight_gate_path.exists() else None,
                 staged_materialization_path if staged_materialization_path.exists() else None,
             )
             write_pipeline_summary(summary_path, summary)

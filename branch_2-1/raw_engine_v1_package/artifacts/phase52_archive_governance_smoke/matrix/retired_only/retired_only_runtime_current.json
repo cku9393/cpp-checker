@@ -1,0 +1,378 @@
+{
+  "manifest_version": "runtime_current_manifest_v1",
+  "manifest_role": "current",
+  "generated_at_utc": "2026-04-24T03:12:53Z",
+  "phase": "phase22",
+  "artifact_root": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke",
+  "baseline_tag": "phase22-runtime",
+  "host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.4.0",
+    "arch": "arm64",
+    "runner_tag": "smoke-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)",
+    "fingerprint_hash": "393d9c23f92284ad12d06c9b00ed349ede7d3c68a127ec10b56eda337d113882"
+  },
+  "toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)"
+  },
+  "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+  "runtime_budget_profile_version": 4,
+  "runtime_budget_profile": {
+    "profile_id": "phase33-runtime-budget-approved-profile",
+    "version": 4,
+    "created_at": "2026-04-24T03:12:55Z",
+    "entries": {
+      "release_full": {
+        "execution_class": "release_full",
+        "role": "production_critical",
+        "thresholds": {
+          "soft_seconds": 319.0,
+          "hard_seconds": 520.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0,
+          "soft_delta_floor_sec": 0.0,
+          "hard_delta_floor_sec": 0.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 2,
+          "rebaseline_candidate_threshold": 4,
+          "max_bounded_jitter_percent": 12.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "debug_full": {
+        "execution_class": "debug_full",
+        "role": "production_critical",
+        "thresholds": {
+          "soft_seconds": 900.0,
+          "hard_seconds": 1800.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0,
+          "soft_delta_floor_sec": 0.0,
+          "hard_delta_floor_sec": 0.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 2,
+          "rebaseline_candidate_threshold": 4,
+          "max_bounded_jitter_percent": 12.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "asan_full": {
+        "execution_class": "asan_full",
+        "role": "diagnostic",
+        "thresholds": {
+          "soft_seconds": 2400.0,
+          "hard_seconds": 4200.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0,
+          "soft_delta_floor_sec": 0.0,
+          "hard_delta_floor_sec": 0.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 20.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "policy_core": {
+        "execution_class": "policy_core",
+        "role": "operator",
+        "thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0,
+          "soft_delta_floor_sec": 0.25,
+          "hard_delta_floor_sec": 0.5
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 30.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "policy_refresh": {
+        "execution_class": "policy_refresh",
+        "role": "operator",
+        "thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0,
+          "soft_delta_floor_sec": 0.25,
+          "hard_delta_floor_sec": 0.5
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 30.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "policy_nightly": {
+        "execution_class": "policy_nightly",
+        "role": "operator",
+        "thresholds": {
+          "soft_seconds": 180.0,
+          "hard_seconds": 600.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0,
+          "soft_delta_floor_sec": 0.5,
+          "hard_delta_floor_sec": 1.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 30.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      }
+    }
+  },
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "wall_time_sec": 290.0,
+      "test_count": 10,
+      "build_type": "Release",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 319.0,
+        "hard_seconds": 520.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "execution_role": "production_critical",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 2,
+        "rebaseline_candidate_threshold": 4,
+        "max_bounded_jitter_percent": 12.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "24b769fb379c791afc9d8f286eaa4b6f79447205383cfcb488f2bd069cf21128"
+    },
+    {
+      "execution_class": "debug_full",
+      "wall_time_sec": 480.0,
+      "test_count": 10,
+      "build_type": "Debug",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 900.0,
+        "hard_seconds": 1800.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "execution_role": "production_critical",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 2,
+        "rebaseline_candidate_threshold": 4,
+        "max_bounded_jitter_percent": 12.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "2530e03f105afab11502d1d97256af9eddcd572a06ec31d1876e956d1fe921c3"
+    },
+    {
+      "execution_class": "asan_full",
+      "wall_time_sec": 900.0,
+      "test_count": 10,
+      "build_type": "Asan",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 2400.0,
+        "hard_seconds": 4200.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "execution_role": "diagnostic",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 20.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "056502de042bc42881efe2ec64d82b8cf0c7da42cf97e1dbae3db77ad57e4e10"
+    },
+    {
+      "execution_class": "policy_core",
+      "wall_time_sec": 1.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "execution_role": "operator",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "a28becb3b24743fe52db9a455ee20d983c3c4905298467a9df2680d06731ccca"
+    },
+    {
+      "execution_class": "policy_refresh",
+      "wall_time_sec": 1.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "execution_role": "operator",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "bcbef9bf9708bcdf539dd165ce73e893901075b822f181c742904ce9a3a81e6b"
+    },
+    {
+      "execution_class": "policy_nightly",
+      "wall_time_sec": 2.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 180.0,
+        "hard_seconds": 600.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.5,
+        "hard_delta_floor_sec": 1.0
+      },
+      "execution_role": "operator",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "a3f56023a3d03f07268283894c494587010511240bb78e623f9b9c77d3098a4b"
+    }
+  ],
+  "warn_count": 0,
+  "fail_count": 0,
+  "overall_status": "OK",
+  "current_verdict": "PASS",
+  "overall_budget_verdict": "PASS",
+  "current_runtime_manifest_hash": "20070be3acf6b29aa25a1ca576c572eb5ceb04c5c141f0e40580b1a3ba235500",
+  "runtime_budget_approval_metadata": {
+    "approval_version": "runtime_budget_reprofile_approval_v1",
+    "approval_status": "approved",
+    "approved_from_runtime_current": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/policy_runtime_current_phase22.json",
+    "approved_from_runtime_current_hash": "a26a4c1b7b9193129e150759c98d3c9c0243c8bf872498029e5f5cd3c22c0a24",
+    "approved_from_budget_current": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_budget_current_phase22.json",
+    "approved_from_budget_current_hash": "a4de0134e3834c29e0ff84d40f8225d24ae2b467880c3b46e77e6bb87bf8892c",
+    "approved_from_budget_proposal": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_budget_proposal_phase22.json",
+    "approved_from_budget_proposal_hash": "19e23dbf18ee074cfc67759aa0ce9f1e094d38573b73e9b4c04b9461f5175457",
+    "approved_from_budget_gate": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_budget_proposal_gate_phase22.json",
+    "approved_from_budget_gate_hash": "2ef7993918c4665974633245f9eb19ed8dc3357c8448b40b8324838b1a8bfd51",
+    "approved_from_budget_gate_verdict": "APPROVABLE",
+    "proposal_confidence": "HIGH",
+    "previous_active_budget_profile_id": null,
+    "previous_active_budget_profile_tag": null,
+    "approval_timestamp_utc": "2026-04-24T03:12:55Z",
+    "budget_tag": "phase33-runtime-budget-approved",
+    "evidence_summary": {
+      "affected_execution_classes": [
+        "release_full"
+      ],
+      "rationale": [
+        "release_full stable soft-budget overrun is sufficiently backed by repeated same-fingerprint evidence"
+      ]
+    },
+    "new_active_budget_profile_id": "phase33-runtime-budget-approved-profile",
+    "new_active_budget_profile_tag": "phase33-runtime-budget-approved",
+    "new_active_budget_profile_hash": "9441b6626a1c4bbd3c57524089e32eb2dcb8ef3402f27f103303a9c83b5339b6",
+    "budget_transition_status": "ACTIVE_CONFIRMED"
+  },
+  "runtime_budget_profile_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_budget_baseline_phase22_approved.json",
+  "runtime_budget_transition_status": "ACTIVE_CONFIRMED"
+}

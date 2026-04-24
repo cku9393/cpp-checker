@@ -1,0 +1,22 @@
+{
+  "defer": {
+    "closure_status": "DEFERRED",
+    "decision_valid": true,
+    "resulting_action_status": "DEFERRED"
+  },
+  "reject": {
+    "closure_status": "REJECTED",
+    "decision_valid": true,
+    "resulting_action_status": "REJECTED"
+  },
+  "retry_now": {
+    "closure_status": "RETRY_PENDING",
+    "decision_valid": true,
+    "resulting_action_status": "RETRY_PENDING"
+  },
+  "skip": {
+    "closure_status": "CLOSED",
+    "decision_valid": true,
+    "resulting_action_status": "SKIPPED"
+  }
+}

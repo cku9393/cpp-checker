@@ -160,12 +160,12 @@ Family-chain lower-layer queue is complete: total `7`, fresh `7`, imported `0`. 
 
 Readiness audit decision:
 
-- top recommendation: `canonical_compression_status_preservation`
-- second recommendation: `family_chain_absorption_status_preservation`
-- third recommendation: `project_to_active_status_locality_refinement`
+- top recommendation: `project_to_active_status_locality_refinement`
+- second recommendation: `project_to_active_status_locality_refinement`
+- third recommendation: `higher_support_necessity_recheck`
 - shell16 readiness label: `preflight_contract_ready_no_scan`
-- higher-support necessity label: `higher_support_deferred_after_contract_equivalent_status_congruence_open`
-- general gap theorem readiness label: `ready_for_canonical_compression_status_preservation`
+- higher-support necessity label: `higher_support_deferred_after_family_chain_absorption_status_refutation_measure_open`
+- general gap theorem readiness label: `ready_for_project_to_active_status_locality_refinement`
 - BOJ solver bridge readiness label: `ready_for_problem_bridge_formalization`
 - archive/provenance cleanup label: `worth_cleaning_later`
 
@@ -190,21 +190,21 @@ The bridge formalization round decomposed the next scope into statement candidat
 - shell16 candidate/raw/canonical/outside-bounded counts: `4 / 8 / 4 / 4`
 - shell16 local exact / plus-one / theorem-preserving survivors: `2 / 0 / 0`
 - shell16 fingerprint: `981:4479772858934799504`
-- support-bound lemma status: `proof_ready_skeleton_project_contraction_status_proof_ready_remaining_operations_open`
-- support reduction step status: `partition_ready_project_contraction_status_proof_ready_remaining_operations_open`
-- family-chain lift status: `partial_lift_project_contraction_status_proof_ready_remaining_operations_open`
+- support-bound lemma status: `proof_ready_skeleton_all_primary_operations_status_proof_ready_residual_congruence_open`
+- support reduction step status: `partition_ready_all_primary_operations_status_proof_ready_residual_congruence_open`
+- family-chain lift status: `partial_lift_all_primary_operations_status_proof_ready_residual_congruence_open`
 - refined lift map status: `refined_lift_map_defined_for_recognized_sources_preservation_open`
-- obstruction preservation status: `partial_preservation_project_contraction_status_proof_ready_remaining_operations_open`
-- phase2 skeleton status: `partial_phase2_project_contraction_status_proof_ready_remaining_operations_open`
-- phase3 skeleton status: `partial_phase3_project_contraction_status_proof_ready_remaining_operations_open`
+- obstruction preservation status: `partial_preservation_all_primary_operations_status_proof_ready_residual_congruence_open`
+- phase2 skeleton status: `partial_phase2_project_contraction_compression_status_proof_ready_remaining_operations_open`
+- phase3 skeleton status: `partial_phase3_all_primary_operations_status_proof_ready_residual_congruence_open`
 - previous operation skeleton status: `proof_ready_skeleton_selected_delete_redundant_coordinate`
 - previous project-to-active skeleton status: `partial_project_to_active_status_proof_ready_locality_open`
 - previous coordinate-contraction skeleton status: `partial_contract_equivalent_status_proof_ready_congruence_open`
 - selected operation skeleton status: `partial_absorption_reduction_proved_escape_open`
-- higher-support escape status: `higher_support_deferred_after_contract_equivalent_status_congruence_open`
-- general theorem readiness after this round: `ready_for_canonical_compression_status_preservation`
-- next action matrix first target: `canonical_compression_status_preservation`
-- second target: `family_chain_absorption_status_preservation`
-- third target: `project_to_active_status_locality_refinement`
+- higher-support escape status: `higher_support_deferred_after_family_chain_absorption_status_refutation_measure_open`
+- general theorem readiness after this round: `ready_for_project_to_active_status_locality_refinement`
+- next action matrix first target: `project_to_active_status_locality_refinement`
+- second target: `project_to_active_status_locality_refinement`
+- third target: `higher_support_necessity_recheck`
 
-This still does not prove the full general theorem and does not promote shell16 as a theorem. It proves only the selected limited support8/shell16-boundary bridge theorem under current scope, formalizes the support-bound skeleton, refines support `>8` witnesses into `support_growth_partition`, keeps operation skeletons through `family_chain_absorption_reduction`, adds the current `status_preservation_congruence_bridge` partial skeleton, rechecks higher-support necessity without running support9+, makes project-to-active status proof-ready with inactive-support status locality open, and makes coordinate-contraction status proof-ready with equivalent-coordinate status congruence open. The next broader proof obligation is `canonical_compression_status_preservation`.
+This still does not prove the full general theorem and does not promote shell16 as a theorem. It proves only the selected limited support8/shell16-boundary bridge theorem under current scope, formalizes the support-bound skeleton, refines support `>8` witnesses into `support_growth_partition`, keeps operation skeletons through `family_chain_absorption_reduction`, adds the current `status_preservation_congruence_bridge` partial skeleton, rechecks higher-support necessity without running support9+, makes project-to-active status proof-ready with inactive-support status locality open, makes coordinate-contraction status proof-ready with equivalent-coordinate status congruence open, makes canonical-compression status proof-ready with canonical-motif status congruence open, and makes family-chain absorption status proof-ready with source-target alignment and residual measure open. The next broader proof obligation is `project_to_active_status_locality_refinement`.

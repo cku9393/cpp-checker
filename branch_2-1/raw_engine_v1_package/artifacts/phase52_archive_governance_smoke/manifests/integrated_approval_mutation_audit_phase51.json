@@ -1,0 +1,22 @@
+{
+  "manifest_version": "integrated_approval_mutation_audit_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-24T03:13:19Z",
+  "approval_execution_id": "phase47-budget-approval-72e91325c33f",
+  "approval_mode": "handoff_only",
+  "approval_execution_mode": "handoff_only",
+  "allow_integrated_approval": false,
+  "confirmation_token_present": false,
+  "preflight_success": false,
+  "registry_before_hash": "c83a6f790940717f8d1851971d84b2e5ac8258af3e8898e0f447eed1d81e44b3",
+  "registry_after_hash": "c83a6f790940717f8d1851971d84b2e5ac8258af3e8898e0f447eed1d81e44b3",
+  "baseline_before_hash": "cd022d19190f1badf348e607026368b094569494079b04a69ab9aa80844555f4",
+  "baseline_after_hash": "cd022d19190f1badf348e607026368b094569494079b04a69ab9aa80844555f4",
+  "mutation_expected": false,
+  "mutation_observed": false,
+  "unexpected_mutation_count": 0,
+  "unexpected_mutations": [],
+  "rollback_hint": "no rollback needed; dry_run/handoff_only did not mutate registry or baseline",
+  "audit_verdict": "PASS",
+  "audit_hash": "7f25d67431eb9fd6d10d56e8d8f3f4b52a09291426f1b1102df25ea361833914"
+}

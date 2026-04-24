@@ -2,15 +2,15 @@
 
 ## current recommendation
 
-Top recommendation: `canonical_compression_status_preservation`.
+Top recommendation: `project_to_active_status_locality_refinement`.
 
-The coordinate-contraction status round made quotient status proof-ready with equivalent-coordinate status congruence open. It did not prove coordinate contraction fully. The next operation-specific blocker is canonical compression status preservation/reduction.
+The family-chain absorption status round made absorption status/refutation proof-ready as a refutation/reduction/escape skeleton. It did not prove absorption fully; source-target alignment and residual measure remain open. The next direct operation-specific blocker is project-to-active inactive-support status locality.
 
 Recommended order:
 
-1. `canonical_compression_status_preservation`
-2. `family_chain_absorption_status_preservation`
-3. `project_to_active_status_locality_refinement`
+1. `project_to_active_status_locality_refinement`
+2. `contract_equivalent_status_congruence_refinement`
+3. `canonical_compression_status_congruence_refinement`
 
 No support9+ scan is recommended now.
 

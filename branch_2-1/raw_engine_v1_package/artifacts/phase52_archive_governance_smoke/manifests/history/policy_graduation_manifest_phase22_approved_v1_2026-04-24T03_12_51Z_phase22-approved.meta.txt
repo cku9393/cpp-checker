@@ -1,0 +1,7 @@
+baseline_tag=phase22-approved
+approval_timestamp_utc=2026-04-24T03:12:51Z
+report_file=
+bundle_file=
+baseline_manifest_path=/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/policy_graduation_manifest_phase22_approved_v1.json
+promoted_from_manifest=/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/policy_gate_source.txt
+family_status_snapshot=split_tie_organic_symmetric:PASS/FRESH,automorphism_probe_large:PASS/FRESH,planner_tie_mixed_organic:NON_APPLICABLE/FRESH,planner_tie_mixed_organic_compare_ready:DIAGNOSTIC_ONLY/FRESH

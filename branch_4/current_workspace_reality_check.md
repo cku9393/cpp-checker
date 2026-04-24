@@ -165,12 +165,12 @@ Lower-frontier first-class inventory에 별도로 노출한 shell11/shell12 pair
 - current closure certificate: `branch_4/90/current_support8_closure_certificate_90.md`
 - candidate inventory: `branch_4/90/next_scope_candidate_inventory_90.md`
 - decision matrix: `branch_4/90/next_scope_decision_matrix_90.md`
-- top recommendation: `canonical_compression_status_preservation`
-- second recommendation: `family_chain_absorption_status_preservation`
-- third recommendation: `project_to_active_status_locality_refinement`
+- top recommendation: `project_to_active_status_locality_refinement`
+- second recommendation: `project_to_active_status_locality_refinement`
+- third recommendation: `higher_support_necessity_recheck`
 - shell16 readiness label: `preflight_contract_ready_no_scan`
-- higher-support necessity label: `higher_support_deferred_after_contract_equivalent_status_congruence_open`
-- general gap theorem readiness label: `ready_for_canonical_compression_status_preservation`
+- higher-support necessity label: `higher_support_deferred_after_family_chain_absorption_status_refutation_measure_open`
+- general gap theorem readiness label: `ready_for_project_to_active_status_locality_refinement`
 - BOJ solver bridge readiness label: `ready_for_problem_bridge_formalization`
 - archive/provenance cleanup label: `worth_cleaning_later`
 
@@ -190,15 +190,15 @@ Lower-frontier first-class inventory에 별도로 노출한 shell11/shell12 pair
 - shell16 candidate/raw/canonical/outside-bounded counts: `4 / 8 / 4 / 4`
 - shell16 local exact / plus-one / theorem-preserving survivors: `2 / 0 / 0`
 - shell16 fingerprint: `981:4479772858934799504`
-- support-bound lemma status: `proof_ready_skeleton_project_contraction_status_proof_ready_remaining_operations_open`
-- support reduction step status: `partition_ready_project_contraction_status_proof_ready_remaining_operations_open`
-- family-chain lift status: `partial_lift_project_contraction_status_proof_ready_remaining_operations_open`
+- support-bound lemma status: `proof_ready_skeleton_all_primary_operations_status_proof_ready_residual_congruence_open`
+- support reduction step status: `partition_ready_all_primary_operations_status_proof_ready_residual_congruence_open`
+- family-chain lift status: `partial_lift_all_primary_operations_status_proof_ready_residual_congruence_open`
 - refined lift map status: `refined_lift_map_defined_for_recognized_sources_preservation_open`
-- obstruction preservation status: `partial_preservation_project_contraction_status_proof_ready_remaining_operations_open`
-- phase2 skeleton status: `partial_phase2_project_contraction_status_proof_ready_remaining_operations_open`
-- phase3 skeleton status: `partial_phase3_project_contraction_status_proof_ready_remaining_operations_open`
+- obstruction preservation status: `partial_preservation_all_primary_operations_status_proof_ready_residual_congruence_open`
+- phase2 skeleton status: `partial_phase2_project_contraction_compression_status_proof_ready_remaining_operations_open`
+- phase3 skeleton status: `partial_phase3_all_primary_operations_status_proof_ready_residual_congruence_open`
 - previous operation skeleton status: `proof_ready_skeleton_selected_delete_redundant_coordinate`
 - previous project-to-active skeleton status: `partial_project_to_active_status_proof_ready_locality_open`
 - previous coordinate-contraction skeleton status: `partial_contract_equivalent_status_proof_ready_congruence_open`
-- selected operation skeleton status: `proof_ready_skeleton_contract_equivalent_status_congruence_open`
-- next exact target: `canonical_compression_status_preservation`
+- selected operation skeleton status: `proof_ready_skeleton_family_chain_absorption_status_refutation_measure_open`
+- next exact target: `project_to_active_status_locality_refinement`

@@ -1,0 +1,213 @@
+{
+  "manifest_version": "operator_runbook_catalog_migrated_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-24T03:13:18Z",
+  "catalog_entry_count": 4,
+  "active_runbook_count": 2,
+  "resolved_runbook_count": 2,
+  "integrated_opt_in_required_count": 0,
+  "replayable_runbook_count": 4,
+  "entries": [
+    {
+      "runbook_id": "phase49-runbook-75c36b408d7e",
+      "action_id": "current-env",
+      "runbook_type": "reproposal_gate",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "EXECUTED",
+      "execution_count": 1,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+      "latest_apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "dry_run",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "EXECUTED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+          "apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ],
+      "retention_decision": "retain",
+      "retention_reason": [
+        "active runbook retained",
+        "approval transaction or handoff pointer retained"
+      ]
+    },
+    {
+      "runbook_id": "phase49-runbook-a847d70a05f8",
+      "action_id": "foreign-envs",
+      "runbook_type": "run_foreign_env_onboarding",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "PLANNED",
+      "execution_count": 1,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+      "latest_apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "dry_run",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "PLANNED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+          "apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ],
+      "retention_decision": "retain",
+      "retention_reason": [
+        "active runbook retained",
+        "approval transaction or handoff pointer retained"
+      ]
+    },
+    {
+      "runbook_id": "phase47-approval-runbook-590fa6da5236",
+      "action_id": "phase45-current-env-reproposal-001",
+      "runbook_type": "approval",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "CLOSED",
+      "execution_count": 1,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+      "latest_apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "handoff_only",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "CLOSED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": "manifests/runtime_current_env_budget_approval_execution_phase47.json",
+          "apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ],
+      "retention_decision": "retain",
+      "retention_reason": [
+        "approval transaction or handoff pointer retained",
+        "latest resolved runbook retained by type"
+      ]
+    },
+    {
+      "runbook_id": "phase49-runbook-approve-21a551dae88c",
+      "action_id": "phase45-current-env-reproposal-001",
+      "runbook_type": "approval",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "CLOSED",
+      "execution_count": 0,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": null,
+      "latest_apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "handoff_only",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "operator_decision": "manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "CLOSED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": null,
+          "apply_manifest": "manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ],
+      "retention_decision": "retain",
+      "retention_reason": [
+        "approval transaction or handoff pointer retained",
+        "latest resolved runbook retained by type"
+      ]
+    }
+  ],
+  "catalog_hash": "1e7ed5a556fdde562acff2539c4f6533f895600d92b8c747addf63c3bef49252",
+  "source_catalog_hash": "f73c249349a44033f4658305e8be6cf019f5c9d7626bef7df42695367b169824",
+  "provenance_migration_applied": true,
+  "rewritten_pointer_count": 6,
+  "waived_archived_pointer_count": 1
+}

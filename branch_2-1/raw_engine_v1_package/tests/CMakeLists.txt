@@ -1247,6 +1247,34 @@ add_test(
     COMMAND raw_engine_tests --case evidence_bundle_provenance_migration_smoke
 )
 add_test(
+    NAME raw_engine_operator_archive_reference_graph_smoke
+    COMMAND raw_engine_tests --case operator_archive_reference_graph_smoke
+)
+add_test(
+    NAME raw_engine_operator_waiver_review_smoke
+    COMMAND raw_engine_tests --case operator_waiver_review_smoke
+)
+add_test(
+    NAME raw_engine_verification_preflight_gate_smoke
+    COMMAND raw_engine_tests --case verification_preflight_gate_smoke
+)
+add_test(
+    NAME raw_engine_staged_verification_retention_smoke
+    COMMAND raw_engine_tests --case staged_verification_retention_smoke
+)
+add_test(
+    NAME raw_engine_operator_artifact_path_policy_lint_v2_smoke
+    COMMAND raw_engine_tests --case operator_artifact_path_policy_lint_v2_smoke
+)
+add_test(
+    NAME raw_engine_policy_ops_summary_v18_smoke
+    COMMAND raw_engine_tests --case policy_ops_summary_v18_smoke
+)
+add_test(
+    NAME raw_engine_evidence_bundle_archive_governance_smoke
+    COMMAND raw_engine_tests --case evidence_bundle_archive_governance_smoke
+)
+add_test(
     NAME raw_engine_evidence_bundle_publication_health_smoke
     COMMAND raw_engine_tests --case evidence_bundle_publication_health_smoke
 )

@@ -183,6 +183,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--operator-runbook-lifecycle-validation-before", default=None, help="Optional pre-migration operator runbook lifecycle validation path.")
     parser.add_argument("--operator-runbook-lifecycle-validation-after", default=None, help="Optional post-migration operator runbook lifecycle validation path.")
     parser.add_argument("--operator-artifact-path-policy-lint", default=None, help="Optional operator artifact path policy lint result path.")
+    parser.add_argument("--operator-archive-reference-graph", default=None, help="Optional operator archive reference graph path.")
+    parser.add_argument("--operator-archive-retention-policy", default=None, help="Optional operator archive retention policy path.")
+    parser.add_argument("--operator-archive-retention-plan", default=None, help="Optional operator archive retention plan path.")
+    parser.add_argument("--operator-archive-retention-apply", default=None, help="Optional operator archive retention apply summary path.")
+    parser.add_argument("--operator-waiver-registry", default=None, help="Optional operator waiver registry path.")
+    parser.add_argument("--operator-waiver-review", default=None, help="Optional operator waiver review path.")
+    parser.add_argument("--verification-preflight-gate", default=None, help="Optional verification preflight gate path.")
+    parser.add_argument("--staged-verification-retention", default=None, help="Optional staged verification retention summary path.")
+    parser.add_argument("--published-snapshot-retention", default=None, help="Optional published snapshot retention summary path.")
+    parser.add_argument("--published-snapshot-retention-apply", default=None, help="Optional published snapshot retention apply summary path.")
     parser.add_argument("--integrated-approval-mutation-audit", default=None, help="Optional integrated approval mutation audit path.")
     parser.add_argument("--staged-materialization-transaction", default=None, help="Optional staged materialization transaction log path.")
     parser.add_argument("--source-health-preflight", default=None, help="Optional source health preflight path.")
@@ -1163,6 +1173,36 @@ def main() -> int:
     operator_artifact_path_policy_lint = resolve_manifest_json(
         Path(args.operator_artifact_path_policy_lint).resolve() if args.operator_artifact_path_policy_lint else None
     )
+    operator_archive_reference_graph = resolve_manifest_json(
+        Path(args.operator_archive_reference_graph).resolve() if args.operator_archive_reference_graph else None
+    )
+    operator_archive_retention_policy = resolve_manifest_json(
+        Path(args.operator_archive_retention_policy).resolve() if args.operator_archive_retention_policy else None
+    )
+    operator_archive_retention_plan = resolve_manifest_json(
+        Path(args.operator_archive_retention_plan).resolve() if args.operator_archive_retention_plan else None
+    )
+    operator_archive_retention_apply = resolve_manifest_json(
+        Path(args.operator_archive_retention_apply).resolve() if args.operator_archive_retention_apply else None
+    )
+    operator_waiver_registry = resolve_manifest_json(
+        Path(args.operator_waiver_registry).resolve() if args.operator_waiver_registry else None
+    )
+    operator_waiver_review = resolve_manifest_json(
+        Path(args.operator_waiver_review).resolve() if args.operator_waiver_review else None
+    )
+    verification_preflight_gate = resolve_manifest_json(
+        Path(args.verification_preflight_gate).resolve() if args.verification_preflight_gate else None
+    )
+    staged_verification_retention = resolve_manifest_json(
+        Path(args.staged_verification_retention).resolve() if args.staged_verification_retention else None
+    )
+    published_snapshot_retention = resolve_manifest_json(
+        Path(args.published_snapshot_retention).resolve() if args.published_snapshot_retention else None
+    )
+    published_snapshot_retention_apply = resolve_manifest_json(
+        Path(args.published_snapshot_retention_apply).resolve() if args.published_snapshot_retention_apply else None
+    )
     integrated_approval_mutation_audit = resolve_manifest_json(
         Path(args.integrated_approval_mutation_audit).resolve() if args.integrated_approval_mutation_audit else None
     )
@@ -1343,6 +1383,16 @@ def main() -> int:
     operator_runbook_lifecycle_validation_before_data = read_json_if_exists(operator_runbook_lifecycle_validation_before)
     operator_runbook_lifecycle_validation_after_data = read_json_if_exists(operator_runbook_lifecycle_validation_after)
     operator_artifact_path_policy_lint_data = read_json_if_exists(operator_artifact_path_policy_lint)
+    operator_archive_reference_graph_data = read_json_if_exists(operator_archive_reference_graph)
+    operator_archive_retention_policy_data = read_json_if_exists(operator_archive_retention_policy)
+    operator_archive_retention_plan_data = read_json_if_exists(operator_archive_retention_plan)
+    operator_archive_retention_apply_data = read_json_if_exists(operator_archive_retention_apply)
+    operator_waiver_registry_data = read_json_if_exists(operator_waiver_registry)
+    operator_waiver_review_data = read_json_if_exists(operator_waiver_review)
+    verification_preflight_gate_data = read_json_if_exists(verification_preflight_gate)
+    staged_verification_retention_data = read_json_if_exists(staged_verification_retention)
+    published_snapshot_retention_data = read_json_if_exists(published_snapshot_retention)
+    published_snapshot_retention_apply_data = read_json_if_exists(published_snapshot_retention_apply)
     integrated_approval_mutation_audit_data = read_json_if_exists(integrated_approval_mutation_audit)
     staged_materialization_transaction_data = read_json_if_exists(staged_materialization_transaction)
     source_health_preflight_data = read_json_if_exists(source_health_preflight)
@@ -1688,6 +1738,16 @@ def main() -> int:
         (operator_runbook_lifecycle_validation_before, "operator_runbook_lifecycle_validation_before_"),
         (operator_runbook_lifecycle_validation_after, "operator_runbook_lifecycle_validation_after_"),
         (operator_artifact_path_policy_lint, "operator_artifact_path_policy_lint_"),
+        (operator_archive_reference_graph, "operator_archive_reference_graph_"),
+        (operator_archive_retention_policy, "operator_archive_retention_policy_"),
+        (operator_archive_retention_plan, "operator_archive_retention_plan_"),
+        (operator_archive_retention_apply, "operator_archive_retention_apply_"),
+        (operator_waiver_registry, "operator_waiver_registry_"),
+        (operator_waiver_review, "operator_waiver_review_"),
+        (verification_preflight_gate, "verification_preflight_gate_"),
+        (staged_verification_retention, "staged_verification_retention_"),
+        (published_snapshot_retention, "published_snapshot_retention_"),
+        (published_snapshot_retention_apply, "published_snapshot_retention_apply_"),
     ):
         if path is not None:
             copied["manifests"].extend(copy_manifest_bundle(path, manifests_dir, prefix))
@@ -1937,6 +1997,16 @@ def main() -> int:
         (operator_runbook_lifecycle_validation_before, "operator_runbook_lifecycle_validation_before_"),
         (operator_runbook_lifecycle_validation_after, "operator_runbook_lifecycle_validation_after_"),
         (operator_artifact_path_policy_lint, "operator_artifact_path_policy_lint_"),
+        (operator_archive_reference_graph, "operator_archive_reference_graph_"),
+        (operator_archive_retention_policy, "operator_archive_retention_policy_"),
+        (operator_archive_retention_plan, "operator_archive_retention_plan_"),
+        (operator_archive_retention_apply, "operator_archive_retention_apply_"),
+        (operator_waiver_registry, "operator_waiver_registry_"),
+        (operator_waiver_review, "operator_waiver_review_"),
+        (verification_preflight_gate, "verification_preflight_gate_"),
+        (staged_verification_retention, "staged_verification_retention_"),
+        (published_snapshot_retention, "published_snapshot_retention_"),
+        (published_snapshot_retention_apply, "published_snapshot_retention_apply_"),
     ):
         if path is not None:
             copied["curated"].extend(copy_manifest_bundle(path, curated_dir, prefix))
@@ -2170,6 +2240,16 @@ def main() -> int:
         (operator_runbook_lifecycle_validation_before, "operator_runbook_lifecycle_validation_before_"),
         (operator_runbook_lifecycle_validation_after, "operator_runbook_lifecycle_validation_after_"),
         (operator_artifact_path_policy_lint, "operator_artifact_path_policy_lint_"),
+        (operator_archive_reference_graph, "operator_archive_reference_graph_"),
+        (operator_archive_retention_policy, "operator_archive_retention_policy_"),
+        (operator_archive_retention_plan, "operator_archive_retention_plan_"),
+        (operator_archive_retention_apply, "operator_archive_retention_apply_"),
+        (operator_waiver_registry, "operator_waiver_registry_"),
+        (operator_waiver_review, "operator_waiver_review_"),
+        (verification_preflight_gate, "verification_preflight_gate_"),
+        (staged_verification_retention, "staged_verification_retention_"),
+        (published_snapshot_retention, "published_snapshot_retention_"),
+        (published_snapshot_retention_apply, "published_snapshot_retention_apply_"),
     ):
         if path is not None:
             copied["light_ops"].extend(copy_manifest_bundle(path, light_ops_dir, prefix))
@@ -2381,6 +2461,16 @@ def main() -> int:
         "operator_runbook_lifecycle_validation_before": str(operator_runbook_lifecycle_validation_before) if operator_runbook_lifecycle_validation_before is not None else None,
         "operator_runbook_lifecycle_validation_after": str(operator_runbook_lifecycle_validation_after) if operator_runbook_lifecycle_validation_after is not None else None,
         "operator_artifact_path_policy_lint": str(operator_artifact_path_policy_lint) if operator_artifact_path_policy_lint is not None else None,
+        "operator_archive_reference_graph": str(operator_archive_reference_graph) if operator_archive_reference_graph is not None else None,
+        "operator_archive_retention_policy": str(operator_archive_retention_policy) if operator_archive_retention_policy is not None else None,
+        "operator_archive_retention_plan": str(operator_archive_retention_plan) if operator_archive_retention_plan is not None else None,
+        "operator_archive_retention_apply": str(operator_archive_retention_apply) if operator_archive_retention_apply is not None else None,
+        "operator_waiver_registry": str(operator_waiver_registry) if operator_waiver_registry is not None else None,
+        "operator_waiver_review": str(operator_waiver_review) if operator_waiver_review is not None else None,
+        "verification_preflight_gate": str(verification_preflight_gate) if verification_preflight_gate is not None else None,
+        "staged_verification_retention": str(staged_verification_retention) if staged_verification_retention is not None else None,
+        "published_snapshot_retention": str(published_snapshot_retention) if published_snapshot_retention is not None else None,
+        "published_snapshot_retention_apply": str(published_snapshot_retention_apply) if published_snapshot_retention_apply is not None else None,
         "integrated_approval_mutation_audit": str(integrated_approval_mutation_audit) if integrated_approval_mutation_audit is not None else None,
         "staged_materialization_transaction": str(staged_materialization_transaction) if staged_materialization_transaction is not None else None,
         "source_health_preflight": str(source_health_preflight) if source_health_preflight is not None else None,
@@ -2508,6 +2598,16 @@ def main() -> int:
         "operator_runbook_lifecycle_validation_before_hash": sha256_file(operator_runbook_lifecycle_validation_before),
         "operator_runbook_lifecycle_validation_after_hash": sha256_file(operator_runbook_lifecycle_validation_after),
         "operator_artifact_path_policy_lint_hash": sha256_file(operator_artifact_path_policy_lint),
+        "operator_archive_reference_graph_hash": sha256_file(operator_archive_reference_graph),
+        "operator_archive_retention_policy_hash": sha256_file(operator_archive_retention_policy),
+        "operator_archive_retention_plan_hash": sha256_file(operator_archive_retention_plan),
+        "operator_archive_retention_apply_hash": sha256_file(operator_archive_retention_apply),
+        "operator_waiver_registry_hash": sha256_file(operator_waiver_registry),
+        "operator_waiver_review_hash": sha256_file(operator_waiver_review),
+        "verification_preflight_gate_hash": sha256_file(verification_preflight_gate),
+        "staged_verification_retention_hash": sha256_file(staged_verification_retention),
+        "published_snapshot_retention_hash": sha256_file(published_snapshot_retention),
+        "published_snapshot_retention_apply_hash": sha256_file(published_snapshot_retention_apply),
         "integrated_approval_mutation_audit_hash": sha256_file(integrated_approval_mutation_audit),
         "staged_materialization_transaction_hash": sha256_file(staged_materialization_transaction),
         "source_health_preflight_hash": sha256_file(source_health_preflight),
@@ -2630,6 +2730,16 @@ def main() -> int:
         "operator_runbook_lifecycle_validation_before_summary": operator_runbook_lifecycle_validation_before_data,
         "operator_runbook_lifecycle_validation_after_summary": operator_runbook_lifecycle_validation_after_data,
         "operator_artifact_path_policy_lint_summary": operator_artifact_path_policy_lint_data,
+        "operator_archive_reference_graph_summary": operator_archive_reference_graph_data,
+        "operator_archive_retention_policy_summary": operator_archive_retention_policy_data,
+        "operator_archive_retention_plan_summary": operator_archive_retention_plan_data,
+        "operator_archive_retention_apply_summary": operator_archive_retention_apply_data,
+        "operator_waiver_registry_summary": operator_waiver_registry_data,
+        "operator_waiver_review_summary": operator_waiver_review_data,
+        "verification_preflight_gate_summary": verification_preflight_gate_data,
+        "staged_verification_retention_summary": staged_verification_retention_data,
+        "published_snapshot_retention_summary": published_snapshot_retention_data,
+        "published_snapshot_retention_apply_summary": published_snapshot_retention_apply_data,
         "integrated_approval_mutation_audit_summary": integrated_approval_mutation_audit_data,
         "source_health_preflight_summary": source_health_preflight_data,
         "source_health_action_plan_summary": source_health_action_plan_data,
@@ -3222,6 +3332,20 @@ def main() -> int:
         curated_zip,
         light_ops_zip,
     )
+    for label, path in (
+        ("operator_archive_reference_graph", operator_archive_reference_graph),
+        ("operator_archive_retention_policy", operator_archive_retention_policy),
+        ("operator_archive_retention_plan", operator_archive_retention_plan),
+        ("operator_archive_retention_apply", operator_archive_retention_apply),
+        ("operator_waiver_registry", operator_waiver_registry),
+        ("operator_waiver_review", operator_waiver_review),
+        ("verification_preflight_gate", verification_preflight_gate),
+        ("staged_verification_retention", staged_verification_retention),
+        ("published_snapshot_retention", published_snapshot_retention),
+        ("published_snapshot_retention_apply", published_snapshot_retention_apply),
+    ):
+        if path is not None and path.exists():
+            delivery_entries.append((label, path))
     metadata["delivery_bundle_items"] = [
         {"label": label, "path": str(path), "sha256": sha256_file(path)} for label, path in delivery_entries
     ]

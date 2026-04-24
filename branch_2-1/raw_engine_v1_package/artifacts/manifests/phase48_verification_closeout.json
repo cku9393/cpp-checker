@@ -1,0 +1,26 @@
+{
+  "asan_execution_verdict": "PASS",
+  "closeout_verdict": "CLOSEOUT_PASS",
+  "debug_execution_verdict": "PASS",
+  "generated_at_utc": "2026-04-22T07:44:46Z",
+  "manifest_version": "verification_closeout_v2",
+  "phase_tag": "phase48",
+  "post_docs_source_snapshot_hash": "9619ddf70696718f97cf9b05f380250ee615cadfcdaae5891322c4d339d688d4",
+  "rationale": [
+    "Release/Debug/ASan staged CTest all passed with zero not_run",
+    "source health preflight requires staged/sparse-safe operation for iCloud authoritative tree",
+    "README/ops guide update is documented by post_docs_source_snapshot_hash and does not change compiled sources"
+  ],
+  "release_execution_verdict": "PASS",
+  "source_health_recommendation": "SPARSE_CLONE_REQUIRED",
+  "source_health_status": "ATTENTION_REQUIRED",
+  "source_snapshot_hash": "5077ecf7202e4e8c351ad0bb250d8a08770392f39ade17ab738c965d3ad92f3d",
+  "staged_materialization_mode": "staged_sparse_clone_overlay",
+  "verification_lane_status": "PASS",
+  "verification_manifest_hashes": {
+    "verification_phase48_asan_ubsan.json": "d3149f41cd50899f95a83580614d2286ca52b3758f9a59a4faf2f8561d81158e",
+    "verification_phase48_debug.json": "11063351c0ba63d43e9909662ea3fd3db9f9694e5bda5efe91d00fa3741e99fa",
+    "verification_phase48_release.json": "2dfc0bc9b8cc935a448d347ba9c8fb39543444aae46f9e7e69f21a1bce5d923d"
+  },
+  "verification_not_run_count": 0
+}

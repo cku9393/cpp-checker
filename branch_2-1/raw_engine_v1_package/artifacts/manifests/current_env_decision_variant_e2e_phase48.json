@@ -1,0 +1,48 @@
+{
+  "entries": [
+    {
+      "apply_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/current_env_decision_skip_e2e_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "apply_new_status": "SKIPPED",
+      "closure_status": "CLOSED",
+      "decision": "skip",
+      "decision_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/current_env_decision_skip_e2e_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+      "next_operator_action": "NO_ACTION",
+      "resulting_action_status": "SKIPPED",
+      "variant": "skip"
+    },
+    {
+      "apply_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/current_env_decision_defer_e2e_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "apply_new_status": "DEFERRED",
+      "closure_status": "DEFERRED",
+      "decision": "defer",
+      "decision_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/current_env_decision_defer_e2e_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+      "next_operator_action": "RUN_CURRENT_ENV_REPROPOSAL_GATE",
+      "resulting_action_status": "DEFERRED",
+      "variant": "defer"
+    },
+    {
+      "apply_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/current_env_decision_reject_e2e_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "apply_new_status": "REJECTED",
+      "closure_status": "REJECTED",
+      "decision": "reject",
+      "decision_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/current_env_decision_reject_e2e_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+      "next_operator_action": "ESCALATE_CURRENT_ENV_ACTION",
+      "resulting_action_status": "REJECTED",
+      "variant": "reject"
+    },
+    {
+      "apply_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/runtime_current_env_decision_retry_now_flow_smoke/manifests/runtime_current_env_operator_decision_apply_phase47.json",
+      "apply_new_status": "RETRY_PENDING",
+      "closure_status": "RETRY_PENDING",
+      "decision": "retry_now",
+      "decision_manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/runtime_current_env_decision_retry_now_flow_smoke/manifests/runtime_current_env_operator_decision_phase47.json",
+      "next_operator_action": "RUN_CURRENT_ENV_WATCH_CAMPAIGN",
+      "resulting_action_status": "RETRY_PENDING",
+      "variant": "retry_now"
+    }
+  ],
+  "generated_at_utc": "2026-04-22T07:44:46Z",
+  "manifest_version": "current_env_decision_variant_e2e_v1",
+  "phase": "phase48",
+  "variant_verdict": "PASS"
+}

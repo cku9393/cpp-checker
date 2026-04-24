@@ -534,6 +534,17 @@ Phase51 runbook provenance cleanup workflow:
 - `source_health_action_plan_<phase>.json` and path-policy lint answer different questions. Source health decides whether the local authoritative tree is safe for direct long build/test. Path-policy lint decides whether operator artifacts are portable and do not contain stale executable pointers.
 - `policy_ops_summary_<phase>.json` v17 adds pointer audit, provenance migration, lifecycle validation before/after, and path-policy lint sections. In the light ops bundle, start at `bundle_metadata.json`, then v17 ops summary, then pointer audit, migration report, migrated catalog/ledger, lifecycle-after, path-policy lint, and verification closeout.
 
+Phase52 archive governance and verification preflight workflow:
+- Historical waived archived pointers are allowed only as retained provenance. They must be represented in `operator_waiver_registry_<phase>.json`, backed by the archive reference graph, and reviewed before expiry. Active runbook pointers remain non-waivable.
+- `operator_archive_reference_graph_<phase>.json` links runbook catalogs, ledgers, archives, approval metadata, bundle metadata, published snapshots, verification manifests, and reports. Retention and pruning decisions should be made from this graph rather than from a flat file list.
+- `operator_archive_retention_policy_<phase>.json`, `operator_archive_retention_plan_<phase>.json`, and `operator_archive_retention_apply_<phase>.json` define what can be retained, archived, or pruned. Keep active runbooks, failed actions, approval audit trails, waived archived pointers, and any bundle or snapshot referenced by an active waiver.
+- `operator_waiver_review_<phase>.json` classifies waivers as `ACTIVE`, `DUE_SOON`, `REVIEW_REQUIRED`, `EXPIRED`, or `RETIRED`. If a waiver loses bundle or reference-graph backing, the operator action becomes waiver review or retention repair, not a correctness failure.
+- Source-health preflight and verification preflight gate are separate checks. Source health inspects the authoritative iCloud tree; `verification_preflight_gate_<phase>.json` decides whether direct builds are allowed and which materialization mode is valid for verification.
+- When source health or the preflight gate says `SPARSE_CLONE_REQUIRED`, direct long build/test from the authoritative iCloud tree is invalid. Use `staged_sparse_clone_overlay`; missing required fixtures remain blocking even for staged builds.
+- Staged and published outputs now have retention manifests. Read `staged_verification_retention_<phase>.json` and `published_snapshot_retention_<phase>.json` before pruning snapshots, especially when waived pointers, reports, or bundles still reference them.
+- Path policy lint v2 extends the phase51 lint with category counts for forbidden `/private/tmp`, forbidden authoritative absolute paths, dangling relatives, allowed authoritative source references, and waived archived pointers. Lint failures are infrastructure/action-required evidence, not semantic failure.
+- `policy_ops_summary_<phase>.json` v18 adds archive graph, retention, waiver registry/review, verification preflight gate, staged verification retention, and published snapshot retention sections. In the light ops bundle, start at `bundle_metadata.json`, then v18 ops summary, then pointer/waiver summary, source-health/preflight summary, snapshot retention summary, and verification closeout.
+
 Optional warning hygiene for tests only:
 ```bash
 cmake -S . -B build-debug-strict -DCMAKE_BUILD_TYPE=Debug -DRAW_ENGINE_TEST_STRICT_WARNINGS=ON

@@ -1,0 +1,13 @@
+{
+  "dataless_remaining_count": 0,
+  "generated_at_utc": "2026-04-22T05:00:40Z",
+  "manifest_version": "staged_materialization_v2",
+  "materialization_hash": "0c84e2c6ca2c800553076c4b4e27df1b205a1385a3f0c087ce4c0808daf7dec8",
+  "materialization_verdict": "PASS",
+  "overlay_file_count": 5,
+  "overlay_hash": "d0f3cf3f5fd4eca8f72e034182bbce60a3d51c0e337d38f1768ffa133aa87c70",
+  "phase": "phase48",
+  "source_snapshot_hash": "2b78dfd3caa67426734e6898c08850c317979b889d07076ef18c5041321d9112",
+  "sparse_clone_ref": "a363995f956559184954e027f2978376de656502",
+  "staged_materialization_mode": "staged_sparse_clone_overlay"
+}

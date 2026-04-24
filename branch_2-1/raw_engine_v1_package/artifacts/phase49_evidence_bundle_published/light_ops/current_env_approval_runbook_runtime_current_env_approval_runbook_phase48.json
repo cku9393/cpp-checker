@@ -1,0 +1,46 @@
+{
+  "manifest_version": "runtime_current_env_approval_runbook_v1",
+  "phase": "phase47",
+  "generated_at_utc": "2026-04-22T07:39:11Z",
+  "runbook_id": "phase47-approval-runbook-590fa6da5236",
+  "action_id": "phase45-current-env-reproposal-001",
+  "decision_id": "phase46-operator-decision-80ba4191355e",
+  "approval_mode": "handoff_only",
+  "safety_level": "handoff_only",
+  "mutates_registry": false,
+  "approval_ready": true,
+  "executable": true,
+  "approval_blockers": [],
+  "required_inputs": [
+    "runtime_budget_current",
+    "runtime_budget_proposal",
+    "runtime_budget_proposal_gate",
+    "runtime_budget_registry",
+    "runtime_budget_baseline_out"
+  ],
+  "expected_outputs": [
+    "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_budget_baseline_phase47_approved.json",
+    "runtime budget approval metadata sidecar",
+    "updated runtime budget registry",
+    "archived reproposal snapshot"
+  ],
+  "recommended_command": "python3 tests/tools/runtime_gate_lib.py budget-approve-reprofile --runtime-budget-current <runtime_budget_current> --runtime-budget-proposal <runtime_budget_proposal> --runtime-budget-proposal-gate <runtime_budget_proposal_gate> --runtime-budget-registry /private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_budget_registry_v1.json --runtime-budget-baseline-out /private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_budget_baseline_phase47_approved.json --budget-tag phase47-runtime-budget-explicit-approval --activate",
+  "selected_budget_profile_id": "phase33-runtime-budget-approved-profile",
+  "proposed_budget_profile_id": "phase47-runtime-budget-explicit-approval",
+  "runtime_current_manifest": null,
+  "runtime_budget_registry": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_budget_registry_v1.json",
+  "runtime_budget_baseline_out": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_budget_baseline_phase47_approved.json",
+  "budget_tag": "phase47-runtime-budget-explicit-approval",
+  "preflight_checks": [
+    "operator decision is approve and valid",
+    "handoff approval_ready is true",
+    "correctness lifecycle remains PASS/FRESH",
+    "runtime budget proposal gate remains approval-ready",
+    "budget registry target is explicit"
+  ],
+  "rationale": [
+    "handoff_only remains the default; runbook records the explicit operator approval command",
+    "integrated mode is opt-in and should only be used by explicit smoke or operator request"
+  ],
+  "runbook_hash": "59e2609120ee8e288d1741099ea5eb81a7355d9d67a73b9576bb56936a90b523"
+}

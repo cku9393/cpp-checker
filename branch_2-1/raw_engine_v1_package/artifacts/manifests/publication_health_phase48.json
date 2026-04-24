@@ -1,0 +1,15 @@
+{
+  "dangling_reference_count": 0,
+  "generated_at_utc": "2026-04-22T07:44:46Z",
+  "hash_mismatch_count": 0,
+  "health_verdict": "HEALTHY",
+  "manifest_version": "publication_health_v2",
+  "missing_artifact_count": 0,
+  "phase": "phase48",
+  "rationale": [
+    "phase48 published artifacts assembled from staged verification manifests and tmp bundle root before syncback"
+  ],
+  "recommended_action": "NO_ACTION",
+  "source_health_preflight": "/tmp/raw_engine_phase48_bundle_root/manifests/source_health_preflight_phase48.json",
+  "verification_closeout": "/tmp/raw_engine_phase48_bundle_root/manifests/phase48_verification_closeout.json"
+}

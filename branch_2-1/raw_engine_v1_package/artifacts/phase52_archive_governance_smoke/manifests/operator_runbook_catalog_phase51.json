@@ -1,0 +1,189 @@
+{
+  "manifest_version": "operator_runbook_catalog_v1",
+  "phase": "phase49",
+  "generated_at_utc": "2026-05-16T09:15:10Z",
+  "catalog_entry_count": 4,
+  "active_runbook_count": 2,
+  "resolved_runbook_count": 2,
+  "integrated_opt_in_required_count": 0,
+  "replayable_runbook_count": 4,
+  "entries": [
+    {
+      "runbook_id": "phase49-runbook-75c36b408d7e",
+      "action_id": "current-env",
+      "runbook_type": "reproposal_gate",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "EXECUTED",
+      "execution_count": 1,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+      "latest_apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "dry_run",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "EXECUTED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+          "apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ]
+    },
+    {
+      "runbook_id": "phase49-runbook-a847d70a05f8",
+      "action_id": "foreign-envs",
+      "runbook_type": "run_foreign_env_onboarding",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "PLANNED",
+      "execution_count": 1,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+      "latest_apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "dry_run",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "PLANNED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+          "apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ]
+    },
+    {
+      "runbook_id": "phase47-approval-runbook-590fa6da5236",
+      "action_id": "phase45-current-env-reproposal-001",
+      "runbook_type": "approval",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "CLOSED",
+      "execution_count": 1,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+      "latest_apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "handoff_only",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "CLOSED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+          "apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ]
+    },
+    {
+      "runbook_id": "phase49-runbook-approve-21a551dae88c",
+      "action_id": "phase45-current-env-reproposal-001",
+      "runbook_type": "approval",
+      "first_seen_at": "2026-05-16T09:15:10Z",
+      "last_seen_at": "2026-05-16T09:15:10Z",
+      "phase_first_seen": "phase49",
+      "phase_last_seen": "phase49",
+      "current_status": "CLOSED",
+      "execution_count": 0,
+      "decision_count": 1,
+      "apply_count": 1,
+      "close_count": 1,
+      "failure_count": 0,
+      "latest_decision_id": "phase46-operator-decision-80ba4191355e",
+      "latest_execution_manifest": null,
+      "latest_apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "handoff_only",
+      "integrated_opt_in_required": false,
+      "mutates_registry": false,
+      "retained_reason_metadata": true,
+      "retained_defer_metadata": false,
+      "retained_retry_metadata": false,
+      "retained_approval_pointers": true,
+      "related_manifests": {
+        "operator_decision": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      },
+      "history": [
+        {
+          "phase": "phase49",
+          "seen_at": "2026-05-16T09:15:10Z",
+          "current_status": "CLOSED",
+          "closure_status": "CLOSED",
+          "decision_id": "phase46-operator-decision-80ba4191355e",
+          "execution_manifest": null,
+          "apply_manifest": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+        }
+      ]
+    }
+  ],
+  "catalog_hash": "fd08fb5a30c1e72b7d2b347aa6b175dc1742a0e1070d8203cf723c2b537eb777"
+}

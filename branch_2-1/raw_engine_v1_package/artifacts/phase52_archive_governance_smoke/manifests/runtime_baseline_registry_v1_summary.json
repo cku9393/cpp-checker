@@ -1,0 +1,55 @@
+{
+  "manifest_version": "runtime_baseline_registry_summary_v2",
+  "generated_at_utc": "2026-04-24T03:12:53Z",
+  "registry_version": "runtime_baseline_registry_v1",
+  "entry_count": 2,
+  "active_entry_count": 1,
+  "retired_entry_count": 1,
+  "fingerprint_count": 1,
+  "active_fingerprint_count": 1,
+  "active_baselines_by_fingerprint": {
+    "936b44e1c291ab764aacfa166336709395562d42f37854e3eb6bef122c141ddd": [
+      {
+        "baseline_id": "phase33-runtime-watch-393d9c23-20260424_031253",
+        "baseline_tag": "phase33-runtime-watch",
+        "status": "active",
+        "runtime_baseline_manifest_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/policy_runtime_baseline_phase22_approved.json"
+      }
+    ]
+  },
+  "lineage_history_by_fingerprint": {
+    "936b44e1c291ab764aacfa166336709395562d42f37854e3eb6bef122c141ddd": {
+      "active_count": 1,
+      "retired_count": 1,
+      "entries": [
+        {
+          "baseline_id": "phase33-runtime-watch-393d9c23-20260424_031253",
+          "baseline_tag": "phase33-runtime-watch",
+          "status": "active",
+          "approval_timestamp_utc": "2026-04-24T03:12:53Z",
+          "previous_active_baseline_id": "phase22-runtime-approved-393d9c23-20260424_031251",
+          "supersedes_baseline_ids": [
+            "phase22-runtime-approved-393d9c23-20260424_031251"
+          ],
+          "superseded_by_baseline_id": null,
+          "retired_reason": null,
+          "runtime_baseline_manifest_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/policy_runtime_baseline_phase22_approved.json"
+        },
+        {
+          "baseline_id": "phase22-runtime-approved-393d9c23-20260424_031251",
+          "baseline_tag": "phase22-runtime-approved",
+          "status": "retired",
+          "approval_timestamp_utc": "2026-04-24T03:12:51Z",
+          "previous_active_baseline_id": null,
+          "supersedes_baseline_ids": [],
+          "superseded_by_baseline_id": "phase33-runtime-watch-393d9c23-20260424_031253",
+          "retired_reason": "superseded by phase33-runtime-watch-393d9c23-20260424_031253",
+          "runtime_baseline_manifest_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/policy_runtime_baseline_phase22_approved.json"
+        }
+      ]
+    }
+  },
+  "active_baseline_ids": [
+    "phase33-runtime-watch-393d9c23-20260424_031253"
+  ]
+}

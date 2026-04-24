@@ -1,0 +1,18 @@
+{
+  "manifest_version": "published_snapshot_retention_v1",
+  "phase": "phase52",
+  "generated_at_utc": "2026-04-24T03:13:21Z",
+  "published_snapshot_count": 1,
+  "retained_snapshot_count": 1,
+  "prunable_snapshot_count": 0,
+  "blocked_prune_count": 1,
+  "snapshots_referenced_by_bundles": 1,
+  "snapshots_referenced_by_waivers": 1,
+  "snapshots_referenced_by_reports": 1,
+  "publication_health_status": "HEALTHY",
+  "retention_verdict": "PASS",
+  "rationale": [
+    "published snapshots referenced by active bundles or waived historical pointers are retained"
+  ],
+  "retention_hash": "3c64efbd60719b82b1b7f73439a9dc90ec68ab3e8d173644a3475aac2277de13"
+}

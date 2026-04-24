@@ -1,0 +1,136 @@
+{
+  "manifest_version": "operator_archive_retention_plan_v1",
+  "phase": "phase52",
+  "generated_at_utc": "2026-04-24T03:13:20Z",
+  "policy_id": "phase52-operator-archive-retention-policy",
+  "active_retained_count": 4,
+  "waiver_retained_count": 1,
+  "prunable_count": 0,
+  "blocked_prune_count": 6,
+  "retention_plan_count": 15,
+  "retention_verdict": "PASS",
+  "entries": [
+    {
+      "node_id": "runbook_catalog:07d211e9170275f9",
+      "node_type": "runbook_catalog",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "core governance provenance",
+        "referenced by active waiver"
+      ]
+    },
+    {
+      "node_id": "action_ledger:4eb117bcf4d7bb0f",
+      "node_type": "action_ledger",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "core governance provenance"
+      ]
+    },
+    {
+      "node_id": "runbook_archive:96caceff4bdc971f",
+      "node_type": "runbook_archive",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "retained by default archive governance"
+      ]
+    },
+    {
+      "node_id": "action:8c4f7f89f117490d",
+      "node_type": "action",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "referenced by active waiver"
+      ]
+    },
+    {
+      "node_id": "runbook:5d172c8f47dba9f9",
+      "node_type": "runbook",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "runbook catalog retention policy"
+      ]
+    },
+    {
+      "node_id": "runbook:3c254d9f693bc246",
+      "node_type": "runbook",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "runbook catalog retention policy"
+      ]
+    },
+    {
+      "node_id": "runbook:bf5d720a908751c9",
+      "node_type": "runbook",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "runbook catalog retention policy"
+      ]
+    },
+    {
+      "node_id": "runbook:26795f1293857554",
+      "node_type": "runbook",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "runbook catalog retention policy"
+      ]
+    },
+    {
+      "node_id": "waiver:0258339d1e902bac",
+      "node_type": "waiver",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "waived archived pointer retained until waiver expiry"
+      ]
+    },
+    {
+      "node_id": "bundle_metadata:3423df1ff65e0cea",
+      "node_type": "bundle_metadata",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "core governance provenance"
+      ]
+    },
+    {
+      "node_id": "published_snapshot:a48c77df9363423c",
+      "node_type": "published_snapshot",
+      "retention_decision": "RETAIN",
+      "rationale": [
+        "core governance provenance"
+      ]
+    },
+    {
+      "node_id": "verification_manifest:e75944aa65a62a67",
+      "node_type": "verification_manifest",
+      "retention_decision": "PRUNE_BLOCKED",
+      "rationale": [
+        "reference graph safe-prune policy requires explicit operator review"
+      ]
+    },
+    {
+      "node_id": "verification_manifest:f8621128038c02bb",
+      "node_type": "verification_manifest",
+      "retention_decision": "PRUNE_BLOCKED",
+      "rationale": [
+        "reference graph safe-prune policy requires explicit operator review"
+      ]
+    },
+    {
+      "node_id": "verification_manifest:bb8921df901dae7f",
+      "node_type": "verification_manifest",
+      "retention_decision": "PRUNE_BLOCKED",
+      "rationale": [
+        "reference graph safe-prune policy requires explicit operator review"
+      ]
+    },
+    {
+      "node_id": "report:8474790ce43afac8",
+      "node_type": "report",
+      "retention_decision": "PRUNE_BLOCKED",
+      "rationale": [
+        "reference graph safe-prune policy requires explicit operator review"
+      ]
+    }
+  ],
+  "retention_plan_hash": "08176537ae22d512c43e5deb3fcb09b04f472f7a1a0dad9b4da13bc8c06371ad"
+}

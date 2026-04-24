@@ -1,9 +1,9 @@
 metric	value
-audit_fingerprint	1|1|1|1|1|84:13128510656667622394|16856:14254791785929237461
+audit_fingerprint	1|1|1|1|1|84:3087496610122629103|16856:14254791785929237461
 local_test_compiled	1
 local_test_passed	1
 release_compiled	1
 local_test_stamp_matches_current_binary	1
 local_test_current_run_override	1
-local_test_log_fingerprint	84:13128510656667622394
+local_test_log_fingerprint	84:3087496610122629103
 release_binary_fingerprint	16856:14254791785929237461

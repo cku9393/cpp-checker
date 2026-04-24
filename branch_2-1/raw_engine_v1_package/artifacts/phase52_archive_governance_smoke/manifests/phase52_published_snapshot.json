@@ -1,0 +1,6 @@
+{
+  "manifest_version": "published_snapshot_manifest_v1",
+  "published_snapshot_id": "phase52-smoke-snapshot",
+  "phase_tag": "phase52",
+  "closeout_verdict": "CLOSEOUT_PASS"
+}

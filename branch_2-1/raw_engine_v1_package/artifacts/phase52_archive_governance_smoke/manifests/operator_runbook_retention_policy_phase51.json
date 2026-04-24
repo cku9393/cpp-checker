@@ -1,0 +1,16 @@
+{
+  "manifest_version": "operator_runbook_retention_policy_v1",
+  "policy_id": "phase50-operator-runbook-retention",
+  "phase": "phase51",
+  "keep_active_runbooks": true,
+  "keep_failed_runbooks": true,
+  "keep_retry_pending_runbooks": true,
+  "keep_integrated_approval_runbooks": true,
+  "keep_latest_resolved_per_type": 2,
+  "archive_resolved_after_days": 30,
+  "prune_archived_after_days": 180,
+  "keep_runbook_with_open_ledger_pointer": true,
+  "keep_runbook_with_approval_transaction": true,
+  "generated_at_utc": "2026-04-24T03:13:18Z",
+  "policy_hash": "fcd613cf1147f7ee8c3e994f594340c495805a3976ee4a6f816d8785825510f2"
+}

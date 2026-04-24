@@ -1,0 +1,26 @@
+{
+  "manifest_version": "runtime_current_env_reproposal_plan_v1",
+  "phase": "phase45",
+  "generated_at_utc": "2026-04-22T07:39:07Z",
+  "guardrail_policy_id": "phase42-current-env-guardrail",
+  "plan_verdict": "PASS",
+  "entry_count": 1,
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "current_state": "CURRENT_ENV_WATCH_STABLE",
+      "reproposal_due_at": "2026-04-30T09:15:10Z",
+      "due_state": "NOT_DUE",
+      "overdue_days": 0.0,
+      "minimum_real_samples": 5,
+      "minimum_watch_confidence": "HIGH",
+      "recommended_command": "./raw_engine_tests --case runtime_current_env_reproposal_trigger_gate_smoke",
+      "priority": "LOW",
+      "reason": "open the current-env reproposal trigger gate once cooldown and due thresholds are reached"
+    }
+  ],
+  "current_env_state": "CURRENT_ENV_WATCH_STABLE",
+  "reproposal_due_state": "NOT_DUE",
+  "reproposal_due_at": "2026-04-30T09:15:10Z",
+  "reproposal_plan_hash": "b1769a1868a2798ee977221f9002381e85b91d54c89816c3e7592b7ce6d5f94c"
+}

@@ -3756,6 +3756,7 @@ def build_operator_artifact_path_policy_lint(
     phase: str,
     manifest_root: Path,
     published_root: Path,
+    policy_version: str = "v1",
 ) -> dict[str, Any]:
     def phase51_policy_target(path: Path) -> bool:
         name = path.name
@@ -3788,6 +3789,11 @@ def build_operator_artifact_path_policy_lint(
     forbidden: list[dict[str, Any]] = []
     dangling: list[dict[str, Any]] = []
     allowed_external = 0
+    forbidden_absolute_tmp = 0
+    forbidden_authoritative_abs = 0
+    dangling_relative = 0
+    allowed_authoritative_source_reference = 0
+    waived_archived_pointer_count = 0
     scanned = 0
     for path in files:
         try:
@@ -3799,8 +3805,13 @@ def build_operator_artifact_path_policy_lint(
             if value.startswith(("/private/tmp/", "/tmp/")):
                 if original_provenance_field(field_path):
                     allowed_external += 1
+                    allowed_authoritative_source_reference += 1
                 else:
+                    forbidden_absolute_tmp += 1
                     forbidden.append({"manifest": str(path), "field": field_path, "path": value, "reason": "ephemeral tmp path"})
+                continue
+            if value.startswith("waived_archived_pointer:"):
+                waived_archived_pointer_count += 1
                 continue
             pointer = Path(value)
             if pointer.is_absolute():
@@ -3816,7 +3827,9 @@ def build_operator_artifact_path_policy_lint(
                     pass
                 if original_provenance_field(field_path):
                     allowed_external += 1
+                    allowed_authoritative_source_reference += 1
                 else:
+                    forbidden_authoritative_abs += 1
                     forbidden.append({"manifest": str(path), "field": field_path, "path": value, "reason": "absolute path outside allowed roots"})
                 continue
             if value.startswith("artifacts/"):
@@ -3826,6 +3839,7 @@ def build_operator_artifact_path_policy_lint(
             else:
                 candidate = manifest_dir / value
             if not candidate.exists() and not (published_root / value).exists():
+                dangling_relative += 1
                 dangling.append({"manifest": str(path), "field": field_path, "path": value, "reason": "relative path does not resolve"})
     verdict = "PASS"
     if forbidden:
@@ -3833,7 +3847,7 @@ def build_operator_artifact_path_policy_lint(
     elif dangling:
         verdict = "ACTION_REQUIRED"
     payload = {
-        "manifest_version": "operator_artifact_path_policy_lint_v1",
+        "manifest_version": f"operator_artifact_path_policy_lint_{policy_version}",
         "phase": phase,
         "generated_at_utc": runtime_gate.timestamp_utc_now(),
         "lint_verdict": verdict,
@@ -3841,6 +3855,11 @@ def build_operator_artifact_path_policy_lint(
         "forbidden_path_count": len(forbidden),
         "dangling_path_count": len(dangling),
         "allowed_external_reference_count": allowed_external,
+        "forbidden_absolute_tmp_count": forbidden_absolute_tmp,
+        "forbidden_authoritative_abs_count": forbidden_authoritative_abs,
+        "dangling_relative_count": dangling_relative,
+        "allowed_authoritative_source_reference_count": allowed_authoritative_source_reference,
+        "waived_archived_pointer_count": waived_archived_pointer_count,
         "forbidden_paths": forbidden,
         "dangling_paths": dangling,
         "rationale": [
@@ -3849,6 +3868,535 @@ def build_operator_artifact_path_policy_lint(
         ],
     }
     payload["lint_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def normalize_operator_archive_retention_policy(raw: dict[str, Any] | None, *, phase: str) -> dict[str, Any]:
+    policy = dict(raw or {})
+    defaults = {
+        "manifest_version": "operator_archive_retention_policy_v1",
+        "policy_id": f"{phase}-operator-archive-retention-policy",
+        "phase": phase,
+        "keep_active_runbooks": True,
+        "keep_failed_actions": True,
+        "keep_approval_audit_trail": True,
+        "keep_waived_archived_pointers": True,
+        "waiver_expiry_days": 365,
+        "waiver_review_due_soon_days": 30,
+        "archive_prune_after_days": 730,
+        "keep_latest_bundle_count": 4,
+        "keep_latest_published_snapshot_count": 4,
+        "keep_latest_verification_manifest_count": 6,
+        "keep_bundle_if_referenced_by_waiver": True,
+        "prune_only_if_reference_graph_safe": True,
+    }
+    for key, value in defaults.items():
+        policy.setdefault(key, value)
+    policy["generated_at_utc"] = runtime_gate.timestamp_utc_now()
+    policy["policy_hash"] = sha256_text(json.dumps(policy, sort_keys=True))
+    return policy
+
+
+def graph_node_id(node_type: str, stable_key: str) -> str:
+    return f"{node_type}:{sha256_text(stable_key)[:16]}"
+
+
+def build_operator_archive_reference_graph(
+    *,
+    phase: str,
+    runbook_catalog: dict[str, Any],
+    action_ledger: dict[str, Any],
+    runbook_archive: dict[str, Any],
+    ledger_archive: dict[str, Any],
+    provenance_migration: dict[str, Any],
+    bundle_metadata: dict[str, Any],
+    published_snapshot: dict[str, Any],
+    verification_manifests: list[dict[str, Any]],
+    report_path: str | None,
+) -> dict[str, Any]:
+    nodes: dict[str, dict[str, Any]] = {}
+    edges: list[dict[str, Any]] = []
+
+    def add_node(node_type: str, stable_key: str, **fields: Any) -> str:
+        node_id = graph_node_id(node_type, stable_key)
+        node = nodes.setdefault(
+            node_id,
+            {
+                "node_id": node_id,
+                "node_type": node_type,
+                "stable_key": stable_key,
+            },
+        )
+        node.update({key: value for key, value in fields.items() if value is not None})
+        return node_id
+
+    def add_edge(src: str, dst: str, edge_type: str, **fields: Any) -> None:
+        edges.append(
+            {
+                "source": src,
+                "target": dst,
+                "edge_type": edge_type,
+                **{key: value for key, value in fields.items() if value is not None},
+            }
+        )
+
+    catalog_node = add_node("runbook_catalog", str(runbook_catalog.get("catalog_hash") or "runbook_catalog"), hash=runbook_catalog.get("catalog_hash"))
+    ledger_node = add_node("action_ledger", str(action_ledger.get("ledger_hash") or "action_ledger"), hash=action_ledger.get("ledger_hash"))
+    add_edge(catalog_node, ledger_node, "references")
+    if runbook_archive:
+        archive_node = add_node("runbook_archive", str(runbook_archive.get("archive_hash") or "runbook_archive"), hash=runbook_archive.get("archive_hash"))
+        add_edge(archive_node, catalog_node, "archived_from")
+    if ledger_archive:
+        ledger_archive_node = add_node("ledger_archive", str(ledger_archive.get("archive_hash") or "ledger_archive"), hash=ledger_archive.get("archive_hash"))
+        add_edge(ledger_archive_node, ledger_node, "archived_from")
+    action_nodes: dict[str, str] = {}
+    for entry in [item for item in action_ledger.get("entries", []) if isinstance(item, dict)]:
+        action_id = str(entry.get("action_id") or "")
+        if not action_id:
+            continue
+        node_id = add_node(
+            "action",
+            action_id,
+            action_id=action_id,
+            action_kind=entry.get("action_kind"),
+            action_status=entry.get("action_status"),
+            closure_status=entry.get("closure_status"),
+        )
+        action_nodes[action_id] = node_id
+        add_edge(ledger_node, node_id, "references")
+    for entry in [item for item in runbook_catalog.get("entries", []) if isinstance(item, dict)]:
+        runbook_id = str(entry.get("runbook_id") or entry.get("action_id") or "")
+        if not runbook_id:
+            continue
+        node_id = add_node(
+            "runbook",
+            runbook_id,
+            runbook_id=runbook_id,
+            action_id=entry.get("action_id"),
+            runbook_type=entry.get("runbook_type"),
+            current_status=entry.get("current_status"),
+            latest_closure_status=entry.get("latest_closure_status"),
+            safety_level=entry.get("safety_level"),
+        )
+        add_edge(catalog_node, node_id, "references")
+        action_node = action_nodes.get(str(entry.get("action_id") or ""))
+        if action_node:
+            add_edge(node_id, action_node, "references")
+    waiver_count = 0
+    for record in [item for item in provenance_migration.get("per_pointer", []) if isinstance(item, dict)]:
+        if str(record.get("migration_action") or "") != "waive_archived":
+            continue
+        waiver_count += 1
+        waiver_id = str(record.get("waiver_token") or f"waiver:{waiver_count}")
+        waiver_node = add_node(
+            "waiver",
+            waiver_id,
+            waiver_id=waiver_id,
+            pointer_field=record.get("pointer_field"),
+            original_path=record.get("original_path"),
+            linked_runbook_id=record.get("runbook_id"),
+            linked_action_id=record.get("action_id"),
+        )
+        add_edge(waiver_node, catalog_node, "waiver_for")
+        if str(record.get("action_id") or "") in action_nodes:
+            add_edge(waiver_node, action_nodes[str(record.get("action_id") or "")], "waiver_for")
+    if bundle_metadata:
+        bundle_node = add_node(
+            "bundle_metadata",
+            str(bundle_metadata.get("bundle_hash") or bundle_metadata.get("bundle_id") or "bundle_metadata"),
+            hash=bundle_metadata.get("bundle_hash"),
+            bundle_id=bundle_metadata.get("bundle_id"),
+        )
+        add_edge(bundle_node, catalog_node, "bundled_in")
+        add_edge(bundle_node, ledger_node, "bundled_in")
+        for waiver_node in [node_id for node_id, node in nodes.items() if node.get("node_type") == "waiver"]:
+            add_edge(bundle_node, waiver_node, "bundled_in")
+    if published_snapshot:
+        snapshot_node = add_node(
+            "published_snapshot",
+            str(published_snapshot.get("published_snapshot_id") or published_snapshot.get("phase_tag") or "published_snapshot"),
+            published_snapshot_id=published_snapshot.get("published_snapshot_id"),
+            closeout_verdict=published_snapshot.get("closeout_verdict"),
+        )
+        if bundle_metadata:
+            add_edge(snapshot_node, graph_node_id("bundle_metadata", str(bundle_metadata.get("bundle_hash") or bundle_metadata.get("bundle_id") or "bundle_metadata")), "published_from")
+    for index, manifest in enumerate(verification_manifests):
+        if not manifest:
+            continue
+        verify_node = add_node(
+            "verification_manifest",
+            str(manifest.get("verification_hash") or manifest.get("manifest_hash") or f"verification-{index}"),
+            execution_verdict=manifest.get("execution_verdict"),
+            pass_count=manifest.get("pass_count"),
+            not_run_count=manifest.get("not_run_count"),
+        )
+        add_edge(verify_node, catalog_node, "references")
+    if report_path:
+        report_node = add_node("report", report_path, path=report_path)
+        add_edge(report_node, catalog_node, "references")
+    payload = {
+        "manifest_version": "operator_archive_reference_graph_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "node_count": len(nodes),
+        "edge_count": len(edges),
+        "waiver_node_count": sum(1 for node in nodes.values() if node.get("node_type") == "waiver"),
+        "nodes": list(nodes.values()),
+        "edges": edges,
+        "graph_verdict": "PASS",
+        "rationale": [
+            "archive reference graph links waived pointers to runbook, action, bundle, snapshot, and verification provenance",
+            "retention and pruning decisions must preserve active waiver and approval audit paths",
+        ],
+    }
+    payload["graph_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_archive_retention_plan(
+    *,
+    phase: str,
+    reference_graph: dict[str, Any],
+    retention_policy: dict[str, Any],
+) -> dict[str, Any]:
+    waiver_targets = {
+        edge.get("target")
+        for edge in reference_graph.get("edges", [])
+        if edge.get("edge_type") == "waiver_for"
+    }
+    plan_entries: list[dict[str, Any]] = []
+    active_retained = 0
+    waiver_retained = 0
+    prunable = 0
+    blocked = 0
+    for node in [item for item in reference_graph.get("nodes", []) if isinstance(item, dict)]:
+        node_type = str(node.get("node_type") or "")
+        node_id = str(node.get("node_id") or "")
+        reasons: list[str] = []
+        decision = "RETAIN"
+        if node_type in {"runbook_catalog", "action_ledger", "bundle_metadata", "published_snapshot"}:
+            reasons.append("core governance provenance")
+        if node_type == "runbook" and retention_policy.get("keep_active_runbooks", True):
+            reasons.append("runbook catalog retention policy")
+            active_retained += 1
+        if node_type == "action" and str(node.get("action_status") or "") in {ACTION_STATUS_FAILED, ACTION_STATUS_RETRY_PENDING}:
+            reasons.append("failed or retry-pending action retained")
+            active_retained += 1
+        if node_type == "waiver" and retention_policy.get("keep_waived_archived_pointers", True):
+            reasons.append("waived archived pointer retained until waiver expiry")
+            waiver_retained += 1
+        if node_id in waiver_targets and retention_policy.get("keep_bundle_if_referenced_by_waiver", True):
+            reasons.append("referenced by active waiver")
+            blocked += 1
+        if not reasons and node_type in {"verification_manifest", "report"}:
+            if retention_policy.get("prune_only_if_reference_graph_safe", True):
+                decision = "PRUNE_BLOCKED"
+                reasons.append("reference graph safe-prune policy requires explicit operator review")
+                blocked += 1
+            else:
+                decision = "PRUNABLE"
+                reasons.append("not required by current retention policy")
+                prunable += 1
+        elif not reasons:
+            reasons.append("retained by default archive governance")
+        plan_entries.append(
+            {
+                "node_id": node_id,
+                "node_type": node_type,
+                "retention_decision": decision,
+                "rationale": reasons,
+            }
+        )
+    payload = {
+        "manifest_version": "operator_archive_retention_plan_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "policy_id": retention_policy.get("policy_id"),
+        "active_retained_count": active_retained,
+        "waiver_retained_count": waiver_retained,
+        "prunable_count": prunable,
+        "blocked_prune_count": blocked,
+        "retention_plan_count": len(plan_entries),
+        "retention_verdict": "PASS",
+        "entries": plan_entries,
+    }
+    payload["retention_plan_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_archive_retention_apply(
+    *,
+    phase: str,
+    retention_plan: dict[str, Any],
+) -> dict[str, Any]:
+    prunable_count = int(retention_plan.get("prunable_count", 0) or 0)
+    blocked_count = int(retention_plan.get("blocked_prune_count", 0) or 0)
+    payload = {
+        "manifest_version": "operator_archive_retention_apply_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "retention_plan_hash": retention_plan.get("retention_plan_hash"),
+        "apply_mode": "governance_record_only",
+        "pruned_count": 0,
+        "retained_count": int(retention_plan.get("retention_plan_count", 0) or 0),
+        "blocked_prune_count": blocked_count,
+        "would_prune_count": prunable_count,
+        "apply_verdict": "PASS",
+        "rationale": [
+            "phase52 archive retention apply records safe decisions without deleting artifacts",
+            "destructive pruning remains an explicit operator action outside smoke/default path",
+        ],
+    }
+    payload["apply_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_waiver_registry(
+    *,
+    phase: str,
+    provenance_migration: dict[str, Any],
+    retention_policy: dict[str, Any],
+    current_time_override: str | None,
+) -> dict[str, Any]:
+    now = resolve_governance_now(current_time_override)
+    expiry_days = float(retention_policy.get("waiver_expiry_days", 365) or 365)
+    due_soon_days = float(retention_policy.get("waiver_review_due_soon_days", 30) or 30)
+    entries: list[dict[str, Any]] = []
+    for record in [item for item in provenance_migration.get("per_pointer", []) if isinstance(item, dict)]:
+        if str(record.get("migration_action") or "") != "waive_archived":
+            continue
+        granted_at = timestamp_utc_from_datetime(now)
+        expires_at = timestamp_utc_from_datetime(now + timedelta(days=expiry_days))
+        review_due_at = timestamp_utc_from_datetime(now + timedelta(days=max(0.0, expiry_days - due_soon_days)))
+        entries.append(
+            {
+                "waiver_id": str(record.get("waiver_token") or f"waiver-{len(entries)+1}"),
+                "pointer_field": record.get("pointer_field"),
+                "original_path": record.get("original_path"),
+                "linked_runbook_id": record.get("runbook_id"),
+                "linked_action_id": record.get("action_id"),
+                "waiver_reason": record.get("waiver_reason") or "closed historical pointer retained only as provenance summary",
+                "granted_at": granted_at,
+                "expires_at": expires_at,
+                "review_due_at": review_due_at,
+                "review_status": "ACTIVE",
+                "still_bundle_backed": True,
+                "still_reference_graph_safe": True,
+                "recommended_action": "NO_ACTION",
+            }
+        )
+    payload = {
+        "manifest_version": "operator_waiver_registry_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "waiver_count": len(entries),
+        "active_waiver_count": len(entries),
+        "entries": entries,
+        "registry_verdict": "PASS",
+    }
+    payload["waiver_registry_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_waiver_review(
+    *,
+    phase: str,
+    waiver_registry: dict[str, Any],
+    reference_graph: dict[str, Any],
+    current_time_override: str | None,
+) -> dict[str, Any]:
+    now = resolve_governance_now(current_time_override)
+    graph_waiver_ids = {
+        str(node.get("waiver_id") or node.get("stable_key") or "")
+        for node in reference_graph.get("nodes", [])
+        if isinstance(node, dict) and node.get("node_type") == "waiver"
+    }
+    entries: list[dict[str, Any]] = []
+    counts = {"ACTIVE": 0, "DUE_SOON": 0, "REVIEW_REQUIRED": 0, "EXPIRED": 0, "RETIRED": 0}
+    for entry in [item for item in waiver_registry.get("entries", []) if isinstance(item, dict)]:
+        waiver_id = str(entry.get("waiver_id") or "")
+        expires = parse_timestamp_utc(str(entry.get("expires_at") or ""))
+        review_due = parse_timestamp_utc(str(entry.get("review_due_at") or ""))
+        graph_safe = waiver_id in graph_waiver_ids or bool(entry.get("still_reference_graph_safe", False))
+        bundle_backed = bool(entry.get("still_bundle_backed", False))
+        status = "ACTIVE"
+        action = "NO_ACTION"
+        if expires is not None and now >= expires:
+            status = "EXPIRED"
+            action = "REFRESH_OR_RETIRE_WAIVER"
+        elif not graph_safe or not bundle_backed:
+            status = "REVIEW_REQUIRED"
+            action = "REVIEW_WAIVER_RETENTION"
+        elif review_due is not None and now >= review_due:
+            status = "DUE_SOON"
+            action = "SCHEDULE_WAIVER_REVIEW"
+        counts[status] = counts.get(status, 0) + 1
+        reviewed = dict(entry)
+        reviewed.update(
+            {
+                "review_status": status,
+                "still_bundle_backed": bundle_backed,
+                "still_reference_graph_safe": graph_safe,
+                "recommended_action": action,
+            }
+        )
+        entries.append(reviewed)
+    verdict = "PASS"
+    if counts.get("EXPIRED", 0) > 0:
+        verdict = "ACTION_REQUIRED"
+    elif counts.get("REVIEW_REQUIRED", 0) > 0:
+        verdict = "ACTION_REQUIRED"
+    elif counts.get("DUE_SOON", 0) > 0:
+        verdict = "WARN"
+    payload = {
+        "manifest_version": "operator_waiver_review_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "current_time_utc": timestamp_utc_from_datetime(now),
+        "review_verdict": verdict,
+        "waiver_count": len(entries),
+        "active_count": counts.get("ACTIVE", 0),
+        "due_soon_count": counts.get("DUE_SOON", 0),
+        "review_required_count": counts.get("REVIEW_REQUIRED", 0),
+        "expired_count": counts.get("EXPIRED", 0),
+        "retired_count": counts.get("RETIRED", 0),
+        "entries": entries,
+    }
+    payload["review_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_verification_preflight_gate(
+    *,
+    phase: str,
+    source_health: dict[str, Any],
+    staged_materialization: dict[str, Any],
+) -> dict[str, Any]:
+    dataless_count = int(source_health.get("dataless_placeholder_count", 0) or 0)
+    missing_head = bool(source_health.get("git_object_health", {}).get("missing_head_object", False))
+    unreadable_count = int(source_health.get("unreadable_source_file_count", 0) or 0)
+    fixtures_present = bool(source_health.get("required_fixtures_present", True))
+    staged_verdict = str(staged_materialization.get("materialization_verdict") or source_health.get("staged_materialization", {}).get("materialization_verdict") or "")
+    mode = str(staged_materialization.get("staged_materialization_mode") or source_health.get("staged_materialization", {}).get("staged_materialization_mode") or "")
+    direct_allowed = dataless_count == 0 and not missing_head and unreadable_count == 0 and fixtures_present
+    sparse_required = dataless_count > 0 or missing_head
+    staged_allowed = staged_verdict == "PASS" and fixtures_present and unreadable_count == 0
+    remediation: list[str] = []
+    blocking = 0
+    if dataless_count > 0:
+        remediation.append("use staged_sparse_clone_overlay instead of direct long build/test")
+    if missing_head:
+        remediation.append("avoid authoritative git-object dependent verification; use sparse clone ref")
+    if not fixtures_present:
+        remediation.append("materialize required fixtures before staged verification")
+        blocking += 1
+    if unreadable_count > 0:
+        remediation.append("materialize unreadable source files before verification")
+        blocking += unreadable_count
+    verdict = "PASS"
+    if blocking > 0 or not staged_allowed:
+        verdict = "FAIL"
+    elif sparse_required:
+        verdict = "ACTION_REQUIRED"
+    payload = {
+        "manifest_version": "verification_preflight_gate_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "preflight_gate_verdict": verdict,
+        "direct_build_allowed": direct_allowed,
+        "staged_build_allowed": staged_allowed,
+        "sparse_clone_required": sparse_required,
+        "blocking_issue_count": blocking,
+        "remediation_steps": remediation,
+        "selected_materialization_mode": mode or ("direct" if direct_allowed else "staged_sparse_clone_overlay"),
+        "rationale": [
+            "source-health preflight is required before long verification",
+            "source-health infra issues are separated from correctness gate failures",
+        ],
+    }
+    payload["preflight_gate_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_staged_verification_retention_plan(
+    *,
+    phase: str,
+    reference_graph: dict[str, Any],
+    source_snapshot: dict[str, Any],
+    staged_mirror_verify: dict[str, Any],
+    verification_manifests: list[dict[str, Any]],
+) -> dict[str, Any]:
+    verification_count = len([item for item in verification_manifests if item])
+    retained = verification_count + (1 if source_snapshot else 0) + (1 if staged_mirror_verify else 0)
+    payload = {
+        "manifest_version": "staged_verification_retention_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "staged_verification_count": verification_count,
+        "retained_verification_count": retained,
+        "prunable_verification_count": 0,
+        "blocked_prune_count": reference_graph.get("waiver_node_count", 0),
+        "snapshots_referenced_by_bundles": 1 if source_snapshot else 0,
+        "snapshots_referenced_by_waivers": reference_graph.get("waiver_node_count", 0),
+        "snapshots_referenced_by_reports": 1,
+        "retention_verdict": "PASS",
+        "rationale": [
+            "phase verification manifests are retained while bundle, report, and waiver references remain active",
+        ],
+    }
+    payload["retention_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_published_snapshot_retention_plan(
+    *,
+    phase: str,
+    reference_graph: dict[str, Any],
+    published_snapshot: dict[str, Any],
+    publication_health: dict[str, Any],
+    retention_policy: dict[str, Any],
+) -> dict[str, Any]:
+    snapshot_count = 1 if published_snapshot else 0
+    waiver_refs = int(reference_graph.get("waiver_node_count", 0) or 0)
+    blocked = waiver_refs if retention_policy.get("keep_bundle_if_referenced_by_waiver", True) else 0
+    payload = {
+        "manifest_version": "published_snapshot_retention_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "published_snapshot_count": snapshot_count,
+        "retained_snapshot_count": snapshot_count,
+        "prunable_snapshot_count": 0,
+        "blocked_prune_count": blocked,
+        "snapshots_referenced_by_bundles": snapshot_count,
+        "snapshots_referenced_by_waivers": waiver_refs,
+        "snapshots_referenced_by_reports": snapshot_count,
+        "publication_health_status": publication_health.get("status", "NOT_RUN"),
+        "retention_verdict": "PASS",
+        "rationale": [
+            "published snapshots referenced by active bundles or waived historical pointers are retained",
+        ],
+    }
+    payload["retention_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_published_snapshot_retention_apply(
+    *,
+    phase: str,
+    published_snapshot_retention: dict[str, Any],
+) -> dict[str, Any]:
+    payload = {
+        "manifest_version": "published_snapshot_retention_apply_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "retention_hash": published_snapshot_retention.get("retention_hash"),
+        "apply_mode": "governance_record_only",
+        "retained_snapshot_count": published_snapshot_retention.get("retained_snapshot_count", 0),
+        "pruned_snapshot_count": 0,
+        "blocked_prune_count": published_snapshot_retention.get("blocked_prune_count", 0),
+        "apply_verdict": "PASS",
+    }
+    payload["apply_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
     return payload
 
 
@@ -7610,6 +8158,16 @@ def action_ops_summary(args: argparse.Namespace) -> int:
     operator_runbook_lifecycle_validation_before = read_json(resolve_json_path(getattr(args, "operator_runbook_lifecycle_validation_before", None)))
     operator_runbook_lifecycle_validation_after = read_json(resolve_json_path(getattr(args, "operator_runbook_lifecycle_validation_after", None)))
     operator_artifact_path_policy_lint = read_json(resolve_json_path(getattr(args, "operator_artifact_path_policy_lint", None)))
+    operator_archive_reference_graph = read_json(resolve_json_path(getattr(args, "operator_archive_reference_graph", None)))
+    operator_archive_retention_policy = read_json(resolve_json_path(getattr(args, "operator_archive_retention_policy", None)))
+    operator_archive_retention_plan = read_json(resolve_json_path(getattr(args, "operator_archive_retention_plan", None)))
+    operator_archive_retention_apply = read_json(resolve_json_path(getattr(args, "operator_archive_retention_apply", None)))
+    operator_waiver_registry = read_json(resolve_json_path(getattr(args, "operator_waiver_registry", None)))
+    operator_waiver_review = read_json(resolve_json_path(getattr(args, "operator_waiver_review", None)))
+    verification_preflight_gate = read_json(resolve_json_path(getattr(args, "verification_preflight_gate", None)))
+    staged_verification_retention = read_json(resolve_json_path(getattr(args, "staged_verification_retention", None)))
+    published_snapshot_retention = read_json(resolve_json_path(getattr(args, "published_snapshot_retention", None)))
+    published_snapshot_retention_apply = read_json(resolve_json_path(getattr(args, "published_snapshot_retention_apply", None)))
     integrated_approval_mutation_audit = read_json(resolve_json_path(getattr(args, "integrated_approval_mutation_audit", None)))
     source_health_action_plan = read_json(resolve_json_path(getattr(args, "source_health_action_plan", None)))
     staged_materialization_transaction = read_json(resolve_json_path(getattr(args, "staged_materialization_transaction", None)))
@@ -7893,6 +8451,104 @@ def action_ops_summary(args: argparse.Namespace) -> int:
         payload.setdefault("final_operator_actions", {})["path_policy_lint"] = operator_artifact_path_policy_lint.get("lint_verdict", "NOT_RUN")
         payload.setdefault("final_operator_summary", {})["runbook_provenance_migration_verdict"] = operator_runbook_provenance_migration.get("migration_verdict", "NOT_RUN")
         payload.setdefault("final_operator_summary", {})["path_policy_lint_verdict"] = operator_artifact_path_policy_lint.get("lint_verdict", "NOT_RUN")
+        payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    if (
+        operator_archive_reference_graph
+        or operator_archive_retention_plan
+        or operator_waiver_registry
+        or operator_waiver_review
+        or verification_preflight_gate
+        or staged_verification_retention
+        or published_snapshot_retention
+    ):
+        payload["manifest_version"] = "policy_ops_summary_v18"
+        payload["operator_archive_reference_graph"] = {
+            "graph_verdict": operator_archive_reference_graph.get("graph_verdict", "NOT_RUN"),
+            "node_count": operator_archive_reference_graph.get("node_count", 0),
+            "edge_count": operator_archive_reference_graph.get("edge_count", 0),
+            "waiver_node_count": operator_archive_reference_graph.get("waiver_node_count", 0),
+            "graph_hash": operator_archive_reference_graph.get("graph_hash"),
+        }
+        payload["operator_archive_retention"] = {
+            "policy_id": operator_archive_retention_policy.get("policy_id"),
+            "retention_verdict": operator_archive_retention_plan.get("retention_verdict", "NOT_RUN"),
+            "active_retained_count": operator_archive_retention_plan.get("active_retained_count", 0),
+            "waiver_retained_count": operator_archive_retention_plan.get("waiver_retained_count", 0),
+            "prunable_count": operator_archive_retention_plan.get("prunable_count", 0),
+            "blocked_prune_count": operator_archive_retention_plan.get("blocked_prune_count", 0),
+            "apply_verdict": operator_archive_retention_apply.get("apply_verdict", "NOT_RUN"),
+            "apply_mode": operator_archive_retention_apply.get("apply_mode"),
+        }
+        payload["operator_waiver_registry"] = {
+            "registry_verdict": operator_waiver_registry.get("registry_verdict", "NOT_RUN"),
+            "waiver_count": operator_waiver_registry.get("waiver_count", 0),
+            "active_waiver_count": operator_waiver_registry.get("active_waiver_count", 0),
+            "waiver_registry_hash": operator_waiver_registry.get("waiver_registry_hash"),
+        }
+        payload["operator_waiver_review"] = {
+            "review_verdict": operator_waiver_review.get("review_verdict", "NOT_RUN"),
+            "waiver_count": operator_waiver_review.get("waiver_count", 0),
+            "active_count": operator_waiver_review.get("active_count", 0),
+            "due_soon_count": operator_waiver_review.get("due_soon_count", 0),
+            "review_required_count": operator_waiver_review.get("review_required_count", 0),
+            "expired_count": operator_waiver_review.get("expired_count", 0),
+        }
+        payload["verification_preflight_gate"] = {
+            "preflight_gate_verdict": verification_preflight_gate.get("preflight_gate_verdict", "NOT_RUN"),
+            "direct_build_allowed": verification_preflight_gate.get("direct_build_allowed", False),
+            "staged_build_allowed": verification_preflight_gate.get("staged_build_allowed", False),
+            "sparse_clone_required": verification_preflight_gate.get("sparse_clone_required", False),
+            "blocking_issue_count": verification_preflight_gate.get("blocking_issue_count", 0),
+            "selected_materialization_mode": verification_preflight_gate.get("selected_materialization_mode"),
+        }
+        payload["staged_verification_retention"] = {
+            "retention_verdict": staged_verification_retention.get("retention_verdict", "NOT_RUN"),
+            "staged_verification_count": staged_verification_retention.get("staged_verification_count", 0),
+            "retained_verification_count": staged_verification_retention.get("retained_verification_count", 0),
+            "prunable_verification_count": staged_verification_retention.get("prunable_verification_count", 0),
+            "blocked_prune_count": staged_verification_retention.get("blocked_prune_count", 0),
+            "snapshots_referenced_by_waivers": staged_verification_retention.get("snapshots_referenced_by_waivers", 0),
+        }
+        payload["published_snapshot_retention"] = {
+            "retention_verdict": published_snapshot_retention.get("retention_verdict", "NOT_RUN"),
+            "published_snapshot_count": published_snapshot_retention.get("published_snapshot_count", 0),
+            "retained_snapshot_count": published_snapshot_retention.get("retained_snapshot_count", 0),
+            "prunable_snapshot_count": published_snapshot_retention.get("prunable_snapshot_count", 0),
+            "blocked_prune_count": published_snapshot_retention.get("blocked_prune_count", 0),
+            "snapshots_referenced_by_waivers": published_snapshot_retention.get("snapshots_referenced_by_waivers", 0),
+            "apply_verdict": published_snapshot_retention_apply.get("apply_verdict", "NOT_RUN"),
+        }
+        if verification_preflight_gate:
+            verification_lane = dict(payload.get("verification_lane", {}))
+            verification_lane["preflight_gate_verdict"] = verification_preflight_gate.get("preflight_gate_verdict")
+            verification_lane["direct_build_allowed"] = verification_preflight_gate.get("direct_build_allowed")
+            verification_lane["staged_build_allowed"] = verification_preflight_gate.get("staged_build_allowed")
+            verification_lane["sparse_clone_required"] = verification_preflight_gate.get("sparse_clone_required")
+            verification_lane["materialization_mode"] = verification_preflight_gate.get("selected_materialization_mode") or verification_lane.get("materialization_mode")
+            payload["verification_lane"] = verification_lane
+        active_unresolved = int(operator_runbook_provenance_migration.get("unresolved_active_pointer_count", 0) or 0)
+        waiver_review_action = "NO_ACTION"
+        if int(operator_waiver_review.get("expired_count", 0) or 0) > 0 or int(operator_waiver_review.get("review_required_count", 0) or 0) > 0:
+            waiver_review_action = "REVIEW_WAIVERS"
+        elif int(operator_waiver_review.get("due_soon_count", 0) or 0) > 0:
+            waiver_review_action = "SCHEDULE_WAIVER_REVIEW"
+        source_health_action = "NO_ACTION"
+        if bool(verification_preflight_gate.get("sparse_clone_required", False)):
+            source_health_action = "USE_STAGED_SPARSE_LANE"
+        snapshot_action = "NO_ACTION"
+        if int(published_snapshot_retention.get("blocked_prune_count", 0) or 0) > 0:
+            snapshot_action = "RETAIN_SNAPSHOTS"
+        if active_unresolved > 0:
+            payload.setdefault("final_operator_actions", {})["archive_governance"] = "ACTION_REQUIRED"
+        else:
+            payload.setdefault("final_operator_actions", {})["archive_governance"] = waiver_review_action if waiver_review_action != "NO_ACTION" else "NO_ACTION"
+        payload.setdefault("final_operator_actions", {})["operator_waiver_review"] = waiver_review_action
+        payload.setdefault("final_operator_actions", {})["verification_preflight_gate"] = source_health_action
+        payload.setdefault("final_operator_actions", {})["published_snapshot_retention"] = snapshot_action
+        payload.setdefault("final_operator_summary", {})["archive_reference_graph_verdict"] = operator_archive_reference_graph.get("graph_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["waiver_review_verdict"] = operator_waiver_review.get("review_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["verification_preflight_gate_verdict"] = verification_preflight_gate.get("preflight_gate_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["published_snapshot_retention_verdict"] = published_snapshot_retention.get("retention_verdict", "NOT_RUN")
         payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
     write_json(out_path, payload)
     atomic_write_text(text_out, build_ops_summary_text(payload))
@@ -9722,6 +10378,171 @@ def action_operator_artifact_path_policy_lint(args: argparse.Namespace) -> int:
         phase=str(args.phase),
         manifest_root=Path(args.manifest_root).resolve(),
         published_root=Path(args.published_root).resolve(),
+        policy_version=str(getattr(args, "policy_version", "v1") or "v1"),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_archive_reference_graph(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.reference_graph_out)
+    if out_path is None:
+        raise SystemExit("--reference-graph-out is required")
+    verification_manifests = [
+        read_json(resolve_json_path(path))
+        for path in list(getattr(args, "verification_manifest", []) or [])
+        if resolve_json_path(path) is not None
+    ]
+    payload = build_operator_archive_reference_graph(
+        phase=str(args.phase),
+        runbook_catalog=read_json(resolve_json_path(args.runbook_catalog)),
+        action_ledger=read_json(resolve_json_path(args.action_ledger)),
+        runbook_archive=read_json(resolve_json_path(getattr(args, "runbook_archive", None))),
+        ledger_archive=read_json(resolve_json_path(getattr(args, "ledger_archive", None))),
+        provenance_migration=read_json(resolve_json_path(getattr(args, "provenance_migration", None))),
+        bundle_metadata=read_json(resolve_json_path(getattr(args, "bundle_metadata", None))),
+        published_snapshot=read_json(resolve_json_path(getattr(args, "published_snapshot", None))),
+        verification_manifests=verification_manifests,
+        report_path=getattr(args, "report", None),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_archive_retention_plan(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.retention_plan_out)
+    if out_path is None:
+        raise SystemExit("--retention-plan-out is required")
+    policy_path = resolve_json_path(args.retention_policy)
+    policy = normalize_operator_archive_retention_policy(read_json(policy_path), phase=str(args.phase))
+    if policy_path is not None:
+        write_json(policy_path, policy)
+    payload = build_operator_archive_retention_plan(
+        phase=str(args.phase),
+        reference_graph=read_json(resolve_json_path(args.reference_graph)),
+        retention_policy=policy,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_archive_retention_apply(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.retention_apply_out)
+    if out_path is None:
+        raise SystemExit("--retention-apply-out is required")
+    payload = build_operator_archive_retention_apply(
+        phase=str(args.phase),
+        retention_plan=read_json(resolve_json_path(args.retention_plan)),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_waiver_registry(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.waiver_registry_out)
+    if out_path is None:
+        raise SystemExit("--waiver-registry-out is required")
+    policy_path = resolve_json_path(getattr(args, "retention_policy", None))
+    policy = normalize_operator_archive_retention_policy(read_json(policy_path), phase=str(args.phase))
+    payload = build_operator_waiver_registry(
+        phase=str(args.phase),
+        provenance_migration=read_json(resolve_json_path(args.provenance_migration)),
+        retention_policy=policy,
+        current_time_override=getattr(args, "current_time_override", None),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_waiver_review(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.review_out)
+    if out_path is None:
+        raise SystemExit("--review-out is required")
+    payload = build_operator_waiver_review(
+        phase=str(args.phase),
+        waiver_registry=read_json(resolve_json_path(args.waiver_registry)),
+        reference_graph=read_json(resolve_json_path(args.reference_graph)),
+        current_time_override=getattr(args, "current_time_override", None),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_verification_preflight_gate(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.preflight_gate_out)
+    if out_path is None:
+        raise SystemExit("--preflight-gate-out is required")
+    payload = build_verification_preflight_gate(
+        phase=str(args.phase),
+        source_health=read_json(resolve_json_path(args.source_health)),
+        staged_materialization=read_json(resolve_json_path(args.staged_materialization)),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_staged_verification_retention_plan(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.retention_out)
+    if out_path is None:
+        raise SystemExit("--retention-out is required")
+    verification_manifests = [
+        read_json(resolve_json_path(path))
+        for path in list(getattr(args, "verification_manifest", []) or [])
+        if resolve_json_path(path) is not None
+    ]
+    payload = build_staged_verification_retention_plan(
+        phase=str(args.phase),
+        reference_graph=read_json(resolve_json_path(args.reference_graph)),
+        source_snapshot=read_json(resolve_json_path(getattr(args, "source_snapshot", None))),
+        staged_mirror_verify=read_json(resolve_json_path(getattr(args, "staged_mirror_verify", None))),
+        verification_manifests=verification_manifests,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_published_snapshot_retention_plan(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.retention_out)
+    if out_path is None:
+        raise SystemExit("--retention-out is required")
+    policy_path = resolve_json_path(getattr(args, "retention_policy", None))
+    policy = normalize_operator_archive_retention_policy(read_json(policy_path), phase=str(args.phase))
+    payload = build_published_snapshot_retention_plan(
+        phase=str(args.phase),
+        reference_graph=read_json(resolve_json_path(args.reference_graph)),
+        published_snapshot=read_json(resolve_json_path(args.published_snapshot)),
+        publication_health=read_json(resolve_json_path(getattr(args, "publication_health", None))),
+        retention_policy=policy,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_published_snapshot_retention_apply(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.retention_apply_out)
+    if out_path is None:
+        raise SystemExit("--retention-apply-out is required")
+    payload = build_published_snapshot_retention_apply(
+        phase=str(args.phase),
+        published_snapshot_retention=read_json(resolve_json_path(args.published_snapshot_retention)),
     )
     write_json(out_path, payload)
     atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
@@ -10520,6 +11341,72 @@ def parse_args() -> argparse.Namespace:
     path_policy_lint_parser.add_argument("--manifest-root", required=True)
     path_policy_lint_parser.add_argument("--published-root", required=True)
     path_policy_lint_parser.add_argument("--lint-out", required=True)
+    path_policy_lint_parser.add_argument("--policy-version", default="v1", choices=["v1", "v2"])
+
+    archive_graph_parser = subparsers.add_parser("operator-archive-reference-graph")
+    archive_graph_parser.add_argument("--phase", required=True)
+    archive_graph_parser.add_argument("--runbook-catalog", required=True)
+    archive_graph_parser.add_argument("--action-ledger", required=True)
+    archive_graph_parser.add_argument("--runbook-archive", default=None)
+    archive_graph_parser.add_argument("--ledger-archive", default=None)
+    archive_graph_parser.add_argument("--provenance-migration", default=None)
+    archive_graph_parser.add_argument("--bundle-metadata", default=None)
+    archive_graph_parser.add_argument("--published-snapshot", default=None)
+    archive_graph_parser.add_argument("--verification-manifest", action="append", default=[])
+    archive_graph_parser.add_argument("--report", default=None)
+    archive_graph_parser.add_argument("--reference-graph-out", required=True)
+
+    archive_retention_plan_parser = subparsers.add_parser("operator-archive-retention-plan")
+    archive_retention_plan_parser.add_argument("--phase", required=True)
+    archive_retention_plan_parser.add_argument("--reference-graph", required=True)
+    archive_retention_plan_parser.add_argument("--retention-policy", required=True)
+    archive_retention_plan_parser.add_argument("--retention-plan-out", required=True)
+
+    archive_retention_apply_parser = subparsers.add_parser("operator-archive-retention-apply")
+    archive_retention_apply_parser.add_argument("--phase", required=True)
+    archive_retention_apply_parser.add_argument("--retention-plan", required=True)
+    archive_retention_apply_parser.add_argument("--retention-apply-out", required=True)
+
+    waiver_registry_parser = subparsers.add_parser("operator-waiver-registry")
+    waiver_registry_parser.add_argument("--phase", required=True)
+    waiver_registry_parser.add_argument("--provenance-migration", required=True)
+    waiver_registry_parser.add_argument("--retention-policy", default=None)
+    waiver_registry_parser.add_argument("--current-time-override", default=None)
+    waiver_registry_parser.add_argument("--waiver-registry-out", required=True)
+
+    waiver_review_parser = subparsers.add_parser("operator-waiver-review")
+    waiver_review_parser.add_argument("--phase", required=True)
+    waiver_review_parser.add_argument("--waiver-registry", required=True)
+    waiver_review_parser.add_argument("--reference-graph", required=True)
+    waiver_review_parser.add_argument("--current-time-override", default=None)
+    waiver_review_parser.add_argument("--review-out", required=True)
+
+    verification_preflight_parser = subparsers.add_parser("verification-preflight-gate")
+    verification_preflight_parser.add_argument("--phase", required=True)
+    verification_preflight_parser.add_argument("--source-health", required=True)
+    verification_preflight_parser.add_argument("--staged-materialization", required=True)
+    verification_preflight_parser.add_argument("--preflight-gate-out", required=True)
+
+    staged_verification_retention_parser = subparsers.add_parser("staged-verification-retention-plan")
+    staged_verification_retention_parser.add_argument("--phase", required=True)
+    staged_verification_retention_parser.add_argument("--reference-graph", required=True)
+    staged_verification_retention_parser.add_argument("--source-snapshot", default=None)
+    staged_verification_retention_parser.add_argument("--staged-mirror-verify", default=None)
+    staged_verification_retention_parser.add_argument("--verification-manifest", action="append", default=[])
+    staged_verification_retention_parser.add_argument("--retention-out", required=True)
+
+    published_snapshot_retention_parser = subparsers.add_parser("published-snapshot-retention-plan")
+    published_snapshot_retention_parser.add_argument("--phase", required=True)
+    published_snapshot_retention_parser.add_argument("--reference-graph", required=True)
+    published_snapshot_retention_parser.add_argument("--published-snapshot", required=True)
+    published_snapshot_retention_parser.add_argument("--publication-health", default=None)
+    published_snapshot_retention_parser.add_argument("--retention-policy", default=None)
+    published_snapshot_retention_parser.add_argument("--retention-out", required=True)
+
+    published_snapshot_apply_parser = subparsers.add_parser("published-snapshot-retention-apply")
+    published_snapshot_apply_parser.add_argument("--phase", required=True)
+    published_snapshot_apply_parser.add_argument("--published-snapshot-retention", required=True)
+    published_snapshot_apply_parser.add_argument("--retention-apply-out", required=True)
 
     decision_metadata_audit_parser = subparsers.add_parser("operator-decision-metadata-audit")
     decision_metadata_audit_parser.add_argument("--phase", required=True)
@@ -10738,6 +11625,16 @@ def parse_args() -> argparse.Namespace:
     ops_parser.add_argument("--operator-runbook-lifecycle-validation-before", default=None)
     ops_parser.add_argument("--operator-runbook-lifecycle-validation-after", default=None)
     ops_parser.add_argument("--operator-artifact-path-policy-lint", default=None)
+    ops_parser.add_argument("--operator-archive-reference-graph", default=None)
+    ops_parser.add_argument("--operator-archive-retention-policy", default=None)
+    ops_parser.add_argument("--operator-archive-retention-plan", default=None)
+    ops_parser.add_argument("--operator-archive-retention-apply", default=None)
+    ops_parser.add_argument("--operator-waiver-registry", default=None)
+    ops_parser.add_argument("--operator-waiver-review", default=None)
+    ops_parser.add_argument("--verification-preflight-gate", default=None)
+    ops_parser.add_argument("--staged-verification-retention", default=None)
+    ops_parser.add_argument("--published-snapshot-retention", default=None)
+    ops_parser.add_argument("--published-snapshot-retention-apply", default=None)
     ops_parser.add_argument("--integrated-approval-mutation-audit", default=None)
     ops_parser.add_argument("--source-health-action-plan", default=None)
     ops_parser.add_argument("--staged-materialization-transaction", default=None)
@@ -10829,6 +11726,24 @@ def main() -> int:
         return action_operator_runbook_provenance_migrate(args)
     if args.command == "operator-artifact-path-policy-lint":
         return action_operator_artifact_path_policy_lint(args)
+    if args.command == "operator-archive-reference-graph":
+        return action_operator_archive_reference_graph(args)
+    if args.command == "operator-archive-retention-plan":
+        return action_operator_archive_retention_plan(args)
+    if args.command == "operator-archive-retention-apply":
+        return action_operator_archive_retention_apply(args)
+    if args.command == "operator-waiver-registry":
+        return action_operator_waiver_registry(args)
+    if args.command == "operator-waiver-review":
+        return action_operator_waiver_review(args)
+    if args.command == "verification-preflight-gate":
+        return action_verification_preflight_gate(args)
+    if args.command == "staged-verification-retention-plan":
+        return action_staged_verification_retention_plan(args)
+    if args.command == "published-snapshot-retention-plan":
+        return action_published_snapshot_retention_plan(args)
+    if args.command == "published-snapshot-retention-apply":
+        return action_published_snapshot_retention_apply(args)
     if args.command == "operator-decision-metadata-audit":
         return action_operator_decision_metadata_audit(args)
     if args.command == "operator-runbook-replay":

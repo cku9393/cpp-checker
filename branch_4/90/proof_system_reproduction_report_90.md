@@ -13,12 +13,12 @@
 - family-chain lower layers: total `7`, fresh `7`, imported `0`, caveat closed `1`
 - limited bridge theorem: `limited_bridge_theorem_proved_under_current_scope`
 
-## coordinate-contraction status update
+## family-chain absorption status update
 
-The selected statement is `coordinate_contraction_status_or_escape`.
+The selected statement is `family_chain_absorption_status_refuted_or_reduced_or_escape`.
 
-The coordinate-contraction status skeleton is `proof_ready_skeleton_contract_equivalent_status_congruence_open`, with sublemma counts `2/5/1` for proved/sketch/blocked. The blocked sublemma is equivalent-coordinate counterexample-status congruence.
+The family-chain absorption status skeleton is `proof_ready_skeleton_family_chain_absorption_status_refutation_measure_open`, with sublemma counts `3/4/2` for proved/sketch/blocked. The blocked parts are source-target payload/status alignment and normalized residual measure decrease.
 
-Current next target: `canonical_compression_status_preservation`.
+Current next target: `project_to_active_status_locality_refinement`.
 
-This report does not claim a full general theorem, support8 sufficiency, coordinate-contraction completion, or support9+ scan completion.
+This report does not claim a full general theorem, support8 sufficiency, family-chain absorption completion, or support9+ scan completion.

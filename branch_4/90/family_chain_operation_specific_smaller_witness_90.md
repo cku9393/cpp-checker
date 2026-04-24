@@ -1,8 +1,8 @@
 # Family-Chain Operation-Specific Smaller Witness 90
 
-## status after status-congruence bridge
+## status after family-chain absorption status round
 
-`partial_status_congruence_classified_operation_proofs_open`.
+`partial_all_primary_operations_status_proof_ready_residual_congruence_open`.
 
 The operation-specific smaller-witness branch now has a shared status classification:
 
@@ -14,6 +14,6 @@ The operation-specific smaller-witness branch now has a shared status classifica
 - `status_escape_to_higher_support`;
 - `status_not_applicable`.
 
-This does not prove active projection, coordinate contraction, canonical compression, or family-chain absorption status preservation. It names those as exact blockers and makes higher-support necessity recheck the next target.
+Project-to-active, coordinate contraction, canonical compression, and family-chain absorption now each have proof-ready status skeletons with exact locality/congruence/source-alignment/measure blockers. This does not prove full support reduction or any full general theorem.
 
 Runtime table: `branch_4/90/runtime/family_chain_operation_specific_smaller_witness_90.tsv`.

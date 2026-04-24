@@ -1,0 +1,18 @@
+{
+  "plan_version": "runtime_rerun_plan_v1",
+  "generated_at_utc": "2026-04-24T03:12:57Z",
+  "artifact_root": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke",
+  "baseline_runtime_manifest_path": null,
+  "current_runtime_manifest_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_current.json",
+  "refresh_runtime_manifest_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_refresh.json",
+  "baseline_runtime_manifest_hash": null,
+  "current_runtime_manifest_hash": "0592ab8cbe79d602d0f61062c27fa0fe01ce4b4bb8ce7256676bb03586f3f643",
+  "refresh_runtime_manifest_hash": "85f9c79a06dc46796417679d06d08c95251cc39f8ebb3aaca1c4ba6477621cc1",
+  "stale_entry_count": 0,
+  "requires_rerun_entry_count": 0,
+  "rebaseline_required_count": 0,
+  "selected_entry_count": 0,
+  "entries": [],
+  "summary_verdict": "PASS",
+  "rationale": "no stale or over-budget runtime entries"
+}

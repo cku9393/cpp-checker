@@ -1,0 +1,7 @@
+manifest_version=publication_health_v2
+phase=phase48
+health_verdict=HEALTHY
+recommended_action=NO_ACTION
+missing_artifact_count=0
+hash_mismatch_count=0
+dangling_reference_count=0

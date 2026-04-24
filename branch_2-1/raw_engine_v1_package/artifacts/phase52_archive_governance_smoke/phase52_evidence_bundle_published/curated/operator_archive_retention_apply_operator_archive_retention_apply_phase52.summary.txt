@@ -1,0 +1,17 @@
+{
+  "manifest_version": "operator_archive_retention_apply_v1",
+  "phase": "phase52",
+  "generated_at_utc": "2026-04-24T03:13:20Z",
+  "retention_plan_hash": "08176537ae22d512c43e5deb3fcb09b04f472f7a1a0dad9b4da13bc8c06371ad",
+  "apply_mode": "governance_record_only",
+  "pruned_count": 0,
+  "retained_count": 15,
+  "blocked_prune_count": 6,
+  "would_prune_count": 0,
+  "apply_verdict": "PASS",
+  "rationale": [
+    "phase52 archive retention apply records safe decisions without deleting artifacts",
+    "destructive pruning remains an explicit operator action outside smoke/default path"
+  ],
+  "apply_hash": "69173ed383ae403e1f08bb578ac8b266a140b6d6b79f0e66fbc3ba2b12211494"
+}

@@ -139,12 +139,12 @@ lower-frontier inventory-only shell11/shell12 pair `4`개는 계속 분리해 �
 Theorem-data promotion 자체는 current support8 top-level과 family-chain lower-layer 축에서 닫혔다. 다음 scope는 `general_gap_bridge_formalization`으로 둔다.
 
 - shell16은 `preflight_contract_ready_no_scan`
-- higher-support는 `higher_support_deferred_after_contract_equivalent_status_congruence_open`
+- higher-support는 `higher_support_deferred_after_family_chain_absorption_status_refutation_measure_open`
 - broader general gap theorem은 `ready_for_bridge_formalization`
 - BOJ solver bridge는 `ready_for_problem_bridge_formalization`
 - archive cleanup은 `worth_cleaning_later`
 
-Bridge formalization 이후 proof-obligation 관점의 `prove_minimal_counterexample_reduction`은 proof-ready skeleton까지 진행됐고, limited bridge theorem은 current scope에서 증명됐다. support-bound/support-reduction/family-chain rounds now keep operation routes through `family_chain_absorption_reduction`. The current `status_preservation_congruence_bridge` formalizes the common status language and operation table, classifying preserved/reduced/refuted/absorbed/escaped outcomes while leaving operation-specific status proofs and residual absorption measure open. The higher-support recheck did not run support9+, the project-to-active status round made active projection status proof-ready with inactive-support status locality still open, and the coordinate-contraction status round made quotient status proof-ready with equivalent-coordinate status congruence open. Full theorem-data/general promotion은 아니다. 다음 target은 `canonical_compression_status_preservation`다.
+Bridge formalization 이후 proof-obligation 관점의 `prove_minimal_counterexample_reduction`은 proof-ready skeleton까지 진행됐고, limited bridge theorem은 current scope에서 증명됐다. support-bound/support-reduction/family-chain rounds now keep operation routes through `family_chain_absorption_reduction`. The current `status_preservation_congruence_bridge` formalizes the common status language and operation table, classifying preserved/reduced/refuted/absorbed/escaped outcomes while leaving operation-specific status proofs and residual absorption measure open. The higher-support recheck did not run support9+, the project-to-active status round made active projection status proof-ready with inactive-support status locality still open, the coordinate-contraction status round made quotient status proof-ready with equivalent-coordinate status congruence open, the canonical-compression status round made motif status proof-ready with canonical-motif status congruence open, and the family-chain absorption status round made refutation/reduction/escape proof-ready with source-target alignment and residual measure open. Full theorem-data/general promotion은 아니다. 다음 target은 `project_to_active_status_locality_refinement`다.
 
 ### 단계 3. archival only 보존
 

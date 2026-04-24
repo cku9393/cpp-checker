@@ -1,0 +1,237 @@
+{
+  "manifest_version": "operator_archive_reference_graph_v1",
+  "phase": "phase52",
+  "generated_at_utc": "2026-04-24T03:13:20Z",
+  "node_count": 15,
+  "edge_count": 19,
+  "waiver_node_count": 1,
+  "nodes": [
+    {
+      "node_id": "runbook_catalog:07d211e9170275f9",
+      "node_type": "runbook_catalog",
+      "stable_key": "1e7ed5a556fdde562acff2539c4f6533f895600d92b8c747addf63c3bef49252",
+      "hash": "1e7ed5a556fdde562acff2539c4f6533f895600d92b8c747addf63c3bef49252"
+    },
+    {
+      "node_id": "action_ledger:4eb117bcf4d7bb0f",
+      "node_type": "action_ledger",
+      "stable_key": "5c86d7e31a958f3c3cc6f1769db3e7b46684ec6ec1ab54b7173b06ed654fb946",
+      "hash": "5c86d7e31a958f3c3cc6f1769db3e7b46684ec6ec1ab54b7173b06ed654fb946"
+    },
+    {
+      "node_id": "runbook_archive:96caceff4bdc971f",
+      "node_type": "runbook_archive",
+      "stable_key": "5c568954cb12f826cb3b7516637e7c9e1ca1c058f578c7eb6dc9ec5cb0ebeacb",
+      "hash": "5c568954cb12f826cb3b7516637e7c9e1ca1c058f578c7eb6dc9ec5cb0ebeacb"
+    },
+    {
+      "node_id": "action:8c4f7f89f117490d",
+      "node_type": "action",
+      "stable_key": "phase45-current-env-reproposal-001",
+      "action_id": "phase45-current-env-reproposal-001",
+      "action_kind": "RUN_CURRENT_ENV_REPROPOSAL_GATE",
+      "action_status": "CLOSED",
+      "closure_status": "CLOSED"
+    },
+    {
+      "node_id": "runbook:5d172c8f47dba9f9",
+      "node_type": "runbook",
+      "stable_key": "phase49-runbook-75c36b408d7e",
+      "runbook_id": "phase49-runbook-75c36b408d7e",
+      "action_id": "current-env",
+      "runbook_type": "reproposal_gate",
+      "current_status": "EXECUTED",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "dry_run"
+    },
+    {
+      "node_id": "runbook:3c254d9f693bc246",
+      "node_type": "runbook",
+      "stable_key": "phase49-runbook-a847d70a05f8",
+      "runbook_id": "phase49-runbook-a847d70a05f8",
+      "action_id": "foreign-envs",
+      "runbook_type": "run_foreign_env_onboarding",
+      "current_status": "PLANNED",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "dry_run"
+    },
+    {
+      "node_id": "runbook:bf5d720a908751c9",
+      "node_type": "runbook",
+      "stable_key": "phase47-approval-runbook-590fa6da5236",
+      "runbook_id": "phase47-approval-runbook-590fa6da5236",
+      "action_id": "phase45-current-env-reproposal-001",
+      "runbook_type": "approval",
+      "current_status": "CLOSED",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "handoff_only"
+    },
+    {
+      "node_id": "runbook:26795f1293857554",
+      "node_type": "runbook",
+      "stable_key": "phase49-runbook-approve-21a551dae88c",
+      "runbook_id": "phase49-runbook-approve-21a551dae88c",
+      "action_id": "phase45-current-env-reproposal-001",
+      "runbook_type": "approval",
+      "current_status": "CLOSED",
+      "latest_closure_status": "CLOSED",
+      "safety_level": "handoff_only"
+    },
+    {
+      "node_id": "waiver:0258339d1e902bac",
+      "node_type": "waiver",
+      "stable_key": "waived_archived_pointer:eedce3440c774956",
+      "waiver_id": "waived_archived_pointer:eedce3440c774956",
+      "pointer_field": "entries[phase45-current-env-reproposal-001].linked_budget_baseline",
+      "original_path": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_budget_baseline_phase47_approved.json",
+      "linked_action_id": "phase45-current-env-reproposal-001"
+    },
+    {
+      "node_id": "bundle_metadata:3423df1ff65e0cea",
+      "node_type": "bundle_metadata",
+      "stable_key": "phase52-bundle-smoke",
+      "hash": "phase52-bundle-smoke",
+      "bundle_id": "phase52-smoke-bundle"
+    },
+    {
+      "node_id": "published_snapshot:a48c77df9363423c",
+      "node_type": "published_snapshot",
+      "stable_key": "phase52-smoke-snapshot",
+      "published_snapshot_id": "phase52-smoke-snapshot",
+      "closeout_verdict": "CLOSEOUT_PASS"
+    },
+    {
+      "node_id": "verification_manifest:e75944aa65a62a67",
+      "node_type": "verification_manifest",
+      "stable_key": "phase52-release-smoke",
+      "execution_verdict": "PASS",
+      "pass_count": 1,
+      "not_run_count": 0
+    },
+    {
+      "node_id": "verification_manifest:f8621128038c02bb",
+      "node_type": "verification_manifest",
+      "stable_key": "phase52-debug-smoke",
+      "execution_verdict": "PASS",
+      "pass_count": 1,
+      "not_run_count": 0
+    },
+    {
+      "node_id": "verification_manifest:bb8921df901dae7f",
+      "node_type": "verification_manifest",
+      "stable_key": "phase52-asan-smoke",
+      "execution_verdict": "PASS",
+      "pass_count": 1,
+      "not_run_count": 0
+    },
+    {
+      "node_id": "report:8474790ce43afac8",
+      "node_type": "report",
+      "stable_key": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/PHASE52_ARCHIVE_GOVERNANCE_REPORT.txt",
+      "path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/PHASE52_ARCHIVE_GOVERNANCE_REPORT.txt"
+    }
+  ],
+  "edges": [
+    {
+      "source": "runbook_catalog:07d211e9170275f9",
+      "target": "action_ledger:4eb117bcf4d7bb0f",
+      "edge_type": "references"
+    },
+    {
+      "source": "runbook_archive:96caceff4bdc971f",
+      "target": "runbook_catalog:07d211e9170275f9",
+      "edge_type": "archived_from"
+    },
+    {
+      "source": "action_ledger:4eb117bcf4d7bb0f",
+      "target": "action:8c4f7f89f117490d",
+      "edge_type": "references"
+    },
+    {
+      "source": "runbook_catalog:07d211e9170275f9",
+      "target": "runbook:5d172c8f47dba9f9",
+      "edge_type": "references"
+    },
+    {
+      "source": "runbook_catalog:07d211e9170275f9",
+      "target": "runbook:3c254d9f693bc246",
+      "edge_type": "references"
+    },
+    {
+      "source": "runbook_catalog:07d211e9170275f9",
+      "target": "runbook:bf5d720a908751c9",
+      "edge_type": "references"
+    },
+    {
+      "source": "runbook:bf5d720a908751c9",
+      "target": "action:8c4f7f89f117490d",
+      "edge_type": "references"
+    },
+    {
+      "source": "runbook_catalog:07d211e9170275f9",
+      "target": "runbook:26795f1293857554",
+      "edge_type": "references"
+    },
+    {
+      "source": "runbook:26795f1293857554",
+      "target": "action:8c4f7f89f117490d",
+      "edge_type": "references"
+    },
+    {
+      "source": "waiver:0258339d1e902bac",
+      "target": "runbook_catalog:07d211e9170275f9",
+      "edge_type": "waiver_for"
+    },
+    {
+      "source": "waiver:0258339d1e902bac",
+      "target": "action:8c4f7f89f117490d",
+      "edge_type": "waiver_for"
+    },
+    {
+      "source": "bundle_metadata:3423df1ff65e0cea",
+      "target": "runbook_catalog:07d211e9170275f9",
+      "edge_type": "bundled_in"
+    },
+    {
+      "source": "bundle_metadata:3423df1ff65e0cea",
+      "target": "action_ledger:4eb117bcf4d7bb0f",
+      "edge_type": "bundled_in"
+    },
+    {
+      "source": "bundle_metadata:3423df1ff65e0cea",
+      "target": "waiver:0258339d1e902bac",
+      "edge_type": "bundled_in"
+    },
+    {
+      "source": "published_snapshot:a48c77df9363423c",
+      "target": "bundle_metadata:3423df1ff65e0cea",
+      "edge_type": "published_from"
+    },
+    {
+      "source": "verification_manifest:e75944aa65a62a67",
+      "target": "runbook_catalog:07d211e9170275f9",
+      "edge_type": "references"
+    },
+    {
+      "source": "verification_manifest:f8621128038c02bb",
+      "target": "runbook_catalog:07d211e9170275f9",
+      "edge_type": "references"
+    },
+    {
+      "source": "verification_manifest:bb8921df901dae7f",
+      "target": "runbook_catalog:07d211e9170275f9",
+      "edge_type": "references"
+    },
+    {
+      "source": "report:8474790ce43afac8",
+      "target": "runbook_catalog:07d211e9170275f9",
+      "edge_type": "references"
+    }
+  ],
+  "graph_verdict": "PASS",
+  "rationale": [
+    "archive reference graph links waived pointers to runbook, action, bundle, snapshot, and verification provenance",
+    "retention and pruning decisions must preserve active waiver and approval audit paths"
+  ],
+  "graph_hash": "45b6bfaacaab6f18b5404136277b286d134f56052534861eb48b142dcc86d191"
+}

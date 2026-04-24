@@ -1,0 +1,1125 @@
+{
+  "manifest_version": "policy_ops_summary_v18",
+  "phase": "phase52",
+  "generated_at_utc": "2026-04-24T03:13:04Z",
+  "correctness_summary": {
+    "severity": "OK",
+    "verdict": "PASS",
+    "freshness_verdict": "FRESH",
+    "family_statuses": [
+      {
+        "family": "split_tie_organic_symmetric",
+        "role": "production_family",
+        "current_status": "PASS",
+        "status": "PASS",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": true,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "direct_compare",
+          "campaign_compare"
+        ],
+        "source_summary_path": "",
+        "threshold": {
+          "compared_state_count_min": 32,
+          "compare_eligible_state_count_min": 32,
+          "compare_completed_state_count_min": 32,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 0,
+          "applicability_max_compare_relevance": 0.0,
+          "applicability_max_split_ready_relevance": 0.0,
+          "applicability_min_dominant_reason_confidence": 0.0,
+          "lineage_sample_count_min": 0
+        },
+        "measured": {
+          "generated_state_count": 0,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 0,
+          "actual_integrate_hits": 0,
+          "compared_state_count": 32,
+          "compare_eligible_state_count": 32,
+          "compare_ineligible_state_count": 0,
+          "compare_ineligible_reason_histogram": {},
+          "compare_completed_state_count": 32,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 0,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "",
+          "dominant_ineligible_reason_confidence": 0.0,
+          "derived_from_base_state_count": 0,
+          "same_semantic_class_count": 0,
+          "same_final_state_count": 0,
+          "same_trace_class_count": 0,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 0
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "a4883c1c06446da5",
+          "generator_family_hash": "7cb85eb15af26d84",
+          "compare_engine_hash": "d4918cb7bdf77c23",
+          "campaign_config_hash": "511e9bd005dbcc9d",
+          "combined_hash": "f7a769e035bc78c8"
+        },
+        "rationale": "direct compare evidence satisfied",
+        "freshness_rationale": "current manifest records live direct compare evidence"
+      },
+      {
+        "family": "automorphism_probe_large",
+        "role": "production_family",
+        "current_status": "PASS",
+        "status": "PASS",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": true,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "direct_compare",
+          "campaign_compare"
+        ],
+        "source_summary_path": "",
+        "threshold": {
+          "compared_state_count_min": 32,
+          "compare_eligible_state_count_min": 32,
+          "compare_completed_state_count_min": 32,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 0,
+          "applicability_max_compare_relevance": 0.0,
+          "applicability_max_split_ready_relevance": 0.0,
+          "applicability_min_dominant_reason_confidence": 0.0,
+          "lineage_sample_count_min": 0
+        },
+        "measured": {
+          "generated_state_count": 0,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 0,
+          "actual_integrate_hits": 0,
+          "compared_state_count": 32,
+          "compare_eligible_state_count": 32,
+          "compare_ineligible_state_count": 0,
+          "compare_ineligible_reason_histogram": {},
+          "compare_completed_state_count": 32,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 0,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "",
+          "dominant_ineligible_reason_confidence": 0.0,
+          "derived_from_base_state_count": 0,
+          "same_semantic_class_count": 0,
+          "same_final_state_count": 0,
+          "same_trace_class_count": 0,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 0
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "a4883c1c06446da5",
+          "generator_family_hash": "7cb85eb15af26d84",
+          "compare_engine_hash": "d4918cb7bdf77c23",
+          "campaign_config_hash": "17294eee944d949f",
+          "combined_hash": "b3e058d68dbcd5e6"
+        },
+        "rationale": "direct compare evidence satisfied",
+        "freshness_rationale": "current manifest records live direct compare evidence"
+      },
+      {
+        "family": "planner_tie_mixed_organic",
+        "role": "production_family",
+        "current_status": "NON_APPLICABLE",
+        "status": "NON_APPLICABLE",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": false,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "applicability_only"
+        ],
+        "source_summary_path": "",
+        "threshold": {
+          "compared_state_count_min": 0,
+          "compare_eligible_state_count_min": 0,
+          "compare_completed_state_count_min": 0,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 48,
+          "applicability_max_compare_relevance": 0.02,
+          "applicability_max_split_ready_relevance": 0.05,
+          "applicability_min_dominant_reason_confidence": 0.9,
+          "lineage_sample_count_min": 0
+        },
+        "measured": {
+          "generated_state_count": 48,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 0,
+          "actual_integrate_hits": 0,
+          "compared_state_count": 0,
+          "compare_eligible_state_count": 0,
+          "compare_ineligible_state_count": 0,
+          "compare_ineligible_reason_histogram": {},
+          "compare_completed_state_count": 0,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 48,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "no_split_ready",
+          "dominant_ineligible_reason_confidence": 1.0,
+          "derived_from_base_state_count": 0,
+          "same_semantic_class_count": 0,
+          "same_final_state_count": 0,
+          "same_trace_class_count": 0,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 0
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "a4883c1c06446da5",
+          "generator_family_hash": "b3d0e59791f01915",
+          "compare_engine_hash": "d4918cb7bdf77c23",
+          "campaign_config_hash": "b54d8f262d9e3ee2",
+          "combined_hash": "6263b5316952f6d7"
+        },
+        "rationale": "no_split_ready remained dominant and compare relevance stayed below threshold",
+        "freshness_rationale": "current manifest records live applicability evidence"
+      },
+      {
+        "family": "planner_tie_mixed_organic_compare_ready",
+        "role": "diagnostic_support_family",
+        "current_status": "DIAGNOSTIC_ONLY",
+        "status": "DIAGNOSTIC_ONLY",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": false,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "diagnostic_lineage"
+        ],
+        "source_summary_path": "",
+        "threshold": {
+          "compared_state_count_min": 32,
+          "compare_eligible_state_count_min": 32,
+          "compare_completed_state_count_min": 32,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 0,
+          "applicability_max_compare_relevance": 0.0,
+          "applicability_max_split_ready_relevance": 0.0,
+          "applicability_min_dominant_reason_confidence": 0.0,
+          "lineage_sample_count_min": 16
+        },
+        "measured": {
+          "generated_state_count": 0,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 0,
+          "actual_integrate_hits": 0,
+          "compared_state_count": 32,
+          "compare_eligible_state_count": 32,
+          "compare_ineligible_state_count": 0,
+          "compare_ineligible_reason_histogram": {},
+          "compare_completed_state_count": 32,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 0,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "",
+          "dominant_ineligible_reason_confidence": 0.0,
+          "derived_from_base_state_count": 16,
+          "same_semantic_class_count": 16,
+          "same_final_state_count": 16,
+          "same_trace_class_count": 16,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 16
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "a4883c1c06446da5",
+          "generator_family_hash": "657c6299d00da16d",
+          "compare_engine_hash": "d4918cb7bdf77c23",
+          "campaign_config_hash": "",
+          "combined_hash": "e2cd0a8ea3f0870f"
+        },
+        "rationale": "diagnostic compare family met bounded compare and lineage consistency, but followup preservation or structure-only enrichment did not hold; counts_as_production_evidence=false",
+        "freshness_rationale": "current manifest records live diagnostic lineage evidence"
+      }
+    ]
+  },
+  "current_env_summary": {
+    "severity": "OK",
+    "recommendation": "NO_ACTION",
+    "watch_reason": "release_full is within budget and recent same-fingerprint samples are clear",
+    "operator_conclusion": "current env is healthy",
+    "correctness_status": {
+      "verdict": "PASS",
+      "freshness_verdict": "FRESH"
+    },
+    "runtime_status": {
+      "comparability_verdict": "COMPARABLE",
+      "freshness_verdict": "FRESH",
+      "budget_verdict": "PASS"
+    },
+    "watch_status": "CLEAR",
+    "watch_recommendation": "NO_ACTION",
+    "watch_confidence": "HIGH",
+    "confidence_reason": "diagnostic watch is backed by repeated real same-fingerprint evidence with bounded jitter",
+    "evidence_source_counts": {
+      "real": 90
+    },
+    "active_lineage_count": 1,
+    "real_lineage_count": 1,
+    "latest_real_sample_timestamp": "2026-04-24T03:13:02Z",
+    "latest_fixture_sample_timestamp": "None"
+  },
+  "new_env_summary": {
+    "severity": "ACTION_REQUIRED",
+    "recommendation": "REBASELINE_REQUIRED",
+    "operator_conclusion": "new env: do not compare strictly without explicit rebaseline",
+    "comparability_bucket": "COMPARABLE",
+    "watch_status": "REBASELINE_REQUIRED",
+    "watch_recommendation": "REBASELINE_REQUIRED",
+    "watch_confidence": "LOW",
+    "confidence_reason": "diagnostic watch is driven primarily by fixture or replay evidence",
+    "evidence_source_counts": {
+      "fixture": 72
+    },
+    "active_lineage_count": 4,
+    "real_lineage_count": 0,
+    "latest_real_sample_timestamp": "None",
+    "latest_fixture_sample_timestamp": "2026-04-24T03:12:59Z",
+    "matrix_entry_count": 6,
+    "matrix_action_counts": {
+      "NO_ACTION": 1,
+      "NOT_COMPARABLE": 3,
+      "REBASELINE_REQUIRED": 2
+    }
+  },
+  "runtime_same_fingerprint_summary": {
+    "selected_baseline_id": "phase33-runtime-watch-393d9c23-20260424_031253",
+    "selected_baseline_tag": "phase33-runtime-watch",
+    "comparability_verdict": "COMPARABLE",
+    "freshness_verdict": "FRESH",
+    "budget_verdict": "PASS",
+    "watch_status": "CLEAR",
+    "watch_recommendation": "NO_ACTION",
+    "diagnostic_watch_only": false,
+    "watch_confidence": "HIGH",
+    "confidence_reason": "diagnostic watch is backed by repeated real same-fingerprint evidence with bounded jitter"
+  },
+  "runtime_cross_fingerprint_summary": {
+    "matrix_severity": "ACTION_REQUIRED",
+    "matrix_verdict": "REBASELINE_REQUIRED",
+    "matrix_entry_count": 6,
+    "matrix_watch_status_counts": {
+      "CLEAR": 1,
+      "REBASELINE_REQUIRED": 5
+    },
+    "matrix_watch_recommendation_counts": {
+      "NO_ACTION": 1,
+      "REBASELINE_REQUIRED": 5
+    },
+    "matrix_action_counts": {
+      "NO_ACTION": 1,
+      "NOT_COMPARABLE": 3,
+      "REBASELINE_REQUIRED": 2
+    },
+    "matrix_severity_counts": {
+      "OK": 1,
+      "ACTION_REQUIRED": 5
+    },
+    "watch_confidence": "LOW",
+    "confidence_reason": "diagnostic watch is driven primarily by fixture or replay evidence"
+  },
+  "watch_registry_summary": {
+    "entry_count": 30,
+    "fingerprint_count": 5,
+    "status_counts": {
+      "REBASELINE_REQUIRED": 24,
+      "CLEAR": 6
+    },
+    "recommendation_counts": {
+      "REBASELINE_REQUIRED": 24,
+      "NO_ACTION": 6
+    },
+    "comparability_counts": {
+      "None": 30
+    },
+    "role_counts": {
+      "diagnostic": 5,
+      "production_critical": 10,
+      "operator": 15
+    },
+    "evidence_source_counts": {
+      "real": 90,
+      "fixture": 180
+    },
+    "confidence_counts": {
+      "LOW": 24,
+      "HIGH": 6
+    },
+    "active_lineage_count": 5,
+    "real_lineage_count": 1
+  },
+  "current_environment": {
+    "severity": "OK",
+    "correctness_status": {
+      "severity": "OK",
+      "verdict": "PASS",
+      "freshness_verdict": "FRESH"
+    },
+    "runtime_status": {
+      "comparability": "COMPARABLE",
+      "freshness": "FRESH",
+      "budget_verdict": "PASS"
+    },
+    "recommended_action_current_env": "NO_ACTION",
+    "watch_status": "CLEAR",
+    "watch_confidence": "HIGH",
+    "selected_baseline_id": "phase33-runtime-watch-393d9c23-20260424_031253",
+    "selected_baseline_tag": "phase33-runtime-watch",
+    "proposal_needed": false,
+    "operator_conclusion": "current env is healthy",
+    "rationale": [
+      "correctness lifecycle green",
+      "runtime same-fingerprint baseline remains comparable and fresh",
+      "runtime budget verdict for current environment is PASS"
+    ],
+    "registry_health_status": "HEALTHY"
+  },
+  "current_env_watch_budget": {
+    "selected_runtime_baseline_id": "phase33-runtime-watch-393d9c23-20260424_031253",
+    "selected_runtime_baseline_tag": "phase33-runtime-watch",
+    "selected_budget_profile_id": null,
+    "selected_budget_profile_tag": null,
+    "budget_verdict": "PASS",
+    "watch_status": "CLEAR",
+    "watch_confidence": "HIGH",
+    "stable_overrun_count": 0,
+    "reproposal_needed": false,
+    "reproposal_gate_verdict": null,
+    "reproposal_confidence": null,
+    "recommended_action_current_env": "NO_ACTION",
+    "rationale": [
+      "correctness lifecycle green",
+      "runtime same-fingerprint baseline remains comparable and fresh",
+      "runtime budget verdict for current environment is PASS"
+    ],
+    "current_env_state": null,
+    "watch_reason": "release_full is within budget and recent same-fingerprint samples are clear",
+    "history_transition_count": 0
+  },
+  "current_env_guardrail": {
+    "policy_id": null,
+    "current_state": "CURRENT_ENV_CLEAR",
+    "approval_grace_active": false,
+    "next_monitoring_due_at": null,
+    "next_reproposal_due_at": null,
+    "stable_soft_overrun_count": 0,
+    "hard_over_budget_count": 0,
+    "trigger_gate_verdict": "CLEAR",
+    "recommended_action_current_env": "NO_ACTION",
+    "watch_plan_verdict": null,
+    "next_watch_execution_class": null,
+    "next_watch_due_at": null,
+    "post_approval_grace_until": null,
+    "active_budget_profile_id": null,
+    "previous_active_budget_profile_id": null,
+    "rationale": [
+      "correctness lifecycle green",
+      "runtime same-fingerprint baseline remains comparable and fresh",
+      "runtime budget verdict for current environment is PASS"
+    ]
+  },
+  "current_env_due": {
+    "current_state": "CURRENT_ENV_CLEAR",
+    "approval_grace_active": false,
+    "next_monitoring_due_at": null,
+    "next_reproposal_due_at": null,
+    "monitoring_due_state": "NOT_DUE",
+    "reproposal_due_state": "NOT_DUE",
+    "next_due_kind": "none",
+    "next_due_at": null,
+    "overdue_days": 0.0,
+    "recommended_action_current_env": "NO_ACTION",
+    "recommended_command": "",
+    "rationale": []
+  },
+  "current_env_actions": {
+    "planned_action_count": 0,
+    "executed_action_count": 0,
+    "applied_action_count": 0,
+    "failed_action_count": 0,
+    "skipped_action_count": 0,
+    "superseded_action_count": 0,
+    "next_action_kind": "NO_ACTION",
+    "next_action_due_at": null,
+    "latest_watch_execute_manifest": null,
+    "latest_watch_apply_manifest": null,
+    "latest_reproposal_execute_manifest": null
+  },
+  "current_env_watch_apply_result": {
+    "latest_execution_class": null,
+    "observed_watch_status": null,
+    "observed_watch_confidence": null,
+    "new_guardrail_state": null,
+    "next_monitoring_due_at": null,
+    "next_reproposal_due_at": null,
+    "recommended_action_current_env": null,
+    "next_operator_action": null,
+    "execution_verdict": null,
+    "apply_status": null,
+    "trigger_gate_verdict": null,
+    "rationale": []
+  },
+  "current_env_action_ledger": {
+    "total_action_count": 1,
+    "planned_count": 0,
+    "executed_count": 0,
+    "applied_count": 0,
+    "failed_count": 0,
+    "skipped_count": 0,
+    "superseded_count": 0,
+    "deferred_count": 0,
+    "rejected_count": 0,
+    "closed_count": 1,
+    "retry_pending_count": 0,
+    "latest_applied_action_id": "phase45-current-env-watch-001",
+    "next_planned_action_id": null,
+    "ledger_hash": "5c86d7e31a958f3c3cc6f1769db3e7b46684ec6ec1ab54b7173b06ed654fb946"
+  },
+  "current_env_retry_plan": {
+    "plan_verdict": "NOT_RUN",
+    "retryable_count": 0,
+    "escalation_count": 0,
+    "next_retry_at": null,
+    "entry_count": 0
+  },
+  "current_env_reproposal_handoff": {
+    "approval_ready": false,
+    "handoff_status": "NOT_RUN",
+    "gate_verdict": null,
+    "raw_gate_verdict": null,
+    "next_action_kind": null,
+    "recommended_approval_command": null,
+    "approval_blockers": []
+  },
+  "current_env_approval_runbook": {
+    "approval_ready": false,
+    "approval_mode": "NOT_RUN",
+    "executable": false,
+    "recommended_command": "",
+    "approval_blockers": [],
+    "runbook_id": null,
+    "budget_tag": null,
+    "selected_budget_profile_id": null,
+    "proposed_budget_profile_id": null
+  },
+  "current_env_approval_execution": {
+    "approval_status": "NOT_RUN",
+    "approval_applied": false,
+    "approval_preflight_only": false,
+    "registry_updated": false,
+    "baseline_written": false,
+    "proposal_archived": false,
+    "approval_execution_id": null,
+    "approval_metadata_path": null,
+    "next_operator_action": null,
+    "approval_blockers": []
+  },
+  "current_env_approval_link": {
+    "approval_execution_id": null,
+    "approval_status": "NOT_RUN",
+    "approval_applied": false,
+    "approval_preflight_only": false,
+    "ledger_updated": false,
+    "previous_closure_status": null,
+    "new_closure_status": null,
+    "linked_budget_baseline": null,
+    "linked_registry_update": false
+  },
+  "current_env_operator_decisions": {
+    "pending_decision_count": 0,
+    "approved_decision_count": 0,
+    "skipped_decision_count": 0,
+    "deferred_decision_count": 0,
+    "rejected_decision_count": 0,
+    "latest_decision_id": null,
+    "latest_decision": null,
+    "latest_decision_valid": null,
+    "next_required_decision": null,
+    "decision_apply_status": null
+  },
+  "current_env_action_closure": {
+    "open_action_count": 0,
+    "closed_action_count": 1,
+    "deferred_action_count": 0,
+    "failed_action_count": 0,
+    "retry_pending_count": 0,
+    "archived_action_count": 0,
+    "approval_action_count": 0,
+    "latest_closure_status": null,
+    "compaction_status": "NOT_RUN"
+  },
+  "current_env_reproposal_plan": {
+    "plan_verdict": "NOT_RUN",
+    "entry_count": 0,
+    "reproposal_due_state": null,
+    "reproposal_due_at": null,
+    "entries": []
+  },
+  "ops_agenda": {
+    "manifest_version": null,
+    "item_count": 0,
+    "action_required_count": 0,
+    "blocking_action_count": 0,
+    "planned_action_count": 0,
+    "executed_action_count": 0,
+    "applied_action_count": 0,
+    "failed_action_count": 0,
+    "highest_priority_domain": null,
+    "highest_priority_action": null,
+    "items": []
+  },
+  "approved_known_environments": {
+    "severity": "OK",
+    "recommended_action_known_envs": "NO_ACTION",
+    "environment_count": 0,
+    "fresh_count": 0,
+    "healthy_count": 0,
+    "due_soon_count": 0,
+    "stale_count": 0,
+    "reverify_required_count": 0,
+    "retire_candidate_count": 0,
+    "retired_count": 1,
+    "entries": []
+  },
+  "approved_known_env_actions": {
+    "due_soon_reverify_count": 0,
+    "reverify_required_count": 0,
+    "stale_count": 0,
+    "retire_candidate_count": 0,
+    "retired_count": 1,
+    "recommended_action_known_envs": "NO_ACTION",
+    "next_due_known_env_id": null,
+    "next_due_at": null
+  },
+  "unapproved_foreign_environments": {
+    "severity": "ACTION_REQUIRED",
+    "recommended_action_foreign_envs": "REBASELINE_REQUIRED",
+    "environment_count": 1,
+    "candidate_count": 1,
+    "action_required_count": 1,
+    "rebaseline_required_count": 1,
+    "entries": [
+      {
+        "environment_label": "matrix",
+        "environment_state": "UNAPPROVED_FOREIGN",
+        "severity": "ACTION_REQUIRED",
+        "recommendation": "REBASELINE_REQUIRED",
+        "selected_baseline_id": null,
+        "selected_baseline_tag": null,
+        "comparability": "COMPARABLE",
+        "freshness": "FRESH",
+        "watch_status": "REBASELINE_REQUIRED",
+        "watch_confidence": "LOW",
+        "proposal_needed": true,
+        "rationale": [],
+        "runtime_fingerprint_key": null
+      }
+    ]
+  },
+  "new_environment_matrix": {
+    "severity": "ACTION_REQUIRED",
+    "recommended_action_new_env": "REBASELINE_REQUIRED",
+    "comparability_buckets": {},
+    "rebaseline_required_counts": {
+      "NO_ACTION": 1,
+      "NOT_COMPARABLE": 3,
+      "REBASELINE_REQUIRED": 2
+    },
+    "operator_conclusion": "new env: do not compare strictly without explicit rebaseline"
+  },
+  "runtime_registry_health": {
+    "status": "HEALTHY",
+    "current_active_count": 1,
+    "active_fingerprint_count": 1,
+    "approved_known_fresh_count": 0,
+    "approved_known_due_soon_count": 0,
+    "approved_known_reverify_required_count": 0,
+    "approved_known_stale_count": 0,
+    "healthy_active_count": 1,
+    "healthy_known_env_count": 0,
+    "stale_known_env_count": 0,
+    "stale_active_count": 0,
+    "reverify_required_count": 0,
+    "governance_action_required_count": 0,
+    "retire_candidate_count": 0,
+    "retired_count": 1,
+    "retired_entry_count": 1,
+    "orphaned_entry_count": 0,
+    "foreign_unapproved_count": 0,
+    "approved_known_env_count": 0
+  },
+  "publication_health": {
+    "status": "NOT_RUN",
+    "missing_artifact_count": 0,
+    "hash_mismatch_count": 0,
+    "dangling_reference_count": 0
+  },
+  "verification_lane": {
+    "status": "NOT_RUN",
+    "recommendation": "RUN_STAGED_VERIFICATION",
+    "source_snapshot_hash": null,
+    "staged_mirror_hash": null,
+    "verification_release_hash": null,
+    "verification_debug_hash": null,
+    "verification_asan_hash": null,
+    "verification_not_run_count": 0,
+    "published_snapshot_id": null,
+    "closeout_verdict": "NOT_RUN",
+    "release_execution_verdict": "NOT_RUN",
+    "debug_execution_verdict": "NOT_RUN",
+    "asan_execution_verdict": "NOT_RUN",
+    "materialization_mode": "staged_sparse_clone_overlay",
+    "source_health_status": "ATTENTION_REQUIRED",
+    "source_health_recommendation": "SPARSE_CLONE_REQUIRED",
+    "dataless_placeholder_count": 3,
+    "materialization_verdict": "PASS",
+    "source_health_action_plan_hash": "7d4c696505259571997fe2b42886834c0d3c29b17dbafdb5fa94664aa6e022f6",
+    "direct_build_allowed": false,
+    "staged_build_allowed": true,
+    "preflight_gate_verdict": "ACTION_REQUIRED",
+    "sparse_clone_required": true
+  },
+  "overall_summary": {
+    "exact_shadow_policy_status": "healthy",
+    "runtime_baseline_registry_health": "healthy",
+    "stale_family_count": 0,
+    "stale_runtime_lineage_count": 4,
+    "required_operator_actions": [
+      "NO_ACTION",
+      "NO_ACTION",
+      "NO_ACTION",
+      "NO_ACTION",
+      "NO_ACTION",
+      "REBASELINE_REQUIRED",
+      "NOT_RUN",
+      "RUN_STAGED_VERIFICATION"
+    ],
+    "current_env_operator_conclusion": "current env is healthy",
+    "current_env_guardrail_operator_conclusion": "current env guardrail remains clear",
+    "current_env_due_operator_conclusion": "current env due scheduler has no pending action",
+    "ops_agenda_operator_conclusion": "operator agenda has no pending action",
+    "approved_known_env_operator_conclusion": "approved known environments: none recorded",
+    "new_env_operator_conclusion": "new env: do not compare strictly without explicit rebaseline",
+    "publication_operator_conclusion": "publication snapshot health is healthy",
+    "verification_lane_operator_conclusion": "staged verification lane has not run yet"
+  },
+  "final_operator_summary": {
+    "combined_severity_current_env": "OK",
+    "combined_severity_known_envs": "OK",
+    "combined_severity_cross_env": "ACTION_REQUIRED",
+    "recommended_action_current_env": "NO_ACTION",
+    "recommended_action_current_env_guardrail": "NO_ACTION",
+    "recommended_action_current_env_due": "NO_ACTION",
+    "recommended_command_current_env_due": "",
+    "recommended_action_ops_agenda": "NO_ACTION",
+    "ops_agenda_highest_priority_domain": "",
+    "current_env_action_planned_count": 0,
+    "current_env_action_executed_count": 0,
+    "current_env_action_applied_count": 0,
+    "current_env_action_failed_count": 0,
+    "current_env_action_skipped_count": 0,
+    "current_env_action_superseded_count": 0,
+    "current_env_watch_apply_new_state": null,
+    "current_env_watch_apply_next_monitoring_due_at": null,
+    "current_env_watch_apply_next_reproposal_due_at": null,
+    "current_env_retryable_action_count": 0,
+    "current_env_retry_escalation_count": 0,
+    "current_env_reproposal_approval_ready": false,
+    "current_env_reproposal_next_action": null,
+    "current_env_approval_runbook_ready": false,
+    "current_env_approval_execution_status": "NOT_RUN",
+    "current_env_approval_applied": false,
+    "current_env_approval_registry_updated": false,
+    "current_env_approval_next_operator_action": null,
+    "current_env_pending_decision_count": 0,
+    "current_env_latest_decision_id": null,
+    "current_env_latest_decision": null,
+    "current_env_open_action_count": 0,
+    "current_env_closed_action_count": 1,
+    "current_env_archived_action_count": 0,
+    "recommended_action_known_envs": "NO_ACTION",
+    "recommended_action_new_env": "REBASELINE_REQUIRED",
+    "current_env_operator_conclusion": "current env is healthy",
+    "current_env_guardrail_conclusion": "current env guardrail remains clear",
+    "current_env_due_conclusion": "current env due scheduler has no pending action",
+    "ops_agenda_conclusion": "operator agenda has no pending action",
+    "known_env_operator_conclusion": "no approved known environments are recorded beyond current env",
+    "new_env_operator_conclusion": "new env: do not compare strictly without explicit rebaseline",
+    "publication_operator_conclusion": "publication snapshot health is healthy",
+    "verification_lane_status": "NOT_RUN",
+    "verification_operator_conclusion": "staged verification lane has not run yet",
+    "rationale": [
+      "correctness lifecycle green",
+      "runtime same-fingerprint baseline remains comparable and fresh",
+      "runtime budget verdict for current environment is PASS",
+      "new or foreign runtime fingerprints still require explicit rebaseline"
+    ],
+    "structured_rationale": [
+      {
+        "category": "correctness",
+        "message": "correctness lifecycle green"
+      },
+      {
+        "category": "runtime",
+        "message": "runtime same-fingerprint baseline remains comparable and fresh"
+      },
+      {
+        "category": "runtime",
+        "message": "runtime budget verdict for current environment is PASS"
+      },
+      {
+        "category": "cross_environment",
+        "message": "new or foreign runtime fingerprints still require explicit rebaseline"
+      }
+    ],
+    "source_health_status": "ATTENTION_REQUIRED",
+    "operator_runbook_count": 0,
+    "runbook_catalog_active_count": 2,
+    "decision_metadata_audit_verdict": "NOT_RUN",
+    "runbook_retention_prune_verdict": "PASS",
+    "runbook_lifecycle_validation_verdict": "PASS",
+    "integrated_approval_mutation_audit_verdict": "PASS",
+    "source_health_action_plan": "USE_STAGED_SPARSE_CLONE_OVERLAY",
+    "runbook_provenance_migration_verdict": "PASS_WITH_WAIVERS",
+    "path_policy_lint_verdict": "PASS",
+    "archive_reference_graph_verdict": "PASS",
+    "waiver_review_verdict": "PASS",
+    "verification_preflight_gate_verdict": "ACTION_REQUIRED",
+    "published_snapshot_retention_verdict": "PASS"
+  },
+  "final_operator_actions": {
+    "recommended_action_current_env": "NO_ACTION",
+    "recommended_action_current_env_guardrail": "NO_ACTION",
+    "recommended_action_current_env_due": "NO_ACTION",
+    "recommended_command_current_env_due": "",
+    "recommended_action_ops_agenda": "NO_ACTION",
+    "ops_agenda_highest_priority_domain": "",
+    "current_env_action_planned_count": 0,
+    "current_env_action_executed_count": 0,
+    "current_env_action_applied_count": 0,
+    "current_env_action_failed_count": 0,
+    "current_env_action_skipped_count": 0,
+    "current_env_action_superseded_count": 0,
+    "current_env_watch_apply_new_state": null,
+    "current_env_watch_apply_next_monitoring_due_at": null,
+    "current_env_watch_apply_next_reproposal_due_at": null,
+    "current_env_retryable_action_count": 0,
+    "current_env_retry_escalation_count": 0,
+    "current_env_reproposal_approval_ready": false,
+    "current_env_reproposal_next_action": null,
+    "current_env_approval_runbook_ready": false,
+    "current_env_approval_execution_status": "NOT_RUN",
+    "current_env_approval_applied": false,
+    "current_env_approval_registry_updated": false,
+    "current_env_approval_next_operator_action": null,
+    "current_env_pending_decision_count": 0,
+    "current_env_latest_decision_id": null,
+    "current_env_latest_decision": null,
+    "current_env_open_action_count": 0,
+    "current_env_closed_action_count": 1,
+    "current_env_archived_action_count": 0,
+    "recommended_action_known_envs": "NO_ACTION",
+    "recommended_action_foreign_envs": "REBASELINE_REQUIRED",
+    "recommended_action_publication": "NO_ACTION",
+    "recommended_action_verification": "RUN_STAGED_VERIFICATION",
+    "current_env_operator_conclusion": "current env is healthy",
+    "current_env_guardrail_conclusion": "current env guardrail remains clear",
+    "current_env_due_conclusion": "current env due scheduler has no pending action",
+    "ops_agenda_conclusion": "operator agenda has no pending action",
+    "known_env_operator_conclusion": "no approved known environments are recorded beyond current env",
+    "foreign_env_operator_conclusion": "new env: do not compare strictly without explicit rebaseline",
+    "publication_operator_conclusion": "publication snapshot health is healthy",
+    "verification_operator_conclusion": "staged verification lane has not run yet",
+    "rationale": [
+      "correctness lifecycle green",
+      "runtime same-fingerprint baseline remains comparable and fresh",
+      "runtime budget verdict for current environment is PASS",
+      "new or foreign runtime fingerprints still require explicit rebaseline"
+    ],
+    "structured_rationale": [
+      {
+        "category": "correctness",
+        "message": "correctness lifecycle green"
+      },
+      {
+        "category": "runtime",
+        "message": "runtime same-fingerprint baseline remains comparable and fresh"
+      },
+      {
+        "category": "runtime",
+        "message": "runtime budget verdict for current environment is PASS"
+      },
+      {
+        "category": "cross_environment",
+        "message": "new or foreign runtime fingerprints still require explicit rebaseline"
+      }
+    ],
+    "recommended_action_source_health": "SPARSE_CLONE_REQUIRED",
+    "operator_runbook_executable_count": 0,
+    "operator_metadata_audit": "NOT_RUN",
+    "approval_guardrail": "PASS",
+    "operator_runbook_retention": "PASS",
+    "runbook_lifecycle_validation": "PASS",
+    "approval_mutation_audit": "PASS",
+    "source_health_action_plan": "USE_STAGED_SPARSE_CLONE_OVERLAY",
+    "runbook_provenance_migration": "REVIEW_ARCHIVE_WAIVERS",
+    "path_policy_lint": "PASS",
+    "archive_governance": "NO_ACTION",
+    "operator_waiver_review": "NO_ACTION",
+    "verification_preflight_gate": "USE_STAGED_SPARSE_LANE",
+    "published_snapshot_retention": "RETAIN_SNAPSHOTS"
+  },
+  "ops_summary_hash": "8e385f49fe7afa12e33eed653e7168418e40fc33a5d7029276054043b77f7f34",
+  "current_env_operator_runbooks": {
+    "pending_runbook_count": 0,
+    "executable_runbook_count": 0,
+    "integrated_opt_in_required_count": 0,
+    "approval_runbook_count": 0,
+    "retry_runbook_count": 0,
+    "runbook_index_hash": null
+  },
+  "current_env_decision_variants": {
+    "skip_covered": false,
+    "defer_covered": false,
+    "reject_covered": false,
+    "retry_now_covered": false,
+    "variant_source": "NOT_RUN"
+  },
+  "source_health": {
+    "status": "ATTENTION_REQUIRED",
+    "recommendation": "SPARSE_CLONE_REQUIRED",
+    "dataless_placeholder_count": 3,
+    "git_object_health": {
+      "head_available": true,
+      "head_object_available": false,
+      "missing_head_object": true
+    },
+    "materialization_mode": "staged_sparse_clone_overlay"
+  },
+  "staged_materialization": {
+    "dataless_remaining_count": 0,
+    "generated_at_utc": "2026-04-24T03:13:16Z",
+    "manifest_version": "staged_materialization_v2",
+    "materialization_hash": "2258423109f79fc59b51bfc484668abe14fdcc95aca1ed208f05d7b8aad05bd5",
+    "materialization_verdict": "PASS",
+    "overlay_file_count": 3,
+    "overlay_hash": "ca83956d12b553eebc7e6165f8994505738bbd4d28a23f14daa0ddab774da13f",
+    "phase": "phase48",
+    "source_snapshot_hash": "ac4215c68eec1b5a5828fa8a5430b1ead2c98e9d83887d19d3171a0b2810c190",
+    "sparse_clone_ref": null,
+    "staged_materialization_mode": "staged_sparse_clone_overlay"
+  },
+  "operator_runbook_catalog": {
+    "active_runbook_count": 2,
+    "resolved_runbook_count": 2,
+    "integrated_opt_in_required_count": 0,
+    "metadata_audit_verdict": "NOT_RUN",
+    "replayable_runbook_count": 4,
+    "catalog_hash": "1e7ed5a556fdde562acff2539c4f6533f895600d92b8c747addf63c3bef49252"
+  },
+  "operator_decision_metadata_audit": {
+    "audit_verdict": "NOT_RUN",
+    "missing_reason_count": 0,
+    "missing_defer_until_count": 0,
+    "missing_retry_link_count": 0,
+    "missing_approval_pointer_count": 0,
+    "affected_action_ids": []
+  },
+  "operator_runbook_replay": {
+    "replay_verdict": "NOT_RUN",
+    "missing_input_count": 0,
+    "command_still_valid": null,
+    "requires_operator_confirmation": null,
+    "would_mutate_registry": null
+  },
+  "approval_execution_guardrail": {
+    "integrated_default_enabled": false,
+    "handoff_only_default": true,
+    "accidental_mutation_guard": "PASS",
+    "approval_execution_mode": null,
+    "approval_status": null,
+    "confirmation_token_present": false,
+    "dry_run_preflight_success": false,
+    "registry_before_hash": null,
+    "registry_after_hash": null,
+    "approval_transaction_id": null
+  },
+  "staged_materialization_transaction": {
+    "transaction_id": null,
+    "transaction_verdict": "NOT_RUN",
+    "materialization_mode": null,
+    "source_health_hash": null,
+    "rollback_cleanup_performed": false
+  },
+  "operator_runbook_retention": {
+    "policy_id": null,
+    "prune_verdict": "PASS",
+    "active_retained_count": 2,
+    "failed_retained_count": 0,
+    "retry_pending_retained_count": 0,
+    "approval_retained_count": 4,
+    "resolved_retained_count": 2,
+    "archived_count": 0,
+    "pruned_count": 0,
+    "blocked_prune_count": 0,
+    "pruned_catalog_entry_count": 4,
+    "archive_entry_count": 0
+  },
+  "operator_runbook_lifecycle_validation": {
+    "before_validation_verdict": "PASS",
+    "before_missing_input_count": 0,
+    "after_validation_verdict": "PASS",
+    "after_missing_input_count": 0,
+    "after_stale_input_count": 0,
+    "after_mutation_risk_count": 0,
+    "migrated_catalog_entry_count": 4,
+    "migrated_ledger_entry_count": 1
+  },
+  "integrated_approval_mutation_audit": {
+    "audit_verdict": "PASS",
+    "approval_execution_id": "phase47-budget-approval-72e91325c33f",
+    "approval_execution_mode": "handoff_only",
+    "mutation_expected": false,
+    "mutation_observed": false,
+    "unexpected_mutation_count": 0,
+    "registry_before_hash": "c83a6f790940717f8d1851971d84b2e5ac8258af3e8898e0f447eed1d81e44b3",
+    "registry_after_hash": "c83a6f790940717f8d1851971d84b2e5ac8258af3e8898e0f447eed1d81e44b3",
+    "rollback_hint": "no rollback needed; dry_run/handoff_only did not mutate registry or baseline"
+  },
+  "source_health_action_plan": {
+    "plan_verdict": "PASS",
+    "direct_build_blocked": true,
+    "staged_build_allowed": true,
+    "recommended_action": "USE_STAGED_SPARSE_CLONE_OVERLAY",
+    "issue_count": 2,
+    "materialization_mode": "staged_sparse_clone_overlay"
+  },
+  "operator_runbook_pointer_audit": {
+    "audit_verdict": "WARN",
+    "pointer_count": 33,
+    "absolute_tmp_pointer_count": 33,
+    "rewritable_pointer_count": 32,
+    "waivable_archived_pointer_count": 1,
+    "unresolved_active_pointer_count": 0
+  },
+  "operator_runbook_provenance_migration": {
+    "migration_verdict": "PASS_WITH_WAIVERS",
+    "rewritten_pointer_count": 6,
+    "waived_archived_pointer_count": 1,
+    "unresolved_active_pointer_count": 0,
+    "unresolved_archived_pointer_count": 0,
+    "source_catalog_hash": "f73c249349a44033f4658305e8be6cf019f5c9d7626bef7df42695367b169824",
+    "migrated_catalog_hash": "1e7ed5a556fdde562acff2539c4f6533f895600d92b8c747addf63c3bef49252",
+    "source_ledger_hash": "3c9386341aaa2005a0fb96c2e8979412f23549778908f30670085e3bf3f38333",
+    "migrated_ledger_hash": "5c86d7e31a958f3c3cc6f1769db3e7b46684ec6ec1ab54b7173b06ed654fb946"
+  },
+  "operator_artifact_path_policy_lint": {
+    "lint_verdict": "PASS",
+    "forbidden_path_count": 0,
+    "dangling_path_count": 0,
+    "allowed_external_reference_count": 66,
+    "scanned_manifest_count": 5
+  },
+  "operator_archive_reference_graph": {
+    "graph_verdict": "PASS",
+    "node_count": 15,
+    "edge_count": 19,
+    "waiver_node_count": 1,
+    "graph_hash": "45b6bfaacaab6f18b5404136277b286d134f56052534861eb48b142dcc86d191"
+  },
+  "operator_archive_retention": {
+    "policy_id": "phase52-operator-archive-retention-policy",
+    "retention_verdict": "PASS",
+    "active_retained_count": 4,
+    "waiver_retained_count": 1,
+    "prunable_count": 0,
+    "blocked_prune_count": 6,
+    "apply_verdict": "PASS",
+    "apply_mode": "governance_record_only"
+  },
+  "operator_waiver_registry": {
+    "registry_verdict": "PASS",
+    "waiver_count": 1,
+    "active_waiver_count": 1,
+    "waiver_registry_hash": "e1e0ad9e89b2ef2b97d8f442339f61e23a37249c30265a7469863187d7850a88"
+  },
+  "operator_waiver_review": {
+    "review_verdict": "PASS",
+    "waiver_count": 1,
+    "active_count": 1,
+    "due_soon_count": 0,
+    "review_required_count": 0,
+    "expired_count": 0
+  },
+  "verification_preflight_gate": {
+    "preflight_gate_verdict": "ACTION_REQUIRED",
+    "direct_build_allowed": false,
+    "staged_build_allowed": true,
+    "sparse_clone_required": true,
+    "blocking_issue_count": 0,
+    "selected_materialization_mode": "staged_sparse_clone_overlay"
+  },
+  "staged_verification_retention": {
+    "retention_verdict": "PASS",
+    "staged_verification_count": 3,
+    "retained_verification_count": 5,
+    "prunable_verification_count": 0,
+    "blocked_prune_count": 1,
+    "snapshots_referenced_by_waivers": 1
+  },
+  "published_snapshot_retention": {
+    "retention_verdict": "PASS",
+    "published_snapshot_count": 1,
+    "retained_snapshot_count": 1,
+    "prunable_snapshot_count": 0,
+    "blocked_prune_count": 1,
+    "snapshots_referenced_by_waivers": 1,
+    "apply_verdict": "PASS"
+  }
+}

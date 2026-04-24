@@ -1,0 +1,19 @@
+{
+  "copied_artifacts": [
+    "manifests",
+    "PHASE48_STABILIZATION_REPORT.txt",
+    "raw_engine_phase48_stabilization.zip",
+    "raw_engine_phase48_stabilization_curated.zip",
+    "raw_engine_phase48_ops_light.zip",
+    "raw_engine_phase48_delivery.zip"
+  ],
+  "generated_at_utc": "2026-04-22T07:44:46Z",
+  "manifest_version": "published_snapshot_v2",
+  "phase": "phase48",
+  "post_docs_source_snapshot_hash": "9619ddf70696718f97cf9b05f380250ee615cadfcdaae5891322c4d339d688d4",
+  "publication_health": "/tmp/raw_engine_phase48_bundle_root/manifests/publication_health_phase48.json",
+  "published_root": "/tmp/raw_engine_phase48_published",
+  "source_snapshot_hash": "5077ecf7202e4e8c351ad0bb250d8a08770392f39ade17ab738c965d3ad92f3d",
+  "staged_materialization_mode": "staged_sparse_clone_overlay",
+  "verification_closeout": "/tmp/raw_engine_phase48_bundle_root/manifests/phase48_verification_closeout.json"
+}

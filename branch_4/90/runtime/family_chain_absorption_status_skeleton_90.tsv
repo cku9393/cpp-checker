@@ -1,0 +1,23 @@
+metric	value
+lemma_name	family_chain_absorption_status_refuted_or_reduced_or_named_escape
+selected_statement	family_chain_absorption_status_refuted_or_reduced_or_escape
+exact_statement	For a normal support>8 recognized family-chain witness satisfying the absorption trigger, absorption either refutes aligned source/target counterexample status by bounded family-chain theorem, reduces to a strictly smaller residual witness, or routes failure to a named blocker or deferred higher-support escape.
+assumption_count	7
+conclusion	Family-chain absorption status/refutation is first-class and proof-ready as a refutation/reduction/escape skeleton; source-target payload/status alignment and residual measure decrease remain open.
+family_chain_absorption_definition	recognized trigger on support-growth family-chain component with bounded target layer
+absorption_target_relation	source component maps to bounded target object in pair52 through high57 package
+family_chain_theorem_applicability	proof_sketch_ready_conditional_on_payload_status_alignment
+self_verification_use	proved_under_current_scope_for_current_target_package
+lower_layer_7_7_use	proved_under_current_scope_for_target_availability
+refutation_branch	proof_sketch_ready_lifted_target_refutation_source_alignment_open
+smaller_witness_branch	proof_sketch_ready_residual_measure_open
+measure_decrease_use	blocked_by_measure_for_normalized_residual_branch
+payload_preservation_or_refinement	blocked_by_payload_for_source_target_status_alignment
+counterexample_status_refutation_or_reduction	blocked_by_payload_and_measure
+failure_to_escape_case	proof_sketch_ready_as_named_operation_blocker_or_deferred_higher_support_escape
+relation_to_canonical_compression_status_proof	canonical compression lowers motif rank before absorption; absorption uses bounded theorem target and is not motif compression
+relation_to_project_contraction_status_proofs	project/contraction provide locality/congruence refinements needed before arbitrary source-status transfer
+relation_to_status_congruence_bridge	adds absorption branch to common refuted/reduced/escaped classification
+missing_steps	source-target payload/status alignment;normalized residual measure decrease;absorption-specific payload transfer;higher-support bound after operation proofs close
+exact_caveat	Does not prove full family-chain absorption, full support reduction, support8 sufficiency, higher-support necessity, support9 scan, BOJ solver, or full general theorem.
+final_status	proof_ready_skeleton_family_chain_absorption_status_refutation_measure_open

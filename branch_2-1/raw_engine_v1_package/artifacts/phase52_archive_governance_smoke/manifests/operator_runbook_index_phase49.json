@@ -1,0 +1,133 @@
+{
+  "manifest_version": "operator_runbook_index_v1",
+  "phase": "phase49",
+  "generated_at_utc": "2026-04-24T03:13:16Z",
+  "runbook_count": 4,
+  "pending_runbook_count": 1,
+  "executable_runbook_count": 4,
+  "integrated_opt_in_required_count": 0,
+  "approval_runbook_count": 2,
+  "retry_runbook_count": 0,
+  "empty_verdict": "NOT_EMPTY",
+  "entries": [
+    {
+      "runbook_id": "phase49-runbook-75c36b408d7e",
+      "action_id": "current-env",
+      "action_kind": "RUN_CURRENT_ENV_REPROPOSAL_GATE",
+      "runbook_type": "reproposal_gate",
+      "current_status": "EXECUTED",
+      "decision_status": "DECIDED",
+      "approval_mode": "",
+      "executable": true,
+      "recommended_command": "./raw_engine_tests --case runtime_current_env_reproposal_trigger_gate_smoke",
+      "required_inputs": [],
+      "expected_outputs": [],
+      "blockers": [],
+      "safety_level": "dry_run",
+      "operator_required": false,
+      "next_action_kind": "APPROVE_RUNTIME_BUDGET_REPROFILE",
+      "mutates_registry": false,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      }
+    },
+    {
+      "runbook_id": "phase49-runbook-a847d70a05f8",
+      "action_id": "foreign-envs",
+      "action_kind": "RUN_FOREIGN_ENV_ONBOARDING",
+      "runbook_type": "run_foreign_env_onboarding",
+      "current_status": "PLANNED",
+      "decision_status": "PENDING_OPERATOR_DECISION",
+      "approval_mode": "",
+      "executable": true,
+      "recommended_command": "./raw_engine_tests --case runtime_new_env_proposal_gate_smoke",
+      "required_inputs": [],
+      "expected_outputs": [],
+      "blockers": [],
+      "safety_level": "dry_run",
+      "operator_required": false,
+      "next_action_kind": "RUN_RUNTIME_BUDGET_APPROVAL_COMMAND",
+      "mutates_registry": false,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      }
+    },
+    {
+      "runbook_id": "phase47-approval-runbook-590fa6da5236",
+      "action_id": "phase45-current-env-reproposal-001",
+      "action_kind": "APPROVE_RUNTIME_BUDGET_REPROFILE",
+      "runbook_type": "approval",
+      "current_status": "CLOSED",
+      "decision_status": "APPLIED",
+      "approval_mode": "handoff_only",
+      "executable": true,
+      "recommended_command": "APPROVE_RUNTIME_BUDGET_REPROFILE",
+      "required_inputs": [
+        "runtime_budget_current",
+        "runtime_budget_proposal",
+        "runtime_budget_proposal_gate",
+        "runtime_budget_registry",
+        "runtime_budget_baseline_out"
+      ],
+      "expected_outputs": [
+        "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_budget_baseline_phase47_approved.json",
+        "runtime budget approval metadata sidecar",
+        "updated runtime budget registry",
+        "archived reproposal snapshot"
+      ],
+      "blockers": [],
+      "safety_level": "handoff_only",
+      "operator_required": true,
+      "next_action_kind": "APPROVE_RUNTIME_BUDGET_REPROFILE",
+      "mutates_registry": false,
+      "related_manifests": {
+        "action_ledger": null,
+        "ops_agenda": null,
+        "approval_runbook": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_approval_runbook_phase47.json",
+        "approval_execution": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_budget_approval_execution_phase47.json",
+        "operator_decision": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      }
+    },
+    {
+      "runbook_id": "phase49-runbook-approve-21a551dae88c",
+      "action_id": "phase45-current-env-reproposal-001",
+      "action_kind": "RUN_CURRENT_ENV_REPROPOSAL_GATE",
+      "runbook_type": "approval",
+      "current_status": "CLOSED",
+      "decision_status": "DECIDED",
+      "approval_mode": "handoff_only",
+      "executable": true,
+      "recommended_command": "APPROVE_RUNTIME_BUDGET_REPROFILE",
+      "required_inputs": [
+        "action_ledger",
+        "operator_decision"
+      ],
+      "expected_outputs": [
+        "updated action ledger",
+        "ops summary decision variant"
+      ],
+      "blockers": [],
+      "safety_level": "handoff_only",
+      "operator_required": false,
+      "next_action_kind": "APPROVE_RUNTIME_BUDGET_REPROFILE",
+      "mutates_registry": false,
+      "related_manifests": {
+        "operator_decision": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_phase46.json",
+        "decision_apply": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_current_env_operator_decision_apply_phase46.json"
+      }
+    }
+  ],
+  "runbook_index_hash": "58cf8e50f3c097bdf9b45b53f93c77dc6d9f126b7c3f2e88082cf1d34e19976a",
+  "runbook_index_manifest_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/operator_runbook_index_phase49.json"
+}

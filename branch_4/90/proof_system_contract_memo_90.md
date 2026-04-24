@@ -12,12 +12,13 @@
 
 ## current round contract
 
-The coordinate-contraction status round is an operation-specific proof attempt. It does not prove the full general theorem, does not prove coordinate contraction fully, and does not run support9+.
+The family-chain absorption status round is an operation-specific proof attempt. It does not prove the full general theorem, does not prove family-chain absorption fully, and does not run support9+.
 
 Current result:
 
-- selected statement: `coordinate_contraction_status_or_escape`
-- status skeleton: `proof_ready_skeleton_contract_equivalent_status_congruence_open`
-- equivalent-coordinate congruence: `equivalent_coordinate_congruence_payload_ready_status_congruence_open`
-- support-bound skeleton: `proof_ready_skeleton_project_contraction_status_proof_ready_remaining_operations_open`
-- next exact target: `canonical_compression_status_preservation`
+- selected statement: `family_chain_absorption_status_refuted_or_reduced_or_escape`
+- status skeleton: `proof_ready_skeleton_family_chain_absorption_status_refutation_measure_open`
+- refutation lemma: `family_chain_absorption_refutation_lifted_target_ready_source_alignment_open`
+- residual measure: `family_chain_absorption_residual_measure_decrease_open`
+- support-bound skeleton: `proof_ready_skeleton_all_primary_operations_status_proof_ready_residual_congruence_open`
+- next exact target: `project_to_active_status_locality_refinement`

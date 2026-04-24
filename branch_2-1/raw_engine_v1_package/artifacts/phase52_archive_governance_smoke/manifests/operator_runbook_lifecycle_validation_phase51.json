@@ -1,0 +1,28 @@
+{
+  "manifest_version": "operator_runbook_lifecycle_validation_v1",
+  "phase": "phase51",
+  "generated_at_utc": "2026-04-24T03:13:19Z",
+  "validation_verdict": "PASS",
+  "missing_input_count": 0,
+  "stale_input_count": 0,
+  "superseded_runbook_count": 0,
+  "archived_runbook_count": 0,
+  "replayable_runbook_count": 4,
+  "non_replayable_runbook_count": 0,
+  "mutation_risk_count": 0,
+  "integrated_opt_in_blocked_count": 0,
+  "stale_but_safe_count": 0,
+  "affected_action_ids": [],
+  "missing_inputs": [],
+  "stale_inputs": [],
+  "superseded_runbook_ids": [],
+  "archived_runbook_ids": [],
+  "mutation_risk_runbook_ids": [],
+  "integrated_opt_in_blocked_runbook_ids": [],
+  "stale_but_safe_runbook_ids": [],
+  "rationale": [
+    "active executable runbooks with missing critical inputs require operator action",
+    "stale or archived resolved runbooks are retained as non-blocking history unless they can mutate state"
+  ],
+  "validation_hash": "7fbcb02847dca6bae67d7fd062e745dd31cd58af0931852d44bb19079b3a4826"
+}

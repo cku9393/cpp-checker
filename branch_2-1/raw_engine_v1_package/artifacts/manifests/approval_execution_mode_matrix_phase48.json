@@ -1,0 +1,44 @@
+{
+  "entries": [
+    {
+      "approval_applied": false,
+      "approval_execution_mode": "dry_run",
+      "approval_status": "DRY_RUN",
+      "baseline_written": false,
+      "manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/approval_execution_dry_run_smoke/manifests/runtime_current_env_budget_approval_execution_dry_run.json",
+      "mode": "dry_run",
+      "registry_updated": false
+    },
+    {
+      "approval_applied": false,
+      "approval_execution_mode": "handoff_only",
+      "approval_status": "DRY_RUN",
+      "baseline_written": false,
+      "manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/approval_execution_handoff_only_smoke/manifests/runtime_current_env_budget_approval_execution_handoff_only.json",
+      "mode": "handoff_only",
+      "registry_updated": false
+    },
+    {
+      "approval_applied": false,
+      "approval_execution_mode": "integrated_opt_in",
+      "approval_status": "BLOCKED",
+      "baseline_written": false,
+      "manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/approval_execution_integrated_requires_optin_smoke/manifests/runtime_current_env_budget_approval_execution_integrated_opt_in.json",
+      "mode": "integrated_requires_optin",
+      "registry_updated": false
+    },
+    {
+      "approval_applied": false,
+      "approval_execution_mode": "integrated_opt_in",
+      "approval_status": "APPLIED",
+      "baseline_written": true,
+      "manifest": "/tmp/raw_engine_phase47_build_release/tests/artifacts/approval_execution_integrated_optin_fixture_smoke/manifests/runtime_current_env_budget_approval_execution_integrated_opt_in.json",
+      "mode": "integrated_optin_fixture",
+      "registry_updated": true
+    }
+  ],
+  "generated_at_utc": "2026-04-22T07:44:46Z",
+  "manifest_version": "approval_execution_mode_matrix_v1",
+  "matrix_verdict": "PASS",
+  "phase": "phase48"
+}

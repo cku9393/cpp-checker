@@ -1,0 +1,107 @@
+PHASE52 STABILIZATION REPORT
+
+Scope
+- Authoritative source: split tree under raw_engine_v1_package.
+- Production split-choice policy remains exact_shadow.
+- No src primitive or planner semantic changes were made.
+- exact_full remains tests/debug/nightly compare evidence only.
+- compare_ready family remains diagnostic-only.
+
+Files changed or added
+- README.md
+- tests/CMakeLists.txt
+- tests/raw_engine_cases.cpp
+- tests/tools/runtime_watch_ops.py
+- tests/tools/run_policy_pipeline.py
+- tests/tools/build_evidence_bundle.py
+- PHASE52_STABILIZATION_REPORT.txt
+- artifacts/phase52_archive_governance_smoke/
+- artifacts/manifests/operator_archive_reference_graph_phase52.json
+- artifacts/manifests/operator_archive_retention_policy_phase52.json
+- artifacts/manifests/operator_archive_retention_plan_phase52.json
+- artifacts/manifests/operator_archive_retention_apply_phase52.json
+- artifacts/manifests/operator_waiver_registry_phase52.json
+- artifacts/manifests/operator_waiver_review_phase52.json
+- artifacts/manifests/verification_preflight_gate_phase52.json
+- artifacts/manifests/staged_verification_retention_phase52.json
+- artifacts/manifests/published_snapshot_retention_phase52.json
+- artifacts/manifests/published_snapshot_retention_apply_phase52.json
+- artifacts/manifests/operator_artifact_path_policy_lint_phase52_v2.json
+- artifacts/manifests/policy_ops_summary_phase52_v18.json
+- artifacts/manifests/staged_verification_phase52_debug.json
+- artifacts/manifests/staged_verification_phase52_release.json
+- artifacts/manifests/staged_verification_phase52_asan.json
+- artifacts/manifests/ctest_inventory_phase52_debug.json
+- artifacts/manifests/ctest_inventory_phase52_release.json
+- artifacts/manifests/ctest_inventory_phase52_asan.json
+
+Archive governance design
+- Added archive reference graph support for runbook catalogs, action ledgers, ledger archives, runbook archives, approval metadata, bundle metadata, published snapshots, verification manifests, and reports.
+- Added archive retention policy/plan/apply artifacts. Retention is graph-safe and keeps active runbooks, failed/retry-pending actions, approval audit trail, waived archived pointers, and snapshots referenced by waivers.
+- Added waiver registry/review artifacts. Active runbook pointers remain non-waivable; archived historical pointers are reviewed against bundle/reference-graph backing.
+- Added staged/published snapshot retention artifacts so verification and published outputs are retained when referenced by waivers, bundles, or reports.
+
+Archive governance results
+- archive reference graph: PASS, nodes=15, edges=19, waiver_nodes=1.
+- archive retention apply: PASS, retained_count=15, pruned_count=0, blocked_prune_count=6.
+- waiver review: PASS, waiver_count=1, active_count=1, due_soon_count=0, review_required_count=0, expired_count=0.
+- published snapshot retention: PASS, retained_snapshot_count=1, prunable_snapshot_count=0, blocked_prune_count=1, snapshots_referenced_by_waivers=1.
+- staged verification retention: PASS in ops summary v18, staged_verification_count=3.
+
+Source-health and verification preflight
+- source snapshot manifest: PASS, file_count=110, unreadable_file_count=0.
+- verification preflight gate: ACTION_REQUIRED for direct build, direct_build_allowed=false, staged_build_allowed=true, sparse_clone_required=true, selected_materialization_mode=staged_sparse_clone_overlay.
+- This is an infrastructure/operator action, not a correctness failure.
+- Official verification path remains staged_sparse_clone_overlay for the iCloud authoritative tree.
+
+Path policy lint v2
+- lint verdict: PASS.
+- forbidden_absolute_tmp_count=0.
+- forbidden_authoritative_abs_count=0.
+- dangling_relative_count=0.
+- allowed_authoritative_source_reference_count=66.
+- waived_archived_pointer_count=0 in the linted bundle-internal pointers.
+
+Ops summary v18
+- manifest_version=policy_ops_summary_v18.
+- current env action: NO_ACTION.
+- approved known env action: NO_ACTION.
+- unapproved foreign env action: REBASELINE_REQUIRED.
+- archive governance action: NO_ACTION.
+- waiver review action: NO_ACTION.
+- verification preflight action: USE_STAGED_SPARSE_LANE.
+- published snapshot action: RETAIN_SNAPSHOTS.
+- publication health: HEALTHY in publication_health_phase52.json.
+
+Evidence bundle inclusion
+- Phase52 archive-governance bundle is under artifacts/phase52_archive_governance_smoke/.
+- Full bundle: artifacts/phase52_archive_governance_smoke/raw_engine_phase52_archive_governance_bundle.zip.
+- Curated bundle: artifacts/phase52_archive_governance_smoke/raw_engine_phase52_archive_governance_bundle_curated.zip.
+- Delivery bundle: artifacts/phase52_archive_governance_smoke/raw_engine_phase52_archive_governance_bundle_delivery.zip.
+- Light ops bundle: artifacts/phase52_archive_governance_smoke/raw_engine_phase52_archive_governance_bundle_light.zip.
+- Bundle includes pointer audit, provenance migration, migrated catalog/ledger, waiver registry/review, archive reference graph, retention policy/plan/apply, path-policy lint v2, source health, verification preflight gate, staged/published snapshot retention, ops summary v18, verification manifests, and publication health.
+
+Blocked-part root cause and fix
+- Initial staged full Debug CTest failed because the first staged root was materialized from tracked HEAD-only content and missed untracked/current fixtures, especially tests/runtime_budget_phase29.json.
+- Policy nightly tests also needed historical phase22/phase17 compare/applicability/lineage summaries under artifacts/ for policy gate construction.
+- Fixed by rebuilding the staged root from source plus current tests/tools, current tests/*.cpp/hpp, current tests/*.json, campaigns, and the required historical artifact summary directories.
+- After the staging fix, policy_gate_nightly and policy_refresh_nightly passed, then the full Debug/Release/ASan staged reruns passed.
+
+Verification results
+- Debug staged full CTest: PASS, 465/465 passed, fail_count=0, not_run_count=0, total_wall_time_seconds=3590.23.
+- Release staged full CTest: PASS, 465/465 passed, fail_count=0, not_run_count=0, total_wall_time_seconds=1388.18.
+- ASan/UBSan staged full CTest: PASS, 465/465 passed, fail_count=0, not_run_count=0, total_wall_time_seconds=5306.07.
+- Explicit phase52 smoke coverage was included in full CTest and separately validated during triage for archive reference graph, waiver review, verification preflight gate, staged verification retention, path policy lint v2, ops summary v18, evidence bundle archive governance, and corpus replay.
+
+Semantic/correctness status
+- No new semantic mismatch was observed.
+- No new correctness gate failure was observed.
+- No planner drift was observed.
+- No new counterexample was generated.
+- No new regression test was added for primitive/planner semantics.
+- exact_shadow remains the production split-choice policy.
+
+Remaining risks
+- Historical waived archived pointers still require periodic review until their waiver expiry/refresh path is exercised over longer retention windows.
+- Source-health remains SPARSE_CLONE_REQUIRED for direct long build/test from the iCloud authoritative tree; staged/sparse verification must remain the official lane.
+- Future runbook/catalog/ledger artifacts must continue to pass path-policy lint v2 so ephemeral absolute paths do not re-enter executable provenance.

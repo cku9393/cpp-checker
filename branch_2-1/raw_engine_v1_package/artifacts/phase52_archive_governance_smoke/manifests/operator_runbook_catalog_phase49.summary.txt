@@ -1,0 +1,7 @@
+manifest_version=operator_runbook_catalog_v1
+phase=phase49
+catalog_entry_count=4
+active_runbook_count=2
+resolved_runbook_count=2
+integrated_opt_in_required_count=0
+replayable_runbook_count=4

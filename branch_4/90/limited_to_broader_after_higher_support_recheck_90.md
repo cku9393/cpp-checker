@@ -6,7 +6,7 @@
 
 The limited theorem remains proved under current scope. The broader support-bounded and general statements are still blocked, but the recheck separates two blockers:
 
-- immediate blockers: operation-specific status proofs and residual absorption measure;
+- immediate blockers: operation-specific locality/congruence/source-alignment proofs and residual absorption measure;
 - deferred blocker: theoretical higher-support bound if true irreducible support `>8` escape remains after operation proof closure.
 
 No support9+ scan was executed or recommended as the next step.
