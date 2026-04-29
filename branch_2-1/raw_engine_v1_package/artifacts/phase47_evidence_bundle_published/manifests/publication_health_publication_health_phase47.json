@@ -1,8 +1,0 @@
-{
-  "phase": "phase47",
-  "publication_health_verdict": "HEALTHY",
-  "basis": "phase47 evidence bundle approval workflow smokes and regenerated staged verification manifests passed",
-  "missing_artifacts": 0,
-  "hash_mismatch_count": 0,
-  "dangling_reference_count": 0
-}

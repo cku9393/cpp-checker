@@ -1,8 +1,0 @@
-{
-  "phase": "phase46",
-  "publication_health_verdict": "HEALTHY",
-  "basis": "publication_health_smoke and phase46 evidence bundle operator decision smoke passed in staged full CTest",
-  "missing_artifacts": 0,
-  "hash_mismatch_count": 0,
-  "dangling_reference_count": 0
-}

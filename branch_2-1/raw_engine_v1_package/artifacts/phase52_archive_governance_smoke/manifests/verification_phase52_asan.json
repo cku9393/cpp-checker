@@ -1,7 +1,0 @@
-{
-  "manifest_version": "staged_ctest_verification_v1",
-  "execution_verdict": "PASS",
-  "pass_count": 1,
-  "not_run_count": 0,
-  "verification_hash": "phase52-asan-smoke"
-}

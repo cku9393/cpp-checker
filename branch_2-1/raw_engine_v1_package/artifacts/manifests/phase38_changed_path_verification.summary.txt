@@ -1,0 +1,10 @@
+phase38 changed-path verification summary
+- changed paths: tests/tools/runtime_watch_ops.py, README.md
+- governance/operator changes were rerun in targeted Release/Debug/ASan subsets during phase38 development
+- this closeout is not a changed-path-only rerun
+- authoritative source was snapshotted and materialized into /tmp/raw_engine_phase38_stage
+- full staged CTest reruns completed for Release, Debug, and ASan
+- release inventory: 362 discovered, missing_expected=0, extra_unexpected=0, not_run=0
+- debug inventory: 362 discovered, missing_expected=0, extra_unexpected=0, not_run=0
+- asan inventory: 362 discovered, missing_expected=0, extra_unexpected=0, not_run=0
+- changed-path smoke presence was therefore verified inside the full staged suite, not as a substitute for it

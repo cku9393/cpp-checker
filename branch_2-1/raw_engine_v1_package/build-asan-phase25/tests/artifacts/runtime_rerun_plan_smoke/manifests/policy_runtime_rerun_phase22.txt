@@ -1,7 +1,0 @@
-plan_version=runtime_rerun_plan_v1
-summary_verdict=ACTION_REQUIRED
-stale_entry_count=1
-requires_rerun_entry_count=0
-rebaseline_required_count=0
-selected_entry_count=1
-runtime_rerun_entry=execution_class=release_full freshness_status=STALE rerun_kind=release_full_rerun

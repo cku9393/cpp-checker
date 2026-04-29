@@ -1,0 +1,19 @@
+{
+  "manifest_version": "verification_closeout_v1",
+  "phase_tag": "phase38-closeout",
+  "generated_at_utc": "2026-04-07T16:07:24Z",
+  "closeout_verdict": "CLOSEOUT_PASS",
+  "rationale": [
+    "staged mirror verification and publication closeout are healthy"
+  ],
+  "source_snapshot_hash": "4eb271a12c5aa2513d6a8748a0d8254b95d6e42a3ab5827441f4b04b853513f2",
+  "staged_mirror_hash": "4eb271a12c5aa2513d6a8748a0d8254b95d6e42a3ab5827441f4b04b853513f2",
+  "verification_release_hash": "4183ff6814c6daeb3fff08ff8d10b6ca3a8ed40869f81bcb1c13b5ade6afd4c0",
+  "verification_debug_hash": "40565ad53b3139f73215191c28302d1889c56b00109923cff235ce663f8fbf1f",
+  "verification_asan_hash": "79e7bd85a9778e77609205eaa6094c1cd72a6806f23a20a8938f622bb4d85dd6",
+  "verification_not_run_count": 0,
+  "published_snapshot_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/phase38_published_snapshot_closeout.json",
+  "published_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase38_evidence_bundle_published",
+  "publication_health_verdict": "HEALTHY",
+  "verification_closeout_status": "CLOSEOUT_PASS"
+}

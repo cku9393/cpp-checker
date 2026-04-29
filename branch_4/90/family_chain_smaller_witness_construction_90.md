@@ -19,6 +19,6 @@ The measure is the existing lexicographic support tuple from the support-bound a
 
 ## status
 
-The construction is formalized, but not fully proved. Measure decrease is proof-ready if an operation-specific reduced witness is provided; the operation-specific construction remains blocked by support-reduction operation sublemmas.
+The construction is formalized, but not fully proved. Project-to-active locality is now payload-locality proved and status-domain-open. Measure decrease is proof-ready if an operation-specific reduced witness is provided; the operation-specific construction remains blocked by coordinate congruence, canonical congruence, family-chain source alignment, residual absorption measure, and project-to-active status-domain transfer.
 
 Runtime table: `branch_4/90/runtime/family_chain_smaller_witness_construction_90.tsv`.

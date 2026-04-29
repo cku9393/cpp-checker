@@ -1,8 +1,0 @@
-manifest_path=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac3_smoke_failure_bundle_check/boj28350_resume/smoke_cases.tsv
-case_count=1
-iteration_policy=manifest_row_order
-seed_policy=manifest_seed
-timeout_policy=manifest_fixed
-retry_policy=harness_transient_only
-case_retry_limit=1
-retry_sleep_s=0.05

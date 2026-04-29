@@ -1,1 +1,0 @@
-runtime_budget_proposal_gate_summary proposal_gate_verdict=APPROVABLE proposal_confidence=HIGH execution_class_count=1

@@ -1,4 +1,0 @@
-rc=0
-timed_out=0
-elapsed=1.307049
-rss_kb=16000

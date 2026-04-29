@@ -47,6 +47,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--runtime-rerun-plan", default=None)
     parser.add_argument("--runtime-history-index", default=None)
     parser.add_argument("--runtime-proposal", default=None)
+    parser.add_argument("--runtime-comparability-triage", default=None)
+    parser.add_argument("--runtime-rebaseline-action-plan", default=None)
+    parser.add_argument("--runtime-rebaseline-proposal", default=None)
+    parser.add_argument("--runtime-rebaseline-proposal-gate", default=None)
+    parser.add_argument("--runtime-rebaseline-runbook", default=None)
+    parser.add_argument("--runtime-registry-selection-sanity", default=None)
+    parser.add_argument("--runtime-registry-selection-repair-plan", default=None)
     parser.add_argument("--runtime-watch-current", default=None)
     parser.add_argument("--runtime-watch-refresh", default=None)
     parser.add_argument("--runtime-watch-history-index", default=None)
@@ -58,6 +65,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--source-health-preflight", default=None)
     parser.add_argument("--source-health-action-plan", default=None)
     parser.add_argument("--verification-preflight-gate", default=None)
+    parser.add_argument("--staged-overlay-completeness", default=None)
+    parser.add_argument("--overlay-policy", default=None)
+    parser.add_argument("--verification-preflight-gate-v2", default=None)
     parser.add_argument("--staged-materialization", default=None)
     parser.add_argument("--source-root", default=None)
     parser.add_argument("--source-health-simulate-dataless-count", type=int, default=0)
@@ -225,6 +235,34 @@ def default_runtime_proposal_path(artifact_root: Path, phase: str) -> Path:
     return artifact_root / "manifests" / f"runtime_rebaseline_proposal_{phase}.json"
 
 
+def default_runtime_comparability_triage_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_comparability_triage_{phase}.json"
+
+
+def default_runtime_rebaseline_action_plan_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_rebaseline_action_plan_{phase}.json"
+
+
+def default_runtime_rebaseline_proposal_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_rebaseline_action_proposal_{phase}.json"
+
+
+def default_runtime_rebaseline_proposal_gate_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_rebaseline_action_proposal_gate_{phase}.json"
+
+
+def default_runtime_rebaseline_runbook_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_rebaseline_runbook_{phase}.json"
+
+
+def default_runtime_registry_selection_sanity_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_registry_selection_sanity_{phase}.json"
+
+
+def default_runtime_registry_selection_repair_plan_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"runtime_registry_selection_repair_plan_{phase}.json"
+
+
 def default_runtime_watch_path(artifact_root: Path, phase: str, kind: str) -> Path:
     return artifact_root / "manifests" / f"runtime_watch_{kind}_{phase}.json"
 
@@ -263,6 +301,14 @@ def default_staged_materialization_path(artifact_root: Path, phase: str) -> Path
 
 def default_verification_preflight_gate_path(artifact_root: Path, phase: str) -> Path:
     return artifact_root / "manifests" / f"verification_preflight_gate_{phase}.json"
+
+
+def default_staged_overlay_completeness_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"staged_overlay_completeness_{phase}.json"
+
+
+def default_verification_preflight_gate_v2_path(artifact_root: Path, phase: str) -> Path:
+    return artifact_root / "manifests" / f"verification_preflight_gate_{phase}_v2.json"
 
 
 def default_staged_mirror_manifest_path(artifact_root: Path, phase: str) -> Path:
@@ -745,6 +791,9 @@ def pipeline_summary_text(summary: dict[str, Any]) -> str:
         + f" mode={summary.get('mode', '')}"
         + f" severity={summary.get('severity', '')}"
         + f" exit_code={summary.get('exit_code', '')}"
+        + f" correctness_exit={summary.get('correctness_exit', '')}"
+        + f" runtime_exit={summary.get('runtime_exit', '')}"
+        + f" combined_exit={summary.get('combined_exit', '')}"
         + f" current_verdict={summary.get('current_verdict', '')}"
         + f" freshness_verdict={summary.get('freshness_verdict', '')}"
         + f" rerun_plan_verdict={summary.get('rerun_plan_verdict', '')}"
@@ -783,6 +832,11 @@ def pipeline_summary_text(summary: dict[str, Any]) -> str:
         "runtime_history_index",
         "runtime_history_summary",
         "runtime_proposal",
+        "runtime_comparability_triage",
+        "runtime_rebaseline_action_plan",
+        "runtime_rebaseline_runbook",
+        "runtime_registry_selection_sanity",
+        "runtime_registry_selection_repair_plan",
         "bundle_metadata",
         "runtime_watch_current",
         "runtime_watch_refresh",
@@ -820,7 +874,14 @@ def enrich_summary_with_operator_artifacts(
     source_health_preflight_path: Path | None = None,
     source_health_action_plan_path: Path | None = None,
     verification_preflight_gate_path: Path | None = None,
+    staged_overlay_completeness_path: Path | None = None,
+    verification_preflight_gate_v2_path: Path | None = None,
     staged_materialization_path: Path | None = None,
+    runtime_comparability_triage_path: Path | None = None,
+    runtime_rebaseline_action_plan_path: Path | None = None,
+    runtime_rebaseline_runbook_path: Path | None = None,
+    runtime_registry_selection_sanity_path: Path | None = None,
+    runtime_registry_selection_repair_plan_path: Path | None = None,
 ) -> dict[str, Any]:
     enriched = dict(summary)
     enriched["runtime_watch_registry"] = None if runtime_watch_registry_path is None else str(runtime_watch_registry_path)
@@ -830,7 +891,14 @@ def enrich_summary_with_operator_artifacts(
     enriched["source_health_preflight"] = None if source_health_preflight_path is None else str(source_health_preflight_path)
     enriched["source_health_action_plan"] = None if source_health_action_plan_path is None else str(source_health_action_plan_path)
     enriched["verification_preflight_gate"] = None if verification_preflight_gate_path is None else str(verification_preflight_gate_path)
+    enriched["staged_overlay_completeness"] = None if staged_overlay_completeness_path is None else str(staged_overlay_completeness_path)
+    enriched["verification_preflight_gate_v2"] = None if verification_preflight_gate_v2_path is None else str(verification_preflight_gate_v2_path)
     enriched["staged_materialization"] = None if staged_materialization_path is None else str(staged_materialization_path)
+    enriched["runtime_comparability_triage"] = None if runtime_comparability_triage_path is None else str(runtime_comparability_triage_path)
+    enriched["runtime_rebaseline_action_plan"] = None if runtime_rebaseline_action_plan_path is None else str(runtime_rebaseline_action_plan_path)
+    enriched["runtime_rebaseline_runbook"] = None if runtime_rebaseline_runbook_path is None else str(runtime_rebaseline_runbook_path)
+    enriched["runtime_registry_selection_sanity"] = None if runtime_registry_selection_sanity_path is None else str(runtime_registry_selection_sanity_path)
+    enriched["runtime_registry_selection_repair_plan"] = None if runtime_registry_selection_repair_plan_path is None else str(runtime_registry_selection_repair_plan_path)
 
     runtime_watch_registry = load_json_if_exists(runtime_watch_registry_path)
     ops_summary = load_json_if_exists(ops_summary_path)
@@ -839,8 +907,16 @@ def enrich_summary_with_operator_artifacts(
     source_health_preflight = load_json_if_exists(source_health_preflight_path)
     source_health_action_plan = load_json_if_exists(source_health_action_plan_path)
     verification_preflight_gate = load_json_if_exists(verification_preflight_gate_path)
+    staged_overlay_completeness = load_json_if_exists(staged_overlay_completeness_path)
+    verification_preflight_gate_v2 = load_json_if_exists(verification_preflight_gate_v2_path)
     staged_materialization = load_json_if_exists(staged_materialization_path)
+    runtime_comparability_triage = load_json_if_exists(runtime_comparability_triage_path)
+    runtime_rebaseline_action_plan = load_json_if_exists(runtime_rebaseline_action_plan_path)
+    runtime_rebaseline_runbook = load_json_if_exists(runtime_rebaseline_runbook_path)
+    runtime_registry_selection_sanity = load_json_if_exists(runtime_registry_selection_sanity_path)
+    runtime_registry_selection_repair_plan = load_json_if_exists(runtime_registry_selection_repair_plan_path)
     final_operator_summary = ops_summary.get("final_operator_summary", {})
+    final_operator_actions = ops_summary.get("final_operator_actions", {})
 
     enriched["runtime_watch_registry_entry_count"] = int(runtime_watch_registry.get("entry_count", 0))
     enriched["runtime_watch_registry_fingerprint_count"] = int(runtime_watch_registry.get("fingerprint_count", 0))
@@ -849,6 +925,21 @@ def enrich_summary_with_operator_artifacts(
     enriched["current_env_operator_action"] = final_operator_summary.get("recommended_action_current_env")
     enriched["new_env_operator_action"] = final_operator_summary.get("recommended_action_new_env")
     enriched["operator_rationale_list"] = final_operator_summary.get("rationale", [])
+    enriched["final_operator_actions"] = final_operator_actions
+    enriched["action_domains"] = {
+        "correctness": final_operator_actions.get("correctness"),
+        "runtime_comparability": final_operator_actions.get("runtime_comparability"),
+        "source_health": final_operator_actions.get("source_health"),
+        "archive_governance": final_operator_actions.get("archive_governance")
+            or final_operator_actions.get("operator_archive_review_queue"),
+        "retention": final_operator_actions.get("published_snapshot_retention_apply_v2")
+            or final_operator_actions.get("published_snapshot_retention"),
+    }
+    enriched["rationale"] = (
+        final_operator_actions.get("structured_rationale")
+        or final_operator_actions.get("rationale")
+        or final_operator_summary.get("rationale", [])
+    )
     enriched["current_env_watch_confidence"] = ops_summary.get("current_env_summary", {}).get("watch_confidence")
     enriched["new_env_watch_confidence"] = ops_summary.get("new_env_summary", {}).get("watch_confidence")
     enriched["current_env_evidence_source_counts"] = ops_summary.get("current_env_summary", {}).get("evidence_source_counts", {})
@@ -860,6 +951,11 @@ def enrich_summary_with_operator_artifacts(
     enriched["verification_preflight_direct_build_allowed"] = verification_preflight_gate.get("direct_build_allowed")
     enriched["verification_preflight_staged_build_allowed"] = verification_preflight_gate.get("staged_build_allowed")
     enriched["verification_preflight_sparse_clone_required"] = verification_preflight_gate.get("sparse_clone_required")
+    enriched["staged_overlay_completeness_verdict"] = staged_overlay_completeness.get("completeness_verdict")
+    enriched["staged_overlay_missing_count"] = staged_overlay_completeness.get("missing_overlay_count", 0)
+    enriched["verification_preflight_gate_v2_verdict"] = verification_preflight_gate_v2.get("preflight_gate_verdict")
+    enriched["verification_preflight_v2_staged_build_allowed"] = verification_preflight_gate_v2.get("staged_build_allowed")
+    enriched["verification_preflight_v2_sparse_clone_required"] = verification_preflight_gate_v2.get("sparse_clone_required")
     enriched["source_health_status"] = source_health_preflight.get("status")
     enriched["source_health_recommendation"] = source_health_preflight.get("recommendation")
     enriched["source_health_dataless_placeholder_count"] = source_health_preflight.get("dataless_placeholder_count", 0)
@@ -869,6 +965,15 @@ def enrich_summary_with_operator_artifacts(
     enriched["staged_build_allowed"] = bool(source_health_action_plan.get("staged_build_allowed", False))
     enriched["source_health_plan_recommended_action"] = source_health_action_plan.get("recommended_action")
     enriched["materialization_mode"] = staged_materialization.get("staged_materialization_mode") or source_health_preflight.get("staged_materialization", {}).get("staged_materialization_mode")
+    enriched["runtime_comparability_triage_verdict"] = runtime_comparability_triage.get("triage_verdict")
+    enriched["runtime_comparability_recommended_action"] = runtime_comparability_triage.get("recommended_action")
+    enriched["runtime_rebaseline_action_plan_verdict"] = runtime_rebaseline_action_plan.get("action_plan_verdict")
+    enriched["runtime_rebaseline_action"] = final_operator_actions.get("runtime_comparability") or runtime_rebaseline_action_plan.get("action_plan_verdict")
+    enriched["runtime_action_verdict"] = enriched["runtime_rebaseline_action"]
+    enriched["runtime_rebaseline_proposal_gate_verdict"] = runtime_rebaseline_action_plan.get("proposal_gate_verdict")
+    enriched["runtime_rebaseline_runbook_approval_ready"] = runtime_rebaseline_runbook.get("approval_ready")
+    enriched["runtime_registry_selection_sanity_verdict"] = runtime_registry_selection_sanity.get("sanity_verdict")
+    enriched["runtime_registry_selection_repair_plan_verdict"] = runtime_registry_selection_repair_plan.get("repair_plan_verdict")
     return enriched
 
 
@@ -892,6 +997,8 @@ def materialize_operator_artifacts(
     publication_health_path: Path | None,
     source_snapshot_manifest_path: Path | None = None,
     source_health_preflight_path: Path | None = None,
+    staged_overlay_completeness_path: Path | None = None,
+    verification_preflight_gate_v2_path: Path | None = None,
     staged_materialization_path: Path | None = None,
     staged_mirror_verify_path: Path | None = None,
     verification_release_path: Path | None = None,
@@ -916,6 +1023,13 @@ def materialize_operator_artifacts(
     runtime_budget_refresh_path_manifest: Path | None = None,
     runtime_budget_reproposal_history_path: Path | None = None,
     runtime_budget_registry_summary_path: Path | None = None,
+    runtime_comparability_triage_path: Path | None = None,
+    runtime_rebaseline_action_plan_path: Path | None = None,
+    runtime_rebaseline_proposal_path: Path | None = None,
+    runtime_rebaseline_proposal_gate_path: Path | None = None,
+    runtime_rebaseline_runbook_path: Path | None = None,
+    runtime_registry_selection_sanity_path: Path | None = None,
+    runtime_registry_selection_repair_plan_path: Path | None = None,
 ) -> list[dict[str, Any]]:
     stages: list[dict[str, Any]] = []
     approved_known_summary_paths = approved_known_summary_paths or []
@@ -999,6 +1113,8 @@ def materialize_operator_artifacts(
                 *(["--publication-health", str(publication_health_path)] if publication_health_path is not None and publication_health_path.exists() else []),
                 *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path is not None and source_snapshot_manifest_path.exists() else []),
                 *(["--source-health-preflight", str(source_health_preflight_path)] if source_health_preflight_path is not None and source_health_preflight_path.exists() else []),
+                *(["--staged-overlay-completeness", str(staged_overlay_completeness_path)] if staged_overlay_completeness_path is not None and staged_overlay_completeness_path.exists() else []),
+                *(["--verification-preflight-gate-v2", str(verification_preflight_gate_v2_path)] if verification_preflight_gate_v2_path is not None and verification_preflight_gate_v2_path.exists() else []),
                 *(["--staged-materialization", str(staged_materialization_path)] if staged_materialization_path is not None and staged_materialization_path.exists() else []),
                 *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path is not None and staged_mirror_verify_path.exists() else []),
                 *(["--verification-release", str(verification_release_path)] if verification_release_path is not None and verification_release_path.exists() else []),
@@ -1021,6 +1137,13 @@ def materialize_operator_artifacts(
                 *(["--runtime-budget-refresh", str(runtime_budget_refresh_path_manifest)] if runtime_budget_refresh_path_manifest is not None and runtime_budget_refresh_path_manifest.exists() else []),
                 *(["--runtime-budget-reproposal-history", str(runtime_budget_reproposal_history_path)] if runtime_budget_reproposal_history_path is not None and runtime_budget_reproposal_history_path.exists() else []),
                 *(["--runtime-budget-registry-summary", str(runtime_budget_registry_summary_path)] if runtime_budget_registry_summary_path is not None and runtime_budget_registry_summary_path.exists() else []),
+                *(["--runtime-comparability-triage", str(runtime_comparability_triage_path)] if runtime_comparability_triage_path is not None and runtime_comparability_triage_path.exists() else []),
+                *(["--runtime-rebaseline-action-plan", str(runtime_rebaseline_action_plan_path)] if runtime_rebaseline_action_plan_path is not None and runtime_rebaseline_action_plan_path.exists() else []),
+                *(["--runtime-rebaseline-proposal", str(runtime_rebaseline_proposal_path)] if runtime_rebaseline_proposal_path is not None and runtime_rebaseline_proposal_path.exists() else []),
+                *(["--runtime-rebaseline-proposal-gate", str(runtime_rebaseline_proposal_gate_path)] if runtime_rebaseline_proposal_gate_path is not None and runtime_rebaseline_proposal_gate_path.exists() else []),
+                *(["--runtime-rebaseline-runbook", str(runtime_rebaseline_runbook_path)] if runtime_rebaseline_runbook_path is not None and runtime_rebaseline_runbook_path.exists() else []),
+                *(["--runtime-registry-selection-sanity", str(runtime_registry_selection_sanity_path)] if runtime_registry_selection_sanity_path is not None and runtime_registry_selection_sanity_path.exists() else []),
+                *(["--runtime-registry-selection-repair-plan", str(runtime_registry_selection_repair_plan_path)] if runtime_registry_selection_repair_plan_path is not None and runtime_registry_selection_repair_plan_path.exists() else []),
                 *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
                 *sum([["--foreign-import-summary", str(path)] for path in foreign_import_summary_paths], []),
                 "--out",
@@ -1077,6 +1200,11 @@ def build_summary(
         runtime_trend_summary,
         runtime_watch_refresh,
     )
+    if policy_severity == "OK" and runtime_severity in {"WARN", "ACTION_REQUIRED"}:
+        runtime_rationale = [
+            *runtime_rationale,
+            "runtime comparability/action-required state is separated from correctness; no semantic failure was detected",
+        ]
     severity, exit_code, recommendation, combined_rationale = combine_severity(
         policy_severity,
         runtime_severity,
@@ -1156,6 +1284,23 @@ def build_summary(
         "runtime_budget_profile_id": runtime_watch_refresh.get("runtime_budget_profile_id")
         or runtime_watch_current.get("runtime_budget_profile_id")
         or runtime_current.get("runtime_budget_profile_id"),
+        "correctness_severity": policy_severity,
+        "correctness_exit": {
+            "OK": EXIT_OK,
+            "WARN": EXIT_WARN,
+            "ACTION_REQUIRED": EXIT_ACTION_REQUIRED,
+            "FAIL": EXIT_FAIL,
+        }[policy_severity],
+        "runtime_exit": {
+            "OK": EXIT_OK,
+            "WARN": EXIT_WARN,
+            "ACTION_REQUIRED": EXIT_ACTION_REQUIRED,
+            "FAIL": EXIT_FAIL,
+        }[runtime_severity],
+        "combined_exit": exit_code,
+        "semantic_failure_detected": policy_severity == "FAIL",
+        "correctness_action_domain": "correctness",
+        "runtime_action_domain": "runtime_comparability",
         "policy_severity": policy_severity,
         "policy_rationale": policy_rationale,
         "runtime_severity": runtime_severity,
@@ -1354,6 +1499,34 @@ def main() -> int:
         args.runtime_proposal,
         default_runtime_proposal_path(artifact_root, pipeline_phase),
     )
+    runtime_comparability_triage_path = manifest_json_path(
+        args.runtime_comparability_triage,
+        default_runtime_comparability_triage_path(artifact_root, pipeline_phase),
+    )
+    runtime_rebaseline_action_plan_path = manifest_json_path(
+        args.runtime_rebaseline_action_plan,
+        default_runtime_rebaseline_action_plan_path(artifact_root, pipeline_phase),
+    )
+    runtime_rebaseline_proposal_path = manifest_json_path(
+        args.runtime_rebaseline_proposal,
+        default_runtime_rebaseline_proposal_path(artifact_root, pipeline_phase),
+    )
+    runtime_rebaseline_proposal_gate_path = manifest_json_path(
+        args.runtime_rebaseline_proposal_gate,
+        default_runtime_rebaseline_proposal_gate_path(artifact_root, pipeline_phase),
+    )
+    runtime_rebaseline_runbook_path = manifest_json_path(
+        args.runtime_rebaseline_runbook,
+        default_runtime_rebaseline_runbook_path(artifact_root, pipeline_phase),
+    )
+    runtime_registry_selection_sanity_path = manifest_json_path(
+        args.runtime_registry_selection_sanity,
+        default_runtime_registry_selection_sanity_path(artifact_root, pipeline_phase),
+    )
+    runtime_registry_selection_repair_plan_path = manifest_json_path(
+        args.runtime_registry_selection_repair_plan,
+        default_runtime_registry_selection_repair_plan_path(artifact_root, pipeline_phase),
+    )
     runtime_watch_current_path = manifest_json_path(
         args.runtime_watch_current,
         default_runtime_watch_path(artifact_root, pipeline_phase, "current"),
@@ -1393,6 +1566,14 @@ def main() -> int:
     verification_preflight_gate_path = manifest_json_path(
         args.verification_preflight_gate,
         default_verification_preflight_gate_path(artifact_root, pipeline_phase),
+    )
+    staged_overlay_completeness_path = manifest_json_path(
+        args.staged_overlay_completeness,
+        default_staged_overlay_completeness_path(artifact_root, pipeline_phase),
+    )
+    verification_preflight_gate_v2_path = manifest_json_path(
+        args.verification_preflight_gate_v2,
+        default_verification_preflight_gate_v2_path(artifact_root, pipeline_phase),
     )
     staged_materialization_path = manifest_json_path(
         args.staged_materialization,
@@ -1523,6 +1704,36 @@ def main() -> int:
                 str(verification_preflight_gate_path),
             ]
             stages.append(run_command("verification_preflight_gate", verification_preflight_command, repo_root))
+            overlay_command = [
+                python_bin,
+                str(watch_ops_script),
+                "staged-overlay-completeness-manifest",
+                "--phase",
+                pipeline_phase,
+                "--source-root",
+                str(Path(args.source_root).resolve() if args.source_root else repo_root),
+                "--snapshot-manifest",
+                str(source_snapshot_manifest_path),
+                "--out",
+                str(staged_overlay_completeness_path),
+            ]
+            if args.overlay_policy:
+                overlay_command.extend(["--overlay-policy", str(Path(args.overlay_policy).resolve())])
+            stages.append(run_command("staged_overlay_completeness", overlay_command, repo_root))
+            verification_preflight_v2_command = [
+                python_bin,
+                str(watch_ops_script),
+                "verification-preflight-gate-v2",
+                "--phase",
+                pipeline_phase,
+                "--source-health",
+                str(source_health_preflight_path),
+                "--overlay-completeness",
+                str(staged_overlay_completeness_path),
+                "--preflight-gate-out",
+                str(verification_preflight_gate_v2_path),
+            ]
+            stages.append(run_command("verification_preflight_gate_v2", verification_preflight_v2_command, repo_root))
 
         if args.mode in {"quick", "rebaseline_candidate", "matrix"}:
             policy_ci_command = [
@@ -2038,6 +2249,143 @@ def main() -> int:
                 )
             )
 
+        if runtime_watch_registry_path is not None and (
+            (runtime_watch_current_path is not None and runtime_watch_current_path.exists())
+            or (runtime_watch_refresh_path is not None and runtime_watch_refresh_path.exists())
+            or (runtime_watch_history_index_path is not None and runtime_watch_history_index_path.exists())
+        ):
+            stages.append(
+                run_command(
+                    "runtime_watch_registry_preflight",
+                    [
+                        python_bin,
+                        str(watch_ops_script),
+                        "watch-registry",
+                        *(["--watch-current", str(runtime_watch_current_path)] if runtime_watch_current_path is not None else []),
+                        *(["--watch-refresh", str(runtime_watch_refresh_path)] if runtime_watch_refresh_path is not None else []),
+                        *(["--watch-history-index", str(runtime_watch_history_index_path)] if runtime_watch_history_index_path is not None else []),
+                        "--matrix-summary",
+                        str(default_matrix_summary_path(artifact_root, pipeline_phase)),
+                        "--matrix-root",
+                        str(artifact_root / "matrix"),
+                        "--registry-out",
+                        str(runtime_watch_registry_path),
+                    ],
+                    repo_root,
+                )
+            )
+
+        if runtime_baseline_registry_path is not None and runtime_current_manifest_path.exists():
+            stages.append(
+                run_command(
+                    "runtime_comparability_triage",
+                    [
+                        python_bin,
+                        str(watch_ops_script),
+                        "runtime-comparability-triage",
+                        "--phase",
+                        pipeline_phase,
+                        "--runtime-current-manifest",
+                        str(runtime_current_manifest_path),
+                        "--runtime-baseline-registry",
+                        str(runtime_baseline_registry_path),
+                        *(["--runtime-history-index", str(runtime_history_index_path)] if runtime_history_index_path is not None and runtime_history_index_path.exists() else []),
+                        *(["--runtime-watch-registry", str(runtime_watch_registry_path)] if runtime_watch_registry_path.exists() else []),
+                        "--triage-out",
+                        str(runtime_comparability_triage_path),
+                    ],
+                    repo_root,
+                )
+            )
+            stages.append(
+                run_command(
+                    "runtime_rebaseline_action_plan",
+                    [
+                        python_bin,
+                        str(watch_ops_script),
+                        "runtime-rebaseline-action-plan",
+                        "--phase",
+                        pipeline_phase,
+                        "--runtime-comparability-triage",
+                        str(runtime_comparability_triage_path),
+                        "--runtime-current-manifest",
+                        str(runtime_current_manifest_path),
+                        "--runtime-baseline-registry",
+                        str(runtime_baseline_registry_path),
+                        *(["--runtime-history-index", str(runtime_history_index_path)] if runtime_history_index_path is not None and runtime_history_index_path.exists() else []),
+                        *(["--runtime-watch-registry", str(runtime_watch_registry_path)] if runtime_watch_registry_path.exists() else []),
+                        "--proposal-out",
+                        str(runtime_rebaseline_proposal_path),
+                        "--proposal-gate-out",
+                        str(runtime_rebaseline_proposal_gate_path),
+                        "--action-plan-out",
+                        str(runtime_rebaseline_action_plan_path),
+                    ],
+                    repo_root,
+                )
+            )
+            stages.append(
+                run_command(
+                    "runtime_rebaseline_runbook",
+                    [
+                        python_bin,
+                        str(watch_ops_script),
+                        "runtime-rebaseline-runbook",
+                        "--phase",
+                        pipeline_phase,
+                        "--runtime-rebaseline-action-plan",
+                        str(runtime_rebaseline_action_plan_path),
+                        "--runtime-proposal",
+                        str(runtime_rebaseline_proposal_path),
+                        "--runtime-proposal-gate",
+                        str(runtime_rebaseline_proposal_gate_path),
+                        "--runtime-baseline-registry",
+                        str(runtime_baseline_registry_path),
+                        "--runbook-out",
+                        str(runtime_rebaseline_runbook_path),
+                    ],
+                    repo_root,
+                )
+            )
+            stages.append(
+                run_command(
+                    "runtime_registry_selection_sanity",
+                    [
+                        python_bin,
+                        str(watch_ops_script),
+                        "runtime-registry-selection-sanity",
+                        "--phase",
+                        pipeline_phase,
+                        "--runtime-current-manifest",
+                        str(runtime_current_manifest_path),
+                        "--runtime-baseline-registry",
+                        str(runtime_baseline_registry_path),
+                        "--sanity-out",
+                        str(runtime_registry_selection_sanity_path),
+                    ],
+                    repo_root,
+                )
+            )
+            stages.append(
+                run_command(
+                    "runtime_registry_selection_repair_plan",
+                    [
+                        python_bin,
+                        str(watch_ops_script),
+                        "runtime-registry-selection-repair-plan",
+                        "--phase",
+                        pipeline_phase,
+                        "--selection-sanity",
+                        str(runtime_registry_selection_sanity_path),
+                        "--runtime-baseline-registry",
+                        str(runtime_baseline_registry_path),
+                        "--repair-plan-out",
+                        str(runtime_registry_selection_repair_plan_path),
+                    ],
+                    repo_root,
+                )
+            )
+
         summary = build_summary(
             args.mode,
             pipeline_phase,
@@ -2068,7 +2416,14 @@ def main() -> int:
             source_health_preflight_path if source_health_preflight_path.exists() else None,
             source_health_action_plan_path if source_health_action_plan_path.exists() else None,
             verification_preflight_gate_path if verification_preflight_gate_path.exists() else None,
+            staged_overlay_completeness_path if staged_overlay_completeness_path.exists() else None,
+            verification_preflight_gate_v2_path if verification_preflight_gate_v2_path.exists() else None,
             staged_materialization_path if staged_materialization_path.exists() else None,
+            runtime_comparability_triage_path if runtime_comparability_triage_path.exists() else None,
+            runtime_rebaseline_action_plan_path if runtime_rebaseline_action_plan_path.exists() else None,
+            runtime_rebaseline_runbook_path if runtime_rebaseline_runbook_path.exists() else None,
+            runtime_registry_selection_sanity_path if runtime_registry_selection_sanity_path.exists() else None,
+            runtime_registry_selection_repair_plan_path if runtime_registry_selection_repair_plan_path.exists() else None,
         )
         write_pipeline_summary(summary_path, summary)
 
@@ -2092,6 +2447,8 @@ def main() -> int:
                 publication_health_path=publication_health_path,
                 source_snapshot_manifest_path=source_snapshot_manifest_path,
                 source_health_preflight_path=source_health_preflight_path,
+                staged_overlay_completeness_path=staged_overlay_completeness_path,
+                verification_preflight_gate_v2_path=verification_preflight_gate_v2_path,
                 staged_materialization_path=staged_materialization_path,
                 staged_mirror_verify_path=staged_mirror_verify_path,
                 verification_release_path=verification_release_path,
@@ -2116,6 +2473,13 @@ def main() -> int:
                 runtime_budget_refresh_path_manifest=Path(args.runtime_budget_refresh).resolve() if args.runtime_budget_refresh else None,
                 runtime_budget_reproposal_history_path=Path(args.runtime_budget_reproposal_history).resolve() if args.runtime_budget_reproposal_history else None,
                 runtime_budget_registry_summary_path=Path(args.runtime_budget_registry_summary).resolve() if args.runtime_budget_registry_summary else None,
+                runtime_comparability_triage_path=runtime_comparability_triage_path if runtime_comparability_triage_path.exists() else None,
+                runtime_rebaseline_action_plan_path=runtime_rebaseline_action_plan_path if runtime_rebaseline_action_plan_path.exists() else None,
+                runtime_rebaseline_proposal_path=runtime_rebaseline_proposal_path if runtime_rebaseline_proposal_path.exists() else None,
+                runtime_rebaseline_proposal_gate_path=runtime_rebaseline_proposal_gate_path if runtime_rebaseline_proposal_gate_path.exists() else None,
+                runtime_rebaseline_runbook_path=runtime_rebaseline_runbook_path if runtime_rebaseline_runbook_path.exists() else None,
+                runtime_registry_selection_sanity_path=runtime_registry_selection_sanity_path if runtime_registry_selection_sanity_path.exists() else None,
+                runtime_registry_selection_repair_plan_path=runtime_registry_selection_repair_plan_path if runtime_registry_selection_repair_plan_path.exists() else None,
             )
         )
         summary = build_summary(
@@ -2148,7 +2512,14 @@ def main() -> int:
             source_health_preflight_path if source_health_preflight_path.exists() else None,
             source_health_action_plan_path if source_health_action_plan_path.exists() else None,
             verification_preflight_gate_path if verification_preflight_gate_path.exists() else None,
+            staged_overlay_completeness_path if staged_overlay_completeness_path.exists() else None,
+            verification_preflight_gate_v2_path if verification_preflight_gate_v2_path.exists() else None,
             staged_materialization_path if staged_materialization_path.exists() else None,
+            runtime_comparability_triage_path if runtime_comparability_triage_path.exists() else None,
+            runtime_rebaseline_action_plan_path if runtime_rebaseline_action_plan_path.exists() else None,
+            runtime_rebaseline_runbook_path if runtime_rebaseline_runbook_path.exists() else None,
+            runtime_registry_selection_sanity_path if runtime_registry_selection_sanity_path.exists() else None,
+            runtime_registry_selection_repair_plan_path if runtime_registry_selection_repair_plan_path.exists() else None,
         )
         write_pipeline_summary(summary_path, summary)
 
@@ -2243,6 +2614,8 @@ def main() -> int:
                             *(["--publication-health", str(publication_health_path)] if publication_health_path.exists() else []),
                             *(["--source-health-preflight", str(source_health_preflight_path)] if source_health_preflight_path.exists() else []),
                             *(["--source-health-action-plan", str(source_health_action_plan_path)] if source_health_action_plan_path.exists() else []),
+                            *(["--staged-overlay-completeness", str(staged_overlay_completeness_path)] if staged_overlay_completeness_path.exists() else []),
+                            *(["--verification-preflight-gate-v2", str(verification_preflight_gate_v2_path)] if verification_preflight_gate_v2_path.exists() else []),
                             *(["--staged-materialization", str(staged_materialization_path)] if staged_materialization_path.exists() else []),
                             "--ops-summary",
                             str(ops_summary_path),
@@ -2271,6 +2644,13 @@ def main() -> int:
                             *(["--runtime-budget-refresh", str(Path(args.runtime_budget_refresh).resolve())] if args.runtime_budget_refresh else []),
                             *(["--runtime-budget-reproposal-history", str(Path(args.runtime_budget_reproposal_history).resolve())] if args.runtime_budget_reproposal_history else []),
                             *(["--runtime-budget-registry-summary", str(Path(args.runtime_budget_registry_summary).resolve())] if args.runtime_budget_registry_summary else []),
+                            *(["--runtime-comparability-triage", str(runtime_comparability_triage_path)] if runtime_comparability_triage_path.exists() else []),
+                            *(["--runtime-rebaseline-action-plan", str(runtime_rebaseline_action_plan_path)] if runtime_rebaseline_action_plan_path.exists() else []),
+                            *(["--runtime-rebaseline-proposal", str(runtime_rebaseline_proposal_path)] if runtime_rebaseline_proposal_path.exists() else []),
+                            *(["--runtime-rebaseline-proposal-gate", str(runtime_rebaseline_proposal_gate_path)] if runtime_rebaseline_proposal_gate_path.exists() else []),
+                            *(["--runtime-rebaseline-runbook", str(runtime_rebaseline_runbook_path)] if runtime_rebaseline_runbook_path.exists() else []),
+                            *(["--runtime-registry-selection-sanity", str(runtime_registry_selection_sanity_path)] if runtime_registry_selection_sanity_path.exists() else []),
+                            *(["--runtime-registry-selection-repair-plan", str(runtime_registry_selection_repair_plan_path)] if runtime_registry_selection_repair_plan_path.exists() else []),
                             "--pipeline-summary",
                             str(summary_path),
                             *(["--pipeline-quick-summary", str(default_summary_path(artifact_root, pipeline_phase, "quick"))]
@@ -2371,6 +2751,13 @@ def main() -> int:
                             *(["--runtime-budget-refresh", str(Path(args.runtime_budget_refresh).resolve())] if args.runtime_budget_refresh else []),
                             *(["--runtime-budget-reproposal-history", str(Path(args.runtime_budget_reproposal_history).resolve())] if args.runtime_budget_reproposal_history else []),
                             *(["--runtime-budget-registry-summary", str(Path(args.runtime_budget_registry_summary).resolve())] if args.runtime_budget_registry_summary else []),
+                            *(["--runtime-comparability-triage", str(runtime_comparability_triage_path)] if runtime_comparability_triage_path.exists() else []),
+                            *(["--runtime-rebaseline-action-plan", str(runtime_rebaseline_action_plan_path)] if runtime_rebaseline_action_plan_path.exists() else []),
+                            *(["--runtime-rebaseline-proposal", str(runtime_rebaseline_proposal_path)] if runtime_rebaseline_proposal_path.exists() else []),
+                            *(["--runtime-rebaseline-proposal-gate", str(runtime_rebaseline_proposal_gate_path)] if runtime_rebaseline_proposal_gate_path.exists() else []),
+                            *(["--runtime-rebaseline-runbook", str(runtime_rebaseline_runbook_path)] if runtime_rebaseline_runbook_path.exists() else []),
+                            *(["--runtime-registry-selection-sanity", str(runtime_registry_selection_sanity_path)] if runtime_registry_selection_sanity_path.exists() else []),
+                            *(["--runtime-registry-selection-repair-plan", str(runtime_registry_selection_repair_plan_path)] if runtime_registry_selection_repair_plan_path.exists() else []),
                             *sum([["--approved-known-summary", str(path)] for path in approved_known_summary_paths], []),
                             *sum([["--foreign-import-summary", str(path)] for path in foreign_import_summary_paths], []),
                             "--out",
@@ -2425,6 +2812,8 @@ def main() -> int:
                             *(["--source-snapshot-manifest", str(source_snapshot_manifest_path)] if source_snapshot_manifest_path.exists() else []),
                             *(["--source-health-preflight", str(source_health_preflight_path)] if source_health_preflight_path.exists() else []),
                             *(["--source-health-action-plan", str(source_health_action_plan_path)] if source_health_action_plan_path.exists() else []),
+                            *(["--staged-overlay-completeness", str(staged_overlay_completeness_path)] if staged_overlay_completeness_path.exists() else []),
+                            *(["--verification-preflight-gate-v2", str(verification_preflight_gate_v2_path)] if verification_preflight_gate_v2_path.exists() else []),
                             *(["--staged-materialization", str(staged_materialization_path)] if staged_materialization_path.exists() else []),
                             *(["--staged-mirror-manifest", str(staged_mirror_manifest_path)] if staged_mirror_manifest_path.exists() else []),
                             *(["--staged-mirror-verify", str(staged_mirror_verify_path)] if staged_mirror_verify_path.exists() else []),
@@ -2465,6 +2854,13 @@ def main() -> int:
                             *(["--runtime-budget-refresh", str(Path(args.runtime_budget_refresh).resolve())] if args.runtime_budget_refresh else []),
                             *(["--runtime-budget-reproposal-history", str(Path(args.runtime_budget_reproposal_history).resolve())] if args.runtime_budget_reproposal_history else []),
                             *(["--runtime-budget-registry-summary", str(Path(args.runtime_budget_registry_summary).resolve())] if args.runtime_budget_registry_summary else []),
+                            *(["--runtime-comparability-triage", str(runtime_comparability_triage_path)] if runtime_comparability_triage_path.exists() else []),
+                            *(["--runtime-rebaseline-action-plan", str(runtime_rebaseline_action_plan_path)] if runtime_rebaseline_action_plan_path.exists() else []),
+                            *(["--runtime-rebaseline-proposal", str(runtime_rebaseline_proposal_path)] if runtime_rebaseline_proposal_path.exists() else []),
+                            *(["--runtime-rebaseline-proposal-gate", str(runtime_rebaseline_proposal_gate_path)] if runtime_rebaseline_proposal_gate_path.exists() else []),
+                            *(["--runtime-rebaseline-runbook", str(runtime_rebaseline_runbook_path)] if runtime_rebaseline_runbook_path.exists() else []),
+                            *(["--runtime-registry-selection-sanity", str(runtime_registry_selection_sanity_path)] if runtime_registry_selection_sanity_path.exists() else []),
+                            *(["--runtime-registry-selection-repair-plan", str(runtime_registry_selection_repair_plan_path)] if runtime_registry_selection_repair_plan_path.exists() else []),
                             "--pipeline-summary",
                             str(summary_path),
                             *(["--pipeline-quick-summary", str(default_summary_path(artifact_root, pipeline_phase, "quick"))]
@@ -2518,7 +2914,14 @@ def main() -> int:
                 source_health_preflight_path if source_health_preflight_path.exists() else None,
                 source_health_action_plan_path if source_health_action_plan_path.exists() else None,
                 verification_preflight_gate_path if verification_preflight_gate_path.exists() else None,
+                staged_overlay_completeness_path if staged_overlay_completeness_path.exists() else None,
+                verification_preflight_gate_v2_path if verification_preflight_gate_v2_path.exists() else None,
                 staged_materialization_path if staged_materialization_path.exists() else None,
+                runtime_comparability_triage_path if runtime_comparability_triage_path.exists() else None,
+                runtime_rebaseline_action_plan_path if runtime_rebaseline_action_plan_path.exists() else None,
+                runtime_rebaseline_runbook_path if runtime_rebaseline_runbook_path.exists() else None,
+                runtime_registry_selection_sanity_path if runtime_registry_selection_sanity_path.exists() else None,
+                runtime_registry_selection_repair_plan_path if runtime_registry_selection_repair_plan_path.exists() else None,
             )
             write_pipeline_summary(summary_path, summary)
 

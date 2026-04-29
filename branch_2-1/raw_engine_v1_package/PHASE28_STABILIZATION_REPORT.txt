@@ -1,4 +1,0 @@
-PHASE28 policy pipeline operator report
-timestamp_utc=2026-03-24T00:40:11Z
-mode=nightly
-recommended_next_action=diagnostic-only stable watch remains active; continue monitoring

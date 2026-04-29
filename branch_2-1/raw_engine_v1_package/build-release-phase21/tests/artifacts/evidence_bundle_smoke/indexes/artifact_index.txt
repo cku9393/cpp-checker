@@ -1,8 +1,0 @@
-artifact_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase21/tests/artifacts/evidence_bundle_smoke
-report_count=15
-manifest_count=12
-bundle_count=0
-curated_bundle_count=0
-evidence_bundle_count=1
-nightly_run_count=0
-approved_baseline_count=0

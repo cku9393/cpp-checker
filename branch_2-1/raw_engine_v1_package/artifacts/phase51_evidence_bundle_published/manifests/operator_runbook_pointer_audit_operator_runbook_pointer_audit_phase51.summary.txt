@@ -1,6 +1,0 @@
-audit_verdict=WARN
-pointer_count=30
-absolute_tmp_pointer_count=30
-rewritable_pointer_count=28
-waivable_archived_pointer_count=2
-unresolved_active_pointer_count=0

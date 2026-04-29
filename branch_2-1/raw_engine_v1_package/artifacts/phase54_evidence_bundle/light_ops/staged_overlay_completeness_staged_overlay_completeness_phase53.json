@@ -1,0 +1,129 @@
+{
+  "manifest_version": "staged_overlay_completeness_v1",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T04:19:54Z",
+  "source_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package",
+  "snapshot_manifest_hash": null,
+  "overlay_policy_hash": "522df21341d4d256fb266d6a079138e900767c505b703dcb2a7ac17020a3bccb",
+  "required_overlay_count": 16,
+  "found_overlay_count": 16,
+  "missing_overlay_count": 0,
+  "missing_overlay_entries": [],
+  "required_overlay_entries": [
+    {
+      "category": "include_current_tests_json",
+      "path": "tests/runtime_budget_phase29.json",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 3702
+    },
+    {
+      "category": "include_current_tests_tools",
+      "path": "tests/tools/runtime_watch_ops.py",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 749505
+    },
+    {
+      "category": "include_current_tests_tools",
+      "path": "tests/tools/run_policy_pipeline.py",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 170883
+    },
+    {
+      "category": "include_current_tests_tools",
+      "path": "tests/tools/build_evidence_bundle.py",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 237480
+    },
+    {
+      "category": "include_current_tests_tools",
+      "path": "tests/tools/source_health_preflight.py",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 7985
+    },
+    {
+      "category": "include_current_tests_cpp_hpp",
+      "path": "tests/CMakeLists.txt",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 120100
+    },
+    {
+      "category": "include_current_tests_cpp_hpp",
+      "path": "tests/raw_engine_cases.cpp",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 1468016
+    },
+    {
+      "category": "include_current_tests_cpp_hpp",
+      "path": "tests/test_harness.hpp",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 12057
+    },
+    {
+      "category": "include_campaign_fixtures",
+      "path": "tests/campaigns/phase16_split_tie_organic_compare.txt",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 762
+    },
+    {
+      "category": "include_policy_historical_summaries",
+      "path": "artifacts/phase22_applicability/logs",
+      "found": true,
+      "is_dir": true,
+      "size_bytes": 0
+    },
+    {
+      "category": "include_policy_historical_summaries",
+      "path": "artifacts/phase17_lineage/logs",
+      "found": true,
+      "is_dir": true,
+      "size_bytes": 0
+    },
+    {
+      "category": "include_runtime_budget_profiles",
+      "path": "tests/runtime_budget_phase29.json",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 3702
+    },
+    {
+      "category": "include_bundle_required_manifests",
+      "path": "artifacts/manifests/operator_archive_reference_graph_phase52.json",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 8189
+    },
+    {
+      "category": "include_bundle_required_manifests",
+      "path": "artifacts/manifests/operator_archive_retention_policy_phase52.json",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 739
+    },
+    {
+      "category": "include_phase_specific_governance_artifacts",
+      "path": "artifacts/manifests/operator_waiver_review_phase52.json",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 1236
+    },
+    {
+      "category": "include_phase_specific_governance_artifacts",
+      "path": "artifacts/manifests/verification_preflight_gate_phase52.json",
+      "found": true,
+      "is_dir": false,
+      "size_bytes": 813
+    }
+  ],
+  "completeness_verdict": "PASS",
+  "overlay_hash": "2f319348880346622ce0c30af867685d6c092367ff5c12210e930ce16ed88a8e",
+  "completeness_hash": "4be94e327802444832660dc06d66b9db8455a76da3ab961d610ceda981893324"
+}

@@ -1,4 +1,0 @@
-real 11.79
-user 11.45
-sys 0.30
-time: sysctl kern.clockrate: Operation not permitted

@@ -1,9 +1,13 @@
 # Canonical Compression Status Sublemma Proofs 90
 
-## status
+## status after congruence refinement
 
-`canonical_compression_status_sublemmas_attempted_congruence_open`
+`canonical_compression_status_sublemma_proofs_domain_normal_form_open`
 
-This proof attempt closes the status-language classification and failure-naming parts for canonical motif compression, and reuses the existing lexicographic support/canonical measure decrease for accepted compressible motifs. It does not prove canonical-motif counterexample-status congruence.
+Language and failure classification are current-scope proved. Payload
+congruence, status-domain transfer, normal-form transfer, and conditional
+preservation are proof-sketch/proof-ready. Status predicate determination and
+valid reduced-status fallback remain blocked.
 
-Runtime table: `branch_4/90/runtime/canonical_compression_status_sublemma_proofs_90.tsv`.
+Runtime proofs:
+`branch_4/90/runtime/canonical_compression_status_sublemma_proofs_90.tsv`.

@@ -1,0 +1,24 @@
+{
+  "publication_version": "phase31_quick_summary_v1",
+  "phase": "phase31",
+  "mode": "quick",
+  "severity": "WARN",
+  "exit_code": 10,
+  "policy_severity": "OK",
+  "runtime_severity": "WARN",
+  "runtime_comparability_verdict": "COMPARABLE",
+  "runtime_freshness_verdict": "FRESH",
+  "runtime_budget_verdict": "BUDGET_WARN",
+  "runtime_recommendation": "WATCH_RUNTIME",
+  "current_env_watch_confidence": "MEDIUM",
+  "new_env_watch_confidence": "MEDIUM",
+  "current_env_operator_action": "WATCH_RUNTIME",
+  "new_env_operator_action": "NO_ACTION",
+  "recommended_next_action": "release_full is a stable production_critical soft-budget overrun with bounded jitter across 3/5 samples",
+  "rationale": [
+    "correctness lifecycle is PASS/FRESH",
+    "runtime comparability/freshness healthy",
+    "release_full is a stable production_critical soft-budget overrun with bounded jitter across 3/5 samples"
+  ],
+  "authoritative_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_pipeline_quick_phase31.json"
+}

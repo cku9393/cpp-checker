@@ -1,6 +1,0 @@
-manifest_version=publication_health_v1
-phase=phase52
-status=FAIL
-missing_artifact_count=2
-hash_mismatch_count=0
-dangling_reference_count=0

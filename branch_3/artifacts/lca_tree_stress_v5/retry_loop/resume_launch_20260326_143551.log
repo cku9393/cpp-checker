@@ -1,5 +1,0 @@
-[2m2026-03-26T05:36:35.122737Z[0m [[32m[1minfo     [0m] [1mcodex_cli_runtime.initialized [0m [36mcli_path[0m=[35m/opt/homebrew/bin/codex[0m [36mcwd[0m=[35m'/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3'[0m [36mfilename[0m=[35mcodex_cli_runtime.py[0m [36mlineno[0m=[35m106[0m [36mmodel[0m=[35mNone[0m [36mpermission_mode[0m=[35macceptEdits[0m [36mskills_dir[0m=[35mpackaged://ouroboros.codex/skills[0m
-╭─────────────────────────────────── [1mError[0m ────────────────────────────────────╮
-│ Orchestrator error: Session is in terminal state failed, cannot resume       │
-│ (details: {'session_id': 'orch_6625baf373e9', 'status': 'failed'})           │
-╰──────────────────────────────────────────────────────────────────────────────╯

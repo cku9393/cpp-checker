@@ -1,9 +1,30 @@
 # Project To Active Status Obligations 90
 
-## status
+## status after locality refinement
 
-`project_to_active_status_obligations_ready_status_locality_open`
+`project_to_active_status_obligations_payload_proved_status_domain_open`
 
-The status proof obligations isolate inactive-support irrelevance, payload preservation, counterexample-status locality, smaller-witness fallback, normal-form preservation, family-chain source-form preservation, and named escape.
+The previous status obligations are now refined by
+`project_to_active_locality_obligations_90.md`.
 
-Runtime inventory: `branch_4/90/runtime/project_to_active_status_obligations_90.tsv`.
+Payload locality is available under the active support contract. The remaining
+counterexample-status obligations are status-domain invariance, complete
+status/certificate dependency extraction, normal-form transfer, valid
+reduced-status fallback, and source-form projection when family-chain fields are
+relevant.
+
+Runtime table: `branch_4/90/runtime/project_to_active_status_obligations_90.tsv`.
+## Project To Active Domain Refinement Round
+
+| obligation_key | statement | required_for_selected_statement | existing_verified_inputs | missing_sublemmas | proof_status | dependency_on_inactive_support | dependency_on_payload_locality | dependency_on_status_domain | dependency_on_normal_form | dependency_on_smaller_witness | dependency_on_higher_support | can_attempt_now | recommended_next_action |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| project_to_active_domain_language_well_defined | The domain refinement language separates preserved/refined/reduced/lost/escape cases. | 1 | active support notation;status language |  | proved_under_current_scope | 1 | 0 | 1 | 0 | 0 | 0 | 1 | use_domain_language |
+| source_status_domain_well_defined | The source counterexample-status domain is well-defined. | 1 | project_to_active_status_semantics |  | proved_under_current_scope | 0 | 0 | 1 | 0 | 0 | 0 | 1 | use_source_domain |
+| projected_status_domain_well_defined | The projected domain candidate is well-defined after active projection. | 1 | project_to_active operation semantics |  | proved_under_current_scope | 1 | 1 | 1 | 1 | 0 | 0 | 1 | use_projected_domain |
+| inactive_support_removal_preserves_or_refines_domain | Inactive support removal preserves or refines the source status-domain. | 1 | inactive support locality;payload locality | status dependency irrelevance | proof_sketch_ready | 1 | 1 | 1 | 1 | 0 | 0 | 1 | domain_dependency_sublemma |
+| domain_refinement_preserves_status_predicate_meaning | A refined projected domain preserves counterexample-status predicate meaning. | 1 | domain semantics;payload locality | status predicate determination over refined domain | needs_status_predicate_sublemma | 1 | 1 | 1 | 1 | 0 | 0 | 1 | project_to_active_normal_form_refinement |
+| domain_reduction_implies_smaller_witness | A strict domain reduction is a smaller-witness branch only if projected status is valid. | 1 | measure decrease for strict active subset | valid reduced-status theorem | needs_smaller_witness_sublemma | 1 | 1 | 1 | 1 | 1 | 0 | 1 | valid_reduced_status_sublemma |
+| payload_locality_supports_domain_transfer | Payload locality supplies active carrier containment for domain transfer but does not complete it. | 1 | inactive_support_payload_locality_proved_under_current_scope | payload-to-status dependency bridge | proof_sketch_ready | 1 | 1 | 1 | 0 | 0 | 0 | 1 | payload_to_status_dependency_sublemma |
+| normal_form_interface_sufficient_for_domain_transfer | The normal-form interface lists the assumptions needed to read projected domains. | 1 | support notation;projected normal form candidate | normal-form transfer proof | needs_normal_form_sublemma | 1 | 0 | 1 | 1 | 0 | 0 | 1 | project_to_active_normal_form_refinement |
+| domain_transfer_failure_is_named_escape | Domain transfer failure is a named project-to-active blocker or higher-support escape. | 1 | higher-support escape interface |  | proved_under_current_scope | 1 | 1 | 1 | 1 | 0 | 1 | 1 | keep_escape_visible |
+| no_hidden_domain_transfer_failure_case | Every transfer failure is domain, status-predicate, normal-form, smaller-witness, or named escape. | 1 | domain semantics table;obligation inventory | full no-hidden-case proof after normal-form/status sublemmas | proof_sketch_ready | 1 | 1 | 1 | 1 | 1 | 1 | 1 | project_to_active_normal_form_refinement |

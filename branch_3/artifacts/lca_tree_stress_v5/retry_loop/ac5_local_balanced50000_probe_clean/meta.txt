@@ -1,3 +1,0 @@
-rc=124
-timed_out=1
-elapsed=10.014

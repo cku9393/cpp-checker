@@ -1,0 +1,24 @@
+manifest_version=runtime_comparability_triage_v1
+phase=phase54
+triage_verdict=NOT_COMPARABLE_CURRENT_ENV
+selected_baseline_id=phase34-runtime-external-approved-0f34bd33-20260404_202159
+selected_baseline_tag=phase34-runtime-external-approved
+current_fingerprint_key=03c7e45844a825c1aa0c8bc0c00e36077a280846f2d63b7fd8137e728b2ac649
+selected_baseline_fingerprint_key=0d045149f16d138f992da5a9f56dc290a7bf24faefc87d4e5cc11ad87c7ff1af
+exact_match_count=0
+compatible_match_count=2
+retired_match_count=0
+proposal_needed=1
+recommended_action=PROPOSE_CURRENT_ENV_REBASELINE
+mismatch_host=1
+mismatch_compiler=1
+mismatch_build_type=1
+mismatch_sanitizer_flags=1
+mismatch_runner_tag=1
+mismatch_execution_class_shape=1
+mismatch_budget_profile=1
+rationale=same host/compiler-family runtime lineage exists, but the current fingerprint is not strict-comparable
+rationale=baseline selector preferred a foreign/externally approved compatible candidate; keep this as a runtime operator action
+rationale=same host runtime baseline candidate differs by compiler version
+rationale=watch registry current_env_status=REBASELINE_REQUIRED
+rationale=runtime comparability is an operator lane signal and does not change correctness PASS/FRESH state

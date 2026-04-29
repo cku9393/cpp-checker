@@ -1,0 +1,27 @@
+{
+  "manifest_version": "staged_materialization_transaction_v2",
+  "phase": "phase53",
+  "generated_at_utc": "2026-04-24T14:52:41Z",
+  "transaction_id": "phase53-materialization-cdfcddf32070",
+  "materialization_mode": "staged_sparse_clone_overlay",
+  "source_health_hash": "d63094521e7287bc76a9aab8de707896122abd12a68730a5cffa8c18b15ce336",
+  "sparse_clone_ref": "96ac5861ea1d73fba5f11ea05402bff1a9366205",
+  "overlay_file_count": 0,
+  "overlay_hash": "903c0c0c0b3f2f9cb7cbb9b4653f8b12a37b549e3ce00e0634919f524055c368",
+  "dataless_remaining_count": 0,
+  "source_snapshot_hash": "b92d0c9fbdd8b80c028a45e0b63776c0b27004c815788025bfd9f2c39d0990fc",
+  "staged_mirror_hash": "9084beec7590bd0e585a15d058a2423f1d1793e4e716a6ec395e897788491120",
+  "transaction_verdict": "PASS",
+  "rollback_cleanup_performed": true,
+  "cleanup_performed": true,
+  "cleanup_paths": [
+    "/private/tmp/raw_engine_phase53_staged_cleanup_probe"
+  ],
+  "overlay_completeness_hash": "ee87b01ec56d9157d7ba67aa82801d5beeef5c01d9983d351db78c5ae1d39262",
+  "overlay_missing_count": 0,
+  "retained_policy_artifact_count": 6,
+  "retained_campaign_artifact_count": 1,
+  "archive_reference_graph_hash": "45b6bfaacaab6f18b5404136277b286d134f56052534861eb48b142dcc86d191",
+  "published_root_sync_intent": "sync_after_verification_pass",
+  "transaction_hash": "d6d9fb81a5697515299a206940e510a0ae6acb5d9e46535a450289048d5da500"
+}

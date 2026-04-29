@@ -1,7 +1,0 @@
-[release_diag] phase=case_start run_tag=balanced99999_release_diag3 deletion=0/99999 x=-1 elapsed_ms=0 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=preprocess_done run_tag=balanced99999_release_diag3 deletion=0/99999 x=-1 elapsed_ms=135 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=topo_artifact_done run_tag=balanced99999_release_diag3 deletion=0/99999 x=-1 elapsed_ms=2297 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=topo_owner_exact_done run_tag=balanced99999_release_diag3 deletion=0/99999 x=-1 elapsed_ms=2512 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=topo_init_done run_tag=balanced99999_release_diag3 deletion=0/99999 x=-1 elapsed_ms=2512 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=owner_index_done run_tag=balanced99999_release_diag3 deletion=0/99999 x=-1 elapsed_ms=2619 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=active_scan_done run_tag=balanced99999_release_diag3 deletion=0/99999 x=-1 elapsed_ms=2657 psplit_calls=0 psplit_vertices=0 psplit_ns=0

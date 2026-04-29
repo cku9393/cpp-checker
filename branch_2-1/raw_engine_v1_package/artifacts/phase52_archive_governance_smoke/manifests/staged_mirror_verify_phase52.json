@@ -1,5 +1,0 @@
-{
-  "manifest_version": "staged_mirror_verify_v1",
-  "verify_verdict": "PASS",
-  "staged_mirror_hash": "phase52-mirror-smoke"
-}

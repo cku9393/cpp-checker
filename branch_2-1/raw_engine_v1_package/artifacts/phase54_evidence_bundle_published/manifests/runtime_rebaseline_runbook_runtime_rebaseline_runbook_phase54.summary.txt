@@ -1,0 +1,42 @@
+{
+  "manifest_version": "runtime_rebaseline_runbook_v1",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T08:14:26Z",
+  "runbook_id": "phase54-current_env_rebaseline-handoff",
+  "runbook_type": "current_env_rebaseline",
+  "approval_ready": true,
+  "approval_mode": "handoff_only",
+  "integrated_opt_in_required": true,
+  "mutates_registry": false,
+  "recommended_command": "./raw_engine_tests --case runtime_approve_rebaseline --runtime-current-manifest /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json --runtime-baseline-registry /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json --approval-mode handoff_only",
+  "required_inputs": [
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_action_plan_phase54.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_action_proposal_phase54.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_action_proposal_gate_phase54.json",
+    "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json"
+  ],
+  "expected_outputs": [
+    "operator-reviewed current_env_rebaseline decision",
+    "updated runtime registry only after explicit operator approval"
+  ],
+  "safety_checks": [
+    "confirm correctness PASS/FRESH before runtime registry work",
+    "keep approval_mode=handoff_only unless explicitly opting into integrated tests-only flow",
+    "do not switch registry from this runbook without operator confirmation"
+  ],
+  "blockers": [],
+  "registry_entry_count": 2,
+  "rationale": [
+    "same host/compiler-family runtime lineage exists, but the current fingerprint is not strict-comparable",
+    "baseline selector preferred a foreign/externally approved compatible candidate; keep this as a runtime operator action",
+    "same host runtime baseline candidate differs by compiler version",
+    "watch registry current_env_status=REBASELINE_REQUIRED",
+    "runtime comparability is an operator lane signal and does not change correctness PASS/FRESH state",
+    "runtime action is approval-ready but remains handoff_only; registry switch is not automatic",
+    "correctness PASS/FRESH is unaffected; this plan only covers runtime/operator state"
+  ],
+  "runtime_rebaseline_action_plan_hash": "dda03fe3e325b5b8e45f082dff6f5876386314d9a390e48775e237cbe303a138",
+  "runtime_rebaseline_proposal_hash": "341e74afeb569408647d7b0456b109bd63f34500eb97be122b7a8fe8493ac571",
+  "runtime_rebaseline_proposal_gate_hash": "de764da80615fb6c0a25ac4a2e71a12904f6a053b2229d6c934160123bd735cf",
+  "runbook_hash": "647ef0bae4d5fcdcb441756c6a91edfc963d5054314e3195c31a15c0658ba011"
+}

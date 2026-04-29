@@ -1,8 +1,0 @@
-manifest_version=runtime_current_env_action_ledger_compact_v1
-phase=phase46
-active_action_count=0
-closed_action_count=1
-archived_action_count=0
-retry_pending_count=0
-retained_action_ids=phase44-current-env-reproposal-001
-archived_action_ids=

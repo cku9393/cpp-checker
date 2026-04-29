@@ -1,2 +1,0 @@
-policy_rerun_plan_summary summary_verdict=RERUN_REQUIRED stale_family_count=0 requires_rerun_family_count=1 reclassify_required_count=1 selected_entry_count=1
-family=planner_tie_mixed_organic current_status=NON_APPLICABLE freshness_status=REQUIRES_RERUN rerun_kind=applicability_audit_rerun evidence_mode=applicability_only

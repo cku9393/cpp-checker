@@ -1,0 +1,476 @@
+{
+  "manifest_version": "policy_ops_summary_v2",
+  "phase": "phase32",
+  "generated_at_utc": "2026-04-01T01:46:29Z",
+  "correctness_summary": {
+    "severity": "OK",
+    "verdict": "PASS",
+    "freshness_verdict": "FRESH",
+    "family_statuses": [
+      {
+        "family": "split_tie_organic_symmetric",
+        "role": "production_family",
+        "current_status": "PASS",
+        "status": "PASS",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": true,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "direct_compare",
+          "campaign_compare"
+        ],
+        "source_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase22_campaigns_compare/split_tie_organic/logs/phase22_split_tie_organic_aggregate.summary.txt",
+        "threshold": {
+          "compared_state_count_min": 32,
+          "compare_eligible_state_count_min": 32,
+          "compare_completed_state_count_min": 32,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 0,
+          "applicability_max_compare_relevance": 0.0,
+          "applicability_max_split_ready_relevance": 0.0,
+          "applicability_min_dominant_reason_confidence": 0.0,
+          "lineage_sample_count_min": 0
+        },
+        "measured": {
+          "generated_state_count": 0,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 0,
+          "actual_integrate_hits": 0,
+          "compared_state_count": 36,
+          "compare_eligible_state_count": 36,
+          "compare_ineligible_state_count": 0,
+          "compare_ineligible_reason_histogram": {},
+          "compare_completed_state_count": 36,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 0,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "",
+          "dominant_ineligible_reason_confidence": 0.0,
+          "derived_from_base_state_count": 0,
+          "same_semantic_class_count": 0,
+          "same_final_state_count": 0,
+          "same_trace_class_count": 0,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 0
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "22e63753346a1e46",
+          "generator_family_hash": "6ee0b1a8df236c22",
+          "compare_engine_hash": "d154c9a1e20ab6af",
+          "campaign_config_hash": "35b7b27926385ae4",
+          "combined_hash": "b903c62a0677e4e4"
+        },
+        "rationale": "direct compare evidence satisfied",
+        "freshness_rationale": "current manifest records live direct compare evidence"
+      },
+      {
+        "family": "automorphism_probe_large",
+        "role": "production_family",
+        "current_status": "PASS",
+        "status": "PASS",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": true,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "direct_compare",
+          "campaign_compare"
+        ],
+        "source_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase22_campaigns_compare/automorphism_probe/logs/phase22_automorphism_probe_aggregate.summary.txt",
+        "threshold": {
+          "compared_state_count_min": 32,
+          "compare_eligible_state_count_min": 32,
+          "compare_completed_state_count_min": 32,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 0,
+          "applicability_max_compare_relevance": 0.0,
+          "applicability_max_split_ready_relevance": 0.0,
+          "applicability_min_dominant_reason_confidence": 0.0,
+          "lineage_sample_count_min": 0
+        },
+        "measured": {
+          "generated_state_count": 0,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 0,
+          "actual_integrate_hits": 0,
+          "compared_state_count": 36,
+          "compare_eligible_state_count": 36,
+          "compare_ineligible_state_count": 0,
+          "compare_ineligible_reason_histogram": {},
+          "compare_completed_state_count": 36,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 0,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "",
+          "dominant_ineligible_reason_confidence": 0.0,
+          "derived_from_base_state_count": 0,
+          "same_semantic_class_count": 0,
+          "same_final_state_count": 0,
+          "same_trace_class_count": 0,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 0
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "22e63753346a1e46",
+          "generator_family_hash": "6ee0b1a8df236c22",
+          "compare_engine_hash": "d154c9a1e20ab6af",
+          "campaign_config_hash": "e7f1847550c3df7f",
+          "combined_hash": "9c333f6784d2b4fa"
+        },
+        "rationale": "direct compare evidence satisfied",
+        "freshness_rationale": "current manifest records live direct compare evidence"
+      },
+      {
+        "family": "planner_tie_mixed_organic",
+        "role": "production_family",
+        "current_status": "NON_APPLICABLE",
+        "status": "NON_APPLICABLE",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": false,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "applicability_only"
+        ],
+        "source_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase17_campaigns_compare/planner_tie_mixed_organic_gap_audit/logs/phase17_planner_tie_mixed_organic_gap_audit_aggregate.summary.txt;applicability=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase22_applicability/logs/planner_tie_mixed_organic_applicability_audit.summary.txt",
+        "threshold": {
+          "compared_state_count_min": 0,
+          "compare_eligible_state_count_min": 0,
+          "compare_completed_state_count_min": 0,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 48,
+          "applicability_max_compare_relevance": 0.02,
+          "applicability_max_split_ready_relevance": 0.05,
+          "applicability_min_dominant_reason_confidence": 0.9,
+          "lineage_sample_count_min": 0
+        },
+        "measured": {
+          "generated_state_count": 48,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 48,
+          "actual_integrate_hits": 48,
+          "compared_state_count": 0,
+          "compare_eligible_state_count": 0,
+          "compare_ineligible_state_count": 48,
+          "compare_ineligible_reason_histogram": {
+            "no_split_ready": 48
+          },
+          "compare_completed_state_count": 0,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 48,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "no_split_ready",
+          "dominant_ineligible_reason_confidence": 1.0,
+          "derived_from_base_state_count": 0,
+          "same_semantic_class_count": 0,
+          "same_final_state_count": 0,
+          "same_trace_class_count": 0,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 0
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "22e63753346a1e46",
+          "generator_family_hash": "7483d65940a5eb23",
+          "compare_engine_hash": "d154c9a1e20ab6af",
+          "campaign_config_hash": "668b00b7580be8c1",
+          "combined_hash": "f539d9d32f1ed98a"
+        },
+        "rationale": "no_split_ready remained dominant and compare relevance stayed below threshold",
+        "freshness_rationale": "current manifest records live applicability evidence"
+      },
+      {
+        "family": "planner_tie_mixed_organic_compare_ready",
+        "role": "diagnostic_support_family",
+        "current_status": "DIAGNOSTIC_ONLY",
+        "status": "DIAGNOSTIC_ONLY",
+        "freshness_status": "FRESH",
+        "counts_as_production_evidence": false,
+        "drift_flag": false,
+        "reclassify_required": false,
+        "evidence_sources": [
+          "diagnostic_lineage"
+        ],
+        "source_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase17_campaigns_compare/planner_tie_mixed_organic_compare_ready/logs/phase17_planner_tie_mixed_organic_compare_ready_aggregate.summary.txt;lineage=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase22_lineage/logs/compare_ready_lineage_audit.summary.txt",
+        "threshold": {
+          "compared_state_count_min": 32,
+          "compare_eligible_state_count_min": 32,
+          "compare_completed_state_count_min": 32,
+          "semantic_disagreement_count_max": 0,
+          "fallback_count_max": 0,
+          "semantic_shift_count_max": 0,
+          "representative_shift_count_max": 18446744073709551615,
+          "applicability_generated_state_count_min": 0,
+          "applicability_max_compare_relevance": 0.0,
+          "applicability_max_split_ready_relevance": 0.0,
+          "applicability_min_dominant_reason_confidence": 0.0,
+          "lineage_sample_count_min": 16
+        },
+        "measured": {
+          "generated_state_count": 0,
+          "split_ready_state_count": 0,
+          "tie_ready_state_count": 0,
+          "actual_split_hits": 0,
+          "actual_join_hits": 0,
+          "actual_integrate_hits": 0,
+          "compared_state_count": 32,
+          "compare_eligible_state_count": 32,
+          "compare_ineligible_state_count": 0,
+          "compare_ineligible_reason_histogram": {},
+          "compare_completed_state_count": 32,
+          "semantic_disagreement_count": 0,
+          "fallback_count": 0,
+          "semantic_shift_count": 0,
+          "representative_shift_count": 0,
+          "no_split_ready_count": 0,
+          "compare_relevance": 0.0,
+          "split_ready_relevance": 0.0,
+          "tie_ready_relevance": 0.0,
+          "dominant_ineligible_reason": "",
+          "dominant_ineligible_reason_confidence": 0.0,
+          "derived_from_base_state_count": 16,
+          "same_semantic_class_count": 16,
+          "same_final_state_count": 16,
+          "same_trace_class_count": 16,
+          "followup_pattern_preserved_count": 0,
+          "structure_only_enrichment_count": 0,
+          "lineage_sample_count": 16
+        },
+        "relevant_input_hashes": {
+          "planner_semantics_hash": "22e63753346a1e46",
+          "generator_family_hash": "342808185d009ff6",
+          "compare_engine_hash": "d154c9a1e20ab6af",
+          "campaign_config_hash": "",
+          "combined_hash": "3bacae98547bdd13"
+        },
+        "rationale": "diagnostic compare family met bounded compare and lineage consistency, but followup preservation or structure-only enrichment did not hold; counts_as_production_evidence=false",
+        "freshness_rationale": "current manifest records live diagnostic lineage evidence"
+      }
+    ]
+  },
+  "current_env_summary": {
+    "severity": "WARN",
+    "recommendation": "WATCH_RUNTIME",
+    "watch_reason": "release_full is a stable production_critical soft-budget overrun with bounded jitter across 5/5 samples",
+    "operator_conclusion": "current env: continue monitoring release_full before treating the runtime watch as fully cleared",
+    "correctness_status": {
+      "verdict": "PASS",
+      "freshness_verdict": "FRESH"
+    },
+    "runtime_status": {
+      "comparability_verdict": "COMPARABLE",
+      "freshness_verdict": "FRESH",
+      "budget_verdict": "BUDGET_WARN"
+    },
+    "watch_status": "WATCH_STABLE",
+    "watch_recommendation": "WATCH_RUNTIME",
+    "watch_confidence": "HIGH",
+    "confidence_reason": "production_critical watch is backed by 25 real same-fingerprint samples with bounded jitter and stable overrun depth 5",
+    "evidence_source_counts": {
+      "real": 150
+    },
+    "active_lineage_count": 1,
+    "real_lineage_count": 1,
+    "latest_real_sample_timestamp": "2026-04-01T01:46:29Z",
+    "latest_fixture_sample_timestamp": "None"
+  },
+  "new_env_summary": {
+    "severity": "ACTION_REQUIRED",
+    "recommendation": "REBASELINE_REQUIRED",
+    "operator_conclusion": "new env: do not compare strictly without explicit rebaseline",
+    "comparability_bucket": "COMPARABLE",
+    "watch_status": "REBASELINE_REQUIRED",
+    "watch_recommendation": "REBASELINE_REQUIRED",
+    "watch_confidence": "LOW",
+    "confidence_reason": "diagnostic watch is driven primarily by fixture or replay evidence",
+    "evidence_source_counts": {
+      "fixture": 120
+    },
+    "active_lineage_count": 4,
+    "real_lineage_count": 0,
+    "latest_real_sample_timestamp": "None",
+    "latest_fixture_sample_timestamp": "2026-04-01T01:35:23Z",
+    "matrix_entry_count": 6,
+    "matrix_action_counts": {
+      "WATCH_RUNTIME": 1,
+      "NOT_COMPARABLE": 3,
+      "REBASELINE_REQUIRED": 2
+    }
+  },
+  "runtime_same_fingerprint_summary": {
+    "selected_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+    "selected_baseline_tag": "phase30-runtime-approved",
+    "comparability_verdict": "COMPARABLE",
+    "freshness_verdict": "FRESH",
+    "budget_verdict": "BUDGET_WARN",
+    "watch_status": "WATCH_STABLE",
+    "watch_recommendation": "WATCH_RUNTIME",
+    "diagnostic_watch_only": false,
+    "watch_confidence": "HIGH",
+    "confidence_reason": "production_critical watch is backed by 25 real same-fingerprint samples with bounded jitter and stable overrun depth 5"
+  },
+  "runtime_cross_fingerprint_summary": {
+    "matrix_severity": "ACTION_REQUIRED",
+    "matrix_verdict": "REBASELINE_REQUIRED",
+    "matrix_entry_count": 6,
+    "matrix_watch_status_counts": {
+      "WATCH_STABLE": 1,
+      "REBASELINE_REQUIRED": 5
+    },
+    "matrix_watch_recommendation_counts": {
+      "WATCH_RUNTIME": 1,
+      "REBASELINE_REQUIRED": 5
+    },
+    "matrix_action_counts": {
+      "WATCH_RUNTIME": 1,
+      "NOT_COMPARABLE": 3,
+      "REBASELINE_REQUIRED": 2
+    },
+    "matrix_severity_counts": {
+      "WARN": 1,
+      "ACTION_REQUIRED": 5
+    },
+    "watch_confidence": "LOW",
+    "confidence_reason": "diagnostic watch is driven primarily by fixture or replay evidence"
+  },
+  "watch_registry_summary": {
+    "entry_count": 30,
+    "fingerprint_count": 5,
+    "status_counts": {
+      "REBASELINE_REQUIRED": 24,
+      "CLEAR": 5,
+      "WATCH_STABLE": 1
+    },
+    "recommendation_counts": {
+      "REBASELINE_REQUIRED": 24,
+      "NO_ACTION": 5,
+      "WATCH_RUNTIME": 1
+    },
+    "comparability_counts": {
+      "NOT_COMPARABLE": 18,
+      "REBASELINE_REQUIRED": 6,
+      "None": 6
+    },
+    "role_counts": {
+      "diagnostic": 5,
+      "production_critical": 10,
+      "operator": 15
+    },
+    "evidence_source_counts": {
+      "real": 150,
+      "fixture": 300
+    },
+    "confidence_counts": {
+      "LOW": 24,
+      "HIGH": 6
+    },
+    "active_lineage_count": 5,
+    "real_lineage_count": 1
+  },
+  "current_environment": {
+    "severity": "WARN",
+    "recommended_action_current_env": "WATCH_RUNTIME",
+    "watch_status": "WATCH_STABLE",
+    "watch_confidence": "HIGH",
+    "operator_conclusion": "current env: continue monitoring release_full before treating the runtime watch as fully cleared"
+  },
+  "new_environment_matrix": {
+    "severity": "ACTION_REQUIRED",
+    "recommended_action_new_env": "REBASELINE_REQUIRED",
+    "comparability_buckets": {},
+    "rebaseline_required_counts": {
+      "WATCH_RUNTIME": 1,
+      "NOT_COMPARABLE": 3,
+      "REBASELINE_REQUIRED": 2
+    },
+    "operator_conclusion": "new env: do not compare strictly without explicit rebaseline"
+  },
+  "overall_summary": {
+    "exact_shadow_policy_status": "healthy",
+    "runtime_baseline_registry_health": "healthy",
+    "stale_family_count": 0,
+    "stale_runtime_lineage_count": 5,
+    "required_operator_actions": [
+      "WATCH_RUNTIME",
+      "REBASELINE_REQUIRED"
+    ],
+    "current_env_operator_conclusion": "current env: continue monitoring release_full before treating the runtime watch as fully cleared",
+    "new_env_operator_conclusion": "new env: do not compare strictly without explicit rebaseline"
+  },
+  "final_operator_summary": {
+    "combined_severity_current_env": "WARN",
+    "combined_severity_cross_env": "ACTION_REQUIRED",
+    "recommended_action_current_env": "WATCH_RUNTIME",
+    "recommended_action_new_env": "REBASELINE_REQUIRED",
+    "current_env_operator_conclusion": "current env: continue monitoring release_full before treating the runtime watch as fully cleared",
+    "new_env_operator_conclusion": "new env: do not compare strictly without explicit rebaseline",
+    "rationale": [
+      "correctness lifecycle green",
+      "runtime same-fingerprint baseline remains comparable and fresh",
+      "runtime budget verdict for current environment is BUDGET_WARN",
+      "production-critical release_full soft-budget watch remains stable",
+      "current environment should continue monitoring release_full before any further runtime approval action",
+      "new or foreign runtime fingerprints still require explicit rebaseline"
+    ],
+    "structured_rationale": [
+      {
+        "category": "correctness",
+        "message": "correctness lifecycle green"
+      },
+      {
+        "category": "runtime",
+        "message": "runtime same-fingerprint baseline remains comparable and fresh"
+      },
+      {
+        "category": "runtime",
+        "message": "runtime budget verdict for current environment is BUDGET_WARN"
+      },
+      {
+        "category": "runtime",
+        "message": "production-critical release_full soft-budget watch remains stable"
+      },
+      {
+        "category": "runtime",
+        "message": "current environment should continue monitoring release_full before any further runtime approval action"
+      },
+      {
+        "category": "cross_environment",
+        "message": "new or foreign runtime fingerprints still require explicit rebaseline"
+      }
+    ]
+  },
+  "ops_summary_hash": "19f928c744a725bd7eae48eb47e00bbae566fe934dc01a6d4d20e61afd999c85"
+}

@@ -1,0 +1,64 @@
+{
+  "approval_version": "runtime_rebaseline_approval_v1",
+  "approval_status": "approved",
+  "approved_from_current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase34_external.json",
+  "approved_from_current_manifest_hash": "a769046ffb35de730c3f54c4ee9f1757a9173d1c009e50fd1e82911695c1c970",
+  "approved_from_proposal": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase34_external.json",
+  "approved_from_proposal_hash": "4f8b5ecb13474051d9697f1f462490667990827d809c0e05ba830dde7433ee15",
+  "approved_from_proposal_gate": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_proposal_gate_phase34_external.json",
+  "approved_from_proposal_gate_hash": "79ab2c042bb03440e9b138f9293f13e684f749b603ff415de827de51d01dce6e",
+  "approved_from_proposal_gate_verdict": "APPROVABLE",
+  "proposal_confidence": "HIGH",
+  "selected_previous_baseline": "phase30-runtime-approved-c89a575d-20260331_041735",
+  "selected_previous_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+  "selected_previous_baseline_tag": "phase30-runtime-approved",
+  "selected_previous_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+  "selected_previous_baseline_manifest_hash": "c7eac62f4f09a8c7cf1a8f6f2ccb76a78f84bce3b23c283c0595164a48c782b5",
+  "approval_timestamp_utc": "2026-04-04T20:21:59Z",
+  "baseline_tag": "phase34-runtime-external-approved",
+  "host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "foreign-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "0f34bd3335e7aea443e7b6ebfb05256240a33d717e415c48d635b4040a33f34c"
+  },
+  "toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "execution_classes_covered": [
+    "asan_full",
+    "debug_full",
+    "policy_core",
+    "policy_nightly",
+    "policy_refresh",
+    "release_full"
+  ],
+  "registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+  "approved_runtime_baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+  "proposal_archive_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase34_external_archived.json",
+  "proposal_hash": "69787a051ae8d49952dcf22bd61e17d8ce9f6035a47028f7b0632d609a9afc00",
+  "proposal_current_manifest_hash": "a769046ffb35de730c3f54c4ee9f1757a9173d1c009e50fd1e82911695c1c970",
+  "approval_current_manifest_hash": "a769046ffb35de730c3f54c4ee9f1757a9173d1c009e50fd1e82911695c1c970",
+  "activate": true,
+  "evidence_summary": {
+    "relevant_execution_class_count": 3,
+    "total_real_sample_count": 18,
+    "total_sample_count": 18,
+    "hard_breach_execution_class_count": 0,
+    "watch_status_counts": {
+      "REBASELINE_REQUIRED": 3
+    }
+  },
+  "new_active_runtime_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "new_active_runtime_baseline_tag": "phase34-runtime-external-approved",
+  "new_active_runtime_baseline_manifest_hash": "56bec0f0ca2c17ae2e5028854d20134768bf08b03e7d3bbfde058b8096e910c0",
+  "previous_active_baseline_id_for_same_fingerprint": null,
+  "previous_active_runtime_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+  "runtime_transition_status": "ACTIVE_CONFIRMED"
+}

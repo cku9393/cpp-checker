@@ -1,0 +1,9 @@
+item	status	evidence	next_action
+inactive_support_status_locality_closed	no	Payload locality is proved under current scope, but status-domain invariance and normal-form transfer remain open.	contract_equivalent_status_congruence_refinement
+project_to_active_support_gt8_escape_reduced	partially	Failure is now separated into payload-locality ready, status-domain open, reduced-status fallback, and named escape cases.	contract_equivalent_status_congruence_refinement
+coordinate_contraction_congruence_priority	open	equivalent-coordinate counterexample-status congruence remains open.	contract_equivalent_status_congruence_refinement
+canonical_compression_congruence_priority	open	canonical-motif counterexample-status congruence remains open.	canonical_compression_status_congruence_refinement
+family_chain_source_alignment_priority	open	source-target payload/status alignment and residual absorption measure decrease remain open.	family_chain_absorption_source_alignment_refinement
+higher_support_needed_now	no	No true irreducible higher-support escape is established while operation-specific proof obligations remain open.	higher_support_necessity_recheck_after_operation_refinements
+limited_to_broader_ready	no	Broader planning can continue, but proof completion is blocked by operation-local congruence/alignment/measure obligations.	limited_to_broader_generalization_plan_after_operation_refinements
+final_label	higher_support_deferred_after_project_to_active_locality_status_domain_open	No support9 scan was run; operation proof blockers still dominate.	contract_equivalent_status_congruence_refinement

@@ -1,0 +1,572 @@
+stage: runtime paths
+support8 runtime paths: workspaceRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker branch4Root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4 archivalBundleRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90 runtimeDataRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime
+stage: backend
+stage: helper link
+stage: helper cut
+stage: randomized differential
+stage: load support-bounded obstruction theorem data
+stage: load triple-family theorem data
+stage: load explicit support-bounded subset baseline
+stage: global exact subset search begin
+stage: global exact subset search size1
+stage: build baseline snapshot n5
+progress: snapshot_n5 200/2291
+progress: snapshot_n5 400/2291
+progress: snapshot_n5 600/2291
+progress: snapshot_n5 800/2291
+progress: snapshot_n5 1000/2291
+progress: snapshot_n5 1200/2291
+progress: snapshot_n5 1400/2291
+progress: snapshot_n5 1600/2291
+progress: snapshot_n5 1800/2291
+progress: snapshot_n5 2000/2291
+progress: snapshot_n5 2200/2291
+progress: snapshot_n5 2291/2291
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: global exact subset search size2
+stage: global exact subset search size3
+stage: global exact subset search size4
+stage: candidate pool completeness
+stage: load support-bounded schema-universe obstruction theorem data
+stage: load quadruple-family theorem data
+stage: load quintuple-family theorem data
+stage: load sextuple-family theorem data
+stage: load septuple-family theorem data
+stage: load high-family aggregate theorem data
+stage: load unified family-chain theorem data
+stage: build exact theorem audit
+stage: exact minimal basis begin
+progress: basis_only_n5 200/2291
+progress: basis_only_n5 400/2291
+progress: basis_only_n5 600/2291
+progress: basis_only_n5 800/2291
+progress: basis_only_n5 1000/2291
+progress: basis_only_n5 1200/2291
+progress: basis_only_n5 1400/2291
+progress: basis_only_n5 1600/2291
+progress: basis_only_n5 1800/2291
+progress: basis_only_n5 2000/2291
+progress: basis_only_n5 2200/2291
+progress: basis_only_n5 2291/2291
+stage: exact minimal basis n6 c5
+progress: bounded_enum_exact_trees 1/20
+progress: bounded_enum_exact_trees 2/20
+progress: bounded_enum_exact_trees 3/20
+progress: bounded_enum_exact_trees 4/20
+progress: bounded_enum_exact_trees 5/20
+progress: bounded_enum_exact_trees 6/20
+progress: bounded_enum_exact_trees 7/20
+progress: bounded_enum_exact_trees 8/20
+progress: bounded_enum_exact_trees 9/20
+progress: bounded_enum_exact_trees 10/20
+progress: bounded_enum_exact_trees 11/20
+progress: bounded_enum_exact_trees 12/20
+progress: bounded_enum_exact_trees 13/20
+progress: bounded_enum_exact_trees 14/20
+progress: bounded_enum_exact_trees 15/20
+progress: bounded_enum_exact_trees 16/20
+progress: bounded_enum_exact_trees 17/20
+progress: bounded_enum_exact_trees 18/20
+progress: bounded_enum_exact_trees 19/20
+progress: bounded_enum_exact_trees 20/20
+progress: bounded_enum_exact_trees 1/20
+progress: bounded_enum_exact_trees 2/20
+progress: bounded_enum_exact_trees 3/20
+progress: bounded_enum_exact_trees 4/20
+progress: bounded_enum_exact_trees 5/20
+progress: bounded_enum_exact_trees 6/20
+progress: bounded_enum_exact_trees 7/20
+progress: bounded_enum_exact_trees 8/20
+progress: bounded_enum_exact_trees 9/20
+progress: bounded_enum_exact_trees 10/20
+progress: bounded_enum_exact_trees 11/20
+progress: bounded_enum_exact_trees 12/20
+progress: bounded_enum_exact_trees 13/20
+progress: bounded_enum_exact_trees 14/20
+progress: bounded_enum_exact_trees 15/20
+progress: bounded_enum_exact_trees 16/20
+progress: bounded_enum_exact_trees 17/20
+progress: bounded_enum_exact_trees 18/20
+progress: bounded_enum_exact_trees 19/20
+progress: bounded_enum_exact_trees 20/20
+progress: bounded_enum_exact_trees 1/20
+progress: bounded_enum_exact_trees 2/20
+progress: bounded_enum_exact_trees 3/20
+progress: bounded_enum_exact_trees 4/20
+progress: bounded_enum_exact_trees 5/20
+progress: bounded_enum_exact_trees 6/20
+progress: bounded_enum_exact_trees 7/20
+progress: bounded_enum_exact_trees 8/20
+progress: bounded_enum_exact_trees 9/20
+progress: bounded_enum_exact_trees 10/20
+progress: bounded_enum_exact_trees 11/20
+progress: bounded_enum_exact_trees 12/20
+progress: bounded_enum_exact_trees 13/20
+progress: bounded_enum_exact_trees 14/20
+progress: bounded_enum_exact_trees 15/20
+progress: bounded_enum_exact_trees 16/20
+progress: bounded_enum_exact_trees 17/20
+progress: bounded_enum_exact_trees 18/20
+progress: bounded_enum_exact_trees 19/20
+progress: bounded_enum_exact_trees 20/20
+progress: bounded_enum_exact_trees 1/20
+progress: bounded_enum_exact_trees 2/20
+progress: bounded_enum_exact_trees 3/20
+progress: bounded_enum_exact_trees 4/20
+progress: bounded_enum_exact_trees 5/20
+progress: bounded_enum_exact_trees 6/20
+progress: bounded_enum_exact_trees 7/20
+progress: bounded_enum_exact_trees 8/20
+progress: bounded_enum_exact_trees 9/20
+progress: bounded_enum_exact_trees 10/20
+progress: bounded_enum_exact_trees 11/20
+progress: bounded_enum_exact_trees 12/20
+progress: bounded_enum_exact_trees 13/20
+progress: bounded_enum_exact_trees 14/20
+progress: bounded_enum_exact_trees 15/20
+progress: bounded_enum_exact_trees 16/20
+progress: bounded_enum_exact_trees 17/20
+progress: bounded_enum_exact_trees 18/20
+progress: bounded_enum_exact_trees 19/20
+progress: bounded_enum_exact_trees 20/20
+progress: bounded_enum_exact_trees 1/20
+progress: bounded_enum_exact_trees 2/20
+progress: bounded_enum_exact_trees 3/20
+progress: bounded_enum_exact_trees 4/20
+progress: bounded_enum_exact_trees 5/20
+progress: bounded_enum_exact_trees 6/20
+progress: bounded_enum_exact_trees 7/20
+progress: bounded_enum_exact_trees 8/20
+progress: bounded_enum_exact_trees 9/20
+progress: bounded_enum_exact_trees 10/20
+progress: bounded_enum_exact_trees 11/20
+progress: bounded_enum_exact_trees 12/20
+progress: bounded_enum_exact_trees 13/20
+progress: bounded_enum_exact_trees 14/20
+progress: bounded_enum_exact_trees 15/20
+progress: bounded_enum_exact_trees 16/20
+progress: bounded_enum_exact_trees 17/20
+progress: bounded_enum_exact_trees 18/20
+progress: bounded_enum_exact_trees 19/20
+progress: bounded_enum_exact_trees 20/20
+progress: bounded_enum_exact_trees 1/20
+progress: bounded_enum_exact_trees 2/20
+progress: bounded_enum_exact_trees 3/20
+progress: bounded_enum_exact_trees 4/20
+progress: bounded_enum_exact_trees 5/20
+progress: bounded_enum_exact_trees 6/20
+progress: bounded_enum_exact_trees 7/20
+progress: bounded_enum_exact_trees 8/20
+progress: bounded_enum_exact_trees 9/20
+progress: bounded_enum_exact_trees 10/20
+progress: bounded_enum_exact_trees 11/20
+progress: bounded_enum_exact_trees 12/20
+progress: bounded_enum_exact_trees 13/20
+progress: bounded_enum_exact_trees 14/20
+progress: bounded_enum_exact_trees 15/20
+progress: bounded_enum_exact_trees 16/20
+progress: bounded_enum_exact_trees 17/20
+progress: bounded_enum_exact_trees 18/20
+progress: bounded_enum_exact_trees 19/20
+progress: bounded_enum_exact_trees 20/20
+progress: basis_only_n6_c5 200/5621
+progress: basis_only_n6_c5 400/5621
+progress: basis_only_n6_c5 600/5621
+progress: basis_only_n6_c5 800/5621
+progress: basis_only_n6_c5 1000/5621
+progress: basis_only_n6_c5 1200/5621
+progress: basis_only_n6_c5 1400/5621
+progress: basis_only_n6_c5 1600/5621
+progress: basis_only_n6_c5 1800/5621
+progress: basis_only_n6_c5 2000/5621
+progress: basis_only_n6_c5 2200/5621
+progress: basis_only_n6_c5 2400/5621
+progress: basis_only_n6_c5 2600/5621
+progress: basis_only_n6_c5 2800/5621
+progress: basis_only_n6_c5 3000/5621
+progress: basis_only_n6_c5 3200/5621
+progress: basis_only_n6_c5 3400/5621
+progress: basis_only_n6_c5 3600/5621
+progress: basis_only_n6_c5 3800/5621
+progress: basis_only_n6_c5 4000/5621
+progress: basis_only_n6_c5 4200/5621
+progress: basis_only_n6_c5 4400/5621
+progress: basis_only_n6_c5 4600/5621
+progress: basis_only_n6_c5 4800/5621
+progress: basis_only_n6_c5 5000/5621
+progress: basis_only_n6_c5 5200/5621
+progress: basis_only_n6_c5 5400/5621
+progress: basis_only_n6_c5 5600/5621
+progress: basis_only_n6_c5 5621/5621
+stage: exact minimal basis n7 c3
+progress: bounded_enum_direct_exact_pairs 1/1
+progress: bounded_enum_direct_exact_pairs 2/21
+progress: bounded_enum_direct_exact_pairs 3/21
+progress: bounded_enum_direct_exact_pairs 4/21
+progress: bounded_enum_direct_exact_pairs 5/21
+progress: bounded_enum_direct_exact_pairs 6/21
+progress: bounded_enum_direct_exact_pairs 7/21
+progress: bounded_enum_direct_exact_pairs 8/21
+progress: bounded_enum_direct_exact_pairs 9/21
+progress: bounded_enum_direct_exact_pairs 10/21
+progress: bounded_enum_direct_exact_pairs 11/21
+progress: bounded_enum_direct_exact_pairs 12/21
+progress: bounded_enum_direct_exact_pairs 13/21
+progress: bounded_enum_direct_exact_pairs 14/21
+progress: bounded_enum_direct_exact_pairs 15/21
+progress: bounded_enum_direct_exact_pairs 16/21
+progress: bounded_enum_direct_exact_pairs 17/21
+progress: bounded_enum_direct_exact_pairs 18/21
+progress: bounded_enum_direct_exact_pairs 19/21
+progress: bounded_enum_direct_exact_pairs 20/21
+progress: bounded_enum_direct_exact_pairs 21/21
+progress: bounded_enum_direct_exact_pairs 1/210
+progress: bounded_enum_direct_exact_pairs 26/210
+progress: bounded_enum_direct_exact_pairs 51/210
+progress: bounded_enum_direct_exact_pairs 76/210
+progress: bounded_enum_direct_exact_pairs 101/210
+progress: bounded_enum_direct_exact_pairs 126/210
+progress: bounded_enum_direct_exact_pairs 151/210
+progress: bounded_enum_direct_exact_pairs 176/210
+progress: bounded_enum_direct_exact_pairs 201/210
+progress: bounded_enum_direct_exact_pairs 210/210
+progress: bounded_enum_direct_exact_pairs 1/1330
+progress: bounded_enum_direct_exact_pairs 101/1330
+progress: bounded_enum_direct_exact_pairs 201/1330
+progress: bounded_enum_direct_exact_pairs 301/1330
+progress: bounded_enum_direct_exact_pairs 401/1330
+progress: bounded_enum_direct_exact_pairs 501/1330
+progress: bounded_enum_direct_exact_pairs 601/1330
+progress: bounded_enum_direct_exact_pairs 701/1330
+progress: bounded_enum_direct_exact_pairs 801/1330
+progress: bounded_enum_direct_exact_pairs 901/1330
+progress: bounded_enum_direct_exact_pairs 1001/1330
+progress: bounded_enum_direct_exact_pairs 1101/1330
+progress: bounded_enum_direct_exact_pairs 1201/1330
+progress: bounded_enum_direct_exact_pairs 1301/1330
+progress: bounded_enum_direct_exact_pairs 1330/1330
+progress: basis_only_n7_c3 100/1349
+progress: basis_only_n7_c3 200/1349
+progress: basis_only_n7_c3 300/1349
+progress: basis_only_n7_c3 400/1349
+progress: basis_only_n7_c3 500/1349
+progress: basis_only_n7_c3 600/1349
+progress: basis_only_n7_c3 700/1349
+progress: basis_only_n7_c3 800/1349
+progress: basis_only_n7_c3 900/1349
+progress: basis_only_n7_c3 1000/1349
+progress: basis_only_n7_c3 1100/1349
+progress: basis_only_n7_c3 1200/1349
+progress: basis_only_n7_c3 1300/1349
+progress: basis_only_n7_c3 1349/1349
+stage: build family-chain theorem audit
+stage: validate family-chain theorem self verification
+stage: build bounded schema scope
+stage: validator support baseline
+stage: support7 local exact
+stage: support8 local exact
+stage: target8 plus-one
+stage: target9 plus-one optional
+stage: load minimal outside-bounded frontier theorem data
+stage: load support8 outside-bounded shell theorem data
+stage: load support8 antecedent5 shell theorem data
+stage: load support8 antecedent6 shell theorem data
+stage: load support8 antecedent7 shell theorem data
+stage: load support8 antecedent8 shell theorem data
+stage: load support8 antecedent9 shell theorem data
+stage: load support8 antecedent10 shell theorem data
+stage: load support8 antecedent11 shell theorem data
+stage: load support8 antecedent12 shell theorem data
+stage: load support8 antecedent13 shell theorem data
+progress: support_plus_one_antecedent_index 25/161
+progress: support_plus_one_antecedent_index 50/161
+progress: support_plus_one_antecedent_index 75/161
+progress: support_plus_one_antecedent_index 100/161
+progress: support_plus_one_antecedent_index 125/161
+progress: support_plus_one_antecedent_index 150/161
+progress: support_plus_one_antecedent_index 161/161
+progress: support_plus_one_frontier 25/161
+progress: support_plus_one_frontier 50/161
+progress: support_plus_one_frontier 75/161
+progress: support_plus_one_frontier 100/161
+progress: support_plus_one_frontier 125/161
+progress: support_plus_one_frontier 150/161
+progress: support_plus_one_frontier 161/161
+support_plus_one frontier plusOneSurvivorsPrePreservation=6
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+stage: build baseline snapshot n5
+progress: antecedent_plus_one_frontier 100/502
+progress: antecedent_plus_one_frontier 200/502
+progress: antecedent_plus_one_frontier 300/502
+progress: antecedent_plus_one_frontier 400/502
+progress: antecedent_plus_one_frontier 500/502
+progress: antecedent_plus_one_frontier 502/502
+progress: support8_local_exact_antecedent_index 25/208
+progress: support8_local_exact_antecedent_index 50/208
+progress: support8_local_exact_antecedent_index 75/208
+progress: support8_local_exact_antecedent_index 100/208
+progress: support8_local_exact_antecedent_index 125/208
+progress: support8_local_exact_antecedent_index 150/208
+progress: support8_local_exact_antecedent_index 175/208
+progress: support8_local_exact_antecedent_index 200/208
+progress: support8_local_exact_antecedent_index 208/208
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_local_exact_oracle_snapshot 32/69
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_local_exact_oracle_snapshot 64/69
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_local_exact_oracle_snapshot 69/69
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: mixed_outside_bounded_frontier 25/208
+progress: mixed_outside_bounded_frontier 50/208
+progress: mixed_outside_bounded_frontier 75/208
+progress: mixed_outside_bounded_frontier 100/208
+progress: mixed_outside_bounded_frontier 125/208
+progress: mixed_outside_bounded_frontier 150/208
+progress: mixed_outside_bounded_frontier 175/208
+progress: mixed_outside_bounded_frontier 200/208
+progress: mixed_outside_bounded_frontier 208/208
+progress: antecedent_plus_two_frontier 25/154
+progress: antecedent_plus_two_frontier 50/154
+progress: antecedent_plus_two_frontier 75/154
+progress: antecedent_plus_two_frontier 100/154
+progress: antecedent_plus_two_frontier 125/154
+progress: antecedent_plus_two_frontier 150/154
+progress: antecedent_plus_two_frontier 154/154
+progress: support8_local_exact_antecedent_index 1/154
+progress: support8_local_exact_antecedent_index 26/154
+progress: support8_local_exact_antecedent_index 51/154
+progress: support8_local_exact_antecedent_index 76/154
+progress: support8_local_exact_antecedent_index 101/154
+progress: support8_local_exact_antecedent_index 126/154
+progress: support8_local_exact_antecedent_index 151/154
+progress: support8_local_exact_antecedent_index 154/154
+progress: support8_local_exact_oracle_snapshot 16/56
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_local_exact_oracle_snapshot 48/56
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_local_exact_oracle_snapshot 56/56
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_antecedent5_frontier 25/154
+progress: support8_antecedent5_frontier 50/154
+progress: support8_antecedent5_frontier 75/154
+progress: support8_antecedent5_frontier 100/154
+progress: support8_antecedent5_frontier 125/154
+progress: support8_antecedent5_frontier 150/154
+progress: support8_antecedent5_frontier 154/154
+progress: antecedent_plus_three_frontier 25/70
+progress: antecedent_plus_three_frontier 50/70
+progress: antecedent_plus_three_frontier 70/70
+progress: support8_local_exact_antecedent_index 1/70
+progress: support8_local_exact_antecedent_index 26/70
+progress: support8_local_exact_antecedent_index 51/70
+progress: support8_local_exact_antecedent_index 70/70
+progress: support8_local_exact_oracle_snapshot 16/28
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_local_exact_oracle_snapshot 28/28
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_antecedent6_frontier 25/70
+progress: support8_antecedent6_frontier 50/70
+progress: support8_antecedent6_frontier 70/70
+progress: antecedent_plus_four_frontier 1/18
+progress: antecedent_plus_four_frontier 2/18
+progress: antecedent_plus_four_frontier 3/18
+progress: antecedent_plus_four_frontier 4/18
+progress: antecedent_plus_four_frontier 5/18
+progress: antecedent_plus_four_frontier 6/18
+progress: antecedent_plus_four_frontier 7/18
+progress: antecedent_plus_four_frontier 8/18
+progress: antecedent_plus_four_frontier 9/18
+progress: antecedent_plus_four_frontier 10/18
+progress: antecedent_plus_four_frontier 11/18
+progress: antecedent_plus_four_frontier 12/18
+progress: antecedent_plus_four_frontier 13/18
+progress: antecedent_plus_four_frontier 14/18
+progress: antecedent_plus_four_frontier 15/18
+progress: antecedent_plus_four_frontier 16/18
+progress: antecedent_plus_four_frontier 17/18
+progress: antecedent_plus_four_frontier 18/18
+progress: support8_local_exact_antecedent_index 1/18
+progress: support8_local_exact_antecedent_index 2/18
+progress: support8_local_exact_antecedent_index 3/18
+progress: support8_local_exact_antecedent_index 4/18
+progress: support8_local_exact_antecedent_index 5/18
+progress: support8_local_exact_antecedent_index 6/18
+progress: support8_local_exact_antecedent_index 7/18
+progress: support8_local_exact_antecedent_index 8/18
+progress: support8_local_exact_antecedent_index 9/18
+progress: support8_local_exact_antecedent_index 10/18
+progress: support8_local_exact_antecedent_index 11/18
+progress: support8_local_exact_antecedent_index 12/18
+progress: support8_local_exact_antecedent_index 13/18
+progress: support8_local_exact_antecedent_index 14/18
+progress: support8_local_exact_antecedent_index 15/18
+progress: support8_local_exact_antecedent_index 16/18
+progress: support8_local_exact_antecedent_index 17/18
+progress: support8_local_exact_antecedent_index 18/18
+progress: support8_local_exact_oracle_snapshot 8/8
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_antecedent7_frontier 1/18
+progress: support8_antecedent7_frontier 2/18
+progress: support8_antecedent7_frontier 3/18
+progress: support8_antecedent7_frontier 4/18
+progress: support8_antecedent7_frontier 5/18
+progress: support8_antecedent7_frontier 6/18
+progress: support8_antecedent7_frontier 7/18
+progress: support8_antecedent7_frontier 8/18
+progress: support8_antecedent7_frontier 9/18
+progress: support8_antecedent7_frontier 10/18
+progress: support8_antecedent7_frontier 11/18
+progress: support8_antecedent7_frontier 12/18
+progress: support8_antecedent7_frontier 13/18
+progress: support8_antecedent7_frontier 14/18
+progress: support8_antecedent7_frontier 15/18
+progress: support8_antecedent7_frontier 16/18
+progress: support8_antecedent7_frontier 17/18
+progress: support8_antecedent7_frontier 18/18
+progress: antecedent_plus_five_frontier 1/2
+progress: antecedent_plus_five_frontier 2/2
+progress: support8_local_exact_antecedent_index 1/2
+progress: support8_local_exact_antecedent_index 2/2
+progress: support8_local_exact_oracle_snapshot 1/1
+progress: batch_oracle_n8 1/262144
+progress: batch_oracle_n8 262144/262144
+progress: support8_antecedent8_frontier 1/2
+progress: support8_antecedent8_frontier 2/2
+progress: antecedent_plus_six_frontier 1/2
+progress: antecedent_plus_six_frontier 2/2
+progress: support8_local_exact_antecedent_index 1/2
+progress: support8_local_exact_antecedent_index 2/2
+progress: support8_antecedent9_frontier 1/2
+progress: support8_antecedent9_frontier 2/2
+progress: antecedent_plus_seven_frontier 1/2
+progress: antecedent_plus_seven_frontier 2/2
+progress: support8_local_exact_antecedent_index 1/2
+progress: support8_local_exact_antecedent_index 2/2
+progress: support8_antecedent10_frontier 1/2
+progress: support8_antecedent10_frontier 2/2
+progress: support8_local_exact_antecedent_index 1/2
+progress: support8_local_exact_antecedent_index 2/2
+progress: support8_local_exact_antecedent_index 1/2
+progress: support8_local_exact_antecedent_index 2/2
+stage: load shell13 authoritative theorem data
+stage: load support8 antecedent14 shell theorem data
+stage: load shell14 authoritative theorem data
+stage: load support8 antecedent15 shell theorem data
+stage: load shell15 authoritative frontier theorem data
+shell15 frontier antecedent_plus_twelve: antecedentShell15FrontierData tag=antecedent_plus_twelve_frontier raw=4 canonical=2 outside=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExact=0 unsupportedPlusOne=0 fingerprint=antecedent_plus_twelve_frontier|4|2|2|0|0|0|0|0 source=current_runtime_shell15_frontier_cache constructor=load_current_shell15_frontier_runtime_artifact_ fallbackHit=0 importedCountEqual=1 importedRowSetEqual=1
+shell15 frontier support8_antecedent15: antecedentShell15FrontierData tag=support8_antecedent15_frontier raw=4 canonical=2 outside=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExact=0 unsupportedPlusOne=0 fingerprint=support8_antecedent15_frontier|4|2|2|0|0|0|0|0 source=current_runtime_shell15_frontier_cache constructor=load_current_shell15_frontier_runtime_artifact_ fallbackHit=0 importedCountEqual=1 importedRowSetEqual=1
+stage: build support8 tail candidate fingerprint data
+stage: validate support8 tail stabilization theorem
+stage: build artifact completion audit
+stage: build document completion audit
+stage: validate support8 authoritative completion lock
+stage: validate support8 tail obstruction chain theorem
+stage: optional shell16 regression
+shell16 non-promoting attempt: loaded current shell16 runtime artifact
+stage: support8 shell tail certificate
+stage: general schema gap certificate
+stage: final classification
+stage: provenance audit
+exact theorem audit: exactN5Instances=2291 boundedN6C5Instances=5621 boundedN7C3Instances=335 exactN5Verified=true boundedN6C5Verified=true boundedN7C3Verified=true why=current runtime reran exact/bounded basis-only theorem audits on satisfiable domains with basisFingerprint=n=2 antecedents=[] => (1,2->1)|n=3 antecedents=[] => (1,2->1)|n=4 antecedents=[(2,3->1) (2,4->2)] => (3,4->1)|n=4 antecedents=[(2,3->1) (2,4->4)] => (3,4->1)|n=4 antecedents=[(2,3->2) (2,4->4)] => (3,4->4)|n=4 antecedents=[(2,3->4)] => (2,4->4)|n=4 antecedents=[] => (1,2->1)|n=5 antecedents=[(2,3->1) (2,4->2)] => (3,4->1)|n=5 antecedents=[(2,3->1) (2,4->4)] => (3,4->1)|n=5 antecedents=[(2,3->2) (2,4->2) (3,4->5)] => (2,5->2)|n=5 antecedents=[(2,3->2) (2,4->4) (3,5->4)] => (2,5->4)|n=5 antecedents=[(2,3->2) (2,4->4)] => (3,4->4)|n=5 antecedents=[(2,3->2) (2,4->5)] => (3,4->5)|n=5 antecedents=[(2,3->4)] => (2,4->4)|n=5 antecedents=[] => (1,2->1)|n=6 antecedents=[(2,3->1) (2,4->2)] => (3,4->1)|n=6 antecedents=[(2,3->1) (2,4->4)] => (3,4->1)|n=6 antecedents=[(2,3->2) (2,4->2) (3,4->5)] => (2,5->2)|n=6 antecedents=[(2,3->2) (2,4->4) (3,5->4)] => (2,5->4)|n=6 antecedents=[(2,3->2) (2,4->4)] => (3,4->4)|n=6 antecedents=[(2,3->2) (2,4->5)] => (3,4->5)|n=6 antecedents=[(2,3->4)] => (2,4->4)|n=6 antecedents=[] => (1,2->1)|n=7 antecedents=[(2,3->1) (2,7->2)] => (3,7->1)|n=7 antecedents=[(2,3->1) (2,7->7)] => (3,7->1)|n=7 antecedents=[(2,3->1) (3,7->3)] => (2,7->1)|n=7 antecedents=[(2,3->1) (3,7->7)] => (2,7->1)|n=7 antecedents=[(2,3->2) (2,6->7)] => (3,6->7)|n=7 antecedents=[(2,3->2) (2,7->7)] => (3,7->7)|n=7 antecedents=[(2,3->2) (3,7->3)] => (2,7->2)|n=7 antecedents=[(2,3->4) (2,7->2)] => (3,7->4)|n=7 antecedents=[(2,3->4) (3,7->3)] => (2,7->4)|n=7 antecedents=[(2,4->2) (4,7->4)] => (2,7->2)|n=7 antecedents=[(2,4->4) (2,7->2)] => (4,7->4)|n=7 antecedents=[(2,4->4) (4,6->7)] => (2,6->7)|n=7 antecedents=[(2,4->4) (4,7->6)] => (2,7->6)|n=7 antecedents=[(2,4->4) (4,7->7)] => (2,7->7)|n=7 antecedents=[(2,4->5) (2,7->2)] => (4,7->5)|n=7 antecedents=[(2,4->5) (4,7->4)] => (2,7->5)|n=7 antecedents=[(2,5->4) (2,7->2)] => (5,7->4)|n=7 antecedents=[(2,5->5) (2,7->1)] => (5,7->1)|n=7 antecedents=[(2,5->5) (2,7->2)] => (5,7->5)|n=7 antecedents=[(2,5->5) (5,6->7)] => (2,6->7)|n=7 antecedents=[(2,5->5) (5,7->7)] => (2,7->7)|n=7 antecedents=[(2,6->7)] => (2,7->7)|n=7 antecedents=[(2,6->7)] => (6,7->7)|n=7 antecedents=[(2,7->1) (6,7->7)] => (2,6->1)|n=7 antecedents=[(3,4->1) (3,7->3)] => (4,7->1)|n=7 antecedents=[(3,4->1) (4,7->4)] => (3,7->1)|n=7 antecedents=[(3,4->1) (4,7->7)] => (3,7->1)|n=7 antecedents=[(3,4->3) (4,7->4)] => (3,7->3)|n=7 antecedents=[(3,4->4) (3,7->3)] => (4,7->4)|n=7 antecedents=[(3,4->4) (3,7->6) (4,6->6)] => (4,7->6)|n=7 antecedents=[(3,4->4) (4,6->7)] => (3,6->7)|n=7 antecedents=[(3,4->4) (4,7->6)] => (3,7->6)|n=7 antecedents=[(3,4->4) (4,7->7)] => (3,7->7)|n=7 antecedents=[(3,4->5) (3,7->3)] => (4,7->5)|n=7 antecedents=[(3,4->5) (4,7->4)] => (3,7->5)|n=7 antecedents=[(3,5->1) (3,7->3)] => (5,7->1)|n=7 antecedents=[(3,5->1) (3,7->7)] => (5,7->1)|n=7 antecedents=[(3,5->1) (5,7->5)] => (3,7->1)|n=7 antecedents=[(3,5->1) (5,7->7)] => (3,7->1)|n=7 antecedents=[(3,5->5) (3,7->3)] => (5,7->5)|n=7 antecedents=[(3,5->5) (5,6->7)] => (3,6->7)|n=7 antecedents=[(3,5->5) (5,7->7)] => (3,7->7)|n=7 antecedents=[(3,6->7)] => (3,7->7)|n=7 antecedents=[(3,6->7)] => (6,7->7)|n=7 antecedents=[(3,7->1) (6,7->7)] => (3,6->1)|n=7 antecedents=[(3,7->6)] => (3,6->6)|n=7 antecedents=[(3,7->6)] => (6,7->6)|n=7 antecedents=[(4,5->2) (4,7->4)] => (5,7->2)|n=7 antecedents=[(4,5->3) (4,7->4)] => (5,7->3)|n=7 antecedents=[(4,5->4) (4,6->7)] => (5,6->7)|n=7 antecedents=[(4,5->4) (4,7->7)] => (5,7->7)|n=7 antecedents=[(4,5->4) (5,7->5)] => (4,7->4)|n=7 antecedents=[(4,5->5) (4,7->4)] => (5,7->5)|n=7 antecedents=[(4,5->5) (5,6->7)] => (4,6->7)|n=7 antecedents=[(4,5->5) (5,7->1)] => (4,7->1)|n=7 antecedents=[(4,5->5) (5,7->7)] => (4,7->7)|n=7 antecedents=[(4,6->7)] => (4,7->7)|n=7 antecedents=[(4,6->7)] => (6,7->7)|n=7 antecedents=[(4,7->1) (6,7->7)] => (4,6->1)|n=7 antecedents=[(4,7->6)] => (4,6->6)|n=7 antecedents=[(4,7->6)] => (6,7->6)|n=7 antecedents=[(5,6->7)] => (5,7->7)|n=7 antecedents=[(5,6->7)] => (6,7->7)|n=7 antecedents=[(5,7->1) (6,7->7)] => (5,6->1)|n=7 antecedents=[(6,7->2)] => (2,6->2)|n=7 antecedents=[(6,7->2)] => (2,7->2)|n=7 antecedents=[(6,7->3)] => (3,6->3)|n=7 antecedents=[(6,7->3)] => (3,7->3)|n=7 antecedents=[(6,7->4)] => (4,6->4)|n=7 antecedents=[(6,7->4)] => (4,7->4)|n=7 antecedents=[(6,7->5)] => (5,6->5)|n=7 antecedents=[(6,7->5)] => (5,7->5)|n=7 antecedents=[] => (1,7->1) basisPayloadSource=current_runtime_exact_minimal_basis_payload_cache basisPayloadConstructor=load_current_exact_minimal_basis_payload_runtime_artifact_ basisPayloadFallbackHit=0 theoremStatus=exact_minimal_basis_theorem_plus_one_partial
+family-chain theorem audit: singleRegions=7 pairRegions=21 tripleRegions=35 quadrupleRegions=35 quintupleRegions=21 sextupleRegions=7 septupleRegions=1 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 selfVerified=true why=support_bounded_schema_universe_obstruction_chain_theorem_supported source=build_current_family_chain_output_57_theorem_objects_ caveat=authoritative family-chain theorem objects are rebuilt in the current runtime and pair-expansion aggregate 52 is current constructor/cache-backed; triple-family theorem data 53 is current constructor/cache-backed; quadruple-family theorem data 55 is current constructor/cache-backed; quintuple-family theorem data 57 is current constructor/cache-backed; sextuple-family theorem data 57 is current constructor/cache-backed; septuple-family theorem data 57 is current constructor/cache-backed; high-family theorem data 57 is current constructor/cache-backed; family-chain lower-layer caveat closed
+bounded schema scope: familyCount=7 maxFamilyMergeSize=7 maxSymbolBoundTested=7 maxAntecedentBoundTested=3 poolFingerprint=schema=num=4 antecedents=[(1,2->1) (2,3->3) (3,4->1)] => (2,4->1);schema=num=4 antecedents=[(1,2->1) (3,4->1) (3,4->4)] => (2,3->1);schema=num=4 antecedents=[(2,3->1) (2,3->2)] => (2,4->1);schema=num=4 antecedents=[(2,3->1) (2,3->3)] => (2,4->1);schema=num=4 antecedents=[(2,3->1) (2,3->4)] => (2,4->1);schema=num=4 antecedents=[(2,3->1) (3,4->4)] => (2,4->1);schema=num=4 antecedents=[(2,3->2) (2,3->3)] => (2,3->1);schema=num=4 antecedents=[(2,3->2) (2,3->3)] => (2,4->2);schema=num=4 antecedents=[(2,3->2) (2,3->3)] => (2,4->4);schema=num=4 antecedents=[(2,3->2) (2,3->4)] => (2,4->1);schema=num=4 antecedents=[(2,3->2) (2,4->4) (3,4->1)] => (2,3->1);schema=num=4 antecedents=[(2,3->2) (3,4->1) (3,4->4)] => (2,3->1);schema=num=4 antecedents=[(2,3->3) (3,4->1) (3,4->3)] => (2,4->1);schema=num=4 antecedents=[(2,3->3) (3,4->1)] => (2,4->1);schema=num=4 antecedents=[(2,3->3) (3,4->4)] => (2,4->4);schema=num=4 antecedents=[(2,3->4) (2,4->2)] => (2,4->1) why=bounded schema universe scope stats derived from family-chain theorem data and global candidate pool
+general frontier stats: tag=support_plus_one_frontier rawCandidates=368 canonicalCandidates=294 outsideBoundedCandidates=294 localExactSurvivors=161 plusOneSurvivors=6 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support-plus-one frontier theorem data imported from 67 output
+general frontier stats: tag=antecedent_plus_one_frontier rawCandidates=648 canonicalCandidates=502 outsideBoundedCandidates=208 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent-plus-one frontier theorem data imported from 67 output
+general frontier stats: tag=mixed_outside_bounded_frontier rawCandidates=648 canonicalCandidates=502 outsideBoundedCandidates=208 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative mixed outside-bounded frontier theorem data imported from closed 69 output
+general frontier stats: tag=antecedent_plus_two_frontier rawCandidates=224 canonicalCandidates=154 outsideBoundedCandidates=154 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent plus two frontier theorem data imported from closed 70 output
+general frontier stats: tag=support8_antecedent5_frontier rawCandidates=224 canonicalCandidates=154 outsideBoundedCandidates=154 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8 antecedent5 frontier theorem data imported from closed 70 output
+general frontier stats: tag=antecedent_plus_three_frontier rawCandidates=112 canonicalCandidates=70 outsideBoundedCandidates=70 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent plus three frontier theorem data imported from closed 71 output
+general frontier stats: tag=support8_antecedent6_frontier rawCandidates=112 canonicalCandidates=70 outsideBoundedCandidates=70 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8 antecedent6 frontier theorem data imported from closed 71 output
+general frontier stats: tag=antecedent_plus_four_frontier rawCandidates=32 canonicalCandidates=18 outsideBoundedCandidates=18 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent plus four frontier theorem data imported from closed 72 output
+general frontier stats: tag=support8_antecedent7_frontier rawCandidates=32 canonicalCandidates=18 outsideBoundedCandidates=18 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8 antecedent7 frontier theorem data imported from closed 72 output
+general frontier stats: tag=antecedent_plus_five_frontier rawCandidates=32 canonicalCandidates=18 outsideBoundedCandidates=18 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent plus five frontier theorem data imported from closed 72 output
+general frontier stats: tag=support8_antecedent8_frontier rawCandidates=32 canonicalCandidates=18 outsideBoundedCandidates=18 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8 antecedent8 frontier theorem data imported from closed 72 output
+general frontier stats: tag=antecedent_plus_six_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent plus six frontier theorem data imported from closed 74 output
+general frontier stats: tag=support8_antecedent9_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8 antecedent9 frontier theorem data imported from closed 74 output
+general frontier stats: tag=antecedent_plus_seven_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent_plus_seven_frontier theorem data imported from closed 75 output
+general frontier stats: tag=support8_antecedent10_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8_antecedent10_frontier theorem data imported from closed 75 output
+general frontier stats: tag=antecedent_plus_eight_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent_plus_eight_frontier theorem data imported from closed 76 output
+general frontier stats: tag=support8_antecedent11_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8_antecedent11_frontier theorem data imported from closed 76 output
+general frontier stats: tag=antecedent_plus_nine_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative antecedent_plus_nine_frontier theorem data imported from closed 77 output
+general frontier stats: tag=support8_antecedent12_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=authoritative support8_antecedent12_frontier theorem data imported from closed 77 output
+general frontier stats: tag=antecedent_plus_ten_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=antecedent shell13 frontier scan tag=antecedent_plus_ten_frontier
+general frontier stats: tag=support8_antecedent13_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=antecedent shell13 frontier scan tag=support8_antecedent13_frontier
+general frontier stats: tag=antecedent_plus_eleven_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=antecedent shell14 frontier scan tag=antecedent_plus_eleven_frontier
+general frontier stats: tag=support8_antecedent14_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=antecedent shell14 frontier scan tag=support8_antecedent14_frontier
+general frontier stats: tag=antecedent_plus_twelve_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=loaded validated runtime shell15 frontier artifact
+general frontier stats: tag=support8_antecedent15_frontier rawCandidates=4 canonicalCandidates=2 outsideBoundedCandidates=2 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 unsupportedLocalExactCandidates=0 unsupportedPlusOneCandidates=0 completed=true why=loaded validated runtime shell15 frontier artifact
+general schema gap: boundedChainSelfVerified=true testedFrontierCount=25 outsideBoundedLocalExactSurvivors=161 outsideBoundedPlusOneSurvivors=6 outsideBoundedTheoremPreservingSurvivors=0 why=outside-bounded frontier gap certificate composed over minimal separate frontiers and mixed frontier if present
+exact minimal basis theorem status=exact_minimal_basis_theorem_plus_one_partial
+unified bounded schema-universe theorem: poolFingerprint=schema=num=4 antecedents=[(1,2->1) (2,3->3) (3,4->1)] => (2,4->1);schema=num=4 antecedents=[(1,2->1) (3,4->1) (3,4->4)] => (2,3->1);schema=num=4 antecedents=[(2,3->1) (2,3->2)] => (2,4->1);schema=num=4 antecedents=[(2,3->1) (2,3->3)] => (2,4->1);schema=num=4 antecedents=[(2,3->1) (2,3->4)] => (2,4->1);schema=num=4 antecedents=[(2,3->1) (3,4->4)] => (2,4->1);schema=num=4 antecedents=[(2,3->2) (2,3->3)] => (2,3->1);schema=num=4 antecedents=[(2,3->2) (2,3->3)] => (2,4->2);schema=num=4 antecedents=[(2,3->2) (2,3->3)] => (2,4->4);schema=num=4 antecedents=[(2,3->2) (2,3->4)] => (2,4->1);schema=num=4 antecedents=[(2,3->2) (2,4->4) (3,4->1)] => (2,3->1);schema=num=4 antecedents=[(2,3->2) (3,4->1) (3,4->4)] => (2,3->1);schema=num=4 antecedents=[(2,3->3) (3,4->1) (3,4->3)] => (2,4->1);schema=num=4 antecedents=[(2,3->3) (3,4->1)] => (2,4->1);schema=num=4 antecedents=[(2,3->3) (3,4->4)] => (2,4->4);schema=num=4 antecedents=[(2,3->4) (2,4->2)] => (2,4->1) poolSize=16 familyCount=7 singleFamilyRegions=7 pairRegions=21 tripleRegions=35 quadrupleRegions=35 quintupleRegions=21 sextupleRegions=7 septupleRegions=1 outOfPoolLocalExactSurvivors=0 outOfPoolPlusOneSurvivors=0 outOfPoolTheoremPreservingSurvivors=0 why=current constructor from current support theorem object and validated triple/quadruple/quintuple/high-family theorem-data; pair-expansion aggregate 52 provenance=fresh_current_runtime_generated; triple-family theorem data 53 provenance=fresh_current_runtime_generated; quadruple-family theorem data 55 provenance=fresh_current_runtime_generated; quintuple-family theorem data 57 provenance=fresh_current_runtime_generated; sextuple-family theorem data 57 provenance=fresh_current_runtime_generated; septuple-family theorem data 57 provenance=fresh_current_runtime_generated; high-family theorem data 57 provenance=fresh_current_runtime_generated
+unified bounded schema-universe status=support_bounded_schema_universe_obstruction_chain_theorem_supported
+family-chain theorem status=support_bounded_schema_universe_obstruction_chain_self_verified
+general schema universe status=support8_authoritative_completion_locked
+provenance audit: items=19 currentVerified=16 counterexampleFree=0 archivalClaim=3 notAttempted=0 freshGenerated=16 validatedImported=0 archivalOnly=3 mixed=0 unknown=0 fingerprint=1808:4932380748279645466
+family-chain theorem ledger:
+exactAudit=exactN5Instances=2291 boundedN6C5Instances=5621 boundedN7C3Instances=335 exactN5Verified=true boundedN6C5Verified=true boundedN7C3Verified=true why=current runtime reran exact/bounded basis-only theorem audits on satisfiable domains with basisFingerprint=n=2 antecedents=[] => (1,2->1)|n=3 antecedents=[] => (1,2->1)|n=4 antecedents=[(2,3->1) (2,4->2)] => (3,4->1)|n=4 antecedents=[(2,3->1) (2,4->4)] => (3,4->1)|n=4 antecedents=[(2,3->2) (2,4->4)] => (3,4->4)|n=4 antecedents=[(2,3->4)] => (2,4->4)|n=4 antecedents=[] => (1,2->1)|n=5 antecedents=[(2,3->1) (2,4->2)] => (3,4->1)|n=5 antecedents=[(2,3->1) (2,4->4)] => (3,4->1)|n=5 antecedents=[(2,3->2) (2,4->2) (3,4->5)] => (2,5->2)|n=5 antecedents=[(2,3->2) (2,4->4) (3,5->4)] => (2,5->4)|n=5 antecedents=[(2,3->2) (2,4->4)] => (3,4->4)|n=5 antecedents=[(2,3->2) (2,4->5)] => (3,4->5)|n=5 antecedents=[(2,3->4)] => (2,4->4)|n=5 antecedents=[] => (1,2->1)|n=6 antecedents=[(2,3->1) (2,4->2)] => (3,4->1)|n=6 antecedents=[(2,3->1) (2,4->4)] => (3,4->1)|n=6 antecedents=[(2,3->2) (2,4->2) (3,4->5)] => (2,5->2)|n=6 antecedents=[(2,3->2) (2,4->4) (3,5->4)] => (2,5->4)|n=6 antecedents=[(2,3->2) (2,4->4)] => (3,4->4)|n=6 antecedents=[(2,3->2) (2,4->5)] => (3,4->5)|n=6 antecedents=[(2,3->4)] => (2,4->4)|n=6 antecedents=[] => (1,2->1)|n=7 antecedents=[(2,3->1) (2,7->2)] => (3,7->1)|n=7 antecedents=[(2,3->1) (2,7->7)] => (3,7->1)|n=7 antecedents=[(2,3->1) (3,7->3)] => (2,7->1)|n=7 antecedents=[(2,3->1) (3,7->7)] => (2,7->1)|n=7 antecedents=[(2,3->2) (2,6->7)] => (3,6->7)|n=7 antecedents=[(2,3->2) (2,7->7)] => (3,7->7)|n=7 antecedents=[(2,3->2) (3,7->3)] => (2,7->2)|n=7 antecedents=[(2,3->4) (2,7->2)] => (3,7->4)|n=7 antecedents=[(2,3->4) (3,7->3)] => (2,7->4)|n=7 antecedents=[(2,4->2) (4,7->4)] => (2,7->2)|n=7 antecedents=[(2,4->4) (2,7->2)] => (4,7->4)|n=7 antecedents=[(2,4->4) (4,6->7)] => (2,6->7)|n=7 antecedents=[(2,4->4) (4,7->6)] => (2,7->6)|n=7 antecedents=[(2,4->4) (4,7->7)] => (2,7->7)|n=7 antecedents=[(2,4->5) (2,7->2)] => (4,7->5)|n=7 antecedents=[(2,4->5) (4,7->4)] => (2,7->5)|n=7 antecedents=[(2,5->4) (2,7->2)] => (5,7->4)|n=7 antecedents=[(2,5->5) (2,7->1)] => (5,7->1)|n=7 antecedents=[(2,5->5) (2,7->2)] => (5,7->5)|n=7 antecedents=[(2,5->5) (5,6->7)] => (2,6->7)|n=7 antecedents=[(2,5->5) (5,7->7)] => (2,7->7)|n=7 antecedents=[(2,6->7)] => (2,7->7)|n=7 antecedents=[(2,6->7)] => (6,7->7)|n=7 antecedents=[(2,7->1) (6,7->7)] => (2,6->1)|n=7 antecedents=[(3,4->1) (3,7->3)] => (4,7->1)|n=7 antecedents=[(3,4->1) (4,7->4)] => (3,7->1)|n=7 antecedents=[(3,4->1) (4,7->7)] => (3,7->1)|n=7 antecedents=[(3,4->3) (4,7->4)] => (3,7->3)|n=7 antecedents=[(3,4->4) (3,7->3)] => (4,7->4)|n=7 antecedents=[(3,4->4) (3,7->6) (4,6->6)] => (4,7->6)|n=7 antecedents=[(3,4->4) (4,6->7)] => (3,6->7)|n=7 antecedents=[(3,4->4) (4,7->6)] => (3,7->6)|n=7 antecedents=[(3,4->4) (4,7->7)] => (3,7->7)|n=7 antecedents=[(3,4->5) (3,7->3)] => (4,7->5)|n=7 antecedents=[(3,4->5) (4,7->4)] => (3,7->5)|n=7 antecedents=[(3,5->1) (3,7->3)] => (5,7->1)|n=7 antecedents=[(3,5->1) (3,7->7)] => (5,7->1)|n=7 antecedents=[(3,5->1) (5,7->5)] => (3,7->1)|n=7 antecedents=[(3,5->1) (5,7->7)] => (3,7->1)|n=7 antecedents=[(3,5->5) (3,7->3)] => (5,7->5)|n=7 antecedents=[(3,5->5) (5,6->7)] => (3,6->7)|n=7 antecedents=[(3,5->5) (5,7->7)] => (3,7->7)|n=7 antecedents=[(3,6->7)] => (3,7->7)|n=7 antecedents=[(3,6->7)] => (6,7->7)|n=7 antecedents=[(3,7->1) (6,7->7)] => (3,6->1)|n=7 antecedents=[(3,7->6)] => (3,6->6)|n=7 antecedents=[(3,7->6)] => (6,7->6)|n=7 antecedents=[(4,5->2) (4,7->4)] => (5,7->2)|n=7 antecedents=[(4,5->3) (4,7->4)] => (5,7->3)|n=7 antecedents=[(4,5->4) (4,6->7)] => (5,6->7)|n=7 antecedents=[(4,5->4) (4,7->7)] => (5,7->7)|n=7 antecedents=[(4,5->4) (5,7->5)] => (4,7->4)|n=7 antecedents=[(4,5->5) (4,7->4)] => (5,7->5)|n=7 antecedents=[(4,5->5) (5,6->7)] => (4,6->7)|n=7 antecedents=[(4,5->5) (5,7->1)] => (4,7->1)|n=7 antecedents=[(4,5->5) (5,7->7)] => (4,7->7)|n=7 antecedents=[(4,6->7)] => (4,7->7)|n=7 antecedents=[(4,6->7)] => (6,7->7)|n=7 antecedents=[(4,7->1) (6,7->7)] => (4,6->1)|n=7 antecedents=[(4,7->6)] => (4,6->6)|n=7 antecedents=[(4,7->6)] => (6,7->6)|n=7 antecedents=[(5,6->7)] => (5,7->7)|n=7 antecedents=[(5,6->7)] => (6,7->7)|n=7 antecedents=[(5,7->1) (6,7->7)] => (5,6->1)|n=7 antecedents=[(6,7->2)] => (2,6->2)|n=7 antecedents=[(6,7->2)] => (2,7->2)|n=7 antecedents=[(6,7->3)] => (3,6->3)|n=7 antecedents=[(6,7->3)] => (3,7->3)|n=7 antecedents=[(6,7->4)] => (4,6->4)|n=7 antecedents=[(6,7->4)] => (4,7->4)|n=7 antecedents=[(6,7->5)] => (5,6->5)|n=7 antecedents=[(6,7->5)] => (5,7->5)|n=7 antecedents=[] => (1,7->1) basisPayloadSource=current_runtime_exact_minimal_basis_payload_cache basisPayloadConstructor=load_current_exact_minimal_basis_payload_runtime_artifact_ basisPayloadFallbackHit=0 theoremStatus=exact_minimal_basis_theorem_plus_one_partial
+familyChainAudit=singleRegions=7 pairRegions=21 tripleRegions=35 quadrupleRegions=35 quintupleRegions=21 sextupleRegions=7 septupleRegions=1 localExactSurvivors=0 plusOneSurvivors=0 theoremPreservingSurvivors=0 selfVerified=true why=support_bounded_schema_universe_obstruction_chain_theorem_supported source=build_current_family_chain_output_57_theorem_objects_ caveat=authoritative family-chain theorem objects are rebuilt in the current runtime and pair-expansion aggregate 52 is current constructor/cache-backed; triple-family theorem data 53 is current constructor/cache-backed; quadruple-family theorem data 55 is current constructor/cache-backed; quintuple-family theorem data 57 is current constructor/cache-backed; sextuple-family theorem data 57 is current constructor/cache-backed; septuple-family theorem data 57 is current constructor/cache-backed; high-family theorem data 57 is current constructor/cache-backed; family-chain lower-layer caveat closed
+status=support_bounded_schema_universe_obstruction_chain_self_verified
+
+general schema universe ledger:
+support8 antecedent15 shell theorem
+verified
+
+support8 outside-bounded tail pattern theorem
+verified
+
+artifact completion audit
+verified
+
+document completion audit
+verified
+
+rerun completion audit
+verified
+
+audit freshness
+verified
+
+support8 authoritative completion lock
+verified
+
+support8 tail obstruction chain theorem
+verified
+
+optional shell16 regression
+attempted_no_promotion classification=shell16_probe_completed_local_exact_survivors_present_no_theorem_preserving_survivors
+
+cache stats: cacheHits=0 cacheMisses=16 entries=16
+LOCAL_TEST passed

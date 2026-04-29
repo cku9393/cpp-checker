@@ -1,4 +1,0 @@
-status=timeout
-elapsed=5.007
-out_size=0
-err_size=2827094

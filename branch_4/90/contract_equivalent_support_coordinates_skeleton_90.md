@@ -1,17 +1,29 @@
 # Contract Equivalent Support Coordinates Skeleton 90
 
-## operation lemma
+## status after congruence refinement
 
-`contract_equivalent_support_coordinates_smaller_witness`.
+`partial_contract_equivalent_congruence_proof_ready_domain_normal_form_open`
 
-## exact statement
+The operation still is not fully proved. The finite quotient and strict
+support-size decrease remain current-scope proved under the nontrivial accepted
+equivalence-class precondition.
 
-Let `W` be a normal support `>8` witness with finite support set `S`. Let `~` be the accepted coordinate-equivalence relation, and suppose some equivalence class has size greater than one. If quotienting by `~` is congruent for payload fields, canonical motif fields, and counterexample-status fields, then `W_contract = normalize(pushforward(W,q))` is a smaller support witness candidate. The support measure strictly decreases because `|S/~| < |S|`. If status congruence is missing, contraction is only a named blocker or possible smaller-witness route, not a completed proof. The status follow-up now isolates this as `proof_ready_skeleton_contract_equivalent_status_congruence_open`.
+This round refines the status branch:
 
-## final status
+- selected congruence statement:
+  `equivalent_coordinate_status_preserved_under_refined_congruence_or_reduced_or_escape`;
+- payload congruence: proof-sketch ready under accepted equivalent-coordinate
+  roles;
+- status-domain transfer:
+  `contract_equivalent_status_domain_transfer_proof_ready_quotient_domain_open`;
+- normal-form transfer:
+  `contract_equivalent_normal_form_transfer_proof_ready_quotient_normal_form_open`;
+- status predicate congruence:
+  `equivalent_coordinate_congruence_payload_ready_domain_normal_form_open`;
+- smaller-witness fallback: proof-sketch when quotient status is a valid reduced
+  counterexample;
+- failure: named coordinate-contraction blocker or deferred higher-support
+  escape.
 
-`partial_contract_equivalent_status_proof_ready_congruence_open`.
-
-The finite quotient, output well-definedness under preconditions, strict measure decrease, singleton no-op classification, and failure naming are proved under current scope. Normal form, payload refinement, canonicalization compatibility, and family-chain source-form preservation are proof-sketch. Counterexample-status preservation is not proved; it is now a first-class equivalent-coordinate congruence obligation.
-
-Runtime skeleton: `branch_4/90/runtime/contract_equivalent_support_coordinates_skeleton_90.tsv`.
+Runtime skeleton:
+`branch_4/90/runtime/contract_equivalent_support_coordinates_skeleton_90.tsv`.

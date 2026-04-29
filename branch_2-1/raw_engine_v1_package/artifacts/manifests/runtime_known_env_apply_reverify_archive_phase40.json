@@ -1,0 +1,8 @@
+{
+  "manifest_version": "runtime_known_env_reverify_import_archive_v1",
+  "archived_at_utc": "2026-04-09T00:57:12Z",
+  "runtime_import_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase34_external.json",
+  "runtime_import_manifest_hash": "77e68318f2577e630a86b54fabd095e2d2a79d7bfb691ae210a987cc2cd59a34",
+  "known_env_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "gate_verdict": "FRESHEN"
+}

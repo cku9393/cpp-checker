@@ -1,3 +1,0 @@
-[progress] phase=case_start run_tag= delta_mode=both_off profile_mode=PROFILE_SAMPLED sampled=yes sample_stride=1 sample_warmup=0 progress_stride=1024 deletion=0/1024 x=-1 touched=-1 detailed_sampled=0 elapsed_ms=0
-[progress] phase=init_done run_tag= delta_mode=both_off profile_mode=PROFILE_SAMPLED sampled=yes sample_stride=1 sample_warmup=0 progress_stride=1024 deletion=0/1024 x=-1 touched=-1 detailed_sampled=0 elapsed_ms=152
-[progress] phase=deletion_checkpoint run_tag= delta_mode=both_off profile_mode=PROFILE_SAMPLED sampled=yes sample_stride=1 sample_warmup=0 progress_stride=1024 deletion=1/1024 x=1 touched=510 detailed_sampled=1 elapsed_ms=394

@@ -1,0 +1,20 @@
+{
+  "manifest_version": "operator_archive_review_queue_v1",
+  "phase": "phase53",
+  "generated_at_utc": "2026-04-24T14:46:00Z",
+  "age_tick_hash": "0b01f694e505979d9b1dc10237dd622b7d47415040b4713ebae145b07612e12a",
+  "queue_entry_count": 0,
+  "waiver_due_soon_count": 0,
+  "waiver_review_required_count": 0,
+  "waiver_expired_count": 0,
+  "snapshot_prune_due_count": 0,
+  "snapshot_prune_blocked_count": 0,
+  "archived_pointer_review_required_count": 0,
+  "next_waiver_review_at": "2027-03-24T09:15:10Z",
+  "next_snapshot_retention_review_at": "2028-04-23T03:13:20Z",
+  "entries": [],
+  "recommended_actions": [
+    "NO_ACTION"
+  ],
+  "review_queue_hash": "5e7d4ad610f29096db47cb36c0a7ceb978cf314c3ed4a73fd31e6eee1d6aa663"
+}

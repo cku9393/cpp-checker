@@ -1,7 +1,0 @@
-manifest_version=operator_runbook_replay_v1
-phase=phase49
-replay_verdict=PASS
-missing_input_count=0
-stale_input_count=0
-would_mutate_registry=false
-requires_operator_confirmation=false

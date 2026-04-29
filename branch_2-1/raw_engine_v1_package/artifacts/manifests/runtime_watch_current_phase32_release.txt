@@ -1,0 +1,7 @@
+manifest_version=runtime_watch_current_v1
+phase=phase31
+overall_watch_status=WATCH_STABLE
+overall_watch_recommendation=WATCH_RUNTIME
+runtime_budget_profile_id=runtime-budget-profile-v1
+watch_sample_count=10
+runtime_watch_entry=execution_class=release_full role=production_critical watch_status=WATCH_STABLE sample_count=10

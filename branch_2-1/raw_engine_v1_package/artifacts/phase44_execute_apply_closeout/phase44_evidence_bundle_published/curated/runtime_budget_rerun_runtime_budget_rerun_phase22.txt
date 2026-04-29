@@ -1,3 +1,0 @@
-plan_version=runtime_budget_rerun_plan_v1
-summary_verdict=PASS
-selected_entry_count=0

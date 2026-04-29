@@ -1,1 +1,0 @@
-[branch3_profile] fast_dag_calls=1 fast_dag_sec=0.004374 process_task_calls=2046 process_task_sec=4.246100 unary_block_calls=0 unary_block_sec=0.000000 exact_small_block_calls=0 exact_small_block_sec=0.000000 exact_small_range_calls=0 exact_small_range_sec=0.000000

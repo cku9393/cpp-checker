@@ -1,0 +1,9 @@
+artifact_root=/private/tmp/raw_engine_phase45_bundle_workspace/artifacts
+report_count=41
+manifest_count=14
+bundle_count=0
+delivery_bundle_count=0
+curated_bundle_count=0
+evidence_bundle_count=1
+nightly_run_count=0
+approved_baseline_count=0

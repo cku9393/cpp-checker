@@ -1,6 +1,0 @@
-approval_timestamp_utc=2026-03-23T05:23:14Z
-baseline_tag=phase25-runtime-approved
-previous_active_runtime_baseline_id=phase22-runtime-approved-7fbf1adc-20260323_052313
-new_active_runtime_baseline_id=phase25-runtime-approved-9aa2f07f-20260323_052314
-approval_status=approved
-runtime_transition_status=ACTIVE_SWITCHED

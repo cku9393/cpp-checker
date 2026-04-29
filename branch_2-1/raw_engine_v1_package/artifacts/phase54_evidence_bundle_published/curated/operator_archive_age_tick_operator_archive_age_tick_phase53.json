@@ -1,0 +1,74 @@
+{
+  "manifest_version": "operator_archive_age_tick_v1",
+  "phase": "phase53",
+  "generated_at_utc": "2026-04-24T14:45:58Z",
+  "current_time_utc": "2026-04-24T12:07:13Z",
+  "advance_days": 0.0,
+  "reference_graph_hash": "45b6bfaacaab6f18b5404136277b286d134f56052534861eb48b142dcc86d191",
+  "waiver_registry_hash": "e1e0ad9e89b2ef2b97d8f442339f61e23a37249c30265a7469863187d7850a88",
+  "retention_policy_hash": "65d2d73fbbb4225ba257738a4004665a76e103051146daf61c78977982c97ab4",
+  "waiver_due_soon_count": 0,
+  "waiver_review_required_count": 0,
+  "waiver_expired_count": 0,
+  "snapshot_prune_due_count": 0,
+  "snapshot_prune_blocked_count": 0,
+  "archived_pointer_review_required_count": 0,
+  "next_waiver_review_at": "2027-03-24T09:15:10Z",
+  "next_snapshot_retention_review_at": "2028-04-23T03:13:20Z",
+  "transitions": [
+    {
+      "subject_type": "waiver",
+      "subject_id": "waived_archived_pointer:eedce3440c774956",
+      "from_status": "ACTIVE",
+      "to_status": "WAIVER_ACTIVE",
+      "review_due_at": "2027-03-24T09:15:10Z",
+      "expires_at": "2027-04-23T09:15:10Z",
+      "graph_backed": true,
+      "recommended_action": "NO_ACTION"
+    },
+    {
+      "subject_type": "published_snapshot",
+      "subject_id": "published_snapshot:a48c77df9363423c",
+      "from_status": "SNAPSHOT_RETAIN",
+      "to_status": "SNAPSHOT_RETAIN",
+      "prune_due_at": "2028-04-23T03:13:20Z",
+      "recommended_action": "NO_ACTION"
+    },
+    {
+      "subject_type": "verification_manifest",
+      "subject_id": "verification_manifest:e75944aa65a62a67",
+      "from_status": "SNAPSHOT_RETAIN",
+      "to_status": "SNAPSHOT_RETAIN",
+      "prune_due_at": "2028-04-23T03:13:20Z",
+      "recommended_action": "NO_ACTION"
+    },
+    {
+      "subject_type": "verification_manifest",
+      "subject_id": "verification_manifest:f8621128038c02bb",
+      "from_status": "SNAPSHOT_RETAIN",
+      "to_status": "SNAPSHOT_RETAIN",
+      "prune_due_at": "2028-04-23T03:13:20Z",
+      "recommended_action": "NO_ACTION"
+    },
+    {
+      "subject_type": "verification_manifest",
+      "subject_id": "verification_manifest:bb8921df901dae7f",
+      "from_status": "SNAPSHOT_RETAIN",
+      "to_status": "SNAPSHOT_RETAIN",
+      "prune_due_at": "2028-04-23T03:13:20Z",
+      "recommended_action": "NO_ACTION"
+    },
+    {
+      "subject_type": "report",
+      "subject_id": "report:8474790ce43afac8",
+      "from_status": "SNAPSHOT_RETAIN",
+      "to_status": "SNAPSHOT_RETAIN",
+      "prune_due_at": "2028-04-23T03:13:20Z",
+      "recommended_action": "NO_ACTION"
+    }
+  ],
+  "recommended_actions": [
+    "NO_ACTION"
+  ],
+  "age_tick_hash": "0b01f694e505979d9b1dc10237dd622b7d47415040b4713ebae145b07612e12a"
+}

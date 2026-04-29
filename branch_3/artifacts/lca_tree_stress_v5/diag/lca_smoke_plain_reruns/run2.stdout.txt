@@ -1,6 +1,0 @@
-[validator] OK: N=256, M=11898
-[run_case] mode=comb_dense n=256 seed=1 time=0.269833s mem=5712KB
-[run_case] artifacts: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.ttpDEW/smoke_comb_dense_256_s1/in.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.ttpDEW/smoke_comb_dense_256_s1/out.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.ttpDEW/smoke_comb_dense_256_s1/meta.json
-[validator] OK: N=1024, M=59896
-[run_case] mode=comb_dense n=1024 seed=1 time=0.042213s mem=6128KB
-[run_case] artifacts: /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.ttpDEW/smoke_comb_dense_1024_s1/in.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.ttpDEW/smoke_comb_dense_1024_s1/out.txt /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/.lca_smoke_in_progress.ttpDEW/smoke_comb_dense_1024_s1/meta.json

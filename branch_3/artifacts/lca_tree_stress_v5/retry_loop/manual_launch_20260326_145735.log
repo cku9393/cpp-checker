@@ -1,3 +1,0 @@
-[2026-03-26 14:54:09 KST] attempt 1 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
-[2026-03-26 14:55:10 KST] attempt 1 soft stop requested; terminating workflow pid 72038 for solver_attempt
-[2026-03-26 14:55:15 KST] attempt 1 paused due to soft stop request; keeping retry loop alive and waiting 15070s for quota recovery before the next attempt

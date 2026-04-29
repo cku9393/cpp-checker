@@ -1,2 +1,0 @@
-[STATECERT_GATED] modeS0_hits=0 fallback_hits=0
-[DENSE_DECOMPOSESERIES_R38 rows] rows=255 shadow_prefilter_hit=39 shadow_attempted=39 shadow_match=0 shadow_mismatch=39

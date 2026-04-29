@@ -1,0 +1,359 @@
+{
+  "generated_at_utc": "2026-04-21T02:52:23Z",
+  "artifact_root": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts",
+  "reports": [
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/phase45_evidence_bundle/reports/PHASE45_STABILIZATION_REPORT_20260421.txt",
+      "mtime_epoch": 1776739943.762499,
+      "is_dir": false,
+      "size_bytes": 5312
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE45_STABILIZATION_REPORT_20260421.txt",
+      "mtime_epoch": 1776734687.8076205,
+      "is_dir": false,
+      "size_bytes": 2714
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE42_STABILIZATION_REPORT_20260413.txt",
+      "mtime_epoch": 1776734645.1293654,
+      "is_dir": false,
+      "size_bytes": 5305
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE41_STABILIZATION_REPORT_20260409.txt",
+      "mtime_epoch": 1776734645.1292603,
+      "is_dir": false,
+      "size_bytes": 6227
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE40_STABILIZATION_REPORT_20260409.txt",
+      "mtime_epoch": 1776734645.1291494,
+      "is_dir": false,
+      "size_bytes": 6836
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE39_STABILIZATION_REPORT_20260408.txt",
+      "mtime_epoch": 1776734645.1290452,
+      "is_dir": false,
+      "size_bytes": 4360
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE38_STABILIZATION_REPORT_20260407.txt",
+      "mtime_epoch": 1776734645.1288688,
+      "is_dir": false,
+      "size_bytes": 5743
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE37_STABILIZATION_REPORT_20260407.txt",
+      "mtime_epoch": 1776734645.1287029,
+      "is_dir": false,
+      "size_bytes": 1190
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE36_STABILIZATION_REPORT_20260406.txt",
+      "mtime_epoch": 1776734645.128607,
+      "is_dir": false,
+      "size_bytes": 4810
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE35_STABILIZATION_REPORT_20260405.txt",
+      "mtime_epoch": 1776734645.1285048,
+      "is_dir": false,
+      "size_bytes": 2062
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE34_STABILIZATION_REPORT_20260405.txt",
+      "mtime_epoch": 1776734645.1284285,
+      "is_dir": false,
+      "size_bytes": 8614
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE33_STABILIZATION_REPORT_20260401.txt",
+      "mtime_epoch": 1776734645.1283302,
+      "is_dir": false,
+      "size_bytes": 171
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE33_STABILIZATION_REPORT.txt",
+      "mtime_epoch": 1776734645.1282458,
+      "is_dir": false,
+      "size_bytes": 216
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE32_STABILIZATION_REPORT_20260401.txt",
+      "mtime_epoch": 1776734645.1281009,
+      "is_dir": false,
+      "size_bytes": 8159
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE31_STABILIZATION_REPORT_FINAL_20260331.txt",
+      "mtime_epoch": 1776734645.127999,
+      "is_dir": false,
+      "size_bytes": 11289
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE31_STABILIZATION_REPORT_20260331.txt",
+      "mtime_epoch": 1776734645.1278782,
+      "is_dir": false,
+      "size_bytes": 9529
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE30_STABILIZATION_REPORT_20260331.txt",
+      "mtime_epoch": 1776734645.1277776,
+      "is_dir": false,
+      "size_bytes": 5090
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE29_STABILIZATION_REPORT_20260330.txt",
+      "mtime_epoch": 1776734645.1276648,
+      "is_dir": false,
+      "size_bytes": 9229
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE28_STABILIZATION_REPORT_20260324.txt",
+      "mtime_epoch": 1776734645.1275558,
+      "is_dir": false,
+      "size_bytes": 11599
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE28_STABILIZATION_REPORT.txt",
+      "mtime_epoch": 1776734645.1265996,
+      "is_dir": false,
+      "size_bytes": 177
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE27_STABILIZATION_REPORT_20260323.txt",
+      "mtime_epoch": 1776734645.126509,
+      "is_dir": false,
+      "size_bytes": 9605
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE27_STABILIZATION_REPORT.txt",
+      "mtime_epoch": 1776734645.1263876,
+      "is_dir": false,
+      "size_bytes": 9605
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE26_STABILIZATION_REPORT_20260323.txt",
+      "mtime_epoch": 1776734645.1262357,
+      "is_dir": false,
+      "size_bytes": 8891
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE25_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1776734645.1259975,
+      "is_dir": false,
+      "size_bytes": 9552
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE24_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1776734645.1257212,
+      "is_dir": false,
+      "size_bytes": 10418
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE23_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1776734645.125546,
+      "is_dir": false,
+      "size_bytes": 9561
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE22_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1776734645.125125,
+      "is_dir": false,
+      "size_bytes": 9307
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE21_STABILIZATION_REPORT_20260322.txt",
+      "mtime_epoch": 1776734645.1250193,
+      "is_dir": false,
+      "size_bytes": 8583
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE20_STABILIZATION_REPORT_20260320.txt",
+      "mtime_epoch": 1776734645.1247892,
+      "is_dir": false,
+      "size_bytes": 13713
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE19_STABILIZATION_REPORT_20260320.txt",
+      "mtime_epoch": 1776734645.1246548,
+      "is_dir": false,
+      "size_bytes": 11429
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE18_STABILIZATION_REPORT_20260319.txt",
+      "mtime_epoch": 1776734645.1242018,
+      "is_dir": false,
+      "size_bytes": 8013
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE18_STABILIZATION_REPORT_20260319 2.txt",
+      "mtime_epoch": 1776734645.1240928,
+      "is_dir": false,
+      "size_bytes": 9273
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE17_STABILIZATION_REPORT_20260319.txt",
+      "mtime_epoch": 1776734645.1239395,
+      "is_dir": false,
+      "size_bytes": 12745
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE16_STABILIZATION_REPORT_20260319.txt",
+      "mtime_epoch": 1776734645.1238124,
+      "is_dir": false,
+      "size_bytes": 14988
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE16_STABILIZATION_REPORT_20260319 2.txt",
+      "mtime_epoch": 1776734645.1236744,
+      "is_dir": false,
+      "size_bytes": 10817
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE15_STABILIZATION_REPORT_20260310.txt",
+      "mtime_epoch": 1776734645.123554,
+      "is_dir": false,
+      "size_bytes": 11320
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE14_STABILIZATION_REPORT_20260310.txt",
+      "mtime_epoch": 1776734645.1234417,
+      "is_dir": false,
+      "size_bytes": 9738
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE13_STABILIZATION_REPORT_20260309.txt",
+      "mtime_epoch": 1776734645.1233177,
+      "is_dir": false,
+      "size_bytes": 7707
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE12_STABILIZATION_REPORT_20260309.txt",
+      "mtime_epoch": 1776734645.1232002,
+      "is_dir": false,
+      "size_bytes": 5099
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE11_STABILIZATION_REPORT_20260308.txt",
+      "mtime_epoch": 1776734645.1230674,
+      "is_dir": false,
+      "size_bytes": 8586
+    },
+    {
+      "path": "/private/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package/PHASE10_STABILIZATION_REPORT_20260308.txt",
+      "mtime_epoch": 1776734645.122912,
+      "is_dir": false,
+      "size_bytes": 1695
+    }
+  ],
+  "manifests": [
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/publication_health_phase45.json",
+      "mtime_epoch": 1776739943.7938266,
+      "is_dir": false,
+      "size_bytes": 6630
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/policy_ops_summary_phase45.json",
+      "mtime_epoch": 1776739943.7912474,
+      "is_dir": false,
+      "size_bytes": 27694
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/policy_ops_agenda_phase45.json",
+      "mtime_epoch": 1776739943.7882073,
+      "is_dir": false,
+      "size_bytes": 4972
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/runtime_current_env_next_cycle_overdue_phase45.json",
+      "mtime_epoch": 1776739943.7861257,
+      "is_dir": false,
+      "size_bytes": 1493
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/runtime_current_env_next_cycle_reproposal_due_phase45.json",
+      "mtime_epoch": 1776739943.7841587,
+      "is_dir": false,
+      "size_bytes": 1489
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/runtime_current_env_next_cycle_monitoring_due_phase45.json",
+      "mtime_epoch": 1776739943.7822895,
+      "is_dir": false,
+      "size_bytes": 1498
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/runtime_current_env_next_cycle_due_soon_phase45.json",
+      "mtime_epoch": 1776739943.7801082,
+      "is_dir": false,
+      "size_bytes": 1496
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/runtime_current_env_reproposal_handoff_phase45.json",
+      "mtime_epoch": 1776739943.7781212,
+      "is_dir": false,
+      "size_bytes": 1589
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/runtime_current_env_action_retry_plan_phase45.json",
+      "mtime_epoch": 1776739943.7760105,
+      "is_dir": false,
+      "size_bytes": 421
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/runtime_current_env_action_ledger_phase45.json",
+      "mtime_epoch": 1776739943.7739,
+      "is_dir": false,
+      "size_bytes": 3481
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/ctest_inventory_asan_ubsan_phase45.json",
+      "mtime_epoch": 1776739943.7716017,
+      "is_dir": false,
+      "size_bytes": 20841
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/ctest_inventory_debug_phase45.json",
+      "mtime_epoch": 1776739943.7697468,
+      "is_dir": false,
+      "size_bytes": 20837
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/ctest_inventory_release_phase45.json",
+      "mtime_epoch": 1776739943.767844,
+      "is_dir": false,
+      "size_bytes": 20841
+    },
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/manifests/verification_phase45_full_ctest.json",
+      "mtime_epoch": 1776739943.7657113,
+      "is_dir": false,
+      "size_bytes": 4441
+    }
+  ],
+  "bundles": [],
+  "delivery_bundles": [],
+  "curated_bundles": [],
+  "evidence_bundles": [
+    {
+      "path": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/phase45_evidence_bundle",
+      "mtime_epoch": 1776739943.91468,
+      "is_dir": true,
+      "size_bytes": 0
+    }
+  ],
+  "regressions": [],
+  "logs": [],
+  "checkpoints": [],
+  "nightly_runs": [],
+  "pipeline_summaries": [],
+  "runtime_manifests": [],
+  "runtime_registries": [],
+  "runtime_histories": [],
+  "runtime_proposals": [],
+  "approved_baselines": []
+}

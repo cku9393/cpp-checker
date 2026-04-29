@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
@@ -4266,6 +4267,408 @@ def build_operator_waiver_review(
     return payload
 
 
+def _graph_nodes_by_type(reference_graph: dict[str, Any], node_types: set[str]) -> list[dict[str, Any]]:
+    return [
+        node
+        for node in reference_graph.get("nodes", [])
+        if isinstance(node, dict) and str(node.get("node_type") or "") in node_types
+    ]
+
+
+def _waiver_graph_ids(reference_graph: dict[str, Any]) -> set[str]:
+    return {
+        str(node.get("waiver_id") or node.get("stable_key") or "")
+        for node in _graph_nodes_by_type(reference_graph, {"waiver"})
+        if str(node.get("waiver_id") or node.get("stable_key") or "")
+    }
+
+
+def build_operator_archive_age_tick(
+    *,
+    phase: str,
+    reference_graph: dict[str, Any],
+    waiver_registry: dict[str, Any],
+    retention_policy: dict[str, Any],
+    current_time_override: str | None,
+    advance_days: float,
+) -> dict[str, Any]:
+    now = resolve_governance_now(current_time_override, advance_days)
+    now_text = timestamp_utc_from_datetime(now)
+    due_soon_days = float(retention_policy.get("waiver_review_due_soon_days", 30) or 30)
+    prune_after_days = float(retention_policy.get("archive_prune_after_days", 730) or 730)
+    graph_waivers = _waiver_graph_ids(reference_graph)
+    transitions: list[dict[str, Any]] = []
+    recommended_actions: list[str] = []
+    waiver_due_soon = 0
+    waiver_review_required = 0
+    waiver_expired = 0
+    archived_pointer_review_required = 0
+    next_waiver_review: list[datetime] = []
+    next_snapshot_review: list[datetime] = []
+
+    for entry in [item for item in waiver_registry.get("entries", []) if isinstance(item, dict)]:
+        waiver_id = str(entry.get("waiver_id") or "")
+        expires = parse_timestamp_utc(str(entry.get("expires_at") or ""))
+        review_due = parse_timestamp_utc(str(entry.get("review_due_at") or ""))
+        prior_status = str(entry.get("review_status") or "ACTIVE")
+        status = "WAIVER_ACTIVE"
+        action = "NO_ACTION"
+        if prior_status == "RETIRED":
+            status = "WAIVER_RETIRED"
+        elif expires is not None and now >= expires:
+            status = "WAIVER_EXPIRED"
+            action = "EXPIRE_OR_RETIRE_WAIVER"
+            waiver_expired += 1
+            archived_pointer_review_required += 1
+        elif review_due is not None and now >= review_due:
+            status = "WAIVER_REVIEW_REQUIRED"
+            action = "REVIEW_WAIVER"
+            waiver_review_required += 1
+            archived_pointer_review_required += 1
+        elif review_due is not None and now + timedelta(days=due_soon_days) >= review_due:
+            status = "WAIVER_DUE_SOON"
+            action = "SCHEDULE_WAIVER_REVIEW"
+            waiver_due_soon += 1
+        if status == "WAIVER_ACTIVE" and review_due is not None:
+            next_waiver_review.append(review_due)
+        if action != "NO_ACTION":
+            recommended_actions.append(action)
+        transitions.append(
+            {
+                "subject_type": "waiver",
+                "subject_id": waiver_id,
+                "from_status": prior_status,
+                "to_status": status,
+                "review_due_at": entry.get("review_due_at"),
+                "expires_at": entry.get("expires_at"),
+                "graph_backed": waiver_id in graph_waivers or bool(entry.get("still_reference_graph_safe", False)),
+                "recommended_action": action,
+            }
+        )
+
+    snapshot_prune_due = 0
+    snapshot_prune_blocked = 0
+    waiver_node_count = int(reference_graph.get("waiver_node_count", 0) or 0)
+    graph_generated = parse_timestamp_utc(str(reference_graph.get("generated_at_utc") or "")) or now
+    for node in _graph_nodes_by_type(reference_graph, {"published_snapshot", "verification_manifest", "report"}):
+        node_id = str(node.get("node_id") or node.get("stable_key") or "")
+        created = parse_timestamp_utc(str(node.get("created_at") or node.get("generated_at_utc") or "")) or graph_generated
+        prune_at = created + timedelta(days=prune_after_days)
+        next_snapshot_review.append(prune_at)
+        status = "SNAPSHOT_RETAIN"
+        action = "NO_ACTION"
+        if now >= prune_at:
+            snapshot_prune_due += 1
+            if waiver_node_count > 0 or bool(retention_policy.get("prune_only_if_reference_graph_safe", True)):
+                status = "SNAPSHOT_PRUNE_BLOCKED"
+                action = "RETAIN_SNAPSHOT_REFERENCED_BY_GOVERNANCE"
+                snapshot_prune_blocked += 1
+            else:
+                status = "SNAPSHOT_PRUNE_CANDIDATE"
+                action = "PRUNE_SNAPSHOT_CANDIDATE"
+        if action != "NO_ACTION":
+            recommended_actions.append(action)
+        transitions.append(
+            {
+                "subject_type": str(node.get("node_type") or "snapshot"),
+                "subject_id": node_id,
+                "from_status": "SNAPSHOT_RETAIN",
+                "to_status": status,
+                "prune_due_at": timestamp_utc_from_datetime(prune_at),
+                "recommended_action": action,
+            }
+        )
+
+    payload = {
+        "manifest_version": "operator_archive_age_tick_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "current_time_utc": now_text,
+        "advance_days": float(advance_days or 0.0),
+        "reference_graph_hash": reference_graph.get("graph_hash"),
+        "waiver_registry_hash": waiver_registry.get("waiver_registry_hash"),
+        "retention_policy_hash": retention_policy.get("policy_hash"),
+        "waiver_due_soon_count": waiver_due_soon,
+        "waiver_review_required_count": waiver_review_required,
+        "waiver_expired_count": waiver_expired,
+        "snapshot_prune_due_count": snapshot_prune_due,
+        "snapshot_prune_blocked_count": snapshot_prune_blocked,
+        "archived_pointer_review_required_count": archived_pointer_review_required,
+        "next_waiver_review_at": timestamp_utc_from_datetime(min(next_waiver_review)) if next_waiver_review else None,
+        "next_snapshot_retention_review_at": timestamp_utc_from_datetime(min(next_snapshot_review)) if next_snapshot_review else None,
+        "transitions": transitions,
+        "recommended_actions": sorted(set(recommended_actions)) or ["NO_ACTION"],
+    }
+    payload["age_tick_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_archive_review_queue(*, phase: str, age_tick: dict[str, Any]) -> dict[str, Any]:
+    entries = [
+        item
+        for item in age_tick.get("transitions", [])
+        if isinstance(item, dict) and str(item.get("recommended_action") or "NO_ACTION") != "NO_ACTION"
+    ]
+    payload = {
+        "manifest_version": "operator_archive_review_queue_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "age_tick_hash": age_tick.get("age_tick_hash"),
+        "queue_entry_count": len(entries),
+        "waiver_due_soon_count": age_tick.get("waiver_due_soon_count", 0),
+        "waiver_review_required_count": age_tick.get("waiver_review_required_count", 0),
+        "waiver_expired_count": age_tick.get("waiver_expired_count", 0),
+        "snapshot_prune_due_count": age_tick.get("snapshot_prune_due_count", 0),
+        "snapshot_prune_blocked_count": age_tick.get("snapshot_prune_blocked_count", 0),
+        "archived_pointer_review_required_count": age_tick.get("archived_pointer_review_required_count", 0),
+        "next_waiver_review_at": age_tick.get("next_waiver_review_at"),
+        "next_snapshot_retention_review_at": age_tick.get("next_snapshot_retention_review_at"),
+        "entries": entries,
+        "recommended_actions": age_tick.get("recommended_actions", ["NO_ACTION"]),
+    }
+    payload["review_queue_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_operator_waiver_apply_review(
+    *,
+    phase: str,
+    waiver_registry: dict[str, Any],
+    waiver_review: dict[str, Any],
+    reference_graph: dict[str, Any],
+    allow_expire: bool,
+    allow_retire: bool,
+) -> dict[str, Any]:
+    graph_waivers = _waiver_graph_ids(reference_graph)
+    review_entries = {
+        str(entry.get("waiver_id") or ""): entry
+        for entry in waiver_review.get("entries", [])
+        if isinstance(entry, dict)
+    }
+    updated_entries: list[dict[str, Any]] = []
+    rationale: list[dict[str, Any]] = []
+    counts = {
+        "reviewed": 0,
+        "freshened": 0,
+        "expired": 0,
+        "retired": 0,
+        "blocked": 0,
+    }
+    for entry in [item for item in waiver_registry.get("entries", []) if isinstance(item, dict)]:
+        waiver_id = str(entry.get("waiver_id") or "")
+        review = review_entries.get(waiver_id, {})
+        status = str(review.get("review_status") or entry.get("review_status") or "ACTIVE")
+        action = str(review.get("recommended_action") or entry.get("recommended_action") or "NO_ACTION")
+        pointer_scope = str(entry.get("pointer_scope") or entry.get("pointer_kind") or "archived").lower()
+        bundle_backed = bool(review.get("still_bundle_backed", entry.get("still_bundle_backed", False)))
+        graph_safe = waiver_id in graph_waivers or bool(review.get("still_reference_graph_safe", entry.get("still_reference_graph_safe", False)))
+        updated = dict(entry)
+        counts["reviewed"] += 1
+        decision = "UNCHANGED"
+        reason = "waiver remains active"
+        if pointer_scope == "active":
+            decision = "BLOCKED"
+            reason = "active pointer waivers are forbidden"
+            counts["blocked"] += 1
+        elif bundle_backed and graph_safe and status in {"ACTIVE", "DUE_SOON", "REVIEW_REQUIRED"}:
+            decision = "FRESHENED"
+            reason = "archived waiver remains bundle/reference-graph backed"
+            counts["freshened"] += 1
+            updated["review_status"] = "ACTIVE"
+            updated["recommended_action"] = "NO_ACTION"
+            updated["last_reviewed_at"] = runtime_gate.timestamp_utc_now()
+        elif status == "EXPIRED" and allow_expire:
+            decision = "EXPIRED"
+            reason = "waiver reached expiry and operator allowed expiry"
+            counts["expired"] += 1
+            updated["review_status"] = "EXPIRED"
+            updated["recommended_action"] = "ARCHIVE_OPERATOR_ACTION"
+        elif (status == "RETIRED" or action == "RETIRE_WAIVER") and allow_retire:
+            decision = "RETIRED"
+            reason = "waiver retired by operator review"
+            counts["retired"] += 1
+            updated["review_status"] = "RETIRED"
+            updated["recommended_action"] = "ARCHIVE_OPERATOR_ACTION"
+        else:
+            decision = "BLOCKED"
+            reason = "waiver review did not meet refresh/expire/retire policy"
+            counts["blocked"] += 1
+        updated["apply_decision"] = decision
+        updated_entries.append(updated)
+        rationale.append({"waiver_id": waiver_id, "decision": decision, "reason": reason})
+    resulting_registry = {
+        "manifest_version": waiver_registry.get("manifest_version", "operator_waiver_registry_v1"),
+        "phase": phase,
+        "entries": updated_entries,
+    }
+    payload = {
+        "manifest_version": "operator_waiver_apply_review_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "review_hash": waiver_review.get("review_hash"),
+        "reference_graph_hash": reference_graph.get("graph_hash"),
+        "reviewed_waiver_count": counts["reviewed"],
+        "freshened_waiver_count": counts["freshened"],
+        "expired_waiver_count": counts["expired"],
+        "retired_waiver_count": counts["retired"],
+        "blocked_waiver_count": counts["blocked"],
+        "resulting_registry_hash": sha256_text(json.dumps(resulting_registry, sort_keys=True)),
+        "apply_verdict": "PASS" if counts["blocked"] == 0 else "ACTION_REQUIRED",
+        "entries": updated_entries,
+        "rationale": rationale,
+    }
+    payload["apply_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+DEFAULT_STAGED_OVERLAY_POLICY_ENTRIES = {
+    "include_current_tests_json": ["tests/runtime_budget_phase29.json"],
+    "include_current_tests_tools": [
+        "tests/tools/runtime_watch_ops.py",
+        "tests/tools/run_policy_pipeline.py",
+        "tests/tools/build_evidence_bundle.py",
+        "tests/tools/source_health_preflight.py",
+    ],
+    "include_current_tests_cpp_hpp": [
+        "tests/CMakeLists.txt",
+        "tests/raw_engine_cases.cpp",
+        "tests/test_harness.hpp",
+    ],
+    "include_campaign_fixtures": ["tests/campaigns/phase16_split_tie_organic_compare.txt"],
+    "include_policy_historical_summaries": [
+        "artifacts/phase22_applicability/logs",
+        "artifacts/phase17_lineage/logs",
+    ],
+    "include_runtime_budget_profiles": ["tests/runtime_budget_phase29.json"],
+    "include_bundle_required_manifests": [
+        "artifacts/manifests/operator_archive_reference_graph_phase52.json",
+        "artifacts/manifests/operator_archive_retention_policy_phase52.json",
+    ],
+    "include_phase_specific_governance_artifacts": [
+        "artifacts/manifests/operator_waiver_review_phase52.json",
+        "artifacts/manifests/verification_preflight_gate_phase52.json",
+    ],
+}
+
+
+def normalize_staged_overlay_policy(raw: dict[str, Any] | None, *, phase: str) -> dict[str, Any]:
+    policy = dict(raw or {})
+    policy.setdefault("manifest_version", "staged_overlay_policy_v1")
+    policy.setdefault("phase", phase)
+    for key, entries in DEFAULT_STAGED_OVERLAY_POLICY_ENTRIES.items():
+        value = policy.get(key, True)
+        if isinstance(value, bool):
+            policy[key] = {"enabled": value, "paths": list(entries)}
+        elif isinstance(value, list):
+            policy[key] = {"enabled": True, "paths": [str(item) for item in value]}
+        elif isinstance(value, dict):
+            value.setdefault("enabled", True)
+            value.setdefault("paths", list(entries))
+            policy[key] = value
+        else:
+            policy[key] = {"enabled": True, "paths": list(entries)}
+    policy["policy_hash"] = sha256_text(json.dumps(policy, sort_keys=True))
+    return policy
+
+
+def build_staged_overlay_completeness_manifest(
+    *,
+    phase: str,
+    source_root: Path,
+    snapshot_manifest: dict[str, Any],
+    overlay_policy: dict[str, Any],
+) -> dict[str, Any]:
+    required_entries: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for category, config in overlay_policy.items():
+        if not category.startswith("include_") or not isinstance(config, dict) or not bool(config.get("enabled", True)):
+            continue
+        for rel in [str(item) for item in config.get("paths", [])]:
+            key = (category, rel)
+            if key in seen:
+                continue
+            seen.add(key)
+            path = source_root / rel
+            required_entries.append(
+                {
+                    "category": category,
+                    "path": rel,
+                    "found": path.exists(),
+                    "is_dir": path.is_dir(),
+                    "size_bytes": path.stat().st_size if path.exists() and path.is_file() else 0,
+                }
+            )
+    missing = [entry for entry in required_entries if not bool(entry.get("found", False))]
+    found_count = len(required_entries) - len(missing)
+    verdict = "PASS" if not missing else "FAIL"
+    payload = {
+        "manifest_version": "staged_overlay_completeness_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "source_root": str(source_root),
+        "snapshot_manifest_hash": snapshot_manifest.get("snapshot_hash") or snapshot_manifest.get("manifest_hash"),
+        "overlay_policy_hash": overlay_policy.get("policy_hash"),
+        "required_overlay_count": len(required_entries),
+        "found_overlay_count": found_count,
+        "missing_overlay_count": len(missing),
+        "missing_overlay_entries": missing,
+        "required_overlay_entries": required_entries,
+        "completeness_verdict": verdict,
+    }
+    payload["overlay_hash"] = sha256_text(json.dumps(required_entries, sort_keys=True))
+    payload["completeness_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_verification_preflight_gate_v2(
+    *,
+    phase: str,
+    source_health: dict[str, Any],
+    overlay_completeness: dict[str, Any],
+) -> dict[str, Any]:
+    dataless_count = int(source_health.get("dataless_placeholder_count", 0) or 0)
+    missing_head = bool(source_health.get("git_object_health", {}).get("missing_head_object", False))
+    unreadable_count = int(source_health.get("unreadable_source_file_count", 0) or 0)
+    source_status = str(source_health.get("status") or "NOT_RUN")
+    source_recommendation = str(source_health.get("recommendation") or "NOT_RUN")
+    overlay_verdict = str(overlay_completeness.get("completeness_verdict") or "NOT_RUN")
+    overlay_missing = int(overlay_completeness.get("missing_overlay_count", 0) or 0)
+    sparse_required = source_recommendation == "SPARSE_CLONE_REQUIRED" or dataless_count > 0 or missing_head
+    direct_allowed = dataless_count == 0 and not missing_head and unreadable_count == 0 and overlay_verdict == "PASS"
+    overlay_missing_blocking = overlay_verdict == "FAIL" or overlay_missing > 0
+    staged_allowed = not overlay_missing_blocking and source_status != "BLOCKED" and unreadable_count == 0
+    rationale: list[str] = []
+    if sparse_required:
+        rationale.append("source health requires staged_sparse_clone_overlay for long verification")
+    if overlay_missing_blocking:
+        rationale.append("staged overlay completeness failed; staged build is blocked until missing entries are added")
+    if direct_allowed:
+        rationale.append("direct build is allowed because source health and overlay completeness are both clean")
+    verdict = "PASS"
+    if overlay_missing_blocking or source_status == "BLOCKED" or unreadable_count > 0:
+        verdict = "FAIL"
+    elif sparse_required or not direct_allowed:
+        verdict = "ACTION_REQUIRED"
+    payload = {
+        "manifest_version": "verification_preflight_gate_v2",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "source_health_status": source_status,
+        "source_health_recommendation": source_recommendation,
+        "overlay_completeness_verdict": overlay_verdict,
+        "direct_build_allowed": direct_allowed,
+        "staged_build_allowed": staged_allowed,
+        "sparse_clone_required": sparse_required,
+        "overlay_missing_blocking": overlay_missing_blocking,
+        "overlay_missing_count": overlay_missing,
+        "preflight_gate_verdict": verdict,
+        "selected_materialization_mode": "direct" if direct_allowed else "staged_sparse_clone_overlay",
+        "rationale": rationale or ["source health and overlay completeness are available for verification preflight"],
+    }
+    payload["preflight_gate_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
 def build_verification_preflight_gate(
     *,
     phase: str,
@@ -4395,6 +4798,46 @@ def build_published_snapshot_retention_apply(
         "pruned_snapshot_count": 0,
         "blocked_prune_count": published_snapshot_retention.get("blocked_prune_count", 0),
         "apply_verdict": "PASS",
+    }
+    payload["apply_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_snapshot_retention_apply_v2(
+    *,
+    phase: str,
+    retention_plan: dict[str, Any],
+    reference_graph: dict[str, Any],
+    apply_kind: str,
+) -> dict[str, Any]:
+    retained_count = int(
+        retention_plan.get("retained_snapshot_count", retention_plan.get("retained_verification_count", 0)) or 0
+    )
+    blocked_count = int(retention_plan.get("blocked_prune_count", 0) or 0)
+    retained_by_waiver = int(retention_plan.get("snapshots_referenced_by_waivers", reference_graph.get("waiver_node_count", 0)) or 0)
+    retained_by_bundle = int(retention_plan.get("snapshots_referenced_by_bundles", 0) or 0)
+    retained_by_report = int(retention_plan.get("snapshots_referenced_by_reports", 0) or 0)
+    retained_by_verification = int(retention_plan.get("staged_verification_count", 0) or 0)
+    payload = {
+        "manifest_version": f"{apply_kind}_retention_apply_v2",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "retention_hash": retention_plan.get("retention_hash"),
+        "reference_graph_hash": reference_graph.get("graph_hash"),
+        "apply_mode": "governance_record_only",
+        "retained_count": retained_count,
+        "pruned_count": 0,
+        "blocked_prune_count": blocked_count,
+        "retained_by_waiver_count": retained_by_waiver,
+        "retained_by_bundle_count": retained_by_bundle,
+        "retained_by_report_count": retained_by_report,
+        "retained_by_verification_manifest_count": retained_by_verification,
+        "operator_action_required": blocked_count > 0,
+        "apply_verdict": "PASS",
+        "rationale": [
+            "retention apply v2 records prune candidates and blocked prune reasons as operator actions",
+            "destructive pruning remains outside default stabilization execution",
+        ],
     }
     payload["apply_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
     return payload
@@ -4695,16 +5138,36 @@ def build_staged_materialization_transaction(
     source_health: dict[str, Any],
     staged_materialization: dict[str, Any],
     cleanup_path_values: list[str],
+    overlay_completeness: dict[str, Any] | None = None,
+    reference_graph: dict[str, Any] | None = None,
+    published_root_sync_intent: str = "sync_after_verification_pass",
 ) -> dict[str, Any]:
+    overlay_completeness = overlay_completeness or {}
+    reference_graph = reference_graph or {}
     source_health_hash = source_health.get("preflight_hash") or sha256_text(json.dumps(source_health, sort_keys=True))
     materialization_hash = staged_materialization.get("materialization_hash") or sha256_text(json.dumps(staged_materialization, sort_keys=True))
     cleanup_paths = [str(Path(value).resolve()) for value in cleanup_path_values if str(value).strip()]
+    overlay_missing = int(overlay_completeness.get("missing_overlay_count", 0) or 0)
+    source_health_materialization = source_health.get("staged_materialization") if isinstance(source_health.get("staged_materialization"), dict) else {}
+    mode = (
+        staged_materialization.get("staged_materialization_mode")
+        or staged_materialization.get("materialization_mode")
+        or source_health_materialization.get("staged_materialization_mode")
+        or source_health_materialization.get("materialization_mode")
+        or source_health.get("materialization_mode")
+        or source_health.get("recommended_materialization_mode")
+    )
+    materialization_verdict = staged_materialization.get(
+        "materialization_verdict",
+        staged_materialization.get("materialize_verdict"),
+    )
+    verdict = "PASS" if materialization_verdict in {"PASS", "HEALTHY", None} and overlay_missing == 0 else "FAIL"
     payload = {
-        "manifest_version": "staged_materialization_transaction_v1",
+        "manifest_version": "staged_materialization_transaction_v2" if overlay_completeness else "staged_materialization_transaction_v1",
         "phase": phase,
         "generated_at_utc": runtime_gate.timestamp_utc_now(),
         "transaction_id": f"{phase}-materialization-{sha256_text(str(source_health_hash) + str(materialization_hash))[:12]}",
-        "materialization_mode": staged_materialization.get("staged_materialization_mode"),
+        "materialization_mode": mode,
         "source_health_hash": source_health_hash,
         "sparse_clone_ref": staged_materialization.get("sparse_clone_ref"),
         "overlay_file_count": int(staged_materialization.get("overlay_file_count", 0) or 0),
@@ -4712,10 +5175,34 @@ def build_staged_materialization_transaction(
         "dataless_remaining_count": int(staged_materialization.get("dataless_remaining_count", 0) or 0),
         "source_snapshot_hash": staged_materialization.get("source_snapshot_hash"),
         "staged_mirror_hash": staged_materialization.get("staged_mirror_hash") or staged_materialization.get("materialization_hash"),
-        "transaction_verdict": "PASS" if staged_materialization.get("materialization_verdict") in {"PASS", "HEALTHY", None} else "FAIL",
+        "transaction_verdict": verdict,
         "rollback_cleanup_performed": bool(cleanup_paths),
+        "cleanup_performed": bool(cleanup_paths),
         "cleanup_paths": cleanup_paths,
     }
+    if overlay_completeness:
+        payload.update(
+            {
+                "overlay_completeness_hash": overlay_completeness.get("completeness_hash"),
+                "overlay_missing_count": overlay_missing,
+                "retained_policy_artifact_count": sum(
+                    1
+                    for entry in overlay_completeness.get("required_overlay_entries", [])
+                    if isinstance(entry, dict)
+                    and bool(entry.get("found", False))
+                    and str(entry.get("category") or "") in {"include_policy_historical_summaries", "include_bundle_required_manifests", "include_phase_specific_governance_artifacts"}
+                ),
+                "retained_campaign_artifact_count": sum(
+                    1
+                    for entry in overlay_completeness.get("required_overlay_entries", [])
+                    if isinstance(entry, dict)
+                    and bool(entry.get("found", False))
+                    and str(entry.get("category") or "") == "include_campaign_fixtures"
+                ),
+                "archive_reference_graph_hash": reference_graph.get("graph_hash"),
+                "published_root_sync_intent": published_root_sync_intent,
+            }
+        )
     payload["transaction_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
     return payload
 
@@ -5786,9 +6273,28 @@ def extract_family_statuses(policy_manifest: dict[str, Any]) -> list[dict[str, A
 
 
 def load_json_list_rationale(payload: dict[str, Any]) -> list[str]:
+    def rationale_text(item: Any) -> str:
+        if isinstance(item, dict):
+            value = item.get("message") or item.get("action") or item.get("status") or ""
+            return rationale_text(value)
+        text = str(item).strip()
+        if text.startswith("{") and text.endswith("}"):
+            try:
+                parsed = ast.literal_eval(text)
+            except (SyntaxError, ValueError):
+                parsed = None
+            if isinstance(parsed, dict):
+                return rationale_text(parsed)
+        return text
+
     values = payload.get("rationale", [])
     if isinstance(values, list):
-        return [str(item) for item in values if str(item).strip()]
+        result: list[str] = []
+        for item in values:
+            text = rationale_text(item)
+            if text:
+                result.append(text)
+        return result
     text = str(values).strip()
     return [text] if text else []
 
@@ -6605,13 +7111,15 @@ def build_publication_health(
                 missing_artifacts.append(str(bundle_path) if bundle_path is not None else key)
         delivery_path = Path(str(metadata.get("delivery_zip", ""))).resolve() if metadata.get("delivery_zip") else None
         if delivery_path is not None and delivery_path.exists():
-            for prefix in (
+            required_delivery_prefixes = [
                 "report/",
                 "quick_pipeline_summary/",
                 "nightly_pipeline_summary/",
-                "pipeline_matrix_summary/",
                 "policy_ops_summary/",
-            ):
+            ]
+            if metadata.get("pipeline_matrix_summary"):
+                required_delivery_prefixes.append("pipeline_matrix_summary/")
+            for prefix in required_delivery_prefixes:
                 if not zip_contains_prefix(delivery_path, prefix):
                     missing_artifacts.append(f"{delivery_path}::{prefix}")
 
@@ -6874,7 +7382,9 @@ def build_ops_summary(
     structured_rationale = []
     for item in rationale:
         category = "runtime"
-        if "correctness" in item or "exact_shadow" in item:
+        if "runtime" in item:
+            category = "runtime"
+        elif "correctness" in item or "exact_shadow" in item:
             category = "correctness"
         elif "new or foreign" in item:
             category = "cross_environment"
@@ -7853,6 +8363,11 @@ def build_ops_summary_text(summary: dict[str, Any]) -> str:
     source_health = summary.get("source_health", {})
     staged_materialization = summary.get("staged_materialization", {})
     ops_agenda = summary.get("ops_agenda", {})
+    runtime_triage = summary.get("runtime_comparability_triage", {})
+    runtime_action_plan = summary.get("runtime_rebaseline_action_plan", {})
+    runtime_runbook = summary.get("runtime_rebaseline_runbook", {})
+    runtime_selection_sanity = summary.get("runtime_registry_selection_sanity", {})
+    runtime_selection_repair = summary.get("runtime_registry_selection_repair_plan", {})
     lines = [
         f"manifest_version={summary.get('manifest_version', '')}",
         f"phase={summary.get('phase', '')}",
@@ -7863,6 +8378,16 @@ def build_ops_summary_text(summary: dict[str, Any]) -> str:
         f"runtime_same_fingerprint_watch_recommendation={summary.get('runtime_same_fingerprint_summary', {}).get('watch_recommendation', '')}",
         f"runtime_cross_fingerprint_matrix_severity={summary.get('runtime_cross_fingerprint_summary', {}).get('matrix_severity', '')}",
         f"runtime_cross_fingerprint_matrix_verdict={summary.get('runtime_cross_fingerprint_summary', {}).get('matrix_verdict', '')}",
+        f"runtime_comparability_triage_verdict={runtime_triage.get('triage_verdict', '')}",
+        f"runtime_comparability_recommended_action={runtime_triage.get('recommended_action', '')}",
+        f"runtime_rebaseline_action_plan_verdict={runtime_action_plan.get('action_plan_verdict', '')}",
+        f"runtime_rebaseline_proposal_gate_verdict={runtime_action_plan.get('proposal_gate_verdict', '')}",
+        f"runtime_rebaseline_available_samples={runtime_action_plan.get('available_samples', 0)}",
+        f"runtime_rebaseline_required_samples={runtime_action_plan.get('required_samples', 0)}",
+        f"runtime_rebaseline_runbook_type={runtime_runbook.get('runbook_type', '')}",
+        f"runtime_rebaseline_runbook_approval_ready={int(bool(runtime_runbook.get('approval_ready', False)))}",
+        f"runtime_registry_selection_sanity_verdict={runtime_selection_sanity.get('sanity_verdict', '')}",
+        f"runtime_registry_selection_repair_plan_verdict={runtime_selection_repair.get('repair_plan_verdict', '')}",
         f"combined_severity_current_env={final_summary.get('combined_severity_current_env', '')}",
         f"combined_severity_known_envs={final_summary.get('combined_severity_known_envs', '')}",
         f"combined_severity_cross_env={final_summary.get('combined_severity_cross_env', '')}",
@@ -8094,6 +8619,803 @@ def action_watch_registry(args: argparse.Namespace) -> int:
     return 0
 
 
+def runtime_registry_entry_key(entry: dict[str, Any]) -> str:
+    return str(entry.get("runtime_fingerprint_key", entry.get("fingerprint_key", ""))).strip()
+
+
+def runtime_registry_entry_by_id(registry: dict[str, Any], baseline_id: str | None) -> dict[str, Any]:
+    if not baseline_id:
+        return {}
+    for entry in registry.get("entries", []):
+        if isinstance(entry, dict) and str(entry.get("baseline_id", "")) == str(baseline_id):
+            return dict(entry)
+    return {}
+
+
+def runtime_registry_active_entries(registry: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        dict(entry)
+        for entry in registry.get("entries", [])
+        if isinstance(entry, dict) and str(entry.get("status", runtime_gate.REGISTRY_STATUS_RETIRED)) == runtime_gate.REGISTRY_STATUS_ACTIVE
+    ]
+
+
+def runtime_registry_retired_entries(registry: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        dict(entry)
+        for entry in registry.get("entries", [])
+        if isinstance(entry, dict) and str(entry.get("status", runtime_gate.REGISTRY_STATUS_ACTIVE)) == runtime_gate.REGISTRY_STATUS_RETIRED
+    ]
+
+
+def runtime_entry_is_foreign(entry: dict[str, Any]) -> bool:
+    haystack = " ".join(
+        [
+            str(entry.get("baseline_id", "")),
+            str(entry.get("baseline_tag", "")),
+            str(entry.get("environment_role", "")),
+            str(entry.get("host_fingerprint", {}).get("runner_tag", "")),
+            str(entry.get("runner_tag", "")),
+        ]
+    ).lower()
+    return "foreign" in haystack or "external" in haystack or "new-env" in haystack
+
+
+def runtime_entry_same_host_compiler_family(entry: dict[str, Any], current_manifest: dict[str, Any]) -> bool:
+    host = dict(entry.get("host_fingerprint", {}))
+    toolchain = dict(entry.get("toolchain_fingerprint", {}))
+    current_host = dict(current_manifest.get("host_fingerprint", {}))
+    current_toolchain = dict(current_manifest.get("toolchain_fingerprint", {}))
+    return (
+        str(host.get("os", "")) == str(current_host.get("os", ""))
+        and str(host.get("arch", "")) == str(current_host.get("arch", ""))
+        and str(toolchain.get("compiler_id", "")) == str(current_toolchain.get("compiler_id", ""))
+    )
+
+
+def runtime_entry_same_runner(entry: dict[str, Any], current_manifest: dict[str, Any]) -> bool:
+    return str(entry.get("host_fingerprint", {}).get("runner_tag", "")) == str(
+        current_manifest.get("host_fingerprint", {}).get("runner_tag", "")
+    )
+
+
+def runtime_current_signature_hash(current_manifest: dict[str, Any]) -> str:
+    return sha256_text(",".join(runtime_gate.runtime_execution_signatures(current_manifest)))
+
+
+def runtime_mismatch_dimensions(
+    selected_entry: dict[str, Any],
+    current_manifest: dict[str, Any],
+) -> dict[str, bool]:
+    if not selected_entry:
+        return {
+            "host": True,
+            "compiler": True,
+            "build_type": True,
+            "sanitizer_flags": True,
+            "runner_tag": True,
+            "execution_class_shape": True,
+            "budget_profile": True,
+        }
+    host = dict(selected_entry.get("host_fingerprint", {}))
+    toolchain = dict(selected_entry.get("toolchain_fingerprint", {}))
+    current_host = dict(current_manifest.get("host_fingerprint", {}))
+    current_toolchain = dict(current_manifest.get("toolchain_fingerprint", {}))
+    selected_classes = {str(value) for value in selected_entry.get("build_classes_covered", [])}
+    current_classes = set(runtime_gate.runtime_execution_classes(current_manifest))
+    signature_hash_mismatch = str(selected_entry.get("execution_signature_hash", "")) != runtime_current_signature_hash(current_manifest)
+    return {
+        "host": any(
+            str(host.get(key, "")) != str(current_host.get(key, ""))
+            for key in ("os", "os_release", "arch", "fingerprint_hash")
+        ),
+        "compiler": any(
+            str(toolchain.get(key, "")) != str(current_toolchain.get(key, ""))
+            for key in ("compiler_command", "compiler_id", "compiler_version")
+        ),
+        "build_type": signature_hash_mismatch,
+        "sanitizer_flags": signature_hash_mismatch,
+        "runner_tag": str(host.get("runner_tag", "")) != str(current_host.get("runner_tag", "")),
+        "execution_class_shape": bool(selected_classes and selected_classes != current_classes) or signature_hash_mismatch,
+        "budget_profile": str(selected_entry.get("runtime_budget_profile_id", "")) != str(
+            current_manifest.get("runtime_budget_profile_id", "")
+        ),
+    }
+
+
+def runtime_watch_available_samples(watch_registry: dict[str, Any], current_fingerprint_key: str) -> int:
+    samples = [
+        int(entry.get("sample_count", entry.get("real_sample_count", 0)) or 0)
+        for entry in watch_registry.get("entries", [])
+        if isinstance(entry, dict) and str(entry.get("runtime_fingerprint_key", "")) == current_fingerprint_key
+    ]
+    return max(samples) if samples else 0
+
+
+def runtime_watch_hard_breach_count(watch_registry: dict[str, Any], current_fingerprint_key: str, current_manifest: dict[str, Any]) -> int:
+    watch_hard = sum(
+        int(entry.get("hard_breach_count", entry.get("hard_over_budget_count", 0)) or 0)
+        for entry in watch_registry.get("entries", [])
+        if isinstance(entry, dict) and str(entry.get("runtime_fingerprint_key", "")) == current_fingerprint_key
+    )
+    manifest_hard = sum(
+        1
+        for entry in current_manifest.get("entries", [])
+        if isinstance(entry, dict)
+        and str(entry.get("current_status", entry.get("status", ""))).upper() in {"FAIL", "HARD_BREACH", "BUDGET_FAIL"}
+    )
+    return int(watch_hard + manifest_hard)
+
+
+def build_runtime_comparability_triage(
+    *,
+    phase: str,
+    current_manifest: dict[str, Any],
+    current_manifest_path: Path,
+    registry: dict[str, Any],
+    registry_path: Path,
+    history_index: dict[str, Any],
+    watch_registry: dict[str, Any],
+    history_index_path: Path | None,
+    watch_registry_path: Path | None,
+) -> dict[str, Any]:
+    selection = runtime_gate.select_runtime_baseline_from_registry(
+        current_manifest,
+        registry,
+        current_manifest_path,
+        registry_path,
+    )
+    current_key = str(selection.get("current_fingerprint_key", runtime_gate.runtime_manifest_fingerprint_key(current_manifest)))
+    selected_entry = runtime_registry_entry_by_id(registry, selection.get("selected_baseline_id"))
+    selected_key = runtime_registry_entry_key(selected_entry)
+    active_entries = runtime_registry_active_entries(registry)
+    retired_entries = runtime_registry_retired_entries(registry)
+    active_compatible = [
+        entry for entry in active_entries if runtime_gate.runtime_candidate_compatible(entry, current_manifest)
+    ]
+    local_compatible = [
+        entry
+        for entry in active_compatible
+        if runtime_entry_same_host_compiler_family(entry, current_manifest) and not runtime_entry_is_foreign(entry)
+    ]
+    exact_match_count = int(selection.get("exact_match_count", 0))
+    compatible_match_count = int(selection.get("compatible_match_count", 0))
+    retired_match_count = int(selection.get("retired_match_count", 0))
+    selected_status = str(selected_entry.get("status", selection.get("selected_entry_status", "")))
+    selected_is_retired = selected_status == runtime_gate.REGISTRY_STATUS_RETIRED
+    selected_is_foreign = runtime_entry_is_foreign(selected_entry)
+    mismatch_dimensions = runtime_mismatch_dimensions(selected_entry, current_manifest)
+
+    triage_verdict = "ACTION_REQUIRED"
+    recommended_action = "INVESTIGATE_RUNTIME_COMPARABILITY"
+    rationale: list[str] = []
+    if exact_match_count > 0 and str(selection.get("comparability_verdict")) == runtime_gate.COMPARABLE:
+        triage_verdict = "COMPARABLE"
+        recommended_action = "NO_ACTION"
+        rationale.append("active registry entry exactly matches the current runtime fingerprint")
+    elif selected_is_retired or (retired_match_count > 0 and compatible_match_count == 0):
+        triage_verdict = "STALE_REGISTRY_SELECTION"
+        recommended_action = "REFRESH_REGISTRY_SELECTION"
+        rationale.append("selection points at retired or stale runtime registry lineage")
+    elif not active_entries:
+        triage_verdict = "MISSING_BASELINE"
+        recommended_action = "PROPOSE_FOREIGN_ENV_ONBOARDING"
+        rationale.append("runtime registry has no active baseline candidates")
+    elif local_compatible:
+        triage_verdict = "NOT_COMPARABLE_CURRENT_ENV"
+        recommended_action = "PROPOSE_CURRENT_ENV_REBASELINE"
+        rationale.append("same host/compiler-family runtime lineage exists, but the current fingerprint is not strict-comparable")
+        if selected_is_foreign:
+            rationale.append("baseline selector preferred a foreign/externally approved compatible candidate; keep this as a runtime operator action")
+    elif compatible_match_count > 0:
+        if selected_is_foreign:
+            triage_verdict = "REBASELINE_REQUIRED_FOREIGN_ENV"
+            recommended_action = "PROPOSE_FOREIGN_ENV_ONBOARDING"
+            rationale.append("only foreign or external compatible baseline candidates were available for the current fingerprint")
+        else:
+            triage_verdict = "NOT_COMPARABLE_CURRENT_ENV"
+            recommended_action = "PROPOSE_CURRENT_ENV_REBASELINE"
+            rationale.append("compatible active baseline is informational only; strict comparison is disabled for this fingerprint")
+    elif int(selection.get("candidate_count", 0)) == 0:
+        triage_verdict = "REBASELINE_REQUIRED_FOREIGN_ENV"
+        recommended_action = "PROPOSE_FOREIGN_ENV_ONBOARDING"
+        rationale.append("current runtime fingerprint has no compatible active or retired registry candidate")
+    if str(selection.get("comparability_reason", "")).strip():
+        rationale.append(str(selection.get("comparability_reason")))
+    if watch_registry.get("current_env_status"):
+        rationale.append(f"watch registry current_env_status={watch_registry.get('current_env_status')}")
+    if str(selection.get("comparability_verdict", "")) != runtime_gate.COMPARABLE:
+        rationale.append("runtime comparability is an operator lane signal and does not change correctness PASS/FRESH state")
+
+    is_foreign_env = triage_verdict == "REBASELINE_REQUIRED_FOREIGN_ENV" or (selected_is_foreign and not local_compatible)
+    is_current_env = triage_verdict in {"COMPARABLE", "NOT_COMPARABLE_CURRENT_ENV"} or bool(local_compatible)
+    is_known_env = exact_match_count > 0 or compatible_match_count > 0 or bool(local_compatible)
+    transition = {
+        "from_selected_baseline_id": selection.get("selected_baseline_id"),
+        "from_selected_baseline_tag": selection.get("selected_baseline_tag"),
+        "current_fingerprint_key": current_key,
+        "triage_verdict": triage_verdict,
+        "recommended_action": recommended_action,
+    }
+    payload = {
+        "manifest_version": "runtime_comparability_triage_v1",
+        "phase": phase,
+        "generated_at_utc": stable_manifest_timestamp(current_manifest) or runtime_gate.timestamp_utc_now(),
+        "runtime_current_manifest_path": str(current_manifest_path),
+        "runtime_current_manifest_hash": sha256_file(current_manifest_path),
+        "runtime_baseline_registry_path": str(registry_path),
+        "runtime_baseline_registry_hash": sha256_file(registry_path),
+        "runtime_history_index_path": None if history_index_path is None else str(history_index_path),
+        "runtime_history_index_hash": sha256_file(history_index_path),
+        "runtime_watch_registry_path": None if watch_registry_path is None else str(watch_registry_path),
+        "runtime_watch_registry_hash": sha256_file(watch_registry_path),
+        "triage_verdict": triage_verdict,
+        "selected_baseline_id": selection.get("selected_baseline_id"),
+        "selected_baseline_tag": selection.get("selected_baseline_tag"),
+        "selected_baseline_status": selected_status or None,
+        "current_fingerprint_key": current_key,
+        "selected_baseline_fingerprint_key": selected_key or None,
+        "exact_match_count": exact_match_count,
+        "compatible_match_count": compatible_match_count,
+        "retired_match_count": retired_match_count,
+        "active_candidate_count": len(active_entries),
+        "local_compatible_candidate_count": len(local_compatible),
+        "mismatch_dimensions": mismatch_dimensions,
+        "is_current_env": bool(is_current_env),
+        "is_known_env": bool(is_known_env),
+        "is_foreign_env": bool(is_foreign_env),
+        "proposal_needed": triage_verdict not in {"COMPARABLE", "STALE_REGISTRY_SELECTION"},
+        "recommended_action": recommended_action,
+        "selection_summary": selection,
+        "current_execution_classes": runtime_gate.runtime_execution_classes(current_manifest),
+        "current_execution_signatures": runtime_gate.runtime_execution_signatures(current_manifest),
+        "current_runtime_budget_profile_id": current_manifest.get("runtime_budget_profile_id"),
+        "selected_runtime_budget_profile_id": selected_entry.get("runtime_budget_profile_id"),
+        "history_fingerprint_count": len(history_index.get("fingerprints", [])),
+        "watch_entry_count": int(watch_registry.get("entry_count", len(watch_registry.get("entries", [])) if watch_registry else 0)),
+        "available_samples": runtime_watch_available_samples(watch_registry, current_key),
+        "transition_list": [transition],
+        "rationale": rationale,
+    }
+    payload["triage_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def runtime_comparability_triage_text(payload: dict[str, Any]) -> str:
+    lines = [
+        f"manifest_version={payload.get('manifest_version', '')}",
+        f"phase={payload.get('phase', '')}",
+        f"triage_verdict={payload.get('triage_verdict', '')}",
+        f"selected_baseline_id={payload.get('selected_baseline_id', '')}",
+        f"selected_baseline_tag={payload.get('selected_baseline_tag', '')}",
+        f"current_fingerprint_key={payload.get('current_fingerprint_key', '')}",
+        f"selected_baseline_fingerprint_key={payload.get('selected_baseline_fingerprint_key', '')}",
+        f"exact_match_count={payload.get('exact_match_count', 0)}",
+        f"compatible_match_count={payload.get('compatible_match_count', 0)}",
+        f"retired_match_count={payload.get('retired_match_count', 0)}",
+        f"proposal_needed={int(bool(payload.get('proposal_needed', False)))}",
+        f"recommended_action={payload.get('recommended_action', '')}",
+    ]
+    for key, value in payload.get("mismatch_dimensions", {}).items():
+        lines.append(f"mismatch_{key}={int(bool(value))}")
+    for item in payload.get("rationale", []):
+        lines.append(f"rationale={item}")
+    return "\n".join(lines) + "\n"
+
+
+def build_runtime_rebaseline_action_plan(
+    *,
+    phase: str,
+    triage: dict[str, Any],
+    triage_path: Path,
+    current_manifest: dict[str, Any],
+    current_manifest_path: Path,
+    registry: dict[str, Any],
+    registry_path: Path,
+    history_index: dict[str, Any],
+    history_index_path: Path | None,
+    watch_registry: dict[str, Any],
+    watch_registry_path: Path | None,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    triage_verdict = str(triage.get("triage_verdict", "ACTION_REQUIRED"))
+    current_key = str(triage.get("current_fingerprint_key", runtime_gate.runtime_manifest_fingerprint_key(current_manifest)))
+    required_samples = 0
+    action_plan_verdict = "NO_ACTION"
+    proposal_type = "none"
+    if triage_verdict == "NOT_COMPARABLE_CURRENT_ENV":
+        action_plan_verdict = "PROPOSE_CURRENT_ENV_REBASELINE"
+        proposal_type = "current_env_rebaseline"
+        required_samples = 3
+    elif triage_verdict == "REBASELINE_REQUIRED_FOREIGN_ENV":
+        action_plan_verdict = "PROPOSE_FOREIGN_ENV_ONBOARDING"
+        proposal_type = "foreign_env_onboarding"
+        required_samples = 3
+    elif triage_verdict == "STALE_REGISTRY_SELECTION":
+        action_plan_verdict = "REFRESH_REGISTRY_SELECTION"
+        proposal_type = "registry_refresh"
+        required_samples = 0
+    elif triage_verdict == "MISSING_BASELINE":
+        action_plan_verdict = "PROPOSE_FOREIGN_ENV_ONBOARDING"
+        proposal_type = "foreign_env_onboarding"
+        required_samples = 3
+    elif triage_verdict not in {"COMPARABLE"}:
+        action_plan_verdict = "NEED_MORE_SAMPLES"
+        proposal_type = "investigate"
+        required_samples = 3
+
+    available_samples = runtime_watch_available_samples(watch_registry, current_key)
+    hard_breach_count = runtime_watch_hard_breach_count(watch_registry, current_key, current_manifest)
+    proposal_gate_verdict = "NOT_APPLICABLE"
+    proposal_confidence = "NONE"
+    if action_plan_verdict in {"PROPOSE_CURRENT_ENV_REBASELINE", "PROPOSE_FOREIGN_ENV_ONBOARDING"}:
+        if hard_breach_count > 0:
+            action_plan_verdict = "REJECT"
+            proposal_gate_verdict = "REJECT"
+            proposal_confidence = "LOW"
+        elif available_samples < required_samples:
+            action_plan_verdict = "NEED_MORE_SAMPLES"
+            proposal_gate_verdict = "NEED_MORE_SAMPLES"
+            proposal_confidence = "LOW"
+        else:
+            proposal_gate_verdict = "APPROVABLE"
+            proposal_confidence = "MEDIUM" if available_samples < max(required_samples * 2, 1) else "HIGH"
+    elif action_plan_verdict == "REFRESH_REGISTRY_SELECTION":
+        proposal_gate_verdict = "APPROVABLE"
+        proposal_confidence = "MEDIUM"
+
+    recommended_command = "no runtime action required"
+    if action_plan_verdict == "PROPOSE_CURRENT_ENV_REBASELINE":
+        recommended_command = (
+            f"./raw_engine_tests --case runtime_approve_rebaseline "
+            f"--runtime-current-manifest {current_manifest_path} "
+            f"--runtime-baseline-registry {registry_path} "
+            f"--approval-mode handoff_only"
+        )
+    elif action_plan_verdict == "PROPOSE_FOREIGN_ENV_ONBOARDING":
+        recommended_command = (
+            f"./raw_engine_tests --case runtime_approve_rebaseline "
+            f"--runtime-current-manifest {current_manifest_path} "
+            f"--runtime-baseline-registry {registry_path} "
+            f"--baseline-tag {phase}-runtime-foreign-onboarding --approval-mode handoff_only"
+        )
+    elif action_plan_verdict == "REFRESH_REGISTRY_SELECTION":
+        recommended_command = (
+            f"./raw_engine_tests --case runtime_registry_selection_repair_plan "
+            f"--runtime-current-manifest {current_manifest_path} "
+            f"--runtime-baseline-registry {registry_path}"
+        )
+    elif action_plan_verdict == "NEED_MORE_SAMPLES":
+        recommended_command = (
+            f"./raw_engine_tests --case runtime_watch_campaign --execution-class all "
+            f"--runtime-current-manifest {current_manifest_path}"
+        )
+
+    rationale = list(triage.get("rationale", []))
+    if proposal_gate_verdict == "APPROVABLE":
+        rationale.append("runtime action is approval-ready but remains handoff_only; registry switch is not automatic")
+    elif proposal_gate_verdict == "NEED_MORE_SAMPLES":
+        rationale.append("runtime action needs additional samples before operator approval")
+    elif proposal_gate_verdict == "REJECT":
+        rationale.append("runtime hard breach blocks rebaseline approval and requires escalation")
+    if triage_verdict != "COMPARABLE":
+        rationale.append("correctness PASS/FRESH is unaffected; this plan only covers runtime/operator state")
+
+    proposal = {
+        "manifest_version": "runtime_rebaseline_action_proposal_v1",
+        "phase": phase,
+        "generated_at_utc": stable_manifest_timestamp(current_manifest) or runtime_gate.timestamp_utc_now(),
+        "proposal_type": proposal_type,
+        "proposal_needed": action_plan_verdict
+        in {"PROPOSE_CURRENT_ENV_REBASELINE", "PROPOSE_FOREIGN_ENV_ONBOARDING", "REFRESH_REGISTRY_SELECTION"},
+        "triage_verdict": triage_verdict,
+        "current_fingerprint_key": current_key,
+        "selected_baseline_id": triage.get("selected_baseline_id"),
+        "selected_baseline_tag": triage.get("selected_baseline_tag"),
+        "runtime_current_manifest_path": str(current_manifest_path),
+        "runtime_baseline_registry_path": str(registry_path),
+        "approval_mode": APPROVAL_EXECUTION_MODE_HANDOFF_ONLY,
+        "mutates_registry": False,
+        "rationale": rationale,
+    }
+    proposal["proposal_hash"] = sha256_text(json.dumps(proposal, sort_keys=True))
+    proposal_gate = {
+        "manifest_version": "runtime_rebaseline_action_proposal_gate_v1",
+        "phase": phase,
+        "generated_at_utc": proposal["generated_at_utc"],
+        "proposal_gate_verdict": proposal_gate_verdict,
+        "proposal_confidence": proposal_confidence,
+        "required_samples": required_samples,
+        "available_samples": available_samples,
+        "hard_breach_count": hard_breach_count,
+        "approval_mode": APPROVAL_EXECUTION_MODE_HANDOFF_ONLY,
+        "integrated_opt_in_required": True,
+        "registry_switch_automatic": False,
+        "rationale": rationale,
+    }
+    proposal_gate["proposal_gate_hash"] = sha256_text(json.dumps(proposal_gate, sort_keys=True))
+    action_plan = {
+        "manifest_version": "runtime_rebaseline_action_plan_v1",
+        "phase": phase,
+        "generated_at_utc": proposal["generated_at_utc"],
+        "runtime_comparability_triage_path": str(triage_path),
+        "runtime_comparability_triage_hash": sha256_file(triage_path),
+        "runtime_current_manifest_path": str(current_manifest_path),
+        "runtime_current_manifest_hash": sha256_file(current_manifest_path),
+        "runtime_baseline_registry_path": str(registry_path),
+        "runtime_baseline_registry_hash": sha256_file(registry_path),
+        "runtime_history_index_path": None if history_index_path is None else str(history_index_path),
+        "runtime_history_fingerprint_count": len(history_index.get("fingerprints", [])),
+        "runtime_watch_registry_path": None if watch_registry_path is None else str(watch_registry_path),
+        "action_plan_verdict": action_plan_verdict,
+        "proposal_gate_verdict": proposal_gate_verdict,
+        "proposal_confidence": proposal_confidence,
+        "required_samples": required_samples,
+        "available_samples": available_samples,
+        "hard_breach_count": hard_breach_count,
+        "recommended_operator_command": recommended_command,
+        "approval_mode": APPROVAL_EXECUTION_MODE_HANDOFF_ONLY,
+        "rationale": rationale,
+    }
+    action_plan["action_plan_hash"] = sha256_text(json.dumps(action_plan, sort_keys=True))
+    return proposal, proposal_gate, action_plan
+
+
+def runtime_rebaseline_action_plan_text(payload: dict[str, Any]) -> str:
+    lines = [
+        f"manifest_version={payload.get('manifest_version', '')}",
+        f"phase={payload.get('phase', '')}",
+        f"action_plan_verdict={payload.get('action_plan_verdict', '')}",
+        f"proposal_gate_verdict={payload.get('proposal_gate_verdict', '')}",
+        f"proposal_confidence={payload.get('proposal_confidence', '')}",
+        f"required_samples={payload.get('required_samples', 0)}",
+        f"available_samples={payload.get('available_samples', 0)}",
+        f"hard_breach_count={payload.get('hard_breach_count', 0)}",
+        f"approval_mode={payload.get('approval_mode', '')}",
+        f"recommended_operator_command={payload.get('recommended_operator_command', '')}",
+    ]
+    for item in payload.get("rationale", []):
+        lines.append(f"rationale={item}")
+    return "\n".join(lines) + "\n"
+
+
+def build_runtime_rebaseline_runbook(
+    *,
+    phase: str,
+    action_plan: dict[str, Any],
+    action_plan_path: Path,
+    proposal: dict[str, Any],
+    proposal_path: Path,
+    proposal_gate: dict[str, Any],
+    proposal_gate_path: Path,
+    registry: dict[str, Any],
+    registry_path: Path,
+) -> dict[str, Any]:
+    action_plan_verdict = str(action_plan.get("action_plan_verdict", "NO_ACTION"))
+    runbook_type = "registry_refresh"
+    if action_plan_verdict == "PROPOSE_CURRENT_ENV_REBASELINE":
+        runbook_type = "current_env_rebaseline"
+    elif action_plan_verdict == "PROPOSE_FOREIGN_ENV_ONBOARDING":
+        runbook_type = "foreign_env_onboarding"
+    elif action_plan_verdict in {"NO_ACTION", "NEED_MORE_SAMPLES", "REJECT"}:
+        runbook_type = "registry_refresh" if action_plan_verdict == "NO_ACTION" else "current_env_rebaseline"
+    approval_ready = str(proposal_gate.get("proposal_gate_verdict", "NOT_APPLICABLE")) == "APPROVABLE" and action_plan_verdict not in {"NO_ACTION", "NEED_MORE_SAMPLES", "REJECT"}
+    blockers: list[str] = []
+    if not approval_ready:
+        blockers.append(f"proposal_gate_verdict={proposal_gate.get('proposal_gate_verdict', 'NOT_APPLICABLE')}")
+    if action_plan_verdict == "REJECT":
+        blockers.append("hard runtime breach blocks rebaseline approval")
+    if action_plan_verdict == "NEED_MORE_SAMPLES":
+        blockers.append("additional runtime samples are required")
+    payload = {
+        "manifest_version": "runtime_rebaseline_runbook_v1",
+        "phase": phase,
+        "generated_at_utc": proposal.get("generated_at_utc") or runtime_gate.timestamp_utc_now(),
+        "runbook_id": f"{phase}-{runbook_type}-handoff",
+        "runbook_type": runbook_type,
+        "approval_ready": bool(approval_ready),
+        "approval_mode": APPROVAL_EXECUTION_MODE_HANDOFF_ONLY,
+        "integrated_opt_in_required": True,
+        "mutates_registry": False,
+        "recommended_command": action_plan.get("recommended_operator_command", "no runtime action required"),
+        "required_inputs": [
+            str(action_plan_path),
+            str(proposal_path),
+            str(proposal_gate_path),
+            str(registry_path),
+        ],
+        "expected_outputs": [
+            f"operator-reviewed {runbook_type} decision",
+            "updated runtime registry only after explicit operator approval",
+        ],
+        "safety_checks": [
+            "confirm correctness PASS/FRESH before runtime registry work",
+            "keep approval_mode=handoff_only unless explicitly opting into integrated tests-only flow",
+            "do not switch registry from this runbook without operator confirmation",
+        ],
+        "blockers": blockers,
+        "registry_entry_count": len(registry.get("entries", [])),
+        "rationale": list(action_plan.get("rationale", [])),
+        "runtime_rebaseline_action_plan_hash": sha256_file(action_plan_path),
+        "runtime_rebaseline_proposal_hash": sha256_file(proposal_path),
+        "runtime_rebaseline_proposal_gate_hash": sha256_file(proposal_gate_path),
+    }
+    payload["runbook_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_runtime_registry_selection_sanity(
+    *,
+    phase: str,
+    current_manifest: dict[str, Any],
+    current_manifest_path: Path,
+    registry: dict[str, Any],
+    registry_path: Path,
+) -> dict[str, Any]:
+    selection = runtime_gate.select_runtime_baseline_from_registry(current_manifest, registry, current_manifest_path, registry_path)
+    current_key = str(selection.get("current_fingerprint_key", runtime_gate.runtime_manifest_fingerprint_key(current_manifest)))
+    selected_entry = runtime_registry_entry_by_id(registry, selection.get("selected_baseline_id"))
+    selected_active = bool(selected_entry) and str(selected_entry.get("status", "")) == runtime_gate.REGISTRY_STATUS_ACTIVE
+    active_entries = runtime_registry_active_entries(registry)
+    same_fingerprint_active_entries = [entry for entry in active_entries if runtime_registry_entry_key(entry) == current_key]
+    compatible_active_entries = [entry for entry in active_entries if runtime_gate.runtime_candidate_compatible(entry, current_manifest)]
+    local_compatible_entries = [
+        entry
+        for entry in compatible_active_entries
+        if runtime_entry_same_host_compiler_family(entry, current_manifest) and not runtime_entry_is_foreign(entry)
+    ]
+    retired_selected = bool(selected_entry) and str(selected_entry.get("status", "")) == runtime_gate.REGISTRY_STATUS_RETIRED
+    retired_incorrectly_preferred = retired_selected and bool(compatible_active_entries)
+    multi_active_registry_consistency = "PASS" if len(same_fingerprint_active_entries) <= 1 else "FAIL"
+    budget_profile_link_valid = all(
+        bool(str(entry.get("runtime_budget_profile_id", entry.get("budget_profile_id", ""))).strip())
+        for entry in active_entries
+    )
+    current_fingerprint_parseable = bool(current_key)
+    active_missing_manifest = [
+        {
+            "baseline_id": entry.get("baseline_id"),
+            "baseline_tag": entry.get("baseline_tag"),
+            "status": entry.get("status"),
+            "reason": runtime_gate.runtime_registry_entry_manifest_status(entry)[1],
+        }
+        for entry in active_entries
+        if not runtime_gate.runtime_registry_entry_manifest_status(entry)[0]
+    ]
+    foreign_selected_over_local_candidate = (
+        bool(selected_entry)
+        and runtime_entry_is_foreign(selected_entry)
+        and bool(local_compatible_entries)
+        and runtime_registry_entry_key(selected_entry) != current_key
+    )
+    issues: list[str] = []
+    if selected_entry and not selected_active:
+        issues.append("selected baseline is not active")
+    if same_fingerprint_active_entries and not selected_active:
+        issues.append("same fingerprint active entry exists but selection did not use it")
+    if retired_incorrectly_preferred:
+        issues.append("retired entry was preferred over an active compatible entry")
+    if multi_active_registry_consistency != "PASS":
+        issues.append("multiple active baselines share the current fingerprint")
+    if not budget_profile_link_valid:
+        issues.append("active runtime registry entry is missing a budget profile link")
+    if not current_fingerprint_parseable:
+        issues.append("current runtime fingerprint is not parseable")
+    if active_missing_manifest:
+        issues.append("active runtime registry entry is missing a backing manifest")
+    if foreign_selected_over_local_candidate:
+        issues.append("foreign/external baseline was selected while a local compatible candidate exists")
+    sanity_verdict = "PASS" if not issues else "ACTION_REQUIRED"
+    payload = {
+        "manifest_version": "runtime_registry_selection_sanity_v1",
+        "phase": phase,
+        "generated_at_utc": stable_manifest_timestamp(current_manifest) or runtime_gate.timestamp_utc_now(),
+        "runtime_current_manifest_path": str(current_manifest_path),
+        "runtime_baseline_registry_path": str(registry_path),
+        "sanity_verdict": sanity_verdict,
+        "selected_baseline_id": selection.get("selected_baseline_id"),
+        "selected_baseline_tag": selection.get("selected_baseline_tag"),
+        "selected_baseline_active": bool(selected_active),
+        "same_fingerprint_active_entry_exists": bool(same_fingerprint_active_entries),
+        "same_fingerprint_active_count": len(same_fingerprint_active_entries),
+        "retired_entry_incorrectly_preferred": bool(retired_incorrectly_preferred),
+        "multi_active_registry_consistency": multi_active_registry_consistency,
+        "budget_profile_link_valid": bool(budget_profile_link_valid),
+        "runtime_current_fingerprint_parseable": bool(current_fingerprint_parseable),
+        "active_entry_missing_manifest_count": len(active_missing_manifest),
+        "active_entry_missing_manifest_entries": active_missing_manifest,
+        "foreign_selected_over_local_candidate": bool(foreign_selected_over_local_candidate),
+        "current_fingerprint_key": current_key,
+        "selected_baseline_fingerprint_key": runtime_registry_entry_key(selected_entry) or None,
+        "compatible_active_count": len(compatible_active_entries),
+        "local_compatible_active_count": len(local_compatible_entries),
+        "issues": issues,
+        "selection_summary": selection,
+    }
+    payload["sanity_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def build_runtime_registry_selection_repair_plan(
+    *,
+    phase: str,
+    selection_sanity: dict[str, Any],
+    selection_sanity_path: Path,
+    registry: dict[str, Any],
+    registry_path: Path,
+) -> dict[str, Any]:
+    issues = list(selection_sanity.get("issues", []))
+    repair_actions: list[str] = []
+    if selection_sanity.get("foreign_selected_over_local_candidate"):
+        repair_actions.append("refresh registry selection to prefer local compatible lineage before rebaseline review")
+    if selection_sanity.get("same_fingerprint_active_entry_exists") and not selection_sanity.get("selected_baseline_active"):
+        repair_actions.append("refresh registry selection to the active same-fingerprint baseline")
+    if selection_sanity.get("retired_entry_incorrectly_preferred"):
+        repair_actions.append("reject stale selection and reactivate/promote only through explicit operator approval")
+    if not selection_sanity.get("budget_profile_link_valid", True):
+        repair_actions.append("repair missing runtime budget profile link")
+    if int(selection_sanity.get("active_entry_missing_manifest_count", 0) or 0) > 0:
+        repair_actions.append("repair active registry backing manifest path or require rebaseline")
+    if not repair_actions and str(selection_sanity.get("sanity_verdict", "")) == "PASS":
+        repair_actions.append("no registry repair required")
+    elif not repair_actions:
+        repair_actions.append("require rebaseline")
+    if any("same-fingerprint" in action or "prefer local" in action for action in repair_actions):
+        repair_plan_verdict = "REFRESH_REGISTRY_SELECTION"
+    elif any("missing" in action or "repair" in action for action in repair_actions):
+        repair_plan_verdict = "REPAIR_REGISTRY_METADATA"
+    elif repair_actions == ["no registry repair required"]:
+        repair_plan_verdict = "NO_ACTION"
+    else:
+        repair_plan_verdict = "REQUIRE_REBASELINE"
+    payload = {
+        "manifest_version": "runtime_registry_selection_repair_plan_v1",
+        "phase": phase,
+        "generated_at_utc": runtime_gate.timestamp_utc_now(),
+        "selection_sanity_path": str(selection_sanity_path),
+        "selection_sanity_hash": sha256_file(selection_sanity_path),
+        "runtime_baseline_registry_path": str(registry_path),
+        "runtime_baseline_registry_hash": sha256_file(registry_path),
+        "repair_plan_verdict": repair_plan_verdict,
+        "repair_actions": repair_actions,
+        "selected_baseline_id": selection_sanity.get("selected_baseline_id"),
+        "selected_baseline_tag": selection_sanity.get("selected_baseline_tag"),
+        "registry_entry_count": len(registry.get("entries", [])),
+        "issues": issues,
+        "recommended_operator_command": "operator review required before runtime registry mutation"
+        if repair_plan_verdict != "NO_ACTION"
+        else "no registry repair required",
+    }
+    payload["repair_plan_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    return payload
+
+
+def action_runtime_comparability_triage(args: argparse.Namespace) -> int:
+    current_path = resolve_json_path(args.runtime_current_manifest)
+    registry_path = resolve_json_path(args.runtime_baseline_registry)
+    history_path = resolve_json_path(args.runtime_history_index)
+    watch_path = resolve_json_path(args.runtime_watch_registry)
+    out_path = resolve_json_path(args.triage_out)
+    if current_path is None or registry_path is None or out_path is None:
+        raise SystemExit("--runtime-current-manifest, --runtime-baseline-registry, and --triage-out are required")
+    payload = build_runtime_comparability_triage(
+        phase=str(args.phase),
+        current_manifest=read_json(current_path),
+        current_manifest_path=current_path,
+        registry=read_json(registry_path),
+        registry_path=registry_path,
+        history_index=read_json(history_path),
+        watch_registry=read_json(watch_path),
+        history_index_path=history_path,
+        watch_registry_path=watch_path,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), runtime_comparability_triage_text(payload))
+    print(str(out_path))
+    return 0
+
+
+def action_runtime_rebaseline_action_plan(args: argparse.Namespace) -> int:
+    triage_path = resolve_json_path(args.runtime_comparability_triage)
+    current_path = resolve_json_path(args.runtime_current_manifest)
+    registry_path = resolve_json_path(args.runtime_baseline_registry)
+    history_path = resolve_json_path(args.runtime_history_index)
+    watch_path = resolve_json_path(args.runtime_watch_registry)
+    proposal_path = resolve_json_path(args.proposal_out)
+    proposal_gate_path = resolve_json_path(args.proposal_gate_out)
+    action_plan_path = resolve_json_path(args.action_plan_out)
+    if (
+        triage_path is None
+        or current_path is None
+        or registry_path is None
+        or proposal_path is None
+        or proposal_gate_path is None
+        or action_plan_path is None
+    ):
+        raise SystemExit("--runtime-comparability-triage, --runtime-current-manifest, --runtime-baseline-registry, --proposal-out, --proposal-gate-out, and --action-plan-out are required")
+    proposal, proposal_gate, action_plan = build_runtime_rebaseline_action_plan(
+        phase=str(args.phase),
+        triage=read_json(triage_path),
+        triage_path=triage_path,
+        current_manifest=read_json(current_path),
+        current_manifest_path=current_path,
+        registry=read_json(registry_path),
+        registry_path=registry_path,
+        history_index=read_json(history_path),
+        history_index_path=history_path,
+        watch_registry=read_json(watch_path),
+        watch_registry_path=watch_path,
+    )
+    write_json(proposal_path, proposal)
+    write_json(proposal_gate_path, proposal_gate)
+    write_json(action_plan_path, action_plan)
+    atomic_write_text(action_plan_path.with_suffix(".summary.txt"), runtime_rebaseline_action_plan_text(action_plan))
+    print(str(action_plan_path))
+    return 0
+
+
+def action_runtime_rebaseline_runbook(args: argparse.Namespace) -> int:
+    action_plan_path = resolve_json_path(args.runtime_rebaseline_action_plan)
+    proposal_path = resolve_json_path(args.runtime_proposal)
+    proposal_gate_path = resolve_json_path(args.runtime_proposal_gate)
+    registry_path = resolve_json_path(args.runtime_baseline_registry)
+    runbook_path = resolve_json_path(args.runbook_out)
+    if action_plan_path is None or proposal_path is None or proposal_gate_path is None or registry_path is None or runbook_path is None:
+        raise SystemExit("--runtime-rebaseline-action-plan, --runtime-proposal, --runtime-proposal-gate, --runtime-baseline-registry, and --runbook-out are required")
+    payload = build_runtime_rebaseline_runbook(
+        phase=str(args.phase),
+        action_plan=read_json(action_plan_path),
+        action_plan_path=action_plan_path,
+        proposal=read_json(proposal_path),
+        proposal_path=proposal_path,
+        proposal_gate=read_json(proposal_gate_path),
+        proposal_gate_path=proposal_gate_path,
+        registry=read_json(registry_path),
+        registry_path=registry_path,
+    )
+    write_json(runbook_path, payload)
+    atomic_write_text(runbook_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(runbook_path))
+    return 0
+
+
+def action_runtime_registry_selection_sanity(args: argparse.Namespace) -> int:
+    current_path = resolve_json_path(args.runtime_current_manifest)
+    registry_path = resolve_json_path(args.runtime_baseline_registry)
+    out_path = resolve_json_path(args.sanity_out)
+    if current_path is None or registry_path is None or out_path is None:
+        raise SystemExit("--runtime-current-manifest, --runtime-baseline-registry, and --sanity-out are required")
+    payload = build_runtime_registry_selection_sanity(
+        phase=str(args.phase),
+        current_manifest=read_json(current_path),
+        current_manifest_path=current_path,
+        registry=read_json(registry_path),
+        registry_path=registry_path,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_runtime_registry_selection_repair_plan(args: argparse.Namespace) -> int:
+    sanity_path = resolve_json_path(args.selection_sanity)
+    registry_path = resolve_json_path(args.runtime_baseline_registry)
+    out_path = resolve_json_path(args.repair_plan_out)
+    if sanity_path is None or registry_path is None or out_path is None:
+        raise SystemExit("--selection-sanity, --runtime-baseline-registry, and --repair-plan-out are required")
+    payload = build_runtime_registry_selection_repair_plan(
+        phase=str(args.phase),
+        selection_sanity=read_json(sanity_path),
+        selection_sanity_path=sanity_path,
+        registry=read_json(registry_path),
+        registry_path=registry_path,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
 def action_ops_summary(args: argparse.Namespace) -> int:
     out_path = resolve_json_path(args.out)
     if out_path is None:
@@ -8164,15 +9486,29 @@ def action_ops_summary(args: argparse.Namespace) -> int:
     operator_archive_retention_apply = read_json(resolve_json_path(getattr(args, "operator_archive_retention_apply", None)))
     operator_waiver_registry = read_json(resolve_json_path(getattr(args, "operator_waiver_registry", None)))
     operator_waiver_review = read_json(resolve_json_path(getattr(args, "operator_waiver_review", None)))
+    operator_archive_age_tick = read_json(resolve_json_path(getattr(args, "operator_archive_age_tick", None)))
+    operator_archive_review_queue = read_json(resolve_json_path(getattr(args, "operator_archive_review_queue", None)))
+    operator_waiver_apply = read_json(resolve_json_path(getattr(args, "operator_waiver_apply", None)))
+    staged_overlay_completeness = read_json(resolve_json_path(getattr(args, "staged_overlay_completeness", None)))
+    verification_preflight_gate_v2 = read_json(resolve_json_path(getattr(args, "verification_preflight_gate_v2", None)))
     verification_preflight_gate = read_json(resolve_json_path(getattr(args, "verification_preflight_gate", None)))
     staged_verification_retention = read_json(resolve_json_path(getattr(args, "staged_verification_retention", None)))
+    staged_verification_retention_apply_v2 = read_json(resolve_json_path(getattr(args, "staged_verification_retention_apply_v2", None)))
     published_snapshot_retention = read_json(resolve_json_path(getattr(args, "published_snapshot_retention", None)))
+    published_snapshot_retention_apply_v2 = read_json(resolve_json_path(getattr(args, "published_snapshot_retention_apply_v2", None)))
     published_snapshot_retention_apply = read_json(resolve_json_path(getattr(args, "published_snapshot_retention_apply", None)))
     integrated_approval_mutation_audit = read_json(resolve_json_path(getattr(args, "integrated_approval_mutation_audit", None)))
     source_health_action_plan = read_json(resolve_json_path(getattr(args, "source_health_action_plan", None)))
     staged_materialization_transaction = read_json(resolve_json_path(getattr(args, "staged_materialization_transaction", None)))
     source_health_preflight = read_json(resolve_json_path(getattr(args, "source_health_preflight", None)))
     staged_materialization = read_json(resolve_json_path(getattr(args, "staged_materialization", None)))
+    runtime_comparability_triage = read_json(resolve_json_path(getattr(args, "runtime_comparability_triage", None)))
+    runtime_rebaseline_action_plan = read_json(resolve_json_path(getattr(args, "runtime_rebaseline_action_plan", None)))
+    runtime_rebaseline_proposal = read_json(resolve_json_path(getattr(args, "runtime_rebaseline_proposal", None)))
+    runtime_rebaseline_proposal_gate = read_json(resolve_json_path(getattr(args, "runtime_rebaseline_proposal_gate", None)))
+    runtime_rebaseline_runbook = read_json(resolve_json_path(getattr(args, "runtime_rebaseline_runbook", None)))
+    runtime_registry_selection_sanity = read_json(resolve_json_path(getattr(args, "runtime_registry_selection_sanity", None)))
+    runtime_registry_selection_repair_plan = read_json(resolve_json_path(getattr(args, "runtime_registry_selection_repair_plan", None)))
     runtime_budget_current = read_json(resolve_json_path(getattr(args, "runtime_budget_current", None)))
     runtime_budget_proposal = read_json(resolve_json_path(getattr(args, "runtime_budget_proposal", None)))
     runtime_budget_proposal_gate = read_json(resolve_json_path(getattr(args, "runtime_budget_proposal_gate", None)))
@@ -8549,6 +9885,228 @@ def action_ops_summary(args: argparse.Namespace) -> int:
         payload.setdefault("final_operator_summary", {})["waiver_review_verdict"] = operator_waiver_review.get("review_verdict", "NOT_RUN")
         payload.setdefault("final_operator_summary", {})["verification_preflight_gate_verdict"] = verification_preflight_gate.get("preflight_gate_verdict", "NOT_RUN")
         payload.setdefault("final_operator_summary", {})["published_snapshot_retention_verdict"] = published_snapshot_retention.get("retention_verdict", "NOT_RUN")
+        payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    if (
+        operator_archive_age_tick
+        or operator_archive_review_queue
+        or operator_waiver_apply
+        or staged_overlay_completeness
+        or verification_preflight_gate_v2
+        or staged_verification_retention_apply_v2
+        or published_snapshot_retention_apply_v2
+    ):
+        payload["manifest_version"] = "policy_ops_summary_v19"
+        payload["operator_archive_review_queue"] = {
+            "queue_entry_count": operator_archive_review_queue.get("queue_entry_count", 0),
+            "waiver_due_soon_count": operator_archive_review_queue.get("waiver_due_soon_count", operator_archive_age_tick.get("waiver_due_soon_count", 0)),
+            "waiver_review_required_count": operator_archive_review_queue.get("waiver_review_required_count", operator_archive_age_tick.get("waiver_review_required_count", 0)),
+            "waiver_expired_count": operator_archive_review_queue.get("waiver_expired_count", operator_archive_age_tick.get("waiver_expired_count", 0)),
+            "snapshot_prune_due_count": operator_archive_review_queue.get("snapshot_prune_due_count", operator_archive_age_tick.get("snapshot_prune_due_count", 0)),
+            "snapshot_prune_blocked_count": operator_archive_review_queue.get("snapshot_prune_blocked_count", operator_archive_age_tick.get("snapshot_prune_blocked_count", 0)),
+            "next_waiver_review_at": operator_archive_review_queue.get("next_waiver_review_at", operator_archive_age_tick.get("next_waiver_review_at")),
+            "next_snapshot_retention_review_at": operator_archive_review_queue.get("next_snapshot_retention_review_at", operator_archive_age_tick.get("next_snapshot_retention_review_at")),
+            "review_queue_hash": operator_archive_review_queue.get("review_queue_hash"),
+        }
+        payload["operator_waiver_apply"] = {
+            "apply_verdict": operator_waiver_apply.get("apply_verdict", "NOT_RUN"),
+            "reviewed_waiver_count": operator_waiver_apply.get("reviewed_waiver_count", 0),
+            "freshened_waiver_count": operator_waiver_apply.get("freshened_waiver_count", 0),
+            "expired_waiver_count": operator_waiver_apply.get("expired_waiver_count", 0),
+            "retired_waiver_count": operator_waiver_apply.get("retired_waiver_count", 0),
+            "blocked_waiver_count": operator_waiver_apply.get("blocked_waiver_count", 0),
+            "resulting_registry_hash": operator_waiver_apply.get("resulting_registry_hash"),
+        }
+        payload["staged_overlay_completeness"] = {
+            "completeness_verdict": staged_overlay_completeness.get("completeness_verdict", "NOT_RUN"),
+            "required_overlay_count": staged_overlay_completeness.get("required_overlay_count", 0),
+            "found_overlay_count": staged_overlay_completeness.get("found_overlay_count", 0),
+            "missing_overlay_count": staged_overlay_completeness.get("missing_overlay_count", 0),
+            "overlay_hash": staged_overlay_completeness.get("overlay_hash"),
+        }
+        payload["verification_preflight_gate_v2"] = {
+            "preflight_gate_verdict": verification_preflight_gate_v2.get("preflight_gate_verdict", "NOT_RUN"),
+            "source_health_status": verification_preflight_gate_v2.get("source_health_status"),
+            "source_health_recommendation": verification_preflight_gate_v2.get("source_health_recommendation"),
+            "overlay_completeness_verdict": verification_preflight_gate_v2.get("overlay_completeness_verdict"),
+            "direct_build_allowed": verification_preflight_gate_v2.get("direct_build_allowed"),
+            "staged_build_allowed": verification_preflight_gate_v2.get("staged_build_allowed"),
+            "sparse_clone_required": verification_preflight_gate_v2.get("sparse_clone_required"),
+            "overlay_missing_blocking": verification_preflight_gate_v2.get("overlay_missing_blocking"),
+            "selected_materialization_mode": verification_preflight_gate_v2.get("selected_materialization_mode"),
+        }
+        payload["staged_verification_retention"] = {
+            **payload.get("staged_verification_retention", {}),
+            "apply_v2_verdict": staged_verification_retention_apply_v2.get("apply_verdict", "NOT_RUN"),
+            "apply_v2_blocked_prune_count": staged_verification_retention_apply_v2.get("blocked_prune_count", 0),
+        }
+        payload["published_snapshot_retention"] = {
+            **payload.get("published_snapshot_retention", {}),
+            "apply_v2_verdict": published_snapshot_retention_apply_v2.get("apply_verdict", "NOT_RUN"),
+            "apply_v2_blocked_prune_count": published_snapshot_retention_apply_v2.get("blocked_prune_count", 0),
+            "retained_by_waiver_count": published_snapshot_retention_apply_v2.get("retained_by_waiver_count", 0),
+            "retained_by_bundle_count": published_snapshot_retention_apply_v2.get("retained_by_bundle_count", 0),
+            "retained_by_report_count": published_snapshot_retention_apply_v2.get("retained_by_report_count", 0),
+        }
+        if verification_preflight_gate_v2:
+            verification_lane = dict(payload.get("verification_lane", {}))
+            verification_lane["preflight_gate_verdict"] = verification_preflight_gate_v2.get("preflight_gate_verdict")
+            verification_lane["direct_build_allowed"] = verification_preflight_gate_v2.get("direct_build_allowed")
+            verification_lane["staged_build_allowed"] = verification_preflight_gate_v2.get("staged_build_allowed")
+            verification_lane["sparse_clone_required"] = verification_preflight_gate_v2.get("sparse_clone_required")
+            verification_lane["overlay_completeness_verdict"] = verification_preflight_gate_v2.get("overlay_completeness_verdict")
+            verification_lane["materialization_mode"] = verification_preflight_gate_v2.get("selected_materialization_mode")
+            payload["verification_lane"] = verification_lane
+        actions = payload.setdefault("final_operator_actions", {})
+        if int(operator_archive_review_queue.get("waiver_expired_count", operator_archive_age_tick.get("waiver_expired_count", 0)) or 0) > 0:
+            actions["operator_archive_review_queue"] = "ACTION_REQUIRED"
+        elif int(operator_archive_review_queue.get("waiver_review_required_count", operator_archive_age_tick.get("waiver_review_required_count", 0)) or 0) > 0:
+            actions["operator_archive_review_queue"] = "ACTION_REQUIRED"
+        elif int(operator_archive_review_queue.get("waiver_due_soon_count", operator_archive_age_tick.get("waiver_due_soon_count", 0)) or 0) > 0:
+            actions["operator_archive_review_queue"] = "REVIEW_WAIVERS_SOON"
+        else:
+            actions["operator_archive_review_queue"] = "NO_ACTION"
+        if int(staged_overlay_completeness.get("missing_overlay_count", 0) or 0) > 0:
+            actions["staged_overlay_completeness"] = "FIX_STAGED_OVERLAY"
+        else:
+            actions["staged_overlay_completeness"] = "NO_ACTION"
+        if bool(verification_preflight_gate_v2.get("sparse_clone_required", False)):
+            actions["verification_preflight_gate_v2"] = "USE_STAGED_SPARSE_LANE"
+        elif verification_preflight_gate_v2:
+            actions["verification_preflight_gate_v2"] = "NO_ACTION"
+        if int(published_snapshot_retention_apply_v2.get("blocked_prune_count", 0) or 0) > 0:
+            actions["published_snapshot_retention_apply_v2"] = "RETAIN_SNAPSHOTS"
+        else:
+            actions["published_snapshot_retention_apply_v2"] = "NO_ACTION"
+        decisive_actions = {
+            key: value
+            for key, value in actions.items()
+            if isinstance(value, str) and value not in {"NO_ACTION", "NOT_RUN"}
+        }
+        actions["overall"] = "NO_ACTION" if not decisive_actions else "ACTION_REQUIRED" if "ACTION_REQUIRED" in decisive_actions.values() else sorted(decisive_actions.values())[0]
+        payload.setdefault("final_operator_summary", {})["archive_review_queue_verdict"] = (
+            "ACTION_REQUIRED"
+            if actions["operator_archive_review_queue"] == "ACTION_REQUIRED"
+            else "PASS"
+        )
+        payload.setdefault("final_operator_summary", {})["staged_overlay_completeness_verdict"] = staged_overlay_completeness.get("completeness_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["verification_preflight_gate_v2_verdict"] = verification_preflight_gate_v2.get("preflight_gate_verdict", "NOT_RUN")
+        payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
+    if (
+        runtime_comparability_triage
+        or runtime_rebaseline_action_plan
+        or runtime_rebaseline_runbook
+        or runtime_registry_selection_sanity
+        or runtime_registry_selection_repair_plan
+    ):
+        payload["manifest_version"] = "policy_ops_summary_v20"
+        payload["runtime_comparability_triage"] = {
+            "triage_verdict": runtime_comparability_triage.get("triage_verdict", "NOT_RUN"),
+            "selected_baseline_id": runtime_comparability_triage.get("selected_baseline_id"),
+            "selected_baseline_tag": runtime_comparability_triage.get("selected_baseline_tag"),
+            "current_fingerprint_key": runtime_comparability_triage.get("current_fingerprint_key"),
+            "selected_baseline_fingerprint_key": runtime_comparability_triage.get("selected_baseline_fingerprint_key"),
+            "exact_match_count": runtime_comparability_triage.get("exact_match_count", 0),
+            "compatible_match_count": runtime_comparability_triage.get("compatible_match_count", 0),
+            "retired_match_count": runtime_comparability_triage.get("retired_match_count", 0),
+            "mismatch_dimensions": runtime_comparability_triage.get("mismatch_dimensions", {}),
+            "is_current_env": runtime_comparability_triage.get("is_current_env", False),
+            "is_known_env": runtime_comparability_triage.get("is_known_env", False),
+            "is_foreign_env": runtime_comparability_triage.get("is_foreign_env", False),
+            "proposal_needed": runtime_comparability_triage.get("proposal_needed", False),
+            "recommended_action": runtime_comparability_triage.get("recommended_action", "NOT_RUN"),
+        }
+        payload["runtime_rebaseline_action_plan"] = {
+            "action_plan_verdict": runtime_rebaseline_action_plan.get("action_plan_verdict", "NOT_RUN"),
+            "proposal_gate_verdict": runtime_rebaseline_action_plan.get("proposal_gate_verdict", "NOT_RUN"),
+            "proposal_confidence": runtime_rebaseline_action_plan.get("proposal_confidence"),
+            "required_samples": runtime_rebaseline_action_plan.get("required_samples", 0),
+            "available_samples": runtime_rebaseline_action_plan.get("available_samples", 0),
+            "hard_breach_count": runtime_rebaseline_action_plan.get("hard_breach_count", 0),
+            "recommended_operator_command": runtime_rebaseline_action_plan.get("recommended_operator_command"),
+            "approval_mode": runtime_rebaseline_action_plan.get("approval_mode", APPROVAL_EXECUTION_MODE_HANDOFF_ONLY),
+        }
+        payload["runtime_rebaseline_runbook"] = {
+            "runbook_id": runtime_rebaseline_runbook.get("runbook_id"),
+            "runbook_type": runtime_rebaseline_runbook.get("runbook_type", "NOT_RUN"),
+            "approval_ready": runtime_rebaseline_runbook.get("approval_ready", False),
+            "approval_mode": runtime_rebaseline_runbook.get("approval_mode", APPROVAL_EXECUTION_MODE_HANDOFF_ONLY),
+            "integrated_opt_in_required": runtime_rebaseline_runbook.get("integrated_opt_in_required", True),
+            "mutates_registry": runtime_rebaseline_runbook.get("mutates_registry", False),
+            "blocker_count": len(runtime_rebaseline_runbook.get("blockers", [])),
+        }
+        payload["runtime_registry_selection_sanity"] = {
+            "sanity_verdict": runtime_registry_selection_sanity.get("sanity_verdict", "NOT_RUN"),
+            "selected_baseline_active": runtime_registry_selection_sanity.get("selected_baseline_active"),
+            "same_fingerprint_active_entry_exists": runtime_registry_selection_sanity.get("same_fingerprint_active_entry_exists"),
+            "retired_entry_incorrectly_preferred": runtime_registry_selection_sanity.get("retired_entry_incorrectly_preferred"),
+            "foreign_selected_over_local_candidate": runtime_registry_selection_sanity.get("foreign_selected_over_local_candidate"),
+            "issue_count": len(runtime_registry_selection_sanity.get("issues", [])),
+        }
+        payload["runtime_registry_selection_repair_plan"] = {
+            "repair_plan_verdict": runtime_registry_selection_repair_plan.get("repair_plan_verdict", "NOT_RUN"),
+            "repair_actions": runtime_registry_selection_repair_plan.get("repair_actions", []),
+            "recommended_operator_command": runtime_registry_selection_repair_plan.get("recommended_operator_command"),
+        }
+        actions = payload.setdefault("final_operator_actions", {})
+        actions["correctness"] = "NO_ACTION" if payload.get("correctness_summary", {}).get("severity") in {"", None, "OK"} else "ACTION_REQUIRED"
+        runtime_action = runtime_rebaseline_action_plan.get(
+            "action_plan_verdict",
+            runtime_comparability_triage.get("recommended_action", "NOT_RUN"),
+        )
+        if runtime_action == "NO_ACTION" and runtime_registry_selection_sanity.get("sanity_verdict") == "ACTION_REQUIRED":
+            runtime_action = runtime_registry_selection_repair_plan.get("repair_plan_verdict", "REFRESH_REGISTRY_SELECTION")
+        actions["runtime_comparability"] = runtime_action
+        if source_health_preflight or verification_preflight_gate_v2:
+            actions["source_health"] = (
+                "USE_STAGED_SPARSE_LANE"
+                if bool(verification_preflight_gate_v2.get("sparse_clone_required", False))
+                or str(source_health_preflight.get("recommendation", "")) == "SPARSE_CLONE_REQUIRED"
+                else "NO_ACTION"
+            )
+        if int(published_snapshot_retention_apply_v2.get("blocked_prune_count", 0) or 0) > 0:
+            actions["retention"] = "RETAIN_SNAPSHOTS"
+        if runtime_comparability_triage.get("triage_verdict") == "COMPARABLE":
+            actions["runtime_comparability"] = "NO_ACTION"
+        domain_action_keys = {
+            "correctness",
+            "runtime_comparability",
+            "source_health",
+            "archive_governance",
+            "operator_archive_review_queue",
+            "operator_waiver_review",
+            "verification_preflight_gate",
+            "verification_preflight_gate_v2",
+            "published_snapshot_retention",
+            "published_snapshot_retention_apply_v2",
+            "staged_verification_retention_apply_v2",
+            "retention",
+        }
+        decisive_actions = {
+            key: value
+            for key, value in actions.items()
+            if key in domain_action_keys
+            and isinstance(value, str)
+            and value not in {"", "NO_ACTION", "NOT_RUN", "PASS"}
+        }
+        if not decisive_actions:
+            actions["overall"] = "NO_ACTION"
+        elif "FAIL" in decisive_actions.values():
+            actions["overall"] = "FAIL"
+        else:
+            actions["overall"] = "ACTION_REQUIRED"
+        payload.setdefault("final_operator_summary", {})["runtime_comparability_triage_verdict"] = runtime_comparability_triage.get("triage_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["runtime_rebaseline_action_plan_verdict"] = runtime_rebaseline_action_plan.get("action_plan_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["runtime_registry_selection_sanity_verdict"] = runtime_registry_selection_sanity.get("sanity_verdict", "NOT_RUN")
+        payload.setdefault("final_operator_summary", {})["runtime_action_is_correctness_failure"] = False
+        payload.setdefault("final_operator_summary", {}).setdefault("structured_rationale", [])
+        payload["final_operator_summary"]["structured_rationale"].append(
+            {
+                "domain": "runtime_comparability",
+                "status": runtime_comparability_triage.get("triage_verdict", "NOT_RUN"),
+                "action": actions.get("runtime_comparability"),
+                "message": "runtime comparability action is separate from correctness and does not imply semantic failure",
+            }
+        )
         payload["ops_summary_hash"] = sha256_text(json.dumps(payload, sort_keys=True))
     write_json(out_path, payload)
     atomic_write_text(text_out, build_ops_summary_text(payload))
@@ -10480,6 +12038,99 @@ def action_operator_waiver_review(args: argparse.Namespace) -> int:
     return 0
 
 
+def action_operator_archive_age_tick(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.age_tick_out)
+    if out_path is None:
+        raise SystemExit("--age-tick-out is required")
+    policy_path = resolve_json_path(getattr(args, "retention_policy", None))
+    policy = normalize_operator_archive_retention_policy(read_json(policy_path), phase=str(args.phase))
+    payload = build_operator_archive_age_tick(
+        phase=str(args.phase),
+        reference_graph=read_json(resolve_json_path(args.reference_graph)),
+        waiver_registry=read_json(resolve_json_path(args.waiver_registry)),
+        retention_policy=policy,
+        current_time_override=getattr(args, "current_time_override", None),
+        advance_days=float(getattr(args, "advance_days", 0.0) or 0.0),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_archive_review_queue(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.review_queue_out)
+    if out_path is None:
+        raise SystemExit("--review-queue-out is required")
+    age_tick = read_json(resolve_json_path(getattr(args, "age_tick", None)))
+    if not age_tick:
+        policy_path = resolve_json_path(getattr(args, "retention_policy", None))
+        policy = normalize_operator_archive_retention_policy(read_json(policy_path), phase=str(args.phase))
+        age_tick = build_operator_archive_age_tick(
+            phase=str(args.phase),
+            reference_graph=read_json(resolve_json_path(args.reference_graph)),
+            waiver_registry=read_json(resolve_json_path(args.waiver_registry)),
+            retention_policy=policy,
+            current_time_override=getattr(args, "current_time_override", None),
+            advance_days=float(getattr(args, "advance_days", 0.0) or 0.0),
+        )
+    payload = build_operator_archive_review_queue(phase=str(args.phase), age_tick=age_tick)
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_operator_waiver_apply_review(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.apply_out)
+    archive_out = resolve_json_path(getattr(args, "archive_out", None))
+    if out_path is None:
+        raise SystemExit("--apply-out is required")
+    payload = build_operator_waiver_apply_review(
+        phase=str(args.phase),
+        waiver_registry=read_json(resolve_json_path(args.waiver_registry)),
+        waiver_review=read_json(resolve_json_path(args.waiver_review)),
+        reference_graph=read_json(resolve_json_path(args.reference_graph)),
+        allow_expire=bool(getattr(args, "allow_expire", False)),
+        allow_retire=bool(getattr(args, "allow_retire", False)),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    if archive_out is not None:
+        write_json(
+            archive_out,
+            {
+                "manifest_version": "operator_waiver_apply_archive_v1",
+                "phase": str(args.phase),
+                "generated_at_utc": runtime_gate.timestamp_utc_now(),
+                "apply_hash": payload.get("apply_hash"),
+                "entries": payload.get("entries", []),
+            },
+        )
+    print(str(out_path))
+    return 0
+
+
+def action_staged_overlay_completeness_manifest(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.out)
+    if out_path is None:
+        raise SystemExit("--out is required")
+    policy_path = resolve_json_path(getattr(args, "overlay_policy", None))
+    policy = normalize_staged_overlay_policy(read_json(policy_path), phase=str(args.phase))
+    if policy_path is not None:
+        write_json(policy_path, policy)
+    payload = build_staged_overlay_completeness_manifest(
+        phase=str(args.phase),
+        source_root=Path(args.source_root).resolve(),
+        snapshot_manifest=read_json(resolve_json_path(getattr(args, "snapshot_manifest", None))),
+        overlay_policy=policy,
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
 def action_verification_preflight_gate(args: argparse.Namespace) -> int:
     out_path = resolve_json_path(args.preflight_gate_out)
     if out_path is None:
@@ -10488,6 +12139,21 @@ def action_verification_preflight_gate(args: argparse.Namespace) -> int:
         phase=str(args.phase),
         source_health=read_json(resolve_json_path(args.source_health)),
         staged_materialization=read_json(resolve_json_path(args.staged_materialization)),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_verification_preflight_gate_v2(args: argparse.Namespace) -> int:
+    out_path = resolve_json_path(args.preflight_gate_out)
+    if out_path is None:
+        raise SystemExit("--preflight-gate-out is required")
+    payload = build_verification_preflight_gate_v2(
+        phase=str(args.phase),
+        source_health=read_json(resolve_json_path(args.source_health)),
+        overlay_completeness=read_json(resolve_json_path(args.overlay_completeness)),
     )
     write_json(out_path, payload)
     atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
@@ -10543,6 +12209,22 @@ def action_published_snapshot_retention_apply(args: argparse.Namespace) -> int:
     payload = build_published_snapshot_retention_apply(
         phase=str(args.phase),
         published_snapshot_retention=read_json(resolve_json_path(args.published_snapshot_retention)),
+    )
+    write_json(out_path, payload)
+    atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
+    print(str(out_path))
+    return 0
+
+
+def action_snapshot_retention_apply_v2(args: argparse.Namespace, *, apply_kind: str) -> int:
+    out_path = resolve_json_path(args.apply_out)
+    if out_path is None:
+        raise SystemExit("--apply-out is required")
+    payload = build_snapshot_retention_apply_v2(
+        phase=str(args.phase),
+        retention_plan=read_json(resolve_json_path(args.retention_plan)),
+        reference_graph=read_json(resolve_json_path(args.reference_graph)),
+        apply_kind=apply_kind,
     )
     write_json(out_path, payload)
     atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
@@ -10625,6 +12307,9 @@ def action_staged_materialization_transaction(args: argparse.Namespace) -> int:
         source_health=read_json(resolve_json_path(args.source_health_preflight)),
         staged_materialization=read_json(resolve_json_path(args.staged_materialization)),
         cleanup_path_values=list(args.cleanup_path or []),
+        overlay_completeness=read_json(resolve_json_path(getattr(args, "overlay_completeness", None))),
+        reference_graph=read_json(resolve_json_path(getattr(args, "reference_graph", None))),
+        published_root_sync_intent=str(getattr(args, "published_root_sync_intent", "sync_after_verification_pass")),
     )
     write_json(out_path, payload)
     atomic_write_text(out_path.with_suffix(".summary.txt"), json.dumps(payload, indent=2) + "\n")
@@ -11381,11 +13066,53 @@ def parse_args() -> argparse.Namespace:
     waiver_review_parser.add_argument("--current-time-override", default=None)
     waiver_review_parser.add_argument("--review-out", required=True)
 
+    archive_age_tick_parser = subparsers.add_parser("operator-archive-age-tick")
+    archive_age_tick_parser.add_argument("--phase", required=True)
+    archive_age_tick_parser.add_argument("--reference-graph", required=True)
+    archive_age_tick_parser.add_argument("--waiver-registry", required=True)
+    archive_age_tick_parser.add_argument("--retention-policy", default=None)
+    archive_age_tick_parser.add_argument("--current-time-override", default=None)
+    archive_age_tick_parser.add_argument("--advance-days", type=float, default=0.0)
+    archive_age_tick_parser.add_argument("--age-tick-out", required=True)
+
+    archive_review_queue_parser = subparsers.add_parser("operator-archive-review-queue")
+    archive_review_queue_parser.add_argument("--phase", required=True)
+    archive_review_queue_parser.add_argument("--reference-graph", default=None)
+    archive_review_queue_parser.add_argument("--waiver-registry", default=None)
+    archive_review_queue_parser.add_argument("--retention-policy", default=None)
+    archive_review_queue_parser.add_argument("--age-tick", default=None)
+    archive_review_queue_parser.add_argument("--current-time-override", default=None)
+    archive_review_queue_parser.add_argument("--advance-days", type=float, default=0.0)
+    archive_review_queue_parser.add_argument("--review-queue-out", required=True)
+
+    waiver_apply_parser = subparsers.add_parser("operator-waiver-apply-review")
+    waiver_apply_parser.add_argument("--phase", required=True)
+    waiver_apply_parser.add_argument("--waiver-registry", required=True)
+    waiver_apply_parser.add_argument("--waiver-review", required=True)
+    waiver_apply_parser.add_argument("--reference-graph", required=True)
+    waiver_apply_parser.add_argument("--apply-out", required=True)
+    waiver_apply_parser.add_argument("--archive-out", default=None)
+    waiver_apply_parser.add_argument("--allow-expire", action="store_true")
+    waiver_apply_parser.add_argument("--allow-retire", action="store_true")
+
+    staged_overlay_parser = subparsers.add_parser("staged-overlay-completeness-manifest")
+    staged_overlay_parser.add_argument("--phase", required=True)
+    staged_overlay_parser.add_argument("--source-root", required=True)
+    staged_overlay_parser.add_argument("--snapshot-manifest", default=None)
+    staged_overlay_parser.add_argument("--overlay-policy", default=None)
+    staged_overlay_parser.add_argument("--out", required=True)
+
     verification_preflight_parser = subparsers.add_parser("verification-preflight-gate")
     verification_preflight_parser.add_argument("--phase", required=True)
     verification_preflight_parser.add_argument("--source-health", required=True)
     verification_preflight_parser.add_argument("--staged-materialization", required=True)
     verification_preflight_parser.add_argument("--preflight-gate-out", required=True)
+
+    verification_preflight_v2_parser = subparsers.add_parser("verification-preflight-gate-v2")
+    verification_preflight_v2_parser.add_argument("--phase", required=True)
+    verification_preflight_v2_parser.add_argument("--source-health", required=True)
+    verification_preflight_v2_parser.add_argument("--overlay-completeness", required=True)
+    verification_preflight_v2_parser.add_argument("--preflight-gate-out", required=True)
 
     staged_verification_retention_parser = subparsers.add_parser("staged-verification-retention-plan")
     staged_verification_retention_parser.add_argument("--phase", required=True)
@@ -11407,6 +13134,57 @@ def parse_args() -> argparse.Namespace:
     published_snapshot_apply_parser.add_argument("--phase", required=True)
     published_snapshot_apply_parser.add_argument("--published-snapshot-retention", required=True)
     published_snapshot_apply_parser.add_argument("--retention-apply-out", required=True)
+
+    published_snapshot_apply_v2_parser = subparsers.add_parser("published-snapshot-retention-apply-v2")
+    published_snapshot_apply_v2_parser.add_argument("--phase", required=True)
+    published_snapshot_apply_v2_parser.add_argument("--retention-plan", required=True)
+    published_snapshot_apply_v2_parser.add_argument("--reference-graph", required=True)
+    published_snapshot_apply_v2_parser.add_argument("--apply-out", required=True)
+
+    staged_verification_apply_v2_parser = subparsers.add_parser("staged-verification-retention-apply-v2")
+    staged_verification_apply_v2_parser.add_argument("--phase", required=True)
+    staged_verification_apply_v2_parser.add_argument("--retention-plan", required=True)
+    staged_verification_apply_v2_parser.add_argument("--reference-graph", required=True)
+    staged_verification_apply_v2_parser.add_argument("--apply-out", required=True)
+
+    runtime_triage_parser = subparsers.add_parser("runtime-comparability-triage")
+    runtime_triage_parser.add_argument("--phase", required=True)
+    runtime_triage_parser.add_argument("--runtime-current-manifest", required=True)
+    runtime_triage_parser.add_argument("--runtime-baseline-registry", required=True)
+    runtime_triage_parser.add_argument("--runtime-history-index", default=None)
+    runtime_triage_parser.add_argument("--runtime-watch-registry", default=None)
+    runtime_triage_parser.add_argument("--triage-out", required=True)
+
+    runtime_action_plan_parser = subparsers.add_parser("runtime-rebaseline-action-plan")
+    runtime_action_plan_parser.add_argument("--phase", required=True)
+    runtime_action_plan_parser.add_argument("--runtime-comparability-triage", required=True)
+    runtime_action_plan_parser.add_argument("--runtime-current-manifest", required=True)
+    runtime_action_plan_parser.add_argument("--runtime-baseline-registry", required=True)
+    runtime_action_plan_parser.add_argument("--runtime-history-index", default=None)
+    runtime_action_plan_parser.add_argument("--runtime-watch-registry", default=None)
+    runtime_action_plan_parser.add_argument("--proposal-out", required=True)
+    runtime_action_plan_parser.add_argument("--proposal-gate-out", required=True)
+    runtime_action_plan_parser.add_argument("--action-plan-out", required=True)
+
+    runtime_runbook_parser = subparsers.add_parser("runtime-rebaseline-runbook")
+    runtime_runbook_parser.add_argument("--phase", required=True)
+    runtime_runbook_parser.add_argument("--runtime-rebaseline-action-plan", required=True)
+    runtime_runbook_parser.add_argument("--runtime-proposal", required=True)
+    runtime_runbook_parser.add_argument("--runtime-proposal-gate", required=True)
+    runtime_runbook_parser.add_argument("--runtime-baseline-registry", required=True)
+    runtime_runbook_parser.add_argument("--runbook-out", required=True)
+
+    runtime_selection_sanity_parser = subparsers.add_parser("runtime-registry-selection-sanity")
+    runtime_selection_sanity_parser.add_argument("--phase", required=True)
+    runtime_selection_sanity_parser.add_argument("--runtime-current-manifest", required=True)
+    runtime_selection_sanity_parser.add_argument("--runtime-baseline-registry", required=True)
+    runtime_selection_sanity_parser.add_argument("--sanity-out", required=True)
+
+    runtime_selection_repair_parser = subparsers.add_parser("runtime-registry-selection-repair-plan")
+    runtime_selection_repair_parser.add_argument("--phase", required=True)
+    runtime_selection_repair_parser.add_argument("--selection-sanity", required=True)
+    runtime_selection_repair_parser.add_argument("--runtime-baseline-registry", required=True)
+    runtime_selection_repair_parser.add_argument("--repair-plan-out", required=True)
 
     decision_metadata_audit_parser = subparsers.add_parser("operator-decision-metadata-audit")
     decision_metadata_audit_parser.add_argument("--phase", required=True)
@@ -11442,6 +13220,9 @@ def parse_args() -> argparse.Namespace:
     materialization_tx_parser.add_argument("--staged-materialization", required=True)
     materialization_tx_parser.add_argument("--transaction-out", required=True)
     materialization_tx_parser.add_argument("--cleanup-path", action="append", default=[])
+    materialization_tx_parser.add_argument("--overlay-completeness", default=None)
+    materialization_tx_parser.add_argument("--reference-graph", default=None)
+    materialization_tx_parser.add_argument("--published-root-sync-intent", default="sync_after_verification_pass")
 
     ledger_invariants_parser = subparsers.add_parser("current-env-action-ledger-invariants")
     ledger_invariants_parser.add_argument("--phase", required=True)
@@ -11631,15 +13412,29 @@ def parse_args() -> argparse.Namespace:
     ops_parser.add_argument("--operator-archive-retention-apply", default=None)
     ops_parser.add_argument("--operator-waiver-registry", default=None)
     ops_parser.add_argument("--operator-waiver-review", default=None)
+    ops_parser.add_argument("--operator-archive-age-tick", default=None)
+    ops_parser.add_argument("--operator-archive-review-queue", default=None)
+    ops_parser.add_argument("--operator-waiver-apply", default=None)
+    ops_parser.add_argument("--staged-overlay-completeness", default=None)
+    ops_parser.add_argument("--verification-preflight-gate-v2", default=None)
     ops_parser.add_argument("--verification-preflight-gate", default=None)
     ops_parser.add_argument("--staged-verification-retention", default=None)
+    ops_parser.add_argument("--staged-verification-retention-apply-v2", default=None)
     ops_parser.add_argument("--published-snapshot-retention", default=None)
+    ops_parser.add_argument("--published-snapshot-retention-apply-v2", default=None)
     ops_parser.add_argument("--published-snapshot-retention-apply", default=None)
     ops_parser.add_argument("--integrated-approval-mutation-audit", default=None)
     ops_parser.add_argument("--source-health-action-plan", default=None)
     ops_parser.add_argument("--staged-materialization-transaction", default=None)
     ops_parser.add_argument("--source-health-preflight", default=None)
     ops_parser.add_argument("--staged-materialization", default=None)
+    ops_parser.add_argument("--runtime-comparability-triage", default=None)
+    ops_parser.add_argument("--runtime-rebaseline-action-plan", default=None)
+    ops_parser.add_argument("--runtime-rebaseline-proposal", default=None)
+    ops_parser.add_argument("--runtime-rebaseline-proposal-gate", default=None)
+    ops_parser.add_argument("--runtime-rebaseline-runbook", default=None)
+    ops_parser.add_argument("--runtime-registry-selection-sanity", default=None)
+    ops_parser.add_argument("--runtime-registry-selection-repair-plan", default=None)
     ops_parser.add_argument("--runtime-budget-current", default=None)
     ops_parser.add_argument("--runtime-budget-proposal", default=None)
     ops_parser.add_argument("--runtime-budget-proposal-gate", default=None)
@@ -11736,14 +13531,38 @@ def main() -> int:
         return action_operator_waiver_registry(args)
     if args.command == "operator-waiver-review":
         return action_operator_waiver_review(args)
+    if args.command == "operator-archive-age-tick":
+        return action_operator_archive_age_tick(args)
+    if args.command == "operator-archive-review-queue":
+        return action_operator_archive_review_queue(args)
+    if args.command == "operator-waiver-apply-review":
+        return action_operator_waiver_apply_review(args)
+    if args.command == "staged-overlay-completeness-manifest":
+        return action_staged_overlay_completeness_manifest(args)
     if args.command == "verification-preflight-gate":
         return action_verification_preflight_gate(args)
+    if args.command == "verification-preflight-gate-v2":
+        return action_verification_preflight_gate_v2(args)
     if args.command == "staged-verification-retention-plan":
         return action_staged_verification_retention_plan(args)
     if args.command == "published-snapshot-retention-plan":
         return action_published_snapshot_retention_plan(args)
     if args.command == "published-snapshot-retention-apply":
         return action_published_snapshot_retention_apply(args)
+    if args.command == "published-snapshot-retention-apply-v2":
+        return action_snapshot_retention_apply_v2(args, apply_kind="published_snapshot")
+    if args.command == "staged-verification-retention-apply-v2":
+        return action_snapshot_retention_apply_v2(args, apply_kind="staged_verification")
+    if args.command == "runtime-comparability-triage":
+        return action_runtime_comparability_triage(args)
+    if args.command == "runtime-rebaseline-action-plan":
+        return action_runtime_rebaseline_action_plan(args)
+    if args.command == "runtime-rebaseline-runbook":
+        return action_runtime_rebaseline_runbook(args)
+    if args.command == "runtime-registry-selection-sanity":
+        return action_runtime_registry_selection_sanity(args)
+    if args.command == "runtime-registry-selection-repair-plan":
+        return action_runtime_registry_selection_repair_plan(args)
     if args.command == "operator-decision-metadata-audit":
         return action_operator_decision_metadata_audit(args)
     if args.command == "operator-runbook-replay":

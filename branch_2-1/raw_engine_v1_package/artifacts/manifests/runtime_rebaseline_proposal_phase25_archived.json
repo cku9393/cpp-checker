@@ -1,9 +1,9 @@
 {
   "proposal_version": "runtime_rebaseline_proposal_v1",
-  "generated_at_utc": "2026-03-24T02:16:17Z",
+  "generated_at_utc": "2026-03-30T06:35:54Z",
   "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase25.json",
   "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v1.json",
-  "runtime_current_manifest_hash": "1e35092ac6527643b98af663ac5c2a1ab67ad730b163fd9a6f145e0b64215124",
+  "runtime_current_manifest_hash": "a93dec4f56b2e8c048cf6dd9428f1705f637c6ea8bbd8d565e029487f3373049",
   "selected_baseline_id": "phase25-runtime-approved-c89a575d-20260323_003527",
   "selected_baseline_tag": "phase25-runtime-approved",
   "selected_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase25_approved.json",
@@ -55,27 +55,27 @@
     },
     {
       "execution_class": "policy_core",
-      "wall_time_sec": 0.048,
+      "wall_time_sec": 0.025,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "comparability": "COMPARABLE",
-      "delta_percent": 60.00000000000001
+      "delta_percent": -16.66666666666666
     },
     {
       "execution_class": "policy_refresh",
-      "wall_time_sec": 0.048,
+      "wall_time_sec": 0.025,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "comparability": "COMPARABLE",
-      "delta_percent": 60.00000000000001
+      "delta_percent": -16.66666666666666
     },
     {
       "execution_class": "policy_nightly",
-      "wall_time_sec": 0.023,
+      "wall_time_sec": 0.015,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "comparability": "COMPARABLE",
-      "delta_percent": 64.28571428571428
+      "delta_percent": 7.142857142857137
     }
   ],
   "comparable_candidates": [
@@ -111,11 +111,11 @@
     "release_full": 0.0,
     "debug_full": 0.0,
     "asan_full": 0.0,
-    "policy_core": 60.00000000000001,
-    "policy_refresh": 60.00000000000001,
-    "policy_nightly": 64.28571428571428
+    "policy_core": -16.66666666666666,
+    "policy_refresh": -16.66666666666666,
+    "policy_nightly": 7.142857142857137
   },
-  "suggested_new_baseline_tag": "phase28-runtime-approved",
+  "suggested_new_baseline_tag": "phase29-runtime-approved",
   "suggested_next_command": "none",
   "approval_checklist": [
     "confirm the host/toolchain fingerprint is the intended long-lived runtime baseline target",
@@ -123,5 +123,5 @@
     "confirm the affected execution classes are stable across at least one clean rerun"
   ],
   "registry_entry_count": 3,
-  "proposal_hash": "d2633d6dc9caae8972fb44d6645118df5cb80e0b80e6906a9afdb890a607dcc4"
+  "proposal_hash": "6a7a4d524da9aa493abbcda940fe5163e9f61b1eb2287c3582c42417c04a328e"
 }

@@ -1,0 +1,415 @@
+{
+  "manifest_version": "runtime_current_manifest_v1",
+  "manifest_role": "current",
+  "generated_at_utc": "2026-04-04T20:20:44Z",
+  "phase": "phase34",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
+  "baseline_tag": "phase34-runtime-external-approved",
+  "host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "foreign-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "0f34bd3335e7aea443e7b6ebfb05256240a33d717e415c48d635b4040a33f34c"
+  },
+  "toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+  "runtime_budget_profile_version": 4,
+  "runtime_budget_profile": {
+    "profile_id": "phase33-runtime-budget-approved-profile",
+    "version": 4,
+    "created_at": "2026-04-01T10:51:56Z",
+    "entries": {
+      "release_full": {
+        "execution_class": "release_full",
+        "role": "production_critical",
+        "thresholds": {
+          "soft_seconds": 504.856,
+          "hard_seconds": 807.77,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0,
+          "soft_delta_floor_sec": 0.0,
+          "hard_delta_floor_sec": 0.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 2,
+          "rebaseline_candidate_threshold": 4,
+          "max_bounded_jitter_percent": 12.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "debug_full": {
+        "execution_class": "debug_full",
+        "role": "production_critical",
+        "thresholds": {
+          "soft_seconds": 900.0,
+          "hard_seconds": 1800.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0,
+          "soft_delta_floor_sec": 0.0,
+          "hard_delta_floor_sec": 0.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 2,
+          "rebaseline_candidate_threshold": 4,
+          "max_bounded_jitter_percent": 12.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "asan_full": {
+        "execution_class": "asan_full",
+        "role": "diagnostic",
+        "thresholds": {
+          "soft_seconds": 2400.0,
+          "hard_seconds": 4200.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 60.0,
+          "soft_delta_floor_sec": 0.0,
+          "hard_delta_floor_sec": 0.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 20.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "policy_core": {
+        "execution_class": "policy_core",
+        "role": "operator",
+        "thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0,
+          "soft_delta_floor_sec": 0.25,
+          "hard_delta_floor_sec": 0.5
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 30.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "policy_refresh": {
+        "execution_class": "policy_refresh",
+        "role": "operator",
+        "thresholds": {
+          "soft_seconds": 30.0,
+          "hard_seconds": 90.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0,
+          "soft_delta_floor_sec": 0.25,
+          "hard_delta_floor_sec": 0.5
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 30.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      },
+      "policy_nightly": {
+        "execution_class": "policy_nightly",
+        "role": "operator",
+        "thresholds": {
+          "soft_seconds": 180.0,
+          "hard_seconds": 600.0,
+          "soft_delta_percent": 25.0,
+          "hard_delta_percent": 75.0,
+          "soft_delta_floor_sec": 0.5,
+          "hard_delta_floor_sec": 1.0
+        },
+        "watch_policy": {
+          "min_samples": 3,
+          "clear_window": 2,
+          "stable_overrun_threshold": 3,
+          "rebaseline_candidate_threshold": 5,
+          "max_bounded_jitter_percent": 30.0,
+          "near_baseline_delta_percent": 5.0
+        }
+      }
+    }
+  },
+  "entries": [
+    {
+      "execution_class": "release_full",
+      "wall_time_sec": 132.0,
+      "test_count": 10,
+      "build_type": "Release",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 504.856,
+        "hard_seconds": 807.77,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "execution_role": "production_critical",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 2,
+        "rebaseline_candidate_threshold": 4,
+        "max_bounded_jitter_percent": 12.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "c4be9074fc48f2f88ba33cec4791abfe886901757af8d1dfdcc5fc6add122af9"
+    },
+    {
+      "execution_class": "debug_full",
+      "wall_time_sec": 492.0,
+      "test_count": 10,
+      "build_type": "Debug",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 900.0,
+        "hard_seconds": 1800.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "execution_role": "production_critical",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 2,
+        "rebaseline_candidate_threshold": 4,
+        "max_bounded_jitter_percent": 12.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "d83860ef8103d4b5529a3db538cab5a3cc13aa163ef63b3a648959d5418dcc97"
+    },
+    {
+      "execution_class": "asan_full",
+      "wall_time_sec": 930.0,
+      "test_count": 10,
+      "build_type": "Asan",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 2400.0,
+        "hard_seconds": 4200.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 60.0,
+        "soft_delta_floor_sec": 0.0,
+        "hard_delta_floor_sec": 0.0
+      },
+      "execution_role": "diagnostic",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 20.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "656b73a8f68bfd524317e04fd6e1a5175af8973bb47d5574482dba81ebbd5fbf"
+    },
+    {
+      "execution_class": "policy_core",
+      "wall_time_sec": 1.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "execution_role": "operator",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "3e8ae9448698983f7a5cfe94424063c688bc4faed6f25bb6df24959c1fba2068"
+    },
+    {
+      "execution_class": "policy_refresh",
+      "wall_time_sec": 1.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "execution_role": "operator",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "30a990814c3d67586ea5ae7ccac52c5ab71d4afbe7c07e969e544bfaad4c886e"
+    },
+    {
+      "execution_class": "policy_nightly",
+      "wall_time_sec": 2.0,
+      "test_count": 0,
+      "build_type": "Policy",
+      "sanitizer_flags": "none",
+      "budget_thresholds": {
+        "soft_seconds": 180.0,
+        "hard_seconds": 600.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.5,
+        "hard_delta_floor_sec": 1.0
+      },
+      "execution_role": "operator",
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      },
+      "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+      "runtime_budget_profile_version": 4,
+      "current_status": "OK",
+      "freshness_status": "FRESH",
+      "delta_percent": 0.0,
+      "rationale": "runtime remained within budget",
+      "fingerprint_hash": "d72166980d6684a0f1fc1168f81c1525d5e5bb6c30fc1fc14a1bed4db9ab0d68"
+    }
+  ],
+  "warn_count": 0,
+  "fail_count": 0,
+  "overall_status": "OK",
+  "current_verdict": "PASS",
+  "overall_budget_verdict": "PASS",
+  "current_runtime_manifest_hash": "f761263427a31d79962e41392da13af36556f7448597cf163e88e2768aefa0e1",
+  "approved_runtime_baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+  "approved_runtime_baseline_hash": "dc650e018cee92dfe979b48ea77b48b5a675ae7ccfe768633dd27f801f0f544e",
+  "approval_metadata": {
+    "approval_version": "runtime_rebaseline_approval_v1",
+    "approval_status": "approved",
+    "approved_from_current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase34_external.json",
+    "approved_from_current_manifest_hash": "a769046ffb35de730c3f54c4ee9f1757a9173d1c009e50fd1e82911695c1c970",
+    "approved_from_proposal": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase34_external.json",
+    "approved_from_proposal_hash": "4f8b5ecb13474051d9697f1f462490667990827d809c0e05ba830dde7433ee15",
+    "approved_from_proposal_gate": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_proposal_gate_phase34_external.json",
+    "approved_from_proposal_gate_hash": "79ab2c042bb03440e9b138f9293f13e684f749b603ff415de827de51d01dce6e",
+    "approved_from_proposal_gate_verdict": "APPROVABLE",
+    "proposal_confidence": "HIGH",
+    "selected_previous_baseline": "phase30-runtime-approved-c89a575d-20260331_041735",
+    "selected_previous_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+    "selected_previous_baseline_tag": "phase30-runtime-approved",
+    "selected_previous_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+    "selected_previous_baseline_manifest_hash": "c7eac62f4f09a8c7cf1a8f6f2ccb76a78f84bce3b23c283c0595164a48c782b5",
+    "approval_timestamp_utc": "2026-04-04T20:21:59Z",
+    "baseline_tag": "phase34-runtime-external-approved",
+    "host_fingerprint": {
+      "os": "Darwin",
+      "os_release": "25.3.0",
+      "arch": "arm64",
+      "runner_tag": "foreign-runner",
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+      "fingerprint_hash": "0f34bd3335e7aea443e7b6ebfb05256240a33d717e415c48d635b4040a33f34c"
+    },
+    "toolchain_fingerprint": {
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+    },
+    "execution_classes_covered": [
+      "asan_full",
+      "debug_full",
+      "policy_core",
+      "policy_nightly",
+      "policy_refresh",
+      "release_full"
+    ],
+    "registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+    "approved_runtime_baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+    "proposal_archive_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase34_external_archived.json",
+    "proposal_hash": "69787a051ae8d49952dcf22bd61e17d8ce9f6035a47028f7b0632d609a9afc00",
+    "proposal_current_manifest_hash": "a769046ffb35de730c3f54c4ee9f1757a9173d1c009e50fd1e82911695c1c970",
+    "approval_current_manifest_hash": "a769046ffb35de730c3f54c4ee9f1757a9173d1c009e50fd1e82911695c1c970",
+    "activate": true,
+    "evidence_summary": {
+      "relevant_execution_class_count": 3,
+      "total_real_sample_count": 18,
+      "total_sample_count": 18,
+      "hard_breach_execution_class_count": 0,
+      "watch_status_counts": {
+        "REBASELINE_REQUIRED": 3
+      }
+    },
+    "new_active_runtime_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+    "new_active_runtime_baseline_tag": "phase34-runtime-external-approved",
+    "new_active_runtime_baseline_manifest_hash": "dc650e018cee92dfe979b48ea77b48b5a675ae7ccfe768633dd27f801f0f544e",
+    "previous_active_baseline_id_for_same_fingerprint": null,
+    "previous_active_runtime_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+    "runtime_transition_status": "ACTIVE_CONFIRMED"
+  },
+  "approval_timestamp_utc": "2026-04-04T20:21:59Z",
+  "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "selected_baseline_tag": "phase34-runtime-external-approved"
+}

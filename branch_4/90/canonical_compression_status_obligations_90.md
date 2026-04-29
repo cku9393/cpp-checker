@@ -1,11 +1,11 @@
 # Canonical Compression Status Obligations 90
 
-## status
+## status after congruence refinement
 
-`canonical_compression_status_obligations_first_class`
+`canonical_compression_status_obligations_domain_normal_form_open`
 
-This inventory records the obligations needed for the selected `canonical_compression_status_or_escape` statement.
+The previous status obligations are refined by
+`canonical_compression_status_congruence_refinement_obligations_90.md`.
 
-The lexicographic measure-decrease part is already available from the previous canonical-compression round. The current open proof obligation is canonical-motif congruence for counterexample status. Payload, normal-form, canonicalization, and family-chain source-form transfer remain proof-sketch-ready and are not promoted to proved.
-
-Runtime inventory: `branch_4/90/runtime/canonical_compression_status_obligations_90.tsv`.
+Runtime table:
+`branch_4/90/runtime/canonical_compression_status_obligations_90.tsv`.

@@ -1,0 +1,390 @@
+{
+  "summary_version": "runtime_watch_history_summary_v1",
+  "generated_at_utc": "2026-04-24T17:54:49Z",
+  "runtime_watch_history_index_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_history_index_v1.json",
+  "fingerprint_count": 5,
+  "watch_status_counts": {
+    "CLEAR": 5,
+    "WATCH_STABLE": 1,
+    "REBASELINE_REQUIRED": 12
+  },
+  "transition_count": 24,
+  "watch_transition_counts": {
+    "WATCH->WATCH_STABLE": 4,
+    "WATCH_STABLE->REBASELINE_REQUIRED": 1,
+    "REBASELINE_REQUIRED->WATCH": 1,
+    "WATCH_STABLE->WATCH": 2,
+    "WATCH->CLEAR": 2,
+    "CLEAR->WATCH_ESCALATE": 2,
+    "WATCH_ESCALATE->CLEAR": 2,
+    "CLEAR->WATCH": 2,
+    "CLEAR->WATCH_STABLE": 4,
+    "WATCH_STABLE->CLEAR": 4
+  },
+  "recent_transitions": [
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "CLEAR",
+      "to_status": "WATCH_STABLE",
+      "timestamp_utc": "2026-04-01T10:52:27Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase33_release.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "WATCH_STABLE",
+      "to_status": "CLEAR",
+      "timestamp_utc": "2026-04-01T10:52:37Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase33_asan_guard.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "CLEAR",
+      "to_status": "WATCH_STABLE",
+      "timestamp_utc": "2026-04-07T13:37:40Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase34.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "WATCH_STABLE",
+      "to_status": "CLEAR",
+      "timestamp_utc": "2026-04-07T13:40:33Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase34.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "CLEAR",
+      "to_status": "WATCH_STABLE",
+      "timestamp_utc": "2026-04-09T02:13:49Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase33.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "WATCH_STABLE",
+      "to_status": "CLEAR",
+      "timestamp_utc": "2026-04-09T09:13:56Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41_debug_guard.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "CLEAR",
+      "to_status": "WATCH",
+      "timestamp_utc": "2026-04-09T09:13:58Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "WATCH",
+      "to_status": "WATCH_STABLE",
+      "timestamp_utc": "2026-04-09T09:15:09Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "WATCH_STABLE",
+      "to_status": "CLEAR",
+      "timestamp_utc": "2026-04-09T09:24:15Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "CLEAR",
+      "to_status": "WATCH_STABLE",
+      "timestamp_utc": "2026-04-13T16:14:06Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+    }
+  ],
+  "strongest_watch_status": "REBASELINE_REQUIRED",
+  "fingerprints": [
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "local-macos-appleclang17",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "asan_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "diagnostic"
+        },
+        {
+          "execution_class": "debug_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        },
+        {
+          "execution_class": "policy_core",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_nightly",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_refresh",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "release_full",
+          "watch_status": "WATCH_STABLE",
+          "watch_recommendation": "WATCH_RUNTIME",
+          "sample_count": 5,
+          "stable_overrun_count": 5,
+          "clear_count": 0,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        }
+      ]
+    },
+    {
+      "runtime_fingerprint_key": "a49a24335cf77bfd5663528ac96c50d402bb87f13d77d39814dba3e10560e86b",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "2796c34d973a29243f78493a6a87749012c046927f373912063c2cc0971f77af"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "policy_core",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_refresh",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        }
+      ]
+    },
+    {
+      "runtime_fingerprint_key": "27e710fac1731bb18e4f8cfc91c5fa68bdc263ac89bc4fbea312f6196b838c8c",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "local-macos-appleclang17",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "policy_core",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_refresh",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        }
+      ]
+    },
+    {
+      "runtime_fingerprint_key": "df7b6b0b0abe9bebaf62f963ca4978a42cc47603ff48e4aef432031b4d71c944",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.4.0",
+        "arch": "arm64",
+        "runner_tag": "local-macos-appleclang17",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)",
+        "fingerprint_hash": "b9a5b078fe93f4c841489578feb52aa716725e4d9fdc383682105b1e04583c27"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "asan_full",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "diagnostic"
+        },
+        {
+          "execution_class": "debug_full",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        },
+        {
+          "execution_class": "policy_core",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_nightly",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_refresh",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "release_full",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 1,
+          "clear_count": 0,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        }
+      ]
+    },
+    {
+      "runtime_fingerprint_key": "03c7e45844a825c1aa0c8bc0c00e36077a280846f2d63b7fd8137e728b2ac649",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.4.0",
+        "arch": "arm64",
+        "runner_tag": "",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)",
+        "fingerprint_hash": "2909e8b868d9932f38afd3fc438c967dbc26f07856c04f6d65f38070a0c338e3"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "policy_core",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_refresh",
+          "watch_status": "REBASELINE_REQUIRED",
+          "watch_recommendation": "REBASELINE_REQUIRED",
+          "sample_count": 1,
+          "stable_overrun_count": 0,
+          "clear_count": 1,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        }
+      ]
+    }
+  ],
+  "summary_hash": "d50e3aaf2637478f9ae4cfce6678fde9f7a2a18a4c6cba3f9f99ea4130f810dc"
+}

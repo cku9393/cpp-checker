@@ -1,0 +1,27 @@
+{
+  "manifest_version": "staged_materialization_transaction_v2",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T04:22:40Z",
+  "transaction_id": "phase54-materialization-d60721018ce6",
+  "materialization_mode": "staged_sparse_clone_overlay",
+  "source_health_hash": "ed602e40418729a5f40991f29c739a11bbdae859e190e43ca3f44b371e8aa2f0",
+  "sparse_clone_ref": null,
+  "overlay_file_count": 0,
+  "overlay_hash": null,
+  "dataless_remaining_count": 0,
+  "source_snapshot_hash": "ff8680532fc316ba01710266cc7502a84a81496395a4a0015591f02b4c036805",
+  "staged_mirror_hash": null,
+  "transaction_verdict": "PASS",
+  "rollback_cleanup_performed": true,
+  "cleanup_performed": true,
+  "cleanup_paths": [
+    "/private/tmp/raw_engine_phase54_staged/tmp"
+  ],
+  "overlay_completeness_hash": "4be94e327802444832660dc06d66b9db8455a76da3ab961d610ceda981893324",
+  "overlay_missing_count": 0,
+  "retained_policy_artifact_count": 6,
+  "retained_campaign_artifact_count": 1,
+  "archive_reference_graph_hash": "45b6bfaacaab6f18b5404136277b286d134f56052534861eb48b142dcc86d191",
+  "published_root_sync_intent": "sync_after_verification_pass",
+  "transaction_hash": "02c0dff3202d9bc968c75f6006d00e7aa09afeffa4bc3f023531101c1f035dc1"
+}

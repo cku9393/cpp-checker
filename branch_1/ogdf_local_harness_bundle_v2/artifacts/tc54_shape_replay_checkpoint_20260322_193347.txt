@@ -1,5 +1,0 @@
-checkpoint stage: tc54 shape replay diagnosis
-source random campaign zip: artifacts/oracle_random_compare_resume_20260322_192124.zip
-earliest random mismatch: dumps/solver_compare_oracle_random/s1_r100/solver_compare_mismatch_seed1_tc54_seed1_tc54.txt
-compare replay summary: dumps/solver_compare_oracle_random/seed1_tc54_compare_replay/summary.json
-finalcore replay summary: dumps/solver_compare_oracle_random/seed1_tc54_finalcore_replay/summary.json

@@ -1,0 +1,205 @@
+{
+  "manifest_version": "publication_health_v1",
+  "phase": "phase36",
+  "generated_at_utc": "2026-04-06T01:23:22Z",
+  "published_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase36_evidence_bundle_published",
+  "authoritative_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package",
+  "bundle_metadata_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase36_evidence_bundle_published/bundle_metadata.json",
+  "publication_snapshot_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/phase36_evidence_bundle_published/publication_snapshot.json",
+  "status": "HEALTHY",
+  "missing_artifact_count": 0,
+  "hash_mismatch_count": 0,
+  "dangling_reference_count": 0,
+  "missing_artifacts": [],
+  "hash_mismatches": [],
+  "dangling_references": [],
+  "publication_snapshot_id": "phase36-published-20260405T222458Z",
+  "published_bundle_items": [
+    {
+      "label": "report",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/PHASE36_STABILIZATION_REPORT_20260406.txt",
+      "sha256": "5a2a3e0c590b02793b4341304696980d8d01c76b26538a21878095655eab0f78"
+    },
+    {
+      "label": "current_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_v1.json",
+      "sha256": "5176ad5b85864f0c7d68bbd9c1e049c78cadb12ae2e664fed1c17ec45530aee6"
+    },
+    {
+      "label": "approved_baseline",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_phase30_approved_v1.json",
+      "sha256": "aa0704657059ee6b4ea199124e85907494a136b510a7d14ac7e1d7f0ebdba1ec"
+    },
+    {
+      "label": "refresh_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_refresh_v1.json",
+      "sha256": "43ed004838a21b81591e3829e955f7bd664e620d76eb35b9ae0a71da4f04db99"
+    },
+    {
+      "label": "rerun_plan",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_rerun_plan_phase32_v1.json",
+      "sha256": "5fac902dae855ef769989b04950362dbc08314df9b5755a98bd10708cc5a74ed"
+    },
+    {
+      "label": "nightly_pipeline_summary",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_pipeline_nightly_phase34.json",
+      "sha256": "85e3ed6227ec9a7ee8b489c3689875e2640b062bad1ae2da9dee3965ef72db06"
+    },
+    {
+      "label": "quick_pipeline_summary",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_pipeline_quick_phase34.json",
+      "sha256": "b36fd10e63c77a24ee363f612ec57b3edce427688211694d52a0f68c5ab1d5a6"
+    },
+    {
+      "label": "pipeline_matrix_summary",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_pipeline_matrix_phase34.json",
+      "sha256": "6633c57037077f0ccf8f0dcd5573c6198f4f70c107dbb36ae406ff1cd62086e9"
+    },
+    {
+      "label": "runtime_baseline_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+      "sha256": "c7eac62f4f09a8c7cf1a8f6f2ccb76a78f84bce3b23c283c0595164a48c782b5"
+    },
+    {
+      "label": "runtime_current_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase30.json",
+      "sha256": "9195672b564d8a4a73130b6b32508542cb4178b52fbd9edca0783094486ff55c"
+    },
+    {
+      "label": "runtime_refresh_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase30_v2.json",
+      "sha256": "27c6bda8552451405ca7897651da02f74f64a3a57d2c3be48880c4689ef2e70e"
+    },
+    {
+      "label": "runtime_rerun_plan",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_rerun_phase30_v2.json",
+      "sha256": "6a0eaf84dbdf01ce7ddaf6fc478ee3fb4f2280f40cc2b69e31d820fdd78d85c2"
+    },
+    {
+      "label": "runtime_registry",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+      "sha256": "d802ca672679991018952ee32d98db2fb8bde0388cc2a19768ecc54f5dd0b83e"
+    },
+    {
+      "label": "runtime_registry_health",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_registry_health_phase36.json",
+      "sha256": "5638c6d2eaa9d131f62d41995df13c2784f912c0e5f681334f38436f1479b724"
+    },
+    {
+      "label": "runtime_history_index",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+      "sha256": "b2fc5b03f1ae8ef12c2fa01953eac5309942c069aef0f97d0d5834832bce9c23"
+    },
+    {
+      "label": "runtime_history_compact",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1_compacted.json",
+      "sha256": "4237b6b4e34828e098c13c7805d41cffa2ef9932731b4ff21d7ad82cebfb1b4e"
+    },
+    {
+      "label": "runtime_watch_current",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_current_phase34.json",
+      "sha256": "fdda3fbfe376343f43272df72639662be34ceebe9ae95b03b003d5df339a8c13"
+    },
+    {
+      "label": "runtime_watch_refresh",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase34.json",
+      "sha256": "1ff4b037e3d73c9a1a9551ddf91a5e9b01ac953e7104aaae6e93cf6be3200a36"
+    },
+    {
+      "label": "runtime_watch_history_index",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_history_index_v1.json",
+      "sha256": "b367b633c2774fcdc4c164ca8f42e5fe4f960768fb2bc5c40d39ea5114e36131"
+    },
+    {
+      "label": "runtime_watch_registry",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_registry_v1.json",
+      "sha256": "a36849e526b92bf87dbb295868293f65713eb7bd62640df4ef21c4c9f7044d6c"
+    },
+    {
+      "label": "source_snapshot_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/source_snapshot_manifest_phase36.json",
+      "sha256": "91ffd65f0064b6497967238ecc7c6ba22d65be77e50ccf4ae1121a63f08f7b99"
+    },
+    {
+      "label": "staged_mirror_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/staged_mirror_manifest_phase36.json",
+      "sha256": "851aa768d2f216c9f0c9a77e678e1a871f8994cbb8ad99d4e5c40f21f86cc886"
+    },
+    {
+      "label": "staged_mirror_verify",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/staged_mirror_verify_phase36.json",
+      "sha256": "a4391beeceebf0396d4f1748ef5081b147e562210a7df4256e1fd45faf9e1448"
+    },
+    {
+      "label": "ctest_inventory_release",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_inventory_release_phase36.json",
+      "sha256": "fcd69965d23094a79d913cb6f0b931ba52c6c40682ac5ae083b1a70e0dee9e62"
+    },
+    {
+      "label": "ctest_inventory_debug",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_inventory_debug_phase36.json",
+      "sha256": "84b8058152f10670460069d595316ccba9809e5bacaa55361a14abd226381f92"
+    },
+    {
+      "label": "ctest_inventory_asan",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/ctest_inventory_asan_phase36.json",
+      "sha256": "b0b333b618daa33a239fc3ace72c1c1c7b0191982279e454c58dd3ed5cdda30c"
+    },
+    {
+      "label": "verification_release",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/verification_phase36_release.json",
+      "sha256": "5d57c0cfe8a806825b691738b4ffdc99ce17a9bf4a867ee93f94d2743b7f5141"
+    },
+    {
+      "label": "verification_debug",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/verification_phase36_debug.json",
+      "sha256": "27e2724f11eff169ed613453da498bd5d349724a2413a3e89d16d4fe7dcc945d"
+    },
+    {
+      "label": "verification_asan",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/verification_phase36_asan.json",
+      "sha256": "01dd5a9f7d1f11cefae26ab6c0b02676e7ad04613d47b69d4b43ecd7cf3cfc62"
+    },
+    {
+      "label": "published_snapshot_manifest",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/phase36_published_snapshot.json",
+      "sha256": "040d6bbdcc27489645483ff98a3748d03a3d8a5ac53cc720b98d40144ee48ad8"
+    },
+    {
+      "label": "verification_closeout",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/phase36_verification_closeout.json",
+      "sha256": "7aba178dfa082f989596373ee45a742e53cb9c3e251a87b1f43d08666db0d6a2"
+    },
+    {
+      "label": "publication_health",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/publication_health_phase36.json",
+      "sha256": "300766d87ca36da65507c6526c2c621898fb63e45554830527f4223e14465639"
+    },
+    {
+      "label": "policy_ops_summary",
+      "path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_ops_summary_phase36.json",
+      "sha256": "954fb283612e62118646418016c556c2aeff139808dae1c72b838d48208af15c"
+    },
+    {
+      "label": "bundle_metadata",
+      "path": "/private/tmp/raw_engine_phase36_published/bundle_metadata.json",
+      "sha256": "47650b40176dee11ae5d0c5662c1ddf7b9edd4ca0534d8b652337dde4cc10bb3"
+    },
+    {
+      "label": "bundle_zip",
+      "path": "/private/tmp/raw_engine_phase36_stabilization_20260406.zip",
+      "sha256": "45296230b0e813e9d73d37314453127959ec769703e5218ea9702326e019ce6f"
+    },
+    {
+      "label": "curated_zip",
+      "path": "/private/tmp/raw_engine_phase36_stabilization_curated_20260406.zip",
+      "sha256": "bf5f05374653dbeeae33ea97074d7f1b785825b3f876b065223da1c48385f3d3"
+    },
+    {
+      "label": "light_ops_zip",
+      "path": "/private/tmp/raw_engine_phase36_ops_light_20260406.zip",
+      "sha256": "ecedce653a4645e09f2255860e96961f60271ec6826df7eb73db607f5826ee56"
+    }
+  ],
+  "health_hash": "4c65538d241160a8edf882f39852646e873ec4cc624cd242bbb05f94d9b37809"
+}

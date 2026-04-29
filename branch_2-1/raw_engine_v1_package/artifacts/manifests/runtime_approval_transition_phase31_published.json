@@ -1,0 +1,27 @@
+{
+  "publication_version": "phase31_runtime_approval_transition_v1",
+  "phase": "phase31",
+  "generated_at_utc": "2026-04-01T00:40:00Z",
+  "authoritative_approval_metadata_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved_approval_metadata.json",
+  "authoritative_archived_proposal_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase30_archived.json",
+  "authoritative_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v1.json",
+  "transition_status": "ACTIVE_SWITCHED",
+  "previous_active_runtime_baseline_id": "phase25-runtime-approved-c89a575d-20260323_003527",
+  "new_active_runtime_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+  "baseline_tag": "phase30-runtime-approved",
+  "approval_timestamp_utc": "2026-03-31T04:17:35Z",
+  "approved_from_proposal_gate_verdict": "APPROVABLE",
+  "proposal_confidence": "HIGH",
+  "approved_runtime_baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+  "archived_proposal_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase30_archived.json",
+  "evidence_summary": {
+    "relevant_execution_class_count": 3,
+    "total_real_sample_count": 54,
+    "total_sample_count": 54,
+    "hard_breach_execution_class_count": 0,
+    "watch_status_counts": {
+      "CLEAR": 2,
+      "WATCH_STABLE": 1
+    }
+  }
+}

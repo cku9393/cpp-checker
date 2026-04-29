@@ -9,7 +9,7 @@ current workspace reality
 - runtime path report: `workspaceRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker branch4Root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4 archivalBundleRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90 runtimeDataRoot=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/runtime`
 - required docs: `39` / `39` before this note generation pass
 - required artifacts: `8` / `8`
-- rerun audit fingerprint: `1|1|1|1|1|83:3313802010853241535|16856:14254791785929237461`
+- rerun audit fingerprint: `1|1|1|1|1|84:3087496610122629103|16856:14254791785929237461`
 
 provenance inventory
 - item count: `19`
@@ -38,3 +38,23 @@ still pending in the captured log
 archival source
 - preserved bundle note: `/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_4/90/project_status_summary_90.md`
 - preserved note status: archival claim
+## Project To Active Domain Refinement Round
+
+| metric | value |
+| --- | --- |
+| latest_round | project_to_active_status_domain_refinement |
+| selected_statement | projected_status_domain_refined_under_active_projection_or_reduced_or_escape |
+| project_to_active_status_domain_semantics_status | project_to_active_status_domain_semantics_contract_ready |
+| project_to_active_domain_transfer_lemma_status | project_to_active_domain_transfer_proof_ready_refinement_status_predicate_open |
+| project_to_active_normal_form_interface_status | project_to_active_normal_form_transfer_interface_contract_ready |
+| project_to_active_domain_skeleton_status | proof_ready_skeleton_project_to_active_domain_refinement_status_predicate_normal_form_open |
+| project_to_active_operation_status | partial_project_to_active_domain_refinement_proof_ready_normal_form_status_predicate_open |
+| status_congruence_skeleton | partial_status_congruence_project_domain_refined_remaining_contract_canonical_normal_open |
+| support_reduction_skeleton | partition_ready_project_domain_refined_remaining_contract_canonical_normal_open |
+| support_bound_skeleton | proof_ready_skeleton_project_domain_refined_remaining_contract_canonical_normal_open |
+| higher_support_necessity | higher_support_deferred_after_project_to_active_domain_refinement_normal_form_open |
+| general_theorem_readiness | ready_for_project_to_active_normal_form_refinement |
+| next_action_1 | project_to_active_normal_form_refinement |
+| next_action_2 | contract_equivalent_domain_normal_form_refinement |
+| next_action_3 | canonical_compression_domain_normal_form_refinement |
+| caveat | not_full_general_theorem_or_project_to_active_full_proof |

@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-cat >/dev/null
-printf '0 1 1\n'

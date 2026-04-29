@@ -1,4 +1,0 @@
-latest_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase22/tests/artifacts/policy_empty_plan_noop_smoke/raw_engine_phase22_pipeline_smoke.zip
-latest_curated_bundle=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-asan-phase22/tests/artifacts/policy_empty_plan_noop_smoke/raw_engine_phase22_pipeline_smoke_curated.zip
-bundle_count=0
-curated_bundle_count=0

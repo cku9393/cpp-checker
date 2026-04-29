@@ -1,2 +1,0 @@
-case_index	case_tag	stage	mode	n	seed	shuffle_labels	shuffle_queries	timeout_s
-1	case01_smoke_comb_core_n64_s1_L1_Q1_t2	smoke	comb_core	64	1	1	1	2

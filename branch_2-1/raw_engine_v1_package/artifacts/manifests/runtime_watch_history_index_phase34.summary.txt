@@ -1,0 +1,1 @@
+runtime_watch_history_summary fingerprint_count=1 transition_count=2 watch_status_counts={"CLEAR": 6}

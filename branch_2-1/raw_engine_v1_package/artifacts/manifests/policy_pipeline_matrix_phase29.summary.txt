@@ -1,0 +1,8 @@
+phase=phase29
+mode=matrix
+severity=ACTION_REQUIRED
+exit_code=20
+current_verdict=PASS
+freshness_verdict=FRESH
+runtime_watch_status=REBASELINE_REQUIRED
+recommended_next_action=REBASELINE_REQUIRED

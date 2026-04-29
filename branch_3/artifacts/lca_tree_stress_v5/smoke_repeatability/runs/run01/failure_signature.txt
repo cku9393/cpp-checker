@@ -1,4 +1,0 @@
-run_exit_code=70
-failure_root_state=missing
-failure_summary_state=missing
-failure_report_state=missing

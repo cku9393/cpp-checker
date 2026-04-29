@@ -1,0 +1,21 @@
+{
+  "manifest_version": "runtime_registry_selection_repair_plan_v1",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T08:14:27Z",
+  "selection_sanity_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_registry_selection_sanity_phase54.json",
+  "selection_sanity_hash": "d605408e358aae1b95a46a374d1282314c82dda368252b47f95db00d55ba0f8b",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+  "runtime_baseline_registry_hash": "8e4361d36a1453686bae976837126c2054e8a47d370cc6d4ac840842c888cfe9",
+  "repair_plan_verdict": "REFRESH_REGISTRY_SELECTION",
+  "repair_actions": [
+    "refresh registry selection to prefer local compatible lineage before rebaseline review"
+  ],
+  "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "selected_baseline_tag": "phase34-runtime-external-approved",
+  "registry_entry_count": 2,
+  "issues": [
+    "foreign/external baseline was selected while a local compatible candidate exists"
+  ],
+  "recommended_operator_command": "operator review required before runtime registry mutation",
+  "repair_plan_hash": "4e626821235e9e7e350ee714ac4645291ad3b86ae2fb9794135178fd3968c162"
+}

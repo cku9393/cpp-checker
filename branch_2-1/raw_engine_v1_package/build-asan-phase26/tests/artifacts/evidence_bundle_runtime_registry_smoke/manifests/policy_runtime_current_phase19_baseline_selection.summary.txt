@@ -1,1 +1,0 @@
-runtime_baseline_selection_summary comparability_verdict=COMPARABLE selected_baseline_id=phase19-runtime-approved-d70f8d6c-20260323_052459 candidate_count=1 exact_match_count=1 compatible_match_count=0 retired_match_count=0 reason=active exact runtime fingerprint match

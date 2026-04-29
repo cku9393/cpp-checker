@@ -1,0 +1,122 @@
+Phase54 stabilization report
+============================
+
+Status
+------
+- Final verdict: PASS for correctness and staged verification; runtime/operator actions remain explicit.
+- Production split-choice default: exact_shadow retained.
+- src primitive/planner semantics: unchanged.
+- New semantic mismatch/counterexample: none observed.
+
+Modified / added files
+----------------------
+- README.md
+- tests/CMakeLists.txt
+- tests/raw_engine_cases.cpp
+- tests/tools/build_evidence_bundle.py
+- tests/tools/run_policy_pipeline.py
+- tests/tools/runtime_watch_ops.py
+- PHASE54_STABILIZATION_REPORT.txt
+- Phase54 generated artifacts under artifacts/manifests and the phase54 evidence bundle zips.
+
+Runtime comparability triage
+----------------------------
+- Triage artifact: artifacts/manifests/runtime_comparability_triage_phase54.json.
+- Triage verdict: NOT_COMPARABLE_CURRENT_ENV.
+- Selected baseline: phase34-runtime-external-approved-0f34bd33-20260404_202159.
+- Current runtime fingerprint: 03c7e45844a825c1aa0c8bc0c00e36077a280846f2d63b7fd8137e728b2ac649.
+- Selected baseline fingerprint: 0d045149f16d138f992da5a9f56dc290a7bf24faefc87d4e5cc11ad87c7ff1af.
+- Exact active match count: 0.
+- Compatible active match count: 2.
+- Retired match count: 0.
+- Classification: current/known environment, not foreign.
+- Recommended runtime action: PROPOSE_CURRENT_ENV_REBASELINE.
+- This result does not affect the correctness gate.
+
+Runtime rebaseline action plan and runbook
+------------------------------------------
+- Action plan artifact: artifacts/manifests/runtime_rebaseline_action_plan_phase54.json.
+- Action plan verdict: PROPOSE_CURRENT_ENV_REBASELINE.
+- Proposal gate verdict: APPROVABLE.
+- Proposal confidence: MEDIUM.
+- Required samples: 3.
+- Available samples: 5.
+- Hard breach count: 0.
+- Approval mode: handoff_only.
+- Runbook artifact: artifacts/manifests/runtime_rebaseline_runbook_phase54.json.
+- Runbook type: current_env_rebaseline.
+- Approval ready: true.
+- Mutates registry by default: false.
+- Registry switch remains an explicit operator step.
+
+Registry selection sanity
+-------------------------
+- Sanity artifact: artifacts/manifests/runtime_registry_selection_sanity_phase54.json.
+- Sanity verdict: ACTION_REQUIRED.
+- Selected baseline is active, but a foreign/external baseline was selected while a local-compatible candidate exists.
+- Repair plan artifact: artifacts/manifests/runtime_registry_selection_repair_plan_phase54.json.
+- Repair plan verdict: REFRESH_REGISTRY_SELECTION.
+- No automatic registry mutation was performed.
+
+Quick/nightly separation
+------------------------
+- Quick phase54 summary: artifacts/manifests/policy_pipeline_quick_phase54.json.
+- Nightly phase54 summary: artifacts/manifests/policy_pipeline_nightly_phase54.json.
+- Correctness result: PASS / FRESH.
+- Runtime result: NOT_COMPARABLE / ACTION_REQUIRED.
+- quick correctness_exit=0, runtime_exit=20, combined_exit=20.
+- nightly correctness_exit=0, runtime_exit=20, combined_exit=20.
+- Rationale explicitly states that runtime comparability/action-required state is separated from correctness and no semantic failure was detected.
+- Source-health action and runtime action are separate domains: USE_STAGED_SPARSE_LANE for source-health, PROPOSE_CURRENT_ENV_REBASELINE for runtime comparability.
+
+Source-health, overlay, and staged lane
+---------------------------------------
+- Source health: ATTENTION_REQUIRED / SPARSE_CLONE_REQUIRED.
+- Staged overlay completeness: PASS, required_overlay_count=16, missing_overlay_count=0.
+- Verification preflight gate v2: ACTION_REQUIRED for direct build, staged_build_allowed=true, sparse_clone_required=true, selected_materialization_mode=staged_sparse_clone_overlay.
+- Staged materialization transaction v2: PASS, materialization_mode=staged_sparse_clone_overlay, overlay_missing_count=0, retained_policy_artifact_count=6, retained_campaign_artifact_count=1.
+- Direct build remains blocked by source-health; staged sparse clone overlay remains the official verification lane.
+
+Retention and archive actions
+-----------------------------
+- Archive review queue from phase53 lineage: no immediate waiver or snapshot action.
+- Published snapshot retention apply v2 from phase53 lineage: PASS, blocked_prune_count=1.
+- Staged verification retention apply v2 from phase53 lineage: PASS, blocked_prune_count=1.
+- Blocked prune remains an operator retention action, not a correctness failure.
+
+Ops summary v20
+---------------
+- ops summary artifact: artifacts/manifests/policy_ops_summary_phase54_v20.json.
+- v20 includes correctness summary, current environment, runtime comparability triage, runtime rebaseline action plan, runtime rebaseline runbook, registry selection sanity/repair, archive review queue, source health, staged overlay completeness, verification preflight gate v2, staged materialization, staged/published retention, verification lane, publication health, and final operator actions.
+- Final operator actions separate correctness=NO_ACTION, runtime_comparability=PROPOSE_CURRENT_ENV_REBASELINE, source_health=USE_STAGED_SPARSE_LANE, archive=NO_ACTION, and retention=RETAIN_SNAPSHOTS/NO_ACTION according to live references.
+
+Evidence bundle runtime timeline
+--------------------------------
+- The phase54 evidence bundle includes runtime comparability triage, runtime rebaseline action plan/proposal/gate, runtime rebaseline runbook, registry selection sanity/repair plan, quick/nightly summaries, ops summary v20, phase53 archive/preflight/retention lineage artifacts, phase54 verification manifests, verification closeout, and publication health.
+- The light ops bundle includes the report, ops summary v20, correctness summary, runtime triage summary, runtime action plan summary, source-health/preflight summary, archive/retention summary, verification closeout summary, and publication health summary.
+
+Verification results
+--------------------
+- Release staged full CTest: PASS, 501/501, fail=0, not_run=0, wall_time=2669.11s.
+- Debug staged full CTest: PASS, 501/501, fail=0, not_run=0, wall_time=3195.14s.
+- Isolated ASan/UBSan staged full CTest: PASS, 501/501, fail=0, not_run=0, wall_time=6825.19s.
+- Explicit phase54/corpus smokes executed: runtime_comparability_triage_smoke, runtime_rebaseline_action_plan_smoke, runtime_rebaseline_runbook_smoke, runtime_registry_selection_sanity_smoke, pipeline_runtime_not_comparable_separated_from_correctness_smoke, policy_ops_summary_v20_smoke, evidence_bundle_runtime_triage_smoke, corpus_replay_smoke.
+
+Semantic mismatch handling
+--------------------------
+- No new semantic mismatch, correctness gate FAIL, or planner drift was confirmed.
+- No FailureSignature/live dump/reducer/regression path was triggered.
+- No raw_planner.cpp or primitive body change was made.
+
+Final policy decision
+---------------------
+- exact_shadow remains the production split-choice policy.
+- exact_full remains tests/debug/nightly compare only.
+- compare_ready remains diagnostic-only.
+- handoff_only remains the default approval mode.
+
+Remaining risks
+---------------
+- Runtime baseline comparability remains NOT_COMPARABLE until the operator approves current-env rebaseline or refreshes registry selection.
+- Direct build remains blocked while source health requires staged sparse clone overlay.
+- Snapshot prune can remain blocked by live references and must stay in the operator retention lane.

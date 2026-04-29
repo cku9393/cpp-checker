@@ -1,1 +1,0 @@
-runtime_watch_history_summary fingerprint_count=3 transition_count=19 watch_status_counts={"CLEAR": 5, "REBASELINE_REQUIRED": 4, "WATCH_STABLE": 1}

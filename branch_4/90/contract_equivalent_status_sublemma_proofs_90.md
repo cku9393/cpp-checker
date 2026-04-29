@@ -1,9 +1,13 @@
 # Contract Equivalent Status Sublemma Proofs 90
 
-## status
+## status after congruence refinement
 
-`contract_equivalent_status_sublemmas_attempted_congruence_open`
+`contract_equivalent_status_sublemma_proofs_domain_normal_form_open`
 
-This proof attempt closes the status-language classification and failure-naming parts for coordinate contraction, and reuses the existing strict support-measure decrease for nontrivial quotient classes. It does not prove equivalent-coordinate counterexample-status congruence.
+Language and failure classification are current-scope proved. Payload
+congruence, status-domain transfer, normal-form transfer, and conditional
+preservation are proof-sketch/proof-ready. Status predicate determination and
+valid reduced-status fallback remain blocked.
 
-Runtime table: `branch_4/90/runtime/contract_equivalent_status_sublemma_proofs_90.tsv`.
+Runtime proofs:
+`branch_4/90/runtime/contract_equivalent_status_sublemma_proofs_90.tsv`.

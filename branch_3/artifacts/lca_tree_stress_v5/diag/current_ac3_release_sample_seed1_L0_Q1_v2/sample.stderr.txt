@@ -1,1 +1,0 @@
-sample[61329]: sample cannot examine process 61319 (solve) for unknown reasons, even though it appears to exist; try running with `sudo`.

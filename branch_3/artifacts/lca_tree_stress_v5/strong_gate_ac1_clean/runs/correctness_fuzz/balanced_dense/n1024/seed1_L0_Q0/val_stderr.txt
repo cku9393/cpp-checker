@@ -1,1 +1,0 @@
-[validator] query #24 failed: (768, 784) expected LCA 24, got 12

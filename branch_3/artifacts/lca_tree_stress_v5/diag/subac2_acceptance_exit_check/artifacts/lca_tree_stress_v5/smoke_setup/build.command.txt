@@ -1,1 +1,0 @@
-/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/subac2_acceptance_exit_check/build.sh

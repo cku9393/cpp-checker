@@ -1,6 +1,0 @@
-kind	label	status	value
-file	selected preset source	dataless	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_presets/boj_3s_hard_gate.json
-materialization	selected preset source	dataless	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/suite_presets/boj_3s_hard_gate.json
-file	selected preset source fallback	ok	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/lca_tree_stress_v5/tooling/suite_presets/boj_3s_hard_gate.json
-file	selected preset source fallback	dataless	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/lca_tree_stress_v5/tooling/suite_presets/boj_3s_hard_gate.json
-materialization	selected preset source fallback	dataless	/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/lca_tree_stress_v5/tooling/suite_presets/boj_3s_hard_gate.json

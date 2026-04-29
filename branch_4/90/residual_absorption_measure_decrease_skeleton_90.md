@@ -1,0 +1,25 @@
+# Residual Absorption Measure Decrease Skeleton 90
+
+| metric | value |
+| --- | --- |
+| lemma_name | residual_absorption_lexicographic_measure_decreases_or_escape |
+| exact_statement | For a classified residual family-chain absorption branch, either the residual output decreases the well-founded lexicographic tuple or the branch is a named blocker/escape. |
+| assumptions | recognized source witness;source-alignment residual classification;well-founded measure tuple;residual construction candidate |
+| conclusion | lexicographic smaller-witness branch or named escape |
+| residual_branch_classification | residual_absorption_branch_classification_contract_ready |
+| measure_tuple | residual_absorption_measure_tuple_well_founded_proof_ready |
+| smaller_witness_construction | residual_absorption_smaller_witness_construction_proof_ready_alignment_defect_open |
+| payload_mismatch_case | proof_sketch_payload_defect_decrease_open |
+| status_domain_mismatch_case | proof_sketch_domain_defect_decrease_open |
+| normal_form_mismatch_case | proof_sketch_normal_defect_decrease_open |
+| family_depth_branch | proof_sketch_family_depth_decrease_open |
+| direct_escape_branch | named_residual_measure_escape_ready |
+| measure_decrease_outline | finite lexicographic tuple; strict branch delta; no earlier component increase |
+| counterexample_status_relation | preservation_or_reduction_open_status_domain_normal_form_transfer_required |
+| failure_to_escape_case | measure_failure_is_named_escape |
+| relation_to_source_alignment_skeleton | proof_ready_skeleton_family_chain_source_alignment_payload_domain_normal_form_open_measure_refined |
+| relation_to_family_chain_absorption_status_skeleton | partial_family_chain_absorption_residual_measure_proof_ready_shared_domain_normal_form_open |
+| relation_to_support_bound_skeleton | proof_ready_skeleton_residual_measure_refined_remaining_project_contract_canonical_domain_normal_open |
+| missing_steps | payload/domain/normal-form transfer; valid smaller-witness status; normalization monotonicity |
+| exact_caveat | proof-ready residual measure skeleton only; not full absorption or support-bound proof |
+| final_status | proof_ready_skeleton_residual_absorption_measure_decrease_alignment_defect_open |

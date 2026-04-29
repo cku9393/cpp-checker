@@ -1,7 +1,0 @@
-{
-  "history_version": "runtime_watch_history_index_v1_compacted",
-  "generated_at_utc": "2026-04-24T03:13:03Z",
-  "source_runtime_watch_history_index": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_watch_history_index_v1.json",
-  "fingerprint_count": 1,
-  "summary_path": "/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke/manifests/runtime_watch_history_index_v1_summary.json"
-}

@@ -1,0 +1,16 @@
+{
+  "publication_version": "phase31_matrix_summary_v1",
+  "phase": "phase31",
+  "mode": "matrix",
+  "severity": "ACTION_REQUIRED",
+  "exit_code": 20,
+  "policy_severity": "OK",
+  "runtime_severity": "WARN",
+  "runtime_recommendation": "NOT_COMPARABLE",
+  "recommended_next_action": "runtime baseline is informational only on this host/toolchain; strict comparison is disabled",
+  "rationale": [
+    "matrix worst entry=same_host_compiler_bump",
+    "runtime baseline selection found only compatible, non-strict candidates"
+  ],
+  "authoritative_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_pipeline_matrix_phase31.json"
+}

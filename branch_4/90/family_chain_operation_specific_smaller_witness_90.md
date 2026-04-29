@@ -1,10 +1,11 @@
 # Family-Chain Operation-Specific Smaller Witness 90
 
-## status after family-chain absorption status round
+## status after project-to-active locality refinement
 
-`partial_all_primary_operations_status_proof_ready_residual_congruence_open`.
+`partial_project_locality_proof_ready_remaining_congruence_alignment_measure_open`.
 
-The operation-specific smaller-witness branch now has a shared status classification:
+The operation-specific smaller-witness branch keeps a shared status
+classification:
 
 - `status_preserved`;
 - `status_reduced_to_smaller_witness`;
@@ -14,6 +15,10 @@ The operation-specific smaller-witness branch now has a shared status classifica
 - `status_escape_to_higher_support`;
 - `status_not_applicable`.
 
-Project-to-active, coordinate contraction, canonical compression, and family-chain absorption now each have proof-ready status skeletons with exact locality/congruence/source-alignment/measure blockers. This does not prove full support reduction or any full general theorem.
+Project-to-active is now payload-locality proved and status-domain-open.
+Coordinate contraction, canonical compression, and family-chain absorption still
+have exact congruence/source-alignment/measure blockers. This does not prove
+full support reduction or any full general theorem.
 
-Runtime table: `branch_4/90/runtime/family_chain_operation_specific_smaller_witness_90.tsv`.
+Runtime table:
+`branch_4/90/runtime/family_chain_operation_specific_smaller_witness_90.tsv`.

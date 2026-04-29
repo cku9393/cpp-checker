@@ -1,0 +1,131 @@
+{
+  "manifest_version": "runtime_comparability_triage_v1",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T08:14:26Z",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+  "runtime_current_manifest_hash": "a55d570540f46d8f709b082f857cc059c6236ca72ab4962e6059d40f9184ef5d",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+  "runtime_baseline_registry_hash": "8e4361d36a1453686bae976837126c2054e8a47d370cc6d4ac840842c888cfe9",
+  "runtime_history_index_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+  "runtime_history_index_hash": "90a73b235a4f0d5ac6a5175f927f2e24a2349783c0114d36da973d4cb83ad1a1",
+  "runtime_watch_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_registry_v1.json",
+  "runtime_watch_registry_hash": "351effe712e39a1317490f9ebee057e06b2d299916aabe8926d646a1840cfa96",
+  "triage_verdict": "NOT_COMPARABLE_CURRENT_ENV",
+  "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "selected_baseline_tag": "phase34-runtime-external-approved",
+  "selected_baseline_status": "active",
+  "current_fingerprint_key": "085a976a184e53697c855a3d203d893181d22f1bc0a942ff7bbb37615c84569d",
+  "selected_baseline_fingerprint_key": "0d045149f16d138f992da5a9f56dc290a7bf24faefc87d4e5cc11ad87c7ff1af",
+  "exact_match_count": 0,
+  "compatible_match_count": 2,
+  "retired_match_count": 0,
+  "active_candidate_count": 2,
+  "local_compatible_candidate_count": 1,
+  "mismatch_dimensions": {
+    "host": true,
+    "compiler": true,
+    "build_type": true,
+    "sanitizer_flags": true,
+    "runner_tag": true,
+    "execution_class_shape": true,
+    "budget_profile": true
+  },
+  "is_current_env": true,
+  "is_known_env": true,
+  "is_foreign_env": false,
+  "proposal_needed": true,
+  "recommended_action": "PROPOSE_CURRENT_ENV_REBASELINE",
+  "selection_summary": {
+    "selection_version": "runtime_baseline_selection_v1",
+    "generated_at_utc": "2026-04-25T08:14:26Z",
+    "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+    "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+    "candidate_count": 2,
+    "exact_match_count": 0,
+    "compatible_match_count": 2,
+    "retired_match_count": 0,
+    "current_host_fingerprint": {
+      "os": "Darwin",
+      "os_release": "25.4.0",
+      "arch": "arm64",
+      "runner_tag": "",
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)",
+      "fingerprint_hash": "2909e8b868d9932f38afd3fc438c967dbc26f07856c04f6d65f38070a0c338e3"
+    },
+    "current_toolchain_fingerprint": {
+      "compiler_command": "/usr/bin/c++",
+      "compiler_id": "appleclang",
+      "compiler_version": "Apple clang version 21.0.0 (clang-2100.0.123.102)"
+    },
+    "current_execution_classes": [
+      "policy_core",
+      "policy_nightly",
+      "policy_refresh"
+    ],
+    "current_execution_signatures": [
+      "policy_core|Policy|none",
+      "policy_nightly|Policy|none",
+      "policy_refresh|Policy|none"
+    ],
+    "current_fingerprint_key": "085a976a184e53697c855a3d203d893181d22f1bc0a942ff7bbb37615c84569d",
+    "comparability_verdict": "NOT_COMPARABLE",
+    "comparability_reason": "same host runtime baseline candidate differs by compiler version",
+    "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+    "selected_baseline_tag": "phase34-runtime-external-approved",
+    "selected_runtime_baseline_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+    "selected_runtime_baseline_manifest_hash": "56bec0f0ca2c17ae2e5028854d20134768bf08b03e7d3bbfde058b8096e910c0",
+    "selected_entry_status": "active",
+    "selected_execution_signature_hash": "a9a2bbf68b1e8cb7c0221e9195e48674a27525cfb6c5ec0279bd71c94d93bd6d",
+    "candidates": [
+      {
+        "baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+        "baseline_tag": "phase30-runtime-approved",
+        "status": "active",
+        "match_kind": "compatible",
+        "match_reason": "same host runtime baseline candidate differs by compiler version"
+      },
+      {
+        "baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+        "baseline_tag": "phase34-runtime-external-approved",
+        "status": "active",
+        "match_kind": "compatible",
+        "match_reason": "same host runtime baseline candidate differs by compiler version"
+      }
+    ],
+    "selection_hash": "9aeb9e2404703991d603ae91e1e934f71c6f2f9e87b4140d16c8b5d0da7fe20a"
+  },
+  "current_execution_classes": [
+    "policy_core",
+    "policy_nightly",
+    "policy_refresh"
+  ],
+  "current_execution_signatures": [
+    "policy_core|Policy|none",
+    "policy_nightly|Policy|none",
+    "policy_refresh|Policy|none"
+  ],
+  "current_runtime_budget_profile_id": "runtime-budget-profile-v1",
+  "selected_runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+  "history_fingerprint_count": 3,
+  "watch_entry_count": 57,
+  "available_samples": 43,
+  "transition_list": [
+    {
+      "from_selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+      "from_selected_baseline_tag": "phase34-runtime-external-approved",
+      "current_fingerprint_key": "085a976a184e53697c855a3d203d893181d22f1bc0a942ff7bbb37615c84569d",
+      "triage_verdict": "NOT_COMPARABLE_CURRENT_ENV",
+      "recommended_action": "PROPOSE_CURRENT_ENV_REBASELINE"
+    }
+  ],
+  "rationale": [
+    "same host/compiler-family runtime lineage exists, but the current fingerprint is not strict-comparable",
+    "baseline selector preferred a foreign/externally approved compatible candidate; keep this as a runtime operator action",
+    "same host runtime baseline candidate differs by compiler version",
+    "watch registry current_env_status=REBASELINE_REQUIRED",
+    "runtime comparability is an operator lane signal and does not change correctness PASS/FRESH state"
+  ],
+  "triage_hash": "1c07a5d1addb72d5dade93030efee14c0356fecdc7f8a3fbd05218a606febfed"
+}

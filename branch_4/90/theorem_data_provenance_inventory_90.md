@@ -27,12 +27,6 @@ representative items
 - mixed: `missing`
 - archival claim: `archival project status summary note, archival support8 authoritative completion lock note, archival support8 rerun completion note`
 
-next-scope readiness
-- current support8 closure certificate: `current_support8_closure_certificate_90.md`
-- next-scope decision matrix: `next_scope_decision_matrix_90.md`
-- top recommendation: `general_gap_bridge_formalization`
-- support8/family-chain closure remains distinct from any future shell16, higher-support, broader theorem, BOJ solver, or archive cleanup scope.
-
 inventory rows
 - `exact minimal basis size = 96`: validation=`current_verified`, provenance=`fresh_current_runtime_generated`, imported=`basis_only_theorem_chain`, fresh rederivation=`1`, caveat=`Current runtime rebuilt the authoritative 96-row exact-basis payload through the proof-motif constructor path and validated row-set equality against the imported 48 baseline.`
 - `exact n=5 basis-only theorem`: validation=`current_verified`, provenance=`fresh_current_runtime_generated`, imported=`basis_only_theorem_chain`, fresh rederivation=`1`, caveat=`Current runtime reran the exhaustive n=5 basis-only theorem audit against the fresh 96-row current exact-basis payload.`

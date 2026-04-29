@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-source "$SCRIPT_DIR/runtime_env_exports.sh"
-exec python3 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/branch_run_case.py comb_core 64 7 1 1 /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/smoke_failure_reporting_selftest/smoke_latest_failure/solver_snapshot /Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/smoke_failure_reporting_selftest/smoke_latest_failure/repro_from_seed/smoke_comb_core_64_s7 --timeout 2 --env DENSE_SHADOW_CASE_MODE=comb_core --env DENSE_SHADOW_CASE_N=64 --env DENSE_SHADOW_CASE_SEED=7 --env DENSE_PROFILE_OUTDIR=/Users/free_1/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/smoke_failure_reporting_selftest/smoke_latest_failure/repro_from_seed/smoke_comb_core_64_s7 --env DENSE_DECOMPOSESERIES_ROUND45_SHADOWCHECK=1

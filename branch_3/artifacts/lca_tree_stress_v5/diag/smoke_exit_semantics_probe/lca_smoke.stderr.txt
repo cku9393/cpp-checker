@@ -1,1 +1,0 @@
-/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/outer_suite_wrappers/lca_smoke.sh: line 1582: syntax error near unexpected token `}'

@@ -92,6 +92,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--runtime-history-compact", default=None, help="Optional compacted runtime history index path.")
     parser.add_argument("--runtime-proposal", default=None, help="Optional runtime rebaseline proposal path.")
     parser.add_argument("--runtime-proposal-gate", default=None, help="Optional runtime proposal gate path.")
+    parser.add_argument("--runtime-comparability-triage", default=None, help="Optional runtime comparability triage path.")
+    parser.add_argument("--runtime-rebaseline-action-plan", default=None, help="Optional runtime rebaseline action plan path.")
+    parser.add_argument("--runtime-rebaseline-proposal", default=None, help="Optional phase-specific runtime rebaseline action proposal path.")
+    parser.add_argument("--runtime-rebaseline-proposal-gate", default=None, help="Optional phase-specific runtime rebaseline action proposal gate path.")
+    parser.add_argument("--runtime-rebaseline-runbook", default=None, help="Optional runtime rebaseline runbook path.")
+    parser.add_argument("--runtime-registry-selection-sanity", default=None, help="Optional runtime registry selection sanity path.")
+    parser.add_argument("--runtime-registry-selection-repair-plan", default=None, help="Optional runtime registry selection repair plan path.")
     parser.add_argument("--runtime-import-summary", default=None, help="Optional external/new environment import summary path.")
     parser.add_argument("--runtime-new-env-proposal", default=None, help="Optional new environment runtime proposal path.")
     parser.add_argument("--runtime-new-env-proposal-gate", default=None, help="Optional new environment runtime proposal gate path.")
@@ -189,9 +196,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--operator-archive-retention-apply", default=None, help="Optional operator archive retention apply summary path.")
     parser.add_argument("--operator-waiver-registry", default=None, help="Optional operator waiver registry path.")
     parser.add_argument("--operator-waiver-review", default=None, help="Optional operator waiver review path.")
+    parser.add_argument("--operator-archive-age-tick", default=None, help="Optional operator archive age tick path.")
+    parser.add_argument("--operator-archive-review-queue", default=None, help="Optional operator archive review queue path.")
+    parser.add_argument("--operator-waiver-apply", default=None, help="Optional operator waiver apply review path.")
+    parser.add_argument("--staged-overlay-completeness", default=None, help="Optional staged overlay completeness manifest path.")
+    parser.add_argument("--verification-preflight-gate-v2", default=None, help="Optional verification preflight gate v2 path.")
     parser.add_argument("--verification-preflight-gate", default=None, help="Optional verification preflight gate path.")
     parser.add_argument("--staged-verification-retention", default=None, help="Optional staged verification retention summary path.")
+    parser.add_argument("--staged-verification-retention-apply-v2", default=None, help="Optional staged verification retention apply v2 path.")
     parser.add_argument("--published-snapshot-retention", default=None, help="Optional published snapshot retention summary path.")
+    parser.add_argument("--published-snapshot-retention-apply-v2", default=None, help="Optional published snapshot retention apply v2 path.")
     parser.add_argument("--published-snapshot-retention-apply", default=None, help="Optional published snapshot retention apply summary path.")
     parser.add_argument("--integrated-approval-mutation-audit", default=None, help="Optional integrated approval mutation audit path.")
     parser.add_argument("--staged-materialization-transaction", default=None, help="Optional staged materialization transaction log path.")
@@ -1011,6 +1025,27 @@ def main() -> int:
     runtime_proposal_gate = resolve_manifest_json(
         Path(args.runtime_proposal_gate).resolve() if args.runtime_proposal_gate else None
     )
+    runtime_comparability_triage = resolve_manifest_json(
+        Path(args.runtime_comparability_triage).resolve() if args.runtime_comparability_triage else None
+    )
+    runtime_rebaseline_action_plan = resolve_manifest_json(
+        Path(args.runtime_rebaseline_action_plan).resolve() if args.runtime_rebaseline_action_plan else None
+    )
+    runtime_rebaseline_proposal = resolve_manifest_json(
+        Path(args.runtime_rebaseline_proposal).resolve() if args.runtime_rebaseline_proposal else None
+    )
+    runtime_rebaseline_proposal_gate = resolve_manifest_json(
+        Path(args.runtime_rebaseline_proposal_gate).resolve() if args.runtime_rebaseline_proposal_gate else None
+    )
+    runtime_rebaseline_runbook = resolve_manifest_json(
+        Path(args.runtime_rebaseline_runbook).resolve() if args.runtime_rebaseline_runbook else None
+    )
+    runtime_registry_selection_sanity = resolve_manifest_json(
+        Path(args.runtime_registry_selection_sanity).resolve() if args.runtime_registry_selection_sanity else None
+    )
+    runtime_registry_selection_repair_plan = resolve_manifest_json(
+        Path(args.runtime_registry_selection_repair_plan).resolve() if args.runtime_registry_selection_repair_plan else None
+    )
     runtime_import_summary = resolve_manifest_json(
         Path(args.runtime_import_summary).resolve() if args.runtime_import_summary else None
     )
@@ -1191,14 +1226,35 @@ def main() -> int:
     operator_waiver_review = resolve_manifest_json(
         Path(args.operator_waiver_review).resolve() if args.operator_waiver_review else None
     )
+    operator_archive_age_tick = resolve_manifest_json(
+        Path(args.operator_archive_age_tick).resolve() if args.operator_archive_age_tick else None
+    )
+    operator_archive_review_queue = resolve_manifest_json(
+        Path(args.operator_archive_review_queue).resolve() if args.operator_archive_review_queue else None
+    )
+    operator_waiver_apply = resolve_manifest_json(
+        Path(args.operator_waiver_apply).resolve() if args.operator_waiver_apply else None
+    )
+    staged_overlay_completeness = resolve_manifest_json(
+        Path(args.staged_overlay_completeness).resolve() if args.staged_overlay_completeness else None
+    )
+    verification_preflight_gate_v2 = resolve_manifest_json(
+        Path(args.verification_preflight_gate_v2).resolve() if args.verification_preflight_gate_v2 else None
+    )
     verification_preflight_gate = resolve_manifest_json(
         Path(args.verification_preflight_gate).resolve() if args.verification_preflight_gate else None
     )
     staged_verification_retention = resolve_manifest_json(
         Path(args.staged_verification_retention).resolve() if args.staged_verification_retention else None
     )
+    staged_verification_retention_apply_v2 = resolve_manifest_json(
+        Path(args.staged_verification_retention_apply_v2).resolve() if args.staged_verification_retention_apply_v2 else None
+    )
     published_snapshot_retention = resolve_manifest_json(
         Path(args.published_snapshot_retention).resolve() if args.published_snapshot_retention else None
+    )
+    published_snapshot_retention_apply_v2 = resolve_manifest_json(
+        Path(args.published_snapshot_retention_apply_v2).resolve() if args.published_snapshot_retention_apply_v2 else None
     )
     published_snapshot_retention_apply = resolve_manifest_json(
         Path(args.published_snapshot_retention_apply).resolve() if args.published_snapshot_retention_apply else None
@@ -1329,6 +1385,13 @@ def main() -> int:
     runtime_history_compact_data = read_json_if_exists(runtime_history_compact)
     runtime_proposal_data = read_json_if_exists(runtime_proposal)
     runtime_proposal_gate_data = read_json_if_exists(runtime_proposal_gate)
+    runtime_comparability_triage_data = read_json_if_exists(runtime_comparability_triage)
+    runtime_rebaseline_action_plan_data = read_json_if_exists(runtime_rebaseline_action_plan)
+    runtime_rebaseline_proposal_data = read_json_if_exists(runtime_rebaseline_proposal)
+    runtime_rebaseline_proposal_gate_data = read_json_if_exists(runtime_rebaseline_proposal_gate)
+    runtime_rebaseline_runbook_data = read_json_if_exists(runtime_rebaseline_runbook)
+    runtime_registry_selection_sanity_data = read_json_if_exists(runtime_registry_selection_sanity)
+    runtime_registry_selection_repair_plan_data = read_json_if_exists(runtime_registry_selection_repair_plan)
     runtime_import_summary_data = read_json_if_exists(runtime_import_summary)
     runtime_new_env_proposal_data = read_json_if_exists(runtime_new_env_proposal)
     runtime_new_env_proposal_gate_data = read_json_if_exists(runtime_new_env_proposal_gate)
@@ -1389,9 +1452,16 @@ def main() -> int:
     operator_archive_retention_apply_data = read_json_if_exists(operator_archive_retention_apply)
     operator_waiver_registry_data = read_json_if_exists(operator_waiver_registry)
     operator_waiver_review_data = read_json_if_exists(operator_waiver_review)
+    operator_archive_age_tick_data = read_json_if_exists(operator_archive_age_tick)
+    operator_archive_review_queue_data = read_json_if_exists(operator_archive_review_queue)
+    operator_waiver_apply_data = read_json_if_exists(operator_waiver_apply)
+    staged_overlay_completeness_data = read_json_if_exists(staged_overlay_completeness)
+    verification_preflight_gate_v2_data = read_json_if_exists(verification_preflight_gate_v2)
     verification_preflight_gate_data = read_json_if_exists(verification_preflight_gate)
     staged_verification_retention_data = read_json_if_exists(staged_verification_retention)
+    staged_verification_retention_apply_v2_data = read_json_if_exists(staged_verification_retention_apply_v2)
     published_snapshot_retention_data = read_json_if_exists(published_snapshot_retention)
+    published_snapshot_retention_apply_v2_data = read_json_if_exists(published_snapshot_retention_apply_v2)
     published_snapshot_retention_apply_data = read_json_if_exists(published_snapshot_retention_apply)
     integrated_approval_mutation_audit_data = read_json_if_exists(integrated_approval_mutation_audit)
     staged_materialization_transaction_data = read_json_if_exists(staged_materialization_transaction)
@@ -1574,6 +1644,17 @@ def main() -> int:
         copied["manifests"].extend(copy_manifest_bundle(runtime_proposal, manifests_dir, "runtime_proposal_"))
     if runtime_proposal_gate is not None:
         copied["manifests"].extend(copy_manifest_bundle(runtime_proposal_gate, manifests_dir, "runtime_proposal_gate_"))
+    for runtime_path, runtime_prefix in [
+        (runtime_comparability_triage, "runtime_comparability_triage_"),
+        (runtime_rebaseline_action_plan, "runtime_rebaseline_action_plan_"),
+        (runtime_rebaseline_proposal, "runtime_rebaseline_action_proposal_"),
+        (runtime_rebaseline_proposal_gate, "runtime_rebaseline_action_proposal_gate_"),
+        (runtime_rebaseline_runbook, "runtime_rebaseline_runbook_"),
+        (runtime_registry_selection_sanity, "runtime_registry_selection_sanity_"),
+        (runtime_registry_selection_repair_plan, "runtime_registry_selection_repair_plan_"),
+    ]:
+        if runtime_path is not None:
+            copied["manifests"].extend(copy_manifest_bundle(runtime_path, manifests_dir, runtime_prefix))
     if runtime_import_summary is not None:
         copied["manifests"].extend(copy_manifest_bundle(runtime_import_summary, manifests_dir, "runtime_import_summary_"))
     if runtime_new_env_proposal is not None:
@@ -1744,9 +1825,16 @@ def main() -> int:
         (operator_archive_retention_apply, "operator_archive_retention_apply_"),
         (operator_waiver_registry, "operator_waiver_registry_"),
         (operator_waiver_review, "operator_waiver_review_"),
+        (operator_archive_age_tick, "operator_archive_age_tick_"),
+        (operator_archive_review_queue, "operator_archive_review_queue_"),
+        (operator_waiver_apply, "operator_waiver_apply_"),
+        (staged_overlay_completeness, "staged_overlay_completeness_"),
+        (verification_preflight_gate_v2, "verification_preflight_gate_v2_"),
         (verification_preflight_gate, "verification_preflight_gate_"),
         (staged_verification_retention, "staged_verification_retention_"),
+        (staged_verification_retention_apply_v2, "staged_verification_retention_apply_v2_"),
         (published_snapshot_retention, "published_snapshot_retention_"),
+        (published_snapshot_retention_apply_v2, "published_snapshot_retention_apply_v2_"),
         (published_snapshot_retention_apply, "published_snapshot_retention_apply_"),
     ):
         if path is not None:
@@ -1830,6 +1918,17 @@ def main() -> int:
         copied["curated"].extend(copy_manifest_bundle(runtime_proposal, curated_dir, "runtime_proposal_"))
     if runtime_proposal_gate is not None:
         copied["curated"].extend(copy_manifest_bundle(runtime_proposal_gate, curated_dir, "runtime_proposal_gate_"))
+    for runtime_path, runtime_prefix in [
+        (runtime_comparability_triage, "runtime_comparability_triage_"),
+        (runtime_rebaseline_action_plan, "runtime_rebaseline_action_plan_"),
+        (runtime_rebaseline_proposal, "runtime_rebaseline_action_proposal_"),
+        (runtime_rebaseline_proposal_gate, "runtime_rebaseline_action_proposal_gate_"),
+        (runtime_rebaseline_runbook, "runtime_rebaseline_runbook_"),
+        (runtime_registry_selection_sanity, "runtime_registry_selection_sanity_"),
+        (runtime_registry_selection_repair_plan, "runtime_registry_selection_repair_plan_"),
+    ]:
+        if runtime_path is not None:
+            copied["curated"].extend(copy_manifest_bundle(runtime_path, curated_dir, runtime_prefix))
     if runtime_import_summary is not None:
         copied["curated"].extend(copy_manifest_bundle(runtime_import_summary, curated_dir, "runtime_import_summary_"))
     if runtime_new_env_proposal is not None:
@@ -2003,9 +2102,16 @@ def main() -> int:
         (operator_archive_retention_apply, "operator_archive_retention_apply_"),
         (operator_waiver_registry, "operator_waiver_registry_"),
         (operator_waiver_review, "operator_waiver_review_"),
+        (operator_archive_age_tick, "operator_archive_age_tick_"),
+        (operator_archive_review_queue, "operator_archive_review_queue_"),
+        (operator_waiver_apply, "operator_waiver_apply_"),
+        (staged_overlay_completeness, "staged_overlay_completeness_"),
+        (verification_preflight_gate_v2, "verification_preflight_gate_v2_"),
         (verification_preflight_gate, "verification_preflight_gate_"),
         (staged_verification_retention, "staged_verification_retention_"),
+        (staged_verification_retention_apply_v2, "staged_verification_retention_apply_v2_"),
         (published_snapshot_retention, "published_snapshot_retention_"),
+        (published_snapshot_retention_apply_v2, "published_snapshot_retention_apply_v2_"),
         (published_snapshot_retention_apply, "published_snapshot_retention_apply_"),
     ):
         if path is not None:
@@ -2083,6 +2189,15 @@ def main() -> int:
         copied["light_ops"].extend(copy_manifest_bundle(runtime_proposal, light_ops_dir, "runtime_proposal_"))
     if runtime_proposal_gate is not None:
         copied["light_ops"].extend(copy_manifest_bundle(runtime_proposal_gate, light_ops_dir, "runtime_proposal_gate_"))
+    for runtime_path, runtime_prefix in [
+        (runtime_comparability_triage, "runtime_comparability_triage_"),
+        (runtime_rebaseline_action_plan, "runtime_rebaseline_action_plan_"),
+        (runtime_rebaseline_runbook, "runtime_rebaseline_runbook_"),
+        (runtime_registry_selection_sanity, "runtime_registry_selection_sanity_"),
+        (runtime_registry_selection_repair_plan, "runtime_registry_selection_repair_plan_"),
+    ]:
+        if runtime_path is not None:
+            copied["light_ops"].extend(copy_manifest_bundle(runtime_path, light_ops_dir, runtime_prefix))
     if runtime_import_summary is not None:
         copied["light_ops"].extend(copy_manifest_bundle(runtime_import_summary, light_ops_dir, "runtime_import_summary_"))
     if runtime_new_env_proposal is not None:
@@ -2246,9 +2361,16 @@ def main() -> int:
         (operator_archive_retention_apply, "operator_archive_retention_apply_"),
         (operator_waiver_registry, "operator_waiver_registry_"),
         (operator_waiver_review, "operator_waiver_review_"),
+        (operator_archive_age_tick, "operator_archive_age_tick_"),
+        (operator_archive_review_queue, "operator_archive_review_queue_"),
+        (operator_waiver_apply, "operator_waiver_apply_"),
+        (staged_overlay_completeness, "staged_overlay_completeness_"),
+        (verification_preflight_gate_v2, "verification_preflight_gate_v2_"),
         (verification_preflight_gate, "verification_preflight_gate_"),
         (staged_verification_retention, "staged_verification_retention_"),
+        (staged_verification_retention_apply_v2, "staged_verification_retention_apply_v2_"),
         (published_snapshot_retention, "published_snapshot_retention_"),
+        (published_snapshot_retention_apply_v2, "published_snapshot_retention_apply_v2_"),
         (published_snapshot_retention_apply, "published_snapshot_retention_apply_"),
     ):
         if path is not None:
@@ -2407,6 +2529,13 @@ def main() -> int:
         "runtime_history_compact": str(runtime_history_compact) if runtime_history_compact is not None else None,
         "runtime_proposal": str(runtime_proposal) if runtime_proposal is not None else None,
         "runtime_proposal_gate": str(runtime_proposal_gate) if runtime_proposal_gate is not None else None,
+        "runtime_comparability_triage": str(runtime_comparability_triage) if runtime_comparability_triage is not None else None,
+        "runtime_rebaseline_action_plan": str(runtime_rebaseline_action_plan) if runtime_rebaseline_action_plan is not None else None,
+        "runtime_rebaseline_proposal": str(runtime_rebaseline_proposal) if runtime_rebaseline_proposal is not None else None,
+        "runtime_rebaseline_proposal_gate": str(runtime_rebaseline_proposal_gate) if runtime_rebaseline_proposal_gate is not None else None,
+        "runtime_rebaseline_runbook": str(runtime_rebaseline_runbook) if runtime_rebaseline_runbook is not None else None,
+        "runtime_registry_selection_sanity": str(runtime_registry_selection_sanity) if runtime_registry_selection_sanity is not None else None,
+        "runtime_registry_selection_repair_plan": str(runtime_registry_selection_repair_plan) if runtime_registry_selection_repair_plan is not None else None,
         "runtime_import_summary": str(runtime_import_summary) if runtime_import_summary is not None else None,
         "runtime_new_env_proposal": str(runtime_new_env_proposal) if runtime_new_env_proposal is not None else None,
         "runtime_new_env_proposal_gate": str(runtime_new_env_proposal_gate) if runtime_new_env_proposal_gate is not None else None,
@@ -2467,9 +2596,16 @@ def main() -> int:
         "operator_archive_retention_apply": str(operator_archive_retention_apply) if operator_archive_retention_apply is not None else None,
         "operator_waiver_registry": str(operator_waiver_registry) if operator_waiver_registry is not None else None,
         "operator_waiver_review": str(operator_waiver_review) if operator_waiver_review is not None else None,
+        "operator_archive_age_tick": str(operator_archive_age_tick) if operator_archive_age_tick is not None else None,
+        "operator_archive_review_queue": str(operator_archive_review_queue) if operator_archive_review_queue is not None else None,
+        "operator_waiver_apply": str(operator_waiver_apply) if operator_waiver_apply is not None else None,
+        "staged_overlay_completeness": str(staged_overlay_completeness) if staged_overlay_completeness is not None else None,
+        "verification_preflight_gate_v2": str(verification_preflight_gate_v2) if verification_preflight_gate_v2 is not None else None,
         "verification_preflight_gate": str(verification_preflight_gate) if verification_preflight_gate is not None else None,
         "staged_verification_retention": str(staged_verification_retention) if staged_verification_retention is not None else None,
+        "staged_verification_retention_apply_v2": str(staged_verification_retention_apply_v2) if staged_verification_retention_apply_v2 is not None else None,
         "published_snapshot_retention": str(published_snapshot_retention) if published_snapshot_retention is not None else None,
+        "published_snapshot_retention_apply_v2": str(published_snapshot_retention_apply_v2) if published_snapshot_retention_apply_v2 is not None else None,
         "published_snapshot_retention_apply": str(published_snapshot_retention_apply) if published_snapshot_retention_apply is not None else None,
         "integrated_approval_mutation_audit": str(integrated_approval_mutation_audit) if integrated_approval_mutation_audit is not None else None,
         "staged_materialization_transaction": str(staged_materialization_transaction) if staged_materialization_transaction is not None else None,
@@ -2544,6 +2680,13 @@ def main() -> int:
         "runtime_history_compact_hash": sha256_file(runtime_history_compact),
         "runtime_proposal_hash": sha256_file(runtime_proposal),
         "proposal_gate_hash": sha256_file(runtime_proposal_gate),
+        "runtime_comparability_triage_hash": sha256_file(runtime_comparability_triage),
+        "runtime_rebaseline_action_plan_hash": sha256_file(runtime_rebaseline_action_plan),
+        "runtime_rebaseline_proposal_hash": sha256_file(runtime_rebaseline_proposal),
+        "runtime_rebaseline_proposal_gate_hash": sha256_file(runtime_rebaseline_proposal_gate),
+        "runtime_rebaseline_runbook_hash": sha256_file(runtime_rebaseline_runbook),
+        "runtime_registry_selection_sanity_hash": sha256_file(runtime_registry_selection_sanity),
+        "runtime_registry_selection_repair_plan_hash": sha256_file(runtime_registry_selection_repair_plan),
         "runtime_import_summary_hash": sha256_file(runtime_import_summary),
         "runtime_new_env_proposal_hash": sha256_file(runtime_new_env_proposal),
         "runtime_new_env_proposal_gate_hash": sha256_file(runtime_new_env_proposal_gate),
@@ -2604,9 +2747,16 @@ def main() -> int:
         "operator_archive_retention_apply_hash": sha256_file(operator_archive_retention_apply),
         "operator_waiver_registry_hash": sha256_file(operator_waiver_registry),
         "operator_waiver_review_hash": sha256_file(operator_waiver_review),
+        "operator_archive_age_tick_hash": sha256_file(operator_archive_age_tick),
+        "operator_archive_review_queue_hash": sha256_file(operator_archive_review_queue),
+        "operator_waiver_apply_hash": sha256_file(operator_waiver_apply),
+        "staged_overlay_completeness_hash": sha256_file(staged_overlay_completeness),
+        "verification_preflight_gate_v2_hash": sha256_file(verification_preflight_gate_v2),
         "verification_preflight_gate_hash": sha256_file(verification_preflight_gate),
         "staged_verification_retention_hash": sha256_file(staged_verification_retention),
+        "staged_verification_retention_apply_v2_hash": sha256_file(staged_verification_retention_apply_v2),
         "published_snapshot_retention_hash": sha256_file(published_snapshot_retention),
+        "published_snapshot_retention_apply_v2_hash": sha256_file(published_snapshot_retention_apply_v2),
         "published_snapshot_retention_apply_hash": sha256_file(published_snapshot_retention_apply),
         "integrated_approval_mutation_audit_hash": sha256_file(integrated_approval_mutation_audit),
         "staged_materialization_transaction_hash": sha256_file(staged_materialization_transaction),
@@ -2676,6 +2826,13 @@ def main() -> int:
         "runtime_history_compact_summary": runtime_history_compact_data,
         "runtime_proposal_summary": runtime_proposal_data,
         "runtime_proposal_gate_summary": runtime_proposal_gate_data,
+        "runtime_comparability_triage_summary": runtime_comparability_triage_data,
+        "runtime_rebaseline_action_plan_summary": runtime_rebaseline_action_plan_data,
+        "runtime_rebaseline_proposal_summary": runtime_rebaseline_proposal_data,
+        "runtime_rebaseline_proposal_gate_summary": runtime_rebaseline_proposal_gate_data,
+        "runtime_rebaseline_runbook_summary": runtime_rebaseline_runbook_data,
+        "runtime_registry_selection_sanity_summary": runtime_registry_selection_sanity_data,
+        "runtime_registry_selection_repair_plan_summary": runtime_registry_selection_repair_plan_data,
         "runtime_import_summary_data": runtime_import_summary_data,
         "runtime_new_env_proposal_summary": runtime_new_env_proposal_data,
         "runtime_new_env_proposal_gate_summary": runtime_new_env_proposal_gate_data,
@@ -2736,9 +2893,16 @@ def main() -> int:
         "operator_archive_retention_apply_summary": operator_archive_retention_apply_data,
         "operator_waiver_registry_summary": operator_waiver_registry_data,
         "operator_waiver_review_summary": operator_waiver_review_data,
+        "operator_archive_age_tick_summary": operator_archive_age_tick_data,
+        "operator_archive_review_queue_summary": operator_archive_review_queue_data,
+        "operator_waiver_apply_summary": operator_waiver_apply_data,
+        "staged_overlay_completeness_summary": staged_overlay_completeness_data,
+        "verification_preflight_gate_v2_summary": verification_preflight_gate_v2_data,
         "verification_preflight_gate_summary": verification_preflight_gate_data,
         "staged_verification_retention_summary": staged_verification_retention_data,
+        "staged_verification_retention_apply_v2_summary": staged_verification_retention_apply_v2_data,
         "published_snapshot_retention_summary": published_snapshot_retention_data,
+        "published_snapshot_retention_apply_v2_summary": published_snapshot_retention_apply_v2_data,
         "published_snapshot_retention_apply_summary": published_snapshot_retention_apply_data,
         "integrated_approval_mutation_audit_summary": integrated_approval_mutation_audit_data,
         "source_health_preflight_summary": source_health_preflight_data,
@@ -3339,9 +3503,16 @@ def main() -> int:
         ("operator_archive_retention_apply", operator_archive_retention_apply),
         ("operator_waiver_registry", operator_waiver_registry),
         ("operator_waiver_review", operator_waiver_review),
+        ("operator_archive_age_tick", operator_archive_age_tick),
+        ("operator_archive_review_queue", operator_archive_review_queue),
+        ("operator_waiver_apply", operator_waiver_apply),
+        ("staged_overlay_completeness", staged_overlay_completeness),
+        ("verification_preflight_gate_v2", verification_preflight_gate_v2),
         ("verification_preflight_gate", verification_preflight_gate),
         ("staged_verification_retention", staged_verification_retention),
+        ("staged_verification_retention_apply_v2", staged_verification_retention_apply_v2),
         ("published_snapshot_retention", published_snapshot_retention),
+        ("published_snapshot_retention_apply_v2", published_snapshot_retention_apply_v2),
         ("published_snapshot_retention_apply", published_snapshot_retention_apply),
     ):
         if path is not None and path.exists():

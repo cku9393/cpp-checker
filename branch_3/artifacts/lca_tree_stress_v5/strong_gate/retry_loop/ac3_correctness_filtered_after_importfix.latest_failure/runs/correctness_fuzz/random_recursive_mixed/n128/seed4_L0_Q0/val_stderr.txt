@@ -1,1 +1,0 @@
-query #350 mismatch: lca(82, 126)=36, expected 82

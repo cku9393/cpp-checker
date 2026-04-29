@@ -1,0 +1,25 @@
+{
+  "manifest_version": "operator_waiver_apply_archive_v1",
+  "phase": "phase53",
+  "generated_at_utc": "2026-04-24T14:45:59Z",
+  "apply_hash": "1924af5ca4e1b8e28106d5199d4816f809c50635cd130368c74b0bc2f75f392c",
+  "entries": [
+    {
+      "waiver_id": "waived_archived_pointer:eedce3440c774956",
+      "pointer_field": "entries[phase45-current-env-reproposal-001].linked_budget_baseline",
+      "original_path": "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke/manifests/runtime_budget_baseline_phase47_approved.json",
+      "linked_runbook_id": null,
+      "linked_action_id": "phase45-current-env-reproposal-001",
+      "waiver_reason": "closed historical pointer retained only as provenance summary",
+      "granted_at": "2026-04-23T09:15:10Z",
+      "expires_at": "2027-04-23T09:15:10Z",
+      "review_due_at": "2027-03-24T09:15:10Z",
+      "review_status": "ACTIVE",
+      "still_bundle_backed": true,
+      "still_reference_graph_safe": true,
+      "recommended_action": "NO_ACTION",
+      "last_reviewed_at": "2026-04-24T14:45:59Z",
+      "apply_decision": "FRESHENED"
+    }
+  ]
+}

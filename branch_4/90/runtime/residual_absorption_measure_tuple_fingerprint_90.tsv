@@ -1,0 +1,5 @@
+metric	value
+measure_tuple_status	residual_absorption_measure_tuple_well_founded_proof_ready
+component_count	11
+well_founded_reason	finite_lexicographic_product_of_natural_components
+strict_delta_status	proof_ready_open

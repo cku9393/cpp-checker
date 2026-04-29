@@ -1,0 +1,62 @@
+{
+  "publication_version": "phase31_ops_summary_snapshot_v1",
+  "phase": "phase31",
+  "generated_at_utc": "2026-04-01T00:40:00Z",
+  "authoritative_summary_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_ops_summary_phase31.json",
+  "current_env_summary": {
+    "severity": "WARN",
+    "recommendation": "WATCH_RUNTIME",
+    "correctness_status": {
+      "verdict": "PASS",
+      "freshness_verdict": "FRESH"
+    },
+    "runtime_status": {
+      "comparability_verdict": "COMPARABLE",
+      "freshness_verdict": "FRESH",
+      "budget_verdict": "BUDGET_WARN"
+    },
+    "watch_status": "WATCH_STABLE",
+    "watch_recommendation": "WATCH_RUNTIME",
+    "watch_confidence": "MEDIUM",
+    "confidence_reason": "real evidence exists, but repeated same-fingerprint coverage is still limited",
+    "evidence_source_counts": {
+      "real": 30,
+      "fixture": 36
+    },
+    "active_lineage_count": 1,
+    "real_lineage_count": 1,
+    "latest_real_sample_timestamp": "2026-03-31T04:26:07Z",
+    "latest_fixture_sample_timestamp": "2026-03-31T04:23:40Z"
+  },
+  "new_env_summary": {
+    "severity": "ACTION_REQUIRED",
+    "recommendation": "REBASELINE_REQUIRED",
+    "comparability_bucket": "COMPARABLE",
+    "watch_status": "REBASELINE_REQUIRED",
+    "watch_recommendation": "REBASELINE_REQUIRED",
+    "watch_confidence": "MEDIUM",
+    "confidence_reason": "real evidence exists, but repeated same-fingerprint coverage is still limited",
+    "evidence_source_counts": {
+      "real": 30,
+      "fixture": 60
+    },
+    "active_lineage_count": 5,
+    "real_lineage_count": 1,
+    "matrix_entry_count": 6,
+    "matrix_action_counts": {
+      "WATCH_RUNTIME": 1,
+      "NOT_COMPARABLE": 3,
+      "REBASELINE_REQUIRED": 2
+    }
+  },
+  "overall_summary": {
+    "exact_shadow_policy_status": "healthy",
+    "runtime_baseline_registry_health": "healthy",
+    "stale_family_count": 0,
+    "stale_runtime_lineage_count": 5,
+    "required_operator_actions": [
+      "WATCH_RUNTIME",
+      "REBASELINE_REQUIRED"
+    ]
+  }
+}

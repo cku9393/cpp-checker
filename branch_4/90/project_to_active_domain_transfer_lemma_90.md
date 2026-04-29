@@ -1,0 +1,12 @@
+# Project To Active Domain Transfer Lemma 90
+
+Final status: `project_to_active_domain_transfer_proof_ready_refinement_status_predicate_open`.
+
+| lemma_component | statement | assumptions | conclusion | active_support_definition_used | inactive_support_locality_used | payload_locality_used | projected_domain_used | status_predicate_used | proof_status | missing_hypothesis | caveat |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| source_domain_available | The source status-domain is available from status semantics before projection. | source witness satisfies status-domain preconditions | source domain is well-defined | 0 | 0 | 0 | 0 | 1 | proved_under_current_scope |  | No projection transfer yet. |
+| projected_domain_available | The projected status-domain is well-defined as the active restriction/refinement candidate. | active support A;W_active=normalize(restrict(W,A)) | projected domain candidate exists | 1 | 1 | 1 | 1 | 1 | proved_under_current_scope |  | Candidate existence is not predicate preservation. |
+| inactive_removal_domain_refinement | Removing inactive support preserves or refines status-domain dependencies. | inactive support outside active dependency map;payload locality holds | projected domain is preservation/refinement candidate | 1 | 1 | 1 | 1 | 1 | proof_sketch_only | status dependency containment or irrelevance | Central open domain sublemma. |
+| domain_refinement_status_predicate_meaning | A refined projected domain preserves counterexample-status predicate meaning. | domain refinement map;normal-form interface;payload locality | status predicate comparison is meaningful | 1 | 1 | 1 | 1 | 1 | project_to_active_domain_transfer_proof_ready_refinement_status_predicate_open | status predicate determination over refined domain | Proof-ready only; not completed. |
+| domain_reduction_smaller_witness | A strict domain shrink can be a smaller-witness branch if projected status is valid. | strict active subset;projected status valid | reduced counterexample or obstruction | 1 | 1 | 1 | 1 | 1 | proof_sketch_only | valid reduced-status theorem | Measure decrease alone is insufficient. |
+| domain_failure_escape | If preservation/refinement/reduction fails, the case is a named project-to-active blocker or deferred higher-support escape. | domain transfer cannot be formed or projected status invalid | named escape | 1 | 1 | possible | possible | possible | proved_under_current_scope |  | Escape is not preservation. |

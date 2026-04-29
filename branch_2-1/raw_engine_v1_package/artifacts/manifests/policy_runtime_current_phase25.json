@@ -1,8 +1,8 @@
 {
   "manifest_version": "runtime_current_manifest_v1",
   "manifest_role": "current",
-  "generated_at_utc": "2026-03-24T02:16:16Z",
-  "phase": "phase28",
+  "generated_at_utc": "2026-03-30T06:35:54Z",
+  "phase": "phase29",
   "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
   "baseline_tag": "phase25-runtime-approved",
   "host_fingerprint": {
@@ -20,12 +20,12 @@
     "compiler_id": "appleclang",
     "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
   },
-  "runtime_budget_profile_id": "phase28-runtime-budget-v1",
-  "runtime_budget_profile_version": 2,
+  "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+  "runtime_budget_profile_version": 3,
   "runtime_budget_profile": {
-    "profile_id": "phase28-runtime-budget-v1",
-    "version": 2,
-    "created_at": "2026-03-24T00:00:00Z",
+    "profile_id": "phase29-runtime-budget-v1",
+    "version": 3,
+    "created_at": "2026-03-30T00:00:00Z",
     "entries": {
       "asan_full": {
         "execution_class": "asan_full",
@@ -173,8 +173,8 @@
         "max_bounded_jitter_percent": 12.0,
         "near_baseline_delta_percent": 5.0
       },
-      "runtime_budget_profile_id": "phase28-runtime-budget-v1",
-      "runtime_budget_profile_version": 2,
+      "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+      "runtime_budget_profile_version": 3,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "delta_percent": 0.0,
@@ -204,8 +204,8 @@
         "max_bounded_jitter_percent": 12.0,
         "near_baseline_delta_percent": 5.0
       },
-      "runtime_budget_profile_id": "phase28-runtime-budget-v1",
-      "runtime_budget_profile_version": 2,
+      "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+      "runtime_budget_profile_version": 3,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "delta_percent": 0.0,
@@ -235,8 +235,8 @@
         "max_bounded_jitter_percent": 20.0,
         "near_baseline_delta_percent": 5.0
       },
-      "runtime_budget_profile_id": "phase28-runtime-budget-v1",
-      "runtime_budget_profile_version": 2,
+      "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+      "runtime_budget_profile_version": 3,
       "current_status": "WARN",
       "freshness_status": "FRESH",
       "delta_percent": 0.0,
@@ -245,7 +245,7 @@
     },
     {
       "execution_class": "policy_core",
-      "wall_time_sec": 0.048,
+      "wall_time_sec": 0.025,
       "test_count": 0,
       "build_type": "Policy",
       "sanitizer_flags": "none",
@@ -266,8 +266,8 @@
         "max_bounded_jitter_percent": 30.0,
         "near_baseline_delta_percent": 5.0
       },
-      "runtime_budget_profile_id": "phase28-runtime-budget-v1",
-      "runtime_budget_profile_version": 2,
+      "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+      "runtime_budget_profile_version": 3,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "delta_percent": 0.0,
@@ -276,7 +276,7 @@
     },
     {
       "execution_class": "policy_refresh",
-      "wall_time_sec": 0.048,
+      "wall_time_sec": 0.025,
       "test_count": 0,
       "build_type": "Policy",
       "sanitizer_flags": "none",
@@ -297,8 +297,8 @@
         "max_bounded_jitter_percent": 30.0,
         "near_baseline_delta_percent": 5.0
       },
-      "runtime_budget_profile_id": "phase28-runtime-budget-v1",
-      "runtime_budget_profile_version": 2,
+      "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+      "runtime_budget_profile_version": 3,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "delta_percent": 0.0,
@@ -307,7 +307,7 @@
     },
     {
       "execution_class": "policy_nightly",
-      "wall_time_sec": 0.023,
+      "wall_time_sec": 0.015,
       "test_count": 0,
       "build_type": "Policy",
       "sanitizer_flags": "none",
@@ -328,8 +328,8 @@
         "max_bounded_jitter_percent": 30.0,
         "near_baseline_delta_percent": 5.0
       },
-      "runtime_budget_profile_id": "phase28-runtime-budget-v1",
-      "runtime_budget_profile_version": 2,
+      "runtime_budget_profile_id": "phase29-runtime-budget-v1",
+      "runtime_budget_profile_version": 3,
       "current_status": "OK",
       "freshness_status": "FRESH",
       "delta_percent": 0.0,
@@ -342,5 +342,5 @@
   "overall_status": "WARN",
   "current_verdict": "WARN",
   "overall_budget_verdict": "BUDGET_WARN",
-  "current_runtime_manifest_hash": "6580bc8ca05bc7f3e57c44669d803d145782eb8b0dc838c58a7c6f53c1f9f36b"
+  "current_runtime_manifest_hash": "342fe3dedbb683eac20c106a60aa29f0072b5c448af4a5e80fb1e318cca52101"
 }

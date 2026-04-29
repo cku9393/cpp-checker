@@ -1,0 +1,61 @@
+{
+  "manifest_version": "staged_overlay_policy_v1",
+  "phase": "phase53",
+  "include_current_tests_json": {
+    "enabled": true,
+    "paths": [
+      "tests/runtime_budget_phase29.json"
+    ]
+  },
+  "include_current_tests_tools": {
+    "enabled": true,
+    "paths": [
+      "tests/tools/runtime_watch_ops.py",
+      "tests/tools/run_policy_pipeline.py",
+      "tests/tools/build_evidence_bundle.py",
+      "tests/tools/source_health_preflight.py"
+    ]
+  },
+  "include_current_tests_cpp_hpp": {
+    "enabled": true,
+    "paths": [
+      "tests/CMakeLists.txt",
+      "tests/raw_engine_cases.cpp",
+      "tests/test_harness.hpp"
+    ]
+  },
+  "include_campaign_fixtures": {
+    "enabled": true,
+    "paths": [
+      "tests/campaigns/phase16_split_tie_organic_compare.txt"
+    ]
+  },
+  "include_policy_historical_summaries": {
+    "enabled": true,
+    "paths": [
+      "artifacts/phase22_applicability/logs",
+      "artifacts/phase17_lineage/logs"
+    ]
+  },
+  "include_runtime_budget_profiles": {
+    "enabled": true,
+    "paths": [
+      "tests/runtime_budget_phase29.json"
+    ]
+  },
+  "include_bundle_required_manifests": {
+    "enabled": true,
+    "paths": [
+      "artifacts/manifests/operator_archive_reference_graph_phase52.json",
+      "artifacts/manifests/operator_archive_retention_policy_phase52.json"
+    ]
+  },
+  "include_phase_specific_governance_artifacts": {
+    "enabled": true,
+    "paths": [
+      "artifacts/manifests/operator_waiver_review_phase52.json",
+      "artifacts/manifests/verification_preflight_gate_phase52.json"
+    ]
+  },
+  "policy_hash": "455920892b9f259b2c40eaaeaf89fe7917d0a4b642bb579ae82761e890037094"
+}

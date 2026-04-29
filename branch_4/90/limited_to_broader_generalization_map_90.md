@@ -1,9 +1,17 @@
 # Limited-To-Broader Generalization Map 90
 
-## status after higher-support necessity recheck
+## status after project-to-active locality refinement
 
-The proved limited theorem remains intact. Broader lifting is still blocked by support-bound completion.
+The proved limited theorem remains intact. Broader lifting is still blocked by
+support-bound completion.
 
-The higher-support recheck does not start support9+ work. It classifies higher-support necessity as deferred because operation-specific status proofs and residual absorption measure remain open. After the family-chain absorption status round, project-to-active, coordinate contraction, canonical compression, and family-chain absorption are proof-ready at the status-skeleton level. Locality, congruence, source-target alignment, and residual absorption measure remain open. Limited-to-broader planning can proceed as a planning track, but proof completion still depends first on operation proof closure.
+The project-to-active locality refinement does not start support9+ work. It
+classifies the project-to-active payload side as proved under current scope and
+keeps counterexample-status locality proof-ready with status-domain/normal-form
+transfer open. Coordinate congruence, canonical-motif congruence, source-target
+alignment, and residual absorption measure remain open. Limited-to-broader
+planning can proceed as a planning track, but proof completion still depends
+first on operation proof closure.
 
-Runtime map: `branch_4/90/runtime/limited_to_broader_generalization_map_90.tsv`.
+Runtime map:
+`branch_4/90/runtime/limited_to_broader_generalization_map_90.tsv`.

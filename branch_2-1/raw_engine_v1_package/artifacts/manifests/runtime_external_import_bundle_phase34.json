@@ -1,0 +1,32 @@
+{
+  "manifest_version": "runtime_external_import_bundle_v1",
+  "created_at": "2026-04-04T20:20:44Z",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase34_external.json",
+  "runner_id": "foreign-runner",
+  "host_label": "foreign-host",
+  "evidence_source": "real",
+  "host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "foreign-runner",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "0f34bd3335e7aea443e7b6ebfb05256240a33d717e415c48d635b4040a33f34c"
+  },
+  "toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+  "execution_classes": [
+    "release_full",
+    "debug_full",
+    "asan_full",
+    "policy_core",
+    "policy_refresh",
+    "policy_nightly"
+  ]
+}

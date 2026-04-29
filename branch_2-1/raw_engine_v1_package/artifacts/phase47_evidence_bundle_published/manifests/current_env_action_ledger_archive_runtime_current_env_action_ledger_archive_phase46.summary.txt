@@ -1,4 +1,0 @@
-manifest_version=runtime_current_env_action_ledger_archive_v1
-phase=phase46
-archived_action_count=0
-archived_action_ids=

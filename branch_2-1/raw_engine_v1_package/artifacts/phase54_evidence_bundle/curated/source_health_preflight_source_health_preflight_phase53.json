@@ -1,0 +1,41 @@
+{
+  "dataless_placeholder_count": 93737,
+  "generated_at_utc": "2026-04-25T04:19:54Z",
+  "git_object_health": {
+    "git_rc_cat_file": 0,
+    "git_rc_head": 0,
+    "head": "96ac5861ea1d73fba5f11ea05402bff1a9366205",
+    "head_available": true,
+    "head_object_available": true,
+    "head_object_type": "commit",
+    "missing_head_object": false,
+    "remote_main": "96ac5861ea1d73fba5f11ea05402bff1a9366205"
+  },
+  "manifest_version": "source_health_preflight_v1",
+  "phase": "phase54",
+  "preflight_hash": "ed602e40418729a5f40991f29c739a11bbdae859e190e43ca3f44b371e8aa2f0",
+  "rationale": [
+    "dataless placeholders require staged or sparse materialization before long verification"
+  ],
+  "recommendation": "SPARSE_CLONE_REQUIRED",
+  "required_fixture_count": 4,
+  "required_fixtures_present": true,
+  "selected_source_hash_available": true,
+  "source_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package",
+  "staged_materialization": {
+    "dataless_remaining_count": 0,
+    "generated_at_utc": "2026-04-25T04:19:54Z",
+    "manifest_version": "staged_materialization_v2",
+    "materialization_hash": "68b2fa3883ce0b0341372cf1973acc0d1e0865d7daee2c3be631a0ee95e9b115",
+    "materialization_verdict": "PASS",
+    "overlay_file_count": 4,
+    "overlay_hash": "1b5253acb2dca03e809e913d302b1a253319c04bac39e6c81c25e7871dd63827",
+    "phase": "phase54",
+    "source_snapshot_hash": "f94a6927cefb8acf91cebc78eb017a9310d0f37b74eff795ec8bab073b1e3819",
+    "sparse_clone_ref": "96ac5861ea1d73fba5f11ea05402bff1a9366205",
+    "staged_materialization_mode": "staged_sparse_clone_overlay"
+  },
+  "status": "ATTENTION_REQUIRED",
+  "unreadable_source_file_count": 0,
+  "unreadable_source_files": []
+}

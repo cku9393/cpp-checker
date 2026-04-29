@@ -1,0 +1,20 @@
+{
+  "manifest_version": "runtime_known_env_retire_plan_v1",
+  "generated_at_utc": "2026-04-06T16:48:42Z",
+  "phase": "phase37",
+  "known_env_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "baseline_tag": "phase34-runtime-external-approved",
+  "fingerprint_key": "0d045149f16d138f992da5a9f56dc290a7bf24faefc87d4e5cc11ad87c7ff1af",
+  "retire_reason": "phase37-governance-audit",
+  "plan_verdict": "RETAIN",
+  "recommended_action": "NO_ACTION",
+  "age_since_last_verified_days": 1.85,
+  "latest_history_timestamp": "2026-04-04T20:20:45Z",
+  "watch_status": "REBASELINE_REQUIRED",
+  "watch_confidence": "MEDIUM",
+  "rationale": [
+    "retirement planning never changes the current environment active baseline"
+  ],
+  "plan_hash": "ed295b36bc81f0b86238b02341fd5f15c04c4ef022fd9dcbcb88a31f2f05320a"
+}

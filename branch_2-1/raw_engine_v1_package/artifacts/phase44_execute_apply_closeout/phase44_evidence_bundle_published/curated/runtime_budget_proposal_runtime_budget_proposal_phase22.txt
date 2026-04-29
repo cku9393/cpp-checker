@@ -1,6 +1,0 @@
-proposal_version=runtime_budget_proposal_v1
-budget_proposal_needed=1
-suggested_budget_tag=phase33-runtime-budget-approved
-recommended_action=PROPOSE_BUDGET_REPROFILE
-affected_execution_class=release_full
-rationale=stable production-critical soft-budget overrun is now backed by repeated same-fingerprint real evidence

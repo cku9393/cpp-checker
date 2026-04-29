@@ -1,0 +1,40 @@
+{
+  "publication_version": "phase31_verification_summary_v1",
+  "phase": "phase31",
+  "generated_at_utc": "2026-04-01T00:40:00Z",
+  "release_full_ctest": {
+    "status": "PASS",
+    "passed": 298,
+    "total": 298,
+    "real_time_sec": 804.98
+  },
+  "debug_full_ctest": {
+    "status": "PASS",
+    "passed": 298,
+    "total": 298,
+    "real_time_sec": 2446.84
+  },
+  "asan_full_ctest": {
+    "status": "INFRA_GLITCH_AFTER_289_PASS",
+    "passed_before_glitch": 289,
+    "total": 298,
+    "real_time_sec_before_glitch": 8835.73,
+    "glitch_type": "ctest_executable_lookup_lost_in_iCloud_build_tree",
+    "direct_tail_case_passes": [
+      "split_tie_organic_symmetric_smoke",
+      "planner_tie_mixed_organic_smoke",
+      "planner_tie_mixed_organic_compare_ready_smoke",
+      "automorphism_probe_large_smoke",
+      "sampled_exact_audit_smoke",
+      "duplicate_attribution_smoke"
+    ],
+    "wrapper_only_not_run_tail": [
+      "compare_campaign_checkpoint_smoke",
+      "campaign_resume_smoke",
+      "campaign_partial_merge_smoke"
+    ]
+  },
+  "semantic_mismatch_count": 0,
+  "new_regression_count": 0,
+  "primitive_or_planner_semantics_modified": false
+}

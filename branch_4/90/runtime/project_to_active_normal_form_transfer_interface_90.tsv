@@ -1,0 +1,5 @@
+interface_component	statement	source_normal_form	projected_normal_form	required_for_domain_transfer	required_for_status_predicate	proof_status	missing_hypothesis	caveat
+source_normal_form_input	Source normal form supplies the domain extractor's precondition.	W normal	none yet	yes	yes	proved_under_current_scope		Does not prove projected normal form.
+projected_normal_form_candidate	Projected witness is normalize(restrict(W,A)).	W normal	W_active normalized candidate	yes	yes	proof_sketch_only	normal-form preservation under active projection	This round does not prove full normal-form transfer.
+domain_normal_form_compatibility	Domain extraction after projection must read the same status-relevant normal-form fields.	source domain fields visible	projected domain fields visible	yes	yes	project_to_active_normal_form_transfer_interface_contract_ready	field preservation under normalization	Interface only.
+normal_form_blocker	If projected normal form cannot be certified, domain transfer remains proof-ready but status proof stays open.	source normal	uncertified	possible	yes	blocked_by_normal_form	project_to_active_normal_form_refinement	Next target candidate.

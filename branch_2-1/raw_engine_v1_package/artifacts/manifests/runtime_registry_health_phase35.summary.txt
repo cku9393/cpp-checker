@@ -1,0 +1,12 @@
+manifest_version=runtime_registry_health_v1
+phase=phase35
+overall_status=HEALTHY
+active_fingerprint_count=2
+healthy_active_count=2
+stale_active_count=0
+reverify_required_count=0
+retire_candidate_count=0
+retired_entry_count=0
+orphaned_entry_count=0
+approved_known_env_count=1
+foreign_unapproved_count=1

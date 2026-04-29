@@ -1,5 +1,0 @@
-migration_verdict=PASS_WITH_WAIVERS
-rewritten_pointer_count=5
-waived_archived_pointer_count=2
-unresolved_active_pointer_count=0
-unresolved_archived_pointer_count=0

@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-04-21T02:52:23Z",
+  "latest_bundle": "/private/tmp/raw_engine_phase45_bundle_workspace/raw_engine_phase45_stabilization.zip",
+  "latest_delivery_bundle": "/private/tmp/raw_engine_phase45_bundle_workspace/raw_engine_phase45_stabilization_delivery.zip",
+  "latest_curated_bundle": "/private/tmp/raw_engine_phase45_bundle_workspace/raw_engine_phase45_stabilization_curated.zip",
+  "bundle_root": "/private/tmp/raw_engine_phase45_bundle_workspace/artifacts/phase45_evidence_bundle",
+  "bundles": [],
+  "delivery_bundles": [],
+  "curated_bundles": [],
+  "pipeline_summary": null,
+  "runtime_manifest": null,
+  "runtime_registry": null,
+  "runtime_history_index": null,
+  "runtime_proposal": null
+}

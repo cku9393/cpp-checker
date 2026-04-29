@@ -1,1 +1,0 @@
-runtime_baseline_registry_summary active_entry_count=2 retired_entry_count=0 entry_count=2

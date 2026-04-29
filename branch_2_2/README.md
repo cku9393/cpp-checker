@@ -16,6 +16,9 @@ Layout:
   - preserved historical bundle root
 - `round45_artifacts/`
   - extracted reports, manifests, and reference files
+- `round45_root_legacy/`
+  - Round 45-named root leftovers moved under `branch_2_2/`
+  - legacy manual outputs and binaries, not the active workspace
 
 Execution model:
 
@@ -37,11 +40,11 @@ cd branch_2_2
 Outer `lca_tree_stress_v5` standard wrappers:
 
 ```bash
-./lca_smoke.sh
-./lca_strong_gate.sh
-./lca_rebuttal_gate.sh
-./lca_boj3s_gate.sh
-./lca_hunt.sh
+./outer_suite_wrappers/lca_smoke.sh
+./outer_suite_wrappers/lca_strong_gate.sh
+./outer_suite_wrappers/lca_rebuttal_gate.sh
+./outer_suite_wrappers/lca_boj3s_gate.sh
+./outer_suite_wrappers/lca_hunt.sh
 ```
 
 These wrappers use the plain branch solver `round45_resume/solve` and keep
@@ -52,7 +55,8 @@ inside the branch-local artifact tree.
 
 The outer `lca_tree_stress_v5/` workspace is separate. It has its own
 `lca_tree_stress_v5_solver.cpp`, its own binary, and its own `lca_tree_stress_v5/artifacts/`
-output tree.
+output tree. The shared certification harness now lives under
+`lca_tree_stress_v5/tooling/`.
 
 Historical notes:
 

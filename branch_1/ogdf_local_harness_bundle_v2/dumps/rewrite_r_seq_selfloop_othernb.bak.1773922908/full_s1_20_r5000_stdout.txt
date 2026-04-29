@@ -1,2 +1,0 @@
-=== seed 1 ===
-zsh:1: no such file or directory: ./build/rewrite_r_harness

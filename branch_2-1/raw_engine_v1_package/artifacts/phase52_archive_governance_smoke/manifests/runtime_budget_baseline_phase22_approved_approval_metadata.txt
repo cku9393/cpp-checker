@@ -1,6 +1,0 @@
-approval_timestamp_utc=2026-04-24T03:12:55Z
-baseline_tag=
-previous_active_runtime_baseline_id=
-new_active_runtime_baseline_id=
-approval_status=approved
-runtime_transition_status=

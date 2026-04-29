@@ -242,25 +242,25 @@
 
 Family-chain lower-layer imported caveat는 닫혔다. 이후 bridge formalization과 shell16 preflight가 끝났고, 현재 shell16 first-boundary attempt도 no-promotion guard 아래 실행됐다.
 
-현재 다음 exact target은 `project_to_active_status_locality_refinement`다.
+현재 다음 exact target은 `canonical_compression_status_congruence_refinement`다.
 
 - shell16 readiness: `preflight_contract_ready_no_scan`
-- higher-support necessity: `higher_support_deferred_after_family_chain_absorption_status_refutation_measure_open`
-- support-bound lemma status: `proof_ready_skeleton_all_primary_operations_status_proof_ready_residual_congruence_open`
-- support reduction step status: `partition_ready_all_primary_operations_status_proof_ready_residual_congruence_open`
-- family-chain lift status: `partial_lift_all_primary_operations_status_proof_ready_residual_congruence_open`
+- higher-support necessity: `higher_support_deferred_after_contract_equivalent_congruence_domain_normal_form_open`
+- support-bound lemma status: `proof_ready_skeleton_contract_equivalent_refined_domain_normal_form_open_remaining_canonical_alignment_measure_open`
+- support reduction step status: `partition_ready_contract_equivalent_refined_domain_normal_form_open_remaining_canonical_alignment_measure_open`
+- family-chain lift status: `partial_lift_project_locality_proof_ready_remaining_congruence_alignment_measure_open`
 - refined lift map status: `refined_lift_map_defined_for_recognized_sources_preservation_open`
-- obstruction preservation status: `partial_preservation_all_primary_operations_status_proof_ready_residual_congruence_open`
+- obstruction preservation status: `partial_preservation_project_locality_proof_ready_remaining_congruence_alignment_measure_open`
 - phase2 skeleton status: `partial_phase2_project_contraction_compression_status_proof_ready_remaining_operations_open`
-- phase3 skeleton status: `partial_phase3_all_primary_operations_status_proof_ready_residual_congruence_open`
+- phase3 skeleton status: `partial_phase3_project_locality_proof_ready_remaining_congruence_alignment_measure_open`
 - previous operation skeleton status: `proof_ready_skeleton_selected_delete_redundant_coordinate`
-- previous project-to-active skeleton status: `partial_project_to_active_status_proof_ready_locality_open`
-- previous coordinate-contraction skeleton status: `partial_contract_equivalent_status_proof_ready_congruence_open`
+- project-to-active skeleton status after locality refinement: `partial_project_to_active_locality_proof_ready_status_domain_open`
+- previous coordinate-contraction skeleton status: `partial_contract_equivalent_congruence_proof_ready_domain_normal_form_open`
 - selected operation skeleton status: `proof_ready_skeleton_family_chain_absorption_status_refutation_measure_open`
-- general gap theorem readiness: `ready_for_project_to_active_status_locality_refinement`
+- general gap theorem readiness: `ready_for_canonical_compression_status_congruence_refinement`
 - BOJ solver bridge readiness: `ready_for_problem_bridge_formalization`
 - archive/provenance cleanup: `worth_cleaning_later`
-- recommendation order: `project_to_active_status_locality_refinement`, `contract_equivalent_status_congruence_refinement`, `canonical_compression_status_congruence_refinement`
+- recommendation order: `canonical_compression_status_congruence_refinement`, `project_to_active_status_domain_refinement`, `family_chain_absorption_source_alignment_refinement`
 
 이는 support8 lock recovery 문제가 아니라 다음 범위 선택 문제다. General theorem은 아직 proved가 아니고, BOJ solver도 아직 구현 전이다.
 
@@ -284,4 +284,108 @@ Family-chain lower-layer imported caveat는 닫혔다. 이후 bridge formalizati
 - shell16 local exact / plus-one / theorem-preserving survivors: `2 / 0 / 0`
 - shell16 fingerprint: `981:4479772858934799504`
 
-`tail_monotonicity_bridge`는 checked support8 tail range 안의 witness를 current tail theorem과 tail obstruction chain으로 닫고, checked range 밖 first extension witness를 shell16 attempt로 보냈다. shell16 promotion review는 local exact survivors `2`와 plus-one/theorem-preserving survivors `0/0`을 분리했고, local exact pair를 current theorem-preserving escape에는 nonblocking으로 판정했다. Limited bridge theorem은 current scope에서 증명됐고, support-bound round는 support `>8` witness를 support8 reduction 또는 named escape로 분리하는 skeleton을 formalize했다. support-reduction round는 이를 `support_growth_partition`으로 세분화했다. Operation-sublemma rounds now keep routes through `family_chain_absorption_reduction`, and the current status-congruence bridge classifies operation outcomes as preserved, reduced, refuted, absorbed, named blocker, or higher-support escape. The higher-support recheck did not run support9+, the project-to-active status round made active projection status proof-ready with inactive-support status locality open, the coordinate-contraction status round made quotient status proof-ready with equivalent-coordinate status congruence open, the canonical-compression status round made motif compression status proof-ready with canonical-motif status congruence open, and the family-chain absorption status round made refutation/reduction/escape proof-ready with source-target alignment and residual measure open. Full general theorem proof는 아니며, 다음 exact target은 `project_to_active_status_locality_refinement`다.
+`tail_monotonicity_bridge`는 checked support8 tail range 안의 witness를 current tail theorem과 tail obstruction chain으로 닫고, checked range 밖 first extension witness를 shell16 attempt로 보냈다. shell16 promotion review는 local exact survivors `2`와 plus-one/theorem-preserving survivors `0/0`을 분리했고, local exact pair를 current theorem-preserving escape에는 nonblocking으로 판정했다. Limited bridge theorem은 current scope에서 증명됐고, support-bound round는 support `>8` witness를 support8 reduction 또는 named escape로 분리하는 skeleton을 formalize했다. support-reduction round는 이를 `support_growth_partition`으로 세분화했다. Operation-sublemma rounds now keep routes through `family_chain_absorption_reduction`, and the current status-congruence bridge classifies operation outcomes as preserved, reduced, refuted, absorbed, named blocker, or higher-support escape. The higher-support recheck did not run support9+. The project-to-active locality refinement proved payload locality under the active support contract and moved counterexample-status locality to a proof-ready/status-domain-open skeleton, without proving active projection fully. Coordinate-contraction status is refined to payload/domain/normal-form/status-predicate open proof-ready skeleton, canonical-compression status remains proof-ready with canonical-motif status congruence open, and family-chain absorption status remains proof-ready with source-target alignment and residual measure open. Full general theorem proof는 아니며, 다음 exact target은 `canonical_compression_status_congruence_refinement`다.
+
+## contract-equivalent congruence refinement update
+
+- selected statement: `equivalent_coordinate_status_preserved_under_refined_congruence_or_reduced_or_escape`
+- status-domain transfer: `contract_equivalent_status_domain_transfer_proof_ready_quotient_domain_open`
+- normal-form transfer: `contract_equivalent_normal_form_transfer_proof_ready_quotient_normal_form_open`
+- equivalent-coordinate congruence refinement: `equivalent_coordinate_congruence_payload_ready_domain_normal_form_open`
+- coordinate-congruence skeleton: `proof_ready_skeleton_contract_equivalent_congruence_domain_normal_form_open`
+- contract-equivalent operation status: `partial_contract_equivalent_congruence_proof_ready_domain_normal_form_open`
+- higher-support necessity: `higher_support_deferred_after_contract_equivalent_congruence_domain_normal_form_open`
+- general theorem readiness: `ready_for_canonical_compression_status_congruence_refinement`
+- next action order: `canonical_compression_status_congruence_refinement`, `project_to_active_status_domain_refinement`, `family_chain_absorption_source_alignment_refinement`
+
+This update does not prove the full general theorem and does not prove
+`contract_equivalent_support_coordinates` fully.
+## canonical-compression status congruence refinement round
+
+Latest round: `canonical_compression_status_congruence_refinement`.
+
+- selected canonical-congruence statement: `canonical_motif_status_preserved_under_refined_congruence_or_reduced_or_escape`
+- status-domain transfer: `canonical_compression_status_domain_transfer_proof_ready_motif_domain_open`
+- normal-form transfer: `canonical_compression_normal_form_transfer_proof_ready_motif_normal_form_open`
+- canonical motif congruence refinement: `canonical_motif_congruence_payload_ready_domain_normal_form_open`
+- canonical-congruence skeleton: `proof_ready_skeleton_canonical_compression_congruence_domain_normal_form_open`
+- canonical-compression operation status: `partial_canonical_compression_congruence_proof_ready_domain_normal_form_open`
+- status-congruence skeleton: `partial_status_congruence_canonical_refined_domain_normal_form_open_remaining_project_contract_alignment_measure_open`
+- support reduction skeleton: `partition_ready_canonical_refined_domain_normal_form_open_remaining_project_contract_alignment_measure_open`
+- support-bound lemma skeleton: `proof_ready_skeleton_canonical_refined_domain_normal_form_open_remaining_project_contract_alignment_measure_open`
+- higher-support necessity: `higher_support_deferred_after_canonical_congruence_domain_normal_form_open`
+- general theorem readiness: `ready_for_family_chain_absorption_source_alignment_refinement`
+- next action order: `family_chain_absorption_source_alignment_refinement`, `project_to_active_status_domain_refinement`, `contract_equivalent_domain_normal_form_refinement`
+
+The support8 lock remains `support8_authoritative_completion_locked`; required
+docs/artifacts remain `39/39` and `8/8`; top-level provenance remains fresh
+`16`, imported `0`, mixed `0`, archival `3`; family-chain lower layers remain
+total `7`, fresh `7`, imported `0`, caveat closed `1`; and the limited bridge
+theorem remains `limited_bridge_theorem_proved_under_current_scope`.
+
+This does not prove the full general theorem, does not prove
+`canonical_motif_compression` fully, does not prove support8 sufficiency, and
+does not run support9+.
+## Family Chain Source Alignment Refinement Round
+
+| metric | value |
+| --- | --- |
+| latest_round | family_chain_absorption_source_alignment_refinement |
+| selected_statement | source_alignment_or_smaller_witness_or_escape |
+| source_alignment_semantics_status | family_chain_absorption_source_target_alignment_semantics_contract_ready |
+| payload_alignment_status | family_chain_absorption_payload_alignment_proof_ready_source_target_payload_open |
+| status_domain_alignment_status | family_chain_absorption_status_domain_alignment_proof_ready_source_target_domain_open |
+| normal_form_alignment_status | family_chain_absorption_normal_form_alignment_proof_ready_source_target_normal_form_open |
+| lifted_refutation_to_source_status | lifted_refutation_to_source_refutation_payload_domain_normal_form_open |
+| source_alignment_skeleton_status | proof_ready_skeleton_family_chain_source_alignment_payload_domain_normal_form_open |
+| family_chain_absorption_status | partial_family_chain_absorption_source_alignment_proof_ready_residual_measure_open |
+| status_congruence_skeleton | partial_status_congruence_family_alignment_refined_payload_domain_normal_open_remaining_residual_project_contract_canonical_open |
+| support_reduction_skeleton | partition_ready_family_alignment_refined_payload_domain_normal_open_remaining_residual_project_contract_canonical_open |
+| support_bound_skeleton | proof_ready_skeleton_family_alignment_refined_payload_domain_normal_open_remaining_residual_project_contract_canonical_open |
+| higher_support_necessity | higher_support_deferred_after_family_chain_source_alignment_payload_domain_normal_open |
+| general_theorem_readiness | ready_for_residual_absorption_measure_decrease |
+| next_action_1 | residual_absorption_measure_decrease |
+| next_action_2 | project_to_active_status_domain_refinement |
+| next_action_3 | contract_equivalent_domain_normal_form_refinement |
+| caveat | not_full_general_theorem_or_full_absorption_proof |
+## Residual Measure Decrease Refinement Round
+
+| metric | value |
+| --- | --- |
+| latest_round | residual_absorption_measure_decrease |
+| selected_statement | residual_absorption_lexicographic_measure_decreases_or_escape |
+| residual_branch_classification_status | residual_absorption_branch_classification_contract_ready |
+| residual_measure_tuple_status | residual_absorption_measure_tuple_well_founded_proof_ready |
+| residual_smaller_witness_construction_status | residual_absorption_smaller_witness_construction_proof_ready_alignment_defect_open |
+| residual_measure_skeleton_status | proof_ready_skeleton_residual_absorption_measure_decrease_alignment_defect_open |
+| family_chain_absorption_status | partial_family_chain_absorption_residual_measure_proof_ready_shared_domain_normal_form_open |
+| source_alignment_skeleton_status | proof_ready_skeleton_family_chain_source_alignment_payload_domain_normal_form_open_measure_refined |
+| status_congruence_skeleton | partial_status_congruence_residual_measure_refined_remaining_project_contract_canonical_domain_normal_open |
+| support_reduction_skeleton | partition_ready_residual_measure_refined_remaining_project_contract_canonical_domain_normal_open |
+| support_bound_skeleton | proof_ready_skeleton_residual_measure_refined_remaining_project_contract_canonical_domain_normal_open |
+| higher_support_necessity | higher_support_deferred_after_residual_absorption_measure_proof_ready_domain_normal_open |
+| general_theorem_readiness | ready_for_project_to_active_status_domain_refinement |
+| next_action_1 | project_to_active_status_domain_refinement |
+| next_action_2 | contract_equivalent_domain_normal_form_refinement |
+| next_action_3 | canonical_compression_domain_normal_form_refinement |
+| caveat | not_full_general_theorem_or_full_absorption_proof |
+## Project To Active Domain Refinement Round
+
+| metric | value |
+| --- | --- |
+| latest_round | project_to_active_status_domain_refinement |
+| selected_statement | projected_status_domain_refined_under_active_projection_or_reduced_or_escape |
+| project_to_active_status_domain_semantics_status | project_to_active_status_domain_semantics_contract_ready |
+| project_to_active_domain_transfer_lemma_status | project_to_active_domain_transfer_proof_ready_refinement_status_predicate_open |
+| project_to_active_normal_form_interface_status | project_to_active_normal_form_transfer_interface_contract_ready |
+| project_to_active_domain_skeleton_status | proof_ready_skeleton_project_to_active_domain_refinement_status_predicate_normal_form_open |
+| project_to_active_operation_status | partial_project_to_active_domain_refinement_proof_ready_normal_form_status_predicate_open |
+| status_congruence_skeleton | partial_status_congruence_project_domain_refined_remaining_contract_canonical_normal_open |
+| support_reduction_skeleton | partition_ready_project_domain_refined_remaining_contract_canonical_normal_open |
+| support_bound_skeleton | proof_ready_skeleton_project_domain_refined_remaining_contract_canonical_normal_open |
+| higher_support_necessity | higher_support_deferred_after_project_to_active_domain_refinement_normal_form_open |
+| general_theorem_readiness | ready_for_project_to_active_normal_form_refinement |
+| next_action_1 | project_to_active_normal_form_refinement |
+| next_action_2 | contract_equivalent_domain_normal_form_refinement |
+| next_action_3 | canonical_compression_domain_normal_form_refinement |
+| caveat | not_full_general_theorem_or_project_to_active_full_proof |

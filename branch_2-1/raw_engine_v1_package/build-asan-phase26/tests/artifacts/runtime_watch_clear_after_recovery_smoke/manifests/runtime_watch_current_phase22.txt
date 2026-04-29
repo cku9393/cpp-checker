@@ -1,7 +1,0 @@
-manifest_version=runtime_watch_current_v1
-phase=phase22
-overall_watch_status=CLEAR
-overall_watch_recommendation=NO_ACTION
-runtime_budget_profile_id=phase27-runtime-budget-v1
-watch_sample_count=5
-runtime_watch_entry=execution_class=asan_full role=diagnostic watch_status=CLEAR sample_count=5

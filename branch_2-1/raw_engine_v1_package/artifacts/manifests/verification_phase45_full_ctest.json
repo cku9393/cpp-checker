@@ -1,0 +1,99 @@
+{
+  "manifest_version": "phase45_verification_manifest_v2",
+  "phase": "phase45",
+  "generated_at_utc": "2026-04-21T02:44:13Z",
+  "authoritative_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package",
+  "staged_root": "/tmp/cpp-checker-phase45-sparse/branch_2-1/raw_engine_v1_package",
+  "root_cause_resolution": {
+    "root_cause": "iCloud/FileProvider compressed,dataless authoritative source files plus unhealthy local git object access blocked direct source materialization and build dependency scanning",
+    "mitigation": "fresh remote sparse clone in /tmp, overlay phase45 local changes and readable authoritative support files, verify selected source hashes against prior source snapshot before build/test",
+    "authoritative_tree_direct_long_build_allowed": false,
+    "staged_sparse_clone_used": true,
+    "selected_hash_verification": {
+      "src/raw_primitives.cpp": "fd153fce01f2305cd4414aa39f2688bf3e3de9607429f5b8fe10a4769c79dc1e",
+      "src/raw_planner.cpp": "c5178eba0da17d6ffabaf55c22c023d0c5c7ff73be162dcdc0e926cc55389205",
+      "src/raw_validators.cpp": "ebacc9b8049a15285765cf58bb798d336d21c49a3cb5ce773a7f323cf9d82748",
+      "tests/state_dump.hpp": "930d1acf940f63bc3cb2aec96d614b72417b6a083a4d770fac2e932b26fe8985"
+    }
+  },
+  "release": {
+    "execution_verdict": "PASS",
+    "build_type": "Release",
+    "sanitizers": [],
+    "build_dir": "/tmp/raw_engine_phase45_build_release",
+    "ctest_command": "ctest --test-dir /tmp/raw_engine_phase45_build_release --output-on-failure -j 4",
+    "ctest_log": "/tmp/raw_engine_phase45_ctest_release.log",
+    "inventory_manifest": "artifacts/manifests/ctest_inventory_release_phase45.json",
+    "summary_found": true,
+    "discovered_test_count": 370,
+    "pass_count": 370,
+    "fail_count": 0,
+    "not_run_count": 0,
+    "total_wall_time_seconds": 585.68,
+    "raw_summary": "100% tests passed, 0 tests failed out of 370",
+    "zero_missing_expected_verdict": "PASS",
+    "zero_not_run_verdict": "PASS"
+  },
+  "debug": {
+    "execution_verdict": "PASS",
+    "build_type": "Debug",
+    "sanitizers": [],
+    "build_dir": "/tmp/raw_engine_phase45_build_debug",
+    "ctest_command": "ctest --test-dir /tmp/raw_engine_phase45_build_debug --output-on-failure -j 4",
+    "ctest_log": "/tmp/raw_engine_phase45_ctest_debug.log",
+    "inventory_manifest": "artifacts/manifests/ctest_inventory_debug_phase45.json",
+    "summary_found": true,
+    "discovered_test_count": 370,
+    "pass_count": 370,
+    "fail_count": 0,
+    "not_run_count": 0,
+    "total_wall_time_seconds": 1142.65,
+    "raw_summary": "100% tests passed, 0 tests failed out of 370",
+    "zero_missing_expected_verdict": "PASS",
+    "zero_not_run_verdict": "PASS"
+  },
+  "asan_ubsan": {
+    "execution_verdict": "PASS",
+    "build_type": "Debug",
+    "sanitizers": [
+      "ASan",
+      "UBSan"
+    ],
+    "build_dir": "/tmp/raw_engine_phase45_build_asan",
+    "ctest_command": "ctest --test-dir /tmp/raw_engine_phase45_build_asan --output-on-failure -j 1",
+    "ctest_log": "/tmp/raw_engine_phase45_ctest_asan.log",
+    "inventory_manifest": "artifacts/manifests/ctest_inventory_asan_ubsan_phase45.json",
+    "summary_found": true,
+    "discovered_test_count": 370,
+    "pass_count": 370,
+    "fail_count": 0,
+    "not_run_count": 0,
+    "total_wall_time_seconds": 2714.48,
+    "raw_summary": "100% tests passed, 0 tests failed out of 370",
+    "zero_missing_expected_verdict": "PASS",
+    "zero_not_run_verdict": "PASS"
+  },
+  "aggregate": {
+    "execution_verdict": "PASS",
+    "total_discovered_tests_across_modes": 1110,
+    "total_pass_count_across_modes": 1110,
+    "total_fail_count_across_modes": 0,
+    "total_not_run_count_across_modes": 0,
+    "release_debug_asan_all_pass": true,
+    "zero_not_run_all_modes": true,
+    "zero_missing_expected_all_modes": true
+  },
+  "phase45_explicit_smokes": {
+    "runtime_current_env_action_ledger_smoke": "PASS",
+    "runtime_current_env_action_retry_plan_smoke": "PASS",
+    "runtime_current_env_reproposal_handoff_smoke": "PASS",
+    "current_env_next_cycle_monitoring_due_smoke": "PASS",
+    "policy_ops_agenda_lifecycle_v2_smoke": "PASS",
+    "policy_ops_summary_v11_smoke": "PASS",
+    "evidence_bundle_action_ledger_smoke": "PASS",
+    "corpus_replay_smoke": "PASS"
+  },
+  "semantic_mismatch_observed": false,
+  "new_regression_observed": false,
+  "exact_shadow_policy": "UNCHANGED"
+}

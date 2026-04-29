@@ -1,7 +1,10 @@
-measure_component	statement	assumptions	source_measure	output_measure	support_delta	canonical_delta	family_chain_depth_delta	lexicographic_delta	proof_status	missing_hypothesis	caveat
-contradiction_branch_measure_not_required	Direct refutation closes the branch without producing a smaller witness.	bounded theorem refutes aligned source/target	(k,r,d)	closed	not_applicable	not_applicable	not_applicable	not_applicable	proved_under_current_scope	source-target status alignment still needed	No smaller-witness claim is made for contradiction.
-component_removal_support_delta	If absorption removes a nonempty active component, support size should decrease.	residual output deletes a support-carrying component	k	k-minus-positive	negative	conditional	conditional	negative_if_component_removed	proof_sketch_only	proof that removed component is support-active after normalization	May fail if normalization reintroduces equivalent support.
-canonical_rank_delta	If support size is unchanged, canonical motif/family-chain rank must decrease.	residual rewrite preserves support size but simplifies target	(k,r,d)	(k,r-minus-positive,d-or-less)	zero	negative	conditional	negative_if_rank_drops	proof_sketch_only	canonical rank monotonicity under absorption	Separate from canonical motif compression operation.
-family_chain_depth_delta	Residual absorption may reduce family-chain depth even when support/rank are unchanged.	absorbed component replaced by shallower target	(k,r,d)	(k,r,d-minus-positive)	zero	zero	negative	negative_if_depth_drops	proof_sketch_only	depth measure definition for residual output	Depth decrease has not been connected to existing support measure.
-normalized_residual_lex_delta	After normalization, at least one lexicographic component must strictly decrease and none earlier increase.	normalization preserves measure order	(k,r,d,n)	(k',r',d',n')	conditional	conditional	conditional	conditional	blocked_by_measure	normalization monotonicity plus strict residual decrease	This is the residual measure blocker.
-measure_failure_escape	If no strict decrease is established, the residual branch is not a smaller witness and is named.	residual branch lacks strict delta	(k,r,d,n)	not accepted as smaller witness	none	none	none	none	proved_under_current_scope	higher-support or operation-measure bound for closure	Failure remains a named blocker, not hidden.
+metric	value
+selected_residual_measure_statement	residual_absorption_lexicographic_measure_decreases_or_escape
+residual_branch_classification_status	residual_absorption_branch_classification_contract_ready
+residual_measure_tuple_status	residual_absorption_measure_tuple_well_founded_proof_ready
+residual_smaller_witness_construction_status	residual_absorption_smaller_witness_construction_proof_ready_alignment_defect_open
+residual_measure_skeleton_status	proof_ready_skeleton_residual_absorption_measure_decrease_alignment_defect_open
+direct_refutation_branch	separate_not_smaller_witness
+measure_failure_escape	named_residual_measure_or_higher_support_escape
+final_status	proof_ready_skeleton_residual_absorption_measure_decrease_alignment_defect_open
+caveat	not_full_absorption_measure_decrease_proof

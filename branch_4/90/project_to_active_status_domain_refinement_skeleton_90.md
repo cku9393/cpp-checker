@@ -1,0 +1,22 @@
+# Project To Active Status Domain Refinement Skeleton 90
+
+| metric | value |
+| --- | --- |
+| lemma_name | project_to_active_status_domain_refined_or_reduced_or_escape |
+| exact_statement | Active projection preserves, refines, reduces, or names escape for the projected status-domain; status predicate preservation still requires normal-form and predicate-meaning sublemmas. |
+| assumptions | source witness normal;active support A;payload locality proved;projected witness W_active=normalize(restrict(W,A)) |
+| conclusion | domain-preserved, domain-refined, smaller-witness reduction, or named escape |
+| source_status_domain | source counterexample-status dependency domain |
+| projected_status_domain | active restriction/refinement candidate |
+| domain_transfer_rule | preserve/refine/reduce/escape |
+| payload_locality_use | inactive_support_payload_locality_proved_under_current_scope |
+| normal_form_interface | project_to_active_normal_form_transfer_interface_contract_ready |
+| status_predicate_meaning | blocked_by_status_predicate_refined_domain_determination |
+| smaller_witness_fallback | blocked_by_valid_reduced_status_theorem |
+| failure_to_escape_case | named_project_to_active_domain_escape_or_higher_support_escape |
+| relation_to_inactive_support_locality_skeleton | inactive_support_counterexample_status_locality_proof_ready_status_domain_open_refined |
+| relation_to_status_congruence_bridge | partial_status_congruence_project_domain_refined_remaining_contract_canonical_normal_open |
+| relation_to_support_bound_skeleton | proof_ready_skeleton_project_domain_refined_remaining_contract_canonical_normal_open |
+| missing_steps | status predicate determination over refined domain; project-to-active normal-form transfer; valid reduced-status theorem |
+| exact_caveat | one-operation domain proof-ready skeleton only; not full project-to-active proof |
+| final_status | proof_ready_skeleton_project_to_active_domain_refinement_status_predicate_normal_form_open |

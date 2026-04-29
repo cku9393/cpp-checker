@@ -1,8 +1,0 @@
-[2026-03-25 12:26:47 KST] attempt 1 start: .ouroboros/seed_branch3_progress40_research_loop.yaml
-╭─────────────────────────────────── Error ────────────────────────────────────╮
-│ Invalid seed format: 1 validation error for Seed                             │
-│ constraints.18                                                               │
-│   Input should be a valid string                                             │
-│     For further information visit                                            │
-│ https://errors.pydantic.dev/2.12/v/string_type                               │
-╰──────────────────────────────────────────────────────────────────────────────╯

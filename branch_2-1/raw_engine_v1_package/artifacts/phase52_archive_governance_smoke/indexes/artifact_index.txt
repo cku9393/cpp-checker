@@ -1,9 +1,0 @@
-artifact_root=/private/tmp/raw_engine_phase52_stage/build-release/tests/artifacts/evidence_bundle_archive_governance_smoke
-report_count=1
-manifest_count=330
-bundle_count=0
-delivery_bundle_count=1
-curated_bundle_count=0
-evidence_bundle_count=0
-nightly_run_count=0
-approved_baseline_count=1

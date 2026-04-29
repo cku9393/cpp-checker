@@ -1,9 +1,0 @@
-[release_diag] phase=case_start run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=0 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=preprocess_done run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=111 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=topo_artifact_done run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=3555 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=topo_init_done run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=3558 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=owner_index_done run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=3691 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=active_scan_done run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=3692 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=support_build_done run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=3714 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=init_done run_tag=combrect99999_release_diag4 deletion=0/99999 x=-1 elapsed_ms=3714 psplit_calls=0 psplit_vertices=0 psplit_ns=0
-[release_diag] phase=deletion_checkpoint run_tag=combrect99999_release_diag4 deletion=1/99999 x=1 elapsed_ms=3867 psplit_calls=0 psplit_vertices=0 psplit_ns=0

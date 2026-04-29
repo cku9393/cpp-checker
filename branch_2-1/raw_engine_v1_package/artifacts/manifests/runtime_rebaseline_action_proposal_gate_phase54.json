@@ -1,0 +1,23 @@
+{
+  "manifest_version": "runtime_rebaseline_action_proposal_gate_v1",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T08:14:26Z",
+  "proposal_gate_verdict": "APPROVABLE",
+  "proposal_confidence": "HIGH",
+  "required_samples": 3,
+  "available_samples": 43,
+  "hard_breach_count": 0,
+  "approval_mode": "handoff_only",
+  "integrated_opt_in_required": true,
+  "registry_switch_automatic": false,
+  "rationale": [
+    "same host/compiler-family runtime lineage exists, but the current fingerprint is not strict-comparable",
+    "baseline selector preferred a foreign/externally approved compatible candidate; keep this as a runtime operator action",
+    "same host runtime baseline candidate differs by compiler version",
+    "watch registry current_env_status=REBASELINE_REQUIRED",
+    "runtime comparability is an operator lane signal and does not change correctness PASS/FRESH state",
+    "runtime action is approval-ready but remains handoff_only; registry switch is not automatic",
+    "correctness PASS/FRESH is unaffected; this plan only covers runtime/operator state"
+  ],
+  "proposal_gate_hash": "8e3f705012944e9d470322923e7d7a6ba631c6fb61461d898089ae917817b87c"
+}

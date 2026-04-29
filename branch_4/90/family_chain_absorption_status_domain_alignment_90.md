@@ -1,0 +1,13 @@
+# Family Chain Absorption Status Domain Alignment 90
+
+Final status: `family_chain_absorption_status_domain_alignment_proof_ready_source_target_domain_open`.
+
+Status-domain alignment is proof-ready but open. The target refutation must be meaningful inside the source status-domain before source counterexample refutation can be claimed.
+
+| component_key | source_component | target_component | alignment_rule | relation_to_refutation | relation_to_counterexample_status | relation_to_smaller_witness | failure_effect | proof_status | missing_hypothesis | caveat |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| source_domain_well_formed | source counterexample-status domain | none | source domain is the comparison base | target refutation must be interpreted in this base | defines status predicate inputs | none | status-domain escape | proof_sketch_only | domain extractor completeness | Source domain well-formedness is not target alignment. |
+| target_domain_well_formed | source lift context | target refutation domain | target domain is available from lifted refutation package | the lifted refutation lives here | must map back to source predicate | none unless domain loss exposes strict residual | target-domain escape | proved_under_current_scope |  | Target well-formedness does not imply source compatibility. |
+| domain_map | source domain dependencies | target domain dependencies | target dependencies refine or embed into source dependencies | allows lifted refutation to be read as source predicate denial | central comparison requirement | domain loss may create reduced witness obligation | blocked_by_status_domain | proof_sketch_only | fieldwise source-target domain transfer | Shared blocker with project-to-active and contraction domain transfer. |
+| domain_refinement_case | source domain with extra inactive/residual fields | target refined domain | refined target domain is sufficient if dropped fields are status-local or reduced | supports source refutation when residual fields are irrelevant | needs locality/determination proof | dropped status-relevant field triggers smaller-witness route | domain-refinement blocker | blocked_by_status_domain | status-domain irrelevance or reduction sublemma | Do not confuse with project-to-active projection. |
+| domain_escape_case | source domain outside alignment contract | target domain outside recognized map | name as source-target domain escape | no direct source refutation claimed | comparison remains open | only if residual measure later proves reduction | named_escape | proved_under_current_scope |  | Escape keeps higher-support deferred, not solved. |

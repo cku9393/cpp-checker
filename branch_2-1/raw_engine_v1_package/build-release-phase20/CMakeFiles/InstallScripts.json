@@ -1,9 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase20/cmake_install.cmake",
-		"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase20/src/cmake_install.cmake",
-		"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase20/tests/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

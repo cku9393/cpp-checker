@@ -2,6 +2,21 @@
 
 이 폴더는 `쿼리와 트리 2` 풀이를 **강한 반례군 + 검증 + 성능 리포트 + 인증형 게이트**로 평가하기 위한 패키지다.
 
+## 저장소 구조 메모
+
+이 저장소의 outer LCA stress suite 계열은 `branch_2_2`보다 먼저 **리포 루트에서** 운영되던 공용 스위트였다.
+
+2026-03-24 워크스페이스 재구성 시점에 현재의 `lca_tree_stress_v5/` 서브폴더가 별도로 추가되었고,
+outer-suite 중심 작업은 그 서브폴더 아래에서 진행하도록 정리됐다.
+
+따라서 현재 기준은 다음처럼 보는 편이 맞다.
+
+- 원래 outer stress suite 계열: `lca_tree_stress_v5/` 워크스페이스와 `lca_tree_stress_v5/tooling/` 공용 하니스
+- Round 45 전용 브랜치 워크스페이스: `branch_2_2/`
+- BOJ 28350 전용 브랜치 워크스페이스: `branch_3/`
+
+즉 `branch_2_2`는 Round 45 전용 브랜치이고, 원래 outer suite의 출발점은 아니다.
+
 핵심 목표는 두 가지다.
 
 1. 정답성 검증
@@ -71,44 +86,48 @@
 
 ## 파일 구성
 
-- `gen_case.py`
+공통 LCA harness 파일은 이제 `lca_tree_stress_v5/tooling/` 아래에 모여 있다.
+
+- `tooling/gen_case.py`
   - 유효한 LCA 쿼리 입력 생성기
-- `validator.py`
+- `tooling/validator.py`
   - 출력 트리와 모든 쿼리의 LCA를 재검증
-- `bench_report.py`
+- `tooling/bench_report.py`
   - CSV / Markdown 리포트 생성
-- `find_breakpoint.py`
+- `tooling/find_breakpoint.py`
   - timeout 기준으로 버티는 최대 N 탐색
-- `certify_suite.py`
+- `tooling/certify_suite.py`
   - stage/preset 기반 인증형 실행기
-- `hunt_hardest.py`
+- `tooling/hunt_hardest.py`
   - 현재 solver 기준 최악 케이스 hunt
-- `suite_presets/*.json`
+- `tooling/suite_presets/*.json`
   - smoke / rebuttal / strong gate preset
-- `gate.sh`
+- `tooling/gate.sh`
   - 일반 preset용 `certify_suite.py` 래퍼
-- `gate_boj3s.sh`
+- `tooling/gate_boj3s.sh`
   - `boj_3s_hard_gate.json` 전용 래퍼
-- `hunt.sh`
+- `tooling/hunt.sh`
   - `hunt_hardest.py` 래퍼
-- `stress_modes.sh`
+- `tooling/stress_modes.sh`
   - 여러 모드 일괄 실행
-- `solve.cpp`
+- `tooling/lca_tree_stress_v5_tooling_solver.cpp`
   - 테스트할 솔버 자리
 
 ## 플랫폼별 진입점
 
 - macOS / Linux
-  - `build.sh`, `run_case.sh`, `stress_modes.sh`, `gate.sh`, `gate_boj3s.sh`, `hunt.sh`, `bench_report.sh`
+  - `lca_tree_stress_v5/tooling/{build.sh, run_case.sh, stress_modes.sh, gate.sh, gate_boj3s.sh, hunt.sh, bench_report.sh}`
 - Windows PowerShell
-  - `build.ps1`, `run_case.ps1`, `stress_modes.ps1`, `gate.ps1`, `gate_boj3s.ps1`, `hunt.ps1`, `bench_report.ps1`
+  - `lca_tree_stress_v5/tooling/{build.ps1, run_case.ps1, stress_modes.ps1, gate.ps1, gate_boj3s.ps1, hunt.ps1, bench_report.ps1}`
 - 공통 사항
   - Python 기반 실행 코어는 `.py` 파일들이다.
   - 기본 solver 이름은 macOS / Linux에서 `solve`, Windows에서 `solve.exe`다.
-  - `build.py`는 사용 가능한 C++ 컴파일러를 자동 탐지한다.
-  - Linux에서 정적 링크가 꼭 필요하면 `build.py --static always`를 쓰면 된다.
+  - `tooling/build.py`는 사용 가능한 C++ 컴파일러를 자동 탐지한다.
+  - Linux에서 정적 링크가 꼭 필요하면 `tooling/build.py --static always`를 쓰면 된다.
 
 ## 생성 모드 목록
+
+이 섹션 아래의 공통 하니스 명령 예시는 `cd lca_tree_stress_v5/tooling` 이후 기준으로 보면 된다.
 
 ```bash
 python gen_case.py --describe-modes
@@ -134,14 +153,21 @@ python gen_case.py --describe-modes
 
 ## 빠른 시작
 
+### 1) 현재 outer workspace
+
 ```bash
 cd lca_tree_stress_v5
 ./build.sh
 ```
 
-```powershell
-Set-Location lca_tree_stress_v5
-./build.ps1
+이 경로의 현재 상태와 전용 실행 규칙은 `lca_tree_stress_v5/README.md`를 기준으로 본다.
+
+### 2) 공통 툴링 디렉터리
+
+아래 예시는 `lca_tree_stress_v5/tooling/`에서 실행한다.
+
+```bash
+cd lca_tree_stress_v5/tooling
 ```
 
 단일 케이스:

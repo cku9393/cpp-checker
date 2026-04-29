@@ -1,0 +1,49 @@
+{
+  "profile_version": "runtime_budget_profile_v1",
+  "profile_id": "runtime-budget-profile-v1",
+  "version": 1,
+  "created_at": "2026-04-24T17:54:49Z",
+  "entries": {
+    "policy_core": {
+      "execution_class": "policy_core",
+      "role": "operator",
+      "thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      }
+    },
+    "policy_refresh": {
+      "execution_class": "policy_refresh",
+      "role": "operator",
+      "thresholds": {
+        "soft_seconds": 30.0,
+        "hard_seconds": 90.0,
+        "soft_delta_percent": 25.0,
+        "hard_delta_percent": 75.0,
+        "soft_delta_floor_sec": 0.25,
+        "hard_delta_floor_sec": 0.5
+      },
+      "watch_policy": {
+        "min_samples": 3,
+        "clear_window": 2,
+        "stable_overrun_threshold": 3,
+        "rebaseline_candidate_threshold": 5,
+        "max_bounded_jitter_percent": 30.0,
+        "near_baseline_delta_percent": 5.0
+      }
+    }
+  },
+  "profile_hash": "9a567c687622221acbc98313b18f5df5db31241f96149679c3540a522fdc8c8a"
+}

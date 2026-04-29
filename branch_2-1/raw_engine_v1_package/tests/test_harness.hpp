@@ -210,9 +210,19 @@ struct TestOptions {
     std::optional<std::string> runtimeWatchRefresh;
     std::optional<std::string> runtimeWatchHistoryIndex;
     std::optional<std::string> runtimeBudgetConfig;
+    std::optional<std::string> runtimeBudgetCurrentManifest;
+    std::optional<std::string> runtimeBudgetBaselineManifest;
+    std::optional<std::string> runtimeBudgetRefreshManifest;
+    std::optional<std::string> runtimeBudgetRerunPlan;
+    std::optional<std::string> runtimeBudgetRegistry;
+    std::optional<std::string> runtimeBudgetProposal;
+    std::optional<std::string> runtimeBudgetProposalGate;
     std::optional<std::string> executionClass;
     std::optional<std::string> proposalOut;
+    std::optional<std::string> runtimeProposalGate;
     std::optional<std::string> archiveProposal;
+    std::optional<std::string> minWatchConfidence;
+    std::optional<std::string> budgetTag;
     std::optional<std::string> planOut;
     std::optional<std::string> emitSummary;
     std::optional<std::string> runtimeRunnerTag;
@@ -235,6 +245,10 @@ struct TestOptions {
     bool activate = false;
     bool includeDiagnostic = false;
     bool includeNonApplicable = false;
+    int minRealSamplesRelease = 1;
+    int minRealSamplesDebug = 1;
+    int minRealSamplesAsan = 5;
+    int maxHardBreachCount = 0;
 };
 
 void install_failure_handlers();

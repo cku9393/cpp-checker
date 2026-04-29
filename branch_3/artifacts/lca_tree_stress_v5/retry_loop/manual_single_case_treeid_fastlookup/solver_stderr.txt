@@ -1,1 +1,0 @@
-time: sysctl kern.clockrate: Operation not permitted

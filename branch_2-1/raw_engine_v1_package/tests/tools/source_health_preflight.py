@@ -95,10 +95,10 @@ def build_preflight(args: argparse.Namespace) -> tuple[dict[str, Any], dict[str,
         recommendation = "SPARSE_CLONE_REQUIRED"
         status = "BLOCKED"
     elif dataless_count > 0:
-        recommendation = "SPARSE_CLONE_REQUIRED" if bool(git.get("missing_head_object", False)) else "STAGED_REQUIRED"
+        recommendation = "SPARSE_CLONE_REQUIRED"
         status = "ATTENTION_REQUIRED"
     elif bool(git.get("missing_head_object", False)):
-        recommendation = "STAGED_REQUIRED"
+        recommendation = "SPARSE_CLONE_REQUIRED"
         status = "ATTENTION_REQUIRED"
     materialization_mode = "staged_sparse_clone_overlay" if recommendation == "SPARSE_CLONE_REQUIRED" else "staged_mirror_from_snapshot" if recommendation == "STAGED_REQUIRED" else "direct_or_snapshot"
     overlay_basis = "\n".join(required) + str(dataless_count) + str(git.get("head")) + materialization_mode

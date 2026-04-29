@@ -1,0 +1,25 @@
+{
+  "manifest_version": "runtime_rebaseline_action_proposal_v1",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T08:14:26Z",
+  "proposal_type": "current_env_rebaseline",
+  "proposal_needed": true,
+  "triage_verdict": "NOT_COMPARABLE_CURRENT_ENV",
+  "current_fingerprint_key": "085a976a184e53697c855a3d203d893181d22f1bc0a942ff7bbb37615c84569d",
+  "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "selected_baseline_tag": "phase34-runtime-external-approved",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+  "approval_mode": "handoff_only",
+  "mutates_registry": false,
+  "rationale": [
+    "same host/compiler-family runtime lineage exists, but the current fingerprint is not strict-comparable",
+    "baseline selector preferred a foreign/externally approved compatible candidate; keep this as a runtime operator action",
+    "same host runtime baseline candidate differs by compiler version",
+    "watch registry current_env_status=REBASELINE_REQUIRED",
+    "runtime comparability is an operator lane signal and does not change correctness PASS/FRESH state",
+    "runtime action is approval-ready but remains handoff_only; registry switch is not automatic",
+    "correctness PASS/FRESH is unaffected; this plan only covers runtime/operator state"
+  ],
+  "proposal_hash": "824d06df02b9e83dc26d68233d621d90835f8baa0ba03c520a5919d19727cc4d"
+}

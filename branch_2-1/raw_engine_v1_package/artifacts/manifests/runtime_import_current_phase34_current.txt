@@ -1,0 +1,52 @@
+{
+  "manifest_version": "runtime_external_import_summary_v1",
+  "generated_at_utc": "2026-04-01T10:54:04Z",
+  "runtime_import_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase30.json",
+  "runtime_import_manifest_hash": "697dea60f931a87cc582e850cb3118ea2cb66e07c67defca0192aab49e7cd765",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+  "imported_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+  "imported_host_fingerprint": {
+    "os": "Darwin",
+    "os_release": "25.3.0",
+    "arch": "arm64",
+    "runner_tag": "local-macos-appleclang17",
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a"
+  },
+  "imported_toolchain_fingerprint": {
+    "compiler_command": "/usr/bin/c++",
+    "compiler_id": "appleclang",
+    "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+  },
+  "imported_execution_classes": [
+    "asan_full",
+    "debug_full",
+    "policy_core",
+    "policy_nightly",
+    "policy_refresh",
+    "release_full"
+  ],
+  "imported_runtime_budget_profile_id": "phase33-runtime-budget-approved-profile",
+  "evidence_source": "real",
+  "runner_id": "current-env",
+  "host_label": "current-env",
+  "import_verdict": "COMPARABLE_IMPORTED",
+  "selected_baseline_id": "phase30-runtime-approved-c89a575d-20260331_041735",
+  "selected_baseline_tag": "phase30-runtime-approved",
+  "comparability_verdict": "COMPARABLE",
+  "proposal_needed": false,
+  "counts_as_real_evidence": true,
+  "import_reason": "same fingerprint evidence appended to existing runtime lineage",
+  "runtime_refresh_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase34_current.json",
+  "runtime_refresh_manifest_hash": "be5584361e6d438d1ab0def18a7d897fa93bfe614d0b3ad8e469ab977eeec997",
+  "runtime_current_verdict": "PASS",
+  "runtime_freshness_verdict": "FRESH",
+  "selection_summary": {
+    "exact_match_count": 1,
+    "compatible_match_count": 0,
+    "retired_match_count": 0,
+    "comparability_reason": "active exact runtime fingerprint match"
+  }
+}

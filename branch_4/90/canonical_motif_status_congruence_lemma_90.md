@@ -1,13 +1,14 @@
 # Canonical Motif Status Congruence Lemma 90
 
-## status
+## status after congruence refinement
 
-`canonical_motif_status_congruence_payload_ready_status_congruence_open`
+`canonical_motif_congruence_payload_ready_domain_normal_form_open`
 
-## summary
+Payload-role congruence remains proof-sketch ready under the accepted canonical
+motif compression contract. Counterexample-status congruence is not completed:
+it requires compressed status-domain transfer, compressed normal-form transfer,
+status predicate determination from motif-compatible data, and valid
+reduced-status fallback if the compressed witness changes the status domain.
 
-The canonical motif compression notation and semantics already define accepted compressible motifs and lower-rank compressed motifs. This lemma records what the accepted rewrite must prove for status preservation: the motif rewrite must be a congruence for payload carriers, counterexample-status/certificate fields, normal form, and family-chain source recognition.
-
-Payload congruence is proof-sketch-ready because motif payload refinement is part of the accepted compression contract. Counterexample-status congruence remains open. This file does not claim canonical motif compression preserves status unconditionally.
-
-Runtime table: `branch_4/90/runtime/canonical_motif_status_congruence_lemma_90.tsv`.
+Runtime table:
+`branch_4/90/runtime/canonical_motif_status_congruence_lemma_90.tsv`.

@@ -1,11 +1,21 @@
 # Inactive Support Irrelevance Lemma 90
 
-## status
+## status after locality refinement
 
-`inactive_support_irrelevance_payload_ready_status_locality_open`
+`inactive_support_irrelevance_payload_proved_status_domain_open`
 
-## summary
+This lemma is now split into payload locality and counterexample-status
+locality.
 
-Inactive support irrelevance is split into payload irrelevance and counterexample-status irrelevance. Payload irrelevance is ready under the definition of active support as containing all payload dependency coordinates. Counterexample-status irrelevance remains a locality theorem: the current artifacts name the certificate/status dependency fields, but they do not yet prove that no inactive coordinate can affect arbitrary counterexample status after renormalization.
+- Payload locality is proved under the selected active support contract:
+  inactive coordinates are outside relevant payload carriers.
+- Counterexample-status locality is proof-ready but not completed:
+  payload locality must be supplemented by status dependency containment,
+  status-domain invariance, normal-form transfer, and a valid reduced-status
+  fallback when projection changes domain.
 
-Runtime table: `branch_4/90/runtime/inactive_support_irrelevance_lemma_90.tsv`.
+This is not redundant-coordinate deletion and not a full project-to-active
+status proof.
+
+Runtime table:
+`branch_4/90/runtime/inactive_support_irrelevance_lemma_90.tsv`.

@@ -1,9 +1,12 @@
 # Operation Open Vs Higher Support Required 90
 
-## status after canonical-compression status round
+## status after contract-equivalent congruence refinement
 
-`operation_open_dominates_higher_support_deferred_all_primary_status_proof_ready`
+`operation_open_dominates_higher_support_deferred_contract_equivalent_refined`
 
-Project-to-active is proof-ready with inactive-support status locality open. Coordinate contraction is proof-ready with equivalent-coordinate status congruence open. Canonical compression is proof-ready with canonical-motif status congruence open. Family-chain absorption status/refutation and residual measure remain direct operation proof blockers. Higher-support remains deferred.
+Coordinate contraction is no longer an opaque congruence blocker; it is a
+domain/normal-form/status-predicate-open proof-ready skeleton. This remains an
+operation-proof blocker, not a reason to run support9+.
 
-Runtime table: `branch_4/90/runtime/operation_open_vs_higher_support_required_90.tsv`.
+Runtime table:
+`branch_4/90/runtime/operation_open_vs_higher_support_required_90.tsv`.

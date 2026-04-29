@@ -9,6 +9,9 @@ Layout:
   - solver implementation: `src/*.cpp`
   - CLI entry: `tests/raw_engine_main.cpp`
   - built binary: `build-debug/tests/raw_engine_tests`
+- `root_legacy_artifacts/`
+  - root-level raw-engine campaign artifacts moved under `branch_2-1/`
+  - preserved historical outputs, not the active package artifact root
 - zipped deliverables and dated bundles
   - historical snapshots only
 
@@ -32,4 +35,6 @@ Notes:
 
 - keep build directories under `raw_engine_v1_package/build-*`
 - keep artifact paths under `raw_engine_v1_package/artifacts/...`
+- `root_legacy_artifacts/` is archival; new runs should still target
+  `raw_engine_v1_package/artifacts/...`
 - archived zips at branch root are reference deliverables, not the active workspace

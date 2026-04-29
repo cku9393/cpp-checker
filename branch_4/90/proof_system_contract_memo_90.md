@@ -1,24 +1,50 @@
 # Proof System Contract Memo 90
 
-## verified contract
+## verified baseline
 
 - release compile: verified
 - LOCAL_TEST compile: verified
 - pass1/pass2/pass3: `support8_authoritative_completion_locked`
 - required docs/artifacts: `39/39`, `8/8`
-- top-level provenance: fresh `16`, imported `0`, mixed `0`, archival_only `3`
-- family-chain lower layers: total `7`, fresh `7`, imported `0`, caveat closed `1`
-- limited bridge theorem: `limited_bridge_theorem_proved_under_current_scope`
 
-## current round contract
+## current proof contract
 
-The family-chain absorption status round is an operation-specific proof attempt. It does not prove the full general theorem, does not prove family-chain absorption fully, and does not run support9+.
+This round is `canonical_compression_status_congruence_refinement`. It refines
+canonical motif compression status congruence into payload, status-domain,
+normal-form, counterexample-status predicate, smaller-witness, and named escape
+branches.
 
-Current result:
+It does not prove the full general theorem, does not prove
+`canonical_motif_compression` fully, and does not run support9+.
 
-- selected statement: `family_chain_absorption_status_refuted_or_reduced_or_escape`
-- status skeleton: `proof_ready_skeleton_family_chain_absorption_status_refutation_measure_open`
-- refutation lemma: `family_chain_absorption_refutation_lifted_target_ready_source_alignment_open`
-- residual measure: `family_chain_absorption_residual_measure_decrease_open`
-- support-bound skeleton: `proof_ready_skeleton_all_primary_operations_status_proof_ready_residual_congruence_open`
-- next exact target: `project_to_active_status_locality_refinement`
+Next exact target: `family_chain_absorption_source_alignment_refinement`.
+## Family Chain Source Alignment Refinement Round
+
+| metric | value |
+| --- | --- |
+| latest_round | family_chain_absorption_source_alignment_refinement |
+| release_compile | verified_after_regression |
+| local_test_compile | verified_after_regression |
+| pass1_pass2_pass3 | support8_authoritative_completion_locked |
+| source_alignment_status | proof_ready_skeleton_family_chain_source_alignment_payload_domain_normal_form_open |
+| general_theorem_readiness | ready_for_residual_absorption_measure_decrease |
+## Residual Measure Decrease Refinement Round
+
+| metric | value |
+| --- | --- |
+| latest_round | residual_absorption_measure_decrease |
+| release_compile | verified_after_regression |
+| local_test_compile | verified_after_regression |
+| pass1_pass2_pass3 | support8_authoritative_completion_locked |
+| residual_measure_status | proof_ready_skeleton_residual_absorption_measure_decrease_alignment_defect_open |
+| general_theorem_readiness | ready_for_project_to_active_status_domain_refinement |
+## Project To Active Domain Refinement Round
+
+| metric | value |
+| --- | --- |
+| latest_round | project_to_active_status_domain_refinement |
+| release_compile | verified_after_regression |
+| local_test_compile | verified_after_regression |
+| pass1_pass2_pass3 | support8_authoritative_completion_locked |
+| project_to_active_domain_status | proof_ready_skeleton_project_to_active_domain_refinement_status_predicate_normal_form_open |
+| general_theorem_readiness | ready_for_project_to_active_normal_form_refinement |

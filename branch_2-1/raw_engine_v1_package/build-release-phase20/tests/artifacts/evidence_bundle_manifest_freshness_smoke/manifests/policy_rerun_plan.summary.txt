@@ -1,2 +1,0 @@
-policy_rerun_plan_summary summary_verdict=RERUN_REQUIRED stale_family_count=1 requires_rerun_family_count=0 reclassify_required_count=0 selected_entry_count=1
-family=split_tie_organic_symmetric current_status=PASS freshness_status=STALE rerun_kind=direct_compare_rerun evidence_mode=campaign_compare status_impact=PASS family stale expected_stop_criteria=target-compared-states=32,target-eligible-states=32,semantic_disagreement=0,fallback=0

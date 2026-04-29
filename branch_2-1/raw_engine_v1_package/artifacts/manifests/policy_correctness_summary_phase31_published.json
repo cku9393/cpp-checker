@@ -1,0 +1,35 @@
+{
+  "publication_version": "phase31_correctness_summary_v1",
+  "phase": "phase31",
+  "generated_at_utc": "2026-04-01T00:40:00Z",
+  "authoritative_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_v1.json",
+  "authoritative_baseline_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_phase30_approved_v1.json",
+  "authoritative_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_refresh_phase30_v1.json",
+  "authoritative_rerun_plan_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_rerun_plan_phase30_v1.json",
+  "policy_status": "healthy",
+  "freshness_verdict": "FRESH",
+  "rerun_plan_verdict": "PASS",
+  "rerun_plan_selected_entry_count": 0,
+  "families": [
+    {
+      "family": "split_tie_organic_symmetric",
+      "status": "PASS",
+      "freshness_status": "FRESH"
+    },
+    {
+      "family": "automorphism_probe_large",
+      "status": "PASS",
+      "freshness_status": "FRESH"
+    },
+    {
+      "family": "planner_tie_mixed_organic",
+      "status": "NON_APPLICABLE",
+      "freshness_status": "FRESH"
+    },
+    {
+      "family": "planner_tie_mixed_organic_compare_ready",
+      "status": "DIAGNOSTIC_ONLY",
+      "freshness_status": "FRESH"
+    }
+  ]
+}

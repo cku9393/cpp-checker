@@ -1,0 +1,1 @@
+runtime_baseline_selection_summary comparability_verdict=COMPARABLE selected_baseline_id=phase34-runtime-external-approved-0f34bd33-20260404_202159 candidate_count=2 exact_match_count=1 compatible_match_count=1 retired_match_count=0 reason=active exact runtime fingerprint match

@@ -1,9 +1,0 @@
-public_status=PASS
-result_family=none
-normalized_exit_code=0
-raw_exit_code=0
-normalized_outcome=pass
-outcome_source=inner_wrapper
-source_failure_kind=
-source_failure_origin=
-source_failure_retryable=

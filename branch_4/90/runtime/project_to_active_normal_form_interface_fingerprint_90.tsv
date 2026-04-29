@@ -1,0 +1,5 @@
+metric	value
+normal_form_interface_status	project_to_active_normal_form_transfer_interface_contract_ready
+required_for_domain_transfer	yes
+required_for_status_predicate	yes
+next_action	project_to_active_normal_form_refinement

@@ -1,3 +1,0 @@
-[certify_suite] verdict=FAIL
-[certify_suite] rows=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/lca_strong_gate.run.By8zoN/certify_rows.csv
-[certify_suite] summary=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/lca_strong_gate.run.By8zoN/certify_summary.md

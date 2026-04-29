@@ -385,6 +385,12 @@ void print_usage(ostream& os) {
     os << "  --compress-artifacts\n";
     os << "  --step-budget <size_t>\n";
     os << "  --repeat <int>\n";
+    os << "  --runtime-proposal-gate <path>\n";
+    os << "  --proposal-gate-out <path>\n";
+    os << "  --min-real-samples-release <N>\n";
+    os << "  --min-real-samples-debug <N>\n";
+    os << "  --min-real-samples-asan <N>\n";
+    os << "  --min-watch-confidence LOW|MEDIUM|HIGH\n";
     os << "  --dump-on-fail\n";
     os << "  --oracle [primitive|planner|all]\n";
     os << "  --dump-trace\n";
@@ -489,16 +495,48 @@ int main(int argc, char** argv) {
                 options.runtimeWatchHistoryIndex = require_value(i, argc, argv, arg);
             } else if (arg == "--runtime-budget-config") {
                 options.runtimeBudgetConfig = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-current") {
+                options.runtimeBudgetCurrentManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-baseline-manifest") {
+                options.runtimeBudgetBaselineManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-baseline-out") {
+                options.runtimeBudgetBaselineManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-refresh") {
+                options.runtimeBudgetRefreshManifest = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-rerun") {
+                options.runtimeBudgetRerunPlan = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-registry") {
+                options.runtimeBudgetRegistry = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-proposal") {
+                options.runtimeBudgetProposal = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-budget-proposal-gate") {
+                options.runtimeBudgetProposalGate = require_value(i, argc, argv, arg);
             } else if (arg == "--execution-class") {
                 options.executionClass = require_value(i, argc, argv, arg);
             } else if (arg == "--proposal-out") {
                 options.proposalOut = require_value(i, argc, argv, arg);
             } else if (arg == "--runtime-proposal") {
                 options.proposalOut = require_value(i, argc, argv, arg);
+            } else if (arg == "--runtime-proposal-gate") {
+                options.runtimeProposalGate = require_value(i, argc, argv, arg);
+            } else if (arg == "--proposal-gate-out") {
+                options.runtimeProposalGate = require_value(i, argc, argv, arg);
             } else if (arg == "--archive-proposal") {
                 options.archiveProposal = require_value(i, argc, argv, arg);
+            } else if (arg == "--min-real-samples-release") {
+                options.minRealSamplesRelease = stoi(require_value(i, argc, argv, arg));
+            } else if (arg == "--min-real-samples-debug") {
+                options.minRealSamplesDebug = stoi(require_value(i, argc, argv, arg));
+            } else if (arg == "--min-real-samples-asan") {
+                options.minRealSamplesAsan = stoi(require_value(i, argc, argv, arg));
+            } else if (arg == "--max-hard-breach-count") {
+                options.maxHardBreachCount = stoi(require_value(i, argc, argv, arg));
+            } else if (arg == "--min-watch-confidence") {
+                options.minWatchConfidence = require_value(i, argc, argv, arg);
             } else if (arg == "--activate") {
                 options.activate = true;
+            } else if (arg == "--budget-tag") {
+                options.budgetTag = require_value(i, argc, argv, arg);
             } else if (arg == "--retire-baseline") {
                 options.retireBaseline = require_value(i, argc, argv, arg);
             } else if (arg == "--runtime-runner-tag") {
@@ -712,6 +750,9 @@ int main(int argc, char** argv) {
 
         if (options.repeat <= 0) {
             throw runtime_error("--repeat must be positive");
+        }
+        if (options.minRealSamplesRelease <= 0 || options.minRealSamplesDebug <= 0 || options.minRealSamplesAsan <= 0) {
+            throw runtime_error("--min-real-samples-* must be positive");
         }
         if (options.exactCanonicalSampleRate == 0U) {
             throw runtime_error("--exact-canonical-sample-rate must be positive");

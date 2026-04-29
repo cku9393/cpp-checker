@@ -1,6 +1,6 @@
 {
   "selection_version": "runtime_baseline_selection_v1",
-  "generated_at_utc": "2026-03-24T02:16:16Z",
+  "generated_at_utc": "2026-03-30T06:35:54Z",
   "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase25.json",
   "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v1.json",
   "candidate_count": 3,
@@ -70,5 +70,5 @@
       "match_reason": "active exact runtime fingerprint match"
     }
   ],
-  "selection_hash": "e99947a4114d305e2d585828181da17154c0e43d7d04a58519e536fb9cad8e27"
+  "selection_hash": "669282e46da911e49e1fd3b39d3460c70cb9ac8ddac2bffca946338ae4dba92a"
 }

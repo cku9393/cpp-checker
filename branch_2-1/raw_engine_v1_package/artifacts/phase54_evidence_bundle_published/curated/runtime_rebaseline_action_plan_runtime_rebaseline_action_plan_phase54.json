@@ -1,0 +1,32 @@
+{
+  "manifest_version": "runtime_rebaseline_action_plan_v1",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T08:14:26Z",
+  "runtime_comparability_triage_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_comparability_triage_phase54.json",
+  "runtime_comparability_triage_hash": "693d7bc14f1c12566ec72cdb0c8795af059f0942bd831227d444dd74a653298d",
+  "runtime_current_manifest_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+  "runtime_current_manifest_hash": "a55d570540f46d8f709b082f857cc059c6236ca72ab4962e6059d40f9184ef5d",
+  "runtime_baseline_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+  "runtime_baseline_registry_hash": "8e4361d36a1453686bae976837126c2054e8a47d370cc6d4ac840842c888cfe9",
+  "runtime_history_index_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+  "runtime_history_fingerprint_count": 3,
+  "runtime_watch_registry_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_registry_v1.json",
+  "action_plan_verdict": "PROPOSE_CURRENT_ENV_REBASELINE",
+  "proposal_gate_verdict": "APPROVABLE",
+  "proposal_confidence": "HIGH",
+  "required_samples": 3,
+  "available_samples": 43,
+  "hard_breach_count": 0,
+  "recommended_operator_command": "./raw_engine_tests --case runtime_approve_rebaseline --runtime-current-manifest /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json --runtime-baseline-registry /Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json --approval-mode handoff_only",
+  "approval_mode": "handoff_only",
+  "rationale": [
+    "same host/compiler-family runtime lineage exists, but the current fingerprint is not strict-comparable",
+    "baseline selector preferred a foreign/externally approved compatible candidate; keep this as a runtime operator action",
+    "same host runtime baseline candidate differs by compiler version",
+    "watch registry current_env_status=REBASELINE_REQUIRED",
+    "runtime comparability is an operator lane signal and does not change correctness PASS/FRESH state",
+    "runtime action is approval-ready but remains handoff_only; registry switch is not automatic",
+    "correctness PASS/FRESH is unaffected; this plan only covers runtime/operator state"
+  ],
+  "action_plan_hash": "20534c6b1e0613892ae429340fb3104480d6ed9ac333f572f21f052a0365e7ed"
+}

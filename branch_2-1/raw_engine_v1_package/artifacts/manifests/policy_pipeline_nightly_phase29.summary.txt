@@ -1,0 +1,8 @@
+phase=phase29
+mode=nightly
+severity=WARN
+exit_code=10
+current_verdict=PASS
+freshness_verdict=FRESH
+runtime_watch_status=WATCH_STABLE
+recommended_next_action=CONTINUE_MONITORING

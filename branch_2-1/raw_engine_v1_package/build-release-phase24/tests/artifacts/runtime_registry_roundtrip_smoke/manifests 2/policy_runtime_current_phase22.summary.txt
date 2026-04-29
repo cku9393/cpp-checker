@@ -1,1 +1,0 @@
-runtime_manifest_summary role=current overall_status=OK overall_budget_verdict=PASS entry_count=6 warn_count=0 fail_count=0

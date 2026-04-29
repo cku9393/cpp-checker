@@ -1,0 +1,12 @@
+proposal_gate_version=runtime_proposal_gate_v1
+proposal_confidence=HIGH
+proposal_gate_verdict=APPROVABLE
+selected_baseline_id=phase30-runtime-approved-c89a575d-20260331_041735
+selected_baseline_tag=phase30-runtime-approved
+runtime_proposal_gate_entry=execution_class=asan_full sample_count=6 real_sample_count=6 watch_status=REBASELINE_REQUIRED watch_confidence=HIGH
+runtime_proposal_gate_entry=execution_class=debug_full sample_count=6 real_sample_count=6 watch_status=REBASELINE_REQUIRED watch_confidence=HIGH
+runtime_proposal_gate_entry=execution_class=release_full sample_count=6 real_sample_count=6 watch_status=REBASELINE_REQUIRED watch_confidence=HIGH
+rationale=same-fingerprint real evidence satisfies the configured proposal gate
+rationale=asan_full: repeated same-fingerprint real evidence is available and the runtime is ready for a new fingerprint-specific baseline approval
+rationale=debug_full: repeated same-fingerprint real evidence is available and the runtime is ready for a new fingerprint-specific baseline approval
+rationale=release_full: repeated same-fingerprint real evidence is available and the runtime is ready for a new fingerprint-specific baseline approval

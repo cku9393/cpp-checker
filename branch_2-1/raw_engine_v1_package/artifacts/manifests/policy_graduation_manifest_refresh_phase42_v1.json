@@ -11,14 +11,14 @@
 "build_tag":"build-release-phase20",
 "timestamp_utc":"2026-03-20T05:12:49Z",
 "artifact_root":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
-"baseline_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_phase30_approved_v1.txt",
-"baseline_manifest_hash":"aa137797efeaa6c1",
+"baseline_manifest_path":"/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_gate.txt",
+"baseline_manifest_hash":"cd051de95b7b78a8",
 "current_manifest_hash":"10c4c09cc55c6ba4",
 "current_verdict":"PASS",
-"freshness_verdict":"REQUIRES_RERUN",
+"freshness_verdict":"STALE",
 "fresh_family_count":0,
-"stale_family_count":3,
-"requires_rerun_family_count":1,
+"stale_family_count":4,
+"requires_rerun_family_count":0,
 "reclassify_required_count":0,
 "revalidated_family_count":4,
 "stale_families":["split_tie_organic_symmetric","automorphism_probe_large","planner_tie_mixed_organic","planner_tie_mixed_organic_compare_ready"],
@@ -224,7 +224,7 @@
     "role":"diagnostic_support_family",
     "current_status":"DIAGNOSTIC_ONLY",
     "status":"DIAGNOSTIC_ONLY",
-    "freshness_status":"REQUIRES_RERUN",
+    "freshness_status":"STALE",
     "counts_as_production_evidence":false,
     "drift_flag":false,
     "reclassify_required":false,
@@ -282,7 +282,7 @@
       "combined_hash":"ad44b3fc9ebf28ab"
     },
     "rationale":"diagnostic compare family met bounded compare and lineage consistency, but followup preservation or structure-only enrichment did not hold; counts_as_production_evidence=false",
-    "freshness_rationale":"relevant input hashes missing"
+    "freshness_rationale":"relevant input hash changed since baseline"
   }
 ]
 }

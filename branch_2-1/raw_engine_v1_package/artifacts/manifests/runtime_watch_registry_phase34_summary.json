@@ -1,0 +1,17 @@
+{
+  "manifest_version": "runtime_watch_registry_summary_v2",
+  "generated_at_utc": "",
+  "entry_count": 36,
+  "fingerprint_count": 6,
+  "evidence_source_counts": {
+    "real": 516,
+    "fixture": 420
+  },
+  "confidence_counts": {
+    "MEDIUM": 6,
+    "LOW": 24,
+    "HIGH": 6
+  },
+  "latest_real_sample_timestamp": "2026-04-05T05:24:33Z",
+  "latest_fixture_sample_timestamp": "2026-04-05T05:27:37Z"
+}

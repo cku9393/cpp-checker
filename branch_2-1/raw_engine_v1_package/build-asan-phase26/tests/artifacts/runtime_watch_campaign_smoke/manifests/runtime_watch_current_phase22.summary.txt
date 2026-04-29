@@ -1,1 +1,0 @@
-runtime_watch_current_summary overall_watch_status=WATCH_STABLE overall_watch_recommendation=CONTINUE_MONITORING entry_count=1 watch_sample_count=5

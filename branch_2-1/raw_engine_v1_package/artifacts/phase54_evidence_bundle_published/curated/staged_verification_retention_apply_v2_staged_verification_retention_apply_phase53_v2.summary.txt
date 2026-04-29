@@ -1,0 +1,22 @@
+{
+  "manifest_version": "staged_verification_retention_apply_v2",
+  "phase": "phase53",
+  "generated_at_utc": "2026-04-24T14:46:02Z",
+  "retention_hash": "47c84f1d11ce7ba8a17d9db5c2cf6de2a3d8a2ab3e192ffd8f90e252286485d2",
+  "reference_graph_hash": "45b6bfaacaab6f18b5404136277b286d134f56052534861eb48b142dcc86d191",
+  "apply_mode": "governance_record_only",
+  "retained_count": 5,
+  "pruned_count": 0,
+  "blocked_prune_count": 1,
+  "retained_by_waiver_count": 1,
+  "retained_by_bundle_count": 1,
+  "retained_by_report_count": 1,
+  "retained_by_verification_manifest_count": 3,
+  "operator_action_required": true,
+  "apply_verdict": "PASS",
+  "rationale": [
+    "retention apply v2 records prune candidates and blocked prune reasons as operator actions",
+    "destructive pruning remains outside default stabilization execution"
+  ],
+  "apply_hash": "9b3beed32e1e74e0dc9267cc164b8b9f17682529f3e26ea647572197927a8397"
+}

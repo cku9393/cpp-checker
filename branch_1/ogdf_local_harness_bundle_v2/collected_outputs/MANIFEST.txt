@@ -1,2 +1,0 @@
-source -> copied_root
-dumps/* -> collected_outputs/dumps/*

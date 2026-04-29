@@ -1,0 +1,5 @@
+item	status	evidence	next_action
+equivalent_coordinate_status_congruence_closed	no	Refinement is proof-ready but status-domain, normal-form, and status predicate determination remain open.	canonical_compression_status_congruence_refinement
+contraction_support_gt8_escape_reduced	partially	Failure is separated into payload congruence, domain transfer, normal-form transfer, reduced-status fallback, and named escape cases.	canonical_compression_status_congruence_refinement
+higher_support_needed_now	no	No true irreducible higher-support escape is established while operation-specific proof obligations remain open.	higher_support_necessity_recheck_after_operation_refinements
+final_label	higher_support_deferred_after_contract_equivalent_congruence_domain_normal_form_open	No support9 scan was run; operation proof blockers still dominate.	canonical_compression_status_congruence_refinement

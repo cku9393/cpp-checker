@@ -15,6 +15,9 @@ Layout:
   - older bundle snapshot
 - `backups/`
   - archived checkpoints
+- `root_legacy_dumps/`
+  - root-level rewrite-r dump corpus moved under `branch_1/`
+  - preserved legacy debug dumps, not the active workspace dump target
 
 Execution model:
 
@@ -37,3 +40,5 @@ Notes:
 
 - `build.sh` defaults `HARNESS_PROJECT_USE_FREE_FUNCTION_HOOKS=ON`
 - set `BRANCH1_USE_OGDF=OFF` if you intentionally want the stub-only build
+- current active runs should still write under `ogdf_local_harness_bundle_v2/dumps/...`
+  rather than `root_legacy_dumps/`

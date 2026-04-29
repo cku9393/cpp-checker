@@ -1,0 +1,6 @@
+latest_bundle=/private/tmp/raw_engine_phase45_bundle_workspace/raw_engine_phase45_stabilization.zip
+latest_delivery_bundle=/private/tmp/raw_engine_phase45_bundle_workspace/raw_engine_phase45_stabilization_delivery.zip
+latest_curated_bundle=/private/tmp/raw_engine_phase45_bundle_workspace/raw_engine_phase45_stabilization_curated.zip
+bundle_count=0
+delivery_bundle_count=0
+curated_bundle_count=0

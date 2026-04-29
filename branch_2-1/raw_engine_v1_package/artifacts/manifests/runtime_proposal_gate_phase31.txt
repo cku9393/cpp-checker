@@ -1,0 +1,12 @@
+proposal_gate_version=runtime_proposal_gate_v1
+proposal_confidence=HIGH
+proposal_gate_verdict=APPROVABLE
+selected_baseline_id=phase25-runtime-approved-c89a575d-20260323_003527
+selected_baseline_tag=phase25-runtime-approved
+runtime_proposal_gate_entry=execution_class=asan_full sample_count=18 real_sample_count=18 watch_status=CLEAR watch_confidence=HIGH
+runtime_proposal_gate_entry=execution_class=debug_full sample_count=18 real_sample_count=18 watch_status=CLEAR watch_confidence=HIGH
+runtime_proposal_gate_entry=execution_class=release_full sample_count=18 real_sample_count=18 watch_status=WATCH_STABLE watch_confidence=HIGH
+rationale=same-fingerprint real evidence satisfies the configured proposal gate
+rationale=asan_full: repeated same-fingerprint real evidence is available with bounded jitter
+rationale=debug_full: repeated same-fingerprint real evidence is available with bounded jitter
+rationale=release_full: repeated same-fingerprint real evidence is available with bounded jitter

@@ -1,2 +1,0 @@
-stage,mode,n,seed,shuffle_labels,shuffle_queries,gen_ok,solver_rc,timed_out,val_ok,sec,rss_kb,case_dir
-hard_scaling_probe,comb_dense,4096,1,1,1,1,-9,1,0,,,/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_3/artifacts/lca_tree_stress_v5/diag/ac3_gate_probe/progress40_chain_comb_dense_n4096_seed1_L1_Q1/runs/hard_scaling_probe/comb_dense/n4096/seed1_L1_Q1

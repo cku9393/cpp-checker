@@ -1,8 +1,0 @@
-manifest_version=source_health_preflight_v1
-phase=phase48
-status=ATTENTION_REQUIRED
-recommendation=SPARSE_CLONE_REQUIRED
-dataless_placeholder_count=3
-unreadable_source_file_count=0
-staged_materialization_mode=staged_sparse_clone_overlay
-materialization_verdict=PASS

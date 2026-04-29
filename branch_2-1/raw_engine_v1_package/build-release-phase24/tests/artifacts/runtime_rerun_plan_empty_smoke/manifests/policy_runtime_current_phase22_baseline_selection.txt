@@ -1,6 +1,0 @@
-selection_version=runtime_baseline_selection_v1
-comparability_verdict=COMPARABLE
-selected_baseline_id=phase22-runtime-approved-7fbf1adc-20260322_104713
-selected_baseline_tag=phase22-runtime-approved
-candidate_count=1
-comparability_reason=active exact runtime fingerprint match

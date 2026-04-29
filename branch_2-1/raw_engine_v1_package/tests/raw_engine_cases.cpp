@@ -726,6 +726,35 @@ void run_staged_verification_retention_smoke_case(const TestOptions& options);
 void run_operator_artifact_path_policy_lint_v2_smoke_case(const TestOptions& options);
 void run_policy_ops_summary_v18_smoke_case(const TestOptions& options);
 void run_evidence_bundle_archive_governance_smoke_case(const TestOptions& options);
+void run_operator_archive_age_tick_smoke_case(const TestOptions& options);
+void run_operator_archive_waiver_due_soon_smoke_case(const TestOptions& options);
+void run_operator_archive_waiver_expired_smoke_case(const TestOptions& options);
+void run_operator_archive_snapshot_prune_candidate_smoke_case(const TestOptions& options);
+void run_operator_archive_snapshot_prune_blocked_smoke_case(const TestOptions& options);
+void run_operator_waiver_apply_review_smoke_case(const TestOptions& options);
+void run_operator_waiver_apply_expire_smoke_case(const TestOptions& options);
+void run_operator_waiver_apply_retire_smoke_case(const TestOptions& options);
+void run_operator_waiver_apply_blocked_active_smoke_case(const TestOptions& options);
+void run_staged_overlay_completeness_smoke_case(const TestOptions& options);
+void run_staged_overlay_completeness_missing_budget_json_smoke_case(const TestOptions& options);
+void run_staged_overlay_completeness_missing_policy_summary_smoke_case(const TestOptions& options);
+void run_staged_overlay_completeness_current_tools_smoke_case(const TestOptions& options);
+void run_verification_preflight_gate_v2_smoke_case(const TestOptions& options);
+void run_verification_preflight_gate_v2_missing_overlay_smoke_case(const TestOptions& options);
+void run_verification_preflight_gate_v2_sparse_allowed_smoke_case(const TestOptions& options);
+void run_verification_preflight_gate_v2_fail_smoke_case(const TestOptions& options);
+void run_staged_materialization_transaction_v2_smoke_case(const TestOptions& options);
+void run_staged_materialization_transaction_v2_overlay_count_smoke_case(const TestOptions& options);
+void run_published_snapshot_retention_apply_v2_smoke_case(const TestOptions& options);
+void run_staged_verification_retention_apply_v2_smoke_case(const TestOptions& options);
+void run_published_snapshot_retention_blocked_by_waiver_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_v19_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_archive_queue_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_overlay_completeness_smoke_case(const TestOptions& options);
+void run_policy_ops_summary_preflight_v2_smoke_case(const TestOptions& options);
+void run_evidence_bundle_archive_timeline_smoke_case(const TestOptions& options);
+void run_light_ops_bundle_archive_timeline_smoke_case(const TestOptions& options);
+void run_bundle_metadata_preflight_v2_smoke_case(const TestOptions& options);
 void run_runtime_budget_history_append_smoke_case(const TestOptions& options);
 void run_runtime_watch_campaign_release_repeat10_smoke_case(const TestOptions& options);
 void run_combined_pipeline_after_budget_reprofile_quick_smoke_case(const TestOptions& options);
@@ -14303,9 +14332,18 @@ struct RuntimeBudgetLifecycleSmokeArtifacts {
     filesystem::path operatorArchiveRetentionApplyJson;
     filesystem::path operatorWaiverRegistryJson;
     filesystem::path operatorWaiverReviewJson;
+    filesystem::path operatorArchiveAgeTickJson;
+    filesystem::path operatorArchiveReviewQueueJson;
+    filesystem::path operatorWaiverApplyJson;
+    filesystem::path operatorWaiverApplyArchiveJson;
+    filesystem::path stagedOverlayCompletenessJson;
+    filesystem::path overlayPolicyJson;
+    filesystem::path verificationPreflightGateV2Json;
     filesystem::path verificationPreflightGateJson;
     filesystem::path stagedVerificationRetentionJson;
+    filesystem::path stagedVerificationRetentionApplyV2Json;
     filesystem::path publishedSnapshotRetentionJson;
+    filesystem::path publishedSnapshotRetentionApplyV2Json;
     filesystem::path publishedSnapshotRetentionApplyJson;
     filesystem::path integratedApprovalMutationAuditJson;
     filesystem::path sourceHealthPreflightJson;
@@ -14322,6 +14360,13 @@ struct RuntimeBudgetLifecycleSmokeArtifacts {
     filesystem::path currentEnvNextCycleOverdueJson;
     filesystem::path runtimeBudgetReproposalHistoryJson;
     filesystem::path runtimeBudgetRegistrySummaryJson;
+    filesystem::path runtimeComparabilityTriageJson;
+    filesystem::path runtimeRebaselineActionPlanJson;
+    filesystem::path runtimeRebaselineActionProposalJson;
+    filesystem::path runtimeRebaselineActionProposalGateJson;
+    filesystem::path runtimeRebaselineRunbookJson;
+    filesystem::path runtimeRegistrySelectionSanityJson;
+    filesystem::path runtimeRegistrySelectionRepairPlanJson;
 };
 
 void approve_runtime_budget_smoke_artifacts(
@@ -14462,9 +14507,18 @@ void configure_current_env_guardrail_artifacts_for_phase(
     artifacts.operatorArchiveRetentionApplyJson = artifacts.paths.root / "manifests" / ("operator_archive_retention_apply_" + phase + ".json");
     artifacts.operatorWaiverRegistryJson = artifacts.paths.root / "manifests" / ("operator_waiver_registry_" + phase + ".json");
     artifacts.operatorWaiverReviewJson = artifacts.paths.root / "manifests" / ("operator_waiver_review_" + phase + ".json");
+    artifacts.operatorArchiveAgeTickJson = artifacts.paths.root / "manifests" / ("operator_archive_age_tick_" + phase + ".json");
+    artifacts.operatorArchiveReviewQueueJson = artifacts.paths.root / "manifests" / ("operator_archive_review_queue_" + phase + ".json");
+    artifacts.operatorWaiverApplyJson = artifacts.paths.root / "manifests" / ("operator_waiver_apply_" + phase + ".json");
+    artifacts.operatorWaiverApplyArchiveJson = artifacts.paths.root / "manifests" / ("operator_waiver_apply_archive_" + phase + ".json");
+    artifacts.stagedOverlayCompletenessJson = artifacts.paths.root / "manifests" / ("staged_overlay_completeness_" + phase + ".json");
+    artifacts.overlayPolicyJson = artifacts.paths.root / "manifests" / ("staged_overlay_policy_" + phase + ".json");
+    artifacts.verificationPreflightGateV2Json = artifacts.paths.root / "manifests" / ("verification_preflight_gate_" + phase + "_v2.json");
     artifacts.verificationPreflightGateJson = artifacts.paths.root / "manifests" / ("verification_preflight_gate_" + phase + ".json");
     artifacts.stagedVerificationRetentionJson = artifacts.paths.root / "manifests" / ("staged_verification_retention_" + phase + ".json");
+    artifacts.stagedVerificationRetentionApplyV2Json = artifacts.paths.root / "manifests" / ("staged_verification_retention_apply_" + phase + "_v2.json");
     artifacts.publishedSnapshotRetentionJson = artifacts.paths.root / "manifests" / ("published_snapshot_retention_" + phase + ".json");
+    artifacts.publishedSnapshotRetentionApplyV2Json = artifacts.paths.root / "manifests" / ("published_snapshot_retention_apply_" + phase + "_v2.json");
     artifacts.publishedSnapshotRetentionApplyJson = artifacts.paths.root / "manifests" / ("published_snapshot_retention_apply_" + phase + ".json");
     artifacts.integratedApprovalMutationAuditJson = artifacts.paths.root / "manifests" / ("integrated_approval_mutation_audit_" + phase + ".json");
     artifacts.sourceHealthPreflightJson = artifacts.paths.root / "manifests" / ("source_health_preflight_" + phase + ".json");
@@ -14481,6 +14535,13 @@ void configure_current_env_guardrail_artifacts_for_phase(
     artifacts.currentEnvNextCycleOverdueJson = artifacts.paths.root / "manifests" / ("runtime_current_env_next_cycle_overdue_" + phase + ".json");
     artifacts.runtimeBudgetReproposalHistoryJson = artifacts.paths.root / "manifests" / ("runtime_budget_reproposal_history_" + phase + ".json");
     artifacts.runtimeBudgetRegistrySummaryJson = artifacts.paths.root / "manifests" / ("runtime_budget_registry_" + phase + "_summary.json");
+    artifacts.runtimeComparabilityTriageJson = artifacts.paths.root / "manifests" / ("runtime_comparability_triage_" + phase + ".json");
+    artifacts.runtimeRebaselineActionPlanJson = artifacts.paths.root / "manifests" / ("runtime_rebaseline_action_plan_" + phase + ".json");
+    artifacts.runtimeRebaselineActionProposalJson = artifacts.paths.root / "manifests" / ("runtime_rebaseline_action_proposal_" + phase + ".json");
+    artifacts.runtimeRebaselineActionProposalGateJson = artifacts.paths.root / "manifests" / ("runtime_rebaseline_action_proposal_gate_" + phase + ".json");
+    artifacts.runtimeRebaselineRunbookJson = artifacts.paths.root / "manifests" / ("runtime_rebaseline_runbook_" + phase + ".json");
+    artifacts.runtimeRegistrySelectionSanityJson = artifacts.paths.root / "manifests" / ("runtime_registry_selection_sanity_" + phase + ".json");
+    artifacts.runtimeRegistrySelectionRepairPlanJson = artifacts.paths.root / "manifests" / ("runtime_registry_selection_repair_plan_" + phase + ".json");
 }
 
 void pin_runtime_budget_approval_timestamp_or_throw(
@@ -21778,9 +21839,40 @@ void build_source_health_plan_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& art
 
 void inject_phase51_private_tmp_pointer_debt_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
     const string privateTmpRoot = "/private/tmp/raw_engine_phase48_publish/evidence_bundle_runbook_index_smoke";
-    replace_all_in_file_if_needed_or_throw(artifacts.operatorRunbookCatalogJson, artifacts.paths.root.string(), privateTmpRoot);
-    replace_all_in_file_if_needed_or_throw(artifacts.currentEnvActionLedgerApprovalLinkedJson, artifacts.paths.root.string(), privateTmpRoot);
-    replace_all_in_file_if_needed_or_throw(artifacts.currentEnvActionLedgerJson, artifacts.paths.root.string(), privateTmpRoot);
+    const vector<string> rootNeedles{
+        artifacts.paths.root.string(),
+        filesystem::absolute(artifacts.paths.root).lexically_normal().string(),
+        filesystem::weakly_canonical(artifacts.paths.root).string(),
+    };
+    auto replaceAnyRoot = [&](const filesystem::path& path) {
+        string text = slurp_text_file(path);
+        size_t replacements = 0U;
+        for (const string& needle : rootNeedles) {
+            if (needle.empty() || needle == privateTmpRoot) {
+                continue;
+            }
+            size_t pos = 0U;
+            while ((pos = text.find(needle, pos)) != string::npos) {
+                text.replace(pos, needle.size(), privateTmpRoot);
+                pos += privateTmpRoot.size();
+                ++replacements;
+            }
+        }
+        if (replacements == 0U) {
+            if (text.find(privateTmpRoot) != string::npos) {
+                return;
+            }
+            throw runtime_error("inject_phase51_private_tmp_pointer_debt_or_throw missing root token in " + path.string());
+        }
+        ofstream ofs(path);
+        if (!ofs) {
+            throw runtime_error("failed to rewrite file: " + path.string());
+        }
+        ofs << text;
+    };
+    replaceAnyRoot(artifacts.operatorRunbookCatalogJson);
+    replaceAnyRoot(artifacts.currentEnvActionLedgerApprovalLinkedJson);
+    replaceAnyRoot(artifacts.currentEnvActionLedgerJson);
 }
 
 void build_operator_runbook_lifecycle_validation_to_or_throw(
@@ -22669,6 +22761,845 @@ void run_evidence_bundle_archive_governance_smoke_case(const TestOptions& option
     require_test(metadata.find("\"operator_archive_reference_graph_summary\"") != string::npos, "archive governance bundle expected reference graph metadata");
     require_test(metadata.find("\"operator_waiver_review_summary\"") != string::npos, "archive governance bundle expected waiver review metadata");
     require_test(metadata.find("\"verification_preflight_gate_summary\"") != string::npos, "archive governance bundle expected preflight gate metadata");
+}
+
+void configure_phase53_new_artifact_paths(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    artifacts.operatorArchiveAgeTickJson = artifacts.paths.root / "manifests" / "operator_archive_age_tick_phase53.json";
+    artifacts.operatorArchiveReviewQueueJson = artifacts.paths.root / "manifests" / "operator_archive_review_queue_phase53.json";
+    artifacts.operatorWaiverApplyJson = artifacts.paths.root / "manifests" / "operator_waiver_apply_phase53.json";
+    artifacts.operatorWaiverApplyArchiveJson = artifacts.paths.root / "manifests" / "operator_waiver_apply_archive_phase53.json";
+    artifacts.stagedOverlayCompletenessJson = artifacts.paths.root / "manifests" / "staged_overlay_completeness_phase53.json";
+    artifacts.overlayPolicyJson = artifacts.paths.root / "manifests" / "staged_overlay_policy_phase53.json";
+    artifacts.verificationPreflightGateV2Json = artifacts.paths.root / "manifests" / "verification_preflight_gate_phase53_v2.json";
+    artifacts.stagedVerificationRetentionApplyV2Json = artifacts.paths.root / "manifests" / "staged_verification_retention_apply_phase53_v2.json";
+    artifacts.publishedSnapshotRetentionApplyV2Json = artifacts.paths.root / "manifests" / "published_snapshot_retention_apply_phase53_v2.json";
+    artifacts.stagedMaterializationTransactionJson = artifacts.paths.root / "manifests" / "staged_materialization_transaction_phase53.json";
+    artifacts.sourceHealthPreflightJson = artifacts.paths.root / "manifests" / "source_health_preflight_phase53.json";
+    artifacts.sourceHealthPreflightSummaryTxt = artifacts.paths.root / "manifests" / "source_health_preflight_phase53.summary.txt";
+    artifacts.sourceHealthActionPlanJson = artifacts.paths.root / "manifests" / "source_health_action_plan_phase53.json";
+    artifacts.stagedMaterializationJson = artifacts.paths.root / "manifests" / "staged_materialization_phase53.json";
+}
+
+void write_phase53_overlay_fixture_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    filesystem::create_directories(artifacts.paths.root / "tests" / "tools");
+    filesystem::create_directories(artifacts.paths.root / "tests" / "campaigns");
+    filesystem::create_directories(artifacts.paths.root / "artifacts" / "phase22_applicability" / "logs");
+    filesystem::create_directories(artifacts.paths.root / "artifacts" / "phase17_lineage" / "logs");
+    filesystem::create_directories(artifacts.paths.root / "artifacts" / "manifests");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "runtime_budget_phase29.json", "{\"budget\":\"phase53-smoke\"}\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "tools" / "run_policy_pipeline.py", "# phase53 overlay fixture\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "tools" / "build_evidence_bundle.py", "# phase53 overlay fixture\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "tools" / "source_health_preflight.py", "# phase53 overlay fixture\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "test_harness.hpp", "// phase53 overlay fixture\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "CMakeLists.txt", "# phase53 overlay fixture\n");
+    write_text_file_or_throw(artifacts.paths.root / "tests" / "campaigns" / "phase16_split_tie_organic_compare.txt", "phase53 campaign fixture\n");
+    write_text_file_or_throw(artifacts.paths.root / "artifacts" / "phase22_applicability" / "logs" / "summary.txt", "phase22 historical policy summary\n");
+    write_text_file_or_throw(artifacts.paths.root / "artifacts" / "phase17_lineage" / "logs" / "summary.txt", "phase17 historical policy summary\n");
+    for (const string& name : {
+             "operator_archive_reference_graph_phase52.json",
+             "operator_archive_retention_policy_phase52.json",
+             "operator_waiver_review_phase52.json",
+             "verification_preflight_gate_phase52.json",
+         }) {
+        const filesystem::path from = artifacts.paths.root / "manifests" / name;
+        const filesystem::path to = artifacts.paths.root / "artifacts" / "manifests" / name;
+        if (filesystem::exists(from)) {
+            filesystem::copy_file(from, to, filesystem::copy_options::overwrite_existing);
+        }
+    }
+}
+
+void build_phase53_archive_age_tick_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, double advanceDays = 0.0) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-archive-age-tick",
+            {
+                "--phase phase53",
+                "--reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()),
+                "--waiver-registry " + shell_quote(artifacts.operatorWaiverRegistryJson.string()),
+                "--retention-policy " + shell_quote(artifacts.operatorArchiveRetentionPolicyJson.string()),
+                "--current-time-override 2026-04-23T09:15:10Z",
+                "--advance-days " + to_string(advanceDays),
+                "--age-tick-out " + shell_quote(artifacts.operatorArchiveAgeTickJson.string()),
+            }
+        ) == 0,
+        "phase53 archive age tick expected generation"
+    );
+}
+
+void build_phase53_archive_review_queue_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-archive-review-queue",
+            {
+                "--phase phase53",
+                "--age-tick " + shell_quote(artifacts.operatorArchiveAgeTickJson.string()),
+                "--review-queue-out " + shell_quote(artifacts.operatorArchiveReviewQueueJson.string()),
+            }
+        ) == 0,
+        "phase53 archive review queue expected generation"
+    );
+}
+
+void build_phase53_waiver_apply_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const vector<string>& extraArgs = {}) {
+    vector<string> args{
+        "--phase phase53",
+        "--waiver-registry " + shell_quote(artifacts.operatorWaiverRegistryJson.string()),
+        "--waiver-review " + shell_quote(artifacts.operatorWaiverReviewJson.string()),
+        "--reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()),
+        "--apply-out " + shell_quote(artifacts.operatorWaiverApplyJson.string()),
+        "--archive-out " + shell_quote(artifacts.operatorWaiverApplyArchiveJson.string()),
+    };
+    args.insert(args.end(), extraArgs.begin(), extraArgs.end());
+    require_test(run_runtime_watch_ops_script("operator-waiver-apply-review", args) == 0, "phase53 waiver apply expected generation");
+}
+
+void build_phase53_overlay_completeness_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "staged-overlay-completeness-manifest",
+            {
+                "--phase phase53",
+                "--source-root " + shell_quote(artifacts.paths.root.string()),
+                "--snapshot-manifest " + shell_quote((artifacts.paths.root / "manifests" / "source_snapshot_manifest_phase52.json").string()),
+                "--overlay-policy " + shell_quote(artifacts.overlayPolicyJson.string()),
+                "--out " + shell_quote(artifacts.stagedOverlayCompletenessJson.string()),
+            }
+        ) == 0,
+        "phase53 staged overlay completeness expected generation"
+    );
+}
+
+void build_phase53_preflight_v2_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "verification-preflight-gate-v2",
+            {
+                "--phase phase53",
+                "--source-health " + shell_quote(artifacts.sourceHealthPreflightJson.string()),
+                "--overlay-completeness " + shell_quote(artifacts.stagedOverlayCompletenessJson.string()),
+                "--preflight-gate-out " + shell_quote(artifacts.verificationPreflightGateV2Json.string()),
+            }
+        ) == 0,
+        "phase53 verification preflight v2 expected generation"
+    );
+}
+
+void build_phase53_materialization_transaction_v2_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "staged-materialization-transaction",
+            {
+                "--phase phase53",
+                "--source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()),
+                "--staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()),
+                "--overlay-completeness " + shell_quote(artifacts.stagedOverlayCompletenessJson.string()),
+                "--reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()),
+                "--transaction-out " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()),
+                "--cleanup-path " + shell_quote((artifacts.paths.root / "staged_cleanup_fixture").string()),
+                "--published-root-sync-intent sync_after_verification_pass",
+            }
+        ) == 0,
+        "phase53 staged materialization transaction v2 expected generation"
+    );
+}
+
+void build_phase53_retention_apply_v2_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_watch_ops_script(
+            "published-snapshot-retention-apply-v2",
+            {
+                "--phase phase53",
+                "--retention-plan " + shell_quote(artifacts.publishedSnapshotRetentionJson.string()),
+                "--reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()),
+                "--apply-out " + shell_quote(artifacts.publishedSnapshotRetentionApplyV2Json.string()),
+            }
+        ) == 0,
+        "phase53 published snapshot retention apply v2 expected generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "staged-verification-retention-apply-v2",
+            {
+                "--phase phase53",
+                "--retention-plan " + shell_quote(artifacts.stagedVerificationRetentionJson.string()),
+                "--reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()),
+                "--apply-out " + shell_quote(artifacts.stagedVerificationRetentionApplyV2Json.string()),
+            }
+        ) == 0,
+        "phase53 staged verification retention apply v2 expected generation"
+    );
+}
+
+void prepare_phase53_archive_timeline_context_or_throw(const TestOptions& options, RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    write_phase53_overlay_fixture_or_throw(artifacts);
+    build_source_health_preflight_or_throw(artifacts, 3, true, "phase53");
+    build_phase53_archive_age_tick_or_throw(artifacts, 340.0);
+    build_phase53_archive_review_queue_or_throw(artifacts);
+    build_phase53_waiver_apply_or_throw(artifacts);
+    build_phase53_overlay_completeness_or_throw(artifacts);
+    build_phase53_preflight_v2_or_throw(artifacts);
+    build_phase53_materialization_transaction_v2_or_throw(artifacts);
+    build_phase53_retention_apply_v2_or_throw(artifacts);
+}
+
+void build_phase53_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    const string command =
+        shell_quote("/usr/bin/python3") + " " + shell_quote(policy_tools_script_path("runtime_watch_ops.py").string()) +
+        " ops-summary --phase phase53" +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --current-env-action-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()) +
+        " --operator-runbook-catalog " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()) +
+        " --operator-runbook-retention-policy " + shell_quote(artifacts.operatorRunbookRetentionPolicyJson.string()) +
+        " --operator-runbook-pruned-catalog " + shell_quote(artifacts.operatorRunbookPrunedCatalogJson.string()) +
+        " --operator-runbook-archive " + shell_quote(artifacts.operatorRunbookArchiveJson.string()) +
+        " --operator-runbook-prune-summary " + shell_quote(artifacts.operatorRunbookPruneSummaryJson.string()) +
+        " --operator-runbook-lifecycle-validation " + shell_quote(artifacts.operatorRunbookLifecycleValidationJson.string()) +
+        " --operator-runbook-pointer-audit " + shell_quote(artifacts.operatorRunbookPointerAuditJson.string()) +
+        " --operator-runbook-provenance-migration " + shell_quote(artifacts.operatorRunbookProvenanceMigrationJson.string()) +
+        " --operator-runbook-migrated-catalog " + shell_quote(artifacts.operatorRunbookMigratedCatalogJson.string()) +
+        " --operator-runbook-migrated-ledger " + shell_quote(artifacts.operatorRunbookMigratedLedgerJson.string()) +
+        " --operator-artifact-path-policy-lint " + shell_quote(artifacts.operatorArtifactPathPolicyLintJson.string()) +
+        " --operator-archive-reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()) +
+        " --operator-archive-retention-policy " + shell_quote(artifacts.operatorArchiveRetentionPolicyJson.string()) +
+        " --operator-archive-retention-plan " + shell_quote(artifacts.operatorArchiveRetentionPlanJson.string()) +
+        " --operator-archive-retention-apply " + shell_quote(artifacts.operatorArchiveRetentionApplyJson.string()) +
+        " --operator-waiver-registry " + shell_quote(artifacts.operatorWaiverRegistryJson.string()) +
+        " --operator-waiver-review " + shell_quote(artifacts.operatorWaiverReviewJson.string()) +
+        " --operator-archive-age-tick " + shell_quote(artifacts.operatorArchiveAgeTickJson.string()) +
+        " --operator-archive-review-queue " + shell_quote(artifacts.operatorArchiveReviewQueueJson.string()) +
+        " --operator-waiver-apply " + shell_quote(artifacts.operatorWaiverApplyJson.string()) +
+        " --staged-overlay-completeness " + shell_quote(artifacts.stagedOverlayCompletenessJson.string()) +
+        " --verification-preflight-gate-v2 " + shell_quote(artifacts.verificationPreflightGateV2Json.string()) +
+        " --verification-preflight-gate " + shell_quote(artifacts.verificationPreflightGateJson.string()) +
+        " --staged-verification-retention " + shell_quote(artifacts.stagedVerificationRetentionJson.string()) +
+        " --staged-verification-retention-apply-v2 " + shell_quote(artifacts.stagedVerificationRetentionApplyV2Json.string()) +
+        " --published-snapshot-retention " + shell_quote(artifacts.publishedSnapshotRetentionJson.string()) +
+        " --published-snapshot-retention-apply-v2 " + shell_quote(artifacts.publishedSnapshotRetentionApplyV2Json.string()) +
+        " --published-snapshot-retention-apply " + shell_quote(artifacts.publishedSnapshotRetentionApplyJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --source-health-action-plan " + shell_quote(artifacts.sourceHealthActionPlanJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --staged-materialization-transaction " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()) +
+        " --out " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --out-text " + shell_quote(artifacts.paths.opsSummaryTxt.string());
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "phase53 ops summary v19 expected generation");
+}
+
+void run_operator_archive_age_tick_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_archive_age_tick_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string tick = slurp_text_file(artifacts.operatorArchiveAgeTickJson);
+    require_test(tick.find("\"manifest_version\": \"operator_archive_age_tick_v1\"") != string::npos, "archive age tick smoke expected manifest");
+    require_test(tick.find("\"waiver_review_required_count\"") != string::npos, "archive age tick smoke expected review count");
+}
+
+void run_operator_archive_waiver_due_soon_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_archive_waiver_due_soon_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    build_phase53_archive_age_tick_or_throw(artifacts, 320.0);
+    const string tick = slurp_text_file(artifacts.operatorArchiveAgeTickJson);
+    require_test(tick.find("\"waiver_due_soon_count\": 1") != string::npos, "waiver due soon smoke expected due soon count");
+}
+
+void run_operator_archive_waiver_expired_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_archive_waiver_expired_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    build_phase53_archive_age_tick_or_throw(artifacts, 370.0);
+    const string tick = slurp_text_file(artifacts.operatorArchiveAgeTickJson);
+    require_test(tick.find("\"waiver_expired_count\": 1") != string::npos, "waiver expired smoke expected expired count");
+}
+
+void run_operator_archive_snapshot_prune_candidate_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_archive_snapshot_prune_candidate_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    const filesystem::path policy = artifacts.paths.root / "manifests" / "candidate_retention_policy.json";
+    write_text_file_or_throw(policy, "{\"archive_prune_after_days\": 1, \"prune_only_if_reference_graph_safe\": false, \"keep_bundle_if_referenced_by_waiver\": false}\n");
+    const filesystem::path graph = artifacts.paths.root / "manifests" / "candidate_reference_graph.json";
+    write_text_file_or_throw(
+        graph,
+        "{\n\"manifest_version\":\"operator_archive_reference_graph_v1\",\n\"generated_at_utc\":\"2026-04-20T00:00:00Z\",\n\"waiver_node_count\":0,\n\"nodes\":[{\"node_id\":\"snapshot:candidate\",\"node_type\":\"published_snapshot\",\"generated_at_utc\":\"2026-04-20T00:00:00Z\"}],\n\"edges\":[],\n\"graph_hash\":\"candidate\"\n}\n"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-archive-age-tick",
+            {
+                "--phase phase53",
+                "--reference-graph " + shell_quote(graph.string()),
+                "--waiver-registry " + shell_quote(artifacts.operatorWaiverRegistryJson.string()),
+                "--retention-policy " + shell_quote(policy.string()),
+                "--current-time-override 2026-04-23T00:00:00Z",
+                "--age-tick-out " + shell_quote(artifacts.operatorArchiveAgeTickJson.string()),
+            }
+        ) == 0,
+        "snapshot prune candidate smoke expected age tick generation"
+    );
+    const string tick = slurp_text_file(artifacts.operatorArchiveAgeTickJson);
+    require_test(tick.find("SNAPSHOT_PRUNE_CANDIDATE") != string::npos, "snapshot prune candidate smoke expected candidate state");
+}
+
+void run_operator_archive_snapshot_prune_blocked_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_archive_snapshot_prune_blocked_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    const filesystem::path policy = artifacts.paths.root / "manifests" / "blocked_retention_policy.json";
+    write_text_file_or_throw(policy, "{\"archive_prune_after_days\": 1, \"prune_only_if_reference_graph_safe\": true}\n");
+    build_phase53_archive_age_tick_or_throw(artifacts, 800.0);
+    const string tick = slurp_text_file(artifacts.operatorArchiveAgeTickJson);
+    require_test(tick.find("SNAPSHOT_PRUNE_BLOCKED") != string::npos, "snapshot prune blocked smoke expected blocked state");
+}
+
+void run_operator_waiver_apply_review_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_waiver_apply_review_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string apply = slurp_text_file(artifacts.operatorWaiverApplyJson);
+    require_test(apply.find("\"manifest_version\": \"operator_waiver_apply_review_v1\"") != string::npos, "waiver apply smoke expected manifest");
+    require_test(apply.find("\"freshened_waiver_count\"") != string::npos, "waiver apply smoke expected freshened count");
+}
+
+void run_operator_waiver_apply_expire_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_waiver_apply_expire_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    require_test(
+        run_runtime_watch_ops_script(
+            "operator-waiver-review",
+            {
+                "--phase phase53",
+                "--waiver-registry " + shell_quote(artifacts.operatorWaiverRegistryJson.string()),
+                "--reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()),
+                "--current-time-override 2027-05-01T00:00:00Z",
+                "--review-out " + shell_quote(artifacts.operatorWaiverReviewJson.string()),
+            }
+        ) == 0,
+        "waiver expire smoke expected review generation"
+    );
+    build_phase53_waiver_apply_or_throw(artifacts, {"--allow-expire"});
+    const string apply = slurp_text_file(artifacts.operatorWaiverApplyJson);
+    require_test(apply.find("\"expired_waiver_count\": 1") != string::npos, "waiver expire smoke expected expired count");
+}
+
+void run_operator_waiver_apply_retire_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_waiver_apply_retire_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    replace_in_file_if_needed_or_throw(artifacts.operatorWaiverReviewJson, "\"recommended_action\": \"NO_ACTION\"", "\"recommended_action\": \"RETIRE_WAIVER\"");
+    replace_in_file_if_needed_or_throw(artifacts.operatorWaiverReviewJson, "\"review_status\": \"ACTIVE\"", "\"review_status\": \"RETIRED\"");
+    build_phase53_waiver_apply_or_throw(artifacts, {"--allow-retire"});
+    const string apply = slurp_text_file(artifacts.operatorWaiverApplyJson);
+    require_test(apply.find("\"retired_waiver_count\": 1") != string::npos, "waiver retire smoke expected retired count");
+}
+
+void run_operator_waiver_apply_blocked_active_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "operator_waiver_apply_blocked_active_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    replace_in_file_if_needed_or_throw(artifacts.operatorWaiverRegistryJson, "\"review_status\": \"ACTIVE\"", "\"pointer_scope\": \"active\", \"review_status\": \"ACTIVE\"");
+    build_phase53_waiver_apply_or_throw(artifacts);
+    const string apply = slurp_text_file(artifacts.operatorWaiverApplyJson);
+    require_test(apply.find("\"blocked_waiver_count\": 1") != string::npos, "waiver blocked active smoke expected blocked count");
+}
+
+void run_staged_overlay_completeness_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_overlay_completeness_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string overlay = slurp_text_file(artifacts.stagedOverlayCompletenessJson);
+    require_test(overlay.find("\"completeness_verdict\": \"PASS\"") != string::npos, "overlay completeness smoke expected PASS");
+}
+
+void run_staged_overlay_completeness_missing_budget_json_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_overlay_completeness_missing_budget_json_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    write_phase53_overlay_fixture_or_throw(artifacts);
+    filesystem::remove(artifacts.paths.root / "tests" / "runtime_budget_phase29.json");
+    build_phase53_overlay_completeness_or_throw(artifacts);
+    const string overlay = slurp_text_file(artifacts.stagedOverlayCompletenessJson);
+    require_test(overlay.find("\"completeness_verdict\": \"FAIL\"") != string::npos, "missing budget overlay smoke expected FAIL");
+}
+
+void run_staged_overlay_completeness_missing_policy_summary_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_overlay_completeness_missing_policy_summary_smoke");
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    write_phase53_overlay_fixture_or_throw(artifacts);
+    filesystem::remove_all(artifacts.paths.root / "artifacts" / "phase22_applicability");
+    build_phase53_overlay_completeness_or_throw(artifacts);
+    const string overlay = slurp_text_file(artifacts.stagedOverlayCompletenessJson);
+    require_test(overlay.find("\"completeness_verdict\": \"FAIL\"") != string::npos, "missing policy summary overlay smoke expected FAIL");
+}
+
+void run_staged_overlay_completeness_current_tools_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_overlay_completeness_current_tools_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string overlay = slurp_text_file(artifacts.stagedOverlayCompletenessJson);
+    require_test(overlay.find("tests/tools/run_policy_pipeline.py") != string::npos, "overlay current tools smoke expected run_policy_pipeline entry");
+    require_test(overlay.find("tests/tools/build_evidence_bundle.py") != string::npos, "overlay current tools smoke expected bundle tool entry");
+}
+
+void run_verification_preflight_gate_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "verification_preflight_gate_v2_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string gate = slurp_text_file(artifacts.verificationPreflightGateV2Json);
+    require_test(gate.find("\"manifest_version\": \"verification_preflight_gate_v2\"") != string::npos, "preflight v2 smoke expected manifest");
+    require_test(gate.find("\"staged_build_allowed\": true") != string::npos, "preflight v2 smoke expected staged allowed");
+}
+
+void run_verification_preflight_gate_v2_missing_overlay_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, options.caseName);
+    prepare_phase52_archive_governance_context_or_throw(options, artifacts);
+    configure_phase53_new_artifact_paths(artifacts);
+    write_phase53_overlay_fixture_or_throw(artifacts);
+    build_source_health_preflight_or_throw(artifacts, 3, true, "phase53");
+    filesystem::remove(artifacts.paths.root / "tests" / "runtime_budget_phase29.json");
+    build_phase53_overlay_completeness_or_throw(artifacts);
+    build_phase53_preflight_v2_or_throw(artifacts);
+    const string gate = slurp_text_file(artifacts.verificationPreflightGateV2Json);
+    require_test(gate.find("\"preflight_gate_verdict\": \"FAIL\"") != string::npos, "preflight v2 missing overlay expected FAIL");
+}
+
+void run_verification_preflight_gate_v2_sparse_allowed_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "verification_preflight_gate_v2_sparse_allowed_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string gate = slurp_text_file(artifacts.verificationPreflightGateV2Json);
+    require_test(gate.find("\"sparse_clone_required\": true") != string::npos, "preflight v2 sparse smoke expected sparse required");
+    require_test(gate.find("\"staged_build_allowed\": true") != string::npos, "preflight v2 sparse smoke expected staged allowed");
+}
+
+void run_verification_preflight_gate_v2_fail_smoke_case(const TestOptions& options) {
+    run_verification_preflight_gate_v2_missing_overlay_smoke_case(options);
+}
+
+void run_staged_materialization_transaction_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_materialization_transaction_v2_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string tx = slurp_text_file(artifacts.stagedMaterializationTransactionJson);
+    require_test(tx.find("\"manifest_version\": \"staged_materialization_transaction_v2\"") != string::npos, "transaction v2 smoke expected manifest");
+    require_test(tx.find("\"overlay_completeness_hash\"") != string::npos, "transaction v2 smoke expected overlay hash");
+}
+
+void run_staged_materialization_transaction_v2_overlay_count_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_materialization_transaction_v2_overlay_count_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string tx = slurp_text_file(artifacts.stagedMaterializationTransactionJson);
+    require_test(tx.find("\"overlay_missing_count\": 0") != string::npos, "transaction v2 overlay count smoke expected zero missing");
+    require_test(tx.find("\"retained_campaign_artifact_count\"") != string::npos, "transaction v2 overlay count smoke expected campaign count");
+}
+
+void run_published_snapshot_retention_apply_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "published_snapshot_retention_apply_v2_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string apply = slurp_text_file(artifacts.publishedSnapshotRetentionApplyV2Json);
+    require_test(apply.find("\"manifest_version\": \"published_snapshot_retention_apply_v2\"") != string::npos, "published retention apply v2 smoke expected manifest");
+    require_test(apply.find("\"retained_by_waiver_count\"") != string::npos, "published retention apply v2 smoke expected waiver count");
+}
+
+void run_staged_verification_retention_apply_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "staged_verification_retention_apply_v2_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string apply = slurp_text_file(artifacts.stagedVerificationRetentionApplyV2Json);
+    require_test(apply.find("\"manifest_version\": \"staged_verification_retention_apply_v2\"") != string::npos, "staged retention apply v2 smoke expected manifest");
+}
+
+void run_published_snapshot_retention_blocked_by_waiver_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "published_snapshot_retention_blocked_by_waiver_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    const string apply = slurp_text_file(artifacts.publishedSnapshotRetentionApplyV2Json);
+    require_test(apply.find("\"blocked_prune_count\": 1") != string::npos, "published retention blocked by waiver smoke expected blocked prune");
+}
+
+void run_policy_ops_summary_v19_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v19_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    build_phase53_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"manifest_version\": \"policy_ops_summary_v19\"") != string::npos, "ops summary v19 smoke expected v19 manifest");
+}
+
+void run_policy_ops_summary_archive_queue_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_archive_queue_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    build_phase53_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"operator_archive_review_queue\"") != string::npos, "ops summary archive queue smoke expected queue section");
+}
+
+void run_policy_ops_summary_overlay_completeness_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_overlay_completeness_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    build_phase53_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"staged_overlay_completeness\"") != string::npos, "ops summary overlay smoke expected overlay section");
+}
+
+void run_policy_ops_summary_preflight_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_preflight_v2_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    build_phase53_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"verification_preflight_gate_v2\"") != string::npos, "ops summary preflight v2 smoke expected section");
+}
+
+void build_phase53_evidence_bundle_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& label) {
+    build_phase53_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / ("PHASE53_" + label + "_REPORT.txt");
+    const filesystem::path zipPath = artifacts.paths.root / ("raw_engine_phase53_" + label + ".zip");
+    const filesystem::path curatedZipPath = artifacts.paths.root / ("raw_engine_phase53_" + label + "_curated.zip");
+    const filesystem::path lightZipPath = artifacts.paths.root / ("raw_engine_phase53_" + label + "_light.zip");
+    write_smoke_report_file(reportPath, "phase53 evidence bundle archive timeline smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase53" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --operator-archive-reference-graph " + shell_quote(artifacts.operatorArchiveReferenceGraphJson.string()) +
+        " --operator-archive-retention-policy " + shell_quote(artifacts.operatorArchiveRetentionPolicyJson.string()) +
+        " --operator-archive-retention-plan " + shell_quote(artifacts.operatorArchiveRetentionPlanJson.string()) +
+        " --operator-archive-retention-apply " + shell_quote(artifacts.operatorArchiveRetentionApplyJson.string()) +
+        " --operator-waiver-registry " + shell_quote(artifacts.operatorWaiverRegistryJson.string()) +
+        " --operator-waiver-review " + shell_quote(artifacts.operatorWaiverReviewJson.string()) +
+        " --operator-waiver-apply " + shell_quote(artifacts.operatorWaiverApplyJson.string()) +
+        " --operator-archive-age-tick " + shell_quote(artifacts.operatorArchiveAgeTickJson.string()) +
+        " --operator-archive-review-queue " + shell_quote(artifacts.operatorArchiveReviewQueueJson.string()) +
+        " --operator-artifact-path-policy-lint " + shell_quote(artifacts.operatorArtifactPathPolicyLintJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --source-health-action-plan " + shell_quote(artifacts.sourceHealthActionPlanJson.string()) +
+        " --staged-overlay-completeness " + shell_quote(artifacts.stagedOverlayCompletenessJson.string()) +
+        " --verification-preflight-gate-v2 " + shell_quote(artifacts.verificationPreflightGateV2Json.string()) +
+        " --verification-preflight-gate " + shell_quote(artifacts.verificationPreflightGateJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --staged-materialization-transaction " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()) +
+        " --staged-verification-retention " + shell_quote(artifacts.stagedVerificationRetentionJson.string()) +
+        " --staged-verification-retention-apply-v2 " + shell_quote(artifacts.stagedVerificationRetentionApplyV2Json.string()) +
+        " --published-snapshot-retention " + shell_quote(artifacts.publishedSnapshotRetentionJson.string()) +
+        " --published-snapshot-retention-apply-v2 " + shell_quote(artifacts.publishedSnapshotRetentionApplyV2Json.string()) +
+        " --published-snapshot-retention-apply " + shell_quote(artifacts.publishedSnapshotRetentionApplyJson.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "phase53 evidence bundle expected bundle success");
+}
+
+void run_evidence_bundle_archive_timeline_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_archive_timeline_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    build_phase53_evidence_bundle_or_throw(artifacts, "archive_timeline");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase53_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"operator_archive_review_queue_summary\"") != string::npos, "archive timeline bundle expected review queue metadata");
+    require_test(metadata.find("\"staged_overlay_completeness_summary\"") != string::npos, "archive timeline bundle expected overlay metadata");
+}
+
+void run_light_ops_bundle_archive_timeline_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "light_ops_bundle_archive_timeline_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    build_phase53_evidence_bundle_or_throw(artifacts, "archive_timeline_light_ops");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase53_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"light_ops_zip_hash\"") != string::npos, "light ops archive timeline smoke expected light zip hash");
+}
+
+void run_bundle_metadata_preflight_v2_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "bundle_metadata_preflight_v2_smoke");
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    build_phase53_evidence_bundle_or_throw(artifacts, "preflight_v2");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase53_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"verification_preflight_gate_v2_summary\"") != string::npos, "bundle metadata preflight v2 smoke expected v2 metadata");
+}
+
+void build_phase54_runtime_refresh_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    require_test(
+        run_runtime_lifecycle_script(
+            "refresh",
+            {
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+            }
+        ) == 0,
+        "phase54 runtime refresh expected generation"
+    );
+    require_test(
+        run_runtime_lifecycle_script(
+            "plan-rerun",
+            {
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()),
+                "--runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()),
+            }
+        ) == 0,
+        "phase54 runtime rerun plan expected generation"
+    );
+}
+
+void build_phase54_runtime_triage_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase54");
+    require_test(
+        run_runtime_watch_ops_script(
+            "runtime-comparability-triage",
+            {
+                "--phase phase54",
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--triage-out " + shell_quote(artifacts.runtimeComparabilityTriageJson.string()),
+            }
+        ) == 0,
+        "phase54 runtime comparability triage expected generation"
+    );
+}
+
+void build_phase54_runtime_action_plan_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase54");
+    require_test(
+        run_runtime_watch_ops_script(
+            "runtime-rebaseline-action-plan",
+            {
+                "--phase phase54",
+                "--runtime-comparability-triage " + shell_quote(artifacts.runtimeComparabilityTriageJson.string()),
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()),
+                "--runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()),
+                "--proposal-out " + shell_quote(artifacts.runtimeRebaselineActionProposalJson.string()),
+                "--proposal-gate-out " + shell_quote(artifacts.runtimeRebaselineActionProposalGateJson.string()),
+                "--action-plan-out " + shell_quote(artifacts.runtimeRebaselineActionPlanJson.string()),
+            }
+        ) == 0,
+        "phase54 runtime rebaseline action plan expected generation"
+    );
+}
+
+void build_phase54_runtime_runbook_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase54");
+    require_test(
+        run_runtime_watch_ops_script(
+            "runtime-rebaseline-runbook",
+            {
+                "--phase phase54",
+                "--runtime-rebaseline-action-plan " + shell_quote(artifacts.runtimeRebaselineActionPlanJson.string()),
+                "--runtime-proposal " + shell_quote(artifacts.runtimeRebaselineActionProposalJson.string()),
+                "--runtime-proposal-gate " + shell_quote(artifacts.runtimeRebaselineActionProposalGateJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--runbook-out " + shell_quote(artifacts.runtimeRebaselineRunbookJson.string()),
+            }
+        ) == 0,
+        "phase54 runtime rebaseline runbook expected generation"
+    );
+}
+
+void build_phase54_runtime_registry_sanity_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase54");
+    require_test(
+        run_runtime_watch_ops_script(
+            "runtime-registry-selection-sanity",
+            {
+                "--phase phase54",
+                "--runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--sanity-out " + shell_quote(artifacts.runtimeRegistrySelectionSanityJson.string()),
+            }
+        ) == 0,
+        "phase54 runtime registry selection sanity expected generation"
+    );
+    require_test(
+        run_runtime_watch_ops_script(
+            "runtime-registry-selection-repair-plan",
+            {
+                "--phase phase54",
+                "--selection-sanity " + shell_quote(artifacts.runtimeRegistrySelectionSanityJson.string()),
+                "--runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()),
+                "--repair-plan-out " + shell_quote(artifacts.runtimeRegistrySelectionRepairPlanJson.string()),
+            }
+        ) == 0,
+        "phase54 runtime registry selection repair plan expected generation"
+    );
+}
+
+void prepare_phase54_runtime_triage_context_or_throw(
+    const TestOptions& options,
+    RuntimeBudgetLifecycleSmokeArtifacts& artifacts
+) {
+    prepare_phase53_archive_timeline_context_or_throw(options, artifacts);
+    configure_current_env_guardrail_artifacts_for_phase(artifacts, "phase54");
+    write_runtime_current_smoke_manifest(artifacts.paths, 292.0, 480.0, 900.0, "smoke-runner-phase54");
+    build_phase54_runtime_refresh_or_throw(artifacts);
+    append_runtime_history_samples_or_throw(artifacts.paths, 3);
+    run_runtime_watch_cycle_or_throw(artifacts.paths, "all", 3);
+    build_runtime_watch_registry_or_throw(artifacts.paths);
+    build_runtime_registry_health_or_throw(artifacts.paths, {}, {}, 24.0 * 14.0, 24.0 * 30.0, 24.0 * 90.0, {}, {}, "phase54");
+    build_phase54_runtime_triage_or_throw(artifacts);
+    build_phase54_runtime_action_plan_or_throw(artifacts);
+    build_phase54_runtime_runbook_or_throw(artifacts);
+    build_phase54_runtime_registry_sanity_or_throw(artifacts);
+}
+
+void build_phase54_ops_summary_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts) {
+    const string command =
+        shell_quote("/usr/bin/python3") + " " + shell_quote(policy_tools_script_path("runtime_watch_ops.py").string()) +
+        " ops-summary --phase phase54" +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --nightly-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-refresh " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-baseline-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-registry-health " + shell_quote(artifacts.paths.runtimeRegistryHealthJson.string()) +
+        " --operator-archive-review-queue " + shell_quote(artifacts.operatorArchiveReviewQueueJson.string()) +
+        " --operator-waiver-apply " + shell_quote(artifacts.operatorWaiverApplyJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --staged-overlay-completeness " + shell_quote(artifacts.stagedOverlayCompletenessJson.string()) +
+        " --verification-preflight-gate-v2 " + shell_quote(artifacts.verificationPreflightGateV2Json.string()) +
+        " --staged-materialization-transaction " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()) +
+        " --staged-materialization " + shell_quote(artifacts.stagedMaterializationJson.string()) +
+        " --staged-verification-retention-apply-v2 " + shell_quote(artifacts.stagedVerificationRetentionApplyV2Json.string()) +
+        " --published-snapshot-retention-apply-v2 " + shell_quote(artifacts.publishedSnapshotRetentionApplyV2Json.string()) +
+        " --runtime-comparability-triage " + shell_quote(artifacts.runtimeComparabilityTriageJson.string()) +
+        " --runtime-rebaseline-action-plan " + shell_quote(artifacts.runtimeRebaselineActionPlanJson.string()) +
+        " --runtime-rebaseline-proposal " + shell_quote(artifacts.runtimeRebaselineActionProposalJson.string()) +
+        " --runtime-rebaseline-proposal-gate " + shell_quote(artifacts.runtimeRebaselineActionProposalGateJson.string()) +
+        " --runtime-rebaseline-runbook " + shell_quote(artifacts.runtimeRebaselineRunbookJson.string()) +
+        " --runtime-registry-selection-sanity " + shell_quote(artifacts.runtimeRegistrySelectionSanityJson.string()) +
+        " --runtime-registry-selection-repair-plan " + shell_quote(artifacts.runtimeRegistrySelectionRepairPlanJson.string()) +
+        " --out " + shell_quote(artifacts.paths.opsSummaryJson.string());
+    require_test(normalized_process_exit_code(system(command.c_str())) == 0, "phase54 ops summary expected generation");
+}
+
+void run_runtime_comparability_triage_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_comparability_triage_smoke");
+    prepare_phase54_runtime_triage_context_or_throw(options, artifacts);
+    const string triage = slurp_text_file(artifacts.runtimeComparabilityTriageJson);
+    require_test(triage.find("\"triage_verdict\": \"NOT_COMPARABLE_CURRENT_ENV\"") != string::npos, "runtime comparability triage smoke expected current env verdict");
+    require_test(triage.find("\"proposal_needed\": true") != string::npos, "runtime comparability triage smoke expected proposal needed");
+}
+
+void run_runtime_rebaseline_action_plan_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_rebaseline_action_plan_smoke");
+    prepare_phase54_runtime_triage_context_or_throw(options, artifacts);
+    const string plan = slurp_text_file(artifacts.runtimeRebaselineActionPlanJson);
+    require_test(plan.find("\"action_plan_verdict\": \"PROPOSE_CURRENT_ENV_REBASELINE\"") != string::npos, "runtime rebaseline action plan smoke expected current-env plan");
+    require_test(plan.find("\"approval_mode\": \"handoff_only\"") != string::npos, "runtime rebaseline action plan smoke expected handoff_only");
+}
+
+void run_runtime_rebaseline_runbook_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_rebaseline_runbook_smoke");
+    prepare_phase54_runtime_triage_context_or_throw(options, artifacts);
+    const string runbook = slurp_text_file(artifacts.runtimeRebaselineRunbookJson);
+    require_test(runbook.find("\"runbook_type\": \"current_env_rebaseline\"") != string::npos, "runtime rebaseline runbook smoke expected current env runbook");
+    require_test(runbook.find("\"mutates_registry\": false") != string::npos, "runtime rebaseline runbook smoke expected non-mutating handoff");
+}
+
+void run_runtime_registry_selection_sanity_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "runtime_registry_selection_sanity_smoke");
+    prepare_phase54_runtime_triage_context_or_throw(options, artifacts);
+    const string sanity = slurp_text_file(artifacts.runtimeRegistrySelectionSanityJson);
+    require_test(sanity.find("\"sanity_verdict\"") != string::npos, "runtime registry selection sanity smoke expected verdict");
+    require_test(sanity.find("\"runtime_current_fingerprint_parseable\": true") != string::npos, "runtime registry selection sanity smoke expected parseable fingerprint");
+}
+
+void run_policy_ops_summary_v20_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "policy_ops_summary_v20_smoke");
+    prepare_phase54_runtime_triage_context_or_throw(options, artifacts);
+    build_phase54_ops_summary_or_throw(artifacts);
+    const string summary = slurp_text_file(artifacts.paths.opsSummaryJson);
+    require_test(summary.find("\"manifest_version\": \"policy_ops_summary_v20\"") != string::npos, "ops summary v20 smoke expected v20 manifest");
+    require_test(summary.find("\"runtime_comparability_triage\"") != string::npos, "ops summary v20 expected runtime triage section");
+}
+
+void run_pipeline_runtime_not_comparable_separated_from_correctness_smoke_case(const TestOptions& options) {
+    const auto paths = prepare_policy_pipeline_smoke_artifacts(options, "pipeline_runtime_not_comparable_separated_from_correctness_smoke");
+    const int rc = run_policy_pipeline_script(
+        options,
+        paths,
+        "quick",
+        true,
+        true,
+        false,
+        "--runtime-runner-tag smoke-runner-phase54"
+    );
+    require_test(rc == 20, "pipeline runtime not comparable separated smoke expected runtime ACTION_REQUIRED exit");
+    const string summary = slurp_text_file(paths.summaryJson);
+    require_test(summary.find("\"correctness_exit\": 0") != string::npos, "pipeline runtime separated smoke expected correctness_exit 0");
+    require_test(summary.find("\"runtime_exit\": 20") != string::npos, "pipeline runtime separated smoke expected runtime_exit 20");
+    require_test(summary.find("\"combined_exit\": 20") != string::npos, "pipeline runtime separated smoke expected combined_exit 20");
+    require_test(summary.find("\"semantic_failure_detected\": false") != string::npos, "pipeline runtime separated smoke expected no semantic failure");
+}
+
+void build_phase54_evidence_bundle_or_throw(RuntimeBudgetLifecycleSmokeArtifacts& artifacts, const string& label) {
+    build_phase54_ops_summary_or_throw(artifacts);
+    const filesystem::path reportPath = artifacts.paths.root / ("PHASE54_" + label + "_REPORT.txt");
+    const filesystem::path zipPath = artifacts.paths.root / ("raw_engine_phase54_" + label + ".zip");
+    const filesystem::path curatedZipPath = artifacts.paths.root / ("raw_engine_phase54_" + label + "_curated.zip");
+    const filesystem::path lightZipPath = artifacts.paths.root / ("raw_engine_phase54_" + label + "_light.zip");
+    write_smoke_report_file(reportPath, "phase54 evidence bundle runtime triage smoke report");
+    const string bundleCommand =
+        shell_quote("/usr/bin/python3") + " " +
+        shell_quote(policy_tools_script_path("build_evidence_bundle.py").string()) +
+        " --phase phase54" +
+        " --artifact-root " + shell_quote(artifacts.paths.root.string()) +
+        " --report-out " + shell_quote(reportPath.string()) +
+        " --policy-manifest " + shell_quote(artifacts.paths.currentJson.string()) +
+        " --pipeline-summary " + shell_quote(artifacts.nightlySummaryJson.string()) +
+        " --pipeline-quick-summary " + shell_quote(artifacts.quickSummaryJson.string()) +
+        " --pipeline-matrix-summary " + shell_quote(artifacts.matrixSummaryJson.string()) +
+        " --runtime-current-manifest " + shell_quote(artifacts.paths.runtimeCurrentJson.string()) +
+        " --runtime-refresh-manifest " + shell_quote(artifacts.paths.runtimeRefreshJson.string()) +
+        " --runtime-rerun-plan " + shell_quote(artifacts.paths.runtimeRerunJson.string()) +
+        " --runtime-registry " + shell_quote(artifacts.paths.runtimeRegistryJson.string()) +
+        " --runtime-history-index " + shell_quote(artifacts.paths.runtimeHistoryIndexJson.string()) +
+        " --runtime-watch-current " + shell_quote(artifacts.paths.runtimeWatchCurrentJson.string()) +
+        " --runtime-watch-refresh " + shell_quote(artifacts.paths.runtimeWatchRefreshJson.string()) +
+        " --runtime-watch-history-index " + shell_quote(artifacts.paths.runtimeWatchHistoryIndexJson.string()) +
+        " --runtime-watch-registry " + shell_quote(artifacts.paths.runtimeWatchRegistryJson.string()) +
+        " --runtime-comparability-triage " + shell_quote(artifacts.runtimeComparabilityTriageJson.string()) +
+        " --runtime-rebaseline-action-plan " + shell_quote(artifacts.runtimeRebaselineActionPlanJson.string()) +
+        " --runtime-rebaseline-proposal " + shell_quote(artifacts.runtimeRebaselineActionProposalJson.string()) +
+        " --runtime-rebaseline-proposal-gate " + shell_quote(artifacts.runtimeRebaselineActionProposalGateJson.string()) +
+        " --runtime-rebaseline-runbook " + shell_quote(artifacts.runtimeRebaselineRunbookJson.string()) +
+        " --runtime-registry-selection-sanity " + shell_quote(artifacts.runtimeRegistrySelectionSanityJson.string()) +
+        " --runtime-registry-selection-repair-plan " + shell_quote(artifacts.runtimeRegistrySelectionRepairPlanJson.string()) +
+        " --operator-archive-review-queue " + shell_quote(artifacts.operatorArchiveReviewQueueJson.string()) +
+        " --source-health-preflight " + shell_quote(artifacts.sourceHealthPreflightJson.string()) +
+        " --staged-overlay-completeness " + shell_quote(artifacts.stagedOverlayCompletenessJson.string()) +
+        " --verification-preflight-gate-v2 " + shell_quote(artifacts.verificationPreflightGateV2Json.string()) +
+        " --staged-materialization-transaction " + shell_quote(artifacts.stagedMaterializationTransactionJson.string()) +
+        " --staged-verification-retention-apply-v2 " + shell_quote(artifacts.stagedVerificationRetentionApplyV2Json.string()) +
+        " --published-snapshot-retention-apply-v2 " + shell_quote(artifacts.publishedSnapshotRetentionApplyV2Json.string()) +
+        " --ops-summary " + shell_quote(artifacts.paths.opsSummaryJson.string()) +
+        " --zip-out " + shell_quote(zipPath.string()) +
+        " --curated-zip " + shell_quote(curatedZipPath.string()) +
+        " --light-ops-zip " + shell_quote(lightZipPath.string()) +
+        " --use-published-snapshot";
+    require_test(normalized_process_exit_code(system(bundleCommand.c_str())) == 0, "phase54 evidence bundle expected bundle success");
+}
+
+void run_evidence_bundle_runtime_triage_smoke_case(const TestOptions& options) {
+    auto artifacts = prepare_runtime_budget_lifecycle_smoke_artifacts(options, "evidence_bundle_runtime_triage_smoke");
+    prepare_phase54_runtime_triage_context_or_throw(options, artifacts);
+    build_phase54_evidence_bundle_or_throw(artifacts, "runtime_triage");
+    const string metadata = slurp_text_file(artifacts.paths.root / "phase54_evidence_bundle_published" / "bundle_metadata.json");
+    require_test(metadata.find("\"runtime_comparability_triage_summary\"") != string::npos, "runtime triage bundle expected triage metadata");
+    require_test(metadata.find("\"runtime_rebaseline_action_plan_summary\"") != string::npos, "runtime triage bundle expected action plan metadata");
 }
 
 void run_runtime_recommendation_watch_smoke_case(const TestOptions& options) {
@@ -26024,6 +26955,150 @@ void run_named_case(const TestOptions& options) {
     }
     if (options.caseName == "evidence_bundle_archive_governance_smoke") {
         run_evidence_bundle_archive_governance_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_archive_age_tick_smoke") {
+        run_operator_archive_age_tick_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_archive_waiver_due_soon_smoke") {
+        run_operator_archive_waiver_due_soon_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_archive_waiver_expired_smoke") {
+        run_operator_archive_waiver_expired_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_archive_snapshot_prune_candidate_smoke") {
+        run_operator_archive_snapshot_prune_candidate_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_archive_snapshot_prune_blocked_smoke") {
+        run_operator_archive_snapshot_prune_blocked_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_waiver_apply_review_smoke") {
+        run_operator_waiver_apply_review_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_waiver_apply_expire_smoke") {
+        run_operator_waiver_apply_expire_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_waiver_apply_retire_smoke") {
+        run_operator_waiver_apply_retire_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "operator_waiver_apply_blocked_active_smoke") {
+        run_operator_waiver_apply_blocked_active_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_overlay_completeness_smoke") {
+        run_staged_overlay_completeness_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_overlay_completeness_missing_budget_json_smoke") {
+        run_staged_overlay_completeness_missing_budget_json_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_overlay_completeness_missing_policy_summary_smoke") {
+        run_staged_overlay_completeness_missing_policy_summary_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_overlay_completeness_current_tools_smoke") {
+        run_staged_overlay_completeness_current_tools_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "verification_preflight_gate_v2_smoke") {
+        run_verification_preflight_gate_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "verification_preflight_gate_v2_missing_overlay_smoke") {
+        run_verification_preflight_gate_v2_missing_overlay_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "verification_preflight_gate_v2_sparse_allowed_smoke") {
+        run_verification_preflight_gate_v2_sparse_allowed_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "verification_preflight_gate_v2_fail_smoke") {
+        run_verification_preflight_gate_v2_fail_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_materialization_transaction_v2_smoke") {
+        run_staged_materialization_transaction_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_materialization_transaction_v2_overlay_count_smoke") {
+        run_staged_materialization_transaction_v2_overlay_count_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "published_snapshot_retention_apply_v2_smoke") {
+        run_published_snapshot_retention_apply_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "staged_verification_retention_apply_v2_smoke") {
+        run_staged_verification_retention_apply_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "published_snapshot_retention_blocked_by_waiver_smoke") {
+        run_published_snapshot_retention_blocked_by_waiver_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v19_smoke") {
+        run_policy_ops_summary_v19_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_archive_queue_smoke") {
+        run_policy_ops_summary_archive_queue_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_overlay_completeness_smoke") {
+        run_policy_ops_summary_overlay_completeness_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_preflight_v2_smoke") {
+        run_policy_ops_summary_preflight_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_archive_timeline_smoke") {
+        run_evidence_bundle_archive_timeline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "light_ops_bundle_archive_timeline_smoke") {
+        run_light_ops_bundle_archive_timeline_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "bundle_metadata_preflight_v2_smoke") {
+        run_bundle_metadata_preflight_v2_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_comparability_triage_smoke") {
+        run_runtime_comparability_triage_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rebaseline_action_plan_smoke") {
+        run_runtime_rebaseline_action_plan_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_rebaseline_runbook_smoke") {
+        run_runtime_rebaseline_runbook_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "runtime_registry_selection_sanity_smoke") {
+        run_runtime_registry_selection_sanity_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "pipeline_runtime_not_comparable_separated_from_correctness_smoke") {
+        run_pipeline_runtime_not_comparable_separated_from_correctness_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "policy_ops_summary_v20_smoke") {
+        run_policy_ops_summary_v20_smoke_case(options);
+        return;
+    }
+    if (options.caseName == "evidence_bundle_runtime_triage_smoke") {
+        run_evidence_bundle_runtime_triage_smoke_case(options);
         return;
     }
     if (options.caseName == "runtime_recommendation_watch_smoke") {

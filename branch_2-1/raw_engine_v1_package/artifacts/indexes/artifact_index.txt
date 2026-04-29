@@ -1,9 +1,9 @@
 artifact_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts
-report_count=49
-manifest_count=1280
-bundle_count=40
-delivery_bundle_count=34
-curated_bundle_count=38
-evidence_bundle_count=17
+report_count=52
+manifest_count=1416
+bundle_count=42
+delivery_bundle_count=36
+curated_bundle_count=40
+evidence_bundle_count=18
 nightly_run_count=8
 approved_baseline_count=6

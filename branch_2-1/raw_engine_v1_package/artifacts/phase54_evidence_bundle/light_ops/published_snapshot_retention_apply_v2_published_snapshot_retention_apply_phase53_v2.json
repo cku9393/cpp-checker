@@ -1,0 +1,22 @@
+{
+  "manifest_version": "published_snapshot_retention_apply_v2",
+  "phase": "phase53",
+  "generated_at_utc": "2026-04-24T14:46:01Z",
+  "retention_hash": "3c64efbd60719b82b1b7f73439a9dc90ec68ab3e8d173644a3475aac2277de13",
+  "reference_graph_hash": "45b6bfaacaab6f18b5404136277b286d134f56052534861eb48b142dcc86d191",
+  "apply_mode": "governance_record_only",
+  "retained_count": 1,
+  "pruned_count": 0,
+  "blocked_prune_count": 1,
+  "retained_by_waiver_count": 1,
+  "retained_by_bundle_count": 1,
+  "retained_by_report_count": 1,
+  "retained_by_verification_manifest_count": 0,
+  "operator_action_required": true,
+  "apply_verdict": "PASS",
+  "rationale": [
+    "retention apply v2 records prune candidates and blocked prune reasons as operator actions",
+    "destructive pruning remains outside default stabilization execution"
+  ],
+  "apply_hash": "f6fdfb46b535da0fcffb398dd08e78e761713a762ffb02eed77d5521934430e4"
+}

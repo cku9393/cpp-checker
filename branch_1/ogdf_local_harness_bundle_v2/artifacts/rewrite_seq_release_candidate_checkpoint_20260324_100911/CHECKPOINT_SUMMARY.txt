@@ -1,7 +1,0 @@
-branch=main
-commit=ad0399141f8e2948e304cae645f94d2fb72550ef
-subject=Add remaining non-ignored local files
-defaultFlipSummary=dumps/default_flip_validation/summary.json
-hardCompareSummary=dumps/default_flip_validation/hard_compare/summary.json
-randomSanitySummary=dumps/default_flip_validation/s1_r100/summary.json
-directSolverSmokeLog=dumps/default_flip_validation/direct_solver_smoke/run.log

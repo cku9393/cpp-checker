@@ -1,0 +1,12 @@
+manifest_version=runtime_current_manifest_v1
+manifest_role=current
+phase=phase53
+artifact_root=/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts
+baseline_tag=
+overall_status=OK
+overall_budget_verdict=PASS
+warn_count=0
+fail_count=0
+host_fingerprint_hash=2909e8b868d9932f38afd3fc438c967dbc26f07856c04f6d65f38070a0c338e3
+runtime_entry=execution_class=policy_core wall_time_sec=0.031 test_count=0 build_type=Policy sanitizer_flags=none current_status=OK freshness_status=FRESH
+runtime_entry=execution_class=policy_refresh wall_time_sec=0.031 test_count=0 build_type=Policy sanitizer_flags=none current_status=OK freshness_status=FRESH

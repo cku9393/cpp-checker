@@ -1,1 +1,0 @@
-runtime_rerun_plan_summary summary_verdict=ACTION_REQUIRED selected_entry_count=1 stale_entry_count=0 requires_rerun_entry_count=1 rebaseline_required_count=0

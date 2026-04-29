@@ -1,1 +1,0 @@
-exact_shadow policy lifecycle requires attention: stale=1, requires_rerun=0, reclassify_required=0; pipeline severity=OK

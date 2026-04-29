@@ -6,11 +6,11 @@ status labels
 - LOCAL_TEST rerun completion in captured run: verified
 
 captured metrics
-- audit fingerprint: `1|1|1|1|1|83:3313802010853241535|16856:14254791785929237461`
+- audit fingerprint: `1|1|1|1|1|84:3087496610122629103|16856:14254791785929237461`
 - local test compiled: `1`
 - local test passed: `1`
 - release compiled: `1`
-- local test log fingerprint: `83:3313802010853241535`
+- local test log fingerprint: `84:3087496610122629103`
 - release binary fingerprint: `16856:14254791785929237461`
 
 current interpretation

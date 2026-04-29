@@ -1,0 +1,18 @@
+manifest_version=runtime_current_env_watch_v1
+manifest_role=refresh
+phase=phase41
+current_env_state=CURRENT_ENV_REPROFILE_CANDIDATE
+watch_status=WATCH_STABLE
+watch_confidence=HIGH
+reproposal_needed=1
+reproposal_gate_verdict=APPROVABLE
+selected_budget_profile_id=phase41-runtime-budget-approved-profile
+selected_runtime_baseline_id=phase30-runtime-approved-c89a575d-20260331_041735
+current_env_watch_entry=execution_class=release_full state=CURRENT_ENV_REPROFILE_CANDIDATE watch_status=WATCH_STABLE real_sample_count=35 stable_overrun_count=10
+current_env_watch_entry=execution_class=debug_full state=CURRENT_ENV_CLEAR watch_status=CLEAR real_sample_count=35 stable_overrun_count=0
+current_env_watch_entry=execution_class=asan_full state=CURRENT_ENV_CLEAR watch_status=CLEAR real_sample_count=35 stable_overrun_count=0
+current_env_watch_entry=execution_class=policy_core state=CURRENT_ENV_CLEAR watch_status=CLEAR real_sample_count=35 stable_overrun_count=0
+current_env_watch_entry=execution_class=policy_refresh state=CURRENT_ENV_CLEAR watch_status=CLEAR real_sample_count=35 stable_overrun_count=0
+current_env_watch_entry=execution_class=policy_nightly state=CURRENT_ENV_CLEAR watch_status=CLEAR real_sample_count=35 stable_overrun_count=0
+rationale=release_full is within budget and recent same-fingerprint samples are clear
+rationale=stable soft-budget overrun is sufficiently backed by same-fingerprint real evidence

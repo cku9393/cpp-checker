@@ -1,4 +1,0 @@
-lint_verdict=PASS
-forbidden_path_count=0
-dangling_path_count=0
-allowed_external_reference_count=60

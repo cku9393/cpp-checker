@@ -1,4 +1,0 @@
-rc=-9
-timed_out=1
-elapsed=None
-rss_kb=None

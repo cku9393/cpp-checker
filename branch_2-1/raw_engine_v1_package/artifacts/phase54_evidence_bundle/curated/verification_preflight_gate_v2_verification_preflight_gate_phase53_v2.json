@@ -1,0 +1,19 @@
+{
+  "manifest_version": "verification_preflight_gate_v2",
+  "phase": "phase54",
+  "generated_at_utc": "2026-04-25T04:19:55Z",
+  "source_health_status": "ATTENTION_REQUIRED",
+  "source_health_recommendation": "SPARSE_CLONE_REQUIRED",
+  "overlay_completeness_verdict": "PASS",
+  "direct_build_allowed": false,
+  "staged_build_allowed": true,
+  "sparse_clone_required": true,
+  "overlay_missing_blocking": false,
+  "overlay_missing_count": 0,
+  "preflight_gate_verdict": "ACTION_REQUIRED",
+  "selected_materialization_mode": "staged_sparse_clone_overlay",
+  "rationale": [
+    "source health requires staged_sparse_clone_overlay for long verification"
+  ],
+  "preflight_gate_hash": "8eaaf49dfac7b82b604a80e4804d98e35f1c2212d7cf1900eeb43f9fb07196a5"
+}

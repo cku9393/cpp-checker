@@ -1,0 +1,1150 @@
+{
+  "summary_version": "policy_pipeline_summary_v4",
+  "timestamp_utc": "2026-04-25T08:02:54Z",
+  "phase": "phase54",
+  "mode": "matrix",
+  "artifact_root": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
+  "baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_gate.json",
+  "current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_gate.json",
+  "refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_refresh_phase53_v1.json",
+  "rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_rerun_plan_phase53_v1.json",
+  "runtime_baseline_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+  "runtime_baseline_registry": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+  "runtime_current_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+  "runtime_refresh_manifest": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase53.json",
+  "runtime_rerun_plan": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_rerun_phase53.json",
+  "runtime_history_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+  "runtime_history_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1_summary.json",
+  "runtime_history_compact": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1_compacted.json",
+  "runtime_proposal": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase53.json",
+  "runtime_watch_current": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_current_phase53.json",
+  "runtime_watch_refresh": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase53.json",
+  "runtime_watch_history_index": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_history_index_v1.json",
+  "runtime_watch_history_summary": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_history_index_v1_summary.json",
+  "bundle_metadata": null,
+  "current_verdict": "PASS",
+  "freshness_verdict": "FRESH",
+  "rerun_plan_verdict": "PASS",
+  "stale_family_count": 0,
+  "requires_rerun_family_count": 0,
+  "reclassify_required_count": 0,
+  "runtime_current_verdict": "PASS",
+  "runtime_freshness_verdict": "NOT_COMPARABLE",
+  "runtime_comparability_verdict": "NOT_COMPARABLE",
+  "runtime_selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+  "runtime_selected_baseline_tag": "phase34-runtime-external-approved",
+  "runtime_rerun_plan_verdict": "PASS",
+  "runtime_budget_verdict": "PASS",
+  "runtime_stale_entry_count": 0,
+  "runtime_requires_rerun_entry_count": 0,
+  "runtime_rebaseline_required_count": 0,
+  "runtime_not_comparable_count": 2,
+  "runtime_warn_count": 0,
+  "runtime_fail_count": 0,
+  "runtime_registry_entry_count": 2,
+  "runtime_history_fingerprint_count": 2,
+  "runtime_history_trend_counts": {
+    "stable": 11,
+    "noisy": 0,
+    "regressing": 0,
+    "improved": 1,
+    "insufficient_history": 0
+  },
+  "runtime_trend_summary": {
+    "fingerprint_hash": null,
+    "trend_counts": {
+      "stable": 11,
+      "noisy": 0,
+      "regressing": 0,
+      "improved": 1,
+      "insufficient_history": 0
+    },
+    "execution_classes": [],
+    "strongest_trend": "insufficient_history"
+  },
+  "runtime_rebaseline_proposal_needed": true,
+  "runtime_rebaseline_proposal_reason": "same host runtime baseline candidate differs by compiler version",
+  "runtime_watch_status": "REBASELINE_REQUIRED",
+  "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+  "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+  "runtime_watch_sample_count": 1,
+  "runtime_watch_diagnostic_only": false,
+  "runtime_watch_fingerprint_count": 6,
+  "runtime_watch_history_fingerprint_count": 5,
+  "runtime_watch_history_status_counts": {
+    "CLEAR": 5,
+    "WATCH_STABLE": 1,
+    "REBASELINE_REQUIRED": 12
+  },
+  "runtime_watch_transition_summary": {
+    "transition_count": 24,
+    "watch_transition_counts": {
+      "WATCH->WATCH_STABLE": 4,
+      "WATCH_STABLE->REBASELINE_REQUIRED": 1,
+      "REBASELINE_REQUIRED->WATCH": 1,
+      "WATCH_STABLE->WATCH": 2,
+      "WATCH->CLEAR": 2,
+      "CLEAR->WATCH_ESCALATE": 2,
+      "WATCH_ESCALATE->CLEAR": 2,
+      "CLEAR->WATCH": 2,
+      "CLEAR->WATCH_STABLE": 4,
+      "WATCH_STABLE->CLEAR": 4
+    },
+    "recent_transitions": [
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "CLEAR",
+        "to_status": "WATCH_STABLE",
+        "timestamp_utc": "2026-04-01T10:52:27Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase33_release.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "WATCH_STABLE",
+        "to_status": "CLEAR",
+        "timestamp_utc": "2026-04-01T10:52:37Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase33_asan_guard.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "CLEAR",
+        "to_status": "WATCH_STABLE",
+        "timestamp_utc": "2026-04-07T13:37:40Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase34.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "WATCH_STABLE",
+        "to_status": "CLEAR",
+        "timestamp_utc": "2026-04-07T13:40:33Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase34.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "CLEAR",
+        "to_status": "WATCH_STABLE",
+        "timestamp_utc": "2026-04-09T02:13:49Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase33.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "WATCH_STABLE",
+        "to_status": "CLEAR",
+        "timestamp_utc": "2026-04-09T09:13:56Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41_debug_guard.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "CLEAR",
+        "to_status": "WATCH",
+        "timestamp_utc": "2026-04-09T09:13:58Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "WATCH",
+        "to_status": "WATCH_STABLE",
+        "timestamp_utc": "2026-04-09T09:15:09Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "WATCH_STABLE",
+        "to_status": "CLEAR",
+        "timestamp_utc": "2026-04-09T09:24:15Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+      },
+      {
+        "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+        "execution_class": "release_full",
+        "from_status": "CLEAR",
+        "to_status": "WATCH_STABLE",
+        "timestamp_utc": "2026-04-13T16:14:06Z",
+        "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase41.json"
+      }
+    ],
+    "strongest_watch_status": "REBASELINE_REQUIRED"
+  },
+  "runtime_budget_profile_id": "runtime-budget-profile-v1",
+  "correctness_severity": "OK",
+  "correctness_exit": 0,
+  "runtime_exit": 20,
+  "combined_exit": 20,
+  "semantic_failure_detected": false,
+  "correctness_action_domain": "correctness",
+  "runtime_action_domain": "runtime_comparability",
+  "policy_severity": "OK",
+  "policy_rationale": [
+    "correctness lifecycle is PASS/FRESH"
+  ],
+  "runtime_severity": "ACTION_REQUIRED",
+  "runtime_recommendation": "FAIL",
+  "runtime_rationale": [
+    "runtime baseline selection found only compatible, non-strict candidates",
+    "runtime comparability/action-required state is separated from correctness; no semantic failure was detected"
+  ],
+  "severity": "FAIL",
+  "exit_code": 30,
+  "recommended_next_action": "FAIL",
+  "rationale_list": [
+    "expected comparability COMPARABLE, observed NOT_COMPARABLE"
+  ],
+  "stages": [
+    {
+      "name": "policy_ci_check",
+      "status": "SKIPPED",
+      "duration_seconds": 0.0,
+      "command": [
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/build-release-phase31/tests/raw_engine_tests",
+        "--case",
+        "policy_ci_check",
+        "--baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_gate.json",
+        "--current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_gate.json",
+        "--refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_graduation_manifest_refresh_phase53_v1.json",
+        "--rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_rerun_plan_phase53_v1.json",
+        "--artifact-dir",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts",
+        "--emit-summary",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_pipeline_matrix_phase54.txt",
+        "--allow-empty-plan"
+      ],
+      "note": "policy stage skipped; pipeline summary was rebuilt from existing manifests"
+    },
+    {
+      "name": "matrix_refresh_exact_current",
+      "status": "PASS",
+      "duration_seconds": 0.056,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "refresh",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase53.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase53.json"
+    },
+    {
+      "name": "matrix_plan_exact_current",
+      "status": "PASS",
+      "duration_seconds": 0.051,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "plan-rerun",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase53.json",
+        "--runtime-rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_rerun_phase53.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_rerun_phase53.json"
+    },
+    {
+      "name": "matrix_proposal_exact_current",
+      "status": "PASS",
+      "duration_seconds": 0.054,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "propose-rebaseline",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase53.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_baseline_registry_v2.json",
+        "--proposal-out",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase53.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_rebaseline_proposal_phase53.json"
+    },
+    {
+      "name": "matrix_watch_campaign_exact_current",
+      "status": "PASS",
+      "duration_seconds": 0.532,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-campaign",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase53.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/exact_current/exact_current_runtime_watch_current.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/exact_current/exact_current_runtime_watch_history.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+        "--execution-class",
+        "all",
+        "--repeat",
+        "3"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/exact_current/exact_current_runtime_watch_current.json"
+    },
+    {
+      "name": "matrix_watch_refresh_exact_current",
+      "status": "PASS",
+      "duration_seconds": 0.213,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-refresh",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_current_phase53.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_refresh_phase53.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/exact_current/exact_current_runtime_watch_current.json",
+        "--runtime-watch-refresh",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/exact_current/exact_current_runtime_watch_refresh.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/exact_current/exact_current_runtime_watch_history.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/exact_current/exact_current_runtime_watch_refresh.json"
+    },
+    {
+      "name": "matrix_refresh_same_host_compiler_bump",
+      "status": "PASS",
+      "duration_seconds": 0.127,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "refresh",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_registry.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_refresh.json"
+    },
+    {
+      "name": "matrix_plan_same_host_compiler_bump",
+      "status": "PASS",
+      "duration_seconds": 0.062,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "plan-rerun",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_refresh.json",
+        "--runtime-rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_rerun.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_rerun.json"
+    },
+    {
+      "name": "matrix_proposal_same_host_compiler_bump",
+      "status": "PASS",
+      "duration_seconds": 0.204,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "propose-rebaseline",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_registry.json",
+        "--proposal-out",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_proposal.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_proposal.json"
+    },
+    {
+      "name": "matrix_watch_campaign_same_host_compiler_bump",
+      "status": "PASS",
+      "duration_seconds": 0.078,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-campaign",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_watch_current.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_watch_history.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+        "--execution-class",
+        "all",
+        "--repeat",
+        "3"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_watch_current.json"
+    },
+    {
+      "name": "matrix_watch_refresh_same_host_compiler_bump",
+      "status": "PASS",
+      "duration_seconds": 0.082,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-refresh",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_watch_current.json",
+        "--runtime-watch-refresh",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_watch_refresh.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_watch_history.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/same_host_compiler_bump/same_host_compiler_bump_runtime_watch_refresh.json"
+    },
+    {
+      "name": "matrix_refresh_sanitizer_change",
+      "status": "PASS",
+      "duration_seconds": 0.117,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "refresh",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_registry.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_refresh.json"
+    },
+    {
+      "name": "matrix_plan_sanitizer_change",
+      "status": "PASS",
+      "duration_seconds": 0.05,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "plan-rerun",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_refresh.json",
+        "--runtime-rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_rerun.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_rerun.json"
+    },
+    {
+      "name": "matrix_proposal_sanitizer_change",
+      "status": "PASS",
+      "duration_seconds": 0.08,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "propose-rebaseline",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_registry.json",
+        "--proposal-out",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_proposal.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_proposal.json"
+    },
+    {
+      "name": "matrix_watch_campaign_sanitizer_change",
+      "status": "PASS",
+      "duration_seconds": 0.059,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-campaign",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_watch_current.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_watch_history.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+        "--execution-class",
+        "all",
+        "--repeat",
+        "3"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_watch_current.json"
+    },
+    {
+      "name": "matrix_watch_refresh_sanitizer_change",
+      "status": "PASS",
+      "duration_seconds": 0.136,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-refresh",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_watch_current.json",
+        "--runtime-watch-refresh",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_watch_refresh.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_watch_history.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/sanitizer_change/sanitizer_change_runtime_watch_refresh.json"
+    },
+    {
+      "name": "matrix_refresh_runner_tag_change",
+      "status": "PASS",
+      "duration_seconds": 0.136,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "refresh",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_registry.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_refresh.json"
+    },
+    {
+      "name": "matrix_plan_runner_tag_change",
+      "status": "PASS",
+      "duration_seconds": 0.05,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "plan-rerun",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_refresh.json",
+        "--runtime-rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_rerun.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_rerun.json"
+    },
+    {
+      "name": "matrix_proposal_runner_tag_change",
+      "status": "PASS",
+      "duration_seconds": 0.121,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "propose-rebaseline",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_registry.json",
+        "--proposal-out",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_proposal.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_proposal.json"
+    },
+    {
+      "name": "matrix_watch_campaign_runner_tag_change",
+      "status": "PASS",
+      "duration_seconds": 0.125,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-campaign",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_watch_current.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_watch_history.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+        "--execution-class",
+        "all",
+        "--repeat",
+        "3"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_watch_current.json"
+    },
+    {
+      "name": "matrix_watch_refresh_runner_tag_change",
+      "status": "PASS",
+      "duration_seconds": 0.094,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-refresh",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_watch_current.json",
+        "--runtime-watch-refresh",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_watch_refresh.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_watch_history.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/runner_tag_change/runner_tag_change_runtime_watch_refresh.json"
+    },
+    {
+      "name": "matrix_refresh_cross_host",
+      "status": "PASS",
+      "duration_seconds": 0.195,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "refresh",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_registry.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_refresh.json"
+    },
+    {
+      "name": "matrix_plan_cross_host",
+      "status": "PASS",
+      "duration_seconds": 0.071,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "plan-rerun",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_refresh.json",
+        "--runtime-rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_rerun.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_rerun.json"
+    },
+    {
+      "name": "matrix_proposal_cross_host",
+      "status": "PASS",
+      "duration_seconds": 0.122,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "propose-rebaseline",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_registry.json",
+        "--proposal-out",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_proposal.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_proposal.json"
+    },
+    {
+      "name": "matrix_watch_campaign_cross_host",
+      "status": "PASS",
+      "duration_seconds": 0.067,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-campaign",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_watch_current.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_watch_history.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+        "--execution-class",
+        "all",
+        "--repeat",
+        "3"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_watch_current.json"
+    },
+    {
+      "name": "matrix_watch_refresh_cross_host",
+      "status": "PASS",
+      "duration_seconds": 0.123,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-refresh",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase30_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_watch_current.json",
+        "--runtime-watch-refresh",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_watch_refresh.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_watch_history.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/cross_host/cross_host_runtime_watch_refresh.json"
+    },
+    {
+      "name": "matrix_refresh_retired_only",
+      "status": "PASS",
+      "duration_seconds": 0.116,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "refresh",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_registry.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_refresh.json"
+    },
+    {
+      "name": "matrix_plan_retired_only",
+      "status": "PASS",
+      "duration_seconds": 0.093,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "plan-rerun",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_refresh.json",
+        "--runtime-rerun-plan",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_rerun.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_rerun.json"
+    },
+    {
+      "name": "matrix_proposal_retired_only",
+      "status": "PASS",
+      "duration_seconds": 0.059,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "propose-rebaseline",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_refresh.json",
+        "--runtime-baseline-registry",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_registry.json",
+        "--proposal-out",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_proposal.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_proposal.json"
+    },
+    {
+      "name": "matrix_watch_campaign_retired_only",
+      "status": "PASS",
+      "duration_seconds": 0.089,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-campaign",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_watch_current.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_watch_history.json",
+        "--runtime-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_history_index_v1.json",
+        "--execution-class",
+        "all",
+        "--repeat",
+        "3"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_watch_current.json"
+    },
+    {
+      "name": "matrix_watch_refresh_retired_only",
+      "status": "PASS",
+      "duration_seconds": 0.088,
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/tests/tools/runtime_gate.py",
+        "watch-refresh",
+        "--runtime-baseline-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/policy_runtime_baseline_phase34_external_approved.json",
+        "--runtime-current-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_current.json",
+        "--runtime-refresh-manifest",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_refresh.json",
+        "--runtime-watch-current",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_watch_current.json",
+        "--runtime-watch-refresh",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_watch_refresh.json",
+        "--runtime-watch-history-index",
+        "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_watch_history.json"
+      ],
+      "note": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/matrix/retired_only/retired_only_runtime_watch_refresh.json"
+    }
+  ],
+  "matrix_entries": [
+    {
+      "name": "exact_current",
+      "runtime_current_verdict": "PASS",
+      "runtime_freshness_verdict": "NOT_COMPARABLE",
+      "runtime_comparability_verdict": "NOT_COMPARABLE",
+      "runtime_budget_verdict": "PASS",
+      "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+      "selected_baseline_tag": "phase34-runtime-external-approved",
+      "expected_comparability": "COMPARABLE",
+      "expected_action": null,
+      "severity": "ACTION_REQUIRED",
+      "recommended_action": "NOT_COMPARABLE",
+      "recommendation_text": "runtime baseline is informational only on this host/toolchain; strict comparison is disabled",
+      "rationale": [
+        "runtime baseline selection found only compatible, non-strict candidates"
+      ],
+      "runtime_trend_summary": {
+        "fingerprint_hash": null,
+        "trend_counts": {
+          "stable": 11,
+          "noisy": 0,
+          "regressing": 0,
+          "improved": 1,
+          "insufficient_history": 0
+        },
+        "execution_classes": [],
+        "strongest_trend": "insufficient_history"
+      },
+      "runtime_watch_status": "REBASELINE_REQUIRED",
+      "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+      "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+      "runtime_watch_diagnostic_only": false,
+      "runtime_watch_sample_count": 1,
+      "verification_status": "FAIL",
+      "verification_errors": [
+        "expected comparability COMPARABLE, observed NOT_COMPARABLE"
+      ]
+    },
+    {
+      "name": "same_host_compiler_bump",
+      "runtime_current_verdict": "PASS",
+      "runtime_freshness_verdict": "NOT_COMPARABLE",
+      "runtime_comparability_verdict": "NOT_COMPARABLE",
+      "runtime_budget_verdict": "PASS",
+      "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+      "selected_baseline_tag": "phase34-runtime-external-approved",
+      "expected_comparability": "NOT_COMPARABLE",
+      "expected_action": "NOT_COMPARABLE",
+      "severity": "ACTION_REQUIRED",
+      "recommended_action": "NOT_COMPARABLE",
+      "recommendation_text": "runtime baseline is informational only on this host/toolchain; strict comparison is disabled",
+      "rationale": [
+        "runtime baseline selection found only compatible, non-strict candidates"
+      ],
+      "runtime_trend_summary": {
+        "fingerprint_hash": null,
+        "trend_counts": {
+          "stable": 11,
+          "noisy": 0,
+          "regressing": 0,
+          "improved": 1,
+          "insufficient_history": 0
+        },
+        "execution_classes": [],
+        "strongest_trend": "insufficient_history"
+      },
+      "runtime_watch_status": "REBASELINE_REQUIRED",
+      "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+      "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+      "runtime_watch_diagnostic_only": false,
+      "runtime_watch_sample_count": 1,
+      "verification_status": "PASS",
+      "verification_errors": []
+    },
+    {
+      "name": "sanitizer_change",
+      "runtime_current_verdict": "PASS",
+      "runtime_freshness_verdict": "NOT_COMPARABLE",
+      "runtime_comparability_verdict": "NOT_COMPARABLE",
+      "runtime_budget_verdict": "PASS",
+      "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+      "selected_baseline_tag": "phase34-runtime-external-approved",
+      "expected_comparability": "NOT_COMPARABLE",
+      "expected_action": "NOT_COMPARABLE",
+      "severity": "ACTION_REQUIRED",
+      "recommended_action": "NOT_COMPARABLE",
+      "recommendation_text": "runtime baseline is informational only on this host/toolchain; strict comparison is disabled",
+      "rationale": [
+        "runtime baseline selection found only compatible, non-strict candidates"
+      ],
+      "runtime_trend_summary": {
+        "fingerprint_hash": null,
+        "trend_counts": {
+          "stable": 11,
+          "noisy": 0,
+          "regressing": 0,
+          "improved": 1,
+          "insufficient_history": 0
+        },
+        "execution_classes": [],
+        "strongest_trend": "insufficient_history"
+      },
+      "runtime_watch_status": "REBASELINE_REQUIRED",
+      "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+      "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+      "runtime_watch_diagnostic_only": false,
+      "runtime_watch_sample_count": 1,
+      "verification_status": "PASS",
+      "verification_errors": []
+    },
+    {
+      "name": "runner_tag_change",
+      "runtime_current_verdict": "PASS",
+      "runtime_freshness_verdict": "NOT_COMPARABLE",
+      "runtime_comparability_verdict": "NOT_COMPARABLE",
+      "runtime_budget_verdict": "PASS",
+      "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+      "selected_baseline_tag": "phase34-runtime-external-approved",
+      "expected_comparability": "NOT_COMPARABLE",
+      "expected_action": "NOT_COMPARABLE",
+      "severity": "ACTION_REQUIRED",
+      "recommended_action": "NOT_COMPARABLE",
+      "recommendation_text": "runtime baseline is informational only on this host/toolchain; strict comparison is disabled",
+      "rationale": [
+        "runtime baseline selection found only compatible, non-strict candidates"
+      ],
+      "runtime_trend_summary": {
+        "fingerprint_hash": null,
+        "trend_counts": {
+          "stable": 11,
+          "noisy": 0,
+          "regressing": 0,
+          "improved": 1,
+          "insufficient_history": 0
+        },
+        "execution_classes": [],
+        "strongest_trend": "insufficient_history"
+      },
+      "runtime_watch_status": "REBASELINE_REQUIRED",
+      "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+      "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+      "runtime_watch_diagnostic_only": false,
+      "runtime_watch_sample_count": 1,
+      "verification_status": "PASS",
+      "verification_errors": []
+    },
+    {
+      "name": "cross_host",
+      "runtime_current_verdict": "PASS",
+      "runtime_freshness_verdict": "REBASELINE_REQUIRED",
+      "runtime_comparability_verdict": "REBASELINE_REQUIRED",
+      "runtime_budget_verdict": "PASS",
+      "selected_baseline_id": null,
+      "selected_baseline_tag": null,
+      "expected_comparability": "REBASELINE_REQUIRED",
+      "expected_action": "REBASELINE_REQUIRED",
+      "severity": "ACTION_REQUIRED",
+      "recommended_action": "REBASELINE_REQUIRED",
+      "recommendation_text": "no compatible active runtime baseline in registry",
+      "rationale": [
+        "no compatible active runtime baseline in registry",
+        "runtime proposal should be reviewed before promoting a new baseline"
+      ],
+      "runtime_trend_summary": {
+        "fingerprint_hash": null,
+        "trend_counts": {
+          "stable": 11,
+          "noisy": 0,
+          "regressing": 0,
+          "improved": 1,
+          "insufficient_history": 0
+        },
+        "execution_classes": [],
+        "strongest_trend": "insufficient_history"
+      },
+      "runtime_watch_status": "REBASELINE_REQUIRED",
+      "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+      "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+      "runtime_watch_diagnostic_only": false,
+      "runtime_watch_sample_count": 1,
+      "verification_status": "PASS",
+      "verification_errors": []
+    },
+    {
+      "name": "retired_only",
+      "runtime_current_verdict": "PASS",
+      "runtime_freshness_verdict": "REBASELINE_REQUIRED",
+      "runtime_comparability_verdict": "REBASELINE_REQUIRED",
+      "runtime_budget_verdict": "PASS",
+      "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+      "selected_baseline_tag": "phase34-runtime-external-approved",
+      "expected_comparability": "REBASELINE_REQUIRED",
+      "expected_action": "REBASELINE_REQUIRED",
+      "severity": "ACTION_REQUIRED",
+      "recommended_action": "REBASELINE_REQUIRED",
+      "recommendation_text": "only retired runtime baselines match the current host/toolchain",
+      "rationale": [
+        "only retired runtime baselines match the current host/toolchain",
+        "runtime proposal should be reviewed before promoting a new baseline"
+      ],
+      "runtime_trend_summary": {
+        "fingerprint_hash": null,
+        "trend_counts": {
+          "stable": 11,
+          "noisy": 0,
+          "regressing": 0,
+          "improved": 1,
+          "insufficient_history": 0
+        },
+        "execution_classes": [],
+        "strongest_trend": "insufficient_history"
+      },
+      "runtime_watch_status": "REBASELINE_REQUIRED",
+      "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+      "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+      "runtime_watch_diagnostic_only": false,
+      "runtime_watch_sample_count": 1,
+      "verification_status": "PASS",
+      "verification_errors": []
+    }
+  ],
+  "matrix_entry_count": 6,
+  "matrix_fail_count": 1,
+  "matrix_pass_count": 5,
+  "matrix_verification_status": "FAIL",
+  "matrix_action_counts": {
+    "NOT_COMPARABLE": 4,
+    "REBASELINE_REQUIRED": 2
+  },
+  "matrix_severity_counts": {
+    "ACTION_REQUIRED": 6
+  },
+  "matrix_watch_status_counts": {
+    "REBASELINE_REQUIRED": 6
+  },
+  "matrix_watch_recommendation_counts": {
+    "REBASELINE_REQUIRED": 6
+  },
+  "matrix_worst_entry": {
+    "name": "exact_current",
+    "runtime_current_verdict": "PASS",
+    "runtime_freshness_verdict": "NOT_COMPARABLE",
+    "runtime_comparability_verdict": "NOT_COMPARABLE",
+    "runtime_budget_verdict": "PASS",
+    "selected_baseline_id": "phase34-runtime-external-approved-0f34bd33-20260404_202159",
+    "selected_baseline_tag": "phase34-runtime-external-approved",
+    "expected_comparability": "COMPARABLE",
+    "expected_action": null,
+    "severity": "ACTION_REQUIRED",
+    "recommended_action": "NOT_COMPARABLE",
+    "recommendation_text": "runtime baseline is informational only on this host/toolchain; strict comparison is disabled",
+    "rationale": [
+      "runtime baseline selection found only compatible, non-strict candidates"
+    ],
+    "runtime_trend_summary": {
+      "fingerprint_hash": null,
+      "trend_counts": {
+        "stable": 11,
+        "noisy": 0,
+        "regressing": 0,
+        "improved": 1,
+        "insufficient_history": 0
+      },
+      "execution_classes": [],
+      "strongest_trend": "insufficient_history"
+    },
+    "runtime_watch_status": "REBASELINE_REQUIRED",
+    "runtime_watch_recommendation": "REBASELINE_REQUIRED",
+    "runtime_watch_reason": "policy_core is not strictly comparable to the selected runtime baseline",
+    "runtime_watch_diagnostic_only": false,
+    "runtime_watch_sample_count": 1,
+    "verification_status": "FAIL",
+    "verification_errors": [
+      "expected comparability COMPARABLE, observed NOT_COMPARABLE"
+    ]
+  },
+  "runtime_watch_multi_fingerprint_summary": {
+    "matrix_entry_count": 6,
+    "matrix_watch_status_counts": {
+      "REBASELINE_REQUIRED": 6
+    },
+    "matrix_watch_recommendation_counts": {
+      "REBASELINE_REQUIRED": 6
+    },
+    "matrix_action_counts": {
+      "NOT_COMPARABLE": 4,
+      "REBASELINE_REQUIRED": 2
+    },
+    "matrix_severity_counts": {
+      "ACTION_REQUIRED": 6
+    }
+  }
+}

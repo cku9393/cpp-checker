@@ -1,0 +1,116 @@
+{
+  "summary_version": "runtime_watch_history_summary_v1",
+  "generated_at_utc": "2026-04-05T05:24:33Z",
+  "runtime_watch_history_index_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_history_index_phase34.json",
+  "fingerprint_count": 1,
+  "watch_status_counts": {
+    "CLEAR": 6
+  },
+  "transition_count": 2,
+  "watch_transition_counts": {
+    "CLEAR->WATCH_STABLE": 1,
+    "WATCH_STABLE->CLEAR": 1
+  },
+  "recent_transitions": [
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "CLEAR",
+      "to_status": "WATCH_STABLE",
+      "timestamp_utc": "2026-04-05T05:23:33Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase34.json"
+    },
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "execution_class": "release_full",
+      "from_status": "WATCH_STABLE",
+      "to_status": "CLEAR",
+      "timestamp_utc": "2026-04-05T05:24:33Z",
+      "watch_refresh_path": "/Users/free_1/Library/Mobile Documents/iCloud~md~obsidian/Documents/cpp-checker/branch_2-1/raw_engine_v1_package/artifacts/manifests/runtime_watch_refresh_phase34.json"
+    }
+  ],
+  "strongest_watch_status": "CLEAR",
+  "fingerprints": [
+    {
+      "runtime_fingerprint_key": "ddb0d2e36685fa90e5d9e842e7059446ce839e22405e75534a078ab52480a95b",
+      "host_fingerprint": {
+        "os": "Darwin",
+        "os_release": "25.3.0",
+        "arch": "arm64",
+        "runner_tag": "local-macos-appleclang17",
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+        "fingerprint_hash": "c89a575d84b0fcd2de355c40eeb734cc46bab4e505fc2e1741b67466ec73731a"
+      },
+      "toolchain_fingerprint": {
+        "compiler_command": "/usr/bin/c++",
+        "compiler_id": "appleclang",
+        "compiler_version": "Apple clang version 17.0.0 (clang-1700.6.4.2)"
+      },
+      "execution_classes": [
+        {
+          "execution_class": "asan_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "diagnostic"
+        },
+        {
+          "execution_class": "debug_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        },
+        {
+          "execution_class": "policy_core",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_nightly",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "policy_refresh",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "operator"
+        },
+        {
+          "execution_class": "release_full",
+          "watch_status": "CLEAR",
+          "watch_recommendation": "NO_ACTION",
+          "sample_count": 5,
+          "stable_overrun_count": 0,
+          "clear_count": 5,
+          "escalation_count": 0,
+          "execution_role": "production_critical"
+        }
+      ]
+    }
+  ],
+  "summary_hash": "7f9bf4c8869159cfcea612d5f8d21e03a3b82d2c13e4fe9194669cc4f6a99700"
+}
